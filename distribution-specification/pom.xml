@@ -160,6 +160,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -173,6 +179,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -186,6 +198,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -199,6 +217,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -212,6 +236,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -225,6 +255,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -238,6 +274,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -251,6 +293,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -264,6 +312,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -277,6 +331,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -295,6 +355,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -308,6 +374,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -322,6 +394,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -335,6 +413,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -348,6 +432,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -361,6 +451,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -374,6 +470,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!--
@@ -386,6 +488,12 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!--
