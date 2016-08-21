@@ -195,81 +195,32 @@
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
-                    <!--<execution>-->
-                    <!--<id>unpack-javadoc</id>-->
-                    <!--<goals>-->
-                    <!--<goal>unpack-dependencies</goal>-->
-                    <!--</goals>-->
-                    <!--<phase>generate-resources</phase>-->
-                    <!--<configuration>-->
-                    <!--<outputDirectory>${project.build.directory}/generated-sources/javadoc</outputDirectory>-->
-                    <!--<includeClassifiers>javadoc</includeClassifiers>-->
-                    <!--<useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>-->
-                    <!--<stripVersion>true</stripVersion>-->
-                    <!--<useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>-->
-                    <!--</configuration>-->
-                    <!--</execution>-->
                 </executions>
             </plugin>
-
-            <!--<plugin>-->
-                <!-- Copies the XSL stylesheets to a subdirectory of the
-                 !   the build directory. They are needed to process the XML
-                 !   descriptors of jQAssistant during the generation of the
-                 !   documentation.
-                 !-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-dependency-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-asciidoc-stylesheets</id>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>xml-maven-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>transform-xml2asciidoc</id>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!-- Builds a jar with the Asciidoctor based documenation
-                 !   of the plugin and all needed stuff. This artifact
-                 !   is required for building the user manual of
-                 !   jQAssistant.
-                 !-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-assembly-plugin</artifactId>-->
-<!---->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>com.buschmais.jqassistant</groupId>-->
-                        <!--<artifactId>jqa-asciidoctor-assembly</artifactId>-->
-                        <!--<version>${project.version}</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>attach-asciidoc</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>single</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<descriptorRefs>-->
-                                <!--<descriptorRef>asciidoc</descriptorRef>-->
-                            <!--</descriptorRefs>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-apidocs</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${asciidoc.directory}</directory>
+                                    <includes>
+                                        <include>*/apidocs/**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
