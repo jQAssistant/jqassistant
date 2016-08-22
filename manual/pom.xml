@@ -40,20 +40,6 @@
     <properties>
         <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
-        <!-- This is tricky. This POM configures the jQAssistant run for
-         !   external plugins. The jQAssistant plugin configuration
-         !   can not be applied to this module. Therefore we have to
-         !   skip the execution for this modul!
-         !   Hence this property must be set to false in each plugin
-         !   repository.
-         !-->
-        <!--<jqassistant.skip>true</jqassistant.skip>-->
-
-        <!--<org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>-->
-        <!--<org.jruby.version>9.0.5.0</org.jruby.version>-->
-        <!--<org.mockito.version>1.9.5</org.mockito.version>-->
-        <!--<org.slf4j.version>1.7.13</org.slf4j.version>-->
-        <!--<junit.version>4.12</junit.version>-->
     </properties>
 
 
@@ -87,47 +73,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-
-
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-                    <!--<executions>-->
-                        <!--<execution>-->
-                            <!--<id>attach-javadocs</id>-->
-                            <!--<goals>-->
-                                <!--<goal>jar</goal>-->
-                            <!--</goals>-->
-                        <!--</execution>-->
-                    <!--</executions>-->
-                    <!--<configuration>-->
-                        <!--<quiet>true</quiet>-->
-                        <!--<detectLinks>false</detectLinks>-->
-                        <!--<detectOfflineLinks>false</detectOfflineLinks>-->
-                        <!--<additionalparam>-Xdoclint:none</additionalparam>-->
-                        <!--<groups>-->
-                            <!--<group>-->
-                                <!--<title>API</title>-->
-                                <!--<title>Public API</title>-->
-                                <!--<packages>com.buschmais.jqassistant.plugin.${project.artifactId}.api*</packages>-->
-                            <!--</group>-->
-                        <!--</groups>-->
-<!---->
-                        <!--<source>1.7</source>-->
-                        <!--<doclet>org.asciidoctor.Asciidoclet</doclet>-->
-                        <!--<docletArtifact>-->
-                            <!--<groupId>org.asciidoctor</groupId>-->
-                            <!--<artifactId>asciidoclet</artifactId>-->
-                            <!--<version>1.5.4</version>-->
-                        <!--</docletArtifact>-->
-                        <!--<overview>src/main/java/overview.adoc</overview>-->
-                        <!--<additionalparam>-->
-                            <!--&#45;&#45;base-dir ${project.basedir}-->
-                        <!--</additionalparam>-->
-<!---->
-                    <!--</configuration>-->
-                <!--</plugin>-->
-<!---->
             </plugins>
         </pluginManagement>
 
@@ -199,6 +144,16 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -218,6 +173,26 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
