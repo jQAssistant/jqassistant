@@ -16,6 +16,18 @@
         <org.slf4j.version>1.7.13</org.slf4j.version>
     </properties>
 
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
     <build>
 
         <pluginManagement>
