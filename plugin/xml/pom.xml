@@ -11,6 +11,18 @@
     <artifactId>xml</artifactId>
     <name>jQAssistant XML Plugin</name>
 
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
     <build>
         <plugins>
         </plugins>
