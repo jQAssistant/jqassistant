@@ -40,15 +40,6 @@
     </description>
 
     <properties>
-        <!-- This is tricky. This POM configures the jQAssistant run for
-         !   external plugins. The jQAssistant plugin configuration
-         !   can not be applied to this module. Therefore we have to
-         !   skip the execution for this modul!
-         !   Hence this property must be set to false in each plugin
-         !   repository.
-         !-->
-        <!--<jqassistant.skip>true</jqassistant.skip>-->
-
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.0.5.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
