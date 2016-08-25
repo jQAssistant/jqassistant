@@ -40,6 +40,7 @@
     </description>
 
     <properties>
+        <jqa.core-framework.version>1.2.0-SNAPSHOT</jqa.core-framework.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.0.5.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
@@ -273,43 +274,43 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>common</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>plugin</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -317,7 +318,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -325,7 +326,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa.core-framework.version}</version>
             </dependency>
 
 
