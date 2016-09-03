@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectValueDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONValueDescriptor;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -289,6 +290,156 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         assertThat(object, Matchers.instanceOf(JSONObjectDescriptor.class));
     }
 
+    @Test
+    public void scanReturnsXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/block-comment-in-object.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/empty-file.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/valid/line-comment-after-object.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+        assertThat(file.getFileName(), Matchers.notNullValue());
+        assertThat(file.getFileName(), endsWith("probes/valid/line-comment-after-object.json"));
+
+        assertThat(file.getDocument(), Matchers.notNullValue());
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
+
+        JSONValueDescriptor<?> value = keyDescriptor.getValue();
+
+        assertThat(value, instanceOf(JSONScalarValueDescriptor.class));
+
+        JSONScalarValueDescriptor scalarValueDescriptor = (JSONScalarValueDescriptor) value;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(object, Matchers.<Object>equalTo("B"));
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/line-comment-before-object.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/line-comment-in-object.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/object-with-array-two-elements.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/object-with-array.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/object-with-number.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXXXXXXXXXXXXXXX() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/object-with-objects.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXX__X() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/string-value-with-quote-mark.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
+
+    @Test
+    public void scanReturnsXXXX___X() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/string-value-with-unicode-signs.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        throw new RuntimeException("Test not implemented!");
+    }
 
     private JSONKeyDescriptor findKeyInDocument(List<JSONKeyDescriptor> keys, String name) {
         JSONKeyDescriptor result = null;
