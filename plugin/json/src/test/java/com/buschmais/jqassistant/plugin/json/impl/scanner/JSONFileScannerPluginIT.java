@@ -313,7 +313,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsXXXXXXX() {
+    public void scanReturnsCorrectObjectIfLineCommentIfAfterTheObject() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/line-comment-after-object.json");
 
