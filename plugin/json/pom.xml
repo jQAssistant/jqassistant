@@ -19,12 +19,20 @@
         to scan also JSON files.
     </description>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
     <properties>
         <org.antlr.version>4.5.1-1</org.antlr.version>
         <jqassistant.version>1.2.0-SNAPSHOT</jqassistant.version>
         <plugin-common.version>1.2.0-SNAPSHOT</plugin-common.version>
         <plugin-java.version>1.2.0-SNAPSHOT</plugin-java.version>
-</properties>
+    </properties>
+
 
     <dependencies>
         <dependency>
