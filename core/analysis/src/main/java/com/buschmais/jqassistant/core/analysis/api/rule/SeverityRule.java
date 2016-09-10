@@ -5,7 +5,7 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
  */
 public interface SeverityRule extends Rule {
 
-    /*
+    /**
      * Return the severity.
      *
      * @return The severity.
