@@ -27,6 +27,10 @@
     <tag>HEAD</tag>
   </scm>
 
+  <prerequisites>
+    <maven>3.2</maven>
+  </prerequisites>
+
   <distributionManagement>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
