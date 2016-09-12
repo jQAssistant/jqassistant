@@ -1,7 +1,7 @@
 = jQAssistant Ueber Parent
 
 The jQAssistant Ueber Parent is the root parent POM of all
-other jQAssistant projects. 
+other http://jqassistant.org[jQAssistant^] projects. 
 
 It is used only to specify properties common for all other
 jQAssistant projects.
