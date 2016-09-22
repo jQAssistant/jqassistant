@@ -182,7 +182,6 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>${project.artifactId}</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>distribution</classifier>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${test.distribution}</outputDirectory>
