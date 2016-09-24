@@ -41,6 +41,7 @@
 
     <properties>
         <jqa.core-framework.version>1.2.0-SNAPSHOT</jqa.core-framework.version>
+        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.0.5.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
@@ -63,6 +64,7 @@
                         </scanIncludes>
                         <groups>
                             <group>jqa-legal</group>
+                            <group>jqa-maven-constraints</group>
                             <group>jqa-project-layout</group>
                         </groups>
                     </configuration>
@@ -70,12 +72,17 @@
                         <dependency>
                             <groupId>com.buschmais.jqassistant</groupId>
                             <artifactId>legal-constraints</artifactId>
-                            <version>${project.version}</version>
+                            <version>${jqa.own-constraints.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>maven-commmon-constraints</artifactId>
+                            <version>${jqa.own-constraints.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>com.buschmais.jqassistant</groupId>
                             <artifactId>project-layout-constraints</artifactId>
-                            <version>${project.version}</version>
+                            <version>${jqa.own-constraints.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
