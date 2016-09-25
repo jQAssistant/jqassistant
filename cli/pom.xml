@@ -23,6 +23,7 @@
 
 
     <properties>
+        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
@@ -86,6 +87,8 @@
                          ! for details.
                          ! <group>jqa-legal</group>
                          !-->
+                        <!--<group>jqa-legal</group>-->
+                        <group>jqa-maven-constraints</group>
                         <group>jqa-project-layout</group>
                     </groups>
                 </configuration>
@@ -93,12 +96,17 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>legal-constraints</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jqa.own-constraints.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>maven-commmon-constraints</artifactId>
+                        <version>${jqa.own-constraints.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>project-layout-constraints</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jqa.own-constraints.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
