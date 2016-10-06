@@ -11,7 +11,7 @@
     <name>jQAssistant Neo4j Backend</name>
 
     <properties>
-        <org.neo4j_version>2.3.3</org.neo4j_version>
+        <org.neo4j_version>2.3.7</org.neo4j_version>
         <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
     </properties>
