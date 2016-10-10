@@ -5,3 +5,7 @@
 *~
 *.log
 .DS_Store
+# Files we would like to have in our local repository, but not in the remote repository
+*.ignore 
+release.properties
+pom.xml.releaseBackup
