@@ -60,6 +60,11 @@
       <name>Dirk Mahler</name>
       <email>dirk.mahler@buschmais.com</email>
     </developer>
+    <developer>
+      <id>oliver.b.fischer</id>
+      <name>Oliver B. Fischer</name>
+      <email>o.b.fischer@swe-blog.net</email>
+    </developer>
   </developers>
  
   <properties>
