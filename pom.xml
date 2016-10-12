@@ -8,6 +8,15 @@
   <version>1.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>jQAssistant Ueber Parent</name>
+  <url>http://jqassistant.org/</url>
+
+  <description>
+    Maven Parent POM for all projects of the jQAssistant ecosystem.
+    It provides comman and usefull settings shared by all
+    jQAssistant projects.
+  </description>
+
   <organization>
     <name>buschmais GbR</name>
     <url>http://www.buschmais.com</url>
