@@ -403,6 +403,37 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>release</id>
+      <!--
+       ! This profile is automatically activated by using maven-release-plugin:perfom.
+       ! So this mean signing of artifacts is only done in case of running a release.
+       !-->
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <dependencyManagement>
