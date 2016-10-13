@@ -10,6 +10,14 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
+    <name>jQAssistant Core Framework</name>
+    <url>http://jqassistant.org/</url>
+
+    <description>
+        The jQAssistant Core Framework providing the basic infrastructure
+        for all jQAssistant plugins and other jQAssistant tools.
+    </description>
+
     <organization>
         <name>buschmais GbR</name>
         <url>http://www.buschmais.com</url>
