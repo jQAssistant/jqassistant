@@ -9,6 +9,8 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>xml</artifactId>
+    <version>1.2-SNAPSHOT</version>
+
     <name>jQAssistant XML Plugin</name>
 
     <organization>
