@@ -70,7 +70,7 @@
         <jqa-yaml-plugin.version>1.2.0-SNAPSHOT</jqa-yaml-plugin.version>
         <jqa-testng-plugin.version>1.2.0-SNAPSHOT</jqa-testng-plugin.version>
         <jqa-tycho-plugin.version>1.2.0-SNAPSHOT</jqa-tycho-plugin.version>
-        <jqa-xml-plugin.version>1.2.0-SNAPSHOT</jqa-xml-plugin.version>
+        <jqa-xml-plugin.version>1.2-SNAPSHOT</jqa-xml-plugin.version>
     </properties>
 
     <build>
