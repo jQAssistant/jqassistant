@@ -9,11 +9,20 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>common</artifactId>
+    <version>1.2</version>
+
+    <name>jQAssistant Plugin Common</name>
+    <url>http://jqassistant.org/</url>
 
     <organization>
         <name>buschmais GbR</name>
         <url>http://www.buschmais.com</url>
     </organization>
+
+    <description>
+        The jQAssistant Plugin Common provides a set of common
+        classes which can be used by all jQAssistant plugins.
+    </description>
 
     <licenses>
         <license>
