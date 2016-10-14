@@ -12,6 +12,13 @@
     <version>1.2-SNAPSHOT</version>
 
     <name>jQAssistant XML Plugin</name>
+    <url>http://jqassistant.org/</url>
+
+    <description>
+        Plugin for jQAssistant to be able to scan and to
+        analyze XML related artifacts.
+    </description>
+
 
     <organization>
         <name>buschmais GbR</name>
