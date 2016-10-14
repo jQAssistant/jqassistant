@@ -36,9 +36,8 @@
     </scm>
 
     <description>
-        The parent POM for all plugins developed by the jQAssistant team.
-        It defines a standard of actions, checks and dependencies
-        required by each jQAssistant plugin.
+        The parent POM for all plugins developed by the jQAssistant team. It defines a standard
+        of actions, checks and dependencies required by each jQAssistant plugin.
     </description>
 
     <properties>
