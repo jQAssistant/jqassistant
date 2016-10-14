@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>jqa-distribution-specification</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <inceptionYear>2016</inceptionYear>
@@ -58,7 +59,7 @@
         <jqa-java8-plugin.version>1.2.0-SNAPSHOT</jqa-java8-plugin.version>
         <jqa-javaee6-plugin.version>1.2.0-SNAPSHOT</jqa-javaee6-plugin.version>
         <jqa-java-plugin.version>1.2.0-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-jaxrs-plugin.version>1.2.0-SNAPSHOT</jqa-jaxrs-plugin.version>
+        <jqa-jaxrs-plugin.version>1.2-SNAPSHOT</jqa-jaxrs-plugin.version>
         <jqa-jpa2-plugin.version>1.2.0-SNAPSHOT</jqa-jpa2-plugin.version>
         <jqa-junit-plugin.version>1.2.0-SNAPSHOT</jqa-junit-plugin.version>
         <jqa-osgi-plugin.version>1.2.0-SNAPSHOT</jqa-osgi-plugin.version>
