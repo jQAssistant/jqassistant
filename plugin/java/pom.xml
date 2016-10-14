@@ -15,6 +15,8 @@
     <name>jQAssistant Java Plugin</name>
 
     <properties>
+        <jqa-plugin-common.version>1.2</jqa-plugin-common.version>
+
         <org.ow2.asm.version>5.1</org.ow2.asm.version>
     </properties>
 
@@ -70,7 +72,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
+            <version>${jqa-plugin-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -96,7 +98,7 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
+            <version>${jqa-plugin-common.version}</version>
 			<scope>test</scope>
         </dependency>
         <dependency>
