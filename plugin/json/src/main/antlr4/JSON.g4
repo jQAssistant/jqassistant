@@ -103,6 +103,8 @@ STRING
         // Solution taken from https://theantlrguy.atlassian.net/wiki/x/HgAp
         // See also http://stackoverflow.com/questions/33281312/
         // See also http://stackoverflow.com/questions/39398698/
+
+        // Source for possible optimization https://github.com/antlr/antlr4/issues/477
         {
             StringBuilder result = new StringBuilder();
             int startOfNormalText = 0;
@@ -140,7 +142,16 @@ STRING
                 }
             }
 
-            setText(result.toString());
+            String stringValue = result.toString();
+
+            stringValue = stringValue.replaceAll("\\\\\"", "\"");
+            stringValue = stringValue.replaceAll("\\\\f", "\f");
+            stringValue = stringValue.replaceAll("\\\\b", "\b");
+            stringValue = stringValue.replaceAll("\\\\n", "\n");
+            stringValue = stringValue.replaceAll("\\\\r", "\r");
+            stringValue = stringValue.replaceAll("\\\\t", "\t");
+
+            setText(stringValue);
         }
     ;
 

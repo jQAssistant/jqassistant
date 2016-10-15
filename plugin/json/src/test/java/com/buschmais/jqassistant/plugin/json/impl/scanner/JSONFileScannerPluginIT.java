@@ -421,14 +421,80 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsXXXX__X() {
+    public void scanReturnsValueWithQuotationMark() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/string-value-with-quote-mark.json");
+                                 "/probes/valid/string-value-with-quote-mark.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        throw new RuntimeException("Test not implemented!");
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), equalTo("A"));
+
+        JSONValueDescriptor<?> valueDescriptor = keyDescriptor.getValue();
+
+        assertThat(valueDescriptor, instanceOf(JSONValueDescriptor.class));
+
+        JSONValueDescriptor scalarValueDescriptor = (JSONValueDescriptor) valueDescriptor;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(object, Matchers.<Object>equalTo("B\"C"));
+    }
+
+    @Test
+    public void scanReturnsValueWithEscapeSequences() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/valid/string-value-with-possible-escape-sequences.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), equalTo("A"));
+
+        JSONValueDescriptor<?> valueDescriptor = keyDescriptor.getValue();
+
+        assertThat(valueDescriptor, instanceOf(JSONValueDescriptor.class));
+
+        JSONValueDescriptor scalarValueDescriptor = (JSONValueDescriptor) valueDescriptor;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        String expectedResult = ">\b\f\n\r\t<";
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(((String)object).length(), Matchers.is(expectedResult.length()));
+        assertThat(object, Matchers.<Object>equalTo(expectedResult));
     }
 
     @Test
