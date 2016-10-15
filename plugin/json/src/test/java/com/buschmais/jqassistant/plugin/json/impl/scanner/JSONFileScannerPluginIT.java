@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
@@ -431,14 +432,41 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsXXXX___X() {
+    public void scanReturnsCorrectedUnicodeString() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/string-value-with-unicode-signs.json");
+                                 "/probes/valid/string-value-with-unicode-signs.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        throw new RuntimeException("Test not implemented!");
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+        assertThat(file.getFileName(), Matchers.notNullValue());
+        assertThat(file.getFileName(), endsWith("string-value-with-unicode-signs.json"));
+
+        assertThat(file.getDocument(), Matchers.notNullValue());
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        JSONObjectDescriptor container = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(container.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor jsonKeyDescriptor = container.getKeys().get(0);
+
+        assertThat(jsonKeyDescriptor.getName(), equalTo("A"));
+
+        JSONValueDescriptor<?> value = jsonKeyDescriptor.getValue();
+
+        assertThat(value, instanceOf(JSONScalarValueDescriptor.class));
+
+        JSONScalarValueDescriptor scalarValueDescriptor = (JSONScalarValueDescriptor) value;
+
+        Object rawValue = scalarValueDescriptor.getValue();
+
+        // дом культуры
+        assertThat(rawValue, Matchers.<Object>equalTo("дом культуры"));
     }
 
     private JSONKeyDescriptor findKeyInDocument(List<JSONKeyDescriptor> keys, String name) {

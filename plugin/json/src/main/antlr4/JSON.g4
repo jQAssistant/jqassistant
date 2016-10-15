@@ -7,6 +7,13 @@ grammar JSON;
 
 @header {
     package com.buschmais.jqassistant.plugins.json.impl.parser;
+
+    import java.util.regex.*;
+}
+
+
+@lexer::members {
+    private static Pattern ESCAPE_PATTERN = Pattern.compile("\\\\u([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
 }
 
 
@@ -71,11 +78,15 @@ fragment HEX
     ;
 
 fragment UNICODE_ESCAPE_SEQ
-    :   'u' HEX HEX HEX HEX
+    :   '\\' 'u' HEX HEX HEX HEX
+    ;
+
+fragment ESCAPE_SEQUENCE
+    :    '\\' ["\\/bfnrt]
     ;
 
 fragment ESC
-    :   '\\' (["\\/bfnrt] | UNICODE_ESCAPE_SEQ)
+    :   ESCAPE_SEQUENCE | UNICODE_ESCAPE_SEQ
     ;
 
 NULL
@@ -91,7 +102,46 @@ STRING
     :   '"' (ESC | ~["\\])* '"'
         // Solution taken from https://theantlrguy.atlassian.net/wiki/x/HgAp
         // See also http://stackoverflow.com/questions/33281312/
-        { setText(getText().substring(1, getText().length() - 1)); }
+        // See also http://stackoverflow.com/questions/39398698/
+        {
+            StringBuilder result = new StringBuilder();
+            int startOfNormalText = 0;
+            int endOfNormalText = 0;
+
+            int startOfMatch = 0;
+            int endOfMatch = 0;
+
+            String text = getText().substring(1, getText().length() - 1);
+
+            Matcher matcher = ESCAPE_PATTERN.matcher(text);
+
+            if (!matcher.find()) {
+                result.append(text);
+            } else {
+                do {
+                    startOfMatch = matcher.start();
+                    endOfMatch = matcher.end();
+
+                    {
+                        endOfNormalText = startOfMatch;
+
+                        String normalText = text.substring(startOfNormalText, endOfNormalText);
+                    }
+
+                    String m = text.substring(startOfMatch, endOfMatch);
+                    endOfNormalText = startOfNormalText = endOfMatch;
+                    String hexPart = m.split("u")[1];
+
+                    result.append((char) Integer.parseInt(hexPart, 16));
+                } while (matcher.find());
+
+                if (endOfMatch != text.length() - 1) {
+                    result.append(text.substring(endOfMatch));
+                }
+            }
+
+            setText(result.toString());
+        }
     ;
 
 WHITESPACE
