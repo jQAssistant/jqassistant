@@ -52,7 +52,7 @@
         <!--
          ! Versions of the plugins to be include an a release.
          !-->
-        <jqa-cdi-plugin.version>1.2.0-SNAPSHOT</jqa-cdi-plugin.version>
+        <jqa-cdi-plugin.version>1.2-SNAPSHOT</jqa-cdi-plugin.version>
         <jqa-core.version>1.2.0-SNAPSHOT</jqa-core.version>
         <jqa-graphml-plugin.version>1.2.0-SNAPSHOT</jqa-graphml-plugin.version>
         <jqa-ejb3-plugin.version>1.2.0-SNAPSHOT</jqa-ejb3-plugin.version>
