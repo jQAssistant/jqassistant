@@ -292,14 +292,36 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsXXXXX() {
+    public void scannerCanHandleBlockCommentInObject() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/block-comment-in-object.json");
+                                 "/probes/valid/block-comment-in-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        throw new RuntimeException("Test not implemented!");
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
+
+        JSONValueDescriptor<?> value = keyDescriptor.getValue();
+
+        assertThat(value, instanceOf(JSONScalarValueDescriptor.class));
+
+        JSONScalarValueDescriptor scalarValueDescriptor = (JSONScalarValueDescriptor) value;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(object, Matchers.<Object>equalTo("B"));
     }
 
     @Test
