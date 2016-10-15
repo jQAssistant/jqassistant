@@ -55,7 +55,7 @@
         <jqa-cdi-plugin.version>1.2-SNAPSHOT</jqa-cdi-plugin.version>
         <jqa-core.version>1.2.0-SNAPSHOT</jqa-core.version>
         <jqa-graphml-plugin.version>1.2.0-SNAPSHOT</jqa-graphml-plugin.version>
-        <jqa-ejb3-plugin.version>1.2.0-SNAPSHOT</jqa-ejb3-plugin.version>
+        <jqa-ejb3-plugin.version>1.2-SNAPSHOT</jqa-ejb3-plugin.version>
         <jqa-java8-plugin.version>1.2-SNAPSHOT</jqa-java8-plugin.version>
         <jqa-javaee6-plugin.version>1.2.0-SNAPSHOT</jqa-javaee6-plugin.version>
         <jqa-java-plugin.version>1.2-SNAPSHOT</jqa-java-plugin.version>
