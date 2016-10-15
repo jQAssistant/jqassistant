@@ -67,7 +67,7 @@
         <jqa-maven3-plugin.version>1.2.0-SNAPSHOT</jqa-maven3-plugin.version>
         <jqa-neo4jserver.version>1.2.0-SNAPSHOT</jqa-neo4jserver.version>
         <jqa-plugin-common.version>1.2.0-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-rdbms-plugin.version>1.2.0-SNAPSHOT</jqa-rdbms-plugin.version>
+        <jqa-rdbms-plugin.version>1.2-SNAPSHOT</jqa-rdbms-plugin.version>
         <jqa-yaml-plugin.version>1.2.0-SNAPSHOT</jqa-yaml-plugin.version>
         <jqa-testng-plugin.version>1.2.0-SNAPSHOT</jqa-testng-plugin.version>
         <jqa-tycho-plugin.version>1.2.0-SNAPSHOT</jqa-tycho-plugin.version>
