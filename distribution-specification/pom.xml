@@ -63,6 +63,7 @@
         <jqa-jpa2-plugin.version>1.2-SNAPSHOT</jqa-jpa2-plugin.version>
         <jqa-junit-plugin.version>1.2.0-SNAPSHOT</jqa-junit-plugin.version>
         <jqa-osgi-plugin.version>1.2.0-SNAPSHOT</jqa-osgi-plugin.version>
+        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
         <jqa-m2repo-plugin.version>1.2.0-SNAPSHOT</jqa-m2repo-plugin.version>
         <jqa-maven3-plugin.version>1.2.0-SNAPSHOT</jqa-maven3-plugin.version>
         <jqa-neo4jserver.version>1.2.0-SNAPSHOT</jqa-neo4jserver.version>
@@ -87,6 +88,7 @@
                     </scanIncludes>
                     <groups>
                         <group>jqa-legal</group>
+                        <group>jqa-maven-constraints</group>
                         <group>jqa-project-layout</group>
                     </groups>
                 </configuration>
@@ -94,12 +96,17 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>legal-constraints</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jqa.own-constraints.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>project-layout-constraints</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jqa.own-constraints.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>maven-commmon-constraints</artifactId>
+                        <version>${jqa.own-constraints.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
