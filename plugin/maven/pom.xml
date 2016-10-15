@@ -14,6 +14,12 @@
     <version>1.2-SNAPSHOT</version>
 
     <name>jQAssistant Maven 3 Plugin</name>
+    <url>http://jqassistant.org/</url>
+
+    <description>
+        Plugin for jQAssistant to be able to scan and to
+        analyze Maven 3 related artifacts.
+    </description>
 
     <organization>
         <name>buschmais GbR</name>
