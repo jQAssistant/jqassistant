@@ -1,13 +1,20 @@
 package com.buschmais.jqassistant.plugins.json.impl.scanner;
 
-import java.util.Stack;
-
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayValueDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectValueDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONBaseListener;
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugins.json.api.model.*;
+import java.util.Stack;
 
 public class JSONParseListener extends JSONBaseListener {
 
@@ -40,7 +47,9 @@ public class JSONParseListener extends JSONBaseListener {
 //        JSONFileDescriptor fileDescriptor = stack().pop().as(JSONFileDescriptor.class);
         JSONFileDescriptor fileDescriptor = (JSONFileDescriptor) stack().pop();
 
-        fileDescriptor.setDocument(documentDescriptor);
+        if (null != documentDescriptor.getContainer()) {
+            fileDescriptor.setDocument(documentDescriptor);
+        }
     }
 
     @Override

@@ -20,13 +20,13 @@ grammar JSON;
 jsonDocument
     :   jsonObject
     |   jsonArray
+    |
     ;
 
 
 jsonObject
     :   '{' keyValuePair (',' keyValuePair)* '}'
     |   '{' '}'
-    |
     ;
 
 keyValuePair
@@ -40,7 +40,6 @@ arrayElements
 jsonArray
     :   '[' ']'
     |   '[' arrayElements ']'
-    |
     ;
 
 value
