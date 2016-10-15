@@ -341,7 +341,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsCorrectObjectIfLineCommentIfAfterTheObject() {
+    public void parserHandlesLineCommentAfterObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/line-comment-after-object.json");
 
@@ -381,28 +381,86 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         assertThat(object, Matchers.<Object>equalTo("B"));
     }
 
-    @Ignore
     @Test
-    public void scanReturnsXXXXXXXX() {
+    public void parserHandlesLineCommentBeforeObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/line-comment-before-object.json");
+                                 "/probes/valid/line-comment-before-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        throw new RuntimeException("Test not implemented!");
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+        assertThat(file.getFileName(), Matchers.notNullValue());
+        assertThat(file.getFileName(), endsWith("probes/valid/line-comment-before-object.json"));
+
+        assertThat(file.getDocument(), Matchers.notNullValue());
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
+
+        JSONValueDescriptor<?> value = keyDescriptor.getValue();
+
+        assertThat(value, instanceOf(JSONScalarValueDescriptor.class));
+
+        JSONScalarValueDescriptor scalarValueDescriptor = (JSONScalarValueDescriptor) value;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(object, Matchers.<Object>equalTo("B"));
     }
 
-    @Ignore
     @Test
-    public void scanReturnsXXXXXXXXX() {
+    public void parserHandlesLineCommentInObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/line-comment-in-object.json");
+                                 "/probes/valid/line-comment-in-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        throw new RuntimeException("Test not implemented!");
+        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
+                   file, notNullValue());
+
+        assertThat(file.getFileName(), Matchers.notNullValue());
+        assertThat(file.getFileName(), endsWith("probes/valid/line-comment-in-object.json"));
+
+        assertThat(file.getDocument(), Matchers.notNullValue());
+
+        JSONDocumentDescriptor document = file.getDocument();
+
+        assertThat(document.getContainer(), Matchers.notNullValue());
+
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) document.getContainer();
+
+        assertThat(jsonObject.getKeys(), hasSize(1));
+
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+
+        assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
+
+        JSONValueDescriptor<?> value = keyDescriptor.getValue();
+
+        assertThat(value, instanceOf(JSONScalarValueDescriptor.class));
+
+        JSONScalarValueDescriptor scalarValueDescriptor = (JSONScalarValueDescriptor) value;
+
+        Object object = scalarValueDescriptor.getValue();
+
+        assertThat(object, Matchers.notNullValue());
+        assertThat(object, Matchers.instanceOf(String.class));
+        assertThat(object, Matchers.<Object>equalTo("B"));
     }
 
     @Ignore
