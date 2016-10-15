@@ -57,7 +57,7 @@
         <jqa-graphml-plugin.version>1.2.0-SNAPSHOT</jqa-graphml-plugin.version>
         <jqa-ejb3-plugin.version>1.2-SNAPSHOT</jqa-ejb3-plugin.version>
         <jqa-java8-plugin.version>1.2-SNAPSHOT</jqa-java8-plugin.version>
-        <jqa-javaee6-plugin.version>1.2.0-SNAPSHOT</jqa-javaee6-plugin.version>
+        <jqa-javaee6-plugin.version>1.2-SNAPSHOT</jqa-javaee6-plugin.version>
         <jqa-java-plugin.version>1.2-SNAPSHOT</jqa-java-plugin.version>
         <jqa-jaxrs-plugin.version>1.2-SNAPSHOT</jqa-jaxrs-plugin.version>
         <jqa-jpa2-plugin.version>1.2-SNAPSHOT</jqa-jpa2-plugin.version>
