@@ -66,24 +66,20 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>report</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>plugin</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>store</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
