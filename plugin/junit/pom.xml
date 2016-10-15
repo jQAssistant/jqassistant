@@ -38,6 +38,12 @@
         <url>https://github.com/buschmais/jqa-junit-plugin</url>
     </scm>
 
+    <properties>
+        <jqa-java-plugin.version>1.2-SNAPSHOT</jqa-java-plugin.version>
+        <jqa-xml-plugin.version>1.2-SNAPSHOT</jqa-xml-plugin.version>
+        <jqa-plugin-common.version>1.2-SNAPSHOT</jqa-plugin-common.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -51,17 +57,17 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
+            <version>${jqa-plugin-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
-            <version>${project.version}</version>
+            <version>${jqa-java-plugin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>xml</artifactId>
-            <version>${project.version}</version>
+            <version>${jqa-xml-plugin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -85,15 +91,15 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
-			<scope>test</scope>
+            <version>${jqa-plugin-common.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
-			<scope>test</scope>
+            <version>${jqa-java-plugin.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
