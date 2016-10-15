@@ -11,6 +11,8 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>maven3</artifactId>
+    <version>1.2-SNAPSHOT</version>
+
     <name>jQAssistant Maven 3 Plugin</name>
 
     <organization>
