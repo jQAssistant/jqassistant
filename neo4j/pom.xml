@@ -11,6 +11,8 @@
     <name>jQAssistant Neo4j Backend</name>
 
     <properties>
+        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
+
         <org.neo4j_version>2.3.7</org.neo4j_version>
         <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
@@ -72,6 +74,39 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <configuration>
+                    <scanIncludes>
+                        <scanInclude>
+                            <path>${project.basedir}</path>
+                        </scanInclude>
+                    </scanIncludes>
+                    <groups>
+                        <group>jqa-legal</group>
+                        <group>jqa-maven-constraints</group>
+                        <group>jqa-project-layout</group>
+                    </groups>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>project-layout-constraints</artifactId>
+                        <version>${jqa.own-constraints.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>maven-commmon-constraints</artifactId>
+                        <version>${jqa.own-constraints.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>legal-constraints</artifactId>
+                        <version>${jqa.own-constraints.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
