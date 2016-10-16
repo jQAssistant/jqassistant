@@ -19,7 +19,7 @@ import java.util.Stack;
 public class JSONParseListener extends JSONBaseListener {
 
     private final Scanner scanner;
-    private final Stack<JSONDescriptor> descriptorStack = new Stack<>();
+    private final DescriptorStack descriptorStack = new DescriptorStack();
 
     public JSONParseListener(JSONFileDescriptor fd, Scanner sc) {
         scanner = sc;
@@ -27,7 +27,7 @@ public class JSONParseListener extends JSONBaseListener {
         stack().push(fd);
     }
 
-    protected Stack<JSONDescriptor> stack() {
+    protected DescriptorStack stack() {
         return descriptorStack;
     }
 
@@ -275,4 +275,20 @@ public class JSONParseListener extends JSONBaseListener {
 //            throw new IllegalStateException("Unable to handle the value assigned to a JSON key.");
 //        }
 //    }
+}
+
+class DescriptorStack {
+    private Stack<JSONDescriptor> internal = new Stack<>();
+
+    public void push(JSONDescriptor descriptor) {
+        internal.push(descriptor);
+    }
+
+    public JSONDescriptor peek() {
+        return internal.peek();
+    }
+
+    public JSONDescriptor pop() {
+        return internal.pop();
+    }
 }
