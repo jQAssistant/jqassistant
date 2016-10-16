@@ -64,7 +64,7 @@ public class JSONParserIT {
             }
         });
 
-        p.jsonObject();
+        p.jsonDocument();
     }
 
  }
