@@ -13,13 +13,15 @@
     <artifactId>jqa-distribution-specification</artifactId>
     <version>1.2.0-SNAPSHOT</version>
 
+    <name>jQAssistant Distribution Specification</name>
+    <url>http://jqassistant.org/</url>
+
     <packaging>pom</packaging>
     <inceptionYear>2016</inceptionYear>
 
     <description>
-        This POM specifies the version of all modules of jQAssistant which will
-        be part of the commandline distribution of jQAssistant and dependencies of
-        the Maven plugin of jQAssistant.
+        This POM specifies the version of all modules of jQAssistant which will be part of the commandline distribution
+        of jQAssistant and dependencies of the Maven plugin of jQAssistant.
     </description>
 
     <organization>
