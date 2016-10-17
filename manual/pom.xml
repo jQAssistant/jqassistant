@@ -11,7 +11,10 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>manual</artifactId>
+
+
     <name>jQAssistant User Manual</name>
+    <url>http://jqassistant.org/</url>
 
     <inceptionYear>2016</inceptionYear>
 
