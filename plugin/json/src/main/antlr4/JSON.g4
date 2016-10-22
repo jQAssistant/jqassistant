@@ -43,17 +43,9 @@ jsonArray
     ;
 
 value
-    :   jsonArrayValue
-    |   jsonObjectValue
-    |   jsonScalarValue
-    ;
-
-jsonArrayValue
     :   jsonArray
-    ;
-
-jsonObjectValue
-    :   jsonObject
+    |   jsonObject
+    |   jsonScalarValue
     ;
 
 jsonScalarValue

@@ -3,12 +3,10 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONValueDescriptor;
 import org.hamcrest.CoreMatchers;
@@ -188,7 +186,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor jsonArray = (JSONArrayDescriptor) document.getContainer();
 
-        assertThat(jsonArray.getValues(), Matchers.empty());
+        assertThat(jsonArray.getValue(), Matchers.empty());
     }
 
     @Test
@@ -214,9 +212,9 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor jsonArray = (JSONArrayDescriptor) document.getContainer();
 
-        assertThat(jsonArray.getValues(), hasSize(1));
+        assertThat(jsonArray.getValue(), hasSize(1));
 
-        JSONValueDescriptor<?> valueDescriptor = jsonArray.getValues().get(0);
+        JSONValueDescriptor<?> valueDescriptor = jsonArray.getValue().get(0);
 
         assertThat(valueDescriptor.getValue(), Matchers.<Object>equalTo("ABC"));
     }
@@ -248,9 +246,9 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
 
         assertThat(keyDescriptor.getName(), Matchers.<Object>equalTo("A"));
-        assertThat(keyDescriptor.getValue(), Matchers.instanceOf(JSONArrayValueDescriptor.class));
+        assertThat(keyDescriptor.getValue(), Matchers.instanceOf(JSONArrayDescriptor.class));
 
-        JSONArrayValueDescriptor arrayValueDescriptor = (JSONArrayValueDescriptor) keyDescriptor.getValue();
+        JSONArrayDescriptor arrayValueDescriptor = (JSONArrayDescriptor) keyDescriptor.getValue();
 
         assertThat(arrayValueDescriptor.getValue(), empty());
     }
@@ -285,14 +283,12 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONValueDescriptor<?> value = keyDescriptor.getValue();
 
-        assertThat(value, instanceOf(JSONObjectValueDescriptor.class));
+        assertThat(value, instanceOf(JSONObjectDescriptor.class));
 
-        JSONObjectValueDescriptor objectValueDescriptor = (JSONObjectValueDescriptor) value;
+        JSONObjectDescriptor objectDescriptor = (JSONObjectDescriptor) value;
 
-        JSONObjectDescriptor object = objectValueDescriptor.getValue();
-
-        assertThat(object, Matchers.notNullValue());
-        assertThat(object, Matchers.instanceOf(JSONObjectDescriptor.class));
+        assertThat(objectDescriptor, Matchers.notNullValue());
+        assertThat(objectDescriptor, Matchers.instanceOf(JSONObjectDescriptor.class));
     }
 
     @Test
@@ -495,11 +491,11 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONValueDescriptor<?> value = keyDescriptor.getValue();
 
-        assertThat(value, instanceOf(JSONArrayValueDescriptor.class));
+        assertThat(value, instanceOf(JSONArrayDescriptor.class));
 
         JSONArrayDescriptor scalarValueDescriptor = (JSONArrayDescriptor) value;
 
-        List<String> values = scalarValueDescriptor.getValues()
+        List<String> values = scalarValueDescriptor.getValue()
                                                          .stream().map(v -> (String)v.getValue())
                                                          .collect(toList());
         assertThat(values, contains("B", "C"));
@@ -535,13 +531,13 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONValueDescriptor<?> value = keyDescriptor.getValue();
 
-        assertThat(value, instanceOf(JSONArrayValueDescriptor.class));
+        assertThat(value, instanceOf(JSONArrayDescriptor.class));
 
         JSONArrayDescriptor scalarValueDescriptor = (JSONArrayDescriptor) value;
 
-        assertThat(scalarValueDescriptor.getValues(), hasSize(1));
+        assertThat(scalarValueDescriptor.getValue(), hasSize(1));
 
-        List<String> values = scalarValueDescriptor.getValues()
+        List<String> values = scalarValueDescriptor.getValue()
                                                    .stream().map(v -> (String) v.getValue())
                                                    .collect(toList());
         assertThat(values, contains("B"));
@@ -649,21 +645,19 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONValueDescriptor<?> value = keyDescriptor.getValue();
 
-        assertThat(value, instanceOf(JSONObjectValueDescriptor.class));
+        assertThat(value, instanceOf(JSONObjectDescriptor.class));
 
-        JSONObjectValueDescriptor scalarValueDescriptor = (JSONObjectValueDescriptor) value;
+        JSONObjectDescriptor scalarValueDescriptor = (JSONObjectDescriptor) value;
 
-        JSONKeyDescriptor keyB = findKeyInDocument(scalarValueDescriptor.getValue().getKeys(), "B");
-        JSONKeyDescriptor keyD = findKeyInDocument(scalarValueDescriptor.getValue().getKeys(), "D");
-//        JSONKeyDescriptor keyB = scalarValueDescriptor.getValue().getKeys().get(0);
-//        JSONKeyDescriptor keyD = scalarValueDescriptor.getValue().getKeys().get(1);
+        JSONKeyDescriptor keyB = findKeyInDocument(scalarValueDescriptor.getKeys(), "B");
+        JSONKeyDescriptor keyD = findKeyInDocument(scalarValueDescriptor.getKeys(), "D");
         assertThat(keyB.getName(), equalTo("B"));
         assertThat(keyD.getName(), equalTo("D"));
 
         JSONValueDescriptor<?> valueOfKeyD = keyD.getValue();
-        assertThat(valueOfKeyD, instanceOf(JSONObjectValueDescriptor.class));
+        assertThat(valueOfKeyD, instanceOf(JSONObjectDescriptor.class));
 
-        JSONObjectValueDescriptor objectOfD = (JSONObjectValueDescriptor) valueOfKeyD;
+        JSONObjectDescriptor objectOfD = (JSONObjectDescriptor) valueOfKeyD;
         assertThat(objectOfD.getKeys(), empty());
     }
 

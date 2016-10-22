@@ -2,13 +2,11 @@ package com.buschmais.jqassistant.plugins.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONBaseListener;
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONParser;
@@ -61,8 +59,8 @@ public class JSONParseListener extends JSONBaseListener {
         if (descriptor instanceof JSONDocumentDescriptor) {
             JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) stack().peek();
             documentDescriptor.setContainer(jsonObjectDescriptor);
-        } else if (descriptor instanceof JSONObjectValueDescriptor) {
-            JSONObjectValueDescriptor parentDescriptor = (JSONObjectValueDescriptor) stack().peek();
+        } else if (descriptor instanceof JSONKeyDescriptor) {
+            JSONKeyDescriptor parentDescriptor = (JSONKeyDescriptor) stack().peek();
             parentDescriptor.setValue(jsonObjectDescriptor);
         } else {
             throw new IllegalStateException("Unexpected stack state while parsing a JSON document.");
@@ -73,25 +71,6 @@ public class JSONParseListener extends JSONBaseListener {
 
     @Override
     public void exitJsonObject(JSONParser.JsonObjectContext ctx) {
-        stack().pop();
-    }
-
-    @Override
-    public void enterJsonObjectValue(JSONParser.JsonObjectValueContext ctx) {
-        JSONObjectValueDescriptor valueDescriptor = scanner.getContext()
-                                                           .getStore()
-                                                           .create(JSONObjectValueDescriptor.class);
-
-        JSONKeyDescriptor keyDescriptor = (JSONKeyDescriptor) stack().peek();
-
-        keyDescriptor.setValue(valueDescriptor);
-
-        stack().push(valueDescriptor);
-    }
-
-    @Override
-    public void exitJsonObjectValue(JSONParser.JsonObjectValueContext ctx) {
-        super.exitJsonObjectValue(ctx);
         stack().pop();
     }
 
@@ -117,7 +96,7 @@ public class JSONParseListener extends JSONBaseListener {
         if (descriptor instanceof JSONKeyDescriptor) {
             ((JSONKeyDescriptor) descriptor).setValue(valueDescriptor);
         } else if (descriptor instanceof JSONArrayDescriptor) {
-            ((JSONArrayDescriptor) descriptor).getValues().add(valueDescriptor);
+            ((JSONArrayDescriptor) descriptor).getValue().add(valueDescriptor);
         }
 
         stack().push(valueDescriptor);
@@ -161,8 +140,8 @@ public class JSONParseListener extends JSONBaseListener {
 
     @Override
     public void enterJsonArray(JSONParser.JsonArrayContext ctx) {
-        JSONArrayValueDescriptor jsonArrayDescriptor = scanner.getContext().getStore()
-                                                              .create(JSONArrayValueDescriptor.class);
+        JSONArrayDescriptor jsonArrayDescriptor = scanner.getContext().getStore()
+                                                         .create(JSONArrayDescriptor.class);
 
         JSONDescriptor jsonDescriptor = stack().peek();
 
