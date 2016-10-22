@@ -9,38 +9,35 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>xml</artifactId>
+    <version>1.2-SNAPSHOT</version>
+
     <name>jQAssistant XML Plugin</name>
+    <url>http://jqassistant.org/</url>
+
+    <description>
+        Plugin for jQAssistant to be able to scan and to
+        analyze XML related artifacts.
+    </description>
+
+
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <jqa-plugin-common.version>1.2</jqa-plugin-common.version>
+    </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-asciidoc-stylesheets</id>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>transform-xml2asciidoc</id>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-asciidoc</id>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -48,21 +45,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
-            <type>xsl</type>
-            <classifier>plugin2asciidoc</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
-            <type>xsl</type>
-            <classifier>rules2asciidoc-v2</classifier>
+            <version>${jqa-plugin-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -84,7 +67,7 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
+            <version>${jqa-plugin-common.version}</version>
 			<scope>test</scope>
         </dependency>
         <dependency>
@@ -114,4 +97,16 @@
             <artifactId>slf4j-simple</artifactId>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
 </project>
