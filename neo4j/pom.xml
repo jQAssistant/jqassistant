@@ -13,7 +13,10 @@
     <name>jQAssistant Neo4j Backend</name>
     <url>http://jqassistant.org/</url>
 
-
+    <description>
+      Prototype of an jQAssistant server extension.
+    </description>
+    
     <properties>
         <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
 
