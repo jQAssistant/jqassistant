@@ -41,7 +41,7 @@ public class JSONParseListener extends JSONBaseListener {
             fileDescriptor.setObject(jsonObjectDescriptor);
         } else if (descriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor parentDescriptor = (JSONKeyDescriptor) stack().peek();
-            parentDescriptor.setValue(jsonObjectDescriptor);
+            parentDescriptor.setObject(jsonObjectDescriptor);
         } else {
             throw new IllegalStateException("Unexpected stack state while parsing a JSON document.");
         }
@@ -74,7 +74,7 @@ public class JSONParseListener extends JSONBaseListener {
         JSONDescriptor descriptor = stack().peek();
 
         if (descriptor instanceof JSONKeyDescriptor) {
-            ((JSONKeyDescriptor) descriptor).setValue(valueDescriptor);
+            ((JSONKeyDescriptor) descriptor).setScalarValue(valueDescriptor);
         } else if (descriptor instanceof JSONArrayDescriptor) {
             ((JSONArrayDescriptor) descriptor).getValue().add(valueDescriptor);
         }
@@ -94,7 +94,7 @@ public class JSONParseListener extends JSONBaseListener {
         if (stringNode != null) {
             valueDescriptor.setValue(stringNode.getText());
         } else if (nullNode != null) {
-            ((JSONKeyDescriptor) stack().peek()).setValue(null);
+            ((JSONKeyDescriptor) stack().peek()).setScalarValue(null);
         } else if (boolNode != null) {
             String textValue = boolNode.getText();
             Boolean boolValue = Boolean.parseBoolean(textValue);
@@ -130,7 +130,7 @@ public class JSONParseListener extends JSONBaseListener {
             fileDescriptor.setArray(jsonArrayDescriptor);
         } else if (jsonDescriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor keyValueDescriptor = (JSONKeyDescriptor) jsonDescriptor;
-            keyValueDescriptor.setValue(jsonArrayDescriptor);
+            keyValueDescriptor.setArray(jsonArrayDescriptor);
         } else {
             throw new IllegalStateException("Unable to find the context of an JSON array.");
         }
