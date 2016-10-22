@@ -58,7 +58,6 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
                 }
             });
 
-//            parser.addParseListener(new JSONParseListener(jsonFileDescriptor, scanner));
             JSONParser.JsonDocumentContext jsonDocumentContext = parser.jsonDocument();
 
             ParseTreeWalker walker = new ParseTreeWalker();

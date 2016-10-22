@@ -42,10 +42,8 @@ public class JSONLexerTest {
 
     @Test
     public void lexerOuput() throws Exception {
-//        String textInput = "[]";
         JSONLexer lexer = new JSONLexer(new ANTLRInputStream(input));
 
-//        String[] expectedTokens = new String[]{"[", "]"};
         List<? extends Token> foundTokens = lexer.getAllTokens();
 
         assertThat("Number of expected and found tokens must be the same.",

@@ -1,3 +1,4 @@
 Problems with numbers? 0.1 etc.
 Order of elements not keept.
+No tests for invalid files.
 
