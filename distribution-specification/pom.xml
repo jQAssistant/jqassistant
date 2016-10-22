@@ -64,7 +64,7 @@
         <jqa-jaxrs-plugin.version>1.2-SNAPSHOT</jqa-jaxrs-plugin.version>
         <jqa-jpa2-plugin.version>1.2-SNAPSHOT</jqa-jpa2-plugin.version>
         <jqa-junit-plugin.version>1.2.0-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-osgi-plugin.version>1.2.0-SNAPSHOT</jqa-osgi-plugin.version>
+        <jqa-osgi-plugin.version>1.2-SNAPSHOT</jqa-osgi-plugin.version>
         <jqa-own-constraints.version>1.2.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-m2repo-plugin.version>1.2-SNAPSHOT</jqa-m2repo-plugin.version>
         <jqa-maven3-plugin.version>1.2-SNAPSHOT</jqa-maven3-plugin.version>
