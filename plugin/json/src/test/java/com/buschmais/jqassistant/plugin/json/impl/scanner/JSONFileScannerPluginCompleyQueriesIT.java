@@ -51,7 +51,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         Scanner scanner = getScanner();
         scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File)-[:CONTAINS_DOCUMENT]->(d:JSON:Document) " +
+        List<?> results = query("MATCH (f:JSON:File) " +
                                      "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
                                      "-[:HAS_VALUE]->(v:Value) " +
                                      "WHERE k.name = 'A' AND v.value = 'B' " +
@@ -70,7 +70,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File)-[:CONTAINS_DOCUMENT]->(d:JSON:Document) " +
+        List<?> results = query("MATCH (f:JSON:File)" +
                                 "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
                                 "-[:HAS_VALUE]->(v:Value) " +
                                 "WHERE k.name = 'A' AND v.value = 'B' " +
@@ -87,7 +87,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File)-[:CONTAINS_DOCUMENT]->(d:JSON:Document) " +
+        List<?> results = query("MATCH (f:JSON:File)" +
                                 "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
                                 "WHERE " +
                                 "(k.name = 'A') OR " +
@@ -107,7 +107,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<JSONKeyDescriptor> results = query("MATCH (f:JSON:File)-[:CONTAINS_DOCUMENT]->(d:JSON:Document) " +
+        List<JSONKeyDescriptor> results = query("MATCH (f:JSON:File) " +
                                                 "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
                                                 "WHERE " +
                                                 "NOT(k-[:HAS_VALUE]->()) " +

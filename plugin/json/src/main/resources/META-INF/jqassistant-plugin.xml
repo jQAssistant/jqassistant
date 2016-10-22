@@ -5,7 +5,6 @@
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONContainer</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONDescriptor</class>
-        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor</class>

@@ -4,14 +4,16 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-import java.util.List;
-
 public interface JSONFileDescriptor extends JSONDescriptor, FileDescriptor {
+    @Relation("CONTAINS")
+    JSONArrayDescriptor getArray();
 
-    @Relation("CONTAINS_DOCUMENT")
-    JSONDocumentDescriptor getDocument();
+    void setArray(JSONArrayDescriptor array);
 
-    void setDocument(JSONDocumentDescriptor document);
+    @Relation("CONTAINS")
+    JSONObjectDescriptor getObject();
+
+    void setObject(JSONObjectDescriptor object);
 
     void setParsed(boolean parsable);
 

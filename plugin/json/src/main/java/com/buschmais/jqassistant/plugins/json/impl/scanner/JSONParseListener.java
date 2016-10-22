@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugins.json.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
@@ -30,25 +29,6 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void enterDocument(JSONParser.DocumentContext ctx) {
-        JSONDocumentDescriptor descriptor = scanner.getContext().getStore()
-                                                   .create(JSONDocumentDescriptor.class);
-
-        stack().push(descriptor);
-    }
-
-    @Override
-    public void exitDocument(JSONParser.DocumentContext ctx) {
-        JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) stack().pop();
-
-        JSONFileDescriptor fileDescriptor = (JSONFileDescriptor) stack().pop();
-
-        if (null != documentDescriptor.getContainer()) {
-            fileDescriptor.setDocument(documentDescriptor);
-        }
-    }
-
-    @Override
     public void enterObject(JSONParser.ObjectContext ctx) {
         JSONObjectDescriptor jsonObjectDescriptor = scanner.getContext()
                                                            .getStore()
@@ -56,9 +36,9 @@ public class JSONParseListener extends JSONBaseListener {
 
         JSONDescriptor descriptor = stack().peek();
 
-        if (descriptor instanceof JSONDocumentDescriptor) {
-            JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) stack().peek();
-            documentDescriptor.setContainer(jsonObjectDescriptor);
+        if (descriptor instanceof JSONFileDescriptor) {
+            JSONFileDescriptor fileDescriptor = (JSONFileDescriptor) descriptor;
+            fileDescriptor.setObject(jsonObjectDescriptor);
         } else if (descriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor parentDescriptor = (JSONKeyDescriptor) stack().peek();
             parentDescriptor.setValue(jsonObjectDescriptor);
@@ -145,9 +125,9 @@ public class JSONParseListener extends JSONBaseListener {
 
         JSONDescriptor jsonDescriptor = stack().peek();
 
-        if (jsonDescriptor instanceof JSONDocumentDescriptor) {
-            JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) jsonDescriptor;
-            documentDescriptor.setContainer(jsonArrayDescriptor);
+        if (jsonDescriptor instanceof JSONFileDescriptor) {
+            JSONFileDescriptor fileDescriptor = (JSONFileDescriptor) jsonDescriptor;
+            fileDescriptor.setArray(jsonArrayDescriptor);
         } else if (jsonDescriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor keyValueDescriptor = (JSONKeyDescriptor) jsonDescriptor;
             keyValueDescriptor.setValue(jsonArrayDescriptor);
