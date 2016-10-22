@@ -30,7 +30,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void enterJsonDocument(JSONParser.JsonDocumentContext ctx) {
+    public void enterDocument(JSONParser.DocumentContext ctx) {
         JSONDocumentDescriptor descriptor = scanner.getContext().getStore()
                                                    .create(JSONDocumentDescriptor.class);
 
@@ -38,7 +38,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void exitJsonDocument(JSONParser.JsonDocumentContext ctx) {
+    public void exitDocument(JSONParser.DocumentContext ctx) {
         JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) stack().pop();
 
         JSONFileDescriptor fileDescriptor = (JSONFileDescriptor) stack().pop();
@@ -49,7 +49,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void enterJsonObject(JSONParser.JsonObjectContext ctx) {
+    public void enterObject(JSONParser.ObjectContext ctx) {
         JSONObjectDescriptor jsonObjectDescriptor = scanner.getContext()
                                                            .getStore()
                                                            .create(JSONObjectDescriptor.class);
@@ -70,7 +70,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void exitJsonObject(JSONParser.JsonObjectContext ctx) {
+    public void exitObject(JSONParser.ObjectContext ctx) {
         stack().pop();
     }
 
@@ -86,7 +86,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void enterJsonScalarValue(JSONParser.JsonScalarValueContext ctx) {
+    public void enterScalarValue(JSONParser.ScalarValueContext ctx) {
         JSONScalarValueDescriptor valueDescriptor = scanner.getContext()
                                                            .getStore()
                                                            .create(JSONScalarValueDescriptor.class);
@@ -103,7 +103,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void exitJsonScalarValue(JSONParser.JsonScalarValueContext ctx) {
+    public void exitScalarValue(JSONParser.ScalarValueContext ctx) {
         JSONScalarValueDescriptor valueDescriptor = (JSONScalarValueDescriptor) stack().pop();
 
         TerminalNode stringNode = ctx.STRING();
@@ -139,7 +139,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void enterJsonArray(JSONParser.JsonArrayContext ctx) {
+    public void enterArray(JSONParser.ArrayContext ctx) {
         JSONArrayDescriptor jsonArrayDescriptor = scanner.getContext().getStore()
                                                          .create(JSONArrayDescriptor.class);
 
@@ -159,7 +159,7 @@ public class JSONParseListener extends JSONBaseListener {
     }
 
     @Override
-    public void exitJsonArray(JSONParser.JsonArrayContext ctx) {
+    public void exitArray(JSONParser.ArrayContext ctx) {
         stack().pop();
     }
 }

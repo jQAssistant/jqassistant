@@ -17,14 +17,14 @@ grammar JSON;
 }
 
 
-jsonDocument
-    :   jsonObject
-    |   jsonArray
+document
+    :   object
+    |   array
     |
     ;
 
 
-jsonObject
+object
     :   '{' keyValuePair (',' keyValuePair)* '}'
     |   '{' '}'
     ;
@@ -37,18 +37,18 @@ arrayElements
     :   value (',' value)*
     ;
 
-jsonArray
+array
     :   '[' ']'
     |   '[' arrayElements ']'
     ;
 
 value
-    :   jsonArray
-    |   jsonObject
-    |   jsonScalarValue
+    :   array
+    |   object
+    |   scalarValue
     ;
 
-jsonScalarValue
+scalarValue
     :
     |   STRING
     |   NUMBER
