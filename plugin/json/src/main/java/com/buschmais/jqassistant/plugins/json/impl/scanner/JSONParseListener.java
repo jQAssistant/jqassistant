@@ -122,30 +122,30 @@ public class JSONParseListener extends JSONBaseListener {
 
     @Override
     public void exitJsonArrayValue(JSONParser.JsonArrayValueContext ctx) {
-        System.out.println("Popping Json Array Value Descriptor");
-        stack().pop();
+//        System.out.println("Popping Json Array Value Descriptor");
+//        stack().pop();
 
     }
 
     @Override
     public void enterJsonArrayValue(JSONParser.JsonArrayValueContext ctx) {
-        try {
-            JSONArrayValueDescriptor valueDescriptor = scanner.getContext()
-                                                              .getStore()
-                                                              .create(JSONArrayValueDescriptor.class);
-
+//        try {
+//            JSONArrayValueDescriptor valueDescriptor = scanner.getContext()
+//                                                              .getStore()
+//                                                              .create(JSONArrayValueDescriptor.class);
+//
 //    JSONKeyDescriptor keyDescriptor = stack().peek().as(JSONKeyDescriptor.class);
-            JSONKeyDescriptor keyDescriptor = (JSONKeyDescriptor) stack().peek();
-
-
-            System.out.println("Pushing Json Array Value Descriptor");
-            keyDescriptor.setValue(valueDescriptor);
-
-            stack().push(valueDescriptor);
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+//            JSONKeyDescriptor keyDescriptor = (JSONKeyDescriptor) stack().peek();
+//
+//
+//            System.out.println("Pushing Json Array Value Descriptor");
+//            keyDescriptor.setValue(valueDescriptor);
+//
+//            stack().push(valueDescriptor);
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
     }
 
     @Override
@@ -173,6 +173,7 @@ public class JSONParseListener extends JSONBaseListener {
 
         TerminalNode stringNode = ctx.STRING();
         TerminalNode nullNode = ctx.NULL();
+        TerminalNode numberNode = ctx.NUMBER();
         TerminalNode boolNode = ctx.BOOLEAN();
 
         if (stringNode != null) {
@@ -185,6 +186,15 @@ public class JSONParseListener extends JSONBaseListener {
             String textValue = boolNode.getText();
             Boolean boolValue = Boolean.parseBoolean(textValue);
             valueDescriptor.setValue(boolValue);
+        } else if (numberNode != null) {
+            String textValue = numberNode.getText();
+            Double value = Double.parseDouble(textValue);
+//            BigInteger value = new BigInteger(textValue, 10);
+            double intValue = value.doubleValue();
+            valueDescriptor.setValue(intValue);
+        } else {
+            String msg = "Unsupported terminal node for token '" + ctx.getText() + "' found.";
+            throw new IllegalStateException(msg);
         }
     }
 
@@ -214,15 +224,19 @@ public class JSONParseListener extends JSONBaseListener {
 //            JSONDocumentDescriptor documentDescriptor = jsonDescriptor.as(JSONDocumentDescriptor.class);
             JSONDocumentDescriptor documentDescriptor = (JSONDocumentDescriptor) jsonDescriptor;
             documentDescriptor.setContainer(jsonArrayDescriptor);
-        } else if (jsonDescriptor instanceof JSONArrayValueDescriptor) {
+        } else if (jsonDescriptor instanceof JSONKeyDescriptor) {
+            System.out.println("KV");
+            JSONKeyDescriptor keyValueDescriptor = (JSONKeyDescriptor) jsonDescriptor;
+            keyValueDescriptor.setValue(jsonArrayDescriptor);
+//        } else if (jsonDescriptor instanceof JSONArrayValueDescriptor) {
 //            JSONArrayValueDescriptor arrayDescriptor = jsonDescriptor.as(JSONArrayValueDescriptor.class);
-            JSONArrayValueDescriptor arrayDescriptor = (JSONArrayValueDescriptor) jsonDescriptor;
-            try {
-                // arrayDescriptor.setValue(jsonArrayDescriptor);
-            } catch (Exception e) {
-                System.out.println(e);
-                throw e;
-            }
+//            JSONArrayValueDescriptor arrayDescriptor = (JSONArrayValueDescriptor) jsonDescriptor;
+//            try {
+//                 arrayDescriptor.setValue(jsonArrayDescriptor);
+//            } catch (Exception e) {
+//                System.out.println(e);
+//                throw e;
+//            }
         } else {
             throw new IllegalStateException("Unable to find the context of an JSON array.");
         }

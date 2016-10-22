@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 
 import java.io.IOException;
@@ -57,8 +58,11 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
                 }
             });
 
-            parser.addParseListener(new JSONParseListener(jsonFileDescriptor, scanner));
-            parser.jsonDocument();
+//            parser.addParseListener(new JSONParseListener(jsonFileDescriptor, scanner));
+            JSONParser.JsonDocumentContext jsonDocumentContext = parser.jsonDocument();
+
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(new JSONParseListener(jsonFileDescriptor, scanner), jsonDocumentContext);
 
             // In case the content of the file is not parseable set parsed=false
             // to help the user to identify nonparseable files
