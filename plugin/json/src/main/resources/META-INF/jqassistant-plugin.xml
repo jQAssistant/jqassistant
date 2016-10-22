@@ -8,7 +8,6 @@
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor</class>
-        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor</class>
     </model>
     <scanner>

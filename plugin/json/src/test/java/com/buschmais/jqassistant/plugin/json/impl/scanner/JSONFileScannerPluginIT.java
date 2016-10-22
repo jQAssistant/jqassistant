@@ -270,7 +270,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
 
-        JSONValueDescriptor<?> value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
 
         Object objectTwo = value.getValue();
 
@@ -352,7 +352,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(keyDescriptor.getName(), Matchers.equalTo("A"));
 
-        JSONValueDescriptor<?> value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
 
         Object object = value.getValue();
 
