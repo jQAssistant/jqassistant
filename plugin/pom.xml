@@ -10,7 +10,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant.plugin.plugin-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0-RC1</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Plugin Parent POM</name>
@@ -33,7 +33,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</developerConnection>
         <url>https://github.com/buschmais/jqa-plugin-parent</url>
-    </scm>
+      <tag>1.2.0-RC1</tag>
+  </scm>
 
     <description>
         The parent POM for all plugins developed by the jQAssistant team. It defines a standard
@@ -183,8 +184,7 @@
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
-                                        <fileMapper
-                                                implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                             <pattern>^jqassistant-plugin\.xml$</pattern>
                                             <replacement>plugin.adoc</replacement>
                                         </fileMapper>
@@ -206,8 +206,7 @@
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
-                                        <fileMapper
-                                                implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                             <pattern>^jqassistant-plugin\.xml$</pattern>
                                             <replacement>concepts-and-constraints.adoc</replacement>
                                         </fileMapper>
