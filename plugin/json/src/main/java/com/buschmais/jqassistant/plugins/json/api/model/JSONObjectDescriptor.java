@@ -6,7 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.List;
 
 @Label("Object")
-public interface JSONObjectDescriptor extends JSONContainer
+public interface JSONObjectDescriptor extends JSONDescriptor
 {
     @Relation("HAS_KEY")
     List<JSONKeyDescriptor> getKeys();

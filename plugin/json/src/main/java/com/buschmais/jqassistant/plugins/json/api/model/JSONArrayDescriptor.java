@@ -6,7 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.List;
 
 @Label("Array")
-public interface JSONArrayDescriptor extends JSONValueDescriptor<List<JSONValueDescriptor>>, JSONContainer {
+public interface JSONArrayDescriptor extends JSONValueDescriptor<List<JSONValueDescriptor>> {
     @Relation("CONTAINS_VALUE")
     List<JSONValueDescriptor> getValue();
 
