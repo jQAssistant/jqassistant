@@ -9,7 +9,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>common</artifactId>
-    <version>1.2-RC1</version>
+    <version>1.2-RC2-SNAPSHOT</version>
 
     <name>jQAssistant Plugin Common</name>
     <url>http://jqassistant.org/</url>
@@ -35,7 +35,7 @@
         <connection>scm:git:git@github.com:buschmais/jqa-plugin-common.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-plugin-common.git</developerConnection>
         <url>https://github.com/buschmais/jqa-plugin-common</url>
-      <tag>1.2-RC1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <build>
