@@ -31,6 +31,13 @@
         analyze Java related artifacts.
     </description>
 
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-java-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-java-plugin.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-java-plugin</url>
+    </scm>
+
+
     <licenses>
         <license>
             <name>GNU General Public License, v3</name>
