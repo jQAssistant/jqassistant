@@ -34,13 +34,13 @@
         <cypher><![CDATA[
             MATCH
               (type:Type)
-            CREATE UNIQUE
+            MERGE
               (type)-[:ASSIGNABLE_FROM]->(type)
             WITH
               type
             MATCH
               (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
-            CREATE UNIQUE
+            MERGE
               (superType)-[:ASSIGNABLE_FROM]->(type)
             RETURN type AS AssignableType, superType AS AssignableFrom
         ]]></cypher>
@@ -60,7 +60,7 @@
               method.name = otherMethod.name
               AND method.signature = otherMethod.signature
               AND method.visibility <> 'private'
-            CREATE UNIQUE
+            MERGE
               (method)-[:OVERRIDES]->(otherMethod)
             RETURN method AS OverriddenMethod, type AS DeclaringType, superType AS SuperType
         ]]></cypher>
@@ -74,7 +74,7 @@
             MATCH
               (method:Method)-[invocation:INVOKES]->(invokedMethod:Method),
               (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
-            CREATE UNIQUE
+            MERGE
               (method)-[r:INVOKES{lineNumber:invocation.lineNumber}]->(overridingMethod)
             RETURN count(r) AS OverridingInvocations
         ]]></cypher>
@@ -93,8 +93,8 @@
               method <> otherMethod
               AND method.name = otherMethod.name
               AND method.signature <> otherMethod.signature
-            CREATE UNIQUE
-                (method)-[:OVERLOADS]->(otherMethod)
+            MERGE
+              (method)-[:OVERLOADS]->(otherMethod)
             RETURN method AS OverloadedMethod, type AS DeclaringType
         ]]></cypher>
     </concept>
