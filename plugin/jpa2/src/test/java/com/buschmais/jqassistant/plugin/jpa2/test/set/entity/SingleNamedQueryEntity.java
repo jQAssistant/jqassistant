@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.jpa2.test.set.entity;
 
-import org.neo4j.cypher.internal.compiler.v2_2.functions.Sin;
-
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 
