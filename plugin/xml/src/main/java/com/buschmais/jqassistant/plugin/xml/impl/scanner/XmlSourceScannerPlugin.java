@@ -174,5 +174,4 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             ofNamespaceDescriptor.setNamespaceDeclaration(namespaceDescriptor);
         }
     }
-
 }
