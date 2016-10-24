@@ -2,9 +2,12 @@
 
 === Core
 
-- Added support array properties in reports (e.g. HTML)
+- Added support for array properties in reports (e.g. HTML)
 
 === Plugins
+
+==== Common
+- Added support for using file patterns (file.include and file.exclude) for scanner plugins.
 
 ==== JavaEE6
 
@@ -13,3 +16,7 @@
 ==== GraphML
 
 - Fixed a bug where sub graphs have not been evaluated properly
+
+==== XML
+- Added file pattern support (xml.file.include and xml.file.exclude) for specifying XML documents without a native
+scanner plugin.

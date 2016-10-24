@@ -8,23 +8,26 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.DefaultFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
-public class FileResourceScannerPlugin
-        extends AbstractScannerPlugin<FileResource, FileDescriptor> {
+public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
+
+    public static final String PROPERTY_INCLUDE = "file.include";
+    public static final String PROPERTY_EXCLUDE = "file.exclude";
+
+    private FilePatternMatcher filePatternMatcher;
 
     @Override
     protected void configure() {
         getScannerContext().push(FileResolver.class, new DefaultFileResolver());
-    }
-
-    protected FileResourceScannerPlugin getThis() {
-        return this;
+        filePatternMatcher = FilePatternMatcher.Builder.newInstance().include(getStringProperty(PROPERTY_INCLUDE, null))
+                .exclude(getStringProperty(PROPERTY_EXCLUDE, null)).build();
     }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return true;
+        return filePatternMatcher.accepts(path);
     }
 
     @Override

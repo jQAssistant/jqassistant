@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -17,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
@@ -51,7 +53,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     public void validXmlFile() throws IOException, AnalysisException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
-        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
+        XmlFileDescriptor xmlFileDescriptor = getXmlFileScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         verifyDocument(xmlFileDescriptor);
         store.commitTransaction();
     }
@@ -140,10 +142,16 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     public void invalidDocument() throws IOException, AnalysisException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
-        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
+        Scanner scanner = getXmlFileScanner();
+        XmlFileDescriptor xmlFileDescriptor = scanner.scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
         assertThat(xmlFileDescriptor, notNullValue());
         assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(false));
         store.commitTransaction();
+    }
+
+    private Scanner getXmlFileScanner() {
+        Map<String, Object> properties = MapBuilder.<String, Object> create("xml.file.include", "*.xml").get();
+        return getScanner(properties);
     }
 
     @Test

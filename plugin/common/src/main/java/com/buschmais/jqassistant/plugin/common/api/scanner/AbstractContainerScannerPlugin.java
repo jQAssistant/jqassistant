@@ -26,8 +26,7 @@ import com.google.common.base.Stopwatch;
  * @param <D>
  *            The descriptor type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor>
-        extends AbstractResourceScannerPlugin<I, D> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
@@ -49,7 +48,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 try (Resource resource = getEntry(container, entry)) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
-                    fileResolverStrategy.put(relativePath, descriptor);
+                    if (descriptor != null) {
+                        fileResolverStrategy.put(relativePath, descriptor);
+                    }
                 }
             }
         } finally {
