@@ -12,7 +12,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 /**
  * Test plugin: migrates a required TestDescriptor1 to a TestDescriptor2.
  */
-@Requires(TestDescriptor1.class)
 public class TestScannerPlugin2A implements ScannerPlugin<TestItem, TestDescriptor2A> {
 
     @Override

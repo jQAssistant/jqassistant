@@ -21,7 +21,7 @@ public class XmlFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDe
 
     @Override
     protected void configure() {
-        filePatternMatcher = FilePatternMatcher.Builder.newInstance().include(getStringProperty(PROPERTY_INCLUDE, null))
+        filePatternMatcher = FilePatternMatcher.Builder.newInstance().include(getStringProperty(PROPERTY_INCLUDE, ""))
                 .exclude(getStringProperty(PROPERTY_EXCLUDE, null)).build();
     }
 

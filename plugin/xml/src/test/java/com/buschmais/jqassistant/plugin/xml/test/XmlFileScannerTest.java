@@ -31,7 +31,14 @@ public class XmlFileScannerTest {
     @Test
     public void noFilePattern() throws IOException {
         configure(null, null);
-        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(true));
+        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(false));
+        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(false));
+    }
+
+    @Test
+    public void includeFilePattern() throws IOException {
+        configure("*.xml", null);
+        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(false));
         assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(true));
     }
 
