@@ -1,0 +1,42 @@
+<<FileResourceScanner>> <<DirectoryResourceScanner>>
+
+[[FileResourceScanner]]
+== File Resource Scanner
+Imports file resources coming from directories, archives or URLs.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     | Description																 | Default
+| file.include | A pattern defining the files to include, the wildcards * and ? are allowed. |
+| file.exclude | A pattern defining the files to exclude, the wildcards * and ? are allowed. |
+|====
+
+[[:File]]
+=== :File
+Represents a file.
+
+.Properties of :File
+[options="header"]
+|====
+| Name       | Description
+| fileName   | The file name.
+|====
+
+[[DirectoryResourceScanner]]
+== Directory Resource Scanner
+Imports directory resources coming from directories, archives or URLs.
+
+[[:File:Directory]]
+=== :File:Directory
+Represents a directory.
+
+.Properties of :File:Directory
+[options="header"]
+|====
+| Name       | Description
+| fileName   | The file name.
+|====
+

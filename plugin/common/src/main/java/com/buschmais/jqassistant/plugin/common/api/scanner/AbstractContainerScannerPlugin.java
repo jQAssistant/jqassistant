@@ -1,6 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -8,12 +13,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-
 import com.google.common.base.Stopwatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Abstract base implementation for scanner plugins that handle containers of
@@ -26,8 +26,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @param <D>
  *            The descriptor type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor>
-        extends AbstractResourceScannerPlugin<I, D> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
@@ -49,7 +48,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 try (Resource resource = getEntry(container, entry)) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
-                    fileResolverStrategy.put(relativePath, descriptor);
+                    if (descriptor != null) {
+                        fileResolverStrategy.put(relativePath, descriptor);
+                    }
                 }
             }
         } finally {
@@ -74,9 +75,10 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return an iterable which delivers the entries of the container.
-     *
-     * The entries must not contain the relative root element, i.e. `/`.
-     *
+     * <p>
+     * The entries must not contain the relative root element, i.e. "/".
+     * </p>
+     * 
      * @param container
      *            The container.
      * @return The iterable of entries.
@@ -96,13 +98,16 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return the relative path of an element within the container.
-     *
+     * <p>
      * The following conditions must be considered:
+     * <ul>
+     * <li>The separator to use is "/".</li>
+     * <li>The path must start with "/".</li>
+     * <li>The path must not end with "/".</li>
+     * </ul>
      *
-     * - The separator to use is `/`.
-     * - The path must start with `/`.
-     * - The path must not end with `/`.
-     *
+     * </p>
+     * 
      * @param container
      *            The container.
      * @param entry
