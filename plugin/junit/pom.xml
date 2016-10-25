@@ -10,7 +10,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>junit</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2-RC1</version>
 
     <name>jQAssistant JUnit Plugin</name>
     <url>http://jqassistant.org/</url>
@@ -36,7 +36,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-junit-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-junit-plugin.git</developerConnection>
         <url>https://github.com/buschmais/jqa-junit-plugin</url>
-    </scm>
+      <tag>1.2-RC1</tag>
+  </scm>
 
     <properties>
         <jqa-java-plugin.version>1.2-RC1</jqa-java-plugin.version>
