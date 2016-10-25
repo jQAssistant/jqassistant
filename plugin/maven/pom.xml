@@ -33,6 +33,12 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-maven3-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-maven3-plugin.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-maven3-plugin</url>
+    </scm>
+
     <properties>
         <jqa-plugin-common.version>1.2-RC1</jqa-plugin-common.version>
         <jqa-java-plugin.version>1.2-RC1</jqa-java-plugin.version>
