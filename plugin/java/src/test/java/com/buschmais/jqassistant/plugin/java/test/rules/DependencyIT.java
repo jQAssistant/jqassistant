@@ -51,42 +51,43 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(DependentType.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClass.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClassTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterface.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterfaceTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameterTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodException.class)));
+        List<Object> dependencies = testResult.getColumn("t2");
+        assertThat(dependencies, hasItem(typeDescriptor(TypeAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(TypeAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(SuperClass.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(SuperClassTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(ImplementedInterface.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(ImplementedInterfaceTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodReturnType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodReturnTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodParameterTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodException.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(LocalVariableAnnotation.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(LocalVariableAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadStaticVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteStaticVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.ReadStaticVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.ReadVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.WriteStaticVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.WriteVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnType.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterType.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterTypeTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
         store.commitTransaction();
     }
 
