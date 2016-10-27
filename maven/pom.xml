@@ -27,6 +27,12 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-maven-plugin</url>
+    </scm>
+
     <properties>
         <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
