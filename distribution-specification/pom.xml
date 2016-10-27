@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,7 +9,7 @@
     </parent>
 
     <artifactId>jqa-distribution-specification</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0-RC1</version>
 
     <name>jQAssistant Distribution Specification</name>
     <url>http://jqassistant.org/</url>
@@ -40,7 +38,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-distribution-specification.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-distribution-specification.git</developerConnection>
         <url>https://github.com/buschmais/jqa-distribution-specification</url>
-    </scm>
+      <tag>1.2.0-RC1</tag>
+  </scm>
 
 
     <properties>
