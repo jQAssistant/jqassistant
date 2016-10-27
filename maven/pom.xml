@@ -34,7 +34,7 @@
     </scm>
 
     <properties>
-        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa.own-constraints.version>1.2.0-RC1</jqa.own-constraints.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
