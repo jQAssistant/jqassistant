@@ -36,7 +36,9 @@
     <properties>
         <jqa.distribution-spec.version>1.2.0-RC1</jqa.distribution-spec.version>
         <jqa.own-constraints.version>1.2.0-RC1</jqa.own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.2.0-RC1</jqa-asciidoctor-utilities.version>
         <jqa-core.version>1.2.0-RC1</jqa-core.version>
+        <jqa-tycho.version>1.2-RC1</jqa-tycho.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
@@ -285,7 +287,7 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jqa-asciidoctor-utilities.version}</version>
                     </dependency>
                 </dependencies>
 
@@ -328,6 +330,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>neo4jserver</artifactId>
+            <version>1.2.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -380,7 +383,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>tycho</artifactId>
-            <version>${project.version}</version>
+            <version>${jqa-tycho.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
