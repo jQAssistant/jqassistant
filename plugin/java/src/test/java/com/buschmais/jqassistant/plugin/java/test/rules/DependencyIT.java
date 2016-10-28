@@ -41,7 +41,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "dependency:Type".
      * 
-     * @throws java.io.IOException
+     * @throws IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
@@ -51,49 +51,50 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(DependentType.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClass.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClassTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterface.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterfaceTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameterTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodException.class)));
+        List<Object> dependencies = testResult.getColumn("t2");
+        assertThat(dependencies, hasItem(typeDescriptor(TypeAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(TypeAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(SuperClass.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(SuperClassTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(ImplementedInterface.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(ImplementedInterfaceTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(FieldTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotationValueType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodReturnType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodReturnTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodParameterTypeParameter.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(MethodException.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(LocalVariableAnnotation.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(LocalVariableAnnotationValueType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadStaticVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteStaticVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteVariable.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.ReadStaticVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.ReadVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.WriteStaticVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(LocalVariable.WriteVariable.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnType.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterType.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterType.class)));
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterTypeTypeParameter.class)));
-        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
+        assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:Package".
-     * 
-     * @throws java.io.IOException
+     *
+     * @throws IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
@@ -114,32 +115,9 @@ public class DependencyIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "dependency:Package" with keeping existing properties.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void packagesUnique() throws Exception {
-        scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (p1:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.rules'}), (p2:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.matcher'}) MERGE (p1)-[r:DEPENDS_ON {prop: 'value'}]->(p2) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (p1:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.rules'}), (p2:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test'}) MERGE (p1)-[r:DEPENDS_ON]->(p2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("DEPENDS_ON", 2);
-        store.commitTransaction();
-        assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("DEPENDS_ON", 28);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "dependency:Artifact".
-     * 
-     * @throws java.io.IOException
+     *
+     * @throws IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
@@ -174,8 +152,8 @@ public class DependencyIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the constraint "dependency:PackageCycles".
-     * 
-     * @throws java.io.IOException
+     *
+     * @throws IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
@@ -200,8 +178,8 @@ public class DependencyIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the constraint "dependency:ArtifactCycles".
-     * 
-     * @throws java.io.IOException
+     *
+     * @throws IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
@@ -216,15 +194,5 @@ public class DependencyIT extends AbstractJavaPluginIT {
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
-    }
-
-    /**
-     * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     */
-    private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH (:Package)-[r:" + relationName + " {prop: 'value'}]->(:Package) RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH (:Package)-[r:" + relationName + "]->(:Package) RETURN r").getColumn("r").size(), equalTo(total));
     }
 }
