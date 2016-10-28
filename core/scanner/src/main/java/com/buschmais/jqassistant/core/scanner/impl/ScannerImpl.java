@@ -56,6 +56,11 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public <I, D extends Descriptor> D scan(final I item, final String path, final Scope scope) {
+        return scan(item, null, path, scope);
+    }
+
+    @Override
+    public <I, D extends Descriptor> D scan(I item, D descriptor, String path, Scope scope) {
         boolean pipelineCreated;
         Set<ScannerPlugin<?, ?>> pipeline = this.pipelines.get(item);
         if (pipeline == null) {
@@ -67,7 +72,6 @@ public class ScannerImpl implements Scanner {
         }
         Class<?> itemClass = item.getClass();
         Class<D> type = null;
-        D descriptor = null;
         for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
             if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope) && satisfies(selectedPlugin, descriptor)) {
@@ -105,16 +109,21 @@ public class ScannerImpl implements Scanner {
         return descriptor;
     }
 
+    /**
+     * Verifies if the selected plugin requires a descriptor.
+     * 
+     * @param selectedPlugin
+     *            The selected plugin.
+     * @param descriptor
+     *            The descriptor.
+     * @param <I>
+     *            The item type of the plugin.
+     * @param <D>
+     *            The descriptor type of the plugin.
+     * @return <code>true</code> if the selected plugin can be used.
+     */
     private <I, D extends Descriptor> boolean satisfies(ScannerPlugin<I, D> selectedPlugin, D descriptor) {
-        Requires annotation = selectedPlugin.getClass().getAnnotation(Requires.class);
-        if (annotation != null) {
-            for (Class<? extends Descriptor> requiredDescriptorType : annotation.value()) {
-                if (descriptor == null || !requiredDescriptorType.isAssignableFrom(descriptor.getClass())) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return !(selectedPlugin.getClass().isAnnotationPresent(Requires.class) && descriptor == null);
     }
 
     /**
@@ -155,6 +164,7 @@ public class ScannerImpl implements Scanner {
     private <D extends Descriptor> void pushDesriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
             scannerContext.push(type, descriptor);
+            scannerContext.setCurrentDescriptor(descriptor);
         }
     }
 
@@ -168,6 +178,7 @@ public class ScannerImpl implements Scanner {
      */
     private <D extends Descriptor> void popDescriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
+            scannerContext.setCurrentDescriptor(null);
             scannerContext.pop(type);
         }
     }

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Defines the context for the scanning process.
@@ -66,5 +67,25 @@ public interface ScannerContext {
      * @return The value.
      */
     <T> T pop(Class<T> key);
+
+    /**
+     * Set the descriptor which is currently enhanced by the scanner plugins in
+     * the pipeline.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param <D>
+     *            The descriptor type.
+     */
+    <D extends Descriptor> void setCurrentDescriptor(D descriptor);
+
+    /**
+     * Return the descriptor which is currently enhanced by the scanner plugins
+     * in the pipeline.
+     * 
+     * @param <D>
+     *            The descriptor type.
+     */
+    <D extends Descriptor> D getCurrentDescriptor();
 
 }
