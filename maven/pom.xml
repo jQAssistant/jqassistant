@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0-RC1</version>
 
     <name>jQAssistant Plugin for Apache Maven</name>
     <url>http://jqassistant.org/</url>
@@ -31,7 +31,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</developerConnection>
         <url>https://github.com/buschmais/jqa-maven-plugin</url>
-    </scm>
+      <tag>1.2.0-RC1</tag>
+  </scm>
 
     <properties>
         <jqa.distribution-spec.version>1.2.0-RC1</jqa.distribution-spec.version>
