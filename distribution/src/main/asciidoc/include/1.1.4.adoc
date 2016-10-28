@@ -7,7 +7,12 @@
 === Plugins
 
 ==== Common
+
 - Added support for using file patterns (file.include and file.exclude) for scanner plugins.
+
+==== Java
+
+- Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and their inner classes
 
 ==== JavaEE6
 

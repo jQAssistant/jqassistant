@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -27,6 +28,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
+    @Ignore("Scanning only the outer class without their inner classes is currently not supported.")
     public void outerClass() throws IOException {
         scanClasses(AnonymousInnerClass.class);
         assertOuterClassContainsInnerClass();

@@ -161,22 +161,19 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         // innerName always represents the name of the inner class
         String innerTypeName = SignatureHelper.getObjectType(name);
         TypeDescriptor innerType = visitorHelper.resolveType(innerTypeName, cachedType).getTypeDescriptor();
+        // set relation only if outerName is current class
         if (outerName != null) {
             String outerTypeName = SignatureHelper.getObjectType(outerName);
-            // set relation only if outerName is current class
             if (fullQualifiedName.equals(outerTypeName)) {
                 cachedType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
             }
-        } else
-        // outerName is null, so currently scanned class is either outer class or inner class
-        if (!fullQualifiedName.equals(innerTypeName)) {
-            cachedType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
         }
     }
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
-        TypeDescriptor outerType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), cachedType).getTypeDescriptor();
+        String outerTypeName = SignatureHelper.getObjectType(owner);
+        TypeDescriptor outerType = visitorHelper.resolveType(outerTypeName, cachedType).getTypeDescriptor();
         TypeDescriptor innerType = cachedType.getTypeDescriptor();
         outerType.getDeclaredInnerClasses().add(innerType);
     }
