@@ -26,7 +26,9 @@ public interface Scanner {
      * @throws IOException
      *             If scanning fails.
      */
-    public <I, D extends Descriptor> D scan(I item, String path, Scope scope);
+    <I, D extends Descriptor> D scan(I item, String path, Scope scope);
+
+    <I, D extends Descriptor> D scan(I item, D descriptor, String path, Scope scope);
 
     /**
      * Return an instance of the scanner context.

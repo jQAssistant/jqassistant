@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Implementation of the scanner context.
@@ -14,6 +15,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
+
+    private Descriptor current;
 
     private final Map<Class<?>, Deque<?>> contextValuesPerKey = new HashMap<>();
 
@@ -50,6 +53,16 @@ public class ScannerContextImpl implements ScannerContext {
     @Override
     public <T> T pop(Class<T> key) {
         return getValues(key).pop();
+    }
+
+    @Override
+    public <D extends Descriptor> void setCurrentDescriptor(D descriptor) {
+        current = descriptor;
+    }
+
+    @Override
+    public <D extends Descriptor> D getCurrentDescriptor() {
+        return (D) current;
     }
 
     /**

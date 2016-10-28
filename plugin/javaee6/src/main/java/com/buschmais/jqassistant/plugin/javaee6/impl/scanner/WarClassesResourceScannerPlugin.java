@@ -24,7 +24,8 @@ public class WarClassesResourceScannerPlugin extends AbstractResourceScannerPlug
     @Override
     public FileDescriptor scan(Resource item, String path, Scope scope, Scanner scanner) throws IOException {
         String resourcePath = path.substring(PREFIX.length());
-        FileDescriptor fileDescriptor = scanner.scan(item, resourcePath, JavaScope.CLASSPATH);
+        FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
+        fileDescriptor = scanner.scan(item, fileDescriptor, resourcePath, JavaScope.CLASSPATH);
         return fileDescriptor != null ? fileDescriptor : scanner.getContext().peek(FileDescriptor.class);
     }
 }
