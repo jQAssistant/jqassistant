@@ -7,7 +7,7 @@
     </parent>
 
     <artifactId>commandline</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0-RC1</version>
 
     <name>jQAssistant Commandline Tool</name>
     <url>http://jqassistant.org/</url>
@@ -33,7 +33,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-commandline-tool.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-commandline-tool.git</developerConnection>
         <url>https://github.com/buschmais/jqa-commandline-tool</url>
-    </scm>
+      <tag>1.2.0-RC1</tag>
+  </scm>
 
     <properties>
         <this-should-come-properly-from-the-dist-spec>1.2.0-RC1</this-should-come-properly-from-the-dist-spec>
