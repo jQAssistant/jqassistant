@@ -37,7 +37,7 @@
   </scm>
 
     <properties>
-        <jqa-asciidoc-utilities.version>1.2.0-RC1</jqa-asciidoc-utilities.version>
+        <jqa-asciidoc-utilities.version>1.2.0-RC2-SNAPSHOT</jqa-asciidoc-utilities.version>
         <jqa-distribution-spec.version>1.2.0-RC2-SNAPSHOT</jqa-distribution-spec.version>
         <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
