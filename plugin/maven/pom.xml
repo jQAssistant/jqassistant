@@ -10,7 +10,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>maven3</artifactId>
-    <version>1.2.0-RC2-SNAPSHOT</version>
+    <version>1.2-RC2-SNAPSHOT</version>
 
     <name>jQAssistant Maven 3 Plugin</name>
     <url>http://jqassistant.org/</url>
