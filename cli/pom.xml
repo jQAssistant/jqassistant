@@ -34,7 +34,7 @@
         <this-should-come-properly-from-the-dist-spec>1.2.0-RC1</this-should-come-properly-from-the-dist-spec>
         <jqa-asciidoc-utilities.version>1.2.0-RC1</jqa-asciidoc-utilities.version>
         <jqa-distribution-spec.version>1.2.0-RC1</jqa-distribution-spec.version>
-        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa.own-constraints.version>1.2.0-RC1</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
