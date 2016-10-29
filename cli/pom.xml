@@ -29,6 +29,11 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-commandline-tool.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-commandline-tool.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-commandline-tool</url>
+    </scm>
 
     <properties>
         <this-should-come-properly-from-the-dist-spec>1.2.0-RC1</this-should-come-properly-from-the-dist-spec>
