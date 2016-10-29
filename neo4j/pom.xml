@@ -21,7 +21,7 @@
         <jqa-core.version>1.2.0-RC1</jqa-core.version>
         <jqa-java-plugin.version>1.2-RC2-SNAPSHOT</jqa-java-plugin.version>
         <jqa.own-constraints.version>1.2.0-RC1</jqa.own-constraints.version>
-        <jqa-plugin-common.version>1.2-RC1</jqa-plugin-common.version>
+        <jqa-plugin-common.version>1.2-RC2-SNAPSHOT</jqa-plugin-common.version>
 
         <org.neo4j_version>2.3.7</org.neo4j_version>
         <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
