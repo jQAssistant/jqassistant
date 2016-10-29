@@ -225,7 +225,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <configuration>
                     <scanIncludes>
