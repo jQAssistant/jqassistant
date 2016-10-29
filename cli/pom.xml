@@ -37,9 +37,8 @@
   </scm>
 
     <properties>
-        <this-should-come-properly-from-the-dist-spec>1.2.0-RC1</this-should-come-properly-from-the-dist-spec>
         <jqa-asciidoc-utilities.version>1.2.0-RC1</jqa-asciidoc-utilities.version>
-        <jqa-distribution-spec.version>1.2.0-RC1</jqa-distribution-spec.version>
+        <jqa-distribution-spec.version>1.2.0-RC2-SNAPSHOT</jqa-distribution-spec.version>
         <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
@@ -267,7 +266,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>neo4jserver</artifactId>
-            <version>${this-should-come-properly-from-the-dist-spec}</version>
         </dependency>
 
         <!-- List here all plugins of jQAssistant which should be
