@@ -331,7 +331,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>neo4jserver</artifactId>
-            <version>1.2.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
