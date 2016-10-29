@@ -74,7 +74,7 @@
         <jqa-own-constraints.version>1.2.0-RC1</jqa-own-constraints.version>
         <jqa-m2repo-plugin.version>1.2-RC1</jqa-m2repo-plugin.version>
         <jqa-maven3-plugin.version>1.2-RC1</jqa-maven3-plugin.version>
-        <jqa-neo4jserver.version>1.2.0-SNAPSHOT</jqa-neo4jserver.version>
+        <jqa-neo4jserver.version>1.2.0-RC2-SNAPSHOT</jqa-neo4jserver.version>
         <jqa-plugin-common.version>1.2-RC1</jqa-plugin-common.version>
         <jqa-rdbms-plugin.version>1.2-RC1</jqa-rdbms-plugin.version>
         <jqa-yaml-plugin.version>1.2-RC1</jqa-yaml-plugin.version>
