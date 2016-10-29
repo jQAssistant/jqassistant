@@ -41,7 +41,7 @@
     </description>
 
     <properties>
-        <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
         <jqa-distribution-spec.version>1.2.0-RC1</jqa-distribution-spec.version>
         <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
