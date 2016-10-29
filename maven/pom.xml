@@ -35,7 +35,7 @@
   </scm>
 
     <properties>
-        <jqa.distribution-spec.version>1.2.0-RC1</jqa.distribution-spec.version>
+        <jqa.distribution-spec.version>1.2.0-RC2-SNAPSHOT</jqa.distribution-spec.version>
         <jqa.own-constraints.version>1.2.0-RC1</jqa.own-constraints.version>
         <jqa-asciidoctor-utilities.version>1.2.0-RC1</jqa-asciidoctor-utilities.version>
         <jqa-core.version>1.2.0-RC1</jqa-core.version>
