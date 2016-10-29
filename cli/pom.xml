@@ -258,7 +258,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>jqassistant.scm.neo4jserver</artifactId>
+            <artifactId>neo4jserver</artifactId>
         </dependency>
 
         <!-- List here all plugins of jQAssistant which should be
