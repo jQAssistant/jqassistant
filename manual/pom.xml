@@ -42,6 +42,7 @@
 
     <properties>
         <jqa.own-constraints.version>1.2.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa-distribution-spec.version>1.2.0-RC1</jqa-distribution-spec.version>
         <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
     </properties>
@@ -234,7 +235,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqa-distribution-specification</artifactId>
-                <version>${project.version}</version>
+                <version>${jqa-distribution-spec.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
