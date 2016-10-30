@@ -43,6 +43,16 @@
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
+
+        <!--
+         ! Properties used for the IT with the Maven Invoker Plugin.
+         ! We must maintain this list manually as each plugin now have
+         ! his own lifecyle inclusive versioning.
+         ! Oliver B. Fischer, 2016-10-30
+         !-->
+        <it.jqa.core.version>1.2.0-RC1</it.jqa.core.version>
+        <it.jqa.java-plugin.version>1.2-RC1</it.jqa.java-plugin.version>
+        <it.jqa.plugin-common.version>1.2-RC1</it.jqa.plugin-common.version>
     </properties>
 
     <profiles>
