@@ -77,7 +77,7 @@
   </developers>
  
   <properties>
-    <com.buschmais.xo.version>0.6.1</com.buschmais.xo.version>
+    <com.buschmais.xo.version>0.7.0</com.buschmais.xo.version>
     <maven.clean.version>3.0.0</maven.clean.version>
     <maven.compiler.version>3.5</maven.compiler.version>
     <maven.failsafe.version>2.19.1</maven.failsafe.version>
