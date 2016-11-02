@@ -26,7 +26,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
 
     @Override
     public <T extends ClassFileDescriptor> CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
-            ScannerContext context) {
+                                                                ScannerContext context) {
         T typeDescriptor = context.getStore().migrate(fileDescriptor, descriptorType);
         setTypeProperties(typeDescriptor, fullQualifiedName);
         removeRequiredType(fullQualifiedName, typeDescriptor);
@@ -43,8 +43,9 @@ public abstract class AbstractTypeResolver implements TypeResolver {
                 typeDescriptor = findInDependencies(fullQualifiedName, context);
             }
             if (typeDescriptor == null) {
-                String fileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
-                typeDescriptor = context.peek(FileResolver.class).require(fileName, ClassFileDescriptor.class, context);
+                String requiredFileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
+                String containedFileName = getContainedFileName(requiredFileName);
+                typeDescriptor = context.peek(FileResolver.class).require(requiredFileName, containedFileName, ClassFileDescriptor.class, context);
                 setTypeProperties(typeDescriptor, fullQualifiedName);
                 addRequiredType(fullQualifiedName, typeDescriptor);
             }
@@ -52,6 +53,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
         }
         return cachedType;
     }
+
+    protected abstract String getContainedFileName(String requiredFileName);
 
     private <T extends TypeDescriptor> CachedType<T> getCachedType(String fullQualifiedName, TypeDescriptor typeDescriptor) {
         CachedType<T> cachedType = new CachedType(typeDescriptor);

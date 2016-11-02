@@ -14,7 +14,10 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.scanner.DefaultFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.*;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.DefaultTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JavaScopeTest {
@@ -33,7 +36,7 @@ public class JavaScopeTest {
         when(scannerContext.peekOrDefault(TypeResolver.class, null)).thenReturn(typeResolver);
         JavaScope.CLASSPATH.onEnter(scannerContext);
         verify(scannerContext).peekOrDefault(TypeResolver.class, null);
-        verify(scannerContext).push(eq(TypeResolver.class), any(DelegatingTypeResolver.class));
+        verify(scannerContext).push(eq(TypeResolver.class), eq(typeResolver));
         JavaScope.CLASSPATH.onLeave(scannerContext);
         verify(scannerContext).pop(TypeResolver.class);
     }
