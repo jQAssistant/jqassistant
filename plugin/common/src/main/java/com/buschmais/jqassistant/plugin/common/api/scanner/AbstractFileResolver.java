@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
+package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -11,6 +11,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
  * Provides utility functionality.
  */
 public abstract class AbstractFileResolver implements FileResolver {
+
+    @Override
+    public <D extends FileDescriptor> D require(String requiredPath, Class<D> type, ScannerContext context) {
+        return require(requiredPath, requiredPath, type, context);
+    }
 
     /**
      * Takes an optional descriptor and transforms it to file descriptor.
