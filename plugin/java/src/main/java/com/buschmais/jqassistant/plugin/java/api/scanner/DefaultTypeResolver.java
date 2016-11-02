@@ -30,4 +30,9 @@ public class DefaultTypeResolver extends AbstractTypeResolver {
     @Override
     protected void addContainedType(String fqn, TypeDescriptor typeDescriptor) {
     }
+
+    @Override
+    protected String getContainedFileName(String requiredFileName) {
+        return requiredFileName;
+    }
 }

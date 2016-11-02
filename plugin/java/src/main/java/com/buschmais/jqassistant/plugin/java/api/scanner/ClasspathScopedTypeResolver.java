@@ -26,4 +26,9 @@ public class ClasspathScopedTypeResolver extends AbstractArtifactScopedTypeResol
     protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
         return hasDependencies ? getArtifact().resolveRequiredType(fullQualifiedName) : null;
     }
+
+    @Override
+    protected String getContainedFileName(String requiredFileName) {
+        return requiredFileName;
+    }
 }

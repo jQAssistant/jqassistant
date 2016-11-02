@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -33,7 +34,7 @@ public class JavaScopeTest {
         when(scannerContext.peekOrDefault(TypeResolver.class, null)).thenReturn(typeResolver);
         JavaScope.CLASSPATH.onEnter(scannerContext);
         verify(scannerContext).peekOrDefault(TypeResolver.class, null);
-        verify(scannerContext).push(eq(TypeResolver.class), any(DelegatingTypeResolver.class));
+        verify(scannerContext).push(eq(TypeResolver.class), eq(typeResolver));
         JavaScope.CLASSPATH.onLeave(scannerContext);
         verify(scannerContext).pop(TypeResolver.class);
     }

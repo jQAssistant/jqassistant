@@ -7,7 +7,6 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResolver;
 
 /**
  * A file resolver strategy for file containers.
@@ -27,24 +26,24 @@ public class ContainerFileResolver extends AbstractFileResolver {
     }
 
     @Override
-    public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
-        FileDescriptor fileDescriptor = containedFiles.get(path);
+    public <D extends FileDescriptor> D require(String requiredPath, String containedPath, Class<D> type, ScannerContext context) {
+        FileDescriptor fileDescriptor = containedFiles.get(containedPath);
         D result;
         if (fileDescriptor != null) {
-            result = toFileDescriptor(fileDescriptor, type, path, context);
-            containedFiles.put(path, result);
+            result = toFileDescriptor(fileDescriptor, type, requiredPath, context);
+            containedFiles.put(containedPath, result);
         } else {
-            fileDescriptor = requiredFiles.get(path);
-            result = toFileDescriptor(fileDescriptor, type, path, context);
-            requiredFiles.put(path, result);
+            fileDescriptor = requiredFiles.get(containedPath);
+            result = toFileDescriptor(fileDescriptor, type, requiredPath, context);
+            requiredFiles.put(containedPath, result);
         }
         return result;
     }
 
     @Override
-    public <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context) {
-        FileDescriptor fileDescriptor = requiredFiles.remove(path);
-        return toFileDescriptor(fileDescriptor, type, path, context);
+    public <D extends FileDescriptor> D match(String containedPath, Class<D> type, ScannerContext context) {
+        FileDescriptor fileDescriptor = requiredFiles.remove(containedPath);
+        return toFileDescriptor(fileDescriptor, type, containedPath, context);
     }
 
     /**

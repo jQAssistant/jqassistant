@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
@@ -9,14 +10,11 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
-import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
  * Verify scanning of EAR archives.
@@ -40,16 +38,22 @@ public class EarScannerPluginIT extends AbstractPluginIT {
         assertThat(webXml, hasSize(1));
         List<PackageDescriptor> packages = query("match (:Web:Application)-[:CONTAINS]->(package:Java:Package) return package").getColumn("package");
         assertThat(packages, hasSize(5));
-        assertThat(packages, hasItems(
-                packageDescriptor("org"),
-                packageDescriptor("org.wicketstuff"),
-                packageDescriptor("org.wicketstuff.javaee"),
-                packageDescriptor("org.wicketstuff.javaee.example"),
-                packageDescriptor("org.wicketstuff.javaee.example.pages")));
+        assertThat(packages, hasItems(packageDescriptor("org"), packageDescriptor("org.wicketstuff"), packageDescriptor("org.wicketstuff.javaee"),
+                packageDescriptor("org.wicketstuff.javaee.example"), packageDescriptor("org.wicketstuff.javaee.example.pages")));
         List<TypeDescriptor> types = query("match (:Web:Application)-[:CONTAINS]->(type:Java:Type) return type").getColumn("type");
         assertThat(types, hasSize(6));
         assertThat(types, hasItems(typeDescriptor("org.wicketstuff.javaee.example.WicketJavaEEApplication")));
+        // Verify that any type that is contained in an artifact is not required at the same time
+        TestResult duplicates = query("MATCH (a:Artifact),(a)-[:CONTAINS]->(t1:Type),(a)-[:REQUIRES]->(t2:Type) WHERE t1.fqn=t2.fqn return t1.fqn");
+        assertThat(duplicates.getRows().size(), equalTo(0));
         store.commitTransaction();
     }
 
+    @Test
+    public void petclinic() {
+        File archive = new File("C:\\Development\\projects\\spring-petclinic\\target\\petclinic.war");
+        store.beginTransaction();
+        getScanner().scan(archive, archive.getAbsolutePath(), null);
+        store.commitTransaction();
+    }
 }

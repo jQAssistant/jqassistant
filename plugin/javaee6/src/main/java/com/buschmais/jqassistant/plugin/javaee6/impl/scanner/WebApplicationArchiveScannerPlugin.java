@@ -19,15 +19,13 @@ public class WebApplicationArchiveScannerPlugin
 
     @Override
     protected Scope createScope(Scope currentScope, WebApplicationArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
-        TypeResolver typeResolver = new ArtifactScopedTypeResolver(archiveDescriptor);
+        TypeResolver typeResolver = new ArtifactScopedTypeResolver(archiveDescriptor, WarClassesResourceScannerPlugin.CLASSES_DIRECTORY);
         scannerContext.push(TypeResolver.class, typeResolver);
-        scannerContext.push(WebApplicationDescriptor.class, archiveDescriptor);
         return WebApplicationScope.WAR;
     }
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
-        scannerContext.pop(WebApplicationDescriptor.class);
         scannerContext.pop(TypeResolver.class);
     }
 
