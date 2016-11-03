@@ -12,11 +12,13 @@
 
 ==== Java
 
+- Added attribute "weight" to DEPENDS_ON relations between types
 - Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and their inner classes
 
 ==== JavaEE6
 
 - Fixed a bug where 'Package' label has not been added to for packages located in the WEB-INF/classes folder of a WAR file
+- Fixed a bug where scanning a WAR file create duplicate nodes for types located in /WEB-INF/classes folder
 
 ==== GraphML
 

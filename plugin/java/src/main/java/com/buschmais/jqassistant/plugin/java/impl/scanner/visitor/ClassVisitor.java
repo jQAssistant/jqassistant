@@ -100,8 +100,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 }
             });
         }
-        if (value instanceof org.objectweb.asm.Type) {
-            visitorHelper.resolveType(SignatureHelper.getType((org.objectweb.asm.Type) value), cachedType);
+        if (value != null) {
+            if (value instanceof org.objectweb.asm.Type) {
+                visitorHelper.resolveType(SignatureHelper.getType((org.objectweb.asm.Type) value), cachedType);
+            }
+            PrimitiveValueDescriptor valueDescriptor = visitorHelper.getValueDescriptor(PrimitiveValueDescriptor.class);
+            valueDescriptor.setValue(value);
+            fieldDescriptor.setValue(valueDescriptor);
         }
         return new FieldVisitor(cachedType, fieldDescriptor, visitorHelper);
     }

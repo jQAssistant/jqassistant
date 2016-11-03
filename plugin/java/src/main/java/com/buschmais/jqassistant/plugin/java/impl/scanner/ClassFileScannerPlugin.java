@@ -29,7 +29,17 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
+    public static final String PROPERTY_TYPE_DEPENDS_ON_WEIGHT = "java.class.model.Type.DEPENDS_ON.weight";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
+
+    private ClassModelConfiguration classModelConfiguration;
+
+    @Override
+    protected void configure() {
+        classModelConfiguration = ClassModelConfiguration.Builder.newConfiguration()
+                .typeDependsOnWeight(getBooleanProperty(PROPERTY_TYPE_DEPENDS_ON_WEIGHT, true)).build();
+    }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
@@ -46,7 +56,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
         final FileDescriptor fileDescriptor = scanner.getContext().peek(FileDescriptor.class);
-        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
+        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), classModelConfiguration);
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
         ClassFileDescriptor classFileDescriptor;
         try (InputStream stream = file.createStream()) {

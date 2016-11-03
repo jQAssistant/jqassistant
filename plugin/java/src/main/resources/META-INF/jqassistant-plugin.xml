@@ -5,6 +5,8 @@
     </description>
     <model>
         <class>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</class>
