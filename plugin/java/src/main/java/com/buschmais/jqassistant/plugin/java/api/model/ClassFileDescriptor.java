@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Java(Java.JavaLanguageElement.Type)
-public interface ClassFileDescriptor extends TypeDescriptor, FileDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, MD5Descriptor,
+public interface ClassFileDescriptor extends TypeDescriptor, FileDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, MD5Descriptor,
         AbstractDescriptor, ValidDescriptor {
 
     /**

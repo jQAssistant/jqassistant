@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,8 +27,12 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
@@ -88,6 +93,30 @@ public class DependencyIT extends AbstractJavaPluginIT {
         // assertThat(testResult.getColumn("t2"),
         // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterTypeTypeParameter.class)));
         assertThat(dependencies, hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void weight() throws IOException {
+        scanClasses(DependentType.class);
+        store.beginTransaction();
+        Map<String, Object> params = MapBuilder.<String, Object> create("t1", DependentType.class.getName()).put("t2", LocalVariable.class.getName()).get();
+        List<Map<String, Object>> rows = query("MATCH (t1:Type)-[d:DEPENDS_ON]->(t2:Type) WHERE t1.fqn={t1} and t2.fqn={t2} RETURN d", params).getRows();
+        assertThat(rows.size(), equalTo(1));
+        Map<String, Object> row = rows.get(0);
+        TypeDependsOnDescriptor dependsOn = (TypeDependsOnDescriptor) row.get("d");
+        assertThat(dependsOn.getWeight(), equalTo(6));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void weightDisabled() throws IOException {
+        Map<String, Object> pluginConfig = MapBuilder.<String, Object> create(ClassFileScannerPlugin.PROPERTY_TYPE_DEPENDS_ON_WEIGHT, "false").get();
+        File classesDirectory = getClassesDirectory(DependencyIT.class);
+        store.beginTransaction();
+        getScanner(pluginConfig).scan(classesDirectory, "/", JavaScope.CLASSPATH);
+        List<Map<String, Object>> rows = query("MATCH (:Type)-[d:DEPENDS_ON]->(:Type) WHERE has(d.weight) RETURN d").getRows();
+        assertThat(rows.size(), equalTo(0));
         store.commitTransaction();
     }
 

@@ -69,6 +69,15 @@ external libraries not included in the scan) are represented by `:TYPE` nodes wi
 property `fqn` and `DECLARES` relations to their members. These are `:FIELD` or
 `:METHOD` labeled nodes which only provide the property `signature`.
 
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     			                  | Description														     	                    | Default
+| java.class.model.Type.DEPENDS_ON.weight | Enables/disables calculation of the weight attribute for DEPENDS_ON relations between types | `true`
+|====
+
 [[:Java:Type]]
 === Nodes labled with :Java:Type
 A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum` or `:Annotation`
@@ -110,6 +119,20 @@ will only provide the property `fqn` and the relation `DECLARES`.
 using `IMPLEMENTS` relations, i.e. queries must use
 `(a:Type:Interface)-[:IMPLEMENTS]->(b:Type:Interface)` for pattern matching.
 
+.Properties of `:DEPENDS_ON`
+[options="header"]
+|====
+| Name   | Description
+| weight | The weight of the dependency, i.e. the count of occurrences of the referenced type
+|====
+
+.Properties of `:READS`, `:WRITES` and `:INVOKES`
+[options="header"]
+|====
+| Name       | Description
+| lineNumber | The line number the referenced field or method is read, written or invoked
+|====
+
 === Nodes labled with `:Java:Type:Class`
 Qualifies a Java type as class.
 
@@ -146,6 +169,7 @@ A field declared in a Java type.
 | Name         | Target label(s)            | Cardinality | Description
 | OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the field
 | ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the field
+| HAS          | <<:Java:Value>>            | 0..1        | References the primitive value which is used for initialzing the field
 |====
 
 *NOTE* Fields which are referenced by scanned classes but have not been scanned

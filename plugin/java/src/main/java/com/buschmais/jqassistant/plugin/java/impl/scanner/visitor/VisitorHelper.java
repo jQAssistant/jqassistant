@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -19,14 +20,18 @@ public class VisitorHelper {
 
     private ScannerContext scannerContext;
 
+    private ClassModelConfiguration classModelConfiguration;
+
     /**
      * Constructor.
-     * 
+     *
      * @param scannerContext
      *            The scanner context
+     * @param classModelConfiguration
      */
-    public VisitorHelper(ScannerContext scannerContext) {
+    public VisitorHelper(ScannerContext scannerContext, ClassModelConfiguration classModelConfiguration) {
         this.scannerContext = scannerContext;
+        this.classModelConfiguration = classModelConfiguration;
     }
 
     /*
@@ -38,10 +43,15 @@ public class VisitorHelper {
     TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
         TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
-            TypeDescriptor dependency = dependentType.getDependency(fullQualifiedName);
-            if (dependency == null) {
-                dependency = cachedType.getTypeDescriptor();
-                dependentType.addDependency(fullQualifiedName, dependency);
+            TypeDependsOnDescriptor dependsOnDescriptor = dependentType.getDependency(fullQualifiedName);
+            if (dependsOnDescriptor == null) {
+                dependsOnDescriptor = scannerContext.getStore().create(dependentType.getTypeDescriptor(), TypeDependsOnDescriptor.class,
+                        cachedType.getTypeDescriptor());
+                dependentType.addDependency(fullQualifiedName, dependsOnDescriptor);
+            }
+            if (classModelConfiguration.isTypeDependsOnWeight()) {
+                Integer weight = dependsOnDescriptor.getWeight();
+                dependsOnDescriptor.setWeight(weight != null ? ++weight : 1);
             }
         }
         return cachedType;
@@ -61,10 +71,11 @@ public class VisitorHelper {
 
     /**
      * Return the type resolver.
-     *
+     * <p>
      * Looks up an instance in the scanner context. If none can be found the
      * default resolver is used.
-     *
+     * </p>
+     * 
      * @return The type resolver.
      */
     private TypeResolver getTypeResolver() {

@@ -45,5 +45,6 @@ public interface FieldDescriptor extends MemberDescriptor, NamedDescriptor, Type
 
     @Relation("HAS")
     PrimitiveValueDescriptor getValue();
+
     void setValue(PrimitiveValueDescriptor valueDescriptor);
 }

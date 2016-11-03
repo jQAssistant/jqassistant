@@ -4,17 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalCause;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.google.common.cache.*;
 
 /**
  * Cache for resolved types.
@@ -79,7 +70,7 @@ public class TypeCache {
     public static class CachedType<T extends TypeDescriptor> {
         private T typeDescriptor;
         private Map<String, MemberDescriptor> members = null;
-        private Map<String, TypeDescriptor> dependencies = null;
+        private Map<String, TypeDependsOnDescriptor> dependencies = null;
 
         /**
          * Constructor.
@@ -108,12 +99,11 @@ public class TypeCache {
             getMembers().put(signature, member);
         }
 
-        public TypeDescriptor getDependency(String fullQualifiedName) {
+        public TypeDependsOnDescriptor getDependency(String fullQualifiedName) {
             return getDependencies().get(fullQualifiedName);
         }
 
-        public void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
-            ((DependentDescriptor) typeDescriptor).getDependencies().add(dependency);
+        public void addDependency(String fullQualifiedName, TypeDependsOnDescriptor dependency) {
             getDependencies().put(fullQualifiedName, dependency);
         }
 
@@ -130,13 +120,11 @@ public class TypeCache {
             return members;
         }
 
-        private Map<String, TypeDescriptor> getDependencies() {
+        private Map<String, TypeDependsOnDescriptor> getDependencies() {
             if (dependencies == null) {
                 dependencies = new HashMap<>();
-                if (typeDescriptor instanceof DependentDescriptor) {
-                    for (TypeDescriptor dependency : ((DependentDescriptor) typeDescriptor).getDependencies()) {
-                        dependencies.put(dependency.getFullQualifiedName(), dependency);
-                    }
+                for (TypeDependsOnDescriptor dependency : typeDescriptor.getDependencies()) {
+                    dependencies.put(dependency.getDependency().getFullQualifiedName(), dependency);
                 }
             }
             return dependencies;
@@ -144,20 +132,13 @@ public class TypeCache {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
+            if (this == o)
                 return true;
-            }
-
-            if (!(o instanceof CachedType)) {
+            if (!(o instanceof CachedType))
                 return false;
-            }
-
             CachedType that = (CachedType) o;
-
-            if (!typeDescriptor.equals(that.typeDescriptor)) {
+            if (!typeDescriptor.equals(that.typeDescriptor))
                 return false;
-            }
-
             return true;
         }
 

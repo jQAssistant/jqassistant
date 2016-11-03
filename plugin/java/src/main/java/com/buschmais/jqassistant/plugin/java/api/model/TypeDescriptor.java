@@ -12,6 +12,7 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 /**
  * Describes a Java type.
@@ -63,5 +64,11 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor 
     @Outgoing
     @Declares
     Set<TypeDescriptor> getDeclaredInnerClasses();
+
+    @Outgoing
+    List<TypeDependsOnDescriptor> getDependencies();
+
+    @Incoming
+    List<TypeDependsOnDescriptor> getDependents();
 
 }
