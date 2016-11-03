@@ -173,7 +173,7 @@ A field declared in a Java type.
 |====
 
 *NOTE* Fields which are referenced by scanned classes but have not been scanned
-themselves will only provide the property ``sgnature`.
+themselves will only provide the property `signature`.
 
 [[:Java:Method]]
 === :Java:Method
