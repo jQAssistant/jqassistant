@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
@@ -11,11 +7,14 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScan
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Abstract base class for archive scanners based on commons compress.
@@ -66,6 +65,11 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
                         E next = entry;
                         entry = null;
                         return next;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
                     }
                 };
             }
