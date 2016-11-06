@@ -1,4 +1,4 @@
-== 1.1.2
+== jQAssistant Framework 1.1.2
 
 === Core
 - Upgraded to Neo4j 2.3.2

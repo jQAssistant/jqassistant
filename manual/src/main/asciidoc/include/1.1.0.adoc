@@ -1,4 +1,4 @@
-== 1.1.0
+== jQAssistant Framework 1.1.0
 
 === Core
 - Groups may be defined in AsciiDoc documents
