@@ -1,0 +1,6 @@
+== jQAssistant JUnit Plugin Version 1.2
+
+- Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.java`
+  to `com.buschmais.jqassistant.plugin:java`.
+
+NOTE: Dirk has to add this bugfix in commit `8e008f984b05359ecf9971f65b421269dee41c88`.
