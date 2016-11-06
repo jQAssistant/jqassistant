@@ -9,8 +9,8 @@ import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
+import com.buschmais.xo.neo4j.api.Neo4jDatastoreSession;
 import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
-import com.buschmais.xo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -46,7 +46,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected GraphDatabaseService getGraphDatabaseService(XOManager xoManager) {
-        return xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+        return xoManager.getDatastoreSession(Neo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
     @Override
