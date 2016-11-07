@@ -9,6 +9,7 @@ include::{docRoot}/cdi/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/ejb3/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/java/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/java8/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/jpa2/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/junit/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/xml/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/yaml/asciidoc/1.2.adoc[leveloffset=2]
@@ -18,7 +19,6 @@ include::{docRoot}/yaml/asciidoc/1.2.adoc[leveloffset=2]
 //drwxr-xr-x  12 obf  staff   408B 29 Okt 23:47 jqa-graphml-plugin
 //drwxr-xr-x  12 obf  staff   408B 29 Okt 21:24 jqa-javaee6-plugin
 //drwxr-xr-x  12 obf  staff   408B 29 Okt 21:23 jqa-jaxrs-plugin
-//drwxr-xr-x  13 obf  staff   442B 29 Okt 21:23 jqa-jpa2-plugin
 //drwxr-xr-x  14 obf  staff   476B 29 Okt 23:53 jqa-json-plugin
 //drwxr-xr-x  12 obf  staff   408B 30 Okt 00:13 jqa-m2repo-plugin
 //drwxr-xr-x  12 obf  staff   408B 30 Okt 20:25 jqa-maven-plugin
