@@ -11,6 +11,7 @@ include::{docRoot}/java/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/java8/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/jpa2/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/junit/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/testng/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/xml/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/yaml/asciidoc/1.2.adoc[leveloffset=2]
 
