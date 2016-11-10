@@ -48,12 +48,4 @@ public class EarScannerPluginIT extends AbstractPluginIT {
         assertThat(duplicates.getRows().size(), equalTo(0));
         store.commitTransaction();
     }
-
-    @Test
-    public void petclinic() {
-        File archive = new File("C:\\Development\\projects\\spring-petclinic\\target\\petclinic.war");
-        store.beginTransaction();
-        getScanner().scan(archive, archive.getAbsolutePath(), null);
-        store.commitTransaction();
-    }
 }
