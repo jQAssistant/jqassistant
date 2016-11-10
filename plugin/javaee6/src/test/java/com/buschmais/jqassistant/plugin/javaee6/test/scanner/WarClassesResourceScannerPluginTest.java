@@ -9,12 +9,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesFileScannerPlugin;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
@@ -27,7 +26,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesResourceScannerPlugin;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WarClassesResourceScannerPluginTest {
@@ -61,7 +59,7 @@ public class WarClassesResourceScannerPluginTest {
 
     @Test
     public void accepts() throws IOException {
-        WarClassesResourceScannerPlugin plugin = new WarClassesResourceScannerPlugin();
+        WarClassesFileScannerPlugin plugin = new WarClassesFileScannerPlugin();
         assertThat(plugin.accepts(resource, "/Test.class", WebApplicationScope.WAR), equalTo(false));
         assertThat(plugin.accepts(resource, "/WEB-INF/classes/Test.class", WebApplicationScope.WAR), equalTo(true));
         assertThat(plugin.accepts(resource, "/WEB-INF/classes/Test.class", DefaultScope.NONE), equalTo(false));
@@ -72,7 +70,7 @@ public class WarClassesResourceScannerPluginTest {
         when(scannerContext.getCurrentDescriptor()).thenReturn(fileDescriptor);
         when(scanner.scan(resource, fileDescriptor, "/Test.class", JavaScope.CLASSPATH)).thenReturn(containedFileDescriptor);
 
-        WarClassesResourceScannerPlugin plugin = new WarClassesResourceScannerPlugin();
+        WarClassesFileScannerPlugin plugin = new WarClassesFileScannerPlugin();
         FileDescriptor scan = plugin.scan(resource, "/WEB-INF/classes/Test.class", WebApplicationScope.WAR, scanner);
 
         assertThat(scan, is(containedFileDescriptor));

@@ -2,6 +2,7 @@
 
 === Core
 
+- Upgraded to Neo4j 2.3.7
 - Added support for array properties in reports (e.g. HTML)
 
 === Plugins

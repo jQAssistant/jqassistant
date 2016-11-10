@@ -22,6 +22,15 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 public class EarScannerPluginIT extends AbstractPluginIT {
 
     @Test
+    public void warArchive() {
+        File warFile = new File("target/test-data/javaee-inject-example-war.war");
+        store.beginTransaction();
+        getScanner().scan(warFile, warFile.getAbsolutePath(), null);
+        verifyWarArchive();
+        store.commitTransaction();
+    }
+
+    @Test
     public void earArchive() {
         File earFile = new File("target/test-data/javaee-inject-example-ear.ear");
         store.beginTransaction();
@@ -34,6 +43,11 @@ public class EarScannerPluginIT extends AbstractPluginIT {
         List<Object> warDescriptors = query("match (:Enterprise:Application)-[:CONTAINS]->(war:Web:Application:Zip:Archive:Container) return war")
                 .getColumn("war");
         assertThat(warDescriptors, hasSize(1));
+        verifyWarArchive();
+        store.commitTransaction();
+    }
+
+    private void verifyWarArchive() {
         List<Object> webXml = query("match (:Web:Application)-[:CONTAINS]->(web:Web:Xml) return web").getColumn("web");
         assertThat(webXml, hasSize(1));
         List<PackageDescriptor> packages = query("match (:Web:Application)-[:CONTAINS]->(package:Java:Package) return package").getColumn("package");
@@ -43,9 +57,11 @@ public class EarScannerPluginIT extends AbstractPluginIT {
         List<TypeDescriptor> types = query("match (:Web:Application)-[:CONTAINS]->(type:Java:Type) return type").getColumn("type");
         assertThat(types, hasSize(6));
         assertThat(types, hasItems(typeDescriptor("org.wicketstuff.javaee.example.WicketJavaEEApplication")));
-        // Verify that any type that is contained in an artifact is not required at the same time
+        // Verify that any type that is contained in an artifact is not required
+        // at the same time
         TestResult duplicates = query("MATCH (a:Artifact),(a)-[:CONTAINS]->(t1:Type),(a)-[:REQUIRES]->(t2:Type) WHERE t1.fqn=t2.fqn return t1.fqn");
         assertThat(duplicates.getRows().size(), equalTo(0));
-        store.commitTransaction();
     }
+
+
 }

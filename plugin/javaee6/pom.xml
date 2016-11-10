@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -40,7 +41,7 @@
                         </goals>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <includeTypes>ear</includeTypes>
+                            <includeTypes>ear,war</includeTypes>
                             <outputDirectory>${project.build.directory}/test-data</outputDirectory>
                             <stripVersion>true</stripVersion>
                         </configuration>
@@ -149,6 +150,13 @@
             <artifactId>javaee-inject-example-ear</artifactId>
             <version>6.18.0</version>
             <type>ear</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wicketstuff</groupId>
+            <artifactId>javaee-inject-example-war</artifactId>
+            <version>6.18.0</version>
+            <type>war</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
