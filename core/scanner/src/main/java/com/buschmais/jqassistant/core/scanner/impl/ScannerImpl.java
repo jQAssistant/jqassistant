@@ -77,7 +77,6 @@ public class ScannerImpl implements Scanner {
             if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope) && satisfies(selectedPlugin, descriptor)) {
                 pipeline.add(selectedPlugin);
                 pushDesriptor(type, descriptor);
-                enterScope(scope);
                 D newDescriptor = null;
                 try {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
@@ -94,7 +93,6 @@ public class ScannerImpl implements Scanner {
                         throw new IllegalStateException(message, e);
                     }
                 } finally {
-                    leaveScope(scope);
                     popDescriptor(type, descriptor);
                     descriptor = newDescriptor;
                     type = selectedPlugin.getDescriptorType();
@@ -254,21 +252,5 @@ public class ScannerImpl implements Scanner {
             scannerPluginsPerType.put(type, plugins);
         }
         return plugins;
-    }
-
-    private void enterScope(Scope newScope) {
-        Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
-        if (newScope != null && !newScope.equals(oldScope)) {
-            newScope.onEnter(scannerContext);
-        }
-        scannerContext.push(Scope.class, newScope);
-    }
-
-    private void leaveScope(Scope newScope) {
-        scannerContext.pop(Scope.class);
-        Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
-        if (newScope != null && !newScope.equals(oldScope)) {
-            newScope.onLeave(scannerContext);
-        }
     }
 }

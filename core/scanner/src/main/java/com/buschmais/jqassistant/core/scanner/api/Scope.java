@@ -19,23 +19,4 @@ public interface Scope {
      */
     String getName();
 
-    /**
-     * This method is called by the scanner if a new scope is entered and allows the scope
-     * to configure the required environment to plugins by pushing values to the
-     * scanner context.
-     *
-     * @param context the {@link ScannerContext} to be configured,
-     *                must not be {@code null}
-     */
-    void onEnter(ScannerContext context);
-
-    /**
-     * This method is called by the scanner if it leaves to current scope to
-     * remove the provided environment created by {@link #onEnter(ScannerContext)}.
-     *
-     * @param context the {@link ScannerContext} to be de-configured,
-     *                must not be {@code null}
-     */
-    void onLeave(ScannerContext context);
-
 }

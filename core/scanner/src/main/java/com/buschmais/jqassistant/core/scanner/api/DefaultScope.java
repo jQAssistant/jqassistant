@@ -5,16 +5,7 @@ package com.buschmais.jqassistant.core.scanner.api;
  */
 public enum DefaultScope implements Scope {
 
-    NONE {
-        @Override
-        public void onEnter(ScannerContext context) {
-        }
-
-        @Override
-        public void onLeave(ScannerContext context) {
-        }
-    };
-
+    NONE;
     @Override
     public String getPrefix() {
         return "default";

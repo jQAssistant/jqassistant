@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,18 +9,16 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.ContentPart;
 import org.asciidoctor.ast.StructuredDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Arrays.asList;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * @author mh
@@ -111,10 +111,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             String id = part.getId();
             String description = "";
             Object title = attributes.get(TITLE);
-            if(title != null){
-        	description = title.toString();
+            if (title != null) {
+                description = title.toString();
             } else {
-        	LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
+                LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
             }
             Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, REQUIRES_CONCEPTS).keySet());
             Set<String> depends = getDependencies(attributes, DEPENDS).keySet();
