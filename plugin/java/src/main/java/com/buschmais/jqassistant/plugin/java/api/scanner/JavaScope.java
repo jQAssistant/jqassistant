@@ -8,15 +8,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum JavaScope implements Scope {
 
-    CLASSPATH {
-        @Override
-        public void onEnter(ScannerContext context) {
-        }
-
-        @Override
-        public void onLeave(ScannerContext context) {
-        }
-    };
+    CLASSPATH;
 
     @Override
     public String getPrefix() {
