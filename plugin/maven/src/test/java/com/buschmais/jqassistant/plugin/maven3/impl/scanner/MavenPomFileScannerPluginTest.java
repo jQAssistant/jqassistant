@@ -127,16 +127,6 @@ public class MavenPomFileScannerPluginTest {
         public String getName() {
             throw new RuntimeException("Not implemented yet!");
         }
-
-        @Override
-        public void onEnter(ScannerContext context) {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public void onLeave(ScannerContext context) {
-            throw new RuntimeException("Not implemented yet!");
-        }
     }
 
 }
