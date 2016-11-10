@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.sonar</groupId>
         <artifactId>jqassistant.sonar</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.4</version>
     </parent>
     <artifactId>jqassistant.sonar.projectrules</artifactId>
     <packaging>sonar-plugin</packaging>
