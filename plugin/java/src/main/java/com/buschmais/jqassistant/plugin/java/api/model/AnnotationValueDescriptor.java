@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * Represents an annotation value.
  */
-public interface AnnotationValueDescriptor extends TypedDescriptor, ValueDescriptor<List<ValueDescriptor<?>>>, AnnotationDescriptor {
+public interface AnnotationValueDescriptor extends JavaDescriptor, TypedDescriptor, ValueDescriptor<List<ValueDescriptor<?>>>, AnnotationDescriptor {
 
     @Relation("HAS")
     @Override
