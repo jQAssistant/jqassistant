@@ -8,15 +8,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum JunitScope implements Scope {
 
-    TESTREPORTS {
-        @Override
-        public void onEnter(ScannerContext context) {
-        }
-
-        @Override
-        public void onLeave(ScannerContext context) {
-        }
-    };
+    TESTREPORTS;
 
     @Override
     public String getPrefix() {
