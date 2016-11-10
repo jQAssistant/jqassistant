@@ -9,7 +9,9 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 /**
  * A scanner plugin for directories containing java classes.
@@ -24,14 +26,13 @@ public class JavaClassesDirectoryScannerPlugin
 
     @Override
     protected void enterContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
-        context.push(JavaArtifactFileDescriptor.class, javaClassesDirectoryDescriptor);
+        context.push(TypeResolver.class, new ArtifactScopedTypeResolver(javaClassesDirectoryDescriptor));
     }
 
     @Override
     protected void leaveContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
-        context.pop(JavaArtifactFileDescriptor.class);
+        context.pop(TypeResolver.class);
     }
-
 
     @Override
     protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
