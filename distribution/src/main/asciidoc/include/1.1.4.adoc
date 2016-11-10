@@ -14,6 +14,7 @@
 
 - Added attribute "weight" to DEPENDS_ON relations between types
 - Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and their inner classes
+- Annotation nodes are now also labeled with "Java"
 
 ==== JavaEE6
 
