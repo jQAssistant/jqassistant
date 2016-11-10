@@ -1,0 +1,6 @@
+
+= jQAssistant Maven 3 Plugin Release Notes
+
+include::1.2.adoc[]
+
+
