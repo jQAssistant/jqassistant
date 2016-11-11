@@ -1,0 +1,5 @@
+com.buschmais.jqassistant.plugin.maven3.api.artifact
+com.buschmais.jqassistant.plugin.maven3.api.model
+com.buschmais.jqassistant.plugin.maven3.api.scanner
+com.buschmais.jqassistant.plugin.maven3.impl.scanner
+com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact
