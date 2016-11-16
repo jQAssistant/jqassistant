@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static javafx.scene.input.KeyCode.T;
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -28,6 +28,22 @@ import static org.hamcrest.Matchers.is;
 public class JSONParsingTestSuiteIT {
 
     private T input;
+
+    /**
+     * List of files we accept even if this file should not be accepted according
+     * to the "JSON Parsing Test Suite". We didn't remove this files from the
+     * file set because to be able to update the test set later.
+     */
+    private static List<String> FILES_WE_ACCEPT = asList(
+        // Comments are file for us at any position
+        "n_object_trailing_comment_slash_open.json",
+        "n_object_trailing_comment.json",
+        "n_structure_object_with_comment.json",
+        // A single space is for us the same as an empty file
+        "n_single_space.json",
+        // Empty files are fine for us.
+        "n_structure_no_data.json"
+    );
 
     @Parameterized.Parameters
     public static List<Object[]> data() throws URISyntaxException {
@@ -38,7 +54,15 @@ public class JSONParsingTestSuiteIT {
 
         return Stream.of(jsons)
                      .map(T::new)
-                     .map(t -> new Object[]{t}).collect(Collectors.toList());
+                     .collect(Collectors.toList())
+                     .stream()
+                     .peek(t -> {
+                         boolean isAcceptable = t.isAcceptable();
+                         boolean shouldBeAccepted = FILES_WE_ACCEPT.contains(t.getFile().getName());
+                         t.setAcceptable(isAcceptable || shouldBeAccepted);
+                     })
+                     .map(t -> new Object[]{t})
+                     .collect(Collectors.toList());
     }
 
     public JSONParsingTestSuiteIT(T i) {
@@ -81,12 +105,16 @@ public class JSONParsingTestSuiteIT {
 
     static class T {
 
-        private final boolean acceptable;
-        private final File file;
+        private boolean acceptable;
+        private File file;
 
         public T(File f) {
             file = f;
             acceptable = f.getName().startsWith("y_") || f.getName().startsWith("i_");
+        }
+
+        public void setAcceptable(boolean isAcceptable) {
+            this.acceptable = isAcceptable;
         }
 
         public boolean isAcceptable() {
