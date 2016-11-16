@@ -50,9 +50,7 @@ public class JSONParsingTestSuiteIT {
         boolean passed = true;
 
         try (InputStream inputStream = Files.newInputStream(input.getFile().toPath())) {
-            JSONLexer l = new JSONLexer(new ANTLRInputStream(inputStream));
-            JSONParser p = new JSONParser(new CommonTokenStream(l));
-            p.addErrorListener(new BaseErrorListener() {
+            BaseErrorListener errorListener = new BaseErrorListener() {
                 @Override
                 public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
                                         int charPos, String msg, RecognitionException e) {
@@ -60,7 +58,13 @@ public class JSONParsingTestSuiteIT {
                                                    input.getFile().getName(), line, charPos, msg);
                     throw new IllegalStateException(message);
                 }
-            });
+            };
+
+            JSONLexer l = new JSONLexer(new ANTLRInputStream(inputStream));
+            JSONParser p = new JSONParser(new CommonTokenStream(l));
+            p.addErrorListener(errorListener);
+            l.removeErrorListeners();
+            l.addErrorListener(errorListener);
 
             p.document();
         } catch (IllegalStateException e) {
