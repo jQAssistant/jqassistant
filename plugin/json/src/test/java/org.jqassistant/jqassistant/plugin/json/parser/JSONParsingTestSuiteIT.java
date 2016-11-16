@@ -86,6 +86,7 @@ public class JSONParsingTestSuiteIT {
 
             JSONLexer l = new JSONLexer(new ANTLRInputStream(inputStream));
             JSONParser p = new JSONParser(new CommonTokenStream(l));
+            p.removeErrorListeners();
             p.addErrorListener(errorListener);
             l.removeErrorListeners();
             l.addErrorListener(errorListener);

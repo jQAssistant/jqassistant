@@ -51,12 +51,9 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         try {
             JSONLexer lexer = new JSONLexer(new ANTLRInputStream(item.createStream()));
             JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
-            parser.addErrorListener(new BaseErrorListener() {
-                @Override
-                public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int l, int c, String msg, RecognitionException e) {
-                    throw new IllegalStateException("Failed to parse " + absolutePath + " at line " + l + " due to " + msg, e);
-                }
-            });
+
+            lexer.addErrorListener(new MyErrorListener(absolutePath));
+            parser.addErrorListener(new MyErrorListener(absolutePath));
 
             JSONParser.DocumentContext jsonDocumentContext = parser.document();
 
@@ -71,5 +68,18 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         }
 
         return jsonFileDescriptor;
+    }
+
+    private static class MyErrorListener extends BaseErrorListener {
+        private final String absolutePath;
+
+        public MyErrorListener(String absolutePath) {
+            this.absolutePath = absolutePath;
+        }
+
+        @Override
+        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int l, int c, String msg, RecognitionException e) {
+            throw new IllegalStateException("Failed to parse " + absolutePath + " at line " + l + " due to " + msg, e);
+        }
     }
 }
