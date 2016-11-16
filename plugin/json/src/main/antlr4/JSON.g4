@@ -49,8 +49,7 @@ value
     ;
 
 scalarValue
-    :
-    |   STRING
+    :   STRING
     |   NUMBER
     |   BOOLEAN
     |   NULL
