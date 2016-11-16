@@ -18,9 +18,9 @@ grammar JSON;
 
 
 document
-    :   object
-    |   array
-    |
+    :   object EOF
+    |   array  EOF
+    |   EOF
     ;
 
 
