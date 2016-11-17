@@ -178,9 +178,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
         String outerTypeName = SignatureHelper.getObjectType(owner);
-        TypeDescriptor outerType = visitorHelper.resolveType(outerTypeName, cachedType).getTypeDescriptor();
-        TypeDescriptor innerType = cachedType.getTypeDescriptor();
-        outerType.getDeclaredInnerClasses().add(innerType);
+        TypeCache.CachedType cachedOuterType = visitorHelper.resolveType(outerTypeName, this.cachedType);
+        TypeDescriptor innerType = this.cachedType.getTypeDescriptor();
+        cachedOuterType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
+        if (name != null) {
+            String methodSignature = SignatureHelper.getMethodSignature(name, desc);
+            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature);
+            methodDescriptor.getDeclaredInnerClasses().add(innerType);
+        }
     }
 
     // ---------------------------------------------

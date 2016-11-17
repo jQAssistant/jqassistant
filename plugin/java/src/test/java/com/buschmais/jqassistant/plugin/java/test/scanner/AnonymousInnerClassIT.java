@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -10,6 +11,7 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.innerclass.AnonymousInnerClass;
@@ -29,7 +31,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      */
     @Test
     @Ignore("Scanning only the outer class without their inner classes is currently not supported.")
-    public void outerClass() throws IOException {
+    public void outerClass() throws IOException, NoSuchMethodException {
         scanClasses(AnonymousInnerClass.class);
         assertOuterClassContainsInnerClass();
     }
@@ -41,7 +43,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerClass() throws IOException, ClassNotFoundException {
+    public void innerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanInnerClass(AnonymousInnerClass.class, "1");
         assertOuterClassContainsInnerClass();
     }
@@ -53,7 +55,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void outerAndInnerClass() throws IOException, ClassNotFoundException {
+    public void outerAndInnerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanClasses(AnonymousInnerClass.class);
         scanInnerClass(AnonymousInnerClass.class, "1");
         assertOuterClassContainsInnerClass();
@@ -66,7 +68,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerAndOuterClass() throws IOException, ClassNotFoundException {
+    public void innerAndOuterClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanInnerClass(AnonymousInnerClass.class, "1");
         scanClasses(AnonymousInnerClass.class);
         assertOuterClassContainsInnerClass();
@@ -76,15 +78,18 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      * Asserts that the outer class can be fetched and contains a relation to
      * the inner class.
      */
-    private void assertOuterClassContainsInnerClass() {
+    private void assertOuterClassContainsInnerClass() throws NoSuchMethodException {
         store.beginTransaction();
-        TestResult testResult = query("MATCH (outerClass:Type)-[:DECLARES]->(innerClass:Type) RETURN outerClass, innerClass");
+        TestResult testResult = query(
+                "MATCH (outerClass:Type)-[:DECLARES]->(innerClass:Type)<-[:DECLARES]-(method:Method)<-[:DECLARES]-(outerClass) RETURN outerClass, innerClass, method");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
         assertThat(outerClass, typeDescriptor(AnonymousInnerClass.class));
         TypeDescriptor innerClass = (TypeDescriptor) row.get("innerClass");
         assertThat(innerClass, typeDescriptor(INNERCLASS_NAME));
+        MethodDescriptor method = (MethodDescriptor) row.get("method");
+        assertThat(method, methodDescriptor(AnonymousInnerClass.class, "iterator"));
         store.commitTransaction();
     }
 
