@@ -31,3 +31,4 @@
 ==== XML
 - Added file pattern support (xml.file.include and xml.file.exclude) for specifying XML documents without a native
 scanner plugin.
+
