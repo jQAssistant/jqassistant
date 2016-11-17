@@ -1,0 +1,8 @@
+== 1.1.5
+
+=== Plugins
+
+==== Java
+
+- Added DECLARES relations between methods and their declared anonymous inner classes: '(:Method)-[:DECLARES]\->(:Type)'
+

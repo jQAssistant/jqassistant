@@ -97,4 +97,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
     int getCyclomaticComplexity();
 
     void setCyclomaticComplexity(int cyclomaticComplexity);
+
+    @Declares
+    List<TypeDescriptor> getDeclaredInnerClasses();
 }

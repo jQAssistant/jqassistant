@@ -11,13 +11,13 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("Manifest")
 public interface ManifestFileDescriptor extends JavaDescriptor, FileDescriptor {
 
-    @Relation("DECLARES")
+    @Declares
     @Outgoing
     ManifestSectionDescriptor getMainSection();
 
     void setMainSection(ManifestSectionDescriptor mainSection);
 
-    @Relation("DECLARES")
+    @Declares
     @Outgoing
     List<ManifestSectionDescriptor> getManifestSections();
 }
