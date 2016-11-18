@@ -77,6 +77,8 @@
   </developers>
  
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <com.buschmais.xo.version>0.7.0</com.buschmais.xo.version>
     <maven.clean.version>3.0.0</maven.clean.version>
     <maven.compiler.version>3.5</maven.compiler.version>
@@ -96,7 +98,6 @@
     <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
     <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
   </properties>
-
   <build>
     <pluginManagement>
       <plugins>
