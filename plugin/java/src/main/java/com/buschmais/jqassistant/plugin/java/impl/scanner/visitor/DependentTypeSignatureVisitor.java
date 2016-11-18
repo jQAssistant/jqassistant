@@ -24,22 +24,22 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
+        return this;
     }
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
+        return this;
     }
 
     @Override
     public SignatureVisitor visitArrayType() {
-        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
+        return this;
     }
 
     @Override
     public SignatureVisitor visitTypeArgument(char wildcard) {
-        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
+        return this;
     }
 
     @Override

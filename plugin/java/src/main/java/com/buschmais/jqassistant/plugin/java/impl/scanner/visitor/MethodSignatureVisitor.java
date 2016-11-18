@@ -16,23 +16,26 @@ public class MethodSignatureVisitor extends SignatureVisitor {
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private int parameterIndex = 0;
 
-    MethodSignatureVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
+    MethodSignatureVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
+            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
+        this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
     }
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+        return dependentTypeSignatureVisitor;
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+        return dependentTypeSignatureVisitor;
     }
 
     @Override
@@ -43,12 +46,12 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
@@ -64,12 +67,12 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
@@ -81,6 +84,6 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitExceptionType() {
-        return new DependentTypeSignatureVisitor(containingType, visitorHelper);
+        return dependentTypeSignatureVisitor;
     }
 }

@@ -13,20 +13,23 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     private VisitorHelper visitorHelper;
 
-    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper) {
+    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
+
+    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
         this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;
+        this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
     }
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+        return dependentTypeSignatureVisitor;
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+        return dependentTypeSignatureVisitor;
     }
 
     @Override
@@ -34,12 +37,12 @@ public class ClassSignatureVisitor extends SignatureVisitor {
         return new AbstractTypeSignatureVisitor<TypeDescriptor>(cachedType, visitorHelper) {
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
@@ -56,12 +59,12 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                return dependentTypeSignatureVisitor;
             }
 
             @Override

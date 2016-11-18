@@ -26,15 +26,17 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private int syntheticParameters = 0;
     private int cyclomaticComplexity = 1;
     private int line;
 
-    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
+    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
+        this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
     }
 
     @Override
@@ -101,7 +103,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
         if (signature != null) {
-            new SignatureReader(signature).accept(new DependentTypeSignatureVisitor(containingType, visitorHelper));
+            new SignatureReader(signature).accept(dependentTypeSignatureVisitor);
         }
     }
 
