@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
+    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private FileDescriptor fileDescriptor;
     private VisitorHelper visitorHelper;
 
@@ -47,6 +48,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
         String fullQualifiedName = SignatureHelper.getObjectType(name);
         cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, javaType);
+        dependentTypeSignatureVisitor = new DependentTypeSignatureVisitor(cachedType, visitorHelper);
         ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
         classFileDescriptor.setByteCodeVersion(version);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
@@ -63,7 +65,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 classFileDescriptor.getInterfaces().add(interfaceType);
             }
         } else {
-            new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
+            new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper, dependentTypeSignatureVisitor));
         }
     }
 
@@ -81,12 +83,12 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor<FieldDescriptor>(cachedType, visitorHelper) {
                 @Override
                 public SignatureVisitor visitArrayType() {
-                    return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                    return dependentTypeSignatureVisitor;
                 }
 
                 @Override
                 public SignatureVisitor visitTypeArgument(char wildcard) {
-                    return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
+                    return dependentTypeSignatureVisitor;
                 }
 
                 @Override
@@ -132,13 +134,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 parameterDescriptor.setType(visitorHelper.resolveType(parameterType, cachedType).getTypeDescriptor());
             }
         } else {
-            new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper));
+            new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper, dependentTypeSignatureVisitor));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
             TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
             methodDescriptor.getDeclaredThrowables().add(exceptionType);
         }
-        return new MethodVisitor(cachedType, methodDescriptor, visitorHelper);
+        return new MethodVisitor(cachedType, methodDescriptor, visitorHelper, dependentTypeSignatureVisitor);
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
