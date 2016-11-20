@@ -17,7 +17,7 @@
 
     <description>
         The jQAssistant JSON Plugin allows jQAssistant
-        to scan also JSON files.
+        to scan also RFC 7159 compliant JSON files.
     </description>
 
     <licenses>
