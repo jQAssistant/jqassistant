@@ -1,6 +1,6 @@
 //
-// Grammar build build on the grammar on http://json.org and
-// the grammar at https://github.com/antlr/grammars-v4/tree/master/json
+// Grammar build build on grammar provided in RFC 7159
+// and based on the grammar at https://github.com/antlr/grammars-v4/tree/master/json
 //
 
 grammar JSON;
@@ -20,6 +20,7 @@ grammar JSON;
 document
     :   object EOF
     |   array  EOF
+    |   scalarValue EOF
     |   EOF
     ;
 
