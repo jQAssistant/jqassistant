@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
+import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
@@ -121,6 +122,28 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         assertThat(keyDescriptor.getName(), equalTo("C"));
     }
 
+
+    @Test
+    public void scanReturnsSingleInteger() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+                                 "/probes/valid/single-int.json");
+
+        getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        List<JSONScalarValueDescriptor> results = query("MATCH (f:JSON:File) " +
+                                                        "-[:CONTAINS]->(o:JSON) " +
+                                                        "WHERE o.value = 123 " +
+                                                        "RETURN o"
+        ).getColumn("o");
+
+        assertThat(results, hasSize(1));
+
+        JSONScalarValueDescriptor valueDescriptor= results.get(0);
+
+        // Assertion uses a double value because internally the value is
+        // stored a double
+        assertThat(valueDescriptor.getValue(), equalTo(123.0D));
+    }
 
     private JSONKeyDescriptor findKeyInDocument(List<JSONKeyDescriptor> keys, String name) {
         JSONKeyDescriptor result = null;

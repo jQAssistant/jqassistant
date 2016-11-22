@@ -73,10 +73,14 @@ public class JSONParseListener extends JSONBaseListener {
 
         JSONDescriptor descriptor = stack().peek();
 
-        if (descriptor instanceof JSONKeyDescriptor) {
+        if (descriptor instanceof JSONFileDescriptor) {
+            ((JSONFileDescriptor) descriptor).setScalarValue(valueDescriptor);
+        } else if (descriptor instanceof JSONKeyDescriptor) {
             ((JSONKeyDescriptor) descriptor).setScalarValue(valueDescriptor);
         } else if (descriptor instanceof JSONArrayDescriptor) {
             ((JSONArrayDescriptor) descriptor).getValue().add(valueDescriptor);
+        } else {
+            throw new IllegalStateException("Internal error. Unexpected top of stack.");
         }
 
         stack().push(valueDescriptor);
@@ -102,8 +106,8 @@ public class JSONParseListener extends JSONBaseListener {
         } else if (numberNode != null) {
             String textValue = numberNode.getText();
             Double value = Double.parseDouble(textValue);
-            double intValue = value.doubleValue();
-            valueDescriptor.setValue(intValue);
+            double numValue = value.doubleValue();
+            valueDescriptor.setValue(numValue);
         } else {
             String msg = "Unsupported terminal node for token '" + ctx.getText() + "' found.";
             throw new IllegalStateException(msg);

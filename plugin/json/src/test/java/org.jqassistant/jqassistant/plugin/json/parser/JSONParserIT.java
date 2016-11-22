@@ -34,6 +34,7 @@ public class JSONParserIT {
              {"/probes/valid/object-with-objects.json"},
              {"/probes/valid/object-one-key-value-pair.json"},
              {"/probes/valid/object-two-key-value-pairs.json"},
+             {"/probes/valid/single-int.json"},
              {"/probes/valid/string-value-with-quote-mark.json"},
              {"/probes/valid/string-value-with-unicode-signs.json"},
              {"/probes/valid/object-with-array-empty.json"},

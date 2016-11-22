@@ -15,6 +15,11 @@ public interface JSONFileDescriptor extends JSONDescriptor, FileDescriptor {
 
     void setObject(JSONObjectDescriptor object);
 
+    @Relation("CONTAINS")
+    JSONScalarValueDescriptor getScalarValue();
+
+    void setScalarValue(JSONScalarValueDescriptor value);
+
     void setParsed(boolean parsable);
 
     @Property("parsed")
