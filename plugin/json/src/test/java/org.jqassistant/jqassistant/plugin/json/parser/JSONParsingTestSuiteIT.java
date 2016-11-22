@@ -51,9 +51,7 @@ public class JSONParsingTestSuiteIT {
         "i_string_UTF-16LE_with_BOM.json",
         "i_string_utf16BE_no_BOM.json",
         "i_string_utf16LE_no_BOM.json",
-        "i_structure_UTF-8_BOM_empty_object.json",
-        "n_structure_angle_bracket_..json",
-        "n_structure_open_array_object.json"
+        "i_structure_UTF-8_BOM_empty_object.json"
     );
 
     @Parameterized.Parameters
