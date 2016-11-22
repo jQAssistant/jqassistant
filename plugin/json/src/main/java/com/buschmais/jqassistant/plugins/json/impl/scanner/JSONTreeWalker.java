@@ -13,12 +13,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.Stack;
 
-public class JSONParseListener extends JSONBaseListener {
+public class JSONTreeWalker extends JSONBaseListener {
 
     private final Scanner scanner;
     private final DescriptorStack descriptorStack = new DescriptorStack();
 
-    public JSONParseListener(JSONFileDescriptor fd, Scanner sc) {
+    public JSONTreeWalker(JSONFileDescriptor fd, Scanner sc) {
         scanner = sc;
 
         stack().push(fd);

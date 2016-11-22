@@ -16,6 +16,10 @@ grammar JSON;
     private static Pattern ESCAPE_PATTERN = Pattern.compile("\\\\u([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
 }
 
+@parser::members {
+    private NestingLevelCounter nestingCounter = new NestingLevelCounter(5_0000);
+}
+
 
 document
     :   object EOF
@@ -39,7 +43,12 @@ arrayElements
     ;
 
 array
-    :   '[' ']'
+    :    {
+
+    System.out.println("**********");
+    System.out.println(nestingCounter.l());
+    nestingCounter.enter().check(); }
+         '[' ']'
     |   '[' arrayElements ']'
     ;
 

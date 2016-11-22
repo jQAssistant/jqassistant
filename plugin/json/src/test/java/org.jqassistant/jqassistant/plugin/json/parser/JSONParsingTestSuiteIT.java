@@ -2,6 +2,7 @@ package org.jqassistant.jqassistant.plugin.json.parser;
 
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugins.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugins.json.impl.scanner.JSONNestingListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -51,7 +52,7 @@ public class JSONParsingTestSuiteIT {
         "i_string_utf16BE_no_BOM.json",
         "i_string_utf16LE_no_BOM.json",
         "i_structure_UTF-8_BOM_empty_object.json",
-        "n_structure_100000_opening_arrays.json",
+        "n_structure_angle_bracket_..json",
         "n_structure_open_array_object.json"
     );
 
@@ -82,6 +83,7 @@ public class JSONParsingTestSuiteIT {
     public void canParseValidJSONFile() throws Exception {
         boolean passed = true;
 
+        System.out.println(input.getFile().getName());
         try (InputStream inputStream = Files.newInputStream(input.getFile().toPath())) {
             BaseErrorListener errorListener = new BaseErrorListener() {
                 @Override
@@ -97,6 +99,7 @@ public class JSONParsingTestSuiteIT {
             JSONParser p = new JSONParser(new CommonTokenStream(l));
             p.removeErrorListeners();
             p.addErrorListener(errorListener);
+            p.addParseListener(new JSONNestingListener());
             l.removeErrorListeners();
             l.addErrorListener(errorListener);
 

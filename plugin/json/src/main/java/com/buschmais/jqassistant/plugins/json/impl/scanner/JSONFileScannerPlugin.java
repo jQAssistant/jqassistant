@@ -55,10 +55,12 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             lexer.addErrorListener(new MyErrorListener(absolutePath));
             parser.addErrorListener(new MyErrorListener(absolutePath));
 
+            parser.addParseListener(new JSONNestingListener());
+
             JSONParser.DocumentContext jsonDocumentContext = parser.document();
 
             ParseTreeWalker walker = new ParseTreeWalker();
-            walker.walk(new JSONParseListener(jsonFileDescriptor, scanner), jsonDocumentContext);
+            walker.walk(new JSONTreeWalker(jsonFileDescriptor, scanner), jsonDocumentContext);
 
             // In case the content of the file is not parseable set parsed=false
             // to help the user to identify nonparseable files
