@@ -49,11 +49,8 @@ public class JSONParsingTestSuiteIT {
         "i_number_huge_exp.json",
         "i_string_UTF-16LE_with_BOM.json",
         "i_string_utf16BE_no_BOM.json",
-        "n_array_1_true_without_comma.json",
         "i_string_utf16LE_no_BOM.json",
         "i_structure_UTF-8_BOM_empty_object.json",
-        "n_structure_open_array_apostrophe.json",
-        "n_string_with_trailing_garbage.json",
         "n_structure_100000_opening_arrays.json",
         "n_structure_open_array_object.json"
     );
