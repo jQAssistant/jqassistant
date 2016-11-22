@@ -89,8 +89,9 @@ BOOLEAN
     ;
 
 
+// See section 7. Strings of RFC 7159
 STRING
-    :   '"' (ESC | ~["\\])* '"'
+     :   '"' (ESC | ~(["\\] | '\u0000' .. '\u001f'))* '"'
         // Solution taken from https://theantlrguy.atlassian.net/wiki/x/HgAp
         // See also http://stackoverflow.com/questions/33281312/
         // See also http://stackoverflow.com/questions/39398698/
