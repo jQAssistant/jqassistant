@@ -17,7 +17,6 @@ grammar JSON;
 }
 
 @parser::members {
-    private NestingLevelCounter nestingCounter = new NestingLevelCounter(5_0000);
 }
 
 
@@ -43,12 +42,7 @@ arrayElements
     ;
 
 array
-    :    {
-
-    System.out.println("**********");
-    System.out.println(nestingCounter.l());
-    nestingCounter.enter().check(); }
-         '[' ']'
+    :   '[' ']'
     |   '[' arrayElements ']'
     ;
 
