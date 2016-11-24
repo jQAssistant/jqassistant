@@ -102,6 +102,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.asciidoctor</groupId>
+          <artifactId>asciidoctor-maven-plugin</artifactId>
+          <version>${org.asciidoctor-plugin.version}</version>
+        </plugin>
+        <plugin>
           <groupId>com.buschmais.jqassistant</groupId>
           <artifactId>jqassistant-maven-plugin</artifactId>
           <version>${maven.jqassistant.previous.version}</version>
