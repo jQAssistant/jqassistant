@@ -16,40 +16,23 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class JSONParserIT {
+public class JSONParserWithInvalidFilesIT {
 
     private String pathToJSONFile;
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-             {"/probes/valid/array-empty.json"},
-             {"/probes/valid/array-one-value.json"},
-             {"/probes/valid/line-comment-before-object.json"},
-             {"/probes/valid/line-comment-in-object.json"},
-             {"/probes/valid/line-comment-after-object.json"},
-             {"/probes/valid/block-comment-in-object.json"},
-             {"/probes/valid/true-false-null.json"},
-             {"/probes/valid/empty-file.json"},
-             {"/probes/valid/object-with-objects.json"},
-             {"/probes/valid/object-one-key-value-pair.json"},
-             {"/probes/valid/object-two-key-value-pairs.json"},
-             {"/probes/valid/single-int.json"},
-             {"/probes/valid/string-value-with-quote-mark.json"},
-             {"/probes/valid/string-value-with-unicode-signs.json"},
-             {"/probes/valid/object-with-array-empty.json"},
-             {"/probes/valid/object-with-array.json"},
-             {"/probes/valid/object-with-array-two-elements.json"},
-             {"/probes/valid/object-with-number.json"}
+             {"/probes/invalid/empty-file.json"}
         });
     }
 
-    public JSONParserIT(String path) {
+    public JSONParserWithInvalidFilesIT(String path) {
         pathToJSONFile = path;
     }
 
-    @Test
-    public void canParseValidJSONFile() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void parserRecognizesAInvalidJSONFile() throws Exception {
 
         InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile);
         JSONLexer l = new JSONLexer(new ANTLRInputStream(inputStream));

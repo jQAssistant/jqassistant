@@ -26,7 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 public class JSONFileScannerPluginIT extends AbstractPluginIT {
@@ -279,20 +278,13 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         assertThat(objectTwo, Matchers.<Object>equalTo("B"));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void scannerCanHandleEmptyFile() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/empty-file.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
-
-        assertThat("Scanner must be able to scan the resource and to return a descriptor.",
-                   file, notNullValue());
-        assertThat("Scanner must not return an array for an empty file.",
-                   file.getArray(), nullValue());
-        assertThat("Scanner must not return a object for an empty file.",
-                   file.getObject(), nullValue());
     }
 
     @Test

@@ -24,9 +24,7 @@ document
     :   object EOF
     |   array  EOF
     |   scalarValue EOF
-    |   EOF
     ;
-
 
 object
     :   '{' keyValuePair (',' keyValuePair)* '}'

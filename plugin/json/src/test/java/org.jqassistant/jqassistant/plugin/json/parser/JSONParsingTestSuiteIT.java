@@ -39,11 +39,7 @@ public class JSONParsingTestSuiteIT {
         // Comments are file for us at any position
         "n_object_trailing_comment_slash_open.json",
         "n_object_trailing_comment.json",
-        "n_structure_object_with_comment.json",
-        // A single space is for us the same as an empty file
-        "n_single_space.json",
-        // Empty files are fine for us.
-        "n_structure_no_data.json"
+        "n_structure_object_with_comment.json"
     );
 
     private static List<String> FILES_TO_IGNORE_TEMPORARILY = asList(
