@@ -1,0 +1,66 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
+
+    <concept id="test:ConceptWithParameters">
+        <description>Test Concept.</description>
+        <requiresParameter name="name" type="string" />
+        <requiresParameter name="limit" type="int" />
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ConceptWithParametersAndDefaultValues">
+        <description>Test Concept.</description>
+        <requiresParameter name="name" type="string" defaultValue="Test"/>
+        <requiresParameter name="limit" type="int" defaultValue="10"/>
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </concept>
+
+    <constraint id="test:ConstraintWithParameters">
+        <description>Test Constraint.</description>
+        <requiresParameter name="name" type="string" />
+        <requiresParameter name="limit" type="int" />
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:ConstraintWithParametersAndDefaultValues">
+        <description>Test Constraint.</description>
+        <requiresParameter name="name" type="string" defaultValue="Test"/>
+        <requiresParameter name="limit" type="int" defaultValue="10"/>
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </constraint>
+</jqa:jqassistant-rules>

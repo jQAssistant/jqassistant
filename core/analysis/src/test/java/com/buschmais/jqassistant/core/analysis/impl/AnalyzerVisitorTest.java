@@ -1,12 +1,17 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.xo.api.Query;
-import com.buschmais.xo.api.ResultIterator;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,14 +22,13 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.ResultIterator;
 
 /**
  * Verifies the functionality of the analyzer visitor.
@@ -43,11 +47,12 @@ public class AnalyzerVisitorTest {
     @Mock
     private AnalysisListener<AnalysisListenerException> reportWriter;
 
+    @Mock
+    private AnalyzerConfiguration configuration;
+
     private String statement;
 
     private Concept concept;
-
-    private RuleSet ruleSet;
 
     private List<String> columnNames;
 
@@ -55,7 +60,6 @@ public class AnalyzerVisitorTest {
     public void setUp() throws RuleHandlingException {
         statement = "match (n) return n";
         concept = createConcept(statement);
-        ruleSet = RuleSetBuilder.newInstance().addConcept(concept).getRuleSet();
         columnNames = Arrays.asList("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
 
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
@@ -63,22 +67,24 @@ public class AnalyzerVisitorTest {
     }
 
     /**
-     * Verifies that columns of a query a reported in the order given by the query.
+     * Verifies that columns of a query a reported in the order given by the
+     * query.
      *
-     * @throws RuleException     If the test fails.
-     * @throws AnalysisException If the test fails.
+     * @throws RuleException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
      */
     @Test
     public void columnOrder() throws RuleException, AnalysisException {
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, false, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result capturedResult = resultCaptor.getValue();
-        assertThat("The reported column names must match the given column names.", capturedResult.getColumnNames(), CoreMatchers
-                .<List>equalTo(columnNames));
+        assertThat("The reported column names must match the given column names.", capturedResult.getColumnNames(), CoreMatchers.<List> equalTo(columnNames));
         List<Map<String, Object>> capturedRows = capturedResult.getRows();
         assertThat("Expecting one row.", capturedRows.size(), equalTo(1));
         Map<String, Object> capturedRow = capturedRows.get(0);
@@ -87,7 +93,7 @@ public class AnalyzerVisitorTest {
 
     @Test
     public void executeConcept() throws RuleException, AnalysisException {
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, false, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
@@ -98,7 +104,7 @@ public class AnalyzerVisitorTest {
     public void skipAppliedConcept() throws RuleException, AnalysisException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, false, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter, never()).beginConcept(concept);
@@ -108,8 +114,9 @@ public class AnalyzerVisitorTest {
     @Test
     public void executeAppliedConcept() throws RuleException, AnalysisException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
+        when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, true, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
@@ -120,12 +127,10 @@ public class AnalyzerVisitorTest {
     public void ruleSourceInErrorMessage() throws RuleException, AnalysisException {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
-        RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(concept).getRuleSet();
         when(store.executeQuery(Mockito.eq(statement), Mockito.anyMap())).thenThrow(new IllegalStateException("An error"));
         AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
         try {
-
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, false, store, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + AnalysisException.class.getName());
         } catch (AnalysisException e) {
@@ -138,8 +143,8 @@ public class AnalyzerVisitorTest {
         Executable executable = new CypherExecutable(statement);
         Verification verification = new RowCountVerification();
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
-        return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE))).severity(Severity.MINOR).executable(executable).verification(verification)
-                .report(report).get();
+        return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
+                .severity(Severity.MINOR).executable(executable).verification(verification).report(report).get();
     }
 
     private Query.Result<Query.Result.CompositeRowObject> createResult(List<String> columnNames) {

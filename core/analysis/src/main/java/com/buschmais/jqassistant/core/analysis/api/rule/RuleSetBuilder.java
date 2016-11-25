@@ -19,11 +19,6 @@ public class RuleSetBuilder {
         return new RuleSetBuilder();
     }
 
-    public RuleSetBuilder addTemplate(Template template) throws RuleException {
-        ruleSet.templateBucket.add(template);
-        return this;
-    }
-
     public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
         ruleSet.conceptBucket.add(concept);
 
@@ -42,12 +37,6 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder addMetricGroup(MetricGroup metricGroup) throws RuleException {
-        ruleSet.getMetricGroupsBucket().add(metricGroup);
-
-        return this;
-    }
-
     public RuleSet getRuleSet() {
         return ruleSet;
     }
@@ -59,16 +48,9 @@ public class RuleSetBuilder {
 
         private ConceptBucket conceptBucket = new ConceptBucket();
         private ConstraintBucket constraintBucket = new ConstraintBucket();
-        private TemplateBucket templateBucket = new TemplateBucket();
         private GroupsBucket groupsBucket = new GroupsBucket();
-        private MetricGroupsBucket metricGroupsBucket = new MetricGroupsBucket();
 
         private DefaultRuleSet() {
-        }
-
-        @Override
-        public TemplateBucket getTemplateBucket() {
-            return templateBucket;
         }
 
         public ConceptBucket getConceptBucket() {
@@ -86,14 +68,9 @@ public class RuleSetBuilder {
         }
 
         @Override
-        public MetricGroupsBucket getMetricGroupsBucket() {
-            return metricGroupsBucket;
-        }
-
-        @Override
         public String toString() {
             return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() +
-                    ", rules=" + conceptBucket.size() + ", metric groups=" + metricGroupsBucket.size() + "}";
+                    ", rules=" + conceptBucket.size() + "}";
         }
     }
 }

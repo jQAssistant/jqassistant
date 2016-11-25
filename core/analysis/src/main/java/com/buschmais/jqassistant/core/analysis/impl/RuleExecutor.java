@@ -17,7 +17,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Template;
 
 /**
  * Implementation of the
@@ -133,14 +132,6 @@ public class RuleExecutor {
             }
             ruleVisitor.visitConcept(concept, severity);
             executedConcepts.add(concept);
-        }
-    }
-
-    public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
-        try {
-            return ruleSet.getTemplateBucket().getById(queryTemplateId);
-        } catch (NoTemplateException e) {
-            throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.", e);
         }
     }
 

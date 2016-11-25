@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1"
+           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-rules">
         <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="template" type="jqassistant-rules:templateType" minOccurs="0"
-                            maxOccurs="unbounded"/>
                 <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0"
-                            maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="metricGroup" type="jqassistant-rules:metricGroupType" minOccurs="0"
-                            maxOccurs="unbounded"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -22,29 +17,6 @@
     <xs:complexType name="referenceableType" abstract="true">
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
-
-    <xs:complexType name="templateType">
-        <xs:complexContent>
-            <xs:extension base="jqassistant-rules:executableRuleType">
-                <xs:sequence>
-                    <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType"
-                                minOccurs="0" maxOccurs="unbounded"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="parameterDefinitionType">
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
-    </xs:complexType>
-
-    <xs:simpleType name="parameterTypes">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="int"/>
-            <xs:enumeration value="string"/>
-        </xs:restriction>
-    </xs:simpleType>
 
     <xs:complexType name="scriptType">
         <xs:simpleContent>
@@ -57,8 +29,15 @@
     <xs:complexType name="parameterType">
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
-        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="defaultValue" type="xs:string" use="required"/>
     </xs:complexType>
+
+    <xs:simpleType name="parameterTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="string"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="propertyType">
         <xs:simpleContent>
@@ -117,15 +96,14 @@
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
+                    <xs:element name="requiresParameter" type="jqassistant-rules:parameterType" minOccurs="0"
+                                maxOccurs="unbounded"/>
                     <xs:element name="description" type="xs:string" minOccurs="0"/>
                     <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
                     <xs:choice>
                         <xs:element name="cypher" type="xs:string"/>
-                        <xs:element name="useTemplate" type="jqassistant-rules:referenceType"/>
                         <xs:element name="script" type="jqassistant-rules:scriptType"/>
                     </xs:choice>
-                    <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0"
-                                maxOccurs="unbounded"/>
                     <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
@@ -155,38 +133,6 @@
                                 maxOccurs="unbounded"/>
                     <xs:element name="includeGroup" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="metricType">
-        <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
-                <xs:sequence>
-                    <xs:element name="description" type="xs:string" minOccurs="0"/>
-                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:element name="cypher" type="xs:string"/>
-                    <xs:sequence>
-                        <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType"
-                                    minOccurs="0"
-                                    maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="metricGroupType">
-        <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
-                <xs:sequence>
-                    <xs:element name="description" type="xs:string" minOccurs="0"/>
-                    <xs:sequence>
-                        <xs:element name="metric" type="jqassistant-rules:metricType" minOccurs="1"
-                                    maxOccurs="unbounded"/>
-                    </xs:sequence>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

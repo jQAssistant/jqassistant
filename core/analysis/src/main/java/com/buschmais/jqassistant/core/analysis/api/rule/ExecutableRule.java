@@ -30,11 +30,11 @@ public interface ExecutableRule extends Rule {
     Executable getExecutable();
 
     /**
-     * Return the map of parameters.
+     * Return the map of required parameters.
      * 
      * @return The parameters.
      */
-    Map<String, Object> getParameters();
+    Map<String, Parameter> getParameters();
 
     /**
      * Return the result verification for this rule.

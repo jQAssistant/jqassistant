@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 
 /**
@@ -14,8 +16,10 @@ public interface Analyzer {
      *            The rules set.
      * @param ruleSelection
      *            The rule selection.
+     * @param parameters
+     *            The parameters.
      * @throws AnalysisException
      *             If the analysis fails.
      */
-    void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException;
+    void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> parameters) throws AnalysisException;
 }

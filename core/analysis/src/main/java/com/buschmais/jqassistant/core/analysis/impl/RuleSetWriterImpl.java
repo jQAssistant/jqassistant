@@ -18,7 +18,6 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
-
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
@@ -40,8 +39,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroupsBucket().getIds())
-                .addConstraintIds(ruleSet.getConstraintBucket().getIds())
-                .addConceptIds(ruleSet.getConceptBucket().getIds()).get();
+                .addConstraintIds(ruleSet.getConstraintBucket().getIds()).addConceptIds(ruleSet.getConceptBucket().getIds()).get();
         try {
             new RuleExecutor(visitor).execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
@@ -94,7 +92,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), Constraint.DEFAULT_SEVERITY));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
-            rules.getTemplateOrConceptOrConstraint().add(groupType);
+            rules.getConceptOrConstraintOrGroup().add(groupType);
         }
     }
 
@@ -110,7 +108,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConceptId);
                 conceptType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getTemplateOrConceptOrConstraint().add(conceptType);
+            rules.getConceptOrConstraintOrGroup().add(conceptType);
         }
     }
 
@@ -126,7 +124,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConceptId);
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getTemplateOrConceptOrConstraint().add(constraintType);
+            rules.getConceptOrConstraintOrGroup().add(constraintType);
         }
     }
 
@@ -141,10 +139,6 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             scriptType.setLanguage(scriptExecutable.getLanguage());
             scriptType.setValue(scriptExecutable.getSource());
             executableRuleType.setScript(scriptType);
-        } else if (executable instanceof TemplateExecutable) {
-            ReferenceType template = new ReferenceType();
-            template.setRefId(((TemplateExecutable) executable).getTemplateId());
-            executableRuleType.setUseTemplate(template);
         } else {
             throw new RuleException("Unsupport executable type " + executable);
         }
@@ -153,8 +147,10 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     /**
      * Converts {@link Severity} to {@link SeverityEnumType}
      *
-     * @param severity        {@link Severity}
-     * @param defaultSeverity default severity level
+     * @param severity
+     *            {@link Severity}
+     * @param defaultSeverity
+     *            default severity level
      * @return {@link SeverityEnumType}
      */
     private SeverityEnumType getSeverity(Severity severity, Severity defaultSeverity) {

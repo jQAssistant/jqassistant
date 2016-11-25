@@ -6,6 +6,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;
 
+import java.util.Map;
+
 /**
  * Implementation of the {@link Analyzer}.
  */
@@ -39,11 +41,11 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException {
+    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> parameters) throws AnalysisException {
         try {
             reportWriter.begin();
             try {
-                AnalyzerVisitor visitor = new AnalyzerVisitor(ruleSet, configuration.isExecuteAppliedConcepts(), store, reportWriter, logger);
+                AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, store, reportWriter, logger);
                 RuleExecutor executor = new RuleExecutor(visitor);
                 executor.execute(ruleSet, ruleSelection);
             } finally {

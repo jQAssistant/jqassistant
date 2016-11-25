@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Defines an abstract rule which is has an unique identifier and references a query.
+ * Defines an abstract rule which is has an unique identifier and references a
+ * query.
  */
 public abstract class AbstractExecutableRule extends AbstractSeverityRule implements ExecutableRule {
 
@@ -16,9 +17,9 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     private Executable executable;
 
     /**
-     * The parameters to use.
+     * The required parameters.
      */
-    private Map<String, Object> parameters = new HashMap<>();
+    private Map<String, Parameter> parameters = new HashMap<>();
 
     /**
      * The rules which must be applied before this rule can be executed.
@@ -46,7 +47,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
@@ -78,7 +79,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
             return builder();
         }
 
-        public B parameters(Map<String, Object> parameters) {
+        public B parameters(Map<String, Parameter> parameters) {
             AbstractExecutableRule r = get();
             r.parameters.putAll(parameters);
             return builder();

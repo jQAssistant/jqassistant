@@ -9,9 +9,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.analysis.api.rule.Template;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
@@ -49,24 +47,6 @@ public class RuleSetBuilderTest {
         builder.addGroup(group1);
         try {
             builder.addGroup(group2);
-            Assert.fail("Expecting an exception");
-        } catch (RuleException e) {
-        }
-        // Templates
-        Template template1 = Template.Builder.newTemplate().id("test").ruleSource(ruleSource).get();
-        Template template2 = Template.Builder.newTemplate().id("test").ruleSource(ruleSource).get();
-        builder.addTemplate(template1);
-        try {
-            builder.addTemplate(template2);
-            Assert.fail("Expecting an exception");
-        } catch (RuleException e) {
-        }
-        // Metric Groups
-        MetricGroup metricGroup1 = MetricGroup.Builder.newMetricGroup().id("test").ruleSource(ruleSource).get();
-        MetricGroup metricGroup2 = MetricGroup.Builder.newMetricGroup().id("test").ruleSource(ruleSource).get();
-        builder.addMetricGroup(metricGroup1);
-        try {
-            builder.addMetricGroup(metricGroup2);
             Assert.fail("Expecting an exception");
         } catch (RuleException e) {
         }

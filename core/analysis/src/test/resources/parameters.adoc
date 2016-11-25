@@ -1,0 +1,62 @@
+= Rules
+
+== Concepts
+
+[[test:ParameterizedConcept]]
+.Test Concept with parameters.
+[source,cypher,role=concept,requiresParameters="string name, int limit"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ParameterizedConceptWithDefaultValues]]
+.Test Concept with parameters and default values.
+[source,cypher,role=concept,requiresParameters="string name='Test', int limit=10"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+== Constraints
+
+[[test:ParameterizedConstraint]]
+.Test Constraint with parameters.
+[source,cypher,role=constraint,requiresParameters="string name,int limit"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ParameterizedConstraintWithDefaultValues]]
+.Test Constraint with parameters and default values.
+[source,cypher,role=constraint,requiresParameters="string name='Test',int limit=10"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
