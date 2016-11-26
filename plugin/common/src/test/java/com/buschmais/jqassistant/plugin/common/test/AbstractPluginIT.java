@@ -115,7 +115,8 @@ public abstract class AbstractPluginIT {
         /**
          * Return a column identified by its name.
          *
-         * @param <T> The expected type.
+         * @param <T>
+         *            The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
@@ -160,7 +161,7 @@ public abstract class AbstractPluginIT {
 
     @Before
     public void initializeAnalyzer() {
-        reportWriter = new InMemoryReportWriter(new CompositeReportWriter(Collections.<String, AnalysisListener>emptyMap()));
+        reportWriter = new InMemoryReportWriter(new CompositeReportWriter(Collections.<String, AnalysisListener> emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, reportWriter, LOGGER);
     }
@@ -201,13 +202,14 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(Collections.<String, Object>emptyMap());
+        return getScanner(Collections.<String, Object> emptyMap());
     }
 
     /**
      * Return an initialized scanner instance.
      *
-     * @param properties The properties to be used to configure the plugins.
+     * @param properties
+     *            The properties to be used to configure the plugins.
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
@@ -229,7 +231,8 @@ public abstract class AbstractPluginIT {
      * Determines the directory a class is located in (e.g.
      * target/test-classes).
      *
-     * @param rootClass The class.
+     * @param rootClass
+     *            The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
@@ -242,7 +245,8 @@ public abstract class AbstractPluginIT {
      * Deletes the node representing the test class and all its relationships
      * from the store.
      *
-     * @throws IOException If an error occurs.
+     * @throws IOException
+     *             If an error occurs.
      */
     protected void removeTestClass() throws IOException {
         store.beginTransaction();
@@ -257,19 +261,22 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
      *
-     * @param query The query.
+     * @param query
+     *            The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object>emptyMap());
+        return query(query, Collections.<String, Object> emptyMap());
     }
 
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
      *
-     * @param query      The query.
-     * @param parameters The query parameters.
+     * @param query
+     *            The query.
+     * @param parameters
+     *            The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -297,44 +304,94 @@ public abstract class AbstractPluginIT {
     /**
      * Applies the concept identified by id.
      *
-     * @param id The id.
+     * @param id
+     *            The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
+        return applyConcept(id, Collections.<String, String> emptyMap());
+    }
+
+    /**
+     * Applies the concept identified by id.
+     *
+     * @param id
+     *            The id.
+     * @param parameters
+     *            The rule parameters.
+     * @return The result.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
+     */
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
-        analyzer.execute(ruleSet, ruleSelection);
+        analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportWriter.getConceptResults().get(id);
     }
 
     /**
      * Validates the constraint identified by id.
      *
-     * @param id The id.
+     * @param id
+     *            The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
+        return validateConstraint(id, Collections.<String, String> emptyMap());
+    }
+
+    /**
+     * Validates the constraint identified by id.
+     *
+     * @param id
+     *            The id.
+     * @param parameters
+     *            The rule parameters.
+     * @return The result.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
+     */
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
-        analyzer.execute(ruleSet, ruleSelection);
+        analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportWriter.getConstraintResults().get(id);
     }
 
     /**
      * Executes the group identified by id.
      *
-     * @param id The id.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
+     * @param id
+     *            The id.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws AnalysisException, NoGroupException {
+        executeGroup(id, Collections.<String, String> emptyMap());
+    }
+
+    /**
+     * Executes the group identified by id.
+     *
+     * @param id
+     *            The id.
+     * @param parameters
+     *            The rule parameters.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the analyzer reports an error.
+     */
+    protected void executeGroup(String id, Map<String, String> parameters) throws AnalysisException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertNotNull("The request group cannot be found: " + id, group);
-        analyzer.execute(ruleSet, ruleSelection);
+        analyzer.execute(ruleSet, ruleSelection, parameters);
     }
 
     private List<Class<?>> getDescriptorTypes() {
