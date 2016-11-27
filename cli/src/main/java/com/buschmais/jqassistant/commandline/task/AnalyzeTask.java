@@ -1,13 +1,24 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -19,19 +30,6 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -72,7 +70,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
             RuleSet availableRules = getAvailableRules();
-            analyzer.execute(availableRules, getRuleSelection(availableRules));
+            analyzer.execute(availableRules, getRuleSelection(availableRules), Collections.<String, String> emptyMap());
         } catch (AnalysisException e) {
             throw new CliExecutionException("Analysis failed.", e);
         } finally {
