@@ -135,7 +135,7 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>plugin</artifactId>
+            <artifactId>store</artifactId>
             <version>${jqa-core.version}</version>
         </dependency>
         <dependency>
