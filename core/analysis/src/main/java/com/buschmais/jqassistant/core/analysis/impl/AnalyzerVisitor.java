@@ -34,6 +34,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     private AnalyzerConfiguration configuration;
+    private Map<String, String> ruleParameters;
     private Store store;
     private AnalysisListener reportWriter;
     private Logger logger;
@@ -45,14 +46,16 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * 
      * @param configuration
      *            THe configuration
+     * @param ruleParameters
      * @param store
      *            The store.
      * @param reportWriter
      *            The report writer.
      * @param log
      */
-    public AnalyzerVisitor(AnalyzerConfiguration configuration, Store store, AnalysisListener reportWriter, Logger log) {
+    public AnalyzerVisitor(AnalyzerConfiguration configuration, Map<String, String> ruleParameters, Store store, AnalysisListener reportWriter, Logger log) {
         this.configuration = configuration;
+        this.ruleParameters = ruleParameters;
         this.store = store;
         this.reportWriter = reportWriter;
         this.logger = log;
@@ -139,7 +142,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             String parameterName = entry.getKey();
             Parameter parameter = entry.getValue();
             Object parameterValue;
-            String parameterValueAsString = this.configuration.getRuleParameters().get(parameterName);
+            String parameterValueAsString = this.ruleParameters.get(parameterName);
             if (parameterValueAsString == null) {
                 parameterValue = parameter.getType().parse(parameterValueAsString);
             } else {

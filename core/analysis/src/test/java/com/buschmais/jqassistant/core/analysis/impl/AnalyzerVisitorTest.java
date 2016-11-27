@@ -7,10 +7,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -78,7 +75,7 @@ public class AnalyzerVisitorTest {
     @Test
     public void columnOrder() throws RuleException, AnalysisException {
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -93,7 +90,7 @@ public class AnalyzerVisitorTest {
 
     @Test
     public void executeConcept() throws RuleException, AnalysisException {
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
@@ -104,7 +101,7 @@ public class AnalyzerVisitorTest {
     public void skipAppliedConcept() throws RuleException, AnalysisException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter, never()).beginConcept(concept);
@@ -116,7 +113,7 @@ public class AnalyzerVisitorTest {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
@@ -130,7 +127,7 @@ public class AnalyzerVisitorTest {
         when(store.executeQuery(Mockito.eq(statement), Mockito.anyMap())).thenThrow(new IllegalStateException("An error"));
         AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, store, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + AnalysisException.class.getName());
         } catch (AnalysisException e) {

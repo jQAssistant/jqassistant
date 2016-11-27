@@ -41,11 +41,11 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> parameters) throws AnalysisException {
+    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> ruleParameters) throws AnalysisException {
         try {
             reportWriter.begin();
             try {
-                AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, store, reportWriter, logger);
+                AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, logger);
                 RuleExecutor executor = new RuleExecutor(visitor);
                 executor.execute(ruleSet, ruleSelection);
             } finally {
