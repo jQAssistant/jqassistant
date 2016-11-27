@@ -150,6 +150,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>plugin</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>splittingsupport</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
