@@ -261,6 +261,10 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>splittingsupport</artifactId>
         </dependency>
         <dependency>
