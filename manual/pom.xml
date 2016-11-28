@@ -91,7 +91,6 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>${org.asciidoctor-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>index</id>

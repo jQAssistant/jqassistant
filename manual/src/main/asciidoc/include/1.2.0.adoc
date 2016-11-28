@@ -7,32 +7,30 @@
 
 include::{docRoot}/cdi/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/ejb3/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/graphml/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/java/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/java8/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/jpa2/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/junit/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/jaxrs/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/javaee6/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/m2repo/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/maven3/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/osgi/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/rdbms/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/testng/asciidoc/1.2.adoc[leveloffset=2]
+include::{docRoot}/tycho/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/xml/asciidoc/1.2.adoc[leveloffset=2]
 include::{docRoot}/yaml/asciidoc/1.2.adoc[leveloffset=2]
 
+include::{docRoot}/jqassistant-maven-plugin/asciidoc/1.2.0.adoc[leveloffset=2]
+include::{docRoot}/commandline/asciidoc/1.2.0.adoc[leveloffset=2]
 
-//drwxr-xr-x  20 obf  staff   680B 30 Okt 01:20 jqa-core-framework
-//drwxr-xr-x  12 obf  staff   408B 29 Okt 23:47 jqa-graphml-plugin
-//drwxr-xr-x  12 obf  staff   408B 29 Okt 21:24 jqa-javaee6-plugin
-//drwxr-xr-x  12 obf  staff   408B 29 Okt 21:23 jqa-jaxrs-plugin
-//drwxr-xr-x  14 obf  staff   476B 29 Okt 23:53 jqa-json-plugin
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 00:13 jqa-m2repo-plugin
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 20:25 jqa-maven-plugin
-//drwxr-xr-x  15 obf  staff   510B 30 Okt 01:00 jqa-neo4j-backend
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 01:04 jqa-osgi-plugin
 //drwxr-xr-x  13 obf  staff   442B 30 Okt 20:26 jqa-plugin-common
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 01:11 jqa-rdbms-plugin
-//drwxr-xr-x  12 obf  staff   408B 29 Okt 23:53 jqa-spring-plugin
-//drwxr-xr-x  13 obf  staff   442B 30 Okt 01:12 jqa-testng-plugin
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 01:12 jqa-tycho-plugin
 
-//drwxr-xr-x  12 obf  staff   408B 30 Okt 01:46 jqa-maven3-plugin
-//drwxr-xr-x  13 obf  staff   442B 29 Okt 23:48 jqa-commandline-tool
+
+//drwxr-xr-x  15 obf  staff   510B 30 Okt 01:00 jqa-neo4j-backend
+//drwxr-xr-x  20 obf  staff   680B 30 Okt 01:20 jqa-core-framework
 
 
 //==== All
