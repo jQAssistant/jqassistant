@@ -1,0 +1,4 @@
+== jQAssistant Plugin for Maven version 1.2
+
+- Maven coordinates changed from `com.buschmais.jqassistant.scm:jqassistant-maven-plugin`
+  to `com.buschmais.jqassistant:jqassistant-maven-plugin`.
