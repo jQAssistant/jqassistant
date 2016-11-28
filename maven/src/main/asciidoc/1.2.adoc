@@ -2,3 +2,5 @@
 
 - Maven coordinates changed from `com.buschmais.jqassistant.scm:jqassistant-maven-plugin`
   to `com.buschmais.jqassistant:jqassistant-maven-plugin`.
+- Added support for rule parameters
+
