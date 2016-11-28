@@ -213,8 +213,20 @@ public class XmlRuleSetReader implements RuleSetReader {
         for (ParameterType parameterType : parameterTypes) {
             Parameter.Type type;
             switch (parameterType.getType()) {
+            case SHORT:
+                type = Parameter.Type.SHORT;
+                break;
             case INT:
                 type = Parameter.Type.INT;
+                break;
+            case LONG:
+                type = Parameter.Type.LONG;
+                break;
+            case DOUBLE:
+                type = Parameter.Type.DOUBLE;
+                break;
+            case BOOLEAN:
+                type = Parameter.Type.BOOLEAN;
                 break;
             case STRING:
                 type = Parameter.Type.STRING;

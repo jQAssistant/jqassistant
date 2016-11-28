@@ -149,8 +149,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
                 parameterValue = parameter.getDefaultValue();
             }
             if (parameterValue == null) {
-                throw new AnalysisException("No value or default value defined for required parameter '" + parameterName + "' of rule'" + executableRule.getId()
-                        + "' but no value is availabble'");
+                throw new AnalysisException(
+                        "No value or default value defined for required parameter '" + parameterName + "' of rule'" + executableRule.getId() + "'.");
             }
             ruleParameters.put(parameterName, parameterValue);
         }

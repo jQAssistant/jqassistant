@@ -3,16 +3,40 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 public class Parameter {
 
     public enum Type {
-        STRING {
+        SHORT {
             @Override
             public Object parse(String value) {
-                return value;
+                return Short.valueOf(value);
             }
         },
         INT {
             @Override
             public Object parse(String value) {
                 return Integer.valueOf(value);
+            }
+        },
+        LONG {
+            @Override
+            public Object parse(String value) {
+                return Long.valueOf(value);
+            }
+        },
+        DOUBLE {
+            @Override
+            public Object parse(String value) {
+                return Double.valueOf(value);
+            }
+        },
+        BOOLEAN {
+            @Override
+            public Object parse(String value) {
+                return Boolean.valueOf(value);
+            }
+        },
+        STRING {
+            @Override
+            public Object parse(String value) {
+                return value;
             }
         };
 

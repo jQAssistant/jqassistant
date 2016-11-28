@@ -8,7 +8,8 @@
         <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0"
+                            maxOccurs="unbounded"/>
                 <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:complexType>
@@ -29,12 +30,16 @@
     <xs:complexType name="parameterType">
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
-        <xs:attribute name="defaultValue" type="xs:string" use="required"/>
+        <xs:attribute name="defaultValue" type="xs:string" use="optional"/>
     </xs:complexType>
 
     <xs:simpleType name="parameterTypes">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="short"/>
             <xs:enumeration value="int"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="boolean"/>
             <xs:enumeration value="string"/>
         </xs:restriction>
     </xs:simpleType>
@@ -59,7 +64,7 @@
 
     <xs:complexType name="referenceType">
         <xs:attribute name="refId" type="xs:string" use="required"/>
-        <xs:attribute name="optional" type="xs:boolean" use="optional" default="false" />
+        <xs:attribute name="optional" type="xs:boolean" use="optional" default="false"/>
     </xs:complexType>
 
     <xs:complexType name="includedReferenceType">
