@@ -16,7 +16,7 @@
                 <artifactId>@project.artifactId@</artifactId>
                 <configuration>
                     <ruleParameters>
-                        <test.artifactId>@project.artifactId@</test.artifactId>
+                        <testArtifactId>${project.artifactId}</testArtifactId>
                     </ruleParameters>
                 </configuration>
             </plugin>

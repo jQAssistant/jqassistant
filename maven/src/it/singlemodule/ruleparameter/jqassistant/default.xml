@@ -5,13 +5,13 @@
     </group>
 
     <concept id="test:RuleParameter">
-        <requiresParameter name="test.artifactId" type="string" />
+        <requiresParameter name="testArtifactId" type="string" />
         <description>Test concept for verifying rule parameters.</description>
         <cypher>
             MATCH
               (project:Maven:Project)
             WHERE
-              project.artifactId={test.artifactId}
+              project.artifactId={testArtifactId}
             RETURN
               project
         </cypher>
