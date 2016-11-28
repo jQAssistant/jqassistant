@@ -34,6 +34,8 @@ import com.buschmais.xo.api.ResultIterator;
 public class AnalyzerVisitorTest {
 
     private static final String RULESOURCE = "test.xml";
+    private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
+    private static final String PARAMETER_WITH_DEFAULT = "withDefault";
 
     @Mock
     private Store store;
@@ -53,11 +55,15 @@ public class AnalyzerVisitorTest {
 
     private List<String> columnNames;
 
+    private Map<String, String> ruleParameters;
+
     @Before
     public void setUp() throws RuleHandlingException {
         statement = "match (n) return n";
         concept = createConcept(statement);
         columnNames = Arrays.asList("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
+        ruleParameters = new HashMap<>();
+        ruleParameters.put(PARAMETER_WITHOUT_DEFAULT, "value");
 
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(Mockito.eq(statement), Mockito.anyMap())).thenReturn(result);
@@ -75,7 +81,7 @@ public class AnalyzerVisitorTest {
     @Test
     public void columnOrder() throws RuleException, AnalysisException {
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -90,8 +96,14 @@ public class AnalyzerVisitorTest {
 
     @Test
     public void executeConcept() throws RuleException, AnalysisException {
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
+
+        ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(store).executeQuery(Mockito.eq(statement), argumentCaptor.capture());
+        Map<String, Object> parameters = argumentCaptor.getValue();
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object>equalTo("value"));
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object>equalTo("defaultValue"));
 
         verify(reportWriter).beginConcept(concept);
         verify(store).create(ConceptDescriptor.class);
@@ -101,7 +113,7 @@ public class AnalyzerVisitorTest {
     public void skipAppliedConcept() throws RuleException, AnalysisException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter, never()).beginConcept(concept);
@@ -113,11 +125,27 @@ public class AnalyzerVisitorTest {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
-        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+        AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);
+    }
+
+    @Test
+    public void missingParameter() throws RuleException, AnalysisException {
+        String statement = "match (n) return n";
+        Concept concept = createConcept(statement);
+        AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
+        try {
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+            analyzerVisitor.visitConcept(concept, Severity.MINOR);
+            fail("Expecting an " + AnalysisException.class.getName());
+        } catch (AnalysisException e) {
+            String message = e.getMessage();
+            assertThat(message, containsString(concept.getId()));
+            assertThat(message, containsString(PARAMETER_WITHOUT_DEFAULT));
+        }
     }
 
     @Test
@@ -127,7 +155,7 @@ public class AnalyzerVisitorTest {
         when(store.executeQuery(Mockito.eq(statement), Mockito.anyMap())).thenThrow(new IllegalStateException("An error"));
         AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + AnalysisException.class.getName());
         } catch (AnalysisException e) {
@@ -138,10 +166,15 @@ public class AnalyzerVisitorTest {
 
     private Concept createConcept(String statement) {
         Executable executable = new CypherExecutable(statement);
+        Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
+        Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
+        Map<String, Parameter> parameters = new HashMap<>();
+        parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
+        parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Verification verification = new RowCountVerification();
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
         return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MINOR).executable(executable).verification(verification).report(report).get();
+                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(verification).report(report).get();
     }
 
     private Query.Result<Query.Result.CompositeRowObject> createResult(List<String> columnNames) {
