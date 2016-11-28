@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
+           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.2"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.2"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-report">
@@ -45,6 +45,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="success"/>
             <xs:enumeration value="failure"/>
+            <xs:enumeration value="skipped"/>
         </xs:restriction>
     </xs:simpleType>
 

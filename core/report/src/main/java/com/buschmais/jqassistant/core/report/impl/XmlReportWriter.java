@@ -32,7 +32,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     public static final String TYPE = "xml";
 
-    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
+    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.2";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private interface XmlOperation {

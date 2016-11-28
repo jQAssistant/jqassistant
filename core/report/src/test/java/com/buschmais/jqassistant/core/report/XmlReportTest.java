@@ -27,7 +27,7 @@ public class XmlReportTest {
         String xmlReport = XmlReportTestHelper.createXmlReport();
 
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.0.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.2.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -80,7 +80,7 @@ public class XmlReportTest {
     public void testReportWithConstraint() throws JAXBException, SAXException, AnalysisListenerException {
         String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.0.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.2.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

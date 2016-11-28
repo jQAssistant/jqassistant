@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
+           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-plugin">
