@@ -42,6 +42,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     /**
+     * The rule parameters to use (optional).
+     */
+    @Parameter(property = "jqassistant.ruleParameters")
+    protected Map<String, String> ruleParameters;
+
+    /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
      */
     @Parameter(property = "jqassistant.failOnViolations", defaultValue = "false")
@@ -121,7 +127,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
         try {
-            analyzer.execute(ruleSet, ruleSelection, Collections.<String, String> emptyMap());
+            analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (AnalysisException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
