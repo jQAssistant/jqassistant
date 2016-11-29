@@ -48,6 +48,14 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
     }
 
     @Test
+    public void conceptWithParameter() throws IOException, InterruptedException {
+        File ruleParameters = new File(AnalyzeIT.class.getResource("/ruleparameters.properties").getPath());
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER , "-ruleParameters" , ruleParameters.getAbsolutePath()};
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT_WITH_PARAMETER);
+    }
+
+    @Test
     public void constraintSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(2));

@@ -25,6 +25,7 @@ public class AvailableRulesIT extends com.buschmais.jqassistant.commandline.test
         assertThat(executionResult.getExitCode(), equalTo(0));
         List<String> console = executionResult.getErrorConsole();
         assertThat(console, hasItem(containsString(TEST_CONCEPT)));
+        assertThat(console, hasItem(containsString(TEST_CONCEPT_WITH_PARAMETER)));
         assertThat(console, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
         assertThat(console, hasItem(containsString("junit4:TestMethod")));
     }

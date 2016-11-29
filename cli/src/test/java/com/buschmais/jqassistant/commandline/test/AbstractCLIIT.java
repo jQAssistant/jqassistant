@@ -29,6 +29,7 @@ public abstract class AbstractCLIIT {
     public static final String RULES_DIRECTORY = com.buschmais.jqassistant.commandline.test.AnalyzeIT.class.getResource("/rules").getFile();
 
     public static final String TEST_CONCEPT = "default:TestConcept";
+    public static final String TEST_CONCEPT_WITH_PARAMETER = "default:TestConceptWithParameter";
     public static final String TEST_CONSTRAINT = "default:TestConstraint";
     // defined as asciidoc
     public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";

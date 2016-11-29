@@ -1,12 +1,10 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -37,10 +35,12 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private static final String CMDLINE_OPTION_SEVERITY = "severity";
-    protected static final String CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS = "executeAppliedConcepts";
+    private static final String CMDLINE_OPTION_RULEPARAMETERS = "ruleParameters";
+    private static final String CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS = "executeAppliedConcepts";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
+    private File ruleParametersFile;
     private String reportDirectory;
     private Severity severity;
     private boolean executeAppliedConcepts;
@@ -83,8 +83,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             final int conceptViolations = reportHelper.verifyConceptResults(severity, inMemoryReportWriter);
             final int constraintViolations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
             if (conceptViolations > 0 || constraintViolations > 0) {
-                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations
-                        + " constraints");
+                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
         } finally {
             store.commitTransaction();
@@ -92,10 +91,37 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     /**
+     * Reads the given rule parameters file.
+     * 
+     * @return The map containing the rule parameters.
+     * @throws CliExecutionException
+     *             If the file cannot be read.
+     */
+    private Map<String, String> getRuleParameters() throws CliExecutionException {
+        Map<String, String> ruleParameters;
+        if (ruleParametersFile == null) {
+            ruleParameters = Collections.emptyMap();
+        } else {
+            Properties properties = new Properties();
+            try {
+                properties.load(new FileInputStream(ruleParametersFile));
+            } catch (IOException e) {
+                throw new CliExecutionException("Cannot read rule parameters file '" + ruleParametersFile.getPath() + "'.");
+            }
+            ruleParameters = new TreeMap<>();
+            for (String name : properties.stringPropertyNames()) {
+                ruleParameters.put(name, properties.getProperty(name));
+            }
+        }
+        return ruleParameters;
+    }
+
+    /**
      * Get all configured report plugins.
      *
      * @return The list of report plugins.
-     * @throws CliExecutionException If the plugins cannot be loaded or configured.
+     * @throws CliExecutionException
+     *             If the plugins cannot be loaded or configured.
      */
     private Map<String, ReportPlugin> getReportPlugins() throws CliExecutionException {
         ReportPluginRepository reportPluginRepository;
@@ -121,6 +147,15 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     public void withOptions(final CommandLine options) throws CliConfigurationException {
         super.withOptions(options);
+        String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
+        if (ruleParametersFileName != null) {
+            File ruleParametersFile = new File(ruleParametersFileName);
+            if (!ruleParametersFile.exists()) {
+                throw new CliConfigurationException("Cannot find rule parameters file '" + ruleParametersFileName + "'.");
+            }
+        } else {
+            ruleParametersFile = null;
+        }
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, Severity.CRITICAL.name()).toUpperCase());
         executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
@@ -129,11 +164,13 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     protected void addTaskOptions(final List<Option> options) {
         super.addTaskOptions(options);
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs().create(
-                CMDLINE_OPTION_REPORTDIR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULEPARAMETERS).withDescription("The name of a properties file providing rule parameters.")
+                .hasArgs().create(CMDLINE_OPTION_RULEPARAMETERS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
+                .create(CMDLINE_OPTION_REPORTDIR));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SEVERITY).withDescription("The severity threshold to report a failure.").hasArgs()
                 .create(CMDLINE_OPTION_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS).withDescription(
-                "If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS)
+                .withDescription("If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
     }
 }
