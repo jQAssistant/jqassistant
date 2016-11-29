@@ -67,10 +67,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        Map<String, String> ruleParameters = getRuleParameters();
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
             RuleSet availableRules = getAvailableRules();
-            analyzer.execute(availableRules, getRuleSelection(availableRules), Collections.<String, String> emptyMap());
+            analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (AnalysisException e) {
             throw new CliExecutionException("Analysis failed.", e);
         } finally {
