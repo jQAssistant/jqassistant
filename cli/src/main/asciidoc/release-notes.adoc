@@ -1,0 +1,6 @@
+
+= jQAssistant Commandline Tool Release Notes
+
+include::1.2.0.adoc[]
+
+
