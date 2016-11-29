@@ -150,12 +150,12 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         super.withOptions(options);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
         if (ruleParametersFileName != null) {
-            File ruleParametersFile = new File(ruleParametersFileName);
-            if (!ruleParametersFile.exists()) {
+            this.ruleParametersFile = new File(ruleParametersFileName);
+            if (!this.ruleParametersFile.exists()) {
                 throw new CliConfigurationException("Cannot find rule parameters file '" + ruleParametersFileName + "'.");
             }
         } else {
-            ruleParametersFile = null;
+            this.ruleParametersFile = null;
         }
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, Severity.CRITICAL.name()).toUpperCase());
