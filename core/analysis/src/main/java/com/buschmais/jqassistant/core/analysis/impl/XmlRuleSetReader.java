@@ -222,6 +222,9 @@ public class XmlRuleSetReader implements RuleSetReader {
             case LONG:
                 type = Parameter.Type.LONG;
                 break;
+            case FLOAT:
+                type = Parameter.Type.FLOAT;
+                break;
             case DOUBLE:
                 type = Parameter.Type.DOUBLE;
                 break;
