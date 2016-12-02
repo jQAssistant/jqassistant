@@ -2,9 +2,9 @@
 
 == Concepts
 
-[[test:ParameterizedConcept]]
+[[test:ConceptWithParameters]]
 .Test Concept with parameters.
-[source,cypher,role=concept,requiresParameters="string name, int limit"]
+[source,cypher,role=concept,requiresParameters="short shortParam; int intParam; long longParam; float floatParam; double doubleParam; boolean booleanParam; string stringParam"]
 ----
 match
   (n)
@@ -16,9 +16,9 @@ limit
   {limit}
 ----
 
-[[test:ParameterizedConceptWithDefaultValues]]
+[[test:ConceptWithParametersAndDefaultValues]]
 .Test Concept with parameters and default values.
-[source,cypher,role=concept,requiresParameters="string name='Test', int limit=10"]
+[source,cypher,requiresParameters="short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; string stringParam='FortyTwo'"]
 ----
 match
   (n)
@@ -32,9 +32,9 @@ limit
 
 == Constraints
 
-[[test:ParameterizedConstraint]]
+[[test:ConstraintWithParameters]]
 .Test Constraint with parameters.
-[source,cypher,role=constraint,requiresParameters="string name,int limit"]
+[source,cypher,role=constraint,requiresParameters="short shortParam; int intParam; long longParam; float floatParam; double doubleParam; boolean booleanParam; String stringParam"]
 ----
 match
   (n)
@@ -46,9 +46,9 @@ limit
   {limit}
 ----
 
-[[test:ParameterizedConstraintWithDefaultValues]]
+[[test:ConstraintWithParametersAndDefaultValues]]
 .Test Constraint with parameters and default values.
-[source,cypher,role=constraint,requiresParameters="string name='Test',int limit=10"]
+[source,cypher,requiresParameters="short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; string stringParam='FortyTwo'"]
 ----
 match
   (n)

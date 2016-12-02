@@ -43,6 +43,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     public static final String SEVERITY = "severity";
     public static final String DEPENDS = "depends";
     public static final String REQUIRES_CONCEPTS = "requiresConcepts";
+    public static final String REQUIRES_PARAMETERS = "requiresParameters";
     public static final String REPORT_TYPE = "reportType";
     public static final String PRIMARY_REPORT_COLUM = "primaryReportColumn";
     public static final String REPORT_PROPERTIES = "reportProperties";
@@ -72,9 +73,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Reads and decodes a rule source.
      *
-     * @param source  The source.
-     * @param builder The builder to use.
-     * @throws RuleException If building fails.
+     * @param source
+     *            The source.
+     * @param builder
+     *            The builder to use.
+     * @throws RuleException
+     *             If building fails.
      */
     private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
         Map<String, Object> parameters = new HashMap<>();
@@ -119,11 +123,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, REQUIRES_CONCEPTS).keySet());
             Set<String> depends = getDependencies(attributes, DEPENDS).keySet();
             if (!depends.isEmpty()) {
-                LOGGER.info(
-                        "Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
+                LOGGER.info("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
                         ruleSource.getId(), id);
                 requiresConcepts.addAll(depends);
             }
+            Map<String, Parameter> parameters = getParameters(part.getAttributes().get(REQUIRES_PARAMETERS));
             Object language = part.getAttributes().get(LANGUAGE);
             String source = unescapeHtml(part.getContent());
             Executable executable;
@@ -143,11 +147,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = getReport(part);
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+                Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
+                        .requiresConceptIds(requiresConcepts).parameters(parameters).verification(verification).report(report).get();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+                Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
+                        .requiresConceptIds(requiresConcepts).parameters(parameters).verification(verification).report(report).get();
                 builder.addConstraint(constraint);
             }
         }
@@ -156,10 +162,14 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Extract the defined groups from a document.
      *
-     * @param ruleSource     The source of the document.
-     * @param doc            The document.
-     * @param ruleSetBuilder The rule set builder.
-     * @throws RuleException If the rules cannot be built.
+     * @param ruleSource
+     *            The source of the document.
+     * @param doc
+     *            The document.
+     * @param ruleSetBuilder
+     *            The rule set builder.
+     * @throws RuleException
+     *             If the rules cannot be built.
      */
     private void extractGroups(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (ContentPart contentPart : findGroups(doc.getParts())) {
@@ -168,7 +178,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Map<String, Severity> concepts = getDependencies(attributes, INCLUDES_CONCEPTS);
             Map<String, Severity> groups = getDependencies(attributes, INCLUDES_GROUPS);
             Severity severity = getSeverity(contentPart, null);
-            Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource).conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
+            Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource)
+                    .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
             ruleSetBuilder.addGroup(group);
         }
     }
@@ -176,9 +187,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Get dependency declarations for an attribute from a map of attributes.
      *
-     * @param attributes    The map of attributes.
-     * @param attributeName The name of the attribute.
-     * @return A map containing the ids of the dependencies as keys and their severity (optional).
+     * @param attributes
+     *            The map of attributes.
+     * @param attributeName
+     *            The name of the attribute.
+     * @return A map containing the ids of the dependencies as keys and their
+     *         severity (optional).
      */
     private Map<String, Severity> getDependencies(Map<String, Object> attributes, String attributeName) throws RuleException {
         String attribute = (String) attributes.get(attributeName);
@@ -202,8 +216,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Extract the optional severity of a rule.
      *
-     * @param part            The part representing a rule.
-     * @param defaultSeverity The default severity to use if no severity is specified.
+     * @param part
+     *            The part representing a rule.
+     * @param defaultSeverity
+     *            The default severity to use if no severity is specified.
      * @return The severity.
      */
     private Severity getSeverity(ContentPart part, Severity defaultSeverity) throws RuleException {
@@ -218,9 +234,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Unescapes the content of a rule.
      *
-     * TODO do better, or even better add a partget(Original|Raw)Content() to asciidoctor
+     * TODO do better, or even better add a partget(Original|Raw)Content() to
+     * asciidoctor
      *
-     * @param content The content of a rule.
+     * @param content
+     *            The content of a rule.
      * @return The unescaped rule
      */
     private String unescapeHtml(String content) {
@@ -228,9 +246,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Find all content parts representing source code listings with a role that represents a rule.
+     * Find all content parts representing source code listings with a role that
+     * represents a rule.
      *
-     * @param parts The content parts of the document.
+     * @param parts
+     *            The content parts of the document.
      * @return A collection of content parts representing rules.
      */
     private static Collection<ContentPart> findExecutableRules(Collection<ContentPart> parts) {
@@ -262,7 +282,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Create the report part of a rule.
      *
-     * @param part The content part.
+     * @param part
+     *            The content part.
      * @return The report.
      */
     private Report getReport(ContentPart part) {
@@ -282,8 +303,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Parse properties from an attribute.
      *
-     * @param part          The content part containing the attribute.
-     * @param attributeName The attribute name.
+     * @param part
+     *            The content part containing the attribute.
+     * @param attributeName
+     *            The attribute name.
      * @return The properties.
      */
     private Properties parseProperties(ContentPart part, String attributeName) {
@@ -306,4 +329,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         return properties;
     }
+
+    private Map<String, Parameter> getParameters(Object attribute) {
+        if (attribute == null) {
+            return Collections.emptyMap();
+        }
+        Map<String, Parameter> parameters = new HashMap<>();
+        String[] parameterDeclarations = ((String) attribute).split(";");
+        for (String parameterDeclaration : parameterDeclarations) {
+            Scanner scanner = new Scanner(parameterDeclaration);
+            String typeName = scanner.next();
+            String name = scanner.next();
+            Parameter.Type type = Parameter.Type.valueOf(typeName.toUpperCase());
+            Parameter parameter = new Parameter(name, type, null);
+            parameters.put(name, parameter);
+        }
+        return parameters;
+    }
+
 }
