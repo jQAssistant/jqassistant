@@ -24,18 +24,18 @@ public class DefaultTaskFactoryImpl implements TaskFactory {
 
     @Override
     public List<Task> getTasks() {
-        List<Task> taskNames = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
         for (DefaultTask defaultTask : DefaultTask.values()) {
-            taskNames.add(defaultTask.getTask());
+            tasks.add(defaultTask.getTask());
         }
-        return taskNames;
+        return tasks;
     }
 
     @Override
     public List<String> getTaskNames() {
         List<String> taskNames = new ArrayList<>();
         for (DefaultTask defaultTask : DefaultTask.values()) {
-            taskNames.add(defaultTask.name().toLowerCase());
+            taskNames.add(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, defaultTask.name()));
         }
         return taskNames;
     }
