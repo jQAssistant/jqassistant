@@ -35,13 +35,15 @@
 
     <xs:simpleType name="parameterTypes">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="char"/>
+            <xs:enumeration value="byte"/>
             <xs:enumeration value="short"/>
             <xs:enumeration value="int"/>
             <xs:enumeration value="long"/>
             <xs:enumeration value="float"/>
             <xs:enumeration value="double"/>
             <xs:enumeration value="boolean"/>
-            <xs:enumeration value="string"/>
+            <xs:enumeration value="String"/>
         </xs:restriction>
     </xs:simpleType>
 

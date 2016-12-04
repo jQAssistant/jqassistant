@@ -144,7 +144,11 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             Object parameterValue;
             String parameterValueAsString = this.ruleParameters.get(parameterName);
             if (parameterValueAsString != null) {
-                parameterValue = parameter.getType().parse(parameterValueAsString);
+                try {
+                    parameterValue = parameter.getType().parse(parameterValueAsString);
+                } catch (RuleException e) {
+                    throw new AnalysisException("Cannot determine value for parameter " + parameterName + "' of rule '" + executableRule + "'.");
+                }
             } else {
                 parameterValue = parameter.getDefaultValue();
             }

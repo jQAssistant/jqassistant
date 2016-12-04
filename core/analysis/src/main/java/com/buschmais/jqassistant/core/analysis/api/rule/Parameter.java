@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+
 /**
  * Defines a rule parameter.
  */
@@ -9,6 +11,18 @@ public class Parameter {
      * Defines the supported parameter types.
      */
     public enum Type {
+        CHAR {
+            @Override
+            protected Object parseString(String value) {
+                return value.charAt(0);
+            }
+        },
+        BYTE {
+            @Override
+            protected Object parseString(String value) {
+                return Byte.valueOf(value);
+            }
+        },
         SHORT {
             @Override
             public Object parseString(String value) {
@@ -54,8 +68,12 @@ public class Parameter {
 
         protected abstract Object parseString(String value);
 
-        public Object parse(String value) {
-            return value != null ? parseString(value) : null;
+        public Object parse(String value) throws RuleException {
+            try {
+                return value != null ? parseString(value) : null;
+            } catch (NumberFormatException e) {
+                throw new RuleException("Cannot parse value " + value + " for type " + name());
+            }
         };
 
     }

@@ -1,13 +1,15 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
 
     <concept id="test:ConceptWithParameters">
+        <requiresParameter name="charParam" type="char"/>
+        <requiresParameter name="byteParam" type="byte"/>
         <requiresParameter name="shortParam" type="short"/>
         <requiresParameter name="intParam" type="int"/>
         <requiresParameter name="longParam" type="long"/>
         <requiresParameter name="floatParam" type="float"/>
         <requiresParameter name="doubleParam" type="double"/>
         <requiresParameter name="booleanParam" type="boolean"/>
-        <requiresParameter name="stringParam" type="string"/>
+        <requiresParameter name="stringParam" type="String"/>
         <description>Test Concept.</description>
         <cypher><![CDATA[
             match
@@ -22,13 +24,15 @@
     </concept>
 
     <concept id="test:ConceptWithParametersAndDefaultValues">
+        <requiresParameter name="charParam" type="char" defaultValue="4"/>
+        <requiresParameter name="byteParam" type="byte" defaultValue="42"/>
         <requiresParameter name="shortParam" type="short" defaultValue="42"/>
         <requiresParameter name="intParam" type="int" defaultValue="42"/>
         <requiresParameter name="longParam" type="long" defaultValue="42"/>
         <requiresParameter name="floatParam" type="float" defaultValue="42"/>
         <requiresParameter name="doubleParam" type="double" defaultValue="42"/>
         <requiresParameter name="booleanParam" type="boolean" defaultValue="true"/>
-        <requiresParameter name="stringParam" type="string" defaultValue="FortyTwo"/>
+        <requiresParameter name="stringParam" type="String" defaultValue="FortyTwo"/>
         <description>Test Concept.</description>
         <cypher><![CDATA[
             match
@@ -43,13 +47,15 @@
     </concept>
 
     <constraint id="test:ConstraintWithParameters">
+        <requiresParameter name="charParam" type="char"/>
+        <requiresParameter name="byteParam" type="byte"/>
         <requiresParameter name="shortParam" type="short"/>
         <requiresParameter name="intParam" type="int"/>
         <requiresParameter name="longParam" type="long"/>
         <requiresParameter name="floatParam" type="float"/>
         <requiresParameter name="doubleParam" type="double"/>
         <requiresParameter name="booleanParam" type="boolean"/>
-        <requiresParameter name="stringParam" type="string"/>
+        <requiresParameter name="stringParam" type="String"/>
         <description>Test Constraint.</description>
         <cypher><![CDATA[
             match
@@ -64,13 +70,15 @@
     </constraint>
 
     <constraint id="test:ConstraintWithParametersAndDefaultValues">
+        <requiresParameter name="charParam" type="char" defaultValue="4"/>
+        <requiresParameter name="byteParam" type="byte" defaultValue="42"/>
         <requiresParameter name="shortParam" type="short" defaultValue="42"/>
         <requiresParameter name="intParam" type="int" defaultValue="42"/>
         <requiresParameter name="longParam" type="long" defaultValue="42"/>
         <requiresParameter name="floatParam" type="float" defaultValue="42"/>
         <requiresParameter name="doubleParam" type="double" defaultValue="42"/>
         <requiresParameter name="booleanParam" type="boolean" defaultValue="true"/>
-        <requiresParameter name="stringParam" type="string" defaultValue="FortyTwo"/>
+        <requiresParameter name="stringParam" type="String" defaultValue="FortyTwo"/>
         <description>Test Constraint.</description>
         <cypher><![CDATA[
             match
