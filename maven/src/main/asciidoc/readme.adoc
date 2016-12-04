@@ -126,6 +126,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <groups>
                                 <group>default</group>
                             </groups>
+                            <ruleParameter>
+                                <myRuleParameter>com.buschmais</myRuleParameter>
+                            </ruleParameters>
                             <reportProperties>
                                 <customReport.fileName>
                                     ${project.build.directory}/customReport.txt
@@ -303,6 +306,8 @@ Executes an analysis.
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
 ** default 'false'
+* ruleParameters
+** The values for rules that require parameters
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
