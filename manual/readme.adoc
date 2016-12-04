@@ -1,4 +1,4 @@
-= jQAssistant Core Framework
+= jQAssistant Manual
 
 This repository contains the common parts of the jQAssistant 
 User Manual and its build structure.

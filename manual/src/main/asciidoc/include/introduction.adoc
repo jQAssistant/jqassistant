@@ -202,6 +202,160 @@ Thus execution of the group 'my-rules:MyGroup' will report a violation of constr
 - ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
 - ...'my-rules-Constraint2' with severity 'minor' (specified within the group)
 
+==== Script Languages
+
+Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
+
+[source,xml]
+.my-scripting-rules.xml
+----
+<constraint id="xmlExample:JavaScriptConstraint">
+    <description>JavaScript example constraint: returns a result containing the number
+        of declared methods for each class.</description>
+    <script language="JavaScript">
+        // Define the columns returned by the constraint
+        var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
+        // Define the list of rows returned by the constraint
+        var rows = new java.util.ArrayList();
+        // Execute a query using the store
+        var typeIterator = store.executeQuery("match (t:Type:Class) return t").iterator();
+        while(typeIterator.hasNext()) {
+            // Get the next row from the query result
+            var typeRow = typeIterator.next();
+            // Get the column "t" from the row, it represents a type
+            // descriptor as defined by the Java plugin
+            var type = typeRow.get("t",
+                com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.class);
+            // Get the declared methods of the type and count them
+            var methodIterator = type.getDeclaredMethods().iterator();
+            var methodsOfType = 0;
+            while( methodIterator.hasNext()) {
+                methodIterator.next();
+                methodsOfType++;
+            }
+            // Define the row for the result and put the value for each defined column
+            var resultRow = new java.util.HashMap();
+            resultRow.put("Class", type);
+            resultRow.put("MethodsOfType", methodsOfType);
+            rows.add(resultRow);
+        }
+        // Return the result
+        var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+        new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
+    </script>
+</constraint>
+----
+
+or in Asciidoc:
+
+....
+[[asciiDocExample:JavaScriptConstraint]]
+.JavaScript example constraint: returns a result containing the number of declared methods for each class.
+[source,javascript,role=constraint]
+----
+// Define the columns returned by the constraint
+var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
+// Define the list of rows returned by the constraint
+var rows = new java.util.ArrayList();
+// Execute a query using the store
+var typeIterator = store.executeQuery("match (t:Type:Class) return t").iterator();
+while(typeIterator.hasNext()) {
+    // Get the next row from the query result
+    var typeRow = typeIterator.next();
+    // Get the column "t" from the row, it represents a type
+    // descriptor as defined by the Java plugin
+    var type = typeRow.get("t",
+        com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.class);
+    // Get the declared methods of the type and count them
+    var methodIterator = type.getDeclaredMethods().iterator();
+    var methodsOfType = 0;
+    while( methodIterator.hasNext()) {
+        methodIterator.next();
+        methodsOfType++;
+    }
+    // Define the row for the result and put the value for each defined column
+    var resultRow = new java.util.HashMap();
+    resultRow.put("Class", type);
+    resultRow.put("MethodsOfType", methodsOfType);
+    rows.add(resultRow);
+}
+// Return the result
+var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
+----
+....
+
+==== Rule Parameters
+
+Both concepts and constraints may define required parameters:
+
+[source,xml]
+.my-rules.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
+
+    <concept id="my-rules:ApplicationRootPackage">
+        <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <1>
+        <description>Labels the root package of the application with "Root".</description>
+        <cypher><![CDATA[
+           MATCH
+             (root:Package)
+           WHERE
+             root.name = {rootPackage} <2>
+           SET
+             root:Root
+           RETURN
+             root
+        ]]></cypher>
+    </concept>
+
+<jqa:jqassistant-rules/>
+----
+
+<1> Declaration of a required parameter with a default value.
+<2> Reference to a parameter in a Cypher query.
+
+or in Asciidoc:
+
+....
+[[my-rules:my-rules:ApplicationRootPackage]]
+.Labels the root package of the application with "Root".
+[role=group,role=concept,requiresParameters="String rootPackage; int limit"] <1>
+----
+MATCH
+  (root:Package)
+WHERE
+  root.name = {rootPackage} <2>
+SET
+  root:Root
+RETURN
+  root
+----
+....
+
+<1> requiresParameters is a list of parameter declarations separated by `;`
+<2> Reference to a parameter in a Cypher query.
+
+The following parameter types are supported:
+
+* char
+* byte
+* short
+* int
+* long
+* float
+* double
+* boolean
+* String
+
+The values for the required parameters must be provided by the execution context, e.g. the jQAssistant
+Maven plugin or the command line utility. A rule may specify a default value which is used if no concrete value
+is provided for an execution.
+
+NOTE: Default values are currently not supported for rules in Asciidoc files.
+
+For rules expressed in Cypher the parameters are referenced by `{...}` placeholders. For scripts the values are passed
+as parameters, i.e. they may be used directly in the code.
 
 ==== Result verification
 The default strategy verifies a result of a concept or constraint by counting the number returned rows, i.e.
@@ -252,41 +406,6 @@ RETURN
 
 For each returned row the value in column "Count" will be verified following the same principles as described above. The
 rule will fail if at least one row does not match the expected result.
-
-==== Script Languages
-
-Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
-
-[source,xml]
-.my-scripting-rules.xml
-----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
-
-    <constraint id="my-scripting-rules:MyConcept">
-        <description>A JavaScript based concept.</description>
-        <script language="JavaScript">
-          ...
-        </script>
-    </constraint>
-
-</jqa:jqassistant-rules>
-----
-
-
-[source,asciidoc]
-.my-scripting-rules.adoc
-....
-
-[[my-scripting-rules:MyConcept]]
-.A JavaScript based concept.
-[source,javascript,role=constraint]
-----
-  ...
-----
-
-....
-
-Refer to the examples section for a detailed explanation.
 
 ==== Report
 
