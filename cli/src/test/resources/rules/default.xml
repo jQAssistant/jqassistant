@@ -11,7 +11,7 @@
     </concept>
 
     <concept id="default:TestConceptWithParameter">
-        <requiresParameter name="testParam" type="string" />
+        <requiresParameter name="testParam" type="String" />
         <description>Test concept.</description>
         <cypher><![CDATA[
            WITH
