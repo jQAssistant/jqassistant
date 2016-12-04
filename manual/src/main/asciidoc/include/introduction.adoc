@@ -358,7 +358,8 @@ For rules expressed in Cypher the parameters are referenced by `{...}` placehold
 as parameters, i.e. they may be used directly in the code.
 
 ==== Result verification
-The default strategy verifies a result of a concept or constraint by counting the number returned rows, i.e.
+
+The default strategy verifies a result of a concept or constraint by counting the number of returned rows, i.e.
 
 - a concept is valid if it returns at least one row
 - a constraint is valid if it returns no row
