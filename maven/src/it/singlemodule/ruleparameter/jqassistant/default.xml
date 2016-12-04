@@ -5,7 +5,7 @@
     </group>
 
     <concept id="test:RuleParameter">
-        <requiresParameter name="testArtifactId" type="string" />
+        <requiresParameter name="testArtifactId" type="String" />
         <description>Test concept for verifying rule parameters.</description>
         <cypher>
             MATCH
