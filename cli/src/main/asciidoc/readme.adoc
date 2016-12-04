@@ -90,6 +90,8 @@ Executes an analysis.
 * -executeAppliedConcepts
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
+* -ruleParameters
+** specifies the path to a property file defining values for parameters declared by rules
 
 [[cli:available-rules]]
 ==== available-rules
