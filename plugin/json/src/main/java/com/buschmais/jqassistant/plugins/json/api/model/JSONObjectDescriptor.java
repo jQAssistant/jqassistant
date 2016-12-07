@@ -5,6 +5,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.List;
 
+/**
+ * Represents an object found in a JSON document.
+ */
 @Label("Object")
 public interface JSONObjectDescriptor extends JSONDescriptor
 {

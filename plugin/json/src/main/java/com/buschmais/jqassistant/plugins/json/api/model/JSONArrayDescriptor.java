@@ -5,6 +5,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.List;
 
+/**
+ * Represents an JSON array found within a JSON document.
+ */
 @Label("Array")
 public interface JSONArrayDescriptor extends JSONValueDescriptor<List<JSONValueDescriptor>> {
     @Relation("CONTAINS_VALUE")

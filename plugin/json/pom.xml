@@ -8,8 +8,8 @@
         <version>1.2.0-RC2-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.buschmais.jqassistant.plugins</groupId>
-    <artifactId>jqa-json-plugin</artifactId>
+    <groupId>com.buschmais.jqassistant.plugin</groupId>
+    <artifactId>json</artifactId>
     <version>1.2-SNAPSHOT</version>
 
     <name>jQAssistant JSON Plugin</name>
