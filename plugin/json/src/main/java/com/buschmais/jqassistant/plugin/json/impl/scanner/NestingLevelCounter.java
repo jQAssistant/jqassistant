@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugins.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 public class NestingLevelCounter {
     private int level;

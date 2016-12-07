@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;

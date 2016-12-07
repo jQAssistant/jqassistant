@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugins.json.api.model;
+package com.buschmais.jqassistant.plugin.json.api.model;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 

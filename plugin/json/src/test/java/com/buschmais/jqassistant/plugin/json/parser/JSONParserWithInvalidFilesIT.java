@@ -1,7 +1,7 @@
-package org.jqassistant.jqassistant.plugin.json.parser;
+package com.buschmais.jqassistant.plugin.json.parser;
 
-import com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugins.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;

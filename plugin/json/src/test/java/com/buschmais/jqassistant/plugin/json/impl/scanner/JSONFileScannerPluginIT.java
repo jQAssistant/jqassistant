@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONValueDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;

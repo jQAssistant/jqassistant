@@ -88,7 +88,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                ${project.build.directory}/generated-sources/antlr4/com/buschmais/jqassistant/plugins/json/impl/parser
+                                ${project.build.directory}/generated-sources/antlr4/com/buschmais/jqassistant/plugin/json/impl/parser
                             </outputDirectory>
                         </configuration>
                     </execution>

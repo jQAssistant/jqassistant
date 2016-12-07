@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugins.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -8,9 +8,9 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor;
-import com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugins.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;

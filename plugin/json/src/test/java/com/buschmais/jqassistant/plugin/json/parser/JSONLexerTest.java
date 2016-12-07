@@ -1,6 +1,6 @@
-package org.jqassistant.plugin.json.parser;
+package com.buschmais.jqassistant.plugin.json.parser;
 
-import com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.hamcrest.Matchers;
@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer.T__4;
-import static com.buschmais.jqassistant.plugins.json.impl.parser.JSONLexer.T__5;
+import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__4;
+import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 

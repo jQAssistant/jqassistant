@@ -6,7 +6,7 @@
 grammar JSON;
 
 @header {
-    package com.buschmais.jqassistant.plugins.json.impl.parser;
+    package com.buschmais.jqassistant.plugin.json.impl.parser;
 
     import java.util.regex.*;
 }
