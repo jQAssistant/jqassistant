@@ -1,0 +1,5 @@
+= jQAssistant Core Framework Release Notes
+
+include::1.2.adoc[]
+
+

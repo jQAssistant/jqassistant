@@ -1,0 +1,6 @@
+== jQAssistant Core Framework Version 1.2
+
+- Upgraded to Neo4j 2.3.8
+- Added support for array properties in reports (e.g. HTML)
+- Added support for rule parameters
+
