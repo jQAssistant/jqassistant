@@ -67,7 +67,7 @@
 
     <xs:complexType name="referenceType">
         <xs:attribute name="refId" type="xs:string" use="required"/>
-        <xs:attribute name="optional" type="xs:boolean" use="optional" default="false"/>
+        <xs:attribute name="optional" type="xs:boolean" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="includedReferenceType">

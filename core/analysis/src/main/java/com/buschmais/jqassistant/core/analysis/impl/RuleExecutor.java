@@ -13,7 +13,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
