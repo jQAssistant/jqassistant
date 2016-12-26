@@ -4,7 +4,7 @@
 
   <groupId>com.buschmais.jqassistant</groupId>
   <artifactId>jqa-uber-parent</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>jQAssistant Ueber Parent</name>
@@ -32,7 +32,7 @@
     <connection>scm:git:git@github.com:buschmais/jqa-uber-parent.git</connection>
     <developerConnection>scm:git:git@github.com:buschmais/jqa-uber-parent.git</developerConnection>
     <url>https://github.com/buschmais/jqa-uber-parent/</url>
-    <tag>1.2.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <prerequisites>
