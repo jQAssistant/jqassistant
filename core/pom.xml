@@ -39,6 +39,7 @@
   </scm>
 
     <properties>
+        <jqa-asciidoctor-utilities.version>1.2.0-RC2-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
         <com.buschmais.xo.version>0.7.0</com.buschmais.xo.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
@@ -236,6 +237,39 @@
                         <version>${jqa.own-constraints.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <!--
+                 ! Builds a jar with the Asciidoctor based documenation
+                 ! of the core framework and all needed stuff. This artifact
+                 ! is required for building the user manual of
+                 ! jQAssistant.
+                 !-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>asciidoctor-utilities</artifactId>
+                        <version>${jqa-asciidoctor-utilities.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>asciidoc</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
