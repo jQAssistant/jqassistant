@@ -242,6 +242,20 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>parent</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>neo4jserver</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jaxrs</artifactId>
             <type>zip</type>
@@ -251,6 +265,13 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>cdi</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>common</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
