@@ -1,0 +1,5 @@
+= jQAssistant Neo4j Backend Release Notes
+
+include::1.2.0.adoc[]
+
+
