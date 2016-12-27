@@ -2,5 +2,5 @@
 
 - Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.common`
   to `com.buschmais.jqassistant.plugin:common`.
-- Added support for using file patterns (file.include and file.exclude) for scanner plugins.
+- Added support for using file patterns (`file.include` and `file.exclude`) for scanner plugins.
 
