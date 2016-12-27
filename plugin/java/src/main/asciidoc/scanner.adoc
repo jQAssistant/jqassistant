@@ -75,7 +75,7 @@ property `fqn` and `DECLARES` relations to their members. These are `:FIELD` or
 [options="header"]
 |====
 | Property     			                  | Description														     	                    | Default
-| java.class.model.Type.DEPENDS_ON.weight | Enables/disables calculation of the weight attribute for DEPENDS_ON relations between types | `true`
+| java.class.model.Type.DEPENDS_ON.weight | Enables/disables calculation of the weight attribute for `DEPENDS_ON` relations between types | `true`
 |====
 
 [[:Java:Type]]
