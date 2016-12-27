@@ -177,6 +177,20 @@
                 <artifactId>neo4jserver</artifactId>
                 <version>${jqa-neo4jserver.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>neo4jserver</artifactId>
+                <version>${jqa-neo4jserver.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 
 
             <!--
