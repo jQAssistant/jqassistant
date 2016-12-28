@@ -40,7 +40,7 @@
 
     <properties>
         <jqa-asciidoctor-utilities.version>1.2.0-RC2-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
+        <jqa.own-constraints.version>1.2.0</jqa.own-constraints.version>
         <com.buschmais.xo.version>0.7.0</com.buschmais.xo.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <junit.version>4.12</junit.version>
