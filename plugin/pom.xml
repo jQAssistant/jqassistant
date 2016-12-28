@@ -44,7 +44,7 @@
     <properties>
         <jqa-asciidoctor-utilities.version>1.2.0-RC2-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa.core-framework.version>1.2.0-RC2-SNAPSHOT</jqa.core-framework.version>
-        <jqa.own-constraints.version>1.2.0-RC2-SNAPSHOT</jqa.own-constraints.version>
+        <jqa.own-constraints.version>1.2.0</jqa.own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.0.5.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
