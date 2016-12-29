@@ -41,7 +41,7 @@
 
     <properties>
         <jqa-java-plugin.version>1.2-RC2-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-xml-plugin.version>1.2-RC2-SNAPSHOT</jqa-xml-plugin.version>
+        <jqa-xml-plugin.version>1.2</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.2-RC2-SNAPSHOT</jqa-plugin-common.version>
     </properties>
 
