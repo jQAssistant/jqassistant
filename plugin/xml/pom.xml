@@ -40,7 +40,7 @@
     </scm>
 
     <properties>
-        <jqa-plugin-common.version>1.2-RC2-SNAPSHOT</jqa-plugin-common.version>
+        <jqa-plugin-common.version>1.2</jqa-plugin-common.version>
     </properties>
 
     <build>
