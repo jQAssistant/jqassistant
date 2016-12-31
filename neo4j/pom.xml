@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>neo4jserver</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
 
     <name>jQAssistant Neo4j Backend</name>
     <url>http://jqassistant.org/</url>
@@ -45,7 +45,7 @@
         <connection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</developerConnection>
         <url>https://github.com/buschmais/jqa-neo4j-backend</url>
-      <tag>1.2.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <build>
