@@ -10,7 +10,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>manual</artifactId>
-    <version>1.2.0-RC2-SNAPSHOT</version>
+    <version>1.2.0</version>
 
     <name>jQAssistant User Manual</name>
     <url>http://jqassistant.org/</url>
@@ -33,7 +33,7 @@
         <connection>scm:git:git@github.com:buschmais/jqa-manual.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-manual.git</developerConnection>
         <url>https://github.com/buschmais/jqa-manual</url>
-      <tag>HEAD</tag>
+      <tag>1.2.0</tag>
   </scm>
 
     <description>
