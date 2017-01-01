@@ -1,0 +1,4 @@
+== jQAssistant Maven 3 Plugin Version 1.3
+
+- ...
+ 
