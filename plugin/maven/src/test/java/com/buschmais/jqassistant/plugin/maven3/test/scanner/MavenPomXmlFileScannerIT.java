@@ -23,10 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
-import org.hamcrest.Matchers;
+import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,23 +41,6 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.PomDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
@@ -173,11 +153,27 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *             error during scan
      */
     @Test
-    public void invalidPomFile() throws IOException {
+    public void invalidPomFile() throws Exception {
         scanClassPathResource(JavaScope.CLASSPATH,"/invalid/pom.xml");
         store.beginTransaction();
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
         assertThat(mavenPomDescriptors, hasSize(1));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void organizationInPomFile() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH,"/with-organization/pom.xml");
+        store.beginTransaction();
+        List<MavenOrganizationDescriptor> organisationDescriptors = query("MATCH (o:Organization:Maven) RETURN o").getColumn("o");
+        assertThat(organisationDescriptors, notNullValue());
+        assertThat(organisationDescriptors, hasSize(1));
+
+        MavenOrganizationDescriptor organisationDescriptor = organisationDescriptors.get(0);
+
+        assertThat(organisationDescriptor.getName(), equalTo("The Quality Analyzer"));
+        assertThat(organisationDescriptor.getUrl(), equalTo("http://jqassistant.org"));
 
         store.commitTransaction();
     }

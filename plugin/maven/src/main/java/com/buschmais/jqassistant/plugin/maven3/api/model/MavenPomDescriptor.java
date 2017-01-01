@@ -95,4 +95,19 @@ public interface MavenPomDescriptor
     @Outgoing
     List<PomManagesDependencyDescriptor> getManagedDependencies();
 
+    /**
+     * Gets the organization behind the project.
+     *
+     * @return The organization behind the project.
+     */
+    @Outgoing
+    MavenOrganizationDescriptor getOrganization();
+
+    /**
+     * Sets the organization behind the project.
+     *
+     * @param organization The organisation behind the project.
+     */
+    void setOrganization(MavenOrganizationDescriptor organization);
+
 }

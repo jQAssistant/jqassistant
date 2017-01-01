@@ -147,6 +147,19 @@ A developer taking part in the development of the project.
 | HAS_ROLES           | <<:Maven:Role>>         | 0..n        | References a role the developer has in the project.
 |====
 
+[[:Maven:Organization]]
+=== :Maven:Organization
+
+The organization behind the project.
+
+.Properties of :Maven:Organization
+[options="header"]
+|====
+| Name            | Description
+| name            | The name of the organization.
+| url             | The URL of the organization.
+|====
+
 [[:Maven:Role]]
 === :Maven:Role
 
