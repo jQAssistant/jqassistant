@@ -1,0 +1,4 @@
+[[JsonScanner]]
+== Scanner for JSON Files
+
+include::examples.adoc[]
