@@ -140,11 +140,28 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      */
     @Test
     public void resolveDependency() throws Exception {
-        scanAndApply("classpath:ResolveDependency");
+        resolver("classpath:ResolveDependency");
+    }
+
+    /**
+     * Verifies the concept "classpath:resolveDependsOn".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveDependsOn() throws Exception {
+        resolver("classpath:ResolveDependsOn");
+    }
+
+    private void resolver(String concept) throws Exception {
+        scanAndApply(concept);
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
         List<TypeDescriptor> dependencies = query(
-                "MATCH (dependentType:Type)-[:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} RETURN t",
+                "MATCH (dependentType:Type)-[d:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} and has(d.weight) RETURN t",
                 params).getColumn("t");
         assertThat(dependencies.size(), equalTo(6));
         assertThat(
@@ -879,7 +896,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         List<String> concepts = query("MATCH (c:Concept) RETURN c.id as id").getColumn("id");
         assertThat(
                 concepts,
-                hasItems("classpath:ResolveDependency", "classpath:ResolveExtends", "classpath:ResolveImplements", "classpath:ResolveFieldType",
+                hasItems("classpath:ResolveDependsOn", "classpath:ResolveExtends", "classpath:ResolveImplements", "classpath:ResolveFieldType",
                         "classpath:ResolveThrows", "classpath:ResolveReturns", "classpath:ResolveParameterType", "classpath:ResolveAnnotationType",
                         "classpath:ResolveValue", "classpath:ResolveReads", "classpath:ResolveWrites", "classpath:ResolveInvokes"));
         store.commitTransaction();

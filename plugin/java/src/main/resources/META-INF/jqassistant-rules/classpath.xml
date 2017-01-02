@@ -49,17 +49,35 @@
     </concept>
 
     <concept id="classpath:ResolveDependency">
+        <requiresConcept refId="classpath:ResolveDependsOn"/>
+        <description>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <deprecated>This concept has been replaced by "classpath:ResolveDependsOn".</deprecated>
+        <cypher><![CDATA[
+            MATCH
+              (t1:Type)-[:DEPENDS_ON{resolved:true}]->(t2:Type)
+            RETURN
+              count(*) as ResolvedDependencies
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveDependsOn">
         <requiresConcept refId="classpath:ResolveType"/>
         <description>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
             "resolved:true".
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Type)-[d:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[d:DEPENDS_ON]->(t2)
+              (t)-[d1:DEPENDS_ON]->(t2)
             SET
-              d.resolved=true
+              d1.weight=d.weight,
+              d1.resolved=true
             RETURN
               count(t) as ResolvedDependencies
         ]]></cypher>
@@ -290,7 +308,7 @@
     </concept>
 
     <concept id="classpath:Resolve">
-        <requiresConcept refId="classpath:ResolveDependency"/>
+        <requiresConcept refId="classpath:ResolveDependsOn"/>
         <requiresConcept refId="classpath:ResolveExtends"/>
         <requiresConcept refId="classpath:ResolveImplements"/>
         <requiresConcept refId="classpath:ResolveFieldType"/>
