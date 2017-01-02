@@ -93,7 +93,7 @@ public final class SignatureHelper {
      */
     public static String getFieldSignature(String name, String rawSignature) {
         StringBuilder signature = new StringBuilder();
-        String returnType = org.objectweb.asm.Type.getReturnType(rawSignature).getClassName();
+        String returnType = org.objectweb.asm.Type.getType(rawSignature).getClassName();
         signature.append(returnType);
         signature.append(' ');
         signature.append(name);
