@@ -1,10 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -13,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
@@ -35,19 +34,29 @@ public class PojoIT extends AbstractJavaPluginIT {
         assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("stringValue")), hasItem(equalTo("intValue"))));
 
         testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(m:Method) RETURN m.signature as signature, m.name as name");
-        assertThat(
-                testResult.getColumn("signature"),
-                allOf(hasItem(equalTo("java.lang.String getStringValue()")), hasItem(equalTo("void setStringValue(java.lang.String)")),
-                        hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
-        assertThat(testResult.getColumn("name"),
-                allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")), hasItem(equalTo("setIntValue"))));
-        List<int[]> lines = query("MATCH ()-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH ()-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size(), equalTo(2));
-        lines = query("MATCH ()-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size(), equalTo(2));
+        assertThat(testResult.getColumn("signature"), allOf(hasItem(equalTo("java.lang.String getStringValue()")),
+                hasItem(equalTo("void setStringValue(java.lang.String)")), hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
+        assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")),
+                hasItem(equalTo("setIntValue"))));
         store.commitTransaction();
     }
 
+    @Test
+    public void lineNumbers() throws IOException {
+        scanClasses(Pojo.class);
+        store.beginTransaction();
+        List<int[]> lines = query("MATCH (:Method{name:'hashCode'})-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(1));
+        lines = query("MATCH (:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(1));
+        lines = query("MATCH (:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(1));
+        List<MethodDescriptor> hashCodes = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
+        assertThat(hashCodes.size(), equalTo(1));
+        MethodDescriptor hashCode = hashCodes.get(0);
+        assertThat(hashCode.getFirstLineNumber(), notNullValue());
+        assertThat(hashCode.getLastLineNumber(), notNullValue());
+        assertThat(hashCode.getLastLineNumber(), greaterThan(hashCode.getFirstLineNumber()));
+        store.commitTransaction();
+    }
 }

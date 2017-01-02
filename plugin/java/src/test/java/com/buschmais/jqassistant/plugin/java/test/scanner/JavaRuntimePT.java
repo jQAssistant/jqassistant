@@ -43,25 +43,4 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    @Test
-    @TestStore(reset = false)
-    public void javaRuntime02Analyze() throws Exception {
-        applyConcept("metric:Top10TypesPerArtifact");
-        applyConcept("metric:Top10TypesPerPackage");
-        applyConcept("metric:Top10MethodsPerType");
-        applyConcept("metric:Top10FieldsPerType");
-        applyConcept("metric:Top10TypeFanIn");
-        applyConcept("metric:Top10TypeFanOut");
-        for (Result<Concept> conceptResult : reportWriter.getConceptResults().values()) {
-            LOGGER.info(conceptResult.getRule().getId());
-            for (Map<String, Object> row : conceptResult.getRows()) {
-                StringBuffer sb = new StringBuffer("\t");
-                for (Object value : row.values()) {
-                    sb.append(value);
-                    sb.append("\t");
-                }
-                LOGGER.info(sb.toString());
-            }
-        }
-    }
 }

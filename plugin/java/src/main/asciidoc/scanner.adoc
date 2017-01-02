@@ -65,9 +65,9 @@ Imports Java classes, i.e. all scanned files having a `.class` suffix. Nodes wit
 
 *NOTE* The full set of information is only available for class files which
 have actually been scanned. Types which are only referenced (i.e. from
-external libraries not included in the scan) are represented by `:TYPE` nodes with a
-property `fqn` and `DECLARES` relations to their members. These are `:FIELD` or
-`:METHOD` labeled nodes which only provide the property `signature`.
+external libraries not included in the scan) are represented by `:Type` nodes with a
+property `fqn` and `DECLARES` relations to their members. These are `:Field` or
+`:Method` labeled nodes which only provide the property `signature`.
 
 === Configuration
 
@@ -190,6 +190,8 @@ A method declared in a Java type.
 | final                | optional, `true` indicates that the method is final, e.g. `final int getId();`
 | native               | optional, `true` indicates that the method is native, e.g. `native int getId();`
 | synthetic            | optional, `true` indicates that the method is synthetic, i.e. it has been generated
+| firstLineNumber      | The first line number of the method body
+| lastLineNumber       | The last line number of the method body
 | cyclomaticComplexity | The cyclomatic complexity of the method
 |====
 

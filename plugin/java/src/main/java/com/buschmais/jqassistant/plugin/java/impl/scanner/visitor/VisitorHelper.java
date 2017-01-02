@@ -135,7 +135,7 @@ public class VisitorHelper {
      * @param invokedMethodDescriptor
      *            The invoked method.
      */
-    public void addInvokes(MethodDescriptor methodDescriptor, int lineNumber, MethodDescriptor invokedMethodDescriptor) {
+    public void addInvokes(MethodDescriptor methodDescriptor, Integer lineNumber, MethodDescriptor invokedMethodDescriptor) {
         InvokesDescriptor invokesDescriptor = scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
         invokesDescriptor.setLineNumber(lineNumber);
     }
@@ -150,7 +150,7 @@ public class VisitorHelper {
      * @param fieldDescriptor
      *            The field.
      */
-    public void addReads(MethodDescriptor methodDescriptor, int lineNumber, FieldDescriptor fieldDescriptor) {
+    public void addReads(MethodDescriptor methodDescriptor, Integer lineNumber, FieldDescriptor fieldDescriptor) {
         ReadsDescriptor readsDescriptor = scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
         readsDescriptor.setLineNumber(lineNumber);
     }
@@ -165,7 +165,7 @@ public class VisitorHelper {
      * @param fieldDescriptor
      *            The field.
      */
-    public void addWrites(MethodDescriptor methodDescriptor, int lineNumber, FieldDescriptor fieldDescriptor) {
+    public void addWrites(MethodDescriptor methodDescriptor, Integer lineNumber, FieldDescriptor fieldDescriptor) {
         WritesDescriptor writesDescriptor = scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
         writesDescriptor.setLineNumber(lineNumber);
     }

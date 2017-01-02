@@ -100,4 +100,23 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     @Declares
     List<TypeDescriptor> getDeclaredInnerClasses();
+
+    /**
+     * Return the first line number of the method.
+     * 
+     * @return The first line number of the method.
+     */
+    Integer getFirstLineNumber();
+
+    void setFirstLineNumber(Integer firstLineNumber);
+
+    /**
+     * Return the last line number of the method.
+     *
+     * @return The last line number of the method.
+     */
+    Integer getLastLineNumber();
+
+    void setLastLineNumber(Integer lastLineNumber);
+
 }
