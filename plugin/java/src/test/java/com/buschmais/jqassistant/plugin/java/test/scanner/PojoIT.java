@@ -51,12 +51,16 @@ public class PojoIT extends AbstractJavaPluginIT {
         assertThat(lines.size(), equalTo(1));
         lines = query("MATCH (:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        List<MethodDescriptor> hashCodes = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
-        assertThat(hashCodes.size(), equalTo(1));
-        MethodDescriptor hashCode = hashCodes.get(0);
+        List<MethodDescriptor> hashCodeList = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
+        assertThat(hashCodeList.size(), equalTo(1));
+        MethodDescriptor hashCode = hashCodeList.get(0);
         assertThat(hashCode.getFirstLineNumber(), notNullValue());
         assertThat(hashCode.getLastLineNumber(), notNullValue());
         assertThat(hashCode.getLastLineNumber(), greaterThan(hashCode.getFirstLineNumber()));
+        List<MethodDescriptor> equalsList = query("MATCH (equals:Method{name:'equals'}) return equals ").getColumn("equals");
+        assertThat(equalsList.size(), equalTo(1));
+        MethodDescriptor equals = equalsList.get(0);
+        assertThat(equals.getEffectiveLineCount(), equalTo(5));
         store.commitTransaction();
     }
 }

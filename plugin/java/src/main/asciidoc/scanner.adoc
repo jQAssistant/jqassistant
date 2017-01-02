@@ -192,6 +192,7 @@ A method declared in a Java type.
 | synthetic            | optional, `true` indicates that the method is synthetic, i.e. it has been generated
 | firstLineNumber      | The first line number of the method body
 | lastLineNumber       | The last line number of the method body
+| effectiveLineCount   | The count of source code lines containing code
 | cyclomaticComplexity | The cyclomatic complexity of the method
 |====
 

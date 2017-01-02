@@ -119,4 +119,12 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     void setLastLineNumber(Integer lastLineNumber);
 
+    /**
+     * Return the number of source code lines containing code.
+     *
+     * @return The number of source code lines containing code.
+     */
+    int getEffectiveLineCount();
+
+    void setEffectiveLineCount(int effectiveLineCount);
 }

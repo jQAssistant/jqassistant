@@ -30,6 +30,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private int syntheticParameters = 0;
     private int cyclomaticComplexity = 1;
     private Integer line = null;
+    private int effectiveLineCount = 0;
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
@@ -132,6 +133,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             methodDescriptor.setFirstLineNumber(line);
         }
         this.line = line;
+        this.effectiveLineCount++;
     }
 
     @Override
@@ -143,5 +145,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     public void visitEnd() {
         methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
         methodDescriptor.setLastLineNumber(line);
+        methodDescriptor.setEffectiveLineCount(effectiveLineCount);
     }
 }
