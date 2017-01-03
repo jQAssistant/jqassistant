@@ -30,7 +30,7 @@
     <properties>
         <org.antlr.version>4.5.3</org.antlr.version>
         <jqassistant.version>1.2.0-SNAPSHOT</jqassistant.version>
-        <plugin-common.version>1.2.0-SNAPSHOT</plugin-common.version>
+        <plugin-common.version>1.2</plugin-common.version>
         <plugin-java.version>1.2</plugin-java.version>
     </properties>
 
