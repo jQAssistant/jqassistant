@@ -13,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 import org.apache.maven.model.Model;
 
 /**
- * Descriptor for a pom.xml.
+ * Descriptor for a POM.
  * 
  * @see Model
  * @author ronald.kunzmann@buschmais.com
@@ -32,7 +32,7 @@ public interface MavenPomDescriptor
     Set<ArtifactDescriptor> getDescribes();
 
     /**
-     * Get the parent pom.
+     * Get the parent POM.
      *
      * @return The parent POM.
      */

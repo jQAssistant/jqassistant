@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
- * Descriptor for a maven profile.
+ * Descriptor for a POM profile.
  * 
  * @author ronald.kunzmann@buschmais.com
  */
