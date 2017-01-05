@@ -1,4 +1,176 @@
+:numbered:              // Number all section headers
+:sectnumlevels: 5       // Number up to section level 5
+:toclevels: 2           // Table of content should have only two levels
+
 [[JsonScanner]]
-== Scanner for JSON Files
+= Scanner for JSON Files
+
+Scanner to scan https://www.rfc-editor.org/info/rfc7159[RFC 7159^]
+compliant JSON files.
+
+[[:Json:File]]
+== Nodes labled with `:Json:File`
+
+.Properties of `:Json:File`
+[options="header"]
+|===
+| Name     | Description
+
+| fileName
+| The file of the JSON document.
+
+| valid
+| Flag to indicate if the JSON document is valid according
+  to RFC 7159.
+|===
+
+.Relations of `:Json:File`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| CONTAINS
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 1
+| References the contained JSON value.
+|===
+
+[[:Json:Array]]
+== Nodes labled with `:Json:Array`
+
+.Properties of `:Json:Array`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Array`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| CONTAINS_VALUE
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 0..n
+| References a value contained in the array.
+|===
+
+
+[[:Json:Key]]
+== Nodes labled with `:Json:Key`
+
+.Properties of `:Json:Key`
+[options="header"]
+|===
+| Name     | Description
+
+| name
+| The literal name of the key.
+|===
+
+.Relations of `:Json:Key`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| HAS_VALUE
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 1
+| The value associated with the key.
+|===
+
+
+
+
+[[:Json:Object]]
+== Nodes labled with `:Json:Object`
+
+.Properties of `:Json:Object`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Object`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| HAS_KEY
+| <<:Json:Key>>
+| 0..n
+| The key of a key value pair in an JSON object.
+|===
+
+
+
+[[:Json:Scalar]]
+== Nodes labled with `:Json:Scalar`
+
+.Properties of `:Json:Scalar`
+[options="header"]
+|===
+| Name     | Description
+| value    | The value itself.
+|===
+
+.Relations of `:Json:Scalar`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+4+| None
+|===
+
+[[:Json:Value]]
+=== Nodes labled with `:Json:Value`
+
+The label `:Value` is only a marker label without any own properties
+or relationships. It marks only an element of an JSON structure as
+value associated with an other JSON element.
+
+For example:
+
+* The elements of an JSON array are labeled as `Value`.
+* The value of an key value pair is labeled as `Value`.
+
+
+.Properties of `:Json:Value`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Value`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+4+| None
+|===
+
+
+//
+//
+//[[:Java:Artifact]]
+//=== Nodes labled with `:Java:Artifact
+//A directory or archive containing packages, classes and resources.
+//
+//.Properties of `:Java:Artifact`
+//[options="header"]
+//|====
+//| Name       | Description
+//| fqn        | Fully qualified name, e.g. `java.lang`
+//| fileName   | The file name of the artifact.                          `
+//|====
+//
+//.Relations of :Java:Artifact
+//[options="header"]
+//|====
+//| Name         | Target label(s) | Cardinality | Description
+//| CONTAINS     | <<:File>>       | 0..n        | References contained files, e.g. packages, classes or resources
+//| REQUIRES     | <<:Java:Type>>  | 0..n        | References a type which is required by a class in this artifact
+//|====
 
 include::examples.adoc[]

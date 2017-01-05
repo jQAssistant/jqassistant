@@ -6,4 +6,4 @@ target
 *.iml
 *.eml
 *.log
-
+/src/main/asciidoc/scanner.html
