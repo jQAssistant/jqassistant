@@ -38,7 +38,7 @@
 
     <properties>
         <jqa-asciidoc-utilities.version>1.2.0</jqa-asciidoc-utilities.version>
-        <jqa-distribution-spec.version>1.2.0</jqa-distribution-spec.version>
+        <jqa-distribution-spec.version>1.2.1-SNAPSHOT</jqa-distribution-spec.version>
         <jqa.own-constraints.version>1.2.0</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
