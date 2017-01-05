@@ -4,7 +4,7 @@ public class ClassType {
 
     public int foo = 42;
 
-    public void bar() {
+    public void bar(int value) {
     }
 
 }

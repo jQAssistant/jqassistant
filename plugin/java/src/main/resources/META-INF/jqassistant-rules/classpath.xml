@@ -14,9 +14,9 @@
             WHERE
               t2.fqn=t1.fqn
             MERGE
-              (t1)-[:RESOLVES_TO]->(t2)
+              (t1)-[r:RESOLVES_TO]->(t2)
             RETURN
-              count(t1) as ResolvedTypes
+              count(r) as ResolvedTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -38,10 +38,8 @@
               and m1.signature = m2.signature
             MERGE
               (m1)-[r:RESOLVES_TO]->(m2)
-            SET
-              r.resolved=true
             RETURN
-              count(m1) as ResolvedMembers
+              count(r) as ResolvedMembers
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -72,14 +70,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[d:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Type)-[dependsOn:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[d1:DEPENDS_ON]->(t2)
+              (t)-[dependsOn1:DEPENDS_ON]->(t2)
             SET
-              d1.weight=d.weight,
-              d1.resolved=true
+              dependsOn1=dependsOn,
+              dependsOn1.resolved=true
             RETURN
-              count(t) as ResolvedDependencies
+              count(dependsOn1) as ResolvedDependencies
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -93,13 +91,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Type)-[extends:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[e:EXTENDS]->(t2)
+              (t)-[extends1:EXTENDS]->(t2)
             SET
-              e.resolved=true
+              extends1=extends,
+              extends1.resolved=true
             RETURN
-              count(t) as ResolvedSuperClass
+              count(extends1) as ResolvedSuperClass
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -113,13 +112,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Type)-[implements:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[i:IMPLEMENTS]->(t2)
+              (t)-[implements1:IMPLEMENTS]->(t2)
             SET
-              i.resolved=true
+              implements1=implements,
+              implements1.resolved=true
             RETURN
-              count(t1) as ResolvedInterfaces
+              count(implements1) as ResolvedInterfaces
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -133,13 +133,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (f:Field)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (f:Field)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (f)-[o:OF_TYPE]->(t)
+              (f)-[ofType1:OF_TYPE]->(t)
             SET
-              o.resolved=true
+              ofType1=ofType,
+              ofType1.resolved=true
             RETURN
-              count(t) as ResolvedFieldTypes
+              count(ofType1) as ResolvedFieldTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -153,13 +154,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Method)-[throws:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[r:THROWS]->(t)
+              (m)-[throws1:THROWS]->(t)
             SET
-              r.resolved=true
+              throws1=throws,
+              throws1.resolved=true
             RETURN
-              count(t) as ResolvedExceptionTypes
+              count(throws1) as ResolvedExceptionTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -173,13 +175,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[:RETURNS]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Method)-[returns:RETURNS]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[r:RETURNS]->(t)
+              (m)-[returns1:RETURNS]->(t)
             SET
-              r.resolved=true
+              returns1=returns,
+              returns1.resolved=true
             RETURN
-              count(t) as ResolvedReturnTypes
+              count(returns1) as ResolvedReturnTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -193,13 +196,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Parameter)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Parameter)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[o:OF_TYPE]->(t)
+              (m)-[ofType1:OF_TYPE]->(t)
             SET
-              o.resolved=true
+              ofType1=ofType,
+              ofType1.resolved=true
             RETURN
-              count(t) as ResolvedParameterTypes
+              count(ofType1) as ResolvedParameterTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -213,13 +217,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Annotation)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (a:Annotation)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (a)-[o:OF_TYPE]->(t)
+              (a)-[ofType1:OF_TYPE]->(t)
             SET
-              o.resolved=true
+              ofType1=ofType,
+              ofType1.resolved=true
             RETURN
-              count(t) as ResolvedAnnotationTypes
+              count(ofType1) as ResolvedAnnotationTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -234,13 +239,14 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (v:Value)-[:IS]->(e)-[:RESOLVES_TO]->(e2)
+              (v:Value)-[is:IS]->(e)-[:RESOLVES_TO]->(e2)
             MERGE
-              (v)-[i:IS]->(e2)
+              (v)-[is1:IS]->(e2)
             SET
-              i.resolved=true
+              is1=is,
+              is1.resolved=true
             RETURN
-              count(v) as ResolvedValueTypes
+              count(is1) as ResolvedValueTypes
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -254,13 +260,16 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[r:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+              (m:Method)-[reads:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
             MERGE
-              (m)-[r1:READS {lineNumber: r.lineNumber}]->(f2)
+              (m)-[reads1:READS {relationId: id(reads)}]->(f2)
             SET
-              r1.resolved=true
+              reads1=reads,
+              reads1.resolved=true
+            REMOVE
+              reads1.relationId
             RETURN
-              count(r) as ResolvedReads
+              count(reads1) as ResolvedReads
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -274,13 +283,16 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[w:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+              (m:Method)-[writes:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
             MERGE
-              (m)-[w1:WRITES {lineNumber: w.lineNumber}]->(f2)
+              (m)-[writes1:WRITES {relationId: id(writes)}]->(f2)
             SET
-              w1.resolved=true
+              writes1=writes,
+              writes1.resolved=true
+            REMOVE
+              writes1.relationId
             RETURN
-              count(w) as ResolvedWrites
+              count(writes1) as ResolvedWrites
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -294,13 +306,16 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[i:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
+              (m:Method)-[invokes:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
             MERGE
-              (m)-[i1:INVOKES {lineNumber: i.lineNumber}]->(m2)
+              (m)-[invokes1:INVOKES {relationId : id(invokes)}]->(m2)
             SET
-              i1.resolved=true
+              invokes1=invokes,
+              invokes1.resolved=true
+            REMOVE
+              invokes1.relationId
             RETURN
-              count(i) as ResolvedInvocations
+              count(invokes1) as ResolvedInvocations
         ]]></cypher>
         <verify>
             <aggregation/>

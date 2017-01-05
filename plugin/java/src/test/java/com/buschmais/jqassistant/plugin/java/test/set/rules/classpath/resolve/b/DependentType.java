@@ -14,12 +14,15 @@ public class DependentType extends ClassType implements InterfaceType {
     }
 
     public void fieldAccess(ClassType classType) {
-        int foo = classType.foo;
+        int foo1 = classType.foo;
+        int foo2 = classType.foo;
+        classType.foo = foo;
         classType.foo = foo;
     }
 
     public void methodInvocation(ClassType classType) {
-        classType.bar();
+        classType.bar(1);
+        classType.bar(2);
     }
 
 }
