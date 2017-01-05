@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
 import org.hamcrest.Matchers;
@@ -143,6 +144,56 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         // Assertion uses a double value because internally the value is
         // stored a double
         assertThat(valueDescriptor.getValue(), equalTo(123.0D));
+    }
+
+    @Test
+    public void rootObjectIsNotAValueOthersAre() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+                "/probes/valid/object-with-object-empty.json");
+
+        getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        // Get the first array
+        List<JSONDescriptor> resultsA = query("MATCH (f:JSON:File) " +
+                "-[:CONTAINS]->(o:JSON:Object) " +
+                "WHERE NOT o:Value " +
+                "RETURN o"
+        ).getColumn("o");
+
+        // Get the inferior arrays
+        List<JSONDescriptor> resultsB = query("MATCH (f:JSON:File) " +
+                "-[:CONTAINS]->(:JSON:Object)-[*2]->(o:JSON) " +
+                "WHERE o:Value " +
+                "RETURN o"
+        ).getColumn("o");
+
+        assertThat(resultsA, hasSize(1));
+        assertThat(resultsB, hasSize(1));
+    }
+
+    @Test
+    public void rootArrayIsNotAValueOthersAre() {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+                "/probes/valid/array-of-arrays.json");
+
+        getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        // Get the first array
+        List<JSONDescriptor> resultsA = query("MATCH (f:JSON:File) " +
+                "-[:CONTAINS]->(a:JSON:Array) " +
+                "WHERE NOT a:Value " +
+                "RETURN a"
+        ).getColumn("a");
+
+        // Get the inferior arrays
+        List<JSONDescriptor> resultsB = query("MATCH (f:JSON:File) " +
+                "-[:CONTAINS]->(:JSON:Array)-[:CONTAINS_VALUE]->(a:JSON) " +
+                "WHERE a:Value " +
+                "RETURN a"
+        ).getColumn("a");
+
+        assertThat(resultsA, hasSize(1));
+        assertThat(resultsB, hasSize(3));
     }
 
     private JSONKeyDescriptor findKeyInDocument(List<JSONKeyDescriptor> keys, String name) {

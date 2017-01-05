@@ -9,10 +9,10 @@ import java.util.List;
  * Represents an JSON array found within a JSON document.
  */
 @Label("Array")
-public interface JSONArrayDescriptor extends JSONValueDescriptor<List<JSONValueDescriptor>> {
+public interface JSONArrayDescriptor extends JSONDescriptor
+{
     @Relation("CONTAINS_VALUE")
-    List<JSONValueDescriptor> getValue();
+    List<JSONDescriptor> getValues();
 
-    @Override
-    void setValue(List<JSONValueDescriptor> value);
+    void setValues(List<JSONDescriptor> value);
 }

@@ -2,12 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.*;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
@@ -166,7 +161,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor jsonArray = file.getArray();
 
-        assertThat(jsonArray.getValue(), Matchers.empty());
+        assertThat(jsonArray.getValues(), Matchers.empty());
     }
 
     @Test
@@ -187,11 +182,13 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor jsonArray = file.getArray();
 
-        assertThat(jsonArray.getValue(), hasSize(1));
+        assertThat(jsonArray.getValues(), hasSize(1));
 
-        JSONValueDescriptor<?> valueDescriptor = jsonArray.getValue().get(0);
+        JSONDescriptor valueDescriptor = jsonArray.getValues().get(0);
 
-        assertThat(valueDescriptor.getValue(), Matchers.<Object>equalTo("ABC"));
+        assertThat(valueDescriptor, Matchers.instanceOf(JSONValueDescriptor.class));
+        JSONValueDescriptor jsonValueDescriptor = (JSONValueDescriptor) valueDescriptor;
+        assertThat(jsonValueDescriptor.getValue(), Matchers.<Object>equalTo("ABC"));
     }
 
     @Test
@@ -220,7 +217,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor arrayValueDescriptor = keyDescriptor.getArray();
 
-        assertThat(arrayValueDescriptor.getValue(), empty());
+        assertThat(arrayValueDescriptor.getValues(), empty());
     }
 
     @Test
@@ -412,7 +409,9 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor array = keyDescriptor.getArray();
 
-        List<String> values = array.getValue().stream().map(v -> (String) v.getValue())
+        List<String> values = array.getValues().stream()
+                                   .map(v -> (JSONValueDescriptor)v)
+                                   .map(v -> (String) v.getValue())
                                    .collect(toList());
 
         assertThat(values, contains("B", "C"));
@@ -444,10 +443,12 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         JSONArrayDescriptor array = keyDescriptor.getArray();
 
-        assertThat(array.getValue(), hasSize(1));
+        assertThat(array.getValues(), hasSize(1));
 
-        List<String> values = array.getValue()
-                                   .stream().map(v -> (String) v.getValue())
+        List<String> values = array.getValues()
+                                   .stream()
+                                   .map(v -> (JSONValueDescriptor)v)
+                                   .map(v -> (String) v.getValue())
                                    .collect(toList());
         assertThat(values, contains("B"));
 

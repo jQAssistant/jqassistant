@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor;
@@ -15,6 +18,7 @@ import java.util.Stack;
 
 public class JSONTreeWalker extends JSONBaseListener {
 
+    private boolean rootElementSeen = false;
     private final Scanner scanner;
     private final DescriptorStack descriptorStack = new DescriptorStack();
 
@@ -30,9 +34,9 @@ public class JSONTreeWalker extends JSONBaseListener {
 
     @Override
     public void enterObject(JSONParser.ObjectContext ctx) {
-        JSONObjectDescriptor jsonObjectDescriptor = scanner.getContext()
-                                                           .getStore()
-                                                           .create(JSONObjectDescriptor.class);
+        JSONObjectDescriptor jsonObjectDescriptor = createDescriptor(JSONObjectDescriptor.class);
+
+        setTopLevelElementSeen();
 
         JSONDescriptor descriptor = stack().peek();
 
@@ -42,6 +46,9 @@ public class JSONTreeWalker extends JSONBaseListener {
         } else if (descriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor parentDescriptor = (JSONKeyDescriptor) stack().peek();
             parentDescriptor.setObject(jsonObjectDescriptor);
+        } else if (descriptor instanceof JSONArrayDescriptor) {
+            JSONArrayDescriptor arrayDescriptor = (JSONArrayDescriptor) stack().peek();
+            arrayDescriptor.getValues().add(jsonObjectDescriptor);
         } else {
             throw new IllegalStateException("Unexpected stack state while parsing a JSON document.");
         }
@@ -56,9 +63,7 @@ public class JSONTreeWalker extends JSONBaseListener {
 
     @Override
     public void enterKeyValuePair(JSONParser.KeyValuePairContext ctx) {
-        JSONKeyDescriptor keyDescriptor = scanner.getContext()
-                                                 .getStore()
-                                                 .create(JSONKeyDescriptor.class);
+        JSONKeyDescriptor keyDescriptor = createDescriptor(JSONKeyDescriptor.class);
 
         JSONObjectDescriptor jsonContainer = (JSONObjectDescriptor) stack().peek();
         jsonContainer.getKeys().add(keyDescriptor);
@@ -67,9 +72,9 @@ public class JSONTreeWalker extends JSONBaseListener {
 
     @Override
     public void enterScalarValue(JSONParser.ScalarValueContext ctx) {
-        JSONScalarValueDescriptor valueDescriptor = scanner.getContext()
-                                                           .getStore()
-                                                           .create(JSONScalarValueDescriptor.class);
+        JSONScalarValueDescriptor valueDescriptor = createDescriptor(JSONScalarValueDescriptor.class);
+
+        setTopLevelElementSeen();
 
         JSONDescriptor descriptor = stack().peek();
 
@@ -78,7 +83,7 @@ public class JSONTreeWalker extends JSONBaseListener {
         } else if (descriptor instanceof JSONKeyDescriptor) {
             ((JSONKeyDescriptor) descriptor).setScalarValue(valueDescriptor);
         } else if (descriptor instanceof JSONArrayDescriptor) {
-            ((JSONArrayDescriptor) descriptor).getValue().add(valueDescriptor);
+            ((JSONArrayDescriptor) descriptor).getValues().add(valueDescriptor);
         } else {
             throw new IllegalStateException("Internal error. Unexpected top of stack.");
         }
@@ -124,8 +129,9 @@ public class JSONTreeWalker extends JSONBaseListener {
 
     @Override
     public void enterArray(JSONParser.ArrayContext ctx) {
-        JSONArrayDescriptor jsonArrayDescriptor = scanner.getContext().getStore()
-                                                         .create(JSONArrayDescriptor.class);
+        JSONArrayDescriptor jsonArrayDescriptor = createDescriptor(JSONArrayDescriptor.class);
+
+        setTopLevelElementSeen();
 
         JSONDescriptor jsonDescriptor = stack().peek();
 
@@ -135,6 +141,9 @@ public class JSONTreeWalker extends JSONBaseListener {
         } else if (jsonDescriptor instanceof JSONKeyDescriptor) {
             JSONKeyDescriptor keyValueDescriptor = (JSONKeyDescriptor) jsonDescriptor;
             keyValueDescriptor.setArray(jsonArrayDescriptor);
+        } else if (jsonDescriptor instanceof JSONArrayDescriptor) {
+            JSONArrayDescriptor arrayDescriptor = (JSONArrayDescriptor) jsonDescriptor;
+            arrayDescriptor.getValues().add(jsonArrayDescriptor);
         } else {
             throw new IllegalStateException("Unable to find the context of an JSON array.");
         }
@@ -145,6 +154,28 @@ public class JSONTreeWalker extends JSONBaseListener {
     @Override
     public void exitArray(JSONParser.ArrayContext ctx) {
         stack().pop();
+    }
+
+    <T extends Descriptor> T createDescriptor(Class<T> clazz) {
+        Store store = scanner.getContext().getStore();
+        T descriptor = store.create(clazz);
+
+        boolean isNotKeyDescriptor = !JSONKeyDescriptor.class.isAssignableFrom(clazz);
+        boolean isSublevelStructure = !isTopLevelStructure();
+
+        if (isSublevelStructure && isNotKeyDescriptor) {
+            descriptor = store.addDescriptorType(descriptor, ValueDescriptor.class, clazz);
+        }
+
+        return descriptor;
+    }
+
+    private boolean isTopLevelStructure() {
+        return rootElementSeen == false;
+    }
+
+    private void setTopLevelElementSeen() {
+        rootElementSeen = true;
     }
 }
 
