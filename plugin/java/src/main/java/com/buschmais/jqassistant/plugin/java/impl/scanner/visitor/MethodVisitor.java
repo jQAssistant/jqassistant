@@ -29,7 +29,9 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private int syntheticParameters = 0;
     private int cyclomaticComplexity = 1;
-    private Integer line = null;
+    private Integer lineNumber = null;
+    private Integer firstLineNumber = null;
+    private Integer lastLineNumber = null;
     private int effectiveLineCount = 0;
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
@@ -72,11 +74,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         switch (opcode) {
         case Opcodes.GETFIELD:
         case Opcodes.GETSTATIC:
-            visitorHelper.addReads(methodDescriptor, line, fieldDescriptor);
+            visitorHelper.addReads(methodDescriptor, lineNumber, fieldDescriptor);
             break;
         case Opcodes.PUTFIELD:
         case Opcodes.PUTSTATIC:
-            visitorHelper.addWrites(methodDescriptor, line, fieldDescriptor);
+            visitorHelper.addWrites(methodDescriptor, lineNumber, fieldDescriptor);
             break;
         }
     }
@@ -86,7 +88,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature);
-        visitorHelper.addInvokes(methodDescriptor, line, invokedMethodDescriptor);
+        visitorHelper.addInvokes(methodDescriptor, lineNumber, invokedMethodDescriptor);
     }
 
     @Override
@@ -129,10 +131,14 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        if (this.line == null) {
-            methodDescriptor.setFirstLineNumber(line);
+        if (this.lineNumber == null) {
+            this.firstLineNumber = line;
+            this.lastLineNumber = line;
+        } else {
+            firstLineNumber = Math.min(line, this.firstLineNumber);
+            lastLineNumber = Math.max(line, this.lastLineNumber);
         }
-        this.line = line;
+        this.lineNumber = line;
         this.effectiveLineCount++;
     }
 
@@ -144,7 +150,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitEnd() {
         methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
-        methodDescriptor.setLastLineNumber(line);
+        methodDescriptor.setFirstLineNumber(firstLineNumber);
+        methodDescriptor.setLastLineNumber(lastLineNumber);
         methodDescriptor.setEffectiveLineCount(effectiveLineCount);
     }
 }
