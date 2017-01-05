@@ -46,7 +46,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         JSONFileDescriptor jsonFileDescriptor = store.addDescriptorType(fileDescriptor, JSONFileDescriptor.class);
 
         jsonFileDescriptor.setFileName(absolutePath);
-        jsonFileDescriptor.setParsed(false);
+        jsonFileDescriptor.setValid(false);
 
         try {
             JSONLexer lexer = new JSONLexer(new ANTLRInputStream(item.createStream()));
@@ -62,9 +62,9 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(new JSONTreeWalker(jsonFileDescriptor, scanner), jsonDocumentContext);
 
-            // In case the content of the file is not parseable set parsed=false
-            // to help the user to identify nonparseable files
-            jsonFileDescriptor.setParsed(true);
+            // In case the content of the file is not parseable set valid=false
+            // to help the user to identify non-parseable files
+            jsonFileDescriptor.setValid(true);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse the file " + item.getFile().getAbsolutePath() + ".", e);
         }
