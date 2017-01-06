@@ -137,11 +137,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             this.firstLineNumber = line;
             this.lastLineNumber = line;
         } else {
-            firstLineNumber = Math.min(line, this.firstLineNumber);
-            lastLineNumber = Math.max(line, this.lastLineNumber);
+            this.firstLineNumber = Math.min(line, this.firstLineNumber);
+            this.lastLineNumber = Math.max(line, this.lastLineNumber);
         }
         this.lineNumber = line;
-        this.effectiveLines.add(line);
+        this.effectiveLines.add (line);
     }
 
     @Override
@@ -152,8 +152,14 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitEnd() {
         methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
-        methodDescriptor.setFirstLineNumber(firstLineNumber);
-        methodDescriptor.setLastLineNumber(lastLineNumber);
-        methodDescriptor.setEffectiveLineCount(effectiveLines.size());
+        if (firstLineNumber!=null) {
+            methodDescriptor.setFirstLineNumber(firstLineNumber);
+        }
+        if (lastLineNumber!=null) {
+            methodDescriptor.setLastLineNumber(lastLineNumber);
+        }
+        if (!effectiveLines.isEmpty()) {
+            methodDescriptor.setEffectiveLineCount(effectiveLines.size());
+        }
     }
 }
