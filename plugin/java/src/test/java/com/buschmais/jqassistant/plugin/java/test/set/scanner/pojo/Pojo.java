@@ -28,7 +28,6 @@ public class Pojo {
         if (o == null || getClass() != o.getClass()) return false;
         // this is a line not containing any code to verify effectiveLineCount metric
         Pojo pojo = (Pojo) o;
-
         if (intValue != pojo.intValue) return false;
         return stringValue != null ? stringValue.equals(pojo.stringValue) : pojo.stringValue == null;
     }

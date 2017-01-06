@@ -14,6 +14,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
+import java.util.HashSet;
+
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
@@ -32,7 +34,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private Integer lineNumber = null;
     private Integer firstLineNumber = null;
     private Integer lastLineNumber = null;
-    private int effectiveLineCount = 0;
+    private HashSet<Integer> effectiveLines = new HashSet<>();
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
@@ -139,7 +141,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             lastLineNumber = Math.max(line, this.lastLineNumber);
         }
         this.lineNumber = line;
-        this.effectiveLineCount++;
+        this.effectiveLines.add(line);
     }
 
     @Override
@@ -152,6 +154,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
         methodDescriptor.setFirstLineNumber(firstLineNumber);
         methodDescriptor.setLastLineNumber(lastLineNumber);
-        methodDescriptor.setEffectiveLineCount(effectiveLineCount);
+        methodDescriptor.setEffectiveLineCount(effectiveLines.size());
     }
 }
