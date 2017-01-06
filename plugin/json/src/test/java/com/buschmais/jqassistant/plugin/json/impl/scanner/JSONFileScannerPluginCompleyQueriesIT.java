@@ -37,7 +37,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File) " +
+        List<?> results = query("MATCH (f:Json:File) " +
                                 "WHERE f.fileName =~ '.*/true-false-null.json' " +
                                 "RETURN f"
         ).getColumn("f");
@@ -53,8 +53,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         Scanner scanner = getScanner();
         scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File) " +
-                                     "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
+        List<?> results = query("MATCH (f:Json:File) " +
+                                     "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                      "-[:HAS_VALUE]->(v:Value) " +
                                      "WHERE k.name = 'A' AND v.value = 'B' " +
                                      "RETURN f"
@@ -72,8 +72,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File)" +
-                                "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
+        List<?> results = query("MATCH (f:Json:File)" +
+                                "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                 "-[:HAS_VALUE]->(v:Value) " +
                                 "WHERE k.name = 'A' AND v.value = 'B' " +
                                 "RETURN f"
@@ -89,8 +89,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<?> results = query("MATCH (f:JSON:File)" +
-                                "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
+        List<?> results = query("MATCH (f:Json:File)" +
+                                "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                 "WHERE " +
                                 "(k.name = 'A') OR " +
                                 "(k.name = 'B') OR " +
@@ -109,8 +109,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<JSONKeyDescriptor> results = query("MATCH (f:JSON:File) " +
-                                                "-[:CONTAINS]->(o:JSON:Object)-[:HAS_KEY]->(k:Key:JSON) " +
+        List<JSONKeyDescriptor> results = query("MATCH (f:Json:File) " +
+                                                "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                                 "WHERE " +
                                                 "NOT(k-[:HAS_VALUE]->()) " +
                                                 "RETURN k"
@@ -131,8 +131,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<JSONScalarValueDescriptor> results = query("MATCH (f:JSON:File) " +
-                                                        "-[:CONTAINS]->(o:JSON) " +
+        List<JSONScalarValueDescriptor> results = query("MATCH (f:Json:File) " +
+                                                        "-[:CONTAINS]->(o:Json) " +
                                                         "WHERE o.value = 123 " +
                                                         "RETURN o"
         ).getColumn("o");
@@ -154,15 +154,15 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         // Get the first array
-        List<JSONDescriptor> resultsA = query("MATCH (f:JSON:File) " +
-                "-[:CONTAINS]->(o:JSON:Object) " +
+        List<JSONDescriptor> resultsA = query("MATCH (f:Json:File) " +
+                "-[:CONTAINS]->(o:Json:Object) " +
                 "WHERE NOT o:Value " +
                 "RETURN o"
         ).getColumn("o");
 
         // Get the inferior arrays
-        List<JSONDescriptor> resultsB = query("MATCH (f:JSON:File) " +
-                "-[:CONTAINS]->(:JSON:Object)-[*2]->(o:JSON) " +
+        List<JSONDescriptor> resultsB = query("MATCH (f:Json:File) " +
+                "-[:CONTAINS]->(:Json:Object)-[*2]->(o:Json) " +
                 "WHERE o:Value " +
                 "RETURN o"
         ).getColumn("o");
@@ -179,15 +179,15 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         // Get the first array
-        List<JSONDescriptor> resultsA = query("MATCH (f:JSON:File) " +
-                "-[:CONTAINS]->(a:JSON:Array) " +
+        List<JSONDescriptor> resultsA = query("MATCH (f:Json:File) " +
+                "-[:CONTAINS]->(a:Json:Array) " +
                 "WHERE NOT a:Value " +
                 "RETURN a"
         ).getColumn("a");
 
         // Get the inferior arrays
-        List<JSONDescriptor> resultsB = query("MATCH (f:JSON:File) " +
-                "-[:CONTAINS]->(:JSON:Array)-[:CONTAINS_VALUE]->(a:JSON) " +
+        List<JSONDescriptor> resultsB = query("MATCH (f:Json:File) " +
+                "-[:CONTAINS]->(:Json:Array)-[:CONTAINS_VALUE]->(a:Json) " +
                 "WHERE a:Value " +
                 "RETURN a"
         ).getColumn("a");

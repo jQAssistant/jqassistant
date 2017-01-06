@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * Represents a part of a JSON document.
  */
 @Abstract
-@Label("JSON")
+@Label("Json")
 public interface JSONDescriptor extends Descriptor {
 
 }
