@@ -94,6 +94,7 @@ A POM describing a Maven project.
 | USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
 | HAS_CONTRIBUTOR     | <<:Maven:Contributor>>  | 0..n        | References a contributor
 | HAS_DEVELOPER       | <<:Maven:Developer>>    | 0..n        | References a developer
+| HAS_ORGANIZATION    | <<:Maven:Organization>> | 0..1        | References the organization behind the project
 |====
 
 [[:Maven:Contributor]]

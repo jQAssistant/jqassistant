@@ -100,7 +100,7 @@ public interface MavenPomDescriptor
      *
      * @return The organization behind the project.
      */
-    @Outgoing
+    @Relation("HAS_ORGANIZATION")
     MavenOrganizationDescriptor getOrganization();
 
     /**

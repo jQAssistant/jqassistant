@@ -178,6 +178,23 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void relationBetweenPOMAndOrganisationWorks() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/with-organization/pom.xml");
+        store.beginTransaction();
+        List<MavenOrganizationDescriptor> organisationDescriptors =
+                query("MATCH (p:Maven:Pom)-[:HAS_ORGANIZATION]->(o:Organization:Maven) RETURN o").getColumn("o");
+        assertThat(organisationDescriptors, notNullValue());
+        assertThat(organisationDescriptors, hasSize(1));
+
+        MavenOrganizationDescriptor organisationDescriptor = organisationDescriptors.get(0);
+
+        assertThat(organisationDescriptor.getName(), equalTo("The Quality Analyzer"));
+        assertThat(organisationDescriptor.getUrl(), equalTo("http://jqassistant.org"));
+
+        store.commitTransaction();
+    }
+
     /**
      * Checks if all developers in a given pom.xml will be found and
      * added to the model.

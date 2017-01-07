@@ -85,6 +85,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             MavenOrganizationDescriptor organization = store.create(MavenOrganizationDescriptor.class);
             organization.setName(mavenOrganization.getName());
             organization.setUrl(mavenOrganization.getUrl());
+
+            pomDescriptor.setOrganization(organization);
         }
     }
 
