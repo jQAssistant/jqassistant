@@ -21,8 +21,19 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
 
+import com.google.common.base.Optional;
 import org.apache.maven.model.*;
+import org.apache.maven.model.Activation;
+import org.apache.maven.model.ActivationFile;
+import org.apache.maven.model.ActivationOS;
+import org.apache.maven.model.ActivationProperty;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.Repository;
+import org.apache.maven.model.RepositoryPolicy;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.google.common.base.Optional.fromNullable;
 
 /**
  * Scans Maven model instances.
@@ -74,6 +85,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addDevelopers(pomDescriptor, model, store);
         addContributors(pomDescriptor, model, store);
         addOrganization(pomDescriptor, model, store);
+        addRepository(of(pomDescriptor), model.getRepositories(), store);
 
         return pomDescriptor;
     }
@@ -536,8 +548,34 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             addManagedDependencies(mavenProfileDescriptor, profile.getDependencyManagement(), scannerContext, ProfileManagesDependencyDescriptor.class);
             addProfileDependencies(mavenProfileDescriptor, profile.getDependencies(), scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
+            addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
         }
     }
+
+    private void addRepository(RepositoryHolder holder, List<Repository> repositories, Store store) {
+        for (Repository repo : repositories) {
+            MavenRespositoryDescriptor repoDescriptor = store.create(MavenRespositoryDescriptor.class);
+
+            repoDescriptor.setName(repo.getName());
+            repoDescriptor.setId(repo.getId());
+            repoDescriptor.setLayout(repo.getLayout() != null ? repo.getLayout() : "default");
+            repoDescriptor.setURL(repo.getUrl());
+
+            WrappedPolicy relPolicy = new WrappedPolicy(repo.getReleases());
+            WrappedPolicy snapPolicy = new WrappedPolicy(repo.getSnapshots());
+
+            repoDescriptor.setReleasesChecksumPolicy(relPolicy.getChecksumPolicy());
+            repoDescriptor.setReleasesUpdatePolicy(relPolicy.getUpdatePolicy());
+            repoDescriptor.setReleasesEnabled(relPolicy.isEnabled());
+
+            repoDescriptor.setSnapshotsChecksumPolicy(snapPolicy.getChecksumPolicy());
+            repoDescriptor.setSnapshotsUpdatePolicy(snapPolicy.getUpdatePolicy());
+            repoDescriptor.setSnapshotsEnabled(snapPolicy.isEnabled());
+
+            holder.getRepositories().add(repoDescriptor);
+        }
+    }
+
 
     /**
      * Adds information about defined properties.
@@ -599,5 +637,62 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         }
         return childDescriptor;
     }
+
+    private static RepositoryHolder of(final MavenProfileDescriptor profileDescriptor) {
+        return new RepositoryHolder() {
+            @Override
+            public List<MavenRespositoryDescriptor> getRepositories() {
+                return profileDescriptor.getRepositories();
+            }
+        };
+    }
+
+    private static RepositoryHolder of(final MavenPomDescriptor pomDescriptor) {
+        return new RepositoryHolder() {
+            @Override
+            public List<MavenRespositoryDescriptor> getRepositories() {
+                return pomDescriptor.getRepositories();
+            }
+        };
+    }
+
+    protected interface RepositoryHolder {
+        List<MavenRespositoryDescriptor> getRepositories();
+    }
+
+    static class WrappedPolicy {
+        RepositoryPolicy original;
+
+        private WrappedPolicy(RepositoryPolicy policy) {
+            original = policy;
+        }
+
+        public String getChecksumPolicy() {
+            if (original != null) {
+                return firstNonNull(original.getChecksumPolicy(), "warn");
+            }
+
+            return "warn";
+        }
+
+        public String getUpdatePolicy() {
+            if (original != null) {
+                return firstNonNull(original.getUpdatePolicy(), "daily");
+            }
+
+            return "daily";
+        }
+
+        public boolean isEnabled() {
+            boolean result = true;
+
+            if (original != null) {
+                result = firstNonNull(original.isEnabled(), true);
+            }
+
+            return result;
+        }
+    }
+
 
 }

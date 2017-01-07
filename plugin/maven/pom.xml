@@ -44,6 +44,8 @@
         <jqa-java-plugin.version>1.2</jqa-java-plugin.version>
         <jqa-junit-plugin.version>1.2</jqa-junit-plugin.version>
         <jqa-xml-plugin.version>1.2</jqa-xml-plugin.version>
+
+        <guava.version>20.0</guava.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
     </properties>
 
@@ -79,6 +81,11 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>

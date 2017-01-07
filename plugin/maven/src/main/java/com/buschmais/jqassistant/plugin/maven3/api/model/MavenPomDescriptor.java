@@ -72,6 +72,14 @@ public interface MavenPomDescriptor
     List<MavenContributorDescriptor> getContributors();
 
     /**
+     * Returns all declared repositories for this POM.
+     *
+     * @return A list of all declared repositories
+     */
+    @Relation("HAS_REPOSITORY")
+    List<MavenRespositoryDescriptor> getRepositories();
+
+    /**
      * Get profile information.
      * 
      * @return The profiles.

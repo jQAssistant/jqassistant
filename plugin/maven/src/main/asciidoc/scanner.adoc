@@ -95,6 +95,7 @@ A POM describing a Maven project.
 | HAS_CONTRIBUTOR     | <<:Maven:Contributor>>  | 0..n        | References a contributor
 | HAS_DEVELOPER       | <<:Maven:Developer>>    | 0..n        | References a developer
 | HAS_ORGANIZATION    | <<:Maven:Organization>> | 0..1        | References the organization behind the project
+| HAS_REPOSITORY      | <<:Maven:Repository>>   | 0..1        | References a repository declared for this project.
 |====
 
 [[:Maven:Contributor]]
@@ -161,6 +162,28 @@ The organization behind the project.
 | url             | The URL of the organization.
 |====
 
+[[:Maven:Repository]]
+=== Nodes labled with `:Maven:Repository`
+
+A Maven repository declared for a Maven POM or a profile in a Maven POM.
+
+.Properties of `:Maven:Repository`
+[options="header"]
+|====
+| Name                    | Description
+| name                    | The name of the repository.
+| layout                  | The layout of the repository.
+| releasesEnabled         | Flag if this repository is enabled for releases.
+| releasesChecksumPolicy  | The checksum policy to be used for releases provided by this repository.
+| releasesUpdatePolicy    | The update policy to be used for releases provided by this repository.
+| snapshotsEnabled        | Flag if this repository is enabled for snapshots.
+| snapshotsChecksumPolicy | The checksum policy to be used for snapshots provided by this repository.
+| snapshotsUpdatePolicy   | The update policy to be used for snapshots provided by this repository.
+| url                     | The URL of the repository.
+|====
+
+
+
 [[:Maven:Role]]
 === :Maven:Role
 
@@ -196,6 +219,7 @@ A maven profile
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>            | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>            | 0..n        | References a plugin that is used during maven lifecycle
 | HAS_ACTIVATION      | <<:Maven:ProfileActivation>> | 0..1        | References the conditions which will trigger the profile.
+| HAS_REPOSITORY      | <<:Maven:Repository>>        | 0..1        | References a repository declared for this profile.
 |====
 
 [[:Maven:ProfileActivation]]

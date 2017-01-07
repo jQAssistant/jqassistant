@@ -195,6 +195,123 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    public void minimalRepositoryInPOM() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/repository/1/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenRespositoryDescriptor> repoDescriptors =
+                query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
+                        "WHERE f.fileName='/repository/1/pom.xml' " +
+                        "RETURN r").getColumn("r");
+
+        assertThat(repoDescriptors, hasSize(1));
+
+        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+
+        assertThat(repoDescriptor.getName(), equalTo("Repo"));
+        assertThat(repoDescriptor.getId(), equalTo("x1"));
+        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getLayout(), equalTo("default"));
+
+        assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getReleasesEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getReleasesUpdatePolicy(), equalTo("daily"));
+
+        assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+    }
+
+    @Test
+    public void disabledReleasesForRepositoryInPOM() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/repository/2/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenRespositoryDescriptor> repoDescriptors =
+                query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
+                        "WHERE f.fileName='/repository/2/pom.xml' " +
+                        "RETURN r").getColumn("r");
+
+        assertThat(repoDescriptors, hasSize(1));
+
+        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+
+        assertThat(repoDescriptor.getName(), equalTo("Repo"));
+        assertThat(repoDescriptor.getId(), equalTo("x1"));
+        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getLayout(), equalTo("default"));
+
+        assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getReleasesEnabled(), equalTo(false));
+        assertThat(repoDescriptor.getReleasesUpdatePolicy(), equalTo("daily"));
+
+        assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+    }
+
+    @Test
+    public void disabledSnapshotsForRepositoryInPOM() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/repository/3/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenRespositoryDescriptor> repoDescriptors =
+                query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
+                        "WHERE f.fileName='/repository/3/pom.xml' " +
+                        "RETURN r").getColumn("r");
+
+        assertThat(repoDescriptors, hasSize(1));
+
+        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+
+        assertThat(repoDescriptor.getName(), equalTo("Repo"));
+        assertThat(repoDescriptor.getId(), equalTo("x1"));
+        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getLayout(), equalTo("default"));
+
+        assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getReleasesEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getReleasesUpdatePolicy(), equalTo("daily"));
+
+        assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(false));
+        assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+    }
+
+    @Test
+    public void minimalRepositoryInProfile() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/repository/4/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenRespositoryDescriptor> repoDescriptors =
+                query("MATCH (f:File:Maven:Xml:Pom) " +
+                        "-[:HAS_PROFILE]->(:Maven:Profile) " +
+                        "-[:HAS_REPOSITORY]->(r:Maven:Repository) " +
+                        "WHERE f.fileName='/repository/4/pom.xml' " +
+                        "RETURN r").getColumn("r");
+
+        assertThat(repoDescriptors, hasSize(1));
+
+        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+
+        assertThat(repoDescriptor.getName(), equalTo("Repo"));
+        assertThat(repoDescriptor.getId(), equalTo("x1"));
+        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getLayout(), equalTo("default"));
+
+        assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getReleasesEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getReleasesUpdatePolicy(), equalTo("daily"));
+
+        assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
+        assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
+        assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+    }
+
     /**
      * Checks if all developers in a given pom.xml will be found and
      * added to the model.
