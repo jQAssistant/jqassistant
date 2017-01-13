@@ -4,7 +4,7 @@
 
 [[test:ConceptWithParameters]]
 .Test Concept with parameters.
-[source,cypher,role=concept,requiresParameters="char charParam; byte byteParam; short shortParam; int intParam; long longParam; float floatParam; double doubleParam; boolean booleanParam; string stringParam"]
+[source,cypher,role=concept,requiresParameters="char charParam; byte byteParam; short shortParam; int intParam; long longParam; float floatParam; double doubleParam; boolean booleanParam; String stringParam"]
 ----
 match
   (n)
@@ -18,7 +18,7 @@ limit
 
 [[test:ConceptWithParametersAndDefaultValues]]
 .Test Concept with parameters and default values.
-[source,cypher,requiresParameters="char charParam='4'; byte byteParam=42; short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; string stringParam='FortyTwo'"]
+[source,cypher,requiresParameters="char charParam='4'; byte byteParam=42; short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; String stringParam='FortyTwo'"]
 ----
 match
   (n)
@@ -48,7 +48,7 @@ limit
 
 [[test:ConstraintWithParametersAndDefaultValues]]
 .Test Constraint with parameters and default values.
-[source,cypher,requiresParameters="char charParam='4'; byte byteParam=42; short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; string stringParam='FortyTwo'"]
+[source,cypher,requiresParameters="char charParam='4'; byte byteParam=42; short shortParam=42; int intParam=42; long longParam=42; float floatParam=42; double doubleParam=42; boolean booleanParam=true; String stringParam='FortyTwo'"]
 ----
 match
   (n)
