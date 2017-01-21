@@ -4,11 +4,11 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>neo4jserver</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <name>jQAssistant Neo4j Backend</name>
     <url>http://jqassistant.org/</url>
@@ -18,11 +18,11 @@
     </description>
     
     <properties>
-        <jqa-asciidoctor-utilities.version>1.2.0</jqa-asciidoctor-utilities.version>
-        <jqa-core.version>1.2.0</jqa-core.version>
-        <jqa-java-plugin.version>1.2</jqa-java-plugin.version>
-        <jqa.own-constraints.version>1.2.0</jqa.own-constraints.version>
-        <jqa-plugin-common.version>1.2</jqa-plugin-common.version>
+        <jqa-asciidoctor-utilities.version>1.3.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-core.version>1.3.0-SNAPSHOT</jqa-core.version>
+        <jqa-java-plugin.version>1.3-SNAPSHOT</jqa-java-plugin.version>
+        <jqa.own-constraints.version>1.3.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa-plugin-common.version>1.3-SNAPSHOT</jqa-plugin-common.version>
 
         <org.neo4j_version>2.3.8</org.neo4j_version>
         <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
