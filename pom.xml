@@ -80,10 +80,16 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <com.buschmais.xo.version>0.7.0</com.buschmais.xo.version>
+    <maven.assembly.version>2.5.3</maven.assembly.version>
+    <maven.buildhelper.version>1.9.1</maven.buildhelper.version>
     <maven.clean.version>3.0.0</maven.clean.version>
     <maven.compiler.version>3.5</maven.compiler.version>
+    <maven.dependency.version>2.10</maven.dependency.version>
+    <maven.deploy.version>2.8.2</maven.deploy.version>
+    <maven.enforcer.version>1.4.1</maven.enforcer.version>
     <maven.failsafe.version>2.19.1</maven.failsafe.version>
     <maven.install.version>2.5.2</maven.install.version>
+    <maven.jar.version>2.6</maven.jar.version>
     <maven.javadoc.version>2.10.4</maven.javadoc.version>
     <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
 
@@ -94,8 +100,13 @@
      !-->
     <maven.jqassistant.previous.version>1.2.0-RC1</maven.jqassistant.previous.version>
     <maven.min.version>3.2.5</maven.min.version>
+    <maven.release.version>2.5.3</maven.release.version>
+    <maven.resources.version>3.0.1</maven.resources.version>
+    <maven.share.version>2.4.1</maven.share.version>
+    <maven.site.version>3.4</maven.site.version>
     <maven.source.plugin>3.0.1</maven.source.plugin>
     <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
+    <maven.xml.version>1.0</maven.xml.version>
     <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
   </properties>
   <build>
@@ -177,7 +188,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.5.3</version>
+          <version>${maven.assembly.version}</version>
         </plugin>
 
         <plugin>
@@ -211,7 +222,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>${maven.jar.version}</version>
         </plugin>
 
         <plugin>
@@ -257,25 +268,25 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>${maven.share.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
+          <version>${maven.dependency.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <version>${maven.deploy.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
+          <version>${maven.enforcer.version}</version>
           <executions>
             <execution>
               <id>enforce-maven</id>
@@ -314,7 +325,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.3</version>
+          <version>${maven.release.version}</version>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
             <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -326,7 +337,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${maven.resources.version}</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
@@ -335,7 +346,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.4</version>
+          <version>${maven.site.version}</version>
           <dependencies>
             <dependency>
               <groupId>org.apache.maven.doxia</groupId>
@@ -371,13 +382,13 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.9.1</version>
+          <version>${maven.buildhelper.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
-          <version>1.0</version>
+          <version>${maven.xml.version}</version>
         </plugin>
 
 
