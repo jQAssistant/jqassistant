@@ -1,0 +1,6 @@
+//
+//
+//
+== jQAssistant Core Framework Version 1.3.0
+
+- TBW.
