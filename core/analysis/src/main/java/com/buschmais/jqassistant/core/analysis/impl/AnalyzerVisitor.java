@@ -69,27 +69,42 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
         try {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
+            Result.Status status;
             if (conceptDescriptor == null || configuration.isExecuteAppliedConcepts()) {
                 logger.info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity) + "'.");
                 reportWriter.beginConcept(concept);
                 Result<Concept> result = execute(concept, effectiveSeverity);
                 reportWriter.setResult(result);
+                status = result.getStatus();
                 if (conceptDescriptor == null) {
                     conceptDescriptor = store.create(ConceptDescriptor.class);
                     conceptDescriptor.setId(concept.getId());
                     conceptDescriptor.setStatus(result.getStatus());
                 }
                 reportWriter.endConcept();
+            } else {
+                status = conceptDescriptor.getStatus();
             }
             store.commitTransaction();
+            return Result.Status.SUCCESS.equals(status);
         } catch (XOException e) {
             store.rollbackTransaction();
             throw new AnalysisException("Cannot apply concept " + concept.getId(), e);
         }
+    }
+
+    @Override
+    public void skipConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+        store.beginTransaction();
+        reportWriter.beginConcept(concept);
+        Result<Concept> result = new Result<>(concept, Result.Status.SKIPPED, effectiveSeverity, null, null);
+        reportWriter.setResult(result);
+        reportWriter.endConcept();
+        store.commitTransaction();
     }
 
     @Override
@@ -105,6 +120,16 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             store.rollbackTransaction();
             throw new AnalysisException("Cannot validate constraint " + constraint.getId(), e);
         }
+    }
+
+    @Override
+    public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+        store.beginTransaction();
+        reportWriter.beginConstraint(constraint);
+        Result<Constraint> result = new Result<>(constraint, Result.Status.SKIPPED, effectiveSeverity, null, null);
+        reportWriter.setResult(result);
+        reportWriter.endConstraint();
+        store.commitTransaction();
     }
 
     @Override

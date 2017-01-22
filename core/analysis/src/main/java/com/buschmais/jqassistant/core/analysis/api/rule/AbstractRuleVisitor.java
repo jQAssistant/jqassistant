@@ -9,11 +9,20 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleVisitor;
 public abstract class AbstractRuleVisitor implements RuleVisitor {
 
     @Override
-    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+        return true;
+    }
+
+    @Override
+    public void skipConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
     }
 
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+    }
+
+    @Override
+    public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
     }
 
     @Override

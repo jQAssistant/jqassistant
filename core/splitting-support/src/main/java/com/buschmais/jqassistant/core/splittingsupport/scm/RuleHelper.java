@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.splittingsupport.scm;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleExecutorConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -89,7 +90,7 @@ public class RuleHelper {
      */
     private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
-        RuleExecutor executor = new RuleExecutor(visitor);
+        RuleExecutor executor = new RuleExecutor(visitor, new RuleExecutorConfiguration());
         executor.execute(ruleSet, ruleSelection);
         return visitor;
     }

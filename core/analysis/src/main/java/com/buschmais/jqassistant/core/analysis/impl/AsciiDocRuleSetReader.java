@@ -55,6 +55,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     public static final String SOURCE = "source";
     public static final String LANGUAGE = "language";
     public static final String CYPHER = "cypher";
+    public static final String OPTIONAL = "optional";
 
     /**
      * The cached rule set reader, initialized lazily.
@@ -120,13 +121,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             } else {
                 LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
             }
-            Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, REQUIRES_CONCEPTS).keySet());
-            Set<String> depends = getDependencies(attributes, DEPENDS).keySet();
-            if (!depends.isEmpty()) {
-                LOGGER.info("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
-                        ruleSource.getId(), id);
-                requiresConcepts.addAll(depends);
-            }
+            Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
+
             Map<String, Parameter> parameters = getParameters(part.getAttributes().get(REQUIRES_PARAMETERS));
             Object language = part.getAttributes().get(LANGUAGE);
             String source = unescapeHtml(part.getContent());
@@ -148,15 +144,47 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
-                        .requiresConceptIds(requiresConcepts).parameters(parameters).verification(verification).report(report).get();
+                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
                 Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
-                        .requiresConceptIds(requiresConcepts).parameters(parameters).verification(verification).report(report).get();
+                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
                 builder.addConstraint(constraint);
             }
         }
+    }
+
+    /**
+     * Evaluates required concepts of a rule.
+     * 
+     * @param ruleSource
+     *            The rule source.
+     * @param attributes
+     *            The attributes of an asciidoc rule block
+     * @param id
+     *            The id.
+     * @return A map where the keys represent the ids of required concepts and
+     *         the values if they are optional.
+     * @throws RuleException
+     *             If the dependencies cannot be evaluated.
+     */
+    private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Map<String, Object> attributes) throws RuleException {
+        Map<String, String> requiresDeclarations = getDependencyDeclarations(attributes, REQUIRES_CONCEPTS);
+        Map<String, String> depends = getDependencyDeclarations(attributes, DEPENDS);
+        if (!depends.isEmpty()) {
+            LOGGER.info("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
+                    ruleSource.getId(), id);
+            requiresDeclarations.putAll(depends);
+        }
+        Map<String, Boolean> required = new HashMap<>();
+        for (Map.Entry<String, String> requiresEntry : requiresDeclarations.entrySet()) {
+            String conceptId = requiresEntry.getKey();
+            String dependencyAttribute = requiresEntry.getValue();
+            Boolean optional = dependencyAttribute != null ? OPTIONAL.equals(dependencyAttribute.toLowerCase()) : null;
+            required.put(conceptId, optional);
+        }
+        return required;
     }
 
     /**
@@ -174,14 +202,26 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     private void extractGroups(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (ContentPart contentPart : findGroups(doc.getParts())) {
             Map<String, Object> attributes = contentPart.getAttributes();
-            Map<String, Severity> constraints = getDependencies(attributes, INCLUDES_CONSTRAINTS);
-            Map<String, Severity> concepts = getDependencies(attributes, INCLUDES_CONCEPTS);
-            Map<String, Severity> groups = getDependencies(attributes, INCLUDES_GROUPS);
+            Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
+            Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
+            Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
             Severity severity = getSeverity(contentPart, null);
             Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource)
                     .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
             ruleSetBuilder.addGroup(group);
         }
+    }
+
+    private Map<String, Severity> getGroupElements(Map<String, Object> attributes, String attributeName) throws RuleException {
+        Map<String, String> dependencyDeclarations = getDependencyDeclarations(attributes, attributeName);
+        Map<String, Severity> result = new HashMap<>();
+        for (Map.Entry<String, String> entry : dependencyDeclarations.entrySet()) {
+            String id = entry.getKey();
+            String dependencyAttribute = entry.getValue();
+            Severity severity = dependencyAttribute != null ? Severity.fromValue(dependencyAttribute.toLowerCase()) : null;
+            result.put(id, severity);
+        }
+        return result;
     }
 
     /**
@@ -194,20 +234,19 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @return A map containing the ids of the dependencies as keys and their
      *         severity (optional).
      */
-    private Map<String, Severity> getDependencies(Map<String, Object> attributes, String attributeName) throws RuleException {
+    private Map<String, String> getDependencyDeclarations(Map<String, Object> attributes, String attributeName) throws RuleException {
         String attribute = (String) attributes.get(attributeName);
         Set<String> dependencies = new HashSet<>();
         if (attribute != null && !attribute.trim().isEmpty()) {
             dependencies.addAll(asList(attribute.split("\\s*,\\s*")));
         }
-        Map<String, Severity> rules = new HashMap<>();
+        Map<String, String> rules = new HashMap<>();
         for (String dependency : dependencies) {
             Matcher matcher = DEPENDENCY_PATTERN.matcher(dependency);
             if (matcher.matches()) {
                 String id = matcher.group(1);
-                String severityValue = matcher.group(3);
-                Severity severity = severityValue != null ? Severity.fromValue(severityValue.toLowerCase()) : null;
-                rules.put(id, severity);
+                String dependencyAttribute = matcher.group(3);
+                rules.put(id, dependencyAttribute);
             }
         }
         return rules;

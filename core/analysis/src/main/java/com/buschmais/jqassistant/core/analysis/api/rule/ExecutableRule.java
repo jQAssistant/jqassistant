@@ -20,7 +20,7 @@ public interface ExecutableRule extends Rule {
      * 
      * @return The ids of required rules.
      */
-    Set<String> getRequiresConcepts();
+    Map<String, Boolean> getRequiresConcepts();
 
     /**
      * Return the executable.

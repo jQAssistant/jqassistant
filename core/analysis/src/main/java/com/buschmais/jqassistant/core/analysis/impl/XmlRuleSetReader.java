@@ -113,7 +113,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
-        Set<String> requiresConcepts = getRequiredReferences(requiresConcept);
+        Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
@@ -153,7 +153,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
-        Set<String> requiresConcepts = getRequiredReferences(requiresConcept);
+        Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
@@ -191,10 +191,10 @@ public class XmlRuleSetReader implements RuleSetReader {
         return DEFAULT_VERIFICATION;
     }
 
-    private Set<String> getRequiredReferences(List<? extends ReferenceType> referenceTypes) {
-        Set<String> references = new HashSet<>();
+    private Map<String, Boolean> getRequiresConcepts(List<? extends ReferenceType> referenceTypes) {
+        Map<String, Boolean> references = new HashMap<>();
         for (ReferenceType referenceType : referenceTypes) {
-            references.add(referenceType.getRefId());
+            references.put(referenceType.getRefId(), referenceType.isOptional());
         }
         return references;
     }

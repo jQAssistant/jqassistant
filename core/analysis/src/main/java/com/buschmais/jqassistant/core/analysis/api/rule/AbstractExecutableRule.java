@@ -22,9 +22,9 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     private Map<String, Parameter> parameters = new HashMap<>();
 
     /**
-     * The rules which must be applied before this rule can be executed.
+     * The rules which must be applied before this rule can be executed. The value determines if the rule is optional.
      */
-    private Set<String> requiresConcepts = new HashSet<>();
+    private Map<String, Boolean> requiresConcepts = new HashMap<>();
 
     /**
      * Describes the verification of the result of an executable rule.
@@ -37,7 +37,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     private Report report;
 
     @Override
-    public Set<String> getRequiresConcepts() {
+    public Map<String, Boolean> getRequiresConcepts() {
         return requiresConcepts;
     }
 
@@ -67,9 +67,9 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
             super(rule);
         }
 
-        public B requiresConceptIds(Set<String> requiresConcepts) {
+        public B requiresConceptIds(Map<String, Boolean> requiresConcepts) {
             AbstractExecutableRule r = get();
-            r.requiresConcepts.addAll(requiresConcepts);
+            r.requiresConcepts.putAll(requiresConcepts);
             return builder();
         }
 

@@ -1,21 +1,15 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.analysis.api.RuleExecutorConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
  * Implementation of the
@@ -23,7 +17,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
  */
 public class RuleExecutor {
 
-    private Set<Concept> executedConcepts = new HashSet<>();
+    private Map<Concept, Boolean> executedConcepts = new HashMap<>();
 
     private Set<Constraint> executedConstraints = new HashSet<>();
 
@@ -31,8 +25,11 @@ public class RuleExecutor {
 
     private RuleVisitor ruleVisitor;
 
-    public RuleExecutor(RuleVisitor ruleVisitor) {
+    private RuleExecutorConfiguration configuration;
+
+    public RuleExecutor(RuleVisitor ruleVisitor, RuleExecutorConfiguration configuration) {
         this.ruleVisitor = ruleVisitor;
+        this.configuration = configuration;
     }
 
     public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException {
@@ -53,11 +50,16 @@ public class RuleExecutor {
     /**
      * Executes the given group.
      *
-     * @param ruleSet  The rule set.
-     * @param group    The group.
-     * @param severity The severity.
-     * @throws AnalysisListenerException If the report cannot be written.
-     * @throws AnalysisException         If the group cannot be executed.
+     * @param ruleSet
+     *            The rule set.
+     * @param group
+     *            The group.
+     * @param severity
+     *            The severity.
+     * @throws AnalysisListenerException
+     *             If the report cannot be written.
+     * @throws AnalysisException
+     *             If the group cannot be executed.
      */
     private void executeGroup(RuleSet ruleSet, Group group, Severity severity) throws AnalysisException {
         if (!executedGroups.contains(group)) {
@@ -79,7 +81,6 @@ public class RuleExecutor {
                 Constraint constraint = resolveConstraint(ruleSet, constraintId);
                 validateConstraint(ruleSet, constraint, getEffectiveSeverity(constraint, severity, constraintEntry.getValue()));
             }
-
             executedGroups.add(group);
             ruleVisitor.afterGroup(group);
         }
@@ -88,9 +89,12 @@ public class RuleExecutor {
     /**
      * Determines the effective severity for a rule to be executed.
      *
-     * @param rule           The rule.
-     * @param parentSeverity The severity inherited from the parent group.
-     * @param ruleSeverity   The severity as specified on the rule in the parent group.
+     * @param rule
+     *            The rule.
+     * @param parentSeverity
+     *            The severity inherited from the parent group.
+     * @param ruleSeverity
+     *            The severity as specified on the rule in the parent group.
      * @return The effective severity.
      */
     private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity ruleSeverity) {
@@ -101,37 +105,61 @@ public class RuleExecutor {
     /**
      * Validates the given constraint.
      *
-     * @param constraint The constraint.
-     * @throws AnalysisListenerException If the report cannot be written.
-     * @throws AnalysisException         If the constraint cannot be validated.
+     * @param constraint
+     *            The constraint.
+     * @throws AnalysisListenerException
+     *             If the report cannot be written.
+     * @throws AnalysisException
+     *             If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws AnalysisException {
         if (!executedConstraints.contains(constraint)) {
-            for (String requiredConceptId : constraint.getRequiresConcepts()) {
-                Concept requiredConcept = resolveConcept(ruleSet, requiredConceptId);
-                applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity());
+            if (applyRequiredConcepts(ruleSet, constraint)) {
+                ruleVisitor.visitConstraint(constraint, severity);
+            } else {
+                ruleVisitor.skipConstraint(constraint, severity);
             }
-            ruleVisitor.visitConstraint(constraint, severity);
             executedConstraints.add(constraint);
         }
+    }
+
+    private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule rule) throws AnalysisException {
+        boolean requiredConceptsApplied = true;
+        for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
+            String conceptId = entry.getKey();
+            Concept requiredConcept = resolveConcept(ruleSet, conceptId);
+            boolean conceptResult = applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity());
+            Boolean optional = entry.getValue();
+            if (optional == null) {
+                optional = configuration.isRequiredConceptsAreOptionalByDefault();
+            }
+            requiredConceptsApplied = requiredConceptsApplied && (conceptResult || optional);
+        }
+        return requiredConceptsApplied;
     }
 
     /**
      * Applies the given concept.
      *
-     * @param concept The concept.
-     * @throws AnalysisListenerException If the report cannot be written.
-     * @throws AnalysisException         If the concept cannot be applied.
+     * @param concept
+     *            The concept.
+     * @throws AnalysisListenerException
+     *             If the report cannot be written.
+     * @throws AnalysisException
+     *             If the concept cannot be applied.
      */
-    private void applyConcept(RuleSet ruleSet, Concept concept, Severity severity) throws AnalysisException {
-        if (!executedConcepts.contains(concept)) {
-            for (String requiredConceptId : concept.getRequiresConcepts()) {
-                Concept requiredConcept = resolveConcept(ruleSet, requiredConceptId);
-                applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity());
+    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity severity) throws AnalysisException {
+        Boolean result =  executedConcepts.get(concept);
+        if (result == null) {
+            if (applyRequiredConcepts(ruleSet, concept)) {
+                result = ruleVisitor.visitConcept(concept, severity);
+            } else {
+                ruleVisitor.skipConcept(concept, severity);
+                result = false;
             }
-            ruleVisitor.visitConcept(concept, severity);
-            executedConcepts.add(concept);
+            executedConcepts.put(concept, result);
         }
+        return result;
     }
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {

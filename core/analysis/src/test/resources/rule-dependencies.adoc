@@ -1,0 +1,132 @@
+= Rules
+
+== Concepts
+
+[[test:Concept1]]
+.Test concept 1.
+[source,cypher,role=concept]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:Concept2]]
+.Test concept 2.
+[source,cypher,role=concept]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:Concept3]]
+.Test concept 3.
+[source,cypher,role=concept]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ConceptWithOptionalDependency]]
+.Test concept with an optional dependency.
+[source,cypher,role=concept,requiresConcepts="test:Concept1(optional)"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ConceptWithRequiredDependency]]
+.Test concept with a required dependency.
+[source,cypher,role=concept,requiresConcepts="test:Concept1(required)"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ConceptWithMixedDependencies]]
+.Test concept with both an optional and a required dependency.
+[source,cypher,role=concept,requiresConcepts="test:Concept1(optional),test:Concept2(required),test:Concept3"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+== Constraints
+
+[[test:ConstraintWithOptionalDependency]]
+.Test constraint with an optional dependency.
+[source,cypher,role=constraint,requiresConcepts="test:Concept1(optional)"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ConstraintWithRequiredDependency]]
+.Test constraint with a required dependency.
+[source,cypher,role=constraint,requiresConcepts="test:Concept1(required)"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+[[test:ConstraintWithMixedDependencies]]
+.Test constraint with an optional, a required and a non-specified dependency.
+[source,cypher,role=constraint,requiresConcepts="test:Concept1(optional),test:Concept2(required),test:Concept3"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+

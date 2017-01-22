@@ -46,7 +46,7 @@ public class AnalyzerImpl implements Analyzer {
             reportWriter.begin();
             try {
                 AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, logger);
-                RuleExecutor executor = new RuleExecutor(visitor);
+                RuleExecutor executor = new RuleExecutor(visitor, configuration.getRuleExecutorConfiguration());
                 executor.execute(ruleSet, ruleSelection);
             } finally {
                 reportWriter.end();

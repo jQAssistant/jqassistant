@@ -11,10 +11,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
@@ -27,7 +24,10 @@ public class RuleSetWriterImpl implements RuleSetWriter {
 
     private JAXBContext jaxbContext;
 
-    public RuleSetWriterImpl() {
+    private RuleExecutorConfiguration configuration;
+
+    public RuleSetWriterImpl(RuleExecutorConfiguration configuration) {
+        this.configuration = configuration;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -41,7 +41,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroupsBucket().getIds())
                 .addConstraintIds(ruleSet.getConstraintBucket().getIds()).addConceptIds(ruleSet.getConceptBucket().getIds()).get();
         try {
-            new RuleExecutor(visitor).execute(ruleSet, ruleSelection);
+            new RuleExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
             throw new RuleException("Cannot create rule set", e);
         }
@@ -103,11 +103,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             conceptType.setDescription(concept.getDescription());
             conceptType.setSeverity(getSeverity(concept.getSeverity(), Concept.DEFAULT_SEVERITY));
             writeExecutable(conceptType, concept);
-            for (String requiresConceptId : concept.getRequiresConcepts()) {
-                ReferenceType conceptReferenceType = new ReferenceType();
-                conceptReferenceType.setRefId(requiresConceptId);
-                conceptType.getRequiresConcept().add(conceptReferenceType);
-            }
+            writeRequiredConcepts(concept, conceptType);
             rules.getConceptOrConstraintOrGroup().add(conceptType);
         }
     }
@@ -119,12 +115,17 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             constraintType.setDescription(constraint.getDescription());
             constraintType.setSeverity(getSeverity(constraint.getSeverity(), Constraint.DEFAULT_SEVERITY));
             writeExecutable(constraintType, constraint);
-            for (String requiresConceptId : constraint.getRequiresConcepts()) {
-                ReferenceType conceptReferenceType = new ReferenceType();
-                conceptReferenceType.setRefId(requiresConceptId);
-                constraintType.getRequiresConcept().add(conceptReferenceType);
-            }
+            writeRequiredConcepts(constraint, constraintType);
             rules.getConceptOrConstraintOrGroup().add(constraintType);
+        }
+    }
+
+    private void writeRequiredConcepts(ExecutableRule rule, ExecutableRuleType ruleType) {
+        for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
+            ReferenceType conceptReferenceType = new ReferenceType();
+            conceptReferenceType.setRefId(entry.getKey());
+            conceptReferenceType.setOptional(entry.getValue());
+            ruleType.getRequiresConcept().add(conceptReferenceType);
         }
     }
 

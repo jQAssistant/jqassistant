@@ -32,12 +32,13 @@ public class CollectRulesVisitor extends AbstractRuleVisitor {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
         concepts.put(concept, effectiveSeverity);
+        return true;
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+    public void  visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
         constraints.put(constraint, effectiveSeverity);
     }
 

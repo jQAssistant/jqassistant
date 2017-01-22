@@ -31,7 +31,7 @@ public class AsciiDocRuleSetReaderTest {
         Executable executable1 = concept1.getExecutable();
         assertThat(executable1, instanceOf(CypherExecutable.class));
         assertThat(((CypherExecutable) executable1).getStatement(), containsString("c:Test:Junit4, m:Test:Junit4"));
-        assertThat(concept1.getRequiresConcepts(), IsEmptyCollection.<String> empty());
+        assertThat(concept1.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
 
         Concept concept2 = concepts.getById("junit4:AssertMethod");
         assertThat(concept2.getId(), containsString("junit4:AssertMethod"));
@@ -40,7 +40,7 @@ public class AsciiDocRuleSetReaderTest {
         Executable executable2 = concept2.getExecutable();
         assertThat(executable2, instanceOf(CypherExecutable.class));
         assertThat(((CypherExecutable) executable2).getStatement(), containsString("and assertMethod.signature =~ 'void assert.*'"));
-        assertThat(concept2.getRequiresConcepts(), IsEmptyCollection.<String> empty());
+        assertThat(concept2.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
 
         ConstraintBucket constraints = ruleSet.getConstraintBucket();
         assertThat(constraints.size(), equalTo(1));
@@ -55,7 +55,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
         assertThat(((CypherExecutable) constraintExecutable).getStatement(), containsString("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
 
-        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder(constraint.getRequiresConcepts().toArray()));
+        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder(constraint.getRequiresConcepts().keySet().toArray()));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class AsciiDocRuleSetReaderTest {
         Concept concept1 = concepts.getById("concept:JavaScript");
         assertThat(concept1.getId(), equalTo("concept:JavaScript"));
         assertThat(concept1.getDescription(), containsString("Demonstrates a concept using JavaScript."));
-        assertThat(concept1.getRequiresConcepts(), IsEmptyCollection.<String> empty());
+        assertThat(concept1.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
 
         Executable executable = concept1.getExecutable();
         assertThat(executable, instanceOf(ScriptExecutable.class));
@@ -76,7 +76,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(scriptExecutable, notNullValue());
         assertThat(scriptExecutable.getLanguage(), equalTo("javascript"));
         assertThat(scriptExecutable.getSource(), CoreMatchers.containsString("var row = new java.util.HashMap();"));
-        assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
+        assertEquals(Collections.emptyMap(), concept1.getRequiresConcepts());
     }
 
     @Test
@@ -144,5 +144,4 @@ public class AsciiDocRuleSetReaderTest {
         RuleSetTestHelper.verifyParameter(parameters, "booleanParam", Parameter.Type.BOOLEAN, assertDefaultValue ? true : null);
         RuleSetTestHelper.verifyParameter(parameters, "stringParam", Parameter.Type.STRING, assertDefaultValue ? "FortyTwo" : null);
     }
-
 }
