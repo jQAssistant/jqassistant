@@ -1,0 +1,3 @@
+== jQAssistant JUnit Plugin Version 1.3
+
+- TBW.
