@@ -11,7 +11,7 @@ import java.io.IOException;
 public class ServerMT extends AbstractServerTest {
 
     @Test
-    public void server() throws IOException, PluginRepositoryException {
+    public void server() throws IOException {
         System.out.println("Hit Enter to continue.");
         System.in.read();
     }

@@ -1,19 +1,24 @@
 package com.buschmais.jqassistant.neo4jserver.impl;
 
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.neo4jserver.api.Server;
 import org.apache.commons.configuration.Configuration;
+import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.server.WrappingNeoServer;
 import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.security.ssl.KeyStoreInformation;
-
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * The customized Neo4j server.
  */
-public class ExtendedCommunityNeoServer extends AbstractServer {
+public class ExtendedCommunityNeoServer extends WrappingNeoServer implements Server {
 
     public static final String DEFAULT_ADDRESS = "localhost";
 
     public static final int DEFAULT_PORT = 7474;
+
+    private final Store store;
 
     /**
      * Constructor.
@@ -24,7 +29,8 @@ public class ExtendedCommunityNeoServer extends AbstractServer {
      *            The port number of the server.
      */
     public ExtendedCommunityNeoServer(EmbeddedGraphStore graphStore, String address, int port) {
-        super(graphStore);
+        super((GraphDatabaseAPI) graphStore.getGraphDatabaseService());
+        this.store = graphStore;
         init(address, port);
     }
 
