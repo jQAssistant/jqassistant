@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.util.HashSet;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -13,8 +15,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
-
-import java.util.HashSet;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
@@ -36,7 +36,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private Integer lastLineNumber = null;
     private HashSet<Integer> effectiveLines = new HashSet<>();
 
-    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
+    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
+            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(Opcodes.ASM5);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
@@ -141,7 +142,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             this.lastLineNumber = Math.max(line, this.lastLineNumber);
         }
         this.lineNumber = line;
-        this.effectiveLines.add (line);
+        this.effectiveLines.add(line);
     }
 
     @Override
@@ -152,10 +153,10 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitEnd() {
         methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
-        if (firstLineNumber!=null) {
+        if (firstLineNumber != null) {
             methodDescriptor.setFirstLineNumber(firstLineNumber);
         }
-        if (lastLineNumber!=null) {
+        if (lastLineNumber != null) {
             methodDescriptor.setLastLineNumber(lastLineNumber);
         }
         if (!effectiveLines.isEmpty()) {
