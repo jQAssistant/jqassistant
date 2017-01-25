@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqa-distribution-specification</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <name>jQAssistant Distribution Specification</name>
     <url>http://jqassistant.org/</url>
@@ -48,39 +48,39 @@
          ! It is used only to include the correct version of
          ! the documentation of the commandline tool in the user manual.
          !-->
-        <jqa-commandline-tool.version>1.2.0</jqa-commandline-tool.version>
+        <jqa-commandline-tool.version>1.3.0-SNAPSHOT</jqa-commandline-tool.version>
 
         <!--
          ! Version of the Plugin of Apache Maven.
          ! It is used only to include the correct version of
          ! the documentation of the commandline tool in the user manual.
          !-->
-        <jqa-maven-plugin.version>1.2.0</jqa-maven-plugin.version>
+        <jqa-maven-plugin.version>1.3.0-SNAPSHOT</jqa-maven-plugin.version>
 
         <!--
          ! Versions of the plugins to be include an a release.
          !-->
-        <jqa-cdi-plugin.version>1.2</jqa-cdi-plugin.version>
-        <jqa-core.version>1.2.0</jqa-core.version>
-        <jqa-graphml-plugin.version>1.2</jqa-graphml-plugin.version>
-        <jqa-ejb3-plugin.version>1.2</jqa-ejb3-plugin.version>
-        <jqa-java8-plugin.version>1.2</jqa-java8-plugin.version>
-        <jqa-javaee6-plugin.version>1.2</jqa-javaee6-plugin.version>
-        <jqa-java-plugin.version>1.2.1-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-jaxrs-plugin.version>1.2</jqa-jaxrs-plugin.version>
-        <jqa-jpa2-plugin.version>1.2</jqa-jpa2-plugin.version>
-        <jqa-junit-plugin.version>1.2</jqa-junit-plugin.version>
-        <jqa-osgi-plugin.version>1.2</jqa-osgi-plugin.version>
-        <jqa-own-constraints.version>1.2.0</jqa-own-constraints.version>
-        <jqa-m2repo-plugin.version>1.2</jqa-m2repo-plugin.version>
-        <jqa-maven3-plugin.version>1.2</jqa-maven3-plugin.version>
-        <jqa-neo4jserver.version>1.2.0</jqa-neo4jserver.version>
-        <jqa-plugin-common.version>1.2.0</jqa-plugin-common.version>
-        <jqa-rdbms-plugin.version>1.2</jqa-rdbms-plugin.version>
-        <jqa-yaml-plugin.version>1.2</jqa-yaml-plugin.version>
-        <jqa-testng-plugin.version>1.2</jqa-testng-plugin.version>
-        <jqa-tycho-plugin.version>1.2</jqa-tycho-plugin.version>
-        <jqa-xml-plugin.version>1.2</jqa-xml-plugin.version>
+        <jqa-cdi-plugin.version>1.3-SNAPSHOT</jqa-cdi-plugin.version>
+        <jqa-core.version>1.3.0-SNAPSHOT</jqa-core.version>
+        <jqa-graphml-plugin.version>1.3-SNAPSHOT</jqa-graphml-plugin.version>
+        <jqa-ejb3-plugin.version>1.3-SNAPSHOT</jqa-ejb3-plugin.version>
+        <jqa-java8-plugin.version>1.3-SNAPSHOT</jqa-java8-plugin.version>
+        <jqa-javaee6-plugin.version>1.3-SNAPSHOT</jqa-javaee6-plugin.version>
+        <jqa-java-plugin.version>1.3-SNAPSHOT</jqa-java-plugin.version>
+        <jqa-jaxrs-plugin.version>1.3-SNAPSHOT</jqa-jaxrs-plugin.version>
+        <jqa-jpa2-plugin.version>1.3-SNAPSHOT</jqa-jpa2-plugin.version>
+        <jqa-junit-plugin.version>1.3-SNAPSHOT</jqa-junit-plugin.version>
+        <jqa-osgi-plugin.version>1.3-SNAPSHOT</jqa-osgi-plugin.version>
+        <jqa-own-constraints.version>1.3.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-m2repo-plugin.version>1.3-SNAPSHOT</jqa-m2repo-plugin.version>
+        <jqa-maven3-plugin.version>1.3-SNAPSHOT</jqa-maven3-plugin.version>
+        <jqa-neo4jserver.version>1.3.0-SNAPSHOT</jqa-neo4jserver.version>
+        <jqa-plugin-common.version>1.3-SNAPSHOT</jqa-plugin-common.version>
+        <jqa-rdbms-plugin.version>1.3-SNAPSHOT</jqa-rdbms-plugin.version>
+        <jqa-yaml-plugin.version>1.3-SNAPSHOT</jqa-yaml-plugin.version>
+        <jqa-testng-plugin.version>1.3-SNAPSHOT</jqa-testng-plugin.version>
+        <jqa-tycho-plugin.version>1.3-SNAPSHOT</jqa-tycho-plugin.version>
+        <jqa-xml-plugin.version>1.3-SNAPSHOT</jqa-xml-plugin.version>
     </properties>
 
     <build>

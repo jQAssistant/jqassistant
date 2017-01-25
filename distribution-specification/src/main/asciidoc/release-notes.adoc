@@ -1,0 +1,6 @@
+
+= jQAssistant Distribution Specification Release Notes
+
+include::1.3.0.adoc[]
+
+
