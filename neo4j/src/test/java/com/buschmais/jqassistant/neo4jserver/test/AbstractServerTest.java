@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.neo4jserver.test;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.neo4jserver.impl.ExtendedCommunityNeoServer;
 import org.junit.After;
 import org.junit.Before;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4jserver.api.Server;
-import com.buschmais.jqassistant.neo4jserver.impl.ExtendedCommunityNeoServer;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 
