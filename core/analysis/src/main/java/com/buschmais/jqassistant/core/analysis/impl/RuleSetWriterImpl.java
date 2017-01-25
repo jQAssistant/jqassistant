@@ -24,10 +24,9 @@ public class RuleSetWriterImpl implements RuleSetWriter {
 
     private JAXBContext jaxbContext;
 
-    private RuleExecutorConfiguration configuration;
+    private RuleExecutorConfiguration configuration = new RuleExecutorConfiguration();
 
-    public RuleSetWriterImpl(RuleExecutorConfiguration configuration) {
-        this.configuration = configuration;
+    public RuleSetWriterImpl() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
