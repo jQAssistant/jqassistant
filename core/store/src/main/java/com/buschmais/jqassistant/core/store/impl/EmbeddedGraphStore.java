@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOManager;
@@ -28,6 +30,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
     private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
+    private static final int BATCH_LIMIT = 4096;
 
     /**
      * The directory of the database.
@@ -66,40 +69,18 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
-        GlobalGraphOperations graphOperations = GlobalGraphOperations.at(getGraphDatabaseService());
-        beginTransaction();
-        LOGGER.debug("Deleting relations...");
-        run(graphOperations.getAllRelationships(), new Operation<Relationship>() {
-            @Override
-            public void execute(Relationship value) {
-                value.delete();
-            }
-        });
-        LOGGER.debug("Deleting nodes...");
-        run(graphOperations.getAllNodes(), new Operation<Node>() {
-            @Override
-            public void execute(Node value) {
-                value.delete();
-            }
-        });
-        commitTransaction();
-        LOGGER.info("Reset finished.");
+        long nodes;
+        long totalNodes = 0;
+        Map<String,Object> params = new HashMap<>();
+        params.put("limit", BATCH_LIMIT);
+        do {
+            beginTransaction();
+            nodes = executeQuery("MATCH (n) WITH n LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes", params).getSingleResult().get("nodes", Long.class);
+            commitTransaction();
+            totalNodes += nodes;
+        } while (nodes == BATCH_LIMIT);
+        LOGGER.info("Reset finished (removed " + totalNodes + " nodes.)");
     }
 
-    private <T> void run(Iterable<T> iterable, Operation<T> operation) {
-        int count = 0;
-        for (T value : iterable) {
-            operation.execute(value);
-            count++;
-            if (count % 4096 == 0) {
-                commitTransaction();
-                beginTransaction();
-            }
-        }
-    }
-
-    interface Operation<T> {
-        void execute(T value);
-    }
 
 }
