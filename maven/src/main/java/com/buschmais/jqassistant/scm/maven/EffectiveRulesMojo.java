@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.splittingsupport.scm.RuleHelper;
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -13,7 +10,11 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.splittingsupport.scm.RuleHelper;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Lists all effective rules.
@@ -35,7 +36,7 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection);
-        } catch (AnalysisException e) {
+        } catch (RuleExecutorException e) {
             throw new MojoExecutionException("Cannot print effective rules.", e);
         }
     }

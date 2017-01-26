@@ -7,15 +7,15 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;

@@ -14,16 +14,21 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 
@@ -85,11 +90,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
-        Map<String, AnalysisListener> reportWriters = new HashMap<>();
+        Map<String, ReportPlugin> reportWriters = new HashMap<>();
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
-        AnalysisListener xmlReportWriter = null;
+        ReportPlugin xmlReportWriter = null;
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
             case JQA:
@@ -101,7 +106,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 }
                 try {
                     xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
-                } catch (AnalysisListenerException e) {
+                } catch (ReportException e) {
                     throw new MojoExecutionException("Cannot create XML report file writer.", e);
                 }
                 break;
@@ -121,14 +126,14 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             throw new MojoExecutionException("Cannot get report plugins.", e);
         }
         reportWriters.putAll(reportPlugins);
-        CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+        CompositeReportPlugin reportWriter = new CompositeReportPlugin(reportWriters);
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
         try {
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
-        } catch (AnalysisException e) {
+        } catch (RuleExecutorException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
         ReportHelper reportHelper = new ReportHelper(logger);
@@ -158,7 +163,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         junitReportDirectory.mkdirs();
         try {
             junitReportWriter = new JUnitReportWriter(junitReportDirectory);
-        } catch (AnalysisListenerException e) {
+        } catch (ReportException e) {
             throw new MojoExecutionException("Cannot create XML report file writer.", e);
         }
         return junitReportWriter;

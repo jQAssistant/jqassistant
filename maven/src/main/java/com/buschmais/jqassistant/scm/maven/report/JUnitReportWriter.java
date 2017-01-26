@@ -9,20 +9,20 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 
 /**
- * {@link AnalysisListener} implementation to write JUnit style reports.
+ * {@link ReportPlugin} implementation to write JUnit style reports.
  *
  * Each group is rendered as a test suite to a separate file.
  *
  */
-public class JUnitReportWriter implements AnalysisListener<AnalysisListenerException> {
+public class JUnitReportWriter implements ReportPlugin {
 
     private File directory;
     private JAXBContext jaxbContext;
@@ -32,31 +32,40 @@ public class JUnitReportWriter implements AnalysisListener<AnalysisListenerExcep
     private long groupBeginTimestamp;
     private Map<Result<? extends ExecutableRule>, Long> results = new LinkedHashMap<>();
 
-    public JUnitReportWriter(File directory) throws AnalysisListenerException {
+    public JUnitReportWriter(File directory) throws ReportException {
         this.directory = directory;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
-            throw new AnalysisListenerException("Cannot create jaxb context instance.", e);
+            throw new ReportException("Cannot create jaxb context instance.", e);
         }
     }
 
     @Override
-    public void begin() throws AnalysisListenerException {
+    public void initialize() throws ReportException {
     }
 
     @Override
-    public void end() throws AnalysisListenerException {
+    public void configure(Map<String, Object> properties) throws ReportException {
+
     }
 
     @Override
-    public void beginGroup(Group group) throws AnalysisListenerException {
+    public void begin() throws ReportException {
+    }
+
+    @Override
+    public void end() throws ReportException {
+    }
+
+    @Override
+    public void beginGroup(Group group) throws ReportException {
         this.group = group;
         this.groupBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endGroup() throws AnalysisListenerException {
+    public void endGroup() throws ReportException {
         // TestSuite
         Testsuite testsuite = new Testsuite();
         int tests = 0;
@@ -110,32 +119,32 @@ public class JUnitReportWriter implements AnalysisListener<AnalysisListenerExcep
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.marshal(testsuite, file);
         } catch (JAXBException e) {
-            throw new AnalysisListenerException("Cannot write JUnit report.", e);
+            throw new ReportException("Cannot write JUnit report.", e);
         }
         this.group = null;
         this.results.clear();
     }
 
     @Override
-    public void beginConcept(Concept concept) throws AnalysisListenerException {
+    public void beginConcept(Concept concept) throws ReportException {
         this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConcept() throws AnalysisListenerException {
+    public void endConcept() throws ReportException {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+    public void beginConstraint(Constraint constraint) throws ReportException {
         this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConstraint() throws AnalysisListenerException {
+    public void endConstraint() throws ReportException {
     }
 
     @Override
-    public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         long ruleEndTimestamp = System.currentTimeMillis();
         long time = ruleEndTimestamp - ruleBeginTimestamp;
         this.results.put(result, Long.valueOf(time));
