@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,13 +27,13 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
@@ -161,7 +164,7 @@ public abstract class AbstractPluginIT {
 
     @Before
     public void initializeAnalyzer() {
-        reportWriter = new InMemoryReportWriter(new CompositeReportWriter(Collections.<String, AnalysisListener> emptyMap()));
+        reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, reportWriter, LOGGER);
     }
@@ -373,7 +376,7 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void executeGroup(String id) throws AnalysisException, NoGroupException {
+    protected void executeGroup(String id) throws RuleExecutorException, NoGroupException {
         executeGroup(id, Collections.<String, String> emptyMap());
     }
 
@@ -387,7 +390,7 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void executeGroup(String id, Map<String, String> parameters) throws AnalysisException, NoGroupException {
+    protected void executeGroup(String id, Map<String, String> parameters) throws RuleExecutorException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertNotNull("The request group cannot be found: " + id, group);
