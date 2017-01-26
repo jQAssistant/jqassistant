@@ -14,7 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 public class HtmlReportTransformerTest {
 
     @Test
-    public void transform() throws AnalysisListenerException, SAXException, JAXBException, ReportTransformerException {
+    public void transform() throws ReportException, SAXException, JAXBException, ReportTransformerException {
         String xmlReport = XmlReportTestHelper.createXmlReport();
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(new StringReader(xmlReport));

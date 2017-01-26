@@ -20,10 +20,13 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
@@ -45,7 +48,7 @@ public class AnalyzerVisitorTest {
     private Logger console;
 
     @Mock
-    private AnalysisListener<AnalysisListenerException> reportWriter;
+    private ReportPlugin reportWriter;
 
     @Mock
     private AnalyzerConfiguration configuration;
@@ -83,11 +86,9 @@ public class AnalyzerVisitorTest {
      *
      * @throws RuleException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
-    public void columnOrder() throws RuleException, AnalysisException {
+    public void columnOrder() throws RuleException {
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -101,15 +102,15 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConcept() throws RuleException, AnalysisException {
+    public void executeConcept() throws RuleException {
         boolean visitConcept = analyzerVisitor.visitConcept(concept, Severity.MAJOR);
         assertThat(visitConcept, equalTo(true));
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(Mockito.eq(statement), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object>equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object>equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object> equalTo("value"));
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object> equalTo("defaultValue"));
 
         verify(reportWriter).beginConcept(concept);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -122,7 +123,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConcept() throws RuleException, AnalysisException {
+    public void skipConcept() throws RuleException {
         analyzerVisitor.skipConcept(concept, Severity.MAJOR);
 
         verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
@@ -138,14 +139,14 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConstraint() throws RuleException, AnalysisException {
+    public void executeConstraint() throws RuleException {
         analyzerVisitor.visitConstraint(constraint, Severity.BLOCKER);
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(Mockito.eq(statement), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object>equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object>equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object> equalTo("value"));
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object> equalTo("defaultValue"));
 
         verify(reportWriter).beginConstraint(constraint);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -157,7 +158,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConstraint() throws RuleException, AnalysisException {
+    public void skipConstraint() throws RuleException {
         analyzerVisitor.skipConstraint(constraint, Severity.BLOCKER);
 
         verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
@@ -172,7 +173,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipAppliedConcept() throws RuleException, AnalysisException {
+    public void skipAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
@@ -184,7 +185,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeAppliedConcept() throws RuleException, AnalysisException {
+    public void executeAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
@@ -195,15 +196,15 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void missingParameter() throws RuleException, AnalysisException {
+    public void missingParameter() throws RuleException {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
-        AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
+        ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
-            fail("Expecting an " + AnalysisException.class.getName());
-        } catch (AnalysisException e) {
+            fail("Expecting an " + RuleExecutorException.class.getName());
+        } catch (RuleExecutorException e) {
             String message = e.getMessage();
             assertThat(message, containsString(concept.getId()));
             assertThat(message, containsString(PARAMETER_WITHOUT_DEFAULT));
@@ -211,16 +212,16 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void ruleSourceInErrorMessage() throws RuleException, AnalysisException {
+    public void ruleSourceInErrorMessage() throws RuleException {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
-        AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
+        ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
-            fail("Expecting an " + AnalysisException.class.getName());
-        } catch (AnalysisException e) {
+            fail("Expecting an " + RuleExecutorException.class.getName());
+        } catch (RuleExecutorException e) {
             String message = e.getMessage();
             assertThat(message, containsString(RULESOURCE));
         }

@@ -2,7 +2,9 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 
 /**
  * Defines the interface for the analyzer.
@@ -18,8 +20,6 @@ public interface Analyzer {
      *            The rule selection.
      * @param parameters
      *            The parameters.
-     * @throws AnalysisException
-     *             If the analysis fails.
      */
-    void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> parameters) throws AnalysisException;
+    void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> parameters) throws RuleExecutorException;
 }

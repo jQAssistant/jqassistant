@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3"
+           elementFormDefault="unqualified">
+
+    <xs:element name="jqassistant-rules">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="referenceableType" abstract="true">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="scriptType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="language" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="parameterType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
+        <xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:simpleType name="parameterTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="char"/>
+            <xs:enumeration value="byte"/>
+            <xs:enumeration value="short"/>
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="String"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="propertyType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="severityEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="blocker"/>
+            <xs:enumeration value="critical"/>
+            <xs:enumeration value="major"/>
+            <xs:enumeration value="minor"/>
+            <xs:enumeration value="info"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="referenceType">
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+        <xs:attribute name="optional" type="xs:boolean" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="includedReferenceType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceType">
+                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="verificationType">
+        <xs:choice maxOccurs="1">
+            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType" maxOccurs="1"/>
+            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType" maxOccurs="1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="rowCountVerificationType"/>
+
+    <xs:complexType name="aggregationVerificationType">
+        <xs:attribute name="column" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="severityRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="executableRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:severityRuleType">
+                <xs:sequence>
+                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="requiresParameter" type="jqassistant-rules:parameterType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="description" type="xs:string" minOccurs="0"/>
+                    <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+                    <xs:choice>
+                        <xs:element name="cypher" type="xs:string"/>
+                        <xs:element name="script" type="jqassistant-rules:scriptType"/>
+                    </xs:choice>
+                    <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="conceptType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:executableRuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="constraintType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:executableRuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="groupType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:severityRuleType">
+                <xs:sequence>
+                    <xs:element name="includeConcept" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="includeConstraint" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="includeGroup" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="reportType">
+        <xs:sequence>
+            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string" use="optional"/>
+        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+</xs:schema>

@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.report;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
-import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
-
 import java.io.StringWriter;
 import java.util.*;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 
 /**
  * Provides functionality for XML report tests.
@@ -27,9 +27,9 @@ public final class XmlReportTestHelper {
      * Creates a test report.
      *
      * @return The test report.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If the test fails.
+     * @throws ReportException If the test fails.
      */
-    public static String createXmlReport() throws AnalysisListenerException {
+    public static String createXmlReport() throws ReportException {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
@@ -54,9 +54,9 @@ public final class XmlReportTestHelper {
      * Creates a test report with {@link Constraint}.
      *
      * @return The test report.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If the test fails.
+     * @throws ReportException If the test fails.
      */
-    public static String createXmlReportWithConstraints() throws AnalysisListenerException {
+    public static String createXmlReportWithConstraints() throws ReportException {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();

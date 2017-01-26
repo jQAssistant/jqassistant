@@ -1,17 +1,14 @@
 package com.buschmais.jqassistant.core.splittingsupport.scm;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.RuleExecutorConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
-import com.buschmais.jqassistant.core.analysis.impl.RuleExecutor;
+import java.util.Set;
+
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.slf4j.Logger;
 
-import java.util.Set;
+import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 
 /**
  * Provides utility functionality for creating reports.
@@ -41,7 +38,7 @@ public class RuleHelper {
      * @param ruleSet
      *            The rule set.
      */
-    public void printRuleSet(RuleSet ruleSet) throws AnalysisException {
+    public void printRuleSet(RuleSet ruleSet) throws RuleExecutorException {
         RuleSelection ruleSelection = RuleSelection.Builder.allOf(ruleSet);
         printRuleSet(ruleSet, ruleSelection);
     }
@@ -50,9 +47,9 @@ public class RuleHelper {
      *
      * @param ruleSet
      * @param ruleSelection
-     * @throws AnalysisException
+     * @throws RuleExecutorException
      */
-    public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException {
+    public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleExecutorException {
         CollectRulesVisitor visitor = getAllRules(ruleSet, ruleSelection);
         printValidRules(visitor);
         printMissingRules(visitor);
@@ -85,10 +82,10 @@ public class RuleHelper {
      * @param ruleSet
      *            The rule set.
      * @return The visitor with all valid and missing rules.
-     * @throws AnalysisException
+     * @throws RuleExecutorException
      *             If the rules cannot be evaluated.
      */
-    private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException {
+    private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleExecutorException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleExecutor executor = new RuleExecutor(visitor, new RuleExecutorConfiguration());
         executor.execute(ruleSet, ruleSelection);

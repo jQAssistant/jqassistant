@@ -11,24 +11,16 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
-import com.buschmais.jqassistant.core.report.api.LanguageHelper;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
- * Implementation of an
- * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener} which
- * writes the results of an analysis to an XML file.
+ * Implementation of {@link ReportPlugin} which writes the results of an analysis to an XML file.
  */
-public class XmlReportWriter implements AnalysisListener<AnalysisListenerException> {
+public class XmlReportWriter implements ReportPlugin {
 
     public static final String TYPE = "xml";
 
@@ -36,7 +28,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private interface XmlOperation {
-        void run() throws XMLStreamException, AnalysisListenerException;
+        void run() throws XMLStreamException, ReportException;
     }
 
     private XMLStreamWriter xmlStreamWriter;
@@ -49,17 +41,25 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public XmlReportWriter(Writer writer) throws AnalysisListenerException {
+    public XmlReportWriter(Writer writer) throws ReportException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         try {
             xmlStreamWriter = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(writer));
         } catch (XMLStreamException e) {
-            throw new AnalysisListenerException("Cannot create XML stream writer.", e);
+            throw new ReportException("Cannot create XML stream writer.", e);
         }
     }
 
     @Override
-    public void begin() throws AnalysisListenerException {
+    public void initialize() throws ReportException {
+    }
+
+    @Override
+    public void configure(Map<String, Object> properties) throws ReportException {
+    }
+
+    @Override
+    public void begin() throws ReportException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -72,7 +72,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     }
 
     @Override
-    public void end() throws AnalysisListenerException {
+    public void end() throws ReportException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -83,22 +83,22 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
         try {
             xmlStreamWriter.close();
         } catch (XMLStreamException e) {
-            throw new AnalysisListenerException("Cannot close XML stream writer", e);
+            throw new ReportException("Cannot close XML stream writer", e);
         }
     }
 
     @Override
-    public void beginConcept(Concept concept) throws AnalysisListenerException {
+    public void beginConcept(Concept concept) throws ReportException {
         beginExecutable();
     }
 
     @Override
-    public void endConcept() throws AnalysisListenerException {
+    public void endConcept() throws ReportException {
         endRule();
     }
 
     @Override
-    public void beginGroup(final Group group) throws AnalysisListenerException {
+    public void beginGroup(final Group group) throws ReportException {
         final Date now = new Date();
         run(new XmlOperation() {
             @Override
@@ -112,7 +112,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     }
 
     @Override
-    public void endGroup() throws AnalysisListenerException {
+    public void endGroup() throws ReportException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -123,17 +123,17 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+    public void beginConstraint(Constraint constraint) throws ReportException {
         beginExecutable();
     }
 
     @Override
-    public void endConstraint() throws AnalysisListenerException {
+    public void endConstraint() throws ReportException {
         endRule();
     }
 
     @Override
-    public void setResult(final Result<? extends ExecutableRule> result) throws AnalysisListenerException {
+    public void setResult(final Result<? extends ExecutableRule> result) throws ReportException {
         this.result = result;
     }
 
@@ -141,7 +141,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
         this.ruleBeginTime = System.currentTimeMillis();
     }
 
-    private void endRule() throws AnalysisListenerException {
+    private void endRule() throws ReportException {
         if (result != null) {
             final ExecutableRule rule = result.getRule();
             final String elementName;
@@ -150,13 +150,13 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
             } else if (rule instanceof Constraint) {
                 elementName = "constraint";
             } else {
-                throw new AnalysisListenerException("Cannot write report for unsupported rule " + rule);
+                throw new ReportException("Cannot write report for unsupported rule " + rule);
             }
             final List<String> columnNames = result.getColumnNames();
             final String primaryColumn = getPrimaryColumn(rule, columnNames);
             run(new XmlOperation() {
                 @Override
-                public void run() throws XMLStreamException, AnalysisListenerException {
+                public void run() throws XMLStreamException, ReportException {
                     xmlStreamWriter.writeStartElement(elementName);
                     xmlStreamWriter.writeAttribute("id", rule.getId());
                     xmlStreamWriter.writeStartElement("description");
@@ -225,9 +225,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
      * @param columnName The name of the column.
      * @param value      The value.
      * @throws XMLStreamException                                                    If a problem occurs.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If a problem occurs.
+     * @throws ReportException If a problem occurs.
      */
-    private void writeColumn(String columnName, Object value) throws XMLStreamException, AnalysisListenerException {
+    private void writeColumn(String columnName, Object value) throws XMLStreamException, ReportException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue = null;
@@ -290,13 +290,13 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
      * Defines an operation to write XML elements.
      *
      * @param operation The operation.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If writing fails.
+     * @throws ReportException If writing fails.
      */
-    private void run(XmlOperation operation) throws AnalysisListenerException {
+    private void run(XmlOperation operation) throws ReportException {
         try {
             operation.run();
         } catch (XMLStreamException e) {
-            throw new AnalysisListenerException("Cannot write to XML report.", e);
+            throw new ReportException("Cannot write to XML report.", e);
         }
     }
 }

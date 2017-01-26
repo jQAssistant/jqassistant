@@ -33,12 +33,12 @@
 	</build>
 
 	<dependencies>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>analysis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>com.buschmais.jqassistant.core</groupId>
+			<artifactId>rule</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
             <groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>

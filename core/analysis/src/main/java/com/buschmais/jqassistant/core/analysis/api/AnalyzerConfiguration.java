@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
+
 /**
  * Represents the configuration of the analyzer.
  */

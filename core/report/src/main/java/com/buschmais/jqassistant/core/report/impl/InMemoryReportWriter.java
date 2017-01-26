@@ -3,73 +3,81 @@ package com.buschmais.jqassistant.core.report.impl;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
 /**
- * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
+ * A {@link ReportPlugin}
  * implementation collection the concept results and constraint violations
  * in-memory.
  */
-public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerException> {
+public class InMemoryReportWriter implements ReportPlugin {
 
-    private AnalysisListener<AnalysisListenerException> delegate;
+    private ReportPlugin delegate;
 
     private Map<String, Result<Concept>> conceptResults = new TreeMap<>();
 
     private Map<String, Result<Constraint>> constraintResults = new TreeMap<>();
     private Result<? extends Rule> currentResult;
 
-    public InMemoryReportWriter(AnalysisListener<AnalysisListenerException> delegate) {
+    public InMemoryReportWriter(ReportPlugin delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public void begin() throws AnalysisListenerException {
+    public void initialize() throws ReportException {
+    }
+
+    @Override
+    public void configure(Map<String, Object> properties) throws ReportException {
+    }
+
+    @Override
+    public void begin() throws ReportException {
         delegate.begin();
     }
 
     @Override
-    public void end() throws AnalysisListenerException {
+    public void end() throws ReportException {
         delegate.end();
     }
 
     @Override
-    public void beginConcept(Concept concept) throws AnalysisListenerException {
+    public void beginConcept(Concept concept) throws ReportException {
         delegate.beginConcept(concept);
     }
 
     @Override
-    public void endConcept() throws AnalysisListenerException {
+    public void endConcept() throws ReportException {
         addResult(this.conceptResults);
         delegate.endConcept();
     }
 
     @Override
-    public void beginGroup(Group group) throws AnalysisListenerException {
+    public void beginGroup(Group group) throws ReportException {
         delegate.beginGroup(group);
     }
 
     @Override
-    public void endGroup() throws AnalysisListenerException {
+    public void endGroup() throws ReportException {
         delegate.endGroup();
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+    public void beginConstraint(Constraint constraint) throws ReportException {
         delegate.beginConstraint(constraint);
     }
 
     @Override
-    public void endConstraint() throws AnalysisListenerException {
+    public void endConstraint() throws ReportException {
         addResult(this.constraintResults);
         delegate.endConstraint();
     }
 
     @Override
-    public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         this.currentResult = result;
         delegate.setResult(result);
     }

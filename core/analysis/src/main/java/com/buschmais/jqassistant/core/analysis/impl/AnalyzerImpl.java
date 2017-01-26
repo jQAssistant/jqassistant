@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;
@@ -17,7 +21,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private Store store;
 
-    private AnalysisListener reportWriter;
+    private ReportPlugin reportPlugin;
 
     private Logger logger;
 
@@ -28,31 +32,27 @@ public class AnalyzerImpl implements Analyzer {
      *            The configuration.
      * @param store
      *            The store
-     * @param reportWriter
+     * @param reportPlugin
      *            The report wrtier.
      * @param log
      *            The logger.
      */
-    public AnalyzerImpl(AnalyzerConfiguration configuration, Store store, AnalysisListener reportWriter, Logger log) {
+    public AnalyzerImpl(AnalyzerConfiguration configuration, Store store, ReportPlugin reportPlugin, Logger log) {
         this.configuration = configuration;
         this.store = store;
-        this.reportWriter = reportWriter;
+        this.reportPlugin = reportPlugin;
         this.logger = log;
     }
 
     @Override
-    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> ruleParameters) throws AnalysisException {
+    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> ruleParameters) throws RuleExecutorException {
+        reportPlugin.begin();
         try {
-            reportWriter.begin();
-            try {
-                AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, logger);
-                RuleExecutor executor = new RuleExecutor(visitor, configuration.getRuleExecutorConfiguration());
-                executor.execute(ruleSet, ruleSelection);
-            } finally {
-                reportWriter.end();
-            }
-        } catch (AnalysisListenerException e) {
-            throw new AnalysisException("Cannot write report.", e);
+            AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportPlugin, logger);
+            RuleExecutor executor = new RuleExecutor(visitor, configuration.getRuleExecutorConfiguration());
+            executor.execute(ruleSet, ruleSelection);
+        } finally {
+            reportPlugin.end();
         }
     }
 

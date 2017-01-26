@@ -278,6 +278,7 @@
 
     <modules>
         <module>shared</module>
+        <module>rule</module>
         <module>report</module>
         <module>analysis</module>
         <module>scanner</module>

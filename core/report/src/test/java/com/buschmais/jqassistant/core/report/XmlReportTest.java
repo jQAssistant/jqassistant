@@ -17,13 +17,13 @@ import javax.xml.validation.SchemaFactory;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.schema.v1.*;
 
 public class XmlReportTest {
 
     @Test
-    public void writeAndReadReport() throws JAXBException, SAXException, AnalysisListenerException {
+    public void writeAndReadReport() throws JAXBException, SAXException, ReportException {
         String xmlReport = XmlReportTestHelper.createXmlReport();
 
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -77,7 +77,7 @@ public class XmlReportTest {
     }
 
     @Test
-    public void testReportWithConstraint() throws JAXBException, SAXException, AnalysisListenerException {
+    public void testReportWithConstraint() throws JAXBException, SAXException, ReportException {
         String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.2.xsd")));
