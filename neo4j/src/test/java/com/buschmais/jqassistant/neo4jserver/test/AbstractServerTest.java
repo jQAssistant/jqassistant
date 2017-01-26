@@ -29,6 +29,8 @@ public class AbstractServerTest extends AbstractPluginIT {
 
     @After
     public void stopServer() {
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
     }
 }

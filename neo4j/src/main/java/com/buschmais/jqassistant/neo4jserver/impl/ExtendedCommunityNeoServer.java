@@ -16,6 +16,7 @@ import org.neo4j.kernel.configuration.Config;
 import org.neo4j.kernel.impl.factory.GraphDatabaseFacade;
 import org.neo4j.kernel.impl.factory.GraphDatabaseFacadeFactory;
 import org.neo4j.logging.FormattedLogProvider;
+import org.neo4j.logging.Level;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.database.Database;
@@ -30,15 +31,18 @@ public class ExtendedCommunityNeoServer implements Server {
 
     private GraphDatabaseService databaseService;
 
-    private String address;
-    private int port;
+    private String httpAddress;
+    private int httpPort;
+
+    private String boltAddress = DEFAULT_ADDRESS;
+    private int boltPort = 7687;
 
     private Path tempDirectory;
 
     public ExtendedCommunityNeoServer(EmbeddedGraphStore store, String address, int port) {
         this.databaseService = store.getGraphDatabaseService();
-        this.address = address;
-        this.port = port;
+        this.httpAddress = address;
+        this.httpPort = port;
     }
 
     @Override
@@ -47,52 +51,18 @@ public class ExtendedCommunityNeoServer implements Server {
         Database.Factory factory = new Database.Factory() {
             @Override
             public Database newDatabase(Config config, GraphDatabaseFacadeFactory.Dependencies dependencies) {
-                return new Database() {
-                    @Override
-                    public String getLocation() {
-                        return "embedded";
-                    }
-
-                    @Override
-                    public GraphDatabaseFacade getGraph() {
-                        return (GraphDatabaseFacade) databaseService;
-                    }
-
-                    @Override
-                    public boolean isRunning() {
-                        return true;
-                    }
-
-                    @Override
-                    public void init() throws Throwable {
-
-                    }
-
-                    @Override
-                    public void start() throws Throwable {
-
-                    }
-
-                    @Override
-                    public void stop() throws Throwable {
-
-                    }
-
-                    @Override
-                    public void shutdown() throws Throwable {
-                    }
-                };
+                return new EmbeddedDatabase();
             }
         };
         Map<String, String> opts = new HashMap<>();
         // Neo4j 2.x
         opts.put("dbms.security.auth_enabled", Boolean.FALSE.toString());
-        opts.put("org.neo4j.server.webserver.address", address);
-        opts.put("org.neo4j.server.webserver.port", Integer.toString(port));
+        opts.put("org.neo4j.server.webserver.address", httpAddress);
+        opts.put("org.neo4j.server.webserver.port", Integer.toString(httpPort));
         // Neo4j 3.x
         opts.put("dbms.connector.http.type", "HTTP");
         opts.put("dbms.connector.http.enabled", "true");
-        opts.put("dbms.connector.bolt.enabled", "true");
+        opts.put("dbms.connector.http.listen_address", httpAddress + ":" + httpPort);
 
         // Neo4j 2.x/3.x
         String sslDir = tempDirectory.toFile().getAbsolutePath() + "neo4j-home/";
@@ -100,7 +70,7 @@ public class ExtendedCommunityNeoServer implements Server {
         opts.put(ServerSettings.tls_certificate_file.name(), sslDir + "/ssl/snakeoil.cert");
 
         Config defaults = new Config(opts); // Config.empty().with(opts);
-        FormattedLogProvider logProvider = FormattedLogProvider.toOutputStream(System.out);
+        FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
         GraphDatabaseDependencies graphDatabaseDependencies = GraphDatabaseDependencies.newDependencies().userLogProvider(logProvider);
         CommunityNeoServer server = new CommunityNeoServer(defaults, factory, graphDatabaseDependencies, logProvider);
         server.start();
@@ -120,6 +90,42 @@ public class ExtendedCommunityNeoServer implements Server {
             FileUtils.deleteDirectory(tempDirectory.toFile());
         } catch (IOException e) {
             throw new IllegalStateException("Cannot delete temp directory.", e);
+        }
+    }
+
+    private class EmbeddedDatabase implements org.neo4j.server.database.Database {
+        @Override
+        public String getLocation() {
+            return "embedded";
+        }
+
+        @Override
+        public GraphDatabaseFacade getGraph() {
+            return (GraphDatabaseFacade) databaseService;
+        }
+
+        @Override
+        public boolean isRunning() {
+            return true;
+        }
+
+        @Override
+        public void init() throws Throwable {
+
+        }
+
+        @Override
+        public void start() throws Throwable {
+
+        }
+
+        @Override
+        public void stop() throws Throwable {
+
+        }
+
+        @Override
+        public void shutdown() throws Throwable {
         }
     }
 }
