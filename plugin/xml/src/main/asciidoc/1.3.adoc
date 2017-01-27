@@ -1,0 +1,6 @@
+== jQAssistant XML Plugin Version 1.3
+
+- Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.xml`
+  to `com.buschmais.jqassistant.plugin:xml`.
+- Added file pattern support (`xml.file.include` and `xml.file.exclude`) for specifying XML
+  documents without a native scanner plugin.

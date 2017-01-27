@@ -1,6 +1,7 @@
 
 = jQAssistant XML Plugin Release Notes
 
+include::1.3.adoc[]
 include::1.2.adoc[]
 
 
