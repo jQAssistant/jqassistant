@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
-import com.buschmais.jqassistant.core.splittingsupport.scm.ScopeHelper;
+import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

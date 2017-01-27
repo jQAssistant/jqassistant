@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scm.maven;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
-import com.buschmais.jqassistant.core.splittingsupport.scm.RuleHelper;
+import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

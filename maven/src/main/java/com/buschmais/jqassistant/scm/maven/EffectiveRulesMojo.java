@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
-import com.buschmais.jqassistant.core.splittingsupport.scm.RuleHelper;
+import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**

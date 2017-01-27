@@ -145,8 +145,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             } catch (RuleException e) {
                 throw new MojoExecutionException("Invalid severity '" + severity + "'; use one of " + Arrays.toString(Severity.names()));
             }
-            int conceptViolations = reportHelper.verifyConceptResults(effectiveSeverity, inMemoryReportWriter);
-            int constraintViolations = reportHelper.verifyConstraintResults(effectiveSeverity, inMemoryReportWriter);
+            int conceptViolations = reportHelper.verifyConceptResults(effectiveSeverity, effectiveSeverity, inMemoryReportWriter);
+            int constraintViolations = reportHelper.verifyConstraintResults(effectiveSeverity, effectiveSeverity, inMemoryReportWriter);
             if (failOnViolations && (conceptViolations > 0 || constraintViolations > 0)) {
                 throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
