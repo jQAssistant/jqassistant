@@ -65,7 +65,7 @@ public class ReportHelperTest {
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:concept", conceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
-        int violations = reportHelper.verifyConceptResults(Severity.MINOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConceptResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(0));
         assertThat(warnMessages.size(), equalTo(0));
         assertThat(debugMessages.size(), equalTo(0));
@@ -80,7 +80,7 @@ public class ReportHelperTest {
         conceptResults.put("test:minorConcept", minorConceptResult);
         conceptResults.put("test:majorConcept", majorConceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
-        int violations = reportHelper.verifyConceptResults(Severity.MAJOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConceptResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
         assertThat(warnMessages, hasItem("Concept failed: test:minorConcept, Severity: MINOR"));
         assertThat(errorMessages, hasItem(ReportHelper.CONCEPT_FAILED_HEADER));
@@ -97,7 +97,7 @@ public class ReportHelperTest {
         conceptResults.put("test:minorConcept", minorConceptResult);
         conceptResults.put("test:majorConcept", majorConceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
-        int violations = reportHelper.verifyConceptResults(Severity.MAJOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConceptResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
         assertThat(warnMessages, hasItem("Concept failed: test:minorConcept, Severity: MINOR"));
         assertThat(errorMessages, hasItem(ReportHelper.CONCEPT_FAILED_HEADER));
@@ -111,7 +111,7 @@ public class ReportHelperTest {
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:concept", constraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
-        int violations = reportHelper.verifyConstraintResults(Severity.MINOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConstraintResults(Severity.MINOR, Severity.MINOR, inMemoryReportWriter);
         assertThat(violations, equalTo(0));
         assertThat(warnMessages.size(), equalTo(0));
         assertThat(debugMessages.size(), equalTo(0));
@@ -130,7 +130,7 @@ public class ReportHelperTest {
         constraintResults.put("test:minorConstraint", minorConstraintResult);
         constraintResults.put("test:majorConstraint", majorConstraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
-        int violations = reportHelper.verifyConstraintResults(Severity.MAJOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConstraintResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
         assertThat(warnMessages, hasItem("Constraint failed: test:minorConstraint, Severity: MINOR"));
         assertThat(errorMessages, hasItem(ReportHelper.CONSTRAINT_VIOLATION_HEADER));
@@ -152,7 +152,7 @@ public class ReportHelperTest {
         constraintResults.put("test:minorConstraint", minorConstraintResult);
         constraintResults.put("test:majorConstraint", majorConstraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
-        int violations = reportHelper.verifyConstraintResults(Severity.MAJOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConstraintResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
         assertThat(warnMessages, hasItem("Constraint failed: test:minorConstraint, Severity: MINOR"));
         assertThat(debugMessages, hasItem(containsString("MinorElement=MinorValue")));

@@ -8,16 +8,15 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.rule.api.matcher.RuleSourceMatcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+
+import com.buschmais.jqassistant.core.rule.api.matcher.RuleSourceMatcher;
+import com.buschmais.jqassistant.core.shared.mockito.MethodNotMockedAnswer;
 
 
 public class FileRuleSourceTest {
@@ -117,16 +116,4 @@ public class FileRuleSourceTest {
         assertThat(sources, hasSize(1));
         MatcherAssert.assertThat(sources, Matchers.contains(RuleSourceMatcher.matchesById("/path/rules.xml")));
     }
-
-
-    public static class MethodNotMockedAnswer implements Answer {
-        @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
-            Method calledMethod = invocation.getMethod();
-            String signature = calledMethod.toGenericString();
-
-            throw new RuntimeException(signature + " is not mocked!");
-        }
-    }
-
 }

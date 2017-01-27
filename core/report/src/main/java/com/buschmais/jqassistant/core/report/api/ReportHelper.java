@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.core.report.api;
 
 import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.slf4j.Logger;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
@@ -25,7 +25,8 @@ public final class ReportHelper {
     /**
      * Constructor.
      *
-     * @param log The logger to use for logging messages.
+     * @param log
+     *            The logger to use for logging messages.
      */
     public ReportHelper(Logger log) {
         this.logger = log;
@@ -35,44 +36,63 @@ public final class ReportHelper {
      * Verifies the concept results returned by the
      * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
      *
-     * An error message is logged for each concept which did not return a result
-     * (i.e. has not been applied).
-     *
-     * @param inMemoryReportWriter The
-     *                             {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
-     *                             .
+     * @param warnSeverity
+     *            The severity to use for logging warnings about a failed
+     *            concept.
+     * @param violationSeverity
+     *            The severity to use for verifying if failed concept is a
+     *            violation.
+     * @param inMemoryReportWriter
+     *            The
+     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
+     * @return The number concepts that did not pass the verification.
      */
-    public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConceptResults(Severity warnSeverity, Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        return verifyRuleResults(conceptResults, violationSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
+        return verifyRuleResults(conceptResults, warnSeverity, violationSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
-     * Verifies the constraint violations returned by the
-     * {@link InMemoryReportWriter}. Returns the count of constraints having
-     * severity higher than the provided severity level.
+     * Verifies the constraint results returned by the
+     * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
      *
-     * @param violationSeverity    severity level to use for verification
-     * @param inMemoryReportWriter The {@link InMemoryReportWriter}.
+     * @param warnSeverity
+     *            The severity to use for logging warnings about a failed
+     *            concept.
+     * @param violationSeverity
+     *            The severity to use for verifying if failed concept is a
+     *            violation.
+     * @param inMemoryReportWriter
+     *            The
+     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
+     * @return The number concept violations.
      */
-    public int verifyConstraintResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConstraintResults(Severity warnSeverity, Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
-        return verifyRuleResults(constraintResults, violationSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+        return verifyRuleResults(constraintResults, warnSeverity, violationSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
 
     /**
      * Verifies the given results and logs messages.
      *
-     * @param results           The collection of results to verify.
-     * @param violationSeverity The severity to use for identifying violations (i.e.
-     *                          threshold).
-     * @param type              The type of the rules (as string).
-     * @param header            The header to use.
-     * @param logResult         if `true` log the result of the executable rule.
+     * @param results
+     *            The collection of results to verify.
+     * @param warnSeverity
+     *            The severity to use for logging warnings about a failed
+     *            concept.
+     * @param violationSeverity
+     *            The severity to use for verifying if failed concept is a
+     *            violation.
+     * @param type
+     *            The type of the rules (as string).
+     * @param header
+     *            The header to use.
+     * @param logResult
+     *            if `true` log the result of the executable rule.
      * @return The number of detected violations.
      */
-    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity violationSeverity, String type, String header,
-                                  boolean logResult) {
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnSeverity, Severity violationSeverity,
+            String type, String header, boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
@@ -86,9 +106,7 @@ public final class ReportHelper {
                     logger.error(header);
                     logger.error(type + ": " + rule.getId());
                     logger.error("Severity: " + severityInfo);
-
                     logDescription(rule);
-
                     // we need lambdas...
                     for (String row : resultRows) {
                         logger.error(row);
@@ -105,15 +123,16 @@ public final class ReportHelper {
                 }
             }
         }
-
         return violations;
     }
 
     /**
      * Convert the result rows into a string representation.
      *
-     * @param result    The result.
-     * @param logResult if `false` suppress logging the result.
+     * @param result
+     *            The result.
+     * @param logResult
+     *            if `false` suppress logging the result.
      * @return The string representation as list.
      */
     private List<String> getResultRows(Result<?> result, boolean logResult) {
@@ -139,7 +158,8 @@ public final class ReportHelper {
     /**
      * Log the description of a rule.
      *
-     * @param rule The rule.
+     * @param rule
+     *            The rule.
      */
     private void logDescription(Rule rule) {
         String description = rule.getDescription();
@@ -152,7 +172,8 @@ public final class ReportHelper {
     /**
      * Converts a value to its string representation.
      *
-     * @param value The value.
+     * @param value
+     *            The value.
      * @return The string representation
      */
     public static String getLabel(Object value) {

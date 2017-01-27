@@ -12,10 +12,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -49,52 +45,6 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>store</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby-core</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>asm</artifactId>
-            		<groupId>org.ow2.asm</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby-stdlib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-analysis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

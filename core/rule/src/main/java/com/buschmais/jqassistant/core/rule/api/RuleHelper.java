@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.splittingsupport.scm;
+package com.buschmais.jqassistant.core.rule.api;
 
 import java.util.Set;
 
@@ -12,11 +12,7 @@ import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 
 /**
  * Provides utility functionality for creating reports.
- *
- * @deprecated Please use {@link com.buschmais.jqassistant.core.splittingsupport.impl.RuleHelper}
- *             instead.
  */
-@Deprecated
 public class RuleHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";

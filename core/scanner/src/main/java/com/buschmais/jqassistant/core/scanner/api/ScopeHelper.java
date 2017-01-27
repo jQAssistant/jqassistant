@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.splittingsupport.scm;
+package com.buschmais.jqassistant.core.scanner.api;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import java.util.Map;
  * @deprecated Please use {@link com.buschmais.jqassistant.core.splittingsupport.impl.ScopeHelper}
  *             instead.
  */
-@Deprecated
 public class ScopeHelper {
 
     private final Logger logger;
