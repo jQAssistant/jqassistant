@@ -1,0 +1,6 @@
+== jQAssistant Commandline Tool Version 1.3.0
+
+- Renamed command line option `severity` to `violationSeverity`, i.e. the threshold for exiting with an error code
+  after at lease one rule has failed
+- Added command line option `warnSeverity` to set the threshold for logging warnings about failed rules to the console
+

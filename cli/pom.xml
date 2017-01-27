@@ -263,10 +263,6 @@
             <artifactId>plugin</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>splittingsupport</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>neo4jserver</artifactId>
         </dependency>
