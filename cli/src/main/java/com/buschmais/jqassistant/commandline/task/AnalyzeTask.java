@@ -1,23 +1,11 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -31,6 +19,18 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -39,8 +39,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     @Deprecated
     private static final String CMDLINE_OPTION_SEVERITY = "severity";
-    private static final String CMDLINE_OPTION_VIOLATION_SEVERITY = "failSeverity";
-    private static final String CMDLINE_OPTION_WARN_SEVERITY = "warnSeverity";
+    private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
+    private static final String CMDLINE_OPTION_WARN_ON_SEVERITY = "warnOnSeverity";
     private static final String CMDLINE_OPTION_RULEPARAMETERS = "ruleParameters";
     private static final String CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS = "executeAppliedConcepts";
 
@@ -48,8 +48,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private File ruleParametersFile;
     private String reportDirectory;
-    private Severity violationSeverity;
-    private Severity warnSeverity;
+    private Severity failOnSeverity;
+    private Severity warnOnSeverity;
     private boolean executeAppliedConcepts;
 
     @Override
@@ -85,13 +85,13 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
         store.beginTransaction();
-        LOGGER.info("Verifying results, severity=" + violationSeverity);
+        LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
         try {
             final ReportHelper reportHelper = new ReportHelper(LOGGER);
-            final int conceptViolations = reportHelper.verifyConceptResults(warnSeverity, violationSeverity, inMemoryReportWriter);
-            final int constraintViolations = reportHelper.verifyConstraintResults(warnSeverity, violationSeverity, inMemoryReportWriter);
+            final int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, failOnSeverity, inMemoryReportWriter);
+            final int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, failOnSeverity, inMemoryReportWriter);
             if (conceptViolations > 0 || constraintViolations > 0) {
-                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
+                throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
         } finally {
             store.commitTransaction();
@@ -165,15 +165,24 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             this.ruleParametersFile = null;
         }
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
-        Severity severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, null).toUpperCase());
-        if (severity != null) {
-            violationSeverity = severity;
-            LOGGER.warn("'" + CMDLINE_OPTION_SEVERITY + "' has been deprecated, please use '" + CMDLINE_OPTION_VIOLATION_SEVERITY + "'");
+        String severityValue = getOptionValue(options, CMDLINE_OPTION_SEVERITY, null);
+        if (severityValue!= null) {
+            Severity severity = getSeverity(severityValue);
+            failOnSeverity = severity;
+            LOGGER.warn("'" + CMDLINE_OPTION_SEVERITY + "' has been deprecated, please use '" + CMDLINE_OPTION_FAIL_ON_SEVERITY + "' instead.");
         } else {
-            violationSeverity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_VIOLATION_SEVERITY, Severity.MAJOR.name()).toUpperCase());
+            failOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, Severity.MAJOR.name()));
         }
-        warnSeverity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_VIOLATION_SEVERITY, Severity.MINOR.name()).toUpperCase());
+        warnOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, Severity.MINOR.name()));
         executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
+    }
+
+    private Severity getSeverity(String severityValue) throws CliConfigurationException {
+        try {
+            return Severity.fromValue(severityValue);
+        } catch (RuleException e) {
+            throw new CliConfigurationException("Unknown severity value " + severityValue);
+        }
     }
 
     @Override
@@ -184,13 +193,13 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
                 .create(CMDLINE_OPTION_REPORTDIR));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SEVERITY)
-                .withDescription("The severity threshold to report a failure. Deprecated: please use " + CMDLINE_OPTION_VIOLATION_SEVERITY + " instead.")
+                .withDescription("The severity threshold to report a failure. Deprecated: please use " + CMDLINE_OPTION_FAIL_ON_SEVERITY + " instead.")
                 .hasArgs().create(CMDLINE_OPTION_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_VIOLATION_SEVERITY)
-                .withDescription("The severity threshold to report failed rules as violations, i.e. to exit with an error code.").hasArgs()
-                .create(CMDLINE_OPTION_VIOLATION_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_SEVERITY)
-                .withDescription("The severity threshold to report failed rules as warnings on the console.").hasArgs().create(CMDLINE_OPTION_WARN_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
+                .withDescription("The severity threshold to fail on rule violations, i.e. to exit with an error code.").hasArgs()
+                .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_ON_SEVERITY)
+                .withDescription("The severity threshold to warn on rule violations.").hasArgs().create(CMDLINE_OPTION_WARN_ON_SEVERITY));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS)
                 .withDescription("If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
     }

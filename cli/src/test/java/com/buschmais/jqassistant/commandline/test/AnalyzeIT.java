@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import org.junit.Test;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +11,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Verifies command line analysis.
@@ -50,7 +51,8 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
     @Test
     public void conceptWithParameter() throws IOException, InterruptedException {
         File ruleParameters = new File(AnalyzeIT.class.getResource("/ruleparameters.properties").getPath());
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER , "-ruleParameters" , ruleParameters.getAbsolutePath()};
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER, "-ruleParameters",
+                ruleParameters.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT_WITH_PARAMETER);
     }
@@ -59,6 +61,21 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
     public void constraintSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(2));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+    }
+
+    @Test
+    public void constraintFailOnSeverity() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "info" };
+        assertThat(execute(args).getExitCode(), equalTo(2));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+    }
+
+    @Test
+    public void constraintWarnOnSeverity() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "info", "-failOnSeverity",
+                "minor" };
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
