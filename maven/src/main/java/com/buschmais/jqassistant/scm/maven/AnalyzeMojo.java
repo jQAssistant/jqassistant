@@ -1,19 +1,5 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -31,6 +17,22 @@ import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Runs analysis according to the defined rules.
@@ -68,8 +70,15 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      * Severity level for constraint violation failure check. Default value is
      * {@code Severity.INFO}
      */
-    @Parameter(property = "jqassistant.severity", defaultValue = "info")
+    @Deprecated
+    @Parameter(property = "jqassistant.severity")
     protected String severity;
+
+    @Parameter(property = "jqassistant.warnOnSeverity", defaultValue = "info")
+    protected Severity warnOnSeverity;
+
+    @Parameter(property = "jqassistant.failOnSeverity", defaultValue = "major")
+    protected Severity failOnSeverity;
 
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
@@ -139,14 +148,19 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportHelper reportHelper = new ReportHelper(logger);
         store.beginTransaction();
         try {
-            Severity effectiveSeverity;
-            try {
-                effectiveSeverity = Severity.fromValue(severity);
-            } catch (RuleException e) {
-                throw new MojoExecutionException("Invalid severity '" + severity + "'; use one of " + Arrays.toString(Severity.names()));
+            Severity effectiveFailOnSeverity;
+            if (severity != null) {
+                getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
+                try {
+                    effectiveFailOnSeverity = Severity.fromValue(severity);
+                } catch (RuleException e) {
+                    throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
+                }
+            } else {
+                effectiveFailOnSeverity = failOnSeverity ;
             }
-            int conceptViolations = reportHelper.verifyConceptResults(effectiveSeverity, effectiveSeverity, inMemoryReportWriter);
-            int constraintViolations = reportHelper.verifyConstraintResults(effectiveSeverity, effectiveSeverity, inMemoryReportWriter);
+            int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
+            int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
             if (failOnViolations && (conceptViolations > 0 || constraintViolations > 0)) {
                 throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
