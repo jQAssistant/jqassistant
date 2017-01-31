@@ -20,13 +20,13 @@ import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 
 /**
  * Verifies functionality of the report helper.
@@ -74,35 +74,36 @@ public class ReportHelperTest {
 
     @Test
     public void failedConcepts() {
+        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.FAILURE, Severity.INFO);
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR);
         Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
+        conceptResults.put("test:infoConcept", infoConceptResult);
         conceptResults.put("test:minorConcept", minorConceptResult);
         conceptResults.put("test:majorConcept", majorConceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
         int violations = reportHelper.verifyConceptResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
-        assertThat(warnMessages, hasItem("Concept failed: test:minorConcept, Severity: MINOR"));
-        assertThat(errorMessages, hasItem(ReportHelper.CONCEPT_FAILED_HEADER));
-        assertThat(errorMessages, hasItem("Concept: test:majorConcept"));
-        assertThat(errorMessages, hasItem("Severity: MAJOR"));
+        verifyMessages(debugMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:infoConcept", "Severity: INFO");
+        verifyMessages(warnMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:minorConcept", "Severity: MINOR");
+        verifyMessages(errorMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:majorConcept", "Severity: MAJOR");
     }
 
     @Test
     public void failedConceptsWithOverriddenSeverity() {
-        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR);
-        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR,
-                Collections.<Map<String, Object>>emptyList());
+        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR);
+        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR);
+        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR, Severity.CRITICAL);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
+        conceptResults.put("test:infoConcept", infoConceptResult);
         conceptResults.put("test:minorConcept", minorConceptResult);
         conceptResults.put("test:majorConcept", majorConceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
-        int violations = reportHelper.verifyConceptResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
+        int violations = reportHelper.verifyConceptResults(Severity.MAJOR, Severity.CRITICAL, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
-        assertThat(warnMessages, hasItem("Concept failed: test:minorConcept, Severity: MINOR"));
-        assertThat(errorMessages, hasItem(ReportHelper.CONCEPT_FAILED_HEADER));
-        assertThat(errorMessages, hasItem("Concept: test:majorConcept"));
-        assertThat(errorMessages, hasItem("Severity: MAJOR (from MINOR)"));
+        verifyMessages(debugMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:infoConcept", "Severity: MINOR (from INFO)");
+        verifyMessages(warnMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:minorConcept", "Severity: MAJOR (from MINOR)");
+        verifyMessages(errorMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:majorConcept", "Severity: CRITICAL (from MAJOR)");
     }
 
     @Test
@@ -120,46 +121,59 @@ public class ReportHelperTest {
 
     @Test
     public void failedConstraints() {
-        Map<String, Object> minorRow = new HashMap<>();
-        minorRow.put("MinorElement", "MinorValue");
-        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MINOR);
-        Map<String, Object> majorRow = new HashMap<>();
-        majorRow.put("MajorElement", "MajorValue");
-        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR);
-        Map<String, Result<Constraint>> constraintResults = new HashMap<>();
-        constraintResults.put("test:minorConstraint", minorConstraintResult);
-        constraintResults.put("test:majorConstraint", majorConstraintResult);
-        when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
-        int violations = reportHelper.verifyConstraintResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
-        assertThat(violations, equalTo(1));
-        assertThat(warnMessages, hasItem("Constraint failed: test:minorConstraint, Severity: MINOR"));
-        assertThat(errorMessages, hasItem(ReportHelper.CONSTRAINT_VIOLATION_HEADER));
-        assertThat(errorMessages, hasItem("Constraint: test:majorConstraint"));
-        assertThat(errorMessages, hasItem("Severity: MAJOR"));
-    }
-
-    @Test
-    public void failedConstraintsWithOverriddenSeverity() {
+        Map<String, Object> infoRow = new HashMap<>();
+        infoRow.put("InfoElement", "InfoValue");
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.FAILURE, Severity.INFO,
+                Collections.singletonList(infoRow));
         Map<String, Object> minorRow = new HashMap<>();
         minorRow.put("MinorElement", "MinorValue");
         Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MINOR,
                 Collections.singletonList(minorRow));
         Map<String, Object> majorRow = new HashMap<>();
         majorRow.put("MajorElement", "MajorValue");
-        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR,
+        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR,
                 Collections.singletonList(majorRow));
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
+        constraintResults.put("test:infoConstraint", infoConstraintResult);
         constraintResults.put("test:minorConstraint", minorConstraintResult);
         constraintResults.put("test:majorConstraint", majorConstraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
         int violations = reportHelper.verifyConstraintResults(Severity.MINOR, Severity.MAJOR, inMemoryReportWriter);
         assertThat(violations, equalTo(1));
-        assertThat(warnMessages, hasItem("Constraint failed: test:minorConstraint, Severity: MINOR"));
-        assertThat(debugMessages, hasItem(containsString("MinorElement=MinorValue")));
-        assertThat(errorMessages, hasItem(ReportHelper.CONSTRAINT_VIOLATION_HEADER));
-        assertThat(errorMessages, hasItem("Constraint: test:majorConstraint"));
-        assertThat(errorMessages, hasItem("Severity: MAJOR (from MINOR)"));
-        assertThat(errorMessages, hasItem(containsString("MajorElement=MajorValue")));
+        verifyMessages(debugMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:infoConstraint", "Severity: INFO", "InfoElement=InfoValue");
+        verifyMessages(warnMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:minorConstraint", "Severity: MINOR",
+                "MinorElement=MinorValue");
+        verifyMessages(errorMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:majorConstraint", "Severity: MAJOR",
+                "MajorElement=MajorValue");
+    }
+
+    @Test
+    public void failedConstraintsWithOverriddenSeverity() {
+        Map<String, Object> infoRow = new HashMap<>();
+        infoRow.put("InfoElement", "InfoValue");
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR,
+                Collections.singletonList(infoRow));
+        Map<String, Object> minorRow = new HashMap<>();
+        minorRow.put("MinorElement", "MinorValue");
+        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR,
+                Collections.singletonList(minorRow));
+        Map<String, Object> majorRow = new HashMap<>();
+        majorRow.put("MajorElement", "MajorValue");
+        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR,
+                Severity.CRITICAL, Collections.singletonList(majorRow));
+        Map<String, Result<Constraint>> constraintResults = new HashMap<>();
+        constraintResults.put("test:infoConstraint", infoConstraintResult);
+        constraintResults.put("test:minorConstraint", minorConstraintResult);
+        constraintResults.put("test:majorConstraint", majorConstraintResult);
+        when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
+        int violations = reportHelper.verifyConstraintResults(Severity.MAJOR, Severity.CRITICAL, inMemoryReportWriter);
+        assertThat(violations, equalTo(1));
+        verifyMessages(debugMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:infoConstraint", "Severity: MINOR (from INFO)",
+                "InfoElement=InfoValue");
+        verifyMessages(warnMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:minorConstraint", "Severity: MAJOR (from MINOR)",
+                "MinorElement=MinorValue");
+        verifyMessages(errorMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:majorConstraint", "Severity: CRITICAL (from MAJOR)",
+                "MajorElement=MajorValue");
     }
 
     @Test
@@ -168,7 +182,7 @@ public class ReportHelperTest {
         when(descriptorWithLabel.getValue()).thenReturn("value");
         assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));
         assertThat(ReportHelper.getLabel(Collections.singletonList(descriptorWithLabel)), equalTo("[value]"));
-        assertThat(ReportHelper.getLabel(new String[]{"value1", "value2"}), equalTo("[value1,value2]"));
+        assertThat(ReportHelper.getLabel(new String[] { "value1", "value2" }), equalTo("[value1,value2]"));
         Map<String, Object> map = new HashMap<>();
         map.put("key1", descriptorWithLabel);
         map.put("key2", "simpleValue");
@@ -177,17 +191,33 @@ public class ReportHelperTest {
         assertThat(ReportHelper.getLabel(descriptorWithEmptyLanguageLabel), notNullValue());
     }
 
+    private void verifyMessages(List<String> messages, String expectedHeader, String expectedRule, String expectedSeverity, String expectedRow) {
+        verifyMessages(messages, expectedHeader, expectedRule, expectedSeverity);
+        assertThat(messages, hasItem(containsString(expectedRow)));
+    }
+
+    private void verifyMessages(List<String> messages, String expectedHeader, String expectedRule, String expectedSeverity) {
+        assertThat(messages, hasItem(expectedHeader));
+        assertThat(messages, hasItem(expectedRule));
+        assertThat(messages, hasItem(expectedSeverity));
+    }
+
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity) {
-        return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, Collections.<Map<String, Object>>emptyList());
+        return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, Collections.<Map<String, Object>> emptyList());
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
-                                                            List<Map<String, Object>> rows) {
+            List<Map<String, Object>> rows) {
         return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, rows);
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
-                                                            Severity effectiveSeverity, List<Map<String, Object>> rows) {
+            Severity effectiveSeverity) {
+        return mockResult(id, ruleType, status, ruleSeverity, effectiveSeverity, Collections.<Map<String, Object>> emptyList());
+    }
+
+    private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
+            Severity effectiveSeverity, List<Map<String, Object>> rows) {
         Result<T> ruleResult = mock(Result.class);
         T rule = mock(ruleType);
         when(rule.getId()).thenReturn(id);

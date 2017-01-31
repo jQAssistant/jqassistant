@@ -14,13 +14,24 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public final class ReportHelper {
 
+
+    private interface LoggingStrategy {
+
+        void log(String message);
+
+    }
+
     public static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
 
     public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
 
     private static String FOOTER = "-------------------------------------------------------------------";
 
-    private Logger logger;
+    private final LoggingStrategy warnLogger;
+
+    private final LoggingStrategy errorLogger;
+
+    private final LoggingStrategy debugLogger;
 
     /**
      * Constructor.
@@ -28,48 +39,61 @@ public final class ReportHelper {
      * @param log
      *            The logger to use for logging messages.
      */
-    public ReportHelper(Logger log) {
-        this.logger = log;
+    public ReportHelper(final Logger log) {
+        this.errorLogger = new LoggingStrategy() {
+            @Override
+            public void log(String message) {
+                log.error(message);
+            }
+        };
+        this.warnLogger = new LoggingStrategy() {
+            @Override
+            public void log(String message) {
+                log.warn(message);
+            }
+        };
+        this.debugLogger = new LoggingStrategy() {
+            @Override
+            public void log(String message) {
+                log.debug(message);
+            }
+        };
     }
 
     /**
-     * Verifies the concept results returned by the
-     * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
+     * Verifies the concept results returned by the {@link InMemoryReportWriter}
+     * .
      *
-     * @param warnSeverity
-     *            The severity to use for logging warnings about a failed
-     *            concept.
-     * @param violationSeverity
-     *            The severity to use for verifying if failed concept is a
-     *            violation.
+     * @param warnOnSeverity
+     *            The severity threshold to warn.
+     * @param failOnSeverity
+     *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The
-     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
-     * @return The number concepts that did not pass the verification.
+     *            The {@link InMemoryReportWriter}
+     * @return The number of failed concepts, i.e. for breaking the build if
+     *         higher than 0.
      */
-    public int verifyConceptResults(Severity warnSeverity, Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        return verifyRuleResults(conceptResults, warnSeverity, violationSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
+        return verifyRuleResults(conceptResults, warnOnSeverity, failOnSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
      * Verifies the constraint results returned by the
-     * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
+     * {@link InMemoryReportWriter} .
      *
-     * @param warnSeverity
-     *            The severity to use for logging warnings about a failed
-     *            concept.
-     * @param violationSeverity
-     *            The severity to use for verifying if failed concept is a
-     *            violation.
+     * @param warnOnSeverity
+     *            The severity threshold to warn.
+     * @param failOnSeverity
+     *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The
-     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
-     * @return The number concept violations.
+     *            The {@link InMemoryReportWriter}
+     * @return The number of failed concepts, i.e. for breaking the build if
+     *         higher than 0.
      */
-    public int verifyConstraintResults(Severity warnSeverity, Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConstraintResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
-        return verifyRuleResults(constraintResults, warnSeverity, violationSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+        return verifyRuleResults(constraintResults, warnOnSeverity, failOnSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
 
     /**
@@ -77,12 +101,10 @@ public final class ReportHelper {
      *
      * @param results
      *            The collection of results to verify.
-     * @param warnSeverity
-     *            The severity to use for logging warnings about a failed
-     *            concept.
-     * @param violationSeverity
-     *            The severity to use for verifying if failed concept is a
-     *            violation.
+     * @param warnOnSeverity
+     *            The severity threshold to warn.
+     * @param failOnSeverity
+     *            The severity threshold to fail.
      * @param type
      *            The type of the rules (as string).
      * @param header
@@ -91,8 +113,8 @@ public final class ReportHelper {
      *            if `true` log the result of the executable rule.
      * @return The number of detected violations.
      */
-    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnSeverity, Severity violationSeverity,
-            String type, String header, boolean logResult) {
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnOnSeverity, Severity failOnSeverity, String type,
+            String header, boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
@@ -100,30 +122,34 @@ public final class ReportHelper {
                 String severityInfo = rule.getSeverity().getInfo(result.getSeverity());
                 List<String> resultRows = getResultRows(result, logResult);
                 // violation severity level check
-                if (result.getSeverity().getLevel() <= violationSeverity.getLevel()) {
+                boolean warn = result.getSeverity().getLevel() <= warnOnSeverity.getLevel();
+                boolean fail = result.getSeverity().getLevel() <= failOnSeverity.getLevel();
+                LoggingStrategy loggingStrategy;
+                if (fail) {
                     violations++;
-
-                    logger.error(header);
-                    logger.error(type + ": " + rule.getId());
-                    logger.error("Severity: " + severityInfo);
-                    logDescription(rule);
-                    // we need lambdas...
-                    for (String row : resultRows) {
-                        logger.error(row);
-                    }
-
-                    logger.error(FOOTER);
-                    logger.error(System.lineSeparator());
+                    loggingStrategy = errorLogger;
+                } else if (warn) {
+                    loggingStrategy = warnLogger;
                 } else {
-                    logger.warn(type + " failed: " + rule.getId() + ", Severity: " + severityInfo);
-                    // we need lambdas...
-                    for (String row : resultRows) {
-                        logger.debug(row);
-                    }
+                    loggingStrategy = debugLogger;
                 }
+                log(loggingStrategy, rule, resultRows, severityInfo, type, header);
             }
         }
         return violations;
+    }
+
+    private void log(LoggingStrategy loggingStrategy, ExecutableRule rule, List<String> resultRows, String severityInfo, String type, String header) {
+        loggingStrategy.log(header);
+        loggingStrategy.log(type + ": " + rule.getId());
+        loggingStrategy.log("Severity: " + severityInfo);
+        logDescription(loggingStrategy, rule);
+        // we need lambdas...
+        for (String row : resultRows) {
+            loggingStrategy.log(row);
+        }
+        loggingStrategy.log(FOOTER);
+        loggingStrategy.log(System.lineSeparator());
     }
 
     /**
@@ -161,11 +187,11 @@ public final class ReportHelper {
      * @param rule
      *            The rule.
      */
-    private void logDescription(Rule rule) {
+    private void logDescription(LoggingStrategy loggingStrategy, Rule rule) {
         String description = rule.getDescription();
         StringTokenizer tokenizer = new StringTokenizer(description, "\n");
         while (tokenizer.hasMoreTokens()) {
-            logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+            loggingStrategy.log(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
         }
     }
 
@@ -219,4 +245,5 @@ public final class ReportHelper {
         }
         return null;
     }
+
 }

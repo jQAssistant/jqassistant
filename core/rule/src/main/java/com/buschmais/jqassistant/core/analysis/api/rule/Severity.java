@@ -58,7 +58,7 @@ public enum Severity {
             return null;
         }
         for (Severity severity : EnumSet.allOf(Severity.class)) {
-            if (severity.value.equals(value)) {
+            if (severity.value.equals(value.toLowerCase())) {
                 return severity;
             }
         }
