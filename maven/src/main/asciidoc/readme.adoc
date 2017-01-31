@@ -115,8 +115,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
-                            <failOnViolations>true</failOnViolations>
-                            <severity>critical</severity>
+                            <warnOnSeverity>INFO</warnOnSeverity>
+                            <failOnSeverity>CRITICAL</failOnSeverity>
                             <concepts>
                                 <concept>junit4:TestClass</concept>
                             </concepts>
@@ -296,17 +296,19 @@ Executes an analysis.
 * <<rulesDirectories>>
 * <<rulesUrl>>
 * <<xmlReportFile>>
-* failOnViolations (-Djqassistant.failOnViolations)
-** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
-** default: 'false'
-* warnOnSeverity
+* warnOnSeverity (-Djqassistant.warnOnSeverity)
 ** determines the severity level for issuing warnings for failed with equal or higher severities
-* failOnSeverity
+* failOnSeverity (-Djqassistant.failOnSeverity)
 ** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
-* severity (Deprecated)
+* severity
 ** determines if jQAssistant shall break the build if a at least one rule with an equal or higher severity level is
   violated and _failOnViolations_ is set to _true_
 ** default: 'info'
+** Deprecated: use `failOnSeverity` instead
+* failOnViolations (-Djqassistant.failOnViolations)
+** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
+** default: 'false'
+** Deprecated: use `failOnSeverity` instead
 * executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.

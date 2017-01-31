@@ -57,8 +57,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
      */
-    @Parameter(property = "jqassistant.failOnViolations", defaultValue = "false")
-    protected boolean failOnViolations;
+    @Deprecated
+    @Parameter(property = "jqassistant.failOnViolations")
+    protected Boolean failOnViolations = null;
 
     /**
      * If set also execute concepts which have already been applied.
@@ -74,10 +75,16 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Parameter(property = "jqassistant.severity")
     protected String severity;
 
-    @Parameter(property = "jqassistant.warnOnSeverity", defaultValue = "info")
+    /**
+     * The severity threshold to warn on rule violations.
+     */
+    @Parameter(property = "jqassistant.warnOnSeverity", defaultValue = "INFO")
     protected Severity warnOnSeverity;
 
-    @Parameter(property = "jqassistant.failOnSeverity", defaultValue = "major")
+    /**
+     * The severity threshold to fail on rule violations, i.e. break the build.
+     */
+    @Parameter(property = "jqassistant.failOnSeverity", defaultValue = "CRITICAL")
     protected Severity failOnSeverity;
 
     @Parameter(property = "jqassistant.junitReportDirectory")
@@ -149,6 +156,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         store.beginTransaction();
         try {
             Severity effectiveFailOnSeverity;
+            if (failOnViolations) {
+                getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
+            }
             if (severity != null) {
                 getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
                 try {
@@ -161,7 +171,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             }
             int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
             int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
-            if (failOnViolations && (conceptViolations > 0 || constraintViolations > 0)) {
+            if ((failOnViolations == null || Boolean.TRUE.equals(failOnViolations)) && (conceptViolations > 0 || constraintViolations > 0)) {
                 throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
         } finally {
