@@ -122,8 +122,8 @@ public final class ReportHelper {
                 String severityInfo = rule.getSeverity().getInfo(result.getSeverity());
                 List<String> resultRows = getResultRows(result, logResult);
                 // violation severity level check
-                boolean warn = result.getSeverity().getLevel() <= warnOnSeverity.getLevel();
-                boolean fail = result.getSeverity().getLevel() <= failOnSeverity.getLevel();
+                boolean warn = warnOnSeverity != null && result.getSeverity().getLevel() <= warnOnSeverity.getLevel();
+                boolean fail = failOnSeverity != null && result.getSeverity().getLevel() <= failOnSeverity.getLevel();
                 LoggingStrategy loggingStrategy;
                 if (fail) {
                     violations++;
