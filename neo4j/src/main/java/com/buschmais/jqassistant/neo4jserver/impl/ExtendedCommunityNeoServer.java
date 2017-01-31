@@ -6,10 +6,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseDependencies;
 import org.neo4j.kernel.configuration.Config;
@@ -21,6 +18,7 @@ import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.database.Database;
 
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4jserver.api.Server;
 
 public class ExtendedCommunityNeoServer implements Server {
@@ -38,6 +36,8 @@ public class ExtendedCommunityNeoServer implements Server {
     private int boltPort = 7687;
 
     private Path tempDirectory;
+
+    private CommunityNeoServer communityNeoServer;
 
     public ExtendedCommunityNeoServer(EmbeddedGraphStore store, String address, int port) {
         this.databaseService = store.getGraphDatabaseService();
@@ -72,8 +72,8 @@ public class ExtendedCommunityNeoServer implements Server {
         Config defaults = new Config(opts); // Config.empty().with(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
         GraphDatabaseDependencies graphDatabaseDependencies = GraphDatabaseDependencies.newDependencies().userLogProvider(logProvider);
-        CommunityNeoServer server = new CommunityNeoServer(defaults, factory, graphDatabaseDependencies, logProvider);
-        server.start();
+        communityNeoServer = new CommunityNeoServer(defaults, factory, graphDatabaseDependencies, logProvider);
+        communityNeoServer.start();
     }
 
     private Path createTempDirectory() {
@@ -86,6 +86,7 @@ public class ExtendedCommunityNeoServer implements Server {
 
     @Override
     public void stop() {
+        communityNeoServer.stop();
         try {
             FileUtils.deleteDirectory(tempDirectory.toFile());
         } catch (IOException e) {
