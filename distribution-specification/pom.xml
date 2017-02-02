@@ -169,7 +169,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>neo4jserver</artifactId>
+                <artifactId>neo4jserver.embedded</artifactId>
                 <version>${jqa-neo4jserver.version}</version>
             </dependency>
             <dependency>
