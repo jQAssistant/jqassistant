@@ -156,7 +156,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         store.beginTransaction();
         try {
             Severity effectiveFailOnSeverity;
-            if (failOnViolations) {
+            if (failOnViolations != null) {
                 getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
             }
             if (severity != null) {
