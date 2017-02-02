@@ -240,6 +240,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>neo4jserver.embedded</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
         </dependency>
@@ -262,10 +266,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>plugin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>neo4jserver</artifactId>
         </dependency>
 
         <!-- List here all plugins of jQAssistant which should be
