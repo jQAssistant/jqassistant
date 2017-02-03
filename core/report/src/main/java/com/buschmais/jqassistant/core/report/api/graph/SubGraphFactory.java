@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.core.report.api.graph;
 import java.util.Collection;
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -14,6 +12,7 @@ import com.buschmais.jqassistant.core.report.api.graph.model.Relationship;
 import com.buschmais.jqassistant.core.report.api.graph.model.SubGraph;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.xo.api.CompositeObject;
+import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jNode;
 import com.buschmais.xo.neo4j.api.model.Neo4jRelationship;
 
@@ -114,8 +113,8 @@ public final class SubGraphFactory {
             Neo4jNode neo4jNode = (Neo4jNode) value;
             Node node = new Node();
             node.setId(neo4jNode.getId());
-            for (Label label : neo4jNode.getLabels()) {
-                node.getLabels().add(label.name());
+            for (Neo4jLabel label : neo4jNode.getLabels()) {
+                node.getLabels().add(label.getName());
             }
             node.getProperties().putAll(neo4jNode.getProperties());
             return (I) node;
@@ -123,7 +122,7 @@ public final class SubGraphFactory {
             Neo4jRelationship neo4jRelationship = (Neo4jRelationship) value;
             Relationship relationship = new Relationship();
             relationship.setId(neo4jRelationship.getId());
-            relationship.setType(neo4jRelationship.getType().name());
+            relationship.setType(neo4jRelationship.getType().getName());
             relationship.setStartNode((Node) convert(neo4jRelationship.getStartNode()));
             relationship.setEndNode((Node) convert(neo4jRelationship.getEndNode()));
             relationship.getProperties().putAll(neo4jRelationship.getProperties());
