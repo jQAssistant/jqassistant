@@ -478,13 +478,24 @@
     <dependencies>
       <dependency>
         <groupId>com.buschmais.xo</groupId>
-        <artifactId>xo.neo4j</artifactId>
+        <artifactId>xo.neo4j.api</artifactId>
         <version>${com.buschmais.xo.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.neo4j</groupId>
-        <artifactId>neo4j</artifactId>
-        <version>${org.neo4j.version}</version>
+        <groupId>com.buschmais.xo</groupId>
+        <artifactId>xo.impl</artifactId>
+        <version>${com.buschmais.xo.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.buschmais.xo</groupId>
+          <artifactId>xo.neo4j.embedded</artifactId>
+          <version>${com.buschmais.xo.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j</artifactId>
+          <version>${org.neo4j.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
