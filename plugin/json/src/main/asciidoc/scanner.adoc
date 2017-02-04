@@ -3,13 +3,13 @@
 :toclevels: 2           // Table of content should have only two levels
 
 [[JsonScanner]]
-= Scanner for JSON Files
+== Scanner for JSON Files
 
 Scanner to scan https://www.rfc-editor.org/info/rfc7159[RFC 7159^]
 compliant JSON files.
 
 [[:Json:File]]
-== Nodes labled with `:Json:File`
+=== Nodes labled with `:Json:File`
 
 .Properties of `:Json:File`
 [options="header"]
@@ -36,7 +36,7 @@ compliant JSON files.
 |===
 
 [[:Json:Array]]
-== Nodes labled with `:Json:Array`
+=== Nodes labled with `:Json:Array`
 
 .Properties of `:Json:Array`
 [options="header"]
@@ -58,7 +58,7 @@ compliant JSON files.
 
 
 [[:Json:Key]]
-== Nodes labled with `:Json:Key`
+=== Nodes labled with `:Json:Key`
 
 .Properties of `:Json:Key`
 [options="header"]
@@ -84,7 +84,7 @@ compliant JSON files.
 
 
 [[:Json:Object]]
-== Nodes labled with `:Json:Object`
+=== Nodes labled with `:Json:Object`
 
 .Properties of `:Json:Object`
 [options="header"]
@@ -107,7 +107,7 @@ compliant JSON files.
 
 
 [[:Json:Scalar]]
-== Nodes labled with `:Json:Scalar`
+=== Nodes labled with `:Json:Scalar`
 
 .Properties of `:Json:Scalar`
 [options="header"]
