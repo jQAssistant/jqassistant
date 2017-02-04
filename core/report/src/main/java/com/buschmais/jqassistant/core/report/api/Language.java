@@ -5,10 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.buschmais.xo.api.CompositeObject;
+
 /**
- * A meta-annotation to mark
- * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor} as language
- * elements.
+ * A meta-annotation to mark {@link CompositeObject}s as language elements.
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

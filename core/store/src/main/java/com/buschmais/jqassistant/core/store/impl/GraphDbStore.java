@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.net.URISyntaxException;
 import java.util.Collection;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
-import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
-
-import org.neo4j.graphdb.GraphDatabaseService;
+import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
 
 /**
  * {@link com.buschmais.jqassistant.core.store.api.Store} implementation using

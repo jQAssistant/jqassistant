@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 
 /**
  * Provides utility functionality for creating reports.
@@ -204,8 +204,8 @@ public final class ReportHelper {
      */
     public static String getLabel(Object value) {
         if (value != null) {
-            if (value instanceof Descriptor) {
-                Descriptor descriptor = (Descriptor) value;
+            if (value instanceof CompositeObject) {
+                CompositeObject descriptor = (CompositeObject) value;
                 String label = getLanguageLabel(descriptor);
                 return label != null ? label : descriptor.toString();
             } else if (value.getClass().isArray()) {
@@ -237,7 +237,7 @@ public final class ReportHelper {
         return null;
     }
 
-    private static String getLanguageLabel(Descriptor descriptor) {
+    private static String getLanguageLabel(CompositeObject descriptor) {
         LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
         if (elementValue != null) {
             SourceProvider sourceProvider = elementValue.getSourceProvider();

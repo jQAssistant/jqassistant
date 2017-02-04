@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 
 /**
  * Defines the interface for language elements to be returned by
@@ -17,6 +17,6 @@ public interface LanguageElement {
      */
     String name();
 
-    <D extends Descriptor> SourceProvider<D> getSourceProvider();
+    <D extends CompositeObject> SourceProvider<D> getSourceProvider();
 
 }

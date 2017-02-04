@@ -1,21 +1,23 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
-import com.buschmais.xo.neo4j.api.Neo4jDatastoreSession;
-import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import com.buschmais.xo.neo4j.embedded.api.Neo4jDatastoreSession;
+import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -68,17 +70,23 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     public void reset() {
         LOGGER.info("Resetting store.");
         long nodes;
+        long relations;
         long totalNodes = 0;
-        Map<String,Object> params = new HashMap<>();
+        long totalRelations = 0;
+        Map<String, Object> params = new HashMap<>();
         params.put("limit", BATCH_LIMIT);
         do {
             beginTransaction();
-            nodes = executeQuery("MATCH (n) WITH n LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes", params).getSingleResult().get("nodes", Long.class);
+            CompositeRowObject result = executeQuery(
+                    "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
+                    params).getSingleResult();
+            nodes = result.get("nodes", Long.class);
+            relations = result.get("relations", Long.class);
             commitTransaction();
             totalNodes += nodes;
+            totalRelations += relations;
         } while (nodes == BATCH_LIMIT);
-        LOGGER.info("Reset finished (removed " + totalNodes + " nodes.)");
+        LOGGER.info("Reset finished (removed " + totalNodes + " nodes, " + totalRelations + " relations).");
     }
-
 
 }

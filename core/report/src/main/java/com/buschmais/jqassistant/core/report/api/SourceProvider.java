@@ -1,12 +1,11 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 
 /**
- * Defines a provider which allows looking up source code information from
- * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor Descriptors}.
+ * Defines a provider which allows looking up source code information from {@link CompositeObject}s.
  */
-public interface SourceProvider<D extends Descriptor> {
+public interface SourceProvider<D extends CompositeObject> {
 
     /**
      * Return the name representing the language element.

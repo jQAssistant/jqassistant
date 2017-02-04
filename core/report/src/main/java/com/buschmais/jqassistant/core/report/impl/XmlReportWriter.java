@@ -14,7 +14,7 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.*;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
@@ -231,8 +231,8 @@ public class XmlReportWriter implements ReportPlugin {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue = null;
-        if (value instanceof Descriptor) {
-            Descriptor descriptor = (Descriptor) value;
+        if (value instanceof CompositeObject) {
+            CompositeObject descriptor = (CompositeObject) value;
             LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
             if (elementValue != null) {
                 xmlStreamWriter.writeStartElement("element");

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 
 /**
  * A test language to be verified in the XML report.
@@ -25,7 +25,7 @@ public @interface TestLanguage {
         DerivedTestElement;
 
         @Override
-        public SourceProvider<? extends Descriptor> getSourceProvider() {
+        public SourceProvider<? extends CompositeObject> getSourceProvider() {
             return new SourceProvider<TestDescriptorWithLanguageElement>() {
                 @Override
                 public String getName(TestDescriptorWithLanguageElement descriptor) {

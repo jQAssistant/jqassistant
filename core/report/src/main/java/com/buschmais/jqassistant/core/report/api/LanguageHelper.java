@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
@@ -15,7 +15,7 @@ import com.buschmais.xo.spi.reflection.AnnotatedType;
 public final class LanguageHelper {
 
     /**
-     * Return the {@link LanguageElement} associated with a {@link com.buschmais.jqassistant.core.store.api.model.Descriptor}.
+     * Return the {@link LanguageElement} associated with a {@link CompositeObject}.
      *
      * The method uses a breadth-first-search to identify a descriptor type annotated with {@link LanguageElement}.
      * 
@@ -23,7 +23,7 @@ public final class LanguageHelper {
      *            The descriptor.
      * @return The resolved {@link LanguageElement}
      */
-    public static LanguageElement getLanguageElement(Descriptor descriptor) {
+    public static LanguageElement getLanguageElement(CompositeObject descriptor) {
         Queue<Class<?>> queue = new LinkedList<>();
         Class<?>[] descriptorTypes = descriptor.getClass().getInterfaces();
         do {

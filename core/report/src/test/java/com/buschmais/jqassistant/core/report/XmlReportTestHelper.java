@@ -83,6 +83,21 @@ public final class XmlReportTestHelper {
         row.put(C1, "simpleValue");
         row.put(C2, new TestDescriptorWithLanguageElement() {
             @Override
+            public <I> I getId() {
+                return null;
+            }
+
+            @Override
+            public <T> T as(Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <D> D getDelegate() {
+                return null;
+            }
+
+            @Override
             public String getValue() {
                 return "descriptorValue";
             }

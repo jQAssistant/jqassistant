@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.graph.model.Identifiable;
 import com.buschmais.jqassistant.core.report.api.graph.model.Node;
 import com.buschmais.jqassistant.core.report.api.graph.model.Relationship;
 import com.buschmais.jqassistant.core.report.api.graph.model.SubGraph;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jNode;
@@ -75,33 +75,33 @@ public final class SubGraphFactory {
             if (role != null) {
                 Map<String, Object> properties = (Map<String, Object>) virtualObject.get(PROPERTIES);
                 switch (role.toString().toLowerCase()) {
-                    case NODE:
-                        Node node = new Node();
-                        node.setId(nodeId--);
-                        Collection<String> labels = (Collection<String>) virtualObject.get(LABELS);
-                        node.getLabels().addAll(labels);
-                        node.getProperties().putAll(properties);
-                        node.setLabel((String) virtualObject.get(LABEL));
-                        return (I) node;
-                    case RELATIONSHIP:
-                        Relationship relationship = new Relationship();
-                        relationship.setId(relationshipId--);
-                        Node startNode = convert(virtualObject.get(START_NODE));
-                        Node endNode = convert(virtualObject.get(END_NODE));
-                        String type = (String) virtualObject.get(TYPE);
-                        relationship.setType(type);
-                        relationship.setStartNode(startNode);
-                        relationship.setEndNode(endNode);
-                        relationship.getProperties().putAll(properties);
-                        relationship.setLabel((String) virtualObject.get(LABEL));
-                        return (I) relationship;
-                    case GRAPH:
-                        SubGraph subgraph = new SubGraph();
-                        subgraph.setId(subgraphId--);
-                        subgraph.setParent((Node) convert(subgraph, virtualObject.get(PARENT)));
-                        addSubGraphChildren(subgraph, virtualObject, NODES, subgraph.getNodes());
-                        addSubGraphChildren(subgraph, virtualObject, RELATIONSHIPS, subgraph.getRelationships());
-                        return (I) subgraph;
+                case NODE:
+                    Node node = new Node();
+                    node.setId(nodeId--);
+                    Collection<String> labels = (Collection<String>) virtualObject.get(LABELS);
+                    node.getLabels().addAll(labels);
+                    node.getProperties().putAll(properties);
+                    node.setLabel((String) virtualObject.get(LABEL));
+                    return (I) node;
+                case RELATIONSHIP:
+                    Relationship relationship = new Relationship();
+                    relationship.setId(relationshipId--);
+                    Node startNode = convert(virtualObject.get(START_NODE));
+                    Node endNode = convert(virtualObject.get(END_NODE));
+                    String type = (String) virtualObject.get(TYPE);
+                    relationship.setType(type);
+                    relationship.setStartNode(startNode);
+                    relationship.setEndNode(endNode);
+                    relationship.getProperties().putAll(properties);
+                    relationship.setLabel((String) virtualObject.get(LABEL));
+                    return (I) relationship;
+                case GRAPH:
+                    SubGraph subgraph = new SubGraph();
+                    subgraph.setId(subgraphId--);
+                    subgraph.setParent((Node) convert(subgraph, virtualObject.get(PARENT)));
+                    addSubGraphChildren(subgraph, virtualObject, NODES, subgraph.getNodes());
+                    addSubGraphChildren(subgraph, virtualObject, RELATIONSHIPS, subgraph.getRelationships());
+                    return (I) subgraph;
                 }
             }
         } else if (value instanceof CompositeObject) {
@@ -110,7 +110,7 @@ public final class SubGraphFactory {
             identifiable.setLabel(ReportHelper.getLabel(value));
             return identifiable;
         } else if (value instanceof Neo4jNode) {
-            Neo4jNode neo4jNode = (Neo4jNode) value;
+            Neo4jNode<Neo4jLabel, ?, ?, ?> neo4jNode = (Neo4jNode<Neo4jLabel, ?, ?, ?>) value;
             Node node = new Node();
             node.setId(neo4jNode.getId());
             for (Neo4jLabel label : neo4jNode.getLabels()) {
@@ -119,7 +119,7 @@ public final class SubGraphFactory {
             node.getProperties().putAll(neo4jNode.getProperties());
             return (I) node;
         } else if (value instanceof Neo4jRelationship) {
-            Neo4jRelationship neo4jRelationship = (Neo4jRelationship) value;
+            Neo4jRelationship<?, ?> neo4jRelationship = (Neo4jRelationship) value;
             Relationship relationship = new Relationship();
             relationship.setId(neo4jRelationship.getId());
             relationship.setType(neo4jRelationship.getType().getName());
@@ -131,7 +131,8 @@ public final class SubGraphFactory {
         throw new ReportException("Element type not supported: " + value);
     }
 
-    private <I extends Identifiable> void addSubGraphChildren(SubGraph subgraph, Map<String, Object> virtualObject, String key, Map<Long, I> childMap) throws ReportException {
+    private <I extends Identifiable> void addSubGraphChildren(SubGraph subgraph, Map<String, Object> virtualObject, String key, Map<Long, I> childMap)
+            throws ReportException {
         Collection<Object> children = (Collection<Object>) virtualObject.get(key);
         if (children != null) {
             for (Object child : children) {
