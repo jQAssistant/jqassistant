@@ -151,26 +151,4 @@ For example:
 |===
 
 
-//
-//
-//[[:Java:Artifact]]
-//=== Nodes labled with `:Java:Artifact
-//A directory or archive containing packages, classes and resources.
-//
-//.Properties of `:Java:Artifact`
-//[options="header"]
-//|====
-//| Name       | Description
-//| fqn        | Fully qualified name, e.g. `java.lang`
-//| fileName   | The file name of the artifact.                          `
-//|====
-//
-//.Relations of :Java:Artifact
-//[options="header"]
-//|====
-//| Name         | Target label(s) | Cardinality | Description
-//| CONTAINS     | <<:File>>       | 0..n        | References contained files, e.g. packages, classes or resources
-//| REQUIRES     | <<:Java:Type>>  | 0..n        | References a type which is required by a class in this artifact
-//|====
-
 include::examples.adoc[]
