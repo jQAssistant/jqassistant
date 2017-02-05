@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
 import com.buschmais.xo.neo4j.embedded.api.Neo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
 
@@ -30,7 +30,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
     private static final String PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED = "neo4j.dbms.connector.bolt.enabled";
 
-    private static final int BATCH_LIMIT = 4096;
+    private static final int BATCH_LIMIT = 8192;
 
     /**
      * The directory of the database.
@@ -55,9 +55,12 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                .property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString()).property(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString())
-                .property(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString()).create();
+        Properties properties = new Properties();
+        properties.put(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
+        properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
+        properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
+        XOUnit xoUnit = XOUnit.builder().uri(database.toURI()).provider(Neo4jXOProvider.class).types(types).properties(properties)
+                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
         return XO.createXOManagerFactory(xoUnit);
     }
 
