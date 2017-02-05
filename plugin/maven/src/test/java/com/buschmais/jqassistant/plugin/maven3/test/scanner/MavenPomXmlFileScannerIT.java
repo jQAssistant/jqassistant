@@ -432,7 +432,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(pomDescriptor.getManagedPlugins(), empty());
         assertThat(pomDescriptor.getPlugins(), empty());
         assertThat(pomDescriptor.getModules(), empty());
-        store.commitTransaction();
     }
 
     /**
