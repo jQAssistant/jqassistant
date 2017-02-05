@@ -4,11 +4,8 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -17,13 +14,8 @@ import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
-import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -41,6 +33,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
@@ -195,23 +188,24 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
     public void minimalRepositoryInPOM() throws Exception {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/1/pom.xml");
 
         store.beginTransaction();
 
-        List<MavenRespositoryDescriptor> repoDescriptors =
+        List<MavenRepositoryDescriptor> repoDescriptors =
                 query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
                         "WHERE f.fileName='/repository/1/pom.xml' " +
                         "RETURN r").getColumn("r");
 
         assertThat(repoDescriptors, hasSize(1));
 
-        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+        MavenRepositoryDescriptor repoDescriptor = repoDescriptors.get(0);
 
         assertThat(repoDescriptor.getName(), equalTo("Repo"));
         assertThat(repoDescriptor.getId(), equalTo("x1"));
-        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getUrl(), equalTo("https://repo.org"));
         assertThat(repoDescriptor.getLayout(), equalTo("default"));
 
         assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
@@ -221,6 +215,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
         assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
         assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+        store.commitTransaction();
     }
 
     @Test
@@ -229,18 +224,18 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        List<MavenRespositoryDescriptor> repoDescriptors =
+        List<MavenRepositoryDescriptor> repoDescriptors =
                 query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
                         "WHERE f.fileName='/repository/2/pom.xml' " +
                         "RETURN r").getColumn("r");
 
         assertThat(repoDescriptors, hasSize(1));
 
-        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+        MavenRepositoryDescriptor repoDescriptor = repoDescriptors.get(0);
 
         assertThat(repoDescriptor.getName(), equalTo("Repo"));
         assertThat(repoDescriptor.getId(), equalTo("x1"));
-        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getUrl(), equalTo("https://repo.org"));
         assertThat(repoDescriptor.getLayout(), equalTo("default"));
 
         assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
@@ -250,6 +245,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
         assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
         assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+        store.commitTransaction();
     }
 
     @Test
@@ -258,18 +254,18 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        List<MavenRespositoryDescriptor> repoDescriptors =
+        List<MavenRepositoryDescriptor> repoDescriptors =
                 query("MATCH (f:File:Maven:Xml:Pom) -[:HAS_REPOSITORY]->(r:Maven:Repository) " +
                         "WHERE f.fileName='/repository/3/pom.xml' " +
                         "RETURN r").getColumn("r");
 
         assertThat(repoDescriptors, hasSize(1));
 
-        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+        MavenRepositoryDescriptor repoDescriptor = repoDescriptors.get(0);
 
         assertThat(repoDescriptor.getName(), equalTo("Repo"));
         assertThat(repoDescriptor.getId(), equalTo("x1"));
-        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getUrl(), equalTo("https://repo.org"));
         assertThat(repoDescriptor.getLayout(), equalTo("default"));
 
         assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
@@ -279,6 +275,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
         assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(false));
         assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+        store.commitTransaction();
     }
 
     @Test
@@ -287,7 +284,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        List<MavenRespositoryDescriptor> repoDescriptors =
+        List<MavenRepositoryDescriptor> repoDescriptors =
                 query("MATCH (f:File:Maven:Xml:Pom) " +
                         "-[:HAS_PROFILE]->(:Maven:Profile) " +
                         "-[:HAS_REPOSITORY]->(r:Maven:Repository) " +
@@ -296,11 +293,11 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         assertThat(repoDescriptors, hasSize(1));
 
-        MavenRespositoryDescriptor repoDescriptor = repoDescriptors.get(0);
+        MavenRepositoryDescriptor repoDescriptor = repoDescriptors.get(0);
 
         assertThat(repoDescriptor.getName(), equalTo("Repo"));
         assertThat(repoDescriptor.getId(), equalTo("x1"));
-        assertThat(repoDescriptor.getURL(), equalTo("https://repo.org"));
+        assertThat(repoDescriptor.getUrl(), equalTo("https://repo.org"));
         assertThat(repoDescriptor.getLayout(), equalTo("default"));
 
         assertThat(repoDescriptor.getReleasesChecksumPolicy(), equalTo("warn"));
@@ -310,6 +307,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(repoDescriptor.getSnapshotsChecksumPolicy(), equalTo("warn"));
         assertThat(repoDescriptor.getSnapshotsEnabled(), equalTo(true));
         assertThat(repoDescriptor.getSnapshotsUpdatePolicy(), equalTo("daily"));
+        store.commitTransaction();
     }
 
     /**
@@ -355,6 +353,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         assertThat(developers, hasSize(1));
         assertThat(developers.get(0).getId(), equalTo("he"));
+        store.commitTransaction();
     }
 
     /**
@@ -399,6 +398,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         assertThat(developers, hasSize(1));
         assertThat(developers.get(0).getEmail(), equalTo("till@eulenspiegel.org"));
+        store.commitTransaction();
     }
 
     /**
@@ -432,6 +432,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(pomDescriptor.getManagedPlugins(), empty());
         assertThat(pomDescriptor.getPlugins(), empty());
         assertThat(pomDescriptor.getModules(), empty());
+        store.commitTransaction();
     }
 
     /**

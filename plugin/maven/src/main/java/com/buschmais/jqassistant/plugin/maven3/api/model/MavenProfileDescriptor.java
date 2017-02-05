@@ -42,7 +42,7 @@ public interface MavenProfileDescriptor extends MavenDescriptor, MavenDependentD
      * @return A list of all declared repositories
      */
     @Relation("HAS_REPOSITORY")
-    List<MavenRespositoryDescriptor> getRepositories();
+    List<MavenRepositoryDescriptor> getRepositories();
 
     /**
      * Get information about conditions to activate the profile.
