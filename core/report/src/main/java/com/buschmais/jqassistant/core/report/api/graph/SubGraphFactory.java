@@ -94,6 +94,9 @@ public final class SubGraphFactory {
                     relationship.setEndNode(endNode);
                     relationship.getProperties().putAll(properties);
                     relationship.setLabel((String) virtualObject.get(LABEL));
+                    if (startNode == null || endNode == null || type == null) {
+                        throw new ReportException("The virtual relationship does not contain either start node, end node or type: " + relationship);
+                    }
                     return (I) relationship;
                 case GRAPH:
                     SubGraph subgraph = new SubGraph();
