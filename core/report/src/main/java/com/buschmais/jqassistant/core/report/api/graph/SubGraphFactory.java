@@ -122,7 +122,7 @@ public final class SubGraphFactory {
             node.getProperties().putAll(neo4jNode.getProperties());
             return (I) node;
         } else if (value instanceof Neo4jRelationship) {
-            Neo4jRelationship<?, ?> neo4jRelationship = (Neo4jRelationship) value;
+            Neo4jRelationship<?, ?, ? ,? ,?> neo4jRelationship = (Neo4jRelationship) value;
             Relationship relationship = new Relationship();
             relationship.setId(neo4jRelationship.getId());
             relationship.setType(neo4jRelationship.getType().getName());
