@@ -4,6 +4,15 @@
 :sectnumlevels: 5       // Number up to section level 5
 :toclevels: 2           // Table of content should have only two levels
 
+
+// This attribute can be used in the release notes
+// of all other artifacts to provide different content
+// depending on the the context in which the content will
+// be rendered. Mostly it will be used to select a different
+// headline for the global release notes document
+// Oliver B. Fischer, 2017-02-13
+:jqa-in-manual: true
+
 = jQAssistant Framework Release Notes
 
 //:numbered!:
