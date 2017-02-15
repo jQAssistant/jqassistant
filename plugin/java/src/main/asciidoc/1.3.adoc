@@ -1,4 +1,5 @@
-== jQAssistant Java Plugin Version 1.3
+ifndef::jqa-in-manual[== Version 1.3]
+ifdef::jqa-in-manual[== Java Plugin 1.3]
 
 - Added `firstLineNumber`, `lastLineNumber` and `effectiveLineCount` attributes to `:Method` nodes
 - Deprecated concept `classpath:ResolveDependency` and replaced it by `classpath:ResolveDependsOn`

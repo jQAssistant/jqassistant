@@ -1,4 +1,5 @@
-== jQAssistant Java Plugin Version 1.2
+ifndef::jqa-in-manual[== Version 1.2]
+ifdef::jqa-in-manual[== Java Plugin 1.2]
 
 - Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.java`
   to `com.buschmais.jqassistant.plugin:java`.
