@@ -1,4 +1,8 @@
-== jQAssistant Maven 3 Plugin Version 1.3
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.3]
+ifdef::jqa-in-manual[== Maven 3 Plugin 1.3]
 
 - The plugin adds now also information on the organization behind
   a project to the generated graph. See
