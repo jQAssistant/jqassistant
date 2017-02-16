@@ -16,8 +16,8 @@ import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.buschmais.xo.neo4j.embedded.api.Neo4jDatastoreSession;
-import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
+import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
+import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -49,7 +49,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected GraphDatabaseService getGraphDatabaseService(XOManager xoManager) {
-        return xoManager.getDatastoreSession(Neo4jDatastoreSession.class).getGraphDatabaseService();
+        return xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         properties.put(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
         properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
         properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-        XOUnit xoUnit = XOUnit.builder().uri(database.toURI()).provider(Neo4jXOProvider.class).types(types).properties(properties)
+        XOUnit xoUnit = XOUnit.builder().uri(database.toURI()).provider(EmbeddedNeo4jXOProvider.class).types(types).properties(properties)
                 .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
         return XO.createXOManagerFactory(xoUnit);
     }
