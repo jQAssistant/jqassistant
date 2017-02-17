@@ -498,6 +498,11 @@
                 <artifactId>xo.neo4j.remote</artifactId>
                 <version>${com.buschmais.xo.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j</artifactId>
+                <version>${org.neo4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
