@@ -1,7 +1,15 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -9,13 +17,6 @@ import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescripto
 import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -26,6 +27,8 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 public abstract class AbstractGraphStore implements Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
+
+    private static final int BATCH_LIMIT = 8192;
     private static final int AUTOCOMMIT_THRESHOLD = 32678;
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
@@ -161,6 +164,29 @@ public abstract class AbstractGraphStore implements Store {
         return getGraphDatabaseService(xoManager);
     }
 
+    @Override
+    public void reset() {
+        LOGGER.info("Resetting store.");
+        long nodes;
+        long relations;
+        long totalNodes = 0;
+        long totalRelations = 0;
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", BATCH_LIMIT);
+        do {
+            beginTransaction();
+            CompositeRowObject result = executeQuery(
+                    "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
+                    params).getSingleResult();
+            nodes = result.get("nodes", Long.class);
+            relations = result.get("relations", Long.class);
+            commitTransaction();
+            totalNodes += nodes;
+            totalRelations += relations;
+        } while (nodes == BATCH_LIMIT);
+        LOGGER.info("Reset finished (removed " + totalNodes + " nodes, " + totalRelations + " relations).");
+    }
+
     /**
      * Return the graph database service wrapped by the given XOManager.
      * 
@@ -184,5 +210,7 @@ public abstract class AbstractGraphStore implements Store {
      *            The used {@link GraphDatabaseService} instance.
      */
     protected abstract void closeXOManagerFactory(XOManagerFactory factory);
+
+
 
 }
