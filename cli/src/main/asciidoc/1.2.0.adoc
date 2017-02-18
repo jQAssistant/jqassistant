@@ -1,3 +1,7 @@
-== jQAssistant Commandline Tool Version 1.2.0
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.2.0]
+ifdef::jqa-in-manual[== Commandline Tool 1.2.0]
 
 - Added support for rule parameters.
