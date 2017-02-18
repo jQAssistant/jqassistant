@@ -1,6 +1,7 @@
 //
 //
 //
-== jQAssistant Core Framework Version 1.3.0
+ifndef::jqa-in-manual[== Version 1.3.0]
+ifdef::jqa-in-manual[== Core Framework 1.3.0]
 
 - TBW.
