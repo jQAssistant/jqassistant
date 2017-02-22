@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -80,10 +81,7 @@ public class ScanIT extends AbstractCLIIT {
     @Test
     public void storeDirectory() throws IOException, InterruptedException {
         String customStoreDirectory = "tmp/customStore";
-        // initially reset store as before method only cleans up default
-        // location
-        String[] args1 = new String[] { "reset", "-s", customStoreDirectory };
-        assertThat(execute(args1).getExitCode(), equalTo(0));
+        FileUtils.deleteDirectory(new File(customStoreDirectory));
         URL file = getResource(ScanIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", customStoreDirectory };
         assertThat(execute(args2).getExitCode(), equalTo(0));
