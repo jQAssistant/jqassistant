@@ -1,4 +1,8 @@
-== jQAssistant Commandline Tool Version 1.3.0
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.3.0]
+ifdef::jqa-in-manual[== Commandline Tool 1.3.0]
 
 - Renamed command line option `severity` to `violationSeverity`, i.e. the threshold for exiting with an error code
   after at lease one rule has failed
