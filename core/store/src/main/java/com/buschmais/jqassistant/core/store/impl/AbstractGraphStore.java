@@ -29,7 +29,6 @@ public abstract class AbstractGraphStore implements Store {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
 
     private static final int BATCH_LIMIT = 8192;
-    private static final int AUTOCOMMIT_THRESHOLD = 32678;
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
     private int created;
@@ -73,7 +72,7 @@ public abstract class AbstractGraphStore implements Store {
      */
     private void autoCommit() {
         created++;
-        if (created == AUTOCOMMIT_THRESHOLD) {
+        if (created == getAutocommitThreshold()) {
             commitTransaction();
             beginTransaction();
         }
@@ -211,6 +210,6 @@ public abstract class AbstractGraphStore implements Store {
      */
     protected abstract void closeXOManagerFactory(XOManagerFactory factory);
 
-
+    protected abstract int getAutocommitThreshold();
 
 }

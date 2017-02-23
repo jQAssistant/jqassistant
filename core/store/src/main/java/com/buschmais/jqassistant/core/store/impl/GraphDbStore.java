@@ -18,6 +18,8 @@ import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
  */
 public class GraphDbStore extends AbstractGraphStore {
 
+    private static final int AUTOCOMMIT_THRESHOLD = 32678;
+
     /**
      * The {@link org.neo4j.graphdb.GraphDatabaseService}.
      */
@@ -53,6 +55,11 @@ public class GraphDbStore extends AbstractGraphStore {
     @Override
     protected void closeXOManagerFactory(XOManagerFactory xoManagerFactory) {
         xoManagerFactory.close();
+    }
+
+    @Override
+    protected int getAutocommitThreshold() {
+        return AUTOCOMMIT_THRESHOLD;
     }
 
     @Override

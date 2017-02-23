@@ -27,7 +27,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
         properties.setProperty("neo4j.remote.username", "neo4j");
         properties.setProperty("neo4j.remote.password", "admin");
         try {
-            xoUnit = XOUnit.builder().uri(new URI("bolt://localhost:7687")).provider(Neo4jRemoteStoreProvider.class).types(types).properties(properties)
+            xoUnit = XOUnit.builder().uri(new URI("bolt://f1ws30:17687")).provider(Neo4jRemoteStoreProvider.class).types(types).properties(properties)
                     .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -38,5 +38,10 @@ public class RemoteGraphStore extends AbstractGraphStore {
     @Override
     protected void closeXOManagerFactory(XOManagerFactory factory) {
         factory.close();
+    }
+
+    @Override
+    protected int getAutocommitThreshold() {
+        return 1024;
     }
 }

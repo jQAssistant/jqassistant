@@ -19,6 +19,8 @@ import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
 
+    private static final int AUTOCOMMIT_THRESHOLD = 32678;
+
     private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
     private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
     private static final String PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED = "neo4j.dbms.connector.bolt.enabled";
@@ -59,6 +61,11 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected void closeXOManagerFactory(XOManagerFactory xoManagerFactory) {
         xoManagerFactory.close();
+    }
+
+    @Override
+    protected int getAutocommitThreshold() {
+        return AUTOCOMMIT_THRESHOLD;
     }
 
 }
