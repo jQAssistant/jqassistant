@@ -21,6 +21,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -40,6 +44,10 @@
 		<dependency>
 			<groupId>com.buschmais.xo</groupId>
 			<artifactId>xo.neo4j.remote</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
