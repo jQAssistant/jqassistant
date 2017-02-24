@@ -82,7 +82,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.8.0-SNAPSHOT</com.buschmais.xo.version>
         <org.neo4j.version>2.3.9</org.neo4j.version>
-    <maven.assembly.version>2.6</maven.assembly.version>
+        <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>1.9.1</maven.buildhelper.version>
         <maven.clean.version>3.0.0</maven.clean.version>
         <maven.compiler.version>3.5</maven.compiler.version>
@@ -110,6 +110,8 @@
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
+        <lombok.maven.version>1.16.10.0</lombok.maven.version>
+        <lombok.version>1.16.10</lombok.version>
     </properties>
 
     <build>
@@ -394,6 +396,19 @@
                     <version>${maven.xml.version}</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>${lombok.maven.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>delombok</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
             </plugins>
         </pluginManagement>
@@ -502,6 +517,12 @@
                 <groupId>org.neo4j</groupId>
                 <artifactId>neo4j</artifactId>
                 <version>${org.neo4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
