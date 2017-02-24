@@ -111,7 +111,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
         List<TypeDescriptor> dependencies = query(
-                "MATCH (dependentType:Type)-[d:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} and has(d.weight) RETURN t",
+                "MATCH (dependentType:Type)-[d:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} and exists(d.weight) RETURN t",
                 params).getColumn("t");
         assertThat(dependencies.size(), equalTo(6));
         assertThat(dependencies, hasItems(typeDescriptor(AnnotationType.class), typeDescriptor(ClassType.class), typeDescriptor(InterfaceType.class),
