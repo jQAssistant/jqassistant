@@ -1,16 +1,18 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
-import com.buschmais.xo.neo4j.embedded.api.Neo4jXOProvider;
+import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
 /**
  * {@link com.buschmais.jqassistant.core.store.api.Store} implementation using
@@ -31,7 +33,8 @@ public class GraphDbStore extends AbstractGraphStore {
      * @param graphDatabaseService
      *            The {@link org.neo4j.graphdb.GraphDatabaseService}.
      */
-    public GraphDbStore(GraphDatabaseService graphDatabaseService) {
+    public GraphDbStore(GraphDatabaseService graphDatabaseService) throws URISyntaxException {
+        super(StoreConfiguration.builder().uri(new URI("graphDb:///")).build());
         this.graphDatabaseService = graphDatabaseService;
     }
 
@@ -43,12 +46,8 @@ public class GraphDbStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         XOUnit xoUnit;
-        try {
-            xoUnit = XOUnitBuilder.create("graphDb:///", Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                    .property(GraphDatabaseService.class.getName(), graphDatabaseService).create();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Cannot create graph store", e);
-        }
+        xoUnit = XOUnitBuilder.create(storeConfiguration.getUri(), EmbeddedNeo4jXOProvider.class, types.toArray(new Class<?>[0]))
+                .property(GraphDatabaseService.class.getName(), graphDatabaseService).create();
         return XO.createXOManagerFactory(xoUnit);
     }
 

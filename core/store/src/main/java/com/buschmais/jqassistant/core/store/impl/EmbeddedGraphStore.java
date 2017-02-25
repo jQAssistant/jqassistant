@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
@@ -25,20 +26,25 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
     private static final String PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED = "neo4j.dbms.connector.bolt.enabled";
 
-
-    /**
-     * The directory of the database.
-     */
-    private final String databaseDirectory;
-
     /**
      * Constructor.
      *
      * @param databaseDirectory
      *            The directory of the database.
      */
+    @Deprecated
     public EmbeddedGraphStore(String databaseDirectory) {
-        this.databaseDirectory = databaseDirectory;
+        super(StoreConfiguration.builder().uri(new File(databaseDirectory).toURI()).build());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param configuration
+     *            The configuration.
+     */
+    public EmbeddedGraphStore(StoreConfiguration configuration) {
+        super(configuration);
     }
 
     @Override
@@ -48,12 +54,11 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
-        File database = new File(databaseDirectory);
         Properties properties = new Properties();
         properties.put(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
         properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
         properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-        XOUnit xoUnit = XOUnit.builder().uri(database.toURI()).provider(EmbeddedNeo4jXOProvider.class).types(types).properties(properties)
+        XOUnit xoUnit = XOUnit.builder().uri(storeConfiguration.getUri()).provider(EmbeddedNeo4jXOProvider.class).types(types).properties(properties)
                 .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
         return XO.createXOManagerFactory(xoUnit);
     }

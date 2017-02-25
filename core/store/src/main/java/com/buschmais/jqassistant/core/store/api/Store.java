@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.core.store.api;
 
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.xo.api.Example;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -77,6 +78,17 @@ public interface Store {
     <T extends Descriptor> T create(Class<T> type);
 
     /**
+     * Creates a {@link Descriptor} of the given type.
+     *
+     * @param type
+     *            The type.
+     * @param example
+     *            The example.
+     * @return The {@link Descriptor}.
+     */
+    <T extends Descriptor> T create(Class<T> type, Example<T> example);
+
+    /**
      * Creates a relation between to {@link Descriptor}s.
      * 
      * @param source
@@ -88,6 +100,21 @@ public interface Store {
      * @return The {@link Descriptor}.
      */
     <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target);
+
+    /**
+     * Creates a relation between to {@link Descriptor}s.
+     *
+     * @param source
+     *            The source descriptor.
+     * @param relationType
+     *            The relationt type to create.
+     * @param target
+     *            The target descriptor.
+     * @param example
+     *            The example.
+     * @return The {@link Descriptor}.
+     */
+    <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target, Example<R> example);
 
     /**
      * Creates a {@link Descriptor} of the given type with a full qualified name

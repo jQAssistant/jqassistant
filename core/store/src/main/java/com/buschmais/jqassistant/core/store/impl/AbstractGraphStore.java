@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -29,9 +31,16 @@ public abstract class AbstractGraphStore implements Store {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
 
     private static final int BATCH_LIMIT = 8192;
+
+    protected  StoreConfiguration storeConfiguration;
+
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
     private int created;
+
+    protected AbstractGraphStore(StoreConfiguration configuration) {
+        this.storeConfiguration = configuration;
+    }
 
     @Override
     public void start(Collection<Class<?>> types) {
@@ -61,8 +70,21 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <T extends Descriptor> T create(Class<T> type, Example<T> example) {
+        T descriptor = xoManager.create(type, example);
+        autoCommit();
+        return descriptor;
+    }
+
+    @Override
     public <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target) {
         R descriptor = xoManager.create(source, relationType, target);
+        return descriptor;
+    }
+
+    @Override
+    public <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target, Example<R> example) {
+        R descriptor = xoManager.create(source, relationType, target, example);
         return descriptor;
     }
 
