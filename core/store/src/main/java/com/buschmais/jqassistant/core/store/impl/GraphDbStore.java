@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
@@ -47,7 +48,7 @@ public class GraphDbStore extends AbstractGraphStore {
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         XOUnit xoUnit;
         xoUnit = XOUnitBuilder.create(storeConfiguration.getUri(), EmbeddedNeo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                .property(GraphDatabaseService.class.getName(), graphDatabaseService).create();
+                .validationMode(ValidationMode.NONE).property(GraphDatabaseService.class.getName(), graphDatabaseService).create();
         return XO.createXOManagerFactory(xoUnit);
     }
 

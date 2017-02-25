@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
@@ -54,6 +55,6 @@ public class RemoteGraphStore extends AbstractGraphStore {
             properties.setProperty("neo4j.remote.encryptionLevel", encryptionLevel);
         }
         return XOUnit.builder().uri(storeConfiguration.getUri()).provider(Neo4jRemoteStoreProvider.class).types(types).properties(properties)
-                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
+                .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
     }
 }

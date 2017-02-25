@@ -8,6 +8,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
@@ -59,7 +60,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
         properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
         XOUnit xoUnit = XOUnit.builder().uri(storeConfiguration.getUri()).provider(EmbeddedNeo4jXOProvider.class).types(types).properties(properties)
-                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
+                .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
         return XO.createXOManagerFactory(xoUnit);
     }
 
