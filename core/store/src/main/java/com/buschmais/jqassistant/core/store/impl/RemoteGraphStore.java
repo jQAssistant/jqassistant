@@ -11,7 +11,7 @@ import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.buschmais.xo.neo4j.remote.api.Neo4jRemoteStoreProvider;
+import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
 
 public class RemoteGraphStore extends AbstractGraphStore {
 
@@ -37,7 +37,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
 
     @Override
     protected int getAutocommitThreshold() {
-        return 512;
+        return 2048;
     }
 
     private XOUnit getXoUnit(Collection<Class<?>> types) {
@@ -54,7 +54,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
         if (encryptionLevel != null) {
             properties.setProperty("neo4j.remote.encryptionLevel", encryptionLevel);
         }
-        return XOUnit.builder().uri(storeConfiguration.getUri()).provider(Neo4jRemoteStoreProvider.class).types(types).properties(properties)
+        return XOUnit.builder().uri(storeConfiguration.getUri()).provider(RemoteNeo4jXOProvider.class).types(types).properties(properties)
                 .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
     }
 }
