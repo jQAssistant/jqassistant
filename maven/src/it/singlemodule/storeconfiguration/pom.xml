@@ -1,38 +1,48 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>@project.groupId@</groupId>
-		<artifactId>@project.artifactId@.integration</artifactId>
-		<version>@project.version@</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
-	<artifactId>@project.artifactId@.integration.singlemodule.storeconfiguration</artifactId>
-
-    <properties>
-        <store.uri>file:target/jqassistant/store</store.uri>
-    </properties>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@.integration</artifactId>
+        <version>@project.version@</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <artifactId>@project.artifactId@.integration.singlemodule.storeconfiguration</artifactId>
 
     <profiles>
         <profile>
             <id>store1</id>
-            <properties>
-                <store.uri>file:target/store1</store.uri>
-            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <configuration>
+                            <store>
+                                <uri>file:target/store1</uri>
+                            </store>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>store2</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <configuration>
+                            <storeDirectory>target/unsedstore</storeDirectory>
+                            <store>
+                                <uri>file:target/store2</uri>
+                            </store>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
-	<build>
-        <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <store>
-                        <uri>${store.uri}</uri>
-                    </store>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
