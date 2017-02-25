@@ -75,6 +75,7 @@
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>true</streamLogs>
                             <pomIncludes>
+                                <pomInclude>singlemodule/storeconfiguration/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/site/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/junit-report/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/export-rules/pom.xml</pomInclude>

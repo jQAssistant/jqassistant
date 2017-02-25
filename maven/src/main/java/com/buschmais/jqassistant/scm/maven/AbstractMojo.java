@@ -7,19 +7,6 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
-import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
-import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
-
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,10 +15,26 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
+import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
+import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
+
 /**
  * Abstract base implementation for analysis mojos.
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
+
+    public static final String STORE_DIRECTORY = "jqassistant/store";
 
     /**
      * A marker for an already executed goal of a project.
@@ -84,6 +87,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "jqassistant.store.directory")
     protected File storeDirectory;
+
+    /**
+     * The store configuration.
+     */
+    @Parameter
+    protected StoreConfiguration store;
 
     /**
      * Determines if the execution root module shall be used as project root, i.e. to create the store and read the rules from.
@@ -144,9 +153,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Controls the life cycle of the data store.
      *
-     * {@link StoreLifecycle.REACTOR} is the default value which provides caching of the initialized
+     * {@link StoreLifecycle#REACTOR} is the default value which provides caching of the initialized
      * store. There are configurations where this will cause problems, in such
-     * cases {@link StoreLifecycle.MODULE} shall be used.
+     * cases {@link StoreLifecycle#MODULE} shall be used.
      *
      */
     @Parameter(property = PROPERTY_STORE_LIFECYCLE)
@@ -361,14 +370,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 break;
         }
         if (store == null) {
-            File directory = getStoreDirectory(rootModule);
+            StoreConfiguration configuration = getStoreConfiguration(rootModule);
             List<Class<?>> descriptorTypes;
             try {
                 descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
             } catch (PluginRepositoryException e) {
                 throw new MojoExecutionException("Cannot determine model types.", e);
             }
-            store = storeFactory.createStore(directory, descriptorTypes);
+            store = storeFactory.createStore(configuration, descriptorTypes);
         }
         return store;
     }
@@ -393,17 +402,23 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Determines the directory to use for the store.
      *
-     * @param rootModule The root module.
+     * @param rootModule
+     *            The root module.
      * @return The directory.
      */
-    private File getStoreDirectory(MavenProject rootModule) {
-        File directory;
-        if (this.storeDirectory != null) {
-            directory = this.storeDirectory;
+    private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
+        if (store != null) {
+            return store;
         } else {
-            directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
+            File directory;
+            if (this.storeDirectory != null) {
+                directory = this.storeDirectory;
+            } else {
+                directory = new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY);
+            }
+            directory.getParentFile().mkdirs();
+            return StoreConfiguration.builder().uri(directory.toURI()).build();
         }
-        return directory;
     }
 
     /**

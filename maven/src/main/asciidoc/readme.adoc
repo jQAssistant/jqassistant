@@ -142,6 +142,11 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                 <configuration>
                     <skip>false</skip>
                     <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
+                    <store>
+                        <uri>file:target/myDatabaseDirectory</uri>
+                        <username>neo4j</username>
+                        <password>secret</password>
+                    </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rulesDirectory>jqassistant</rulesDirectory>
                     <rulesDirectories>
@@ -236,7 +241,7 @@ gathered information in database.
 ===== Configuration
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
-* <<storeDirectory>>
+* <<store>>
 * <<storeLifecycle>>
 * scanIncludes
 ** add directories or files to be included while scanning
@@ -261,7 +266,7 @@ Resets the database by deleting all nodes and relationships.
 ===== Configuration
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
-* <<storeDirectory>>
+* <<store>>
 * <<storeLifecycle>>
 
 [[server]]
@@ -272,7 +277,7 @@ Starts the integrated Neo4j web server (default address: http://localhost:7474).
 ===== Configuration
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
-* <<storeDirectory>>
+* <<store>>
 * <<storeLifecycle>>
 * serverAddress <address> (-Djqassistant.server.address=<address>)
 ** specifies the binding address for the server (default: localhost)
@@ -287,7 +292,7 @@ Executes an analysis.
 ===== Configuration
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
-* <<storeDirectory>>
+* <<store>>
 * <<storeLifecycle>>
 * <<concepts>>
 * <<constraints>>
@@ -367,6 +372,19 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 * default: 'false'
 
 ==== Store
+
+[[store]]
+===== store
+* specifies the configuration of the database to use
+* uri
+** URI of the database, supported URI schemes are
+** 'file' for embedded databases, e.g. 'file:target/mystore'
+** 'bolt' (experimental) for connecting to a running Neo4j instance (3.x+), e.g. 'bolt://localhost:7687'
+* username
+** username ('bolt' connections only)
+* password
+** password ('bolt' connections only)
+* default: use embedded database at 'file:{rootModule}/target/jqassistant/store'
 
 [[storeDirectory]]
 ===== storeDirectory (-Djqassistant.store.directory)

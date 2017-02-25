@@ -1,18 +1,18 @@
 package com.buschmais.jqassistant.scm.maven.provider;
 
-import java.io.File;
+import java.net.URI;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Singleton;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 
 /**
  * Manages the life cycle of {@link Store} instance.
@@ -22,23 +22,21 @@ public class StoreFactory implements Disposable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreFactory.class);
 
-    private Map<Store, File> stores = new IdentityHashMap<>();
+    private Map<Store, URI> stores = new IdentityHashMap<>();
 
     /**
      * Create/open store in the given directory.
      * 
-     * @param directory
-     *            The directory.
+     * @param storeConfiguration
+     *            The store configuration.
      * @param types
      *            The types to register.
      * @return The store.
      */
-    public Store createStore(File directory, List<Class<?>> types) {
-        LOGGER.info("Opening store in directory '" + directory.getAbsolutePath() + "'.");
-        directory.getParentFile().mkdirs();
-        Store store = new EmbeddedGraphStore(directory.getAbsolutePath());
+    public Store createStore(StoreConfiguration storeConfiguration, List<Class<?>> types) {
+        Store store = com.buschmais.jqassistant.core.store.api.StoreFactory.getStore(storeConfiguration);
         store.start(types);
-        stores.put(store, directory);
+        stores.put(store, storeConfiguration.getUri());
         return store;
     }
 
@@ -67,8 +65,8 @@ public class StoreFactory implements Disposable {
      *            The store.
      */
     private void close(Store store) {
-        File directory = stores.get(store);
-        LOGGER.info("Closing store in directory '" + directory.getAbsolutePath() + "'.");
+        URI uri = stores.get(store);
+        LOGGER.info("Closing store in directory '" + uri + "'.");
         store.stop();
     }
 
