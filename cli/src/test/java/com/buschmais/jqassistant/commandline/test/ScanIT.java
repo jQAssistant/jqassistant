@@ -80,12 +80,41 @@ public class ScanIT extends AbstractCLIIT {
 
     @Test
     public void storeDirectory() throws IOException, InterruptedException {
-        String customStoreDirectory = "tmp/customStore";
-        FileUtils.deleteDirectory(new File(customStoreDirectory));
+        File directory = new File(getWorkingDirectory(), "store1");
+        FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", customStoreDirectory };
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath()};
         assertThat(execute(args2).getExitCode(), equalTo(0));
-        verifyFilesScanned(new File(getWorkingDirectory(), customStoreDirectory),  new File(file.getFile()));
+        verifyFilesScanned(directory,  new File(file.getFile()));
+    }
+
+    @Test
+    public void storeUri() throws IOException, InterruptedException {
+        File directory = new File(getWorkingDirectory(), "store2");
+        FileUtils.deleteDirectory(directory);
+        URL file = getResource(ScanIT.class);
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-storeUri", directory.toURI().toString() };
+        assertThat(execute(args2).getExitCode(), equalTo(0));
+        verifyFilesScanned(directory,  new File(file.getFile()));
+    }
+
+    /**
+     * Verify that it's not allowed to specify both storeDirectory and storeUri.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws InterruptedException
+     *             If execution is interrupted.
+     */
+    @Test
+    public void storeUriAndDirectory() throws IOException, InterruptedException {
+        File directory = new File(getWorkingDirectory(), "store1");
+        FileUtils.deleteDirectory(directory);
+        URL file = getResource(ScanIT.class);
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath(), "-storeUri",
+                directory.toURI().toString() };
+        assertThat(execute(args2).getExitCode(), equalTo(1));
+        verifyFilesNotScanned(directory, new File(file.getFile()));
     }
 
     /**

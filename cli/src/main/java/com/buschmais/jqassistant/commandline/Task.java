@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.commandline;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 
-import java.util.Map;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 
 /**
  * @author jn4, Kontext E GmbH, 17.02.14
@@ -18,7 +19,7 @@ public interface Task extends com.buschmais.jqassistant.commandline.OptionsProvi
 
     void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws com.buschmais.jqassistant.commandline.CliExecutionException;
 
-    void withStandardOptions(CommandLine commandLine);
+    void withStandardOptions(CommandLine commandLine) throws CliConfigurationException;
 
     void run() throws com.buschmais.jqassistant.commandline.CliExecutionException;
 }
