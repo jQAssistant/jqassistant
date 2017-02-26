@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
+import com.buschmais.xo.api.Example;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -135,9 +136,13 @@ public class VisitorHelper {
      * @param invokedMethodDescriptor
      *            The invoked method.
      */
-    public void addInvokes(MethodDescriptor methodDescriptor, Integer lineNumber, MethodDescriptor invokedMethodDescriptor) {
-        InvokesDescriptor invokesDescriptor = scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
-        invokesDescriptor.setLineNumber(lineNumber);
+    public void addInvokes(MethodDescriptor methodDescriptor, final Integer lineNumber, MethodDescriptor invokedMethodDescriptor) {
+        scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor, new Example<InvokesDescriptor>() {
+            @Override
+            public void prepare(InvokesDescriptor example) {
+                example.setLineNumber(lineNumber);
+            }
+        });
     }
 
     /**
@@ -150,9 +155,13 @@ public class VisitorHelper {
      * @param fieldDescriptor
      *            The field.
      */
-    public void addReads(MethodDescriptor methodDescriptor, Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        ReadsDescriptor readsDescriptor = scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
-        readsDescriptor.setLineNumber(lineNumber);
+    public void addReads(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
+        scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor, new Example<ReadsDescriptor>() {
+            @Override
+            public void prepare(ReadsDescriptor example) {
+                example.setLineNumber(lineNumber);
+            }
+        });
     }
 
     /**
@@ -165,9 +174,13 @@ public class VisitorHelper {
      * @param fieldDescriptor
      *            The field.
      */
-    public void addWrites(MethodDescriptor methodDescriptor, Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        WritesDescriptor writesDescriptor = scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
-        writesDescriptor.setLineNumber(lineNumber);
+    public void addWrites(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
+        scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor, new Example<WritesDescriptor>() {
+            @Override
+            public void prepare(WritesDescriptor example) {
+                example.setLineNumber(lineNumber);
+            }
+        });
     }
 
     /**
