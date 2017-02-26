@@ -1,15 +1,11 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.util.Collection;
 import java.util.Properties;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
-import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
-import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
 
@@ -25,22 +21,13 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
-        XOUnit xoUnit = getXoUnit(types);
-        return XO.createXOManagerFactory(xoUnit);
-    }
-
-    @Override
-    protected void closeXOManagerFactory(XOManagerFactory factory) {
-        factory.close();
-    }
-
-    @Override
     protected int getAutocommitThreshold() {
-        return 2048;
+        return 512;
     }
 
-    private XOUnit getXoUnit(Collection<Class<?>> types) {
+    @Override
+    protected void configure(XOUnit.XOUnitBuilder builder) {
+        builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
         String username = storeConfiguration.getUsername();
         if (username != null) {
@@ -54,7 +41,10 @@ public class RemoteGraphStore extends AbstractGraphStore {
         if (encryptionLevel != null) {
             properties.setProperty("neo4j.remote.encryptionLevel", encryptionLevel);
         }
-        return XOUnit.builder().uri(storeConfiguration.getUri()).provider(RemoteNeo4jXOProvider.class).types(types).properties(properties)
-                .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build()).build();
+        Properties storeConfigurationProperties = storeConfiguration.getProperties();
+        if (storeConfigurationProperties != null) {
+            properties.putAll(storeConfigurationProperties);
+        }
+        builder.properties(properties);
     }
 }

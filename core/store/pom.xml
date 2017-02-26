@@ -41,7 +41,17 @@
 			<groupId>com.buschmais.xo</groupId>
 			<artifactId>xo.neo4j.embedded</artifactId>
 		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-io</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
 			<groupId>com.buschmais.xo</groupId>
 			<artifactId>xo.neo4j.remote</artifactId>
 		</dependency>

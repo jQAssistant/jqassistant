@@ -28,6 +28,7 @@ public class StoreFactory {
         }
         switch (scheme.toLowerCase()) {
         case "file":
+        case "memory":
             return new EmbeddedGraphStore(configuration);
         case "bolt":
             return new RemoteGraphStore(configuration);

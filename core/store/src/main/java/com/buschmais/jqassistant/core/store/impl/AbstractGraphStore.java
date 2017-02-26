@@ -15,10 +15,9 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.Example;
-import com.buschmais.xo.api.ResultIterable;
-import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
+import com.buschmais.xo.api.*;
+import com.buschmais.xo.api.bootstrap.XO;
+import com.buschmais.xo.api.bootstrap.XOUnit;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -32,7 +31,7 @@ public abstract class AbstractGraphStore implements Store {
 
     private static final int BATCH_LIMIT = 8192;
 
-    protected  StoreConfiguration storeConfiguration;
+    protected StoreConfiguration storeConfiguration;
 
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
@@ -44,7 +43,10 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public void start(Collection<Class<?>> types) {
-        xoManagerFactory = createXOManagerFactory(types);
+        XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
+                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+        configure(builder);
+        xoManagerFactory = XO.createXOManagerFactory(builder.build());
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -58,7 +60,7 @@ public abstract class AbstractGraphStore implements Store {
             xoManager.close();
         }
         if (xoManagerFactory != null) {
-            closeXOManagerFactory(xoManagerFactory);
+            xoManagerFactory.close();
         }
     }
 
@@ -218,19 +220,9 @@ public abstract class AbstractGraphStore implements Store {
     protected abstract GraphDatabaseService getGraphDatabaseService(XOManager xoManager);
 
     /**
-     * Delegates to the sub class to start the database.
-     * 
-     * @return The {@link GraphDatabaseService} instance to use.
+     * Configure store specific options.
      */
-    protected abstract XOManagerFactory createXOManagerFactory(Collection<Class<?>> types);
-
-    /**
-     * Delegates to the sub class to stop the factory.
-     * 
-     * @param factory
-     *            The used {@link GraphDatabaseService} instance.
-     */
-    protected abstract void closeXOManagerFactory(XOManagerFactory factory);
+    protected abstract void configure(XOUnit.XOUnitBuilder builder);
 
     protected abstract int getAutocommitThreshold();
 

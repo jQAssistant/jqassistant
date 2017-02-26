@@ -2,17 +2,12 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
-import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
-import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
 /**
@@ -45,16 +40,8 @@ public class GraphDbStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
-        XOUnit xoUnit;
-        xoUnit = XOUnitBuilder.create(storeConfiguration.getUri(), EmbeddedNeo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                .validationMode(ValidationMode.NONE).property(GraphDatabaseService.class.getName(), graphDatabaseService).create();
-        return XO.createXOManagerFactory(xoUnit);
-    }
-
-    @Override
-    protected void closeXOManagerFactory(XOManagerFactory xoManagerFactory) {
-        xoManagerFactory.close();
+    protected void configure(XOUnit.XOUnitBuilder builder) {
+        builder.provider(EmbeddedNeo4jXOProvider.class);
     }
 
     @Override

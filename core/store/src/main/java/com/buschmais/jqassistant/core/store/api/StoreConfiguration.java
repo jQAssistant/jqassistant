@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.api;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.net.URI;
+import java.util.Properties;
 
 import lombok.*;
 
@@ -24,4 +25,6 @@ public class StoreConfiguration {
     private String password;
 
     private String encryptionLevel;
+
+    private Properties properties;
 }
