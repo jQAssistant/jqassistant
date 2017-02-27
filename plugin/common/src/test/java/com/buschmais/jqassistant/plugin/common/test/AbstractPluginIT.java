@@ -185,7 +185,11 @@ public abstract class AbstractPluginIT {
     public void startStore() throws PluginRepositoryException, URISyntaxException {
         String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
         URI uri = new File(fileName).toURI();
-        StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).build();
+        // URI uri = new URI("bolt://localhost:7687");
+        // URI uri = new URI("memory:///");
+        Properties properties = new Properties();
+        properties.put("neo4j.remote.log.statement", "info");
+        StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).username("neo4j").password("admin").properties(properties).build();
         store = StoreFactory.getStore(configuration);
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
