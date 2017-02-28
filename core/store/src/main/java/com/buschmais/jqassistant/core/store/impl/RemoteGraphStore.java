@@ -22,7 +22,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
 
     @Override
     protected int getAutocommitThreshold() {
-        return 1024;
+        return 2048;
     }
 
     @Override
