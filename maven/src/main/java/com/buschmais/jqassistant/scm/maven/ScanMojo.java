@@ -49,9 +49,15 @@ public class ScanMojo extends AbstractModuleMojo {
     @Parameter(property = "jqassistant.scan.continueOnError")
     private boolean continueOnError = false;
 
+    /**
+     * Indicates whether to initially reset the store before scanning.
+     */
+    @Parameter(property = "jqassistant.store.reset")
+    protected boolean reset = true;
+
     @Override
     protected boolean isResetStoreBeforeExecution() {
-        return true;
+        return reset;
     }
 
     /**

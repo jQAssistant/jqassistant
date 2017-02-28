@@ -93,6 +93,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         <!--
                         <configuration>
                             <scanIncludes>
+                                <resetStore>true</resetStore>
                                 <scanInclude>
                                     <path>config</path>
                                 </scanInclude>
@@ -243,6 +244,9 @@ gathered information in database.
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
 * <<storeLifecycle>>
+* resetStore (-Djqassistant.store.reset)
+** indicates whether the store shall be reset (i.e. cleaned up) before scanning
+** default: 'true'
 * scanIncludes
 ** add directories or files to be included while scanning
 ** wildcards are not supported
