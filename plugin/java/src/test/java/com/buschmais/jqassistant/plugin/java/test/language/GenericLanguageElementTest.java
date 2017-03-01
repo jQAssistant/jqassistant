@@ -102,4 +102,18 @@ public class GenericLanguageElementTest {
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
     }
+
+    @Test
+    public void typeDependsOnName() {
+        TypeDescriptor dependent = mock(TypeDescriptor.class);
+        when(dependent.getName()).thenReturn("A");
+        TypeDescriptor dependency = mock(TypeDescriptor.class);
+        when(dependency.getName()).thenReturn("B");
+        TypeDependsOnDescriptor dependsOnDescriptor = mock(TypeDependsOnDescriptor.class);
+        when(dependsOnDescriptor.getDependent()).thenReturn(dependent);
+        when(dependsOnDescriptor.getDependency()).thenReturn(dependency);
+        SourceProvider<TypeDependsOnDescriptor> sourceProvider = TypeDepdendency.getSourceProvider();
+        String name = sourceProvider.getName(dependsOnDescriptor);
+        assertThat(name, equalTo("A->B"));
+    }
 }

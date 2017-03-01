@@ -148,6 +148,28 @@ public @interface Java {
                     }
                 };
             }
+        },
+        TypeDepdendency {
+            @Override
+            public SourceProvider<? extends Descriptor> getSourceProvider() {
+                return new SourceProvider<TypeDependsOnDescriptor>() {
+                    @Override
+                    public String getName(TypeDependsOnDescriptor descriptor) {
+                        return descriptor.getDependent().getName() + "->" +descriptor.getDependency().getName();
+                    }
+
+                    @Override
+                    public String getSourceFile(TypeDependsOnDescriptor descriptor) {
+                        TypeDescriptor dependent = descriptor.getDependent();
+                        return dependent instanceof ClassFileDescriptor ? ((FileDescriptor) dependent).getFileName() : null;
+                    }
+
+                    @Override
+                    public Integer getLineNumber(TypeDependsOnDescriptor descriptor) {
+                        return 0;
+                    }
+                };
+            }
         };
 
         @Override
