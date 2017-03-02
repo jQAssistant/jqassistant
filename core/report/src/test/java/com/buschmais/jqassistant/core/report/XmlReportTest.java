@@ -27,7 +27,7 @@ public class XmlReportTest {
         String xmlReport = XmlReportTestHelper.createXmlReport();
 
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.2.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -38,8 +38,8 @@ public class XmlReportTest {
         GroupType groupType = report.getGroup().get(0);
         assertThat(groupType.getDate(), notNullValue());
         assertThat(groupType.getId(), equalTo("default"));
-        assertThat(groupType.getConceptOrConstraint().size(), equalTo(1));
-        RuleType ruleType = groupType.getConceptOrConstraint().get(0);
+        assertThat(groupType.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        RuleType ruleType = (RuleType) groupType.getGroupOrConceptOrConstraint().get(0);
         assertThat(ruleType.getStatus(), equalTo(StatusEnumType.SUCCESS));
         assertThat(ruleType, instanceOf(ConceptType.class));
         assertThat(ruleType.getId(), equalTo("my:concept"));
@@ -80,7 +80,7 @@ public class XmlReportTest {
     public void testReportWithConstraint() throws JAXBException, SAXException, ReportException {
         String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.2.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -91,8 +91,8 @@ public class XmlReportTest {
         GroupType groupType = report.getGroup().get(0);
         assertThat(groupType.getDate(), notNullValue());
         assertThat(groupType.getId(), equalTo("default"));
-        assertThat(groupType.getConceptOrConstraint().size(), equalTo(1));
-        RuleType ruleType = groupType.getConceptOrConstraint().get(0);
+        assertThat(groupType.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        RuleType ruleType = (RuleType) groupType.getGroupOrConceptOrConstraint().get(0);
         assertThat(ruleType, instanceOf(ConstraintType.class));
         assertThat(ruleType.getId(), equalTo("my:Constraint"));
         assertThat(ruleType.getSeverity().getValue(), equalTo("critical"));

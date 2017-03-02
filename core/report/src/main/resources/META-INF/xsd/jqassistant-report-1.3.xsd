@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.2"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.2"
+           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.3"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.3"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-report">
@@ -15,6 +15,7 @@
     <xs:complexType name="GroupType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="group" type="jqassistant-report:GroupType" minOccurs="0"/>
                 <xs:element name="concept" type="jqassistant-report:ConceptType" minOccurs="0"/>
                 <xs:element name="constraint" type="jqassistant-report:ConstraintType" minOccurs="0"/>
             </xs:choice>

@@ -24,7 +24,7 @@ public class XmlReportWriter implements ReportPlugin {
 
     public static final String TYPE = "xml";
 
-    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.2";
+    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.3";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private interface XmlOperation {
