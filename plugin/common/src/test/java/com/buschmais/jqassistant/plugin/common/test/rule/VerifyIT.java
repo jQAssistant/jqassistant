@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 public class VerifyIT extends AbstractPluginIT {

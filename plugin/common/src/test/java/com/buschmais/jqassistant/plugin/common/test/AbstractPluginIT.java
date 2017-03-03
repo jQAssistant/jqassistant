@@ -185,19 +185,15 @@ public abstract class AbstractPluginIT {
     public void startStore() throws PluginRepositoryException, URISyntaxException {
         String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
         URI uri = new File(fileName).toURI();
-        // URI uri = new URI("bolt://localhost:7687");
-        // URI uri = new URI("memory:///");
+        //URI uri = new URI("bolt://localhost:7687");
+        //URI uri = new URI("memory:///");
         Properties properties = new Properties();
-        properties.put("neo4j.remote.log.statement", "info");
+        properties.put("neo4j.remote.statement.log", "none");
         StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).username("neo4j").password("admin").properties(properties).build();
         store = StoreFactory.getStore(configuration);
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
-        boolean resetStore = true;
-        if (testStore != null) {
-            resetStore = testStore.reset();
-        }
-        if (resetStore) {
+        if (testStore == null || testStore.reset()) {
             store.reset();
         }
     }
@@ -321,8 +317,6 @@ public abstract class AbstractPluginIT {
      * @param id
      *            The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
         return applyConcept(id, Collections.<String, String> emptyMap());
@@ -336,8 +330,6 @@ public abstract class AbstractPluginIT {
      * @param parameters
      *            The rule parameters.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
@@ -353,8 +345,6 @@ public abstract class AbstractPluginIT {
      * @param id
      *            The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
         return validateConstraint(id, Collections.<String, String> emptyMap());
@@ -368,8 +358,6 @@ public abstract class AbstractPluginIT {
      * @param parameters
      *            The rule parameters.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
@@ -384,8 +372,6 @@ public abstract class AbstractPluginIT {
      *
      * @param id
      *            The id.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws RuleExecutorException, NoGroupException {
         executeGroup(id, Collections.<String, String> emptyMap());
@@ -398,8 +384,6 @@ public abstract class AbstractPluginIT {
      *            The id.
      * @param parameters
      *            The rule parameters.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
      */
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleExecutorException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
