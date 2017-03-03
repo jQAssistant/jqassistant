@@ -14,7 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -32,7 +31,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validXmlSource() throws IOException, AnalysisException {
+    public void validXmlSource() throws IOException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         Source source = new StreamSource(xmlFile);
@@ -50,7 +49,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validXmlFile() throws IOException, AnalysisException {
+    public void validXmlFile() throws IOException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         XmlFileDescriptor xmlFileDescriptor = getXmlFileScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
@@ -139,7 +138,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     @Test
-    public void invalidDocument() throws IOException, AnalysisException {
+    public void invalidDocument() throws IOException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
         Scanner scanner = getXmlFileScanner();
@@ -155,7 +154,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     @Test
-    public void schemaDocument() throws IOException, AnalysisException {
+    public void schemaDocument() throws IOException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/testSchema.xsd");
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
