@@ -48,7 +48,6 @@
         <org.jruby.version>9.1.7.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
         <org.ow2.asm.version>5.2</org.ow2.asm.version>
-        <org.slf4j.version>1.7.13</org.slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -91,16 +90,6 @@
                         <artifactId>hamcrest-core</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${org.slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
