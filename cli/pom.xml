@@ -384,7 +384,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
 			<scope>runtime</scope>
-            <version>1.7.13</version>
         </dependency>
 		
 		<!-- Test frameworks -->
