@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
@@ -29,7 +28,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 public class InvalidClassFileIT extends AbstractJavaPluginIT {
 
     @Test
-    public void classFileWithHeaderOnly() throws IOException, AnalysisException {
+    public void classFileWithHeaderOnly() throws IOException {
         final String path = "/com.buschmais.Test.class";
         final FileResource fileResource = new AbstractFileResource() {
             @Override
@@ -56,7 +55,7 @@ public class InvalidClassFileIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void validClass() throws IOException, AnalysisException {
+    public void validClass() throws IOException {
         scanClasses(InvalidClassFileIT.class);
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors = query("MATCH (c:Class:File) RETURN c").getColumn("c");

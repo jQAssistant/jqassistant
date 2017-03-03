@@ -11,12 +11,9 @@ import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ExceptionType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InvokeClient;

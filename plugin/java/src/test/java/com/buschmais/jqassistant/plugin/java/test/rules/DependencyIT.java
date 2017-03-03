@@ -23,7 +23,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
@@ -48,11 +47,9 @@ public class DependencyIT extends AbstractJavaPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
-    public void types() throws IOException, AnalysisException {
+    public void types() throws IOException {
         scanClasses(DependentType.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");

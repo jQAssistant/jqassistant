@@ -18,7 +18,6 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;

@@ -11,7 +11,6 @@ import java.util.List;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
@@ -22,7 +21,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 public class ByteCodeVersionIT extends AbstractJavaPluginIT {
 
     @Test
-    public void byteCodeVersion() throws IOException, AnalysisException {
+    public void byteCodeVersion() throws IOException {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' RETURN t").getColumn("t");

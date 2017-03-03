@@ -7,13 +7,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.innertype.OuterType;
 

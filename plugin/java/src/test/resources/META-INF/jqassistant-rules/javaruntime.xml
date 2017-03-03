@@ -1,0 +1,42 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+    <concept id="javaruntime:Package">
+        <description>Creates the missing package structure of the JRE.</description>
+        <cypher><![CDATA[
+        MATCH
+            (:Artifact)-[:CONTAINS]->(t:Type)
+        WHERE
+            exists(t.fqn)
+        WITH
+            t, substring(t.fqn, 0, length(t.fqn)-length(t.name)-1) as packageName
+        MERGE
+            (p:Package{fqn:packageName})
+        MERGE
+            (p)-[:CONTAINS]->(t)
+        RETURN
+            p.fqn, count(t)
+        ]]></cypher>
+    </concept>
+
+    <concept id="javaruntime:PackageDependency">
+        <requiresConcept refId="javaruntime:Package" />
+        <description>Creates the missing package structure of the JRE.</description>
+        <cypher><![CDATA[
+        MATCH
+            (p1:Package)-[:CONTAINS]->(t1:Type),
+            (p2:Package)-[:CONTAINS]->(t2:Type),
+            (t1)-[typeDependsOn:DEPENDS_ON]->(t2)
+        WHERE
+            p1 <> p2
+        WITH
+            p1, p2, count(typeDependsOn) as weight, sum(typeDependsOn.weight) as aggregatedWeight
+        MERGE
+            (p1)-[packageDependsOn:DEPENDS_ON]->(p2)
+        SET
+            packageDependsOn.weight=weight,
+            packageDependsOn.aggregatedWeight=aggregatedWeight
+        RETURN
+            p1.fqn, collect(p2.fqn)
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
