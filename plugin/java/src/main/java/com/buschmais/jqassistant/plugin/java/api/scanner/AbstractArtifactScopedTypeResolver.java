@@ -13,10 +13,13 @@ public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeRes
 
     private JavaArtifactFileDescriptor artifact;
 
+    private boolean hasDependencies;
+
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
     protected AbstractArtifactScopedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
+        this.hasDependencies = artifact.getNumberOfDependencies() > 0;
         addToCache(artifact.getContains());
         addToCache(artifact.getRequires());
     }
@@ -37,6 +40,11 @@ public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeRes
     @Override
     protected TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context) {
         return artifactTypes.get(fullQualifiedName);
+    }
+
+    @Override
+    protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
+        return hasDependencies ? getArtifact().resolveRequiredType(fullQualifiedName) : null;
     }
 
     @Override

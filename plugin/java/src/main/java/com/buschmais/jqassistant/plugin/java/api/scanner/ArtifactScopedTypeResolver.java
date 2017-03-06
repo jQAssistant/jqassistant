@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
  * Artifact scoped type resolver which does not consider dependencies.
@@ -33,11 +31,6 @@ public class ArtifactScopedTypeResolver extends AbstractArtifactScopedTypeResolv
     public ArtifactScopedTypeResolver(JavaArtifactFileDescriptor artifact, String classPathDirectory) {
         super(artifact);
         this.classPathDirectory = classPathDirectory;
-    }
-
-    @Override
-    protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
-        return null;
     }
 
     @Override
