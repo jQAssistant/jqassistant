@@ -4,41 +4,57 @@
            targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.3"
            elementFormDefault="unqualified">
 
-    <xs:element name="jqassistant-report">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="group" type="jqassistant-report:GroupType" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:complexType name="GroupType">
+    <xs:group name="RuleGroup">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="group" type="jqassistant-report:GroupType" minOccurs="0"/>
                 <xs:element name="concept" type="jqassistant-report:ConceptType" minOccurs="0"/>
                 <xs:element name="constraint" type="jqassistant-report:ConstraintType" minOccurs="0"/>
             </xs:choice>
-            <xs:element name="duration" type="xs:int"/>
         </xs:sequence>
+    </xs:group>
+
+    <xs:element name="jqassistant-report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="jqassistant-report:RuleGroup"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ReferencableRuleType" abstract="true">
         <xs:attribute name="id" type="xs:string" use="required"/>
-        <xs:attribute name="date" type="xs:dateTime" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="RuleType" abstract="true">
-        <xs:sequence>
-            <xs:element name="description" type="xs:string"/>
-            <xs:element name="result" type="jqassistant-report:ResultType" minOccurs="0"/>
-            <xs:element name="status" type="jqassistant-report:StatusEnumType"/>
-            <xs:element name="severity" type="jqassistant-report:SeverityType"/>
-            <xs:element name="duration" type="xs:int"/>
-        </xs:sequence>
-        <xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:complexType name="GroupType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-report:ReferencableRuleType">
+                <xs:sequence>
+                    <xs:group ref="jqassistant-report:RuleGroup"/>
+                    <xs:element name="duration" type="xs:int"/>
+                </xs:sequence>
+                <xs:attribute name="date" type="xs:dateTime" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ExecutableRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-report:ReferencableRuleType">
+                <xs:sequence>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="result" type="jqassistant-report:ResultType" minOccurs="0"/>
+                    <xs:element name="status" type="jqassistant-report:StatusEnumType"/>
+                    <xs:element name="severity" type="jqassistant-report:SeverityType"/>
+                    <xs:element name="duration" type="xs:int"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="ConceptType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-report:RuleType"/>
+            <xs:extension base="jqassistant-report:ExecutableRuleType"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -60,7 +76,7 @@
 
     <xs:complexType name="ConstraintType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-report:RuleType"/>
+            <xs:extension base="jqassistant-report:ExecutableRuleType"/>
         </xs:complexContent>
     </xs:complexType>
 
