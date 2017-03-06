@@ -181,9 +181,6 @@ public class MavenProjectScannerPluginTest {
         verify(store).create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
 
-        verify(scannerContext, times(2)).push(eq(TypeResolver.class), any(TypeResolver.class));
-        verify(scannerContext, times(2)).pop(TypeResolver.class);
-
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectory);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
         verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
