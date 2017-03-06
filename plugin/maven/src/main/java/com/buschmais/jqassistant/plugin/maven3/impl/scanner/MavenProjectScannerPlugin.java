@@ -1,12 +1,17 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -18,8 +23,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeResolver;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
@@ -29,15 +32,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 
 /**
  * A scanner plugin for maven projects.
@@ -279,12 +273,9 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                     JavaClassesDirectoryDescriptor.class);
             ScannerContext context = scanner.getContext();
             context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
-            TypeResolver typeResolver = new ClasspathScopedTypeResolver(javaArtifactFileDescriptor);
-            context.push(TypeResolver.class, typeResolver);
             try {
                 scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
-                context.pop(TypeResolver.class);
                 context.pop(JavaArtifactFileDescriptor.class);
             }
         }
