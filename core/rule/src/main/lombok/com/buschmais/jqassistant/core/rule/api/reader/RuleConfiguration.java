@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder(toBuilder = true)
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor
 @AllArgsConstructor(access = PRIVATE)
 public class RuleConfiguration {
 
