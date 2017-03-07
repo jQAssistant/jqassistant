@@ -1,0 +1,23 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <group id="default">
+        <includeConcept refId="test:Dependency"/>
+    </group>
+
+    <concept id="test:Dependency">
+        <description>Verifies that there's direct dependency between classes in two different modules.</description>
+        <cypher>
+            <![CDATA[
+            MATCH
+              (module1:Maven:Project)-[:CREATES]->(:Artifact)-[:CONTAINS]->(a:Type{name:"A"}),
+              (module2:Maven:Project)-[:CREATES]->(:Artifact)-[:CONTAINS]->(b:Type{name:"B"}),
+              (b)-[:DEPENDS_ON]->(a)
+            RETURN
+              count(*) as count
+        ]]></cypher>
+        <verify>
+            <aggregation column="count" />
+        </verify>
+    </concept>
+
+</jqa:jqassistant-rules>
