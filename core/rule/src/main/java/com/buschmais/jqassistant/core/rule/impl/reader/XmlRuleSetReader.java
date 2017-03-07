@@ -116,7 +116,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         Executable executable = createExecutable(referenceableType);
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultGroupSeverity());
+        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultConceptSeverity());
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
