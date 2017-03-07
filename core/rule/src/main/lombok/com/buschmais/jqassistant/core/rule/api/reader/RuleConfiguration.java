@@ -6,21 +6,19 @@ import static lombok.AccessLevel.PRIVATE;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@ToString
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor(access = PRIVATE)
 public class RuleConfiguration {
 
-    private static final RuleConfiguration PROTOTYPE = new RuleConfiguration();
+    public static final RuleConfiguration DEFAULT = new RuleConfiguration();
 
     public static RuleConfigurationBuilder builder() {
-        return PROTOTYPE.toBuilder();
+        return DEFAULT.toBuilder();
     }
 
     private Severity defaultGroupSeverity = null;
