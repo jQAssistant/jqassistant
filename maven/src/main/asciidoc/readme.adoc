@@ -116,8 +116,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
-                            <warnOnSeverity>INFO</warnOnSeverity>
-                            <failOnSeverity>CRITICAL</failOnSeverity>
+                            <warnOnSeverity>minor</warnOnSeverity>
+                            <failOnSeverity>major</failOnSeverity>
                             <concepts>
                                 <concept>junit4:TestClass</concept>
                             </concepts>
@@ -136,7 +136,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 </customReport.fileName>
                             </reportProperties>
                         </configuration>
-                         -->
+                        -->
                     </execution>
                 </executions>
                 <!--
@@ -145,10 +145,15 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
                     <store>
                         <uri>file:target/myDatabaseDirectory</uri>
-                        <username>neo4j</username>
-                        <password>secret</password>
+                        <username></username>
+                        <password></password>
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
+                    <rule>
+                        <defaultConceptSeverity>minor</defaultConceptSeverity>
+                        <defaultConstraintSeverity>minor</defaultConstraintSeverity>
+                        <defaultGroupSeverity></defaultGroupSeverity>
+                    </rule>
                     <rulesDirectory>jqassistant</rulesDirectory>
                     <rulesDirectories>
                         <rulesDirectory>
@@ -298,6 +303,7 @@ Executes an analysis.
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
 * <<storeLifecycle>>
+* <<rule>>
 * <<concepts>>
 * <<constraints>>
 * <<groups>>
@@ -416,6 +422,19 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 ===== groups (-Djqassistant.groups)
 * specifies the ids of the groups to be executed
 * default: 'default'
+
+[[rule]]
+===== rule
+* specifies rule-related settings
+* defaultConceptSeverity
+** the default severity of concepts without an explicit severity
+** default: 'minor'
+* defaultConstraintSeverity
+** the default severity of constraints without an explicit severity
+** default: 'major'
+* defaultGroupSeverity
+** the default severity of groups without an explicit severity
+** default: 'none'
 
 [[rulesDirectory]]
 ===== rulesDirectory (-Djqassistant.rules.directory)
