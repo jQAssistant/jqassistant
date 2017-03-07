@@ -126,6 +126,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         if (defaultConstraintSeverityValue != null) {
             ruleConfigurationBuilder.defaultConstraintSeverity(getSeverity(defaultConstraintSeverityValue));
         }
+        ruleConfiguration = ruleConfigurationBuilder.build();
     }
 
     @Override
