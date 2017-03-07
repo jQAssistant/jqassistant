@@ -30,6 +30,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -166,14 +167,14 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         }
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         String severityValue = getOptionValue(options, CMDLINE_OPTION_SEVERITY, null);
-        if (severityValue!= null) {
+        if (severityValue != null) {
             Severity severity = getSeverity(severityValue);
             failOnSeverity = severity;
             LOGGER.warn("'" + CMDLINE_OPTION_SEVERITY + "' has been deprecated, please use '" + CMDLINE_OPTION_FAIL_ON_SEVERITY + "' instead.");
         } else {
-            failOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, Severity.MAJOR.name()));
+            failOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
         }
-        warnOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, Severity.MINOR.name()));
+        warnOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConceptSeverity().getValue()));
         executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
     }
 

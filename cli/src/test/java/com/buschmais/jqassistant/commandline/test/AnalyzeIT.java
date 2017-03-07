@@ -2,13 +2,16 @@ package com.buschmais.jqassistant.commandline.test;
 
 import static com.buschmais.xo.api.Query.Result;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -23,21 +26,21 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
     @Test
     public void defaultGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
     public void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", CUSTOM_GROUP };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
     @Test
     public void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
@@ -59,24 +62,35 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
 
     @Test
     public void constraintSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "info" };
-        assertThat(execute(args).getExitCode(), equalTo(2));
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "critical" };
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
     public void constraintFailOnSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "info" };
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
         assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
+    /**
+     * Warn on a violated constraint but do not fail.
+     * 
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
     public void constraintWarnOnSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "info", "-failOnSeverity",
-                "minor" };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "major", "-failOnSeverity",
+                "critical" };
+        ExecutionResult executionResult = execute(args);
+        assertThat(executionResult.getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        List<String> console = executionResult.getErrorConsole();
+        assertThat(console, hasItem(containsString("Test constraint."))); // The description
+        assertThat(console, hasItem(containsString(TEST_CONSTRAINT)));
+
     }
 
     @Test
@@ -84,7 +98,7 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), TEST_CONCEPT);
     }
 
