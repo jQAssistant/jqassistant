@@ -1,24 +1,5 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import com.buschmais.jqassistant.commandline.CliConfigurationException;
-import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +7,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.commandline.CliConfigurationException;
+import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
+import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -38,10 +37,13 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
     private static final String CMDLINE_OPTION_GROUPS = "groups";
     private static final String CMDLINE_OPTION_CONSTRAINTS = "constraints";
     private static final String CMDLINE_OPTION_CONCEPTS = "concepts";
+    private static final String CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY = "defaultGroupSeverity";
+    private static final String CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY = "defaultConceptSeverity";
+    private static final String CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY = "defaultConstraintSeverity";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
-    private final RuleSetReader ruleSetReader = new CompoundRuleSetReader();
+    private RuleConfiguration ruleConfiguration;
     private URL rulesUrl;
     private String ruleDirectory;
     private List<String> conceptIds;
@@ -65,6 +67,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
             sources.addAll(ruleSources);
         }
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        RuleSetReader ruleSetReader = new CompoundRuleSetReader(ruleConfiguration);
         try {
             ruleSetReader.read(sources, ruleSetBuilder);
         } catch (RuleException e) {
@@ -110,6 +113,19 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Collections.<String> emptyList());
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
+        RuleConfiguration.RuleConfigurationBuilder ruleConfigurationBuilder = RuleConfiguration.builder();
+        String defaultGroupSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY);
+        if (defaultGroupSeverityValue != null) {
+            ruleConfigurationBuilder.defaultGroupSeverity(getSeverity(defaultGroupSeverityValue));
+        }
+        String defaultConceptSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY);
+        if (defaultConceptSeverityValue != null) {
+            ruleConfigurationBuilder.defaultConceptSeverity(getSeverity(defaultConceptSeverityValue));
+        }
+        String defaultConstraintSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY);
+        if (defaultConstraintSeverityValue != null) {
+            ruleConfigurationBuilder.defaultConstraintSeverity(getSeverity(defaultConstraintSeverityValue));
+        }
     }
 
     @Override
@@ -124,5 +140,19 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
                 .create(CMDLINE_OPTION_CONSTRAINTS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONCEPTS).withDescription("The concepts to apply.").withValueSeparator(',').hasArgs()
                 .create(CMDLINE_OPTION_CONCEPTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY).withDescription("The default severity for groups.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY).withDescription("The default severity for concepts.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY).withDescription("The default severity for constraints.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
+    }
+
+    protected Severity getSeverity(String severityValue) throws CliConfigurationException {
+        try {
+            return Severity.fromValue(severityValue);
+        } catch (RuleException e) {
+            throw new CliConfigurationException("Unknown severity value " + severityValue);
+        }
     }
 }

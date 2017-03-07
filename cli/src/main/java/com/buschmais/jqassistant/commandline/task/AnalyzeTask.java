@@ -1,11 +1,23 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -19,18 +31,6 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -175,14 +175,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         }
         warnOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, Severity.MINOR.name()));
         executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
-    }
-
-    private Severity getSeverity(String severityValue) throws CliConfigurationException {
-        try {
-            return Severity.fromValue(severityValue);
-        } catch (RuleException e) {
-            throw new CliConfigurationException("Unknown severity value " + severityValue);
-        }
     }
 
     @Override
