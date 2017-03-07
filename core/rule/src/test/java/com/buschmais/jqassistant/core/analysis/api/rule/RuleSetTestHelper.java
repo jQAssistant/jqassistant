@@ -8,10 +8,11 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import org.hamcrest.Matchers;
 
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
 
 public final class RuleSetTestHelper {
@@ -21,7 +22,7 @@ public final class RuleSetTestHelper {
 
     public static RuleSet readRuleSet(String resource) throws RuleException {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        CompoundRuleSetReader reader = new CompoundRuleSetReader();
+        CompoundRuleSetReader reader = new CompoundRuleSetReader(RuleConfiguration.builder().build());
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);

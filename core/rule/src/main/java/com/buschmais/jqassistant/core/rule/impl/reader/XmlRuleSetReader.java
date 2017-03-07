@@ -6,10 +6,11 @@ import java.util.*;
 
 import javax.xml.validation.Schema;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.schema.v1.*;
@@ -19,6 +20,7 @@ import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
  * A {@link RuleSetReader} implementation.
  */
 public class XmlRuleSetReader implements RuleSetReader {
+
     public static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
     public static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
     public static final String NAMESPACE_RULES_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
@@ -26,13 +28,16 @@ public class XmlRuleSetReader implements RuleSetReader {
     public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.3.xsd";
 
     public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
+    public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
+
+    private RuleConfiguration ruleConfiguration;
 
     private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
 
-    public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
-
-    public XmlRuleSetReader() {
+    public XmlRuleSetReader(RuleConfiguration ruleConfiguration) {
+        this.ruleConfiguration = ruleConfiguration;
         Map<String, String> namespaceMappings = new HashMap<>();
         namespaceMappings.put(NAMESPACE_RULES_1_0, NAMESPACE_RULES_1_3);
         namespaceMappings.put(NAMESPACE_RULES_1_1, NAMESPACE_RULES_1_3);
@@ -98,7 +103,7 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, Group.DEFAULT_SEVERITY);
+        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultGroupSeverity());
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
@@ -111,7 +116,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         Executable executable = createExecutable(referenceableType);
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
+        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultGroupSeverity());
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
@@ -151,7 +156,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         String description = referenceableType.getDescription();
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
+        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultConstraintSeverity());
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();

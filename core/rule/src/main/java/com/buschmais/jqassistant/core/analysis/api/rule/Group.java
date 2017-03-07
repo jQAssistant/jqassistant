@@ -9,11 +9,6 @@ import java.util.Map;
 public class Group extends AbstractSeverityRule {
 
     /**
-     * Default severity level for groups.
-     */
-    public static final Severity DEFAULT_SEVERITY = null;
-
-    /**
      * The set of rules contained in the group.
      */
     private Map<String, Severity> concepts = new HashMap<>();

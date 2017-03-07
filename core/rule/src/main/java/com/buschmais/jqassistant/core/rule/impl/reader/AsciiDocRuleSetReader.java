@@ -9,13 +9,14 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.ContentPart;
 import org.asciidoctor.ast.StructuredDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
@@ -56,10 +57,16 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     public static final String CYPHER = "cypher";
     public static final String OPTIONAL = "optional";
 
+    private RuleConfiguration ruleConfiguration;
+
     /**
      * The cached rule set reader, initialized lazily.
      */
     private Asciidoctor cachedAsciidoctor = null;
+
+    public AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
+        this.ruleConfiguration = ruleConfiguration;
+    }
 
     @Override
     public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
@@ -141,12 +148,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             }
             Report report = getReport(part);
             if (CONCEPT.equals(part.getRole())) {
-                Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
+                Severity severity = getSeverity(part, ruleConfiguration.getDefaultConceptSeverity());
                 Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
                         .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(part.getRole())) {
-                Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
+                Severity severity = getSeverity(part, ruleConfiguration.getDefaultConstraintSeverity());
                 Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
                         .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
                 builder.addConstraint(constraint);
@@ -204,7 +211,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
             Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
             Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
-            Severity severity = getSeverity(contentPart, null);
+            Severity severity = getSeverity(contentPart, ruleConfiguration.getDefaultGroupSeverity());
             Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource)
                     .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
             ruleSetBuilder.addGroup(group);

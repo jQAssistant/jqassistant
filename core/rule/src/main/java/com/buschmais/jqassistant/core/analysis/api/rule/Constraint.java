@@ -5,11 +5,6 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
  */
 public class Constraint extends AbstractExecutableRule {
 
-    /**
-     * Default severity level for constraints.
-     */
-    public static Severity DEFAULT_SEVERITY = Severity.INFO;
-
     protected Constraint() {
     }
 

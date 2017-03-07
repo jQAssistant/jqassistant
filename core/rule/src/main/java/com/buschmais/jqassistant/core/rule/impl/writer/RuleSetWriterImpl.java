@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
 import com.buschmais.jqassistant.core.rule.schema.v1.*;
@@ -26,11 +27,14 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  */
 public class RuleSetWriterImpl implements RuleSetWriter {
 
+    private RuleConfiguration ruleConfiguration;
+
     private JAXBContext jaxbContext;
 
     private RuleExecutorConfiguration configuration = new RuleExecutorConfiguration();
 
-    public RuleSetWriterImpl() {
+    public RuleSetWriterImpl(RuleConfiguration ruleConfiguration) {
+        this.ruleConfiguration = ruleConfiguration;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -80,19 +84,19 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
                 IncludedReferenceType groupReferenceType = new IncludedReferenceType();
                 groupReferenceType.setRefId(groupEntry.getKey());
-                groupType.setSeverity(getSeverity(groupEntry.getValue(), Group.DEFAULT_SEVERITY));
+                groupType.setSeverity(getSeverity(groupEntry.getValue(), ruleConfiguration.getDefaultGroupSeverity()));
                 groupType.getIncludeGroup().add(groupReferenceType);
             }
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
                 IncludedReferenceType conceptReferenceType = new IncludedReferenceType();
                 conceptReferenceType.setRefId(conceptEntry.getKey());
-                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), Concept.DEFAULT_SEVERITY));
+                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), ruleConfiguration.getDefaultConceptSeverity()));
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
             for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
                 IncludedReferenceType constraintReferenceType = new IncludedReferenceType();
                 constraintReferenceType.setRefId(constraintEntry.getKey());
-                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), Constraint.DEFAULT_SEVERITY));
+                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), ruleConfiguration.getDefaultConstraintSeverity()));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
             rules.getConceptOrConstraintOrGroup().add(groupType);
@@ -104,7 +108,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
-            conceptType.setSeverity(getSeverity(concept.getSeverity(), Concept.DEFAULT_SEVERITY));
+            conceptType.setSeverity(getSeverity(concept.getSeverity(), ruleConfiguration.getDefaultConceptSeverity()));
             writeExecutable(conceptType, concept);
             writeRequiredConcepts(concept, conceptType);
             rules.getConceptOrConstraintOrGroup().add(conceptType);
@@ -116,7 +120,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
-            constraintType.setSeverity(getSeverity(constraint.getSeverity(), Constraint.DEFAULT_SEVERITY));
+            constraintType.setSeverity(getSeverity(constraint.getSeverity(), ruleConfiguration.getDefaultConstraintSeverity()));
             writeExecutable(constraintType, constraint);
             writeRequiredConcepts(constraint, constraintType);
             rules.getConceptOrConstraintOrGroup().add(constraintType);

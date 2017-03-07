@@ -7,11 +7,6 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
  */
 public class Concept extends AbstractExecutableRule {
 
-    /**
-     * Default severity level for concepts.
-     */
-    public static Severity DEFAULT_SEVERITY = Severity.MINOR;
-
     protected Concept() {
     }
 
