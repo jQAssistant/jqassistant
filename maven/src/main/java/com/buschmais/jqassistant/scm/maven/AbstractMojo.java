@@ -19,6 +19,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -93,6 +94,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter
     protected StoreConfiguration store;
+
+    /**
+     * The rule configuration
+     */
+    @Parameter
+    protected RuleConfiguration rule;
 
     /**
      * Determines if the execution root module shall be used as project root, i.e. to create the store and read the rules from.
@@ -194,11 +201,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Inject
     private StoreFactory storeFactory;
 
-    /**
-     * The rules reader instance.
-     */
-    private RuleSetReader ruleSetReader = new CompoundRuleSetReader();
-
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
@@ -250,12 +252,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             sources.addAll(ruleSources);
         }
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        RuleSetReader ruleSetReader = new CompoundRuleSetReader(getRuleConfiguration());
         try {
             ruleSetReader.read(sources, ruleSetBuilder);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
         }
         return ruleSetBuilder.getRuleSet();
+    }
+
+    protected RuleConfiguration getRuleConfiguration() {
+        if (rule != null) {
+            return rule;
+        }
+        return RuleConfiguration.builder().build();
     }
 
     /**
