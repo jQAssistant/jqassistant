@@ -82,11 +82,22 @@ Executes an analysis.
 * <<cli:ruleDirectory>>
 * <<cli:rulesUrl>>
 * <<cli:reportDirectory>>
+* <<cli:defaultConceptSeverity>>
+* <<cli:defaultConstraintSeverity>>
+* <<cli:defaultGroupSeverity>>
 
+* -warnOnSeverity
+** determines the severity level for issuing warnings for failed with equal or higher severities
+** values: 'info', 'minor', 'major', 'critical' or 'blocker'
+** default: 'minor'
+* -failOnSeverity (-Djqassistant.failOnSeverity)
+** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
+** values: 'info', 'minor', 'major', 'critical' or 'blocker'
+** default: 'major'
 * -severity <severity>
 ** specifies the severity of a problem for the analysis to fail. The program will return with exit code 2.
 ** values: 'info', 'minor', 'major', 'critical' or 'blocker'
-** default: 'minor'
+** Deprecated: use `-failOnSeverity` instead
 * -executeAppliedConcepts
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
@@ -101,6 +112,9 @@ List all available rules.
 ===== Options
 * <<cli:ruleDirectory>>
 * <<cli:rulesUrl>>
+* <<cli:defaultConceptSeverity>>
+* <<cli:defaultConstraintSeverity>>
+* <<cli:defaultGroupSeverity>>
 
 [[cli:effective-rules]]
 ==== effective-rules
@@ -113,6 +127,9 @@ List the rules which would be executed for an analysis and the given concepts, c
 * <<cli:groups>>
 * <<cli:ruleDirectory>>
 * <<cli:rulesUrl>>
+* <<cli:defaultConceptSeverity>>
+* <<cli:defaultConstraintSeverity>>
+* <<cli:defaultGroupSeverity>>
 
 [[cli:report]]
 ==== report
@@ -141,6 +158,11 @@ Starts the integrated Neo4j web server.
 * specifies the location of the database to use
 * default: './jqassistant/store'
 
+[[cli:groups]]
+===== -groups <group1>,<group2>
+* specifies the ids of the groups to be executed
+* default: 'default'
+
 [[cli:concepts]]
 ===== -concepts <concept1>,<concept2>
 * specifies the ids of the concepts to be applied
@@ -149,10 +171,21 @@ Starts the integrated Neo4j web server.
 ===== -constraints <constraint1>,<constraint2>
 * specifies the ids of the constraints to be validated
 
-[[cli:groups]]
-===== -groups <group1>,<group2>
-* specifies the ids of the groups to be executed
-* default: 'default'
+[[cli:defaultConceptSeverity]]
+===== -defaultConceptSeverity
+* specifies the default severity of concepts without an explicit severity
+* default: 'minor'
+
+[[cli:defaultConstraintSeverity]]
+===== -defaultConstraintSeverity
+* specifies the default severity of constraints without an explicit severity
+* default: 'major'
+
+[[cli:defaultGroupSeverity]]
+===== -defaultGroupSeverity
+* specifies the default severity of groups without an explicit severity
+* default: 'none'
+
 
 [[cli:ruleDirectory]]
 ===== -r, --ruleDirectory <directory>

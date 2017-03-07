@@ -94,6 +94,21 @@ public class AnalyzeIT extends com.buschmais.jqassistant.commandline.test.Abstra
     }
 
     @Test
+    public void defaultConstraintSeverity() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity",
+                "minor", "-defaultConstraintSeverity", "info" };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+    }
+
+    @Test
+    public void defaultGroupSeverity() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-failOnSeverity", "minor", "-defaultGroupSeverity", "info" };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+    }
+
+    @Test
     public void storeDirectory() throws IOException, InterruptedException {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";

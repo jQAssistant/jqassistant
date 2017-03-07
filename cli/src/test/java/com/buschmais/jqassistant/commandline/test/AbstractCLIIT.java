@@ -1,25 +1,16 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import static org.junit.Assume.assumeTrue;
+
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.Executors;
+
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.Executors;
-
-import static org.junit.Assume.assumeTrue;
+import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Abstract base implementation for CLI tests.
@@ -125,6 +116,7 @@ public abstract class AbstractCLIIT {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHhome);
+        // environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
