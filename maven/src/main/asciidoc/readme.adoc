@@ -116,8 +116,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
-                            <warnOnSeverity>minor</warnOnSeverity>
-                            <failOnSeverity>major</failOnSeverity>
+                            <warnOnSeverity>MINOR</warnOnSeverity>
+                            <failOnSeverity>MAJOR</failOnSeverity>
                             <concepts>
                                 <concept>junit4:TestClass</concept>
                             </concepts>
@@ -313,15 +313,17 @@ Executes an analysis.
 * <<xmlReportFile>>
 * warnOnSeverity (-Djqassistant.warnOnSeverity)
 ** determines the severity level for issuing warnings for failed with equal or higher severities
+** default: 'MINOR'
 * failOnSeverity (-Djqassistant.failOnSeverity)
 ** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
+** default: 'MAJOR'
 * severity
 ** determines if jQAssistant shall break the build if a at least one rule with an equal or higher severity level is
-  violated and _failOnViolations_ is set to _true_
-** default: 'info'
+   violated and _failOnViolations_ is set to _true_
+** default: 'MINOR'
 ** Deprecated: use `failOnSeverity` instead
 * failOnViolations (-Djqassistant.failOnViolations)
-** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
+** determines if jQAssistant shall break the build if violations are detected (see also `severity`)
 ** default: 'false'
 ** Deprecated: use `failOnSeverity` instead
 * executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
@@ -428,13 +430,13 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 * specifies rule-related settings
 * defaultConceptSeverity
 ** the default severity of concepts without an explicit severity
-** default: 'minor'
+** default: 'MINOR'
 * defaultConstraintSeverity
 ** the default severity of constraints without an explicit severity
-** default: 'major'
+** default: 'MAJOR'
 * defaultGroupSeverity
 ** the default severity of groups without an explicit severity
-** default: 'none'
+** default: none
 
 [[rulesDirectory]]
 ===== rulesDirectory (-Djqassistant.rules.directory)

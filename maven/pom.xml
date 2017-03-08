@@ -82,6 +82,7 @@
                                 <pomInclude>singlemodule/skip/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/severity/pom.xml</pomInclude>
+                                <pomInclude>singlemodule/defaultseverity/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/shade/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/model/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/ruleparameter/pom.xml</pomInclude>
