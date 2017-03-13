@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
@@ -56,9 +53,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         LOGGER.info("Executing analysis.");
-        FileWriter xmlReportFileWriter;
+        Writer xmlReportFileWriter;
         try {
-            xmlReportFileWriter = new FileWriter(getXmlReportFile());
+            xmlReportFileWriter = new OutputStreamWriter(new FileOutputStream(getXmlReportFile()), XmlReportWriter.ENCODING);
         } catch (IOException e) {
             throw new RuntimeException("Cannot create XML report file.", e);
         }
