@@ -1,5 +1,20 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -17,28 +32,13 @@ import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Runs analysis according to the defined rules.
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class AnalyzeMojo extends AbstractProjectMojo {
+
     private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
 
     /**
@@ -114,9 +114,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
             case JQA:
-                FileWriter xmlReportFileWriter;
+                Writer xmlReportFileWriter;
                 try {
-                    xmlReportFileWriter = new FileWriter(getXmlReportFile(rootModule));
+                    xmlReportFileWriter = new OutputStreamWriter(new FileOutputStream(getXmlReportFile(rootModule)), XmlReportWriter.ENCODING);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot create XML report file.", e);
                 }
