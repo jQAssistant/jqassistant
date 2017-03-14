@@ -21,8 +21,12 @@ public final class RuleSetTestHelper {
     }
 
     public static RuleSet readRuleSet(String resource) throws RuleException {
+        return readRuleSet(resource, RuleConfiguration.builder().build());
+    }
+
+    public static RuleSet readRuleSet(String resource, RuleConfiguration ruleConfiguration) throws RuleException {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        CompoundRuleSetReader reader = new CompoundRuleSetReader(RuleConfiguration.builder().build());
+        CompoundRuleSetReader reader = new CompoundRuleSetReader(ruleConfiguration);
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);

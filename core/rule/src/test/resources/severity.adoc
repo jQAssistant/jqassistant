@@ -4,7 +4,7 @@
 
 [[test:Concept]]
 .Test Concept
-[source,cypher,role=concept,severity=major]
+[source,cypher,role=concept]
 ----
 match
   (n)
@@ -20,7 +20,7 @@ limit
 
 [[test:Constraint]]
 .Test Constraint
-[source,cypher,role=constraint,severity=major]
+[source,cypher,role=constraint]
 ----
 match
   (n)
