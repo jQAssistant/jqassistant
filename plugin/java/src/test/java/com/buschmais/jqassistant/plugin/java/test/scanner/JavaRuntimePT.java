@@ -29,7 +29,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
      *             If scanning fails.
      */
     @Test
-    public void javaRuntime01Scan() throws IOException {
+    public void javaRuntime01Scan() throws Exception {
         String javaHome = System.getProperty("java.home");
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
@@ -37,10 +37,6 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         store.beginTransaction();
         getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
-    }
-
-    @Test
-    public void packageDependencies() throws Exception {
         applyConcept("javaruntime:PackageDependency");
     }
 
