@@ -36,7 +36,7 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
 [source,xml]
 .my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -178,7 +178,7 @@ further severity is given, e.g.
 [source,xml]
 .my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
 
     <group id="my-rules:MyGroup" severity="blocker">
         <includeConstraint refId="my-rules:MyConstraint1"/>
@@ -292,7 +292,7 @@ Both concepts and constraints may define required parameters:
 [source,xml]
 .my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
 
     <concept id="my-rules:ApplicationRootPackage">
         <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <1>
@@ -309,7 +309,7 @@ Both concepts and constraints may define required parameters:
         ]]></cypher>
     </concept>
 
-<jqa:jqassistant-rules/>
+</jqa:jqassistant-rules>
 ----
 
 <1> Declaration of a required parameter with a default value.

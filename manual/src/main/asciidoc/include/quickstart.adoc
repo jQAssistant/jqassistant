@@ -99,7 +99,7 @@ Add the following lines to the parent pom.xml file of your project:
 <build>
     <plugins>
         <plugin>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqassistant-maven-plugin</artifactId>
             <executions>
                 <execution>
@@ -108,7 +108,7 @@ Add the following lines to the parent pom.xml file of your project:
                         <goal>analyze</goal>
                     </goals>
                     <configuration>
-                        <failOnViolations>true</failOnViolations>
+                        <failOnSeverity>MAJOR</failOnSeverity>
                     </configuration>
                 </execution>
             </executions>
@@ -119,7 +119,7 @@ Add the following lines to the parent pom.xml file of your project:
 <reporting>
     <plugins>
         <plugin>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqassistant-maven-plugin</artifactId>
             <reportSets>
                 <reportSet>
@@ -140,7 +140,7 @@ Within your parent module create a directory "jqassistant" and a rules file "my-
 [source,xml]
 .jqassistant/my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
 
     <constraint id="my-rules:TestClassName">
         <requiresConcept refId="junit4:TestClass" />
