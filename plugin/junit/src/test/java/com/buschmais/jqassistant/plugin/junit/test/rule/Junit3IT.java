@@ -19,10 +19,8 @@ public class Junit3IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit3:TestClass".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -38,10 +36,8 @@ public class Junit3IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit3:TestMethod".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -57,10 +53,8 @@ public class Junit3IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit3:SetUpMethod".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -76,10 +70,8 @@ public class Junit3IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit3:TearDownMethod".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.

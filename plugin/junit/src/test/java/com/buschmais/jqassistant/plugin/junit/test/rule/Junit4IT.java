@@ -41,10 +41,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:TestMethod".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -60,10 +58,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:TestClass".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -79,10 +75,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:TestClassOrMethod".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -101,8 +95,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
      * Verifies the concept "junit4:SuiteClass".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -125,8 +117,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
@@ -147,10 +137,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:IgnoreTestClassOrMethod".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -167,10 +155,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:IgnoreWithoutMessage".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -201,10 +187,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:TestCaseImplementedByMethod".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -225,10 +209,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the uniqueness of concept "junit4:TestCaseImplementedByMethod" with keeping existing properties.
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -255,14 +237,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:AssertMethod".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -278,14 +256,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the constraint "junit4:AssertionMustProvideMessage".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -305,14 +279,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the constraint "junit4:TestMethodWithoutAssertion".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -332,14 +302,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:BeforeMethod".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -354,14 +320,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:AfterMethod".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -376,14 +338,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:BeforeClassMethod".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -398,14 +356,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:AfterClassMethod".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -420,9 +374,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the group "junit4:default".
-     * 
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
     public void defaultGroup() throws RuleExecutorException, NoGroupException {
@@ -434,7 +385,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies if a IMPLEMENTED_BY relation exists between a test case and and test method.
-     * 
+     *
      * @param declaringType
      *            The class declaring the test method.
      * @param testcase
