@@ -204,6 +204,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitEnd() {
+        visitorHelper.storeDependencies(cachedType);
     }
 
     /**

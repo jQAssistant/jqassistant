@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
@@ -7,7 +9,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
-import com.buschmais.xo.api.Example;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -44,16 +45,7 @@ public class VisitorHelper {
     TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
         TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
-            TypeDependsOnDescriptor dependsOnDescriptor = dependentType.getDependency(fullQualifiedName);
-            if (dependsOnDescriptor == null) {
-                dependsOnDescriptor = scannerContext.getStore().create(dependentType.getTypeDescriptor(), TypeDependsOnDescriptor.class,
-                        cachedType.getTypeDescriptor());
-                dependentType.addDependency(fullQualifiedName, dependsOnDescriptor);
-            }
-            if (classModelConfiguration.isTypeDependsOnWeight()) {
-                Integer weight = dependsOnDescriptor.getWeight();
-                dependsOnDescriptor.setWeight(weight != null ? ++weight : 1);
-            }
+            dependentType.addDependency(cachedType.getTypeDescriptor());
         }
         return cachedType;
     }
@@ -137,12 +129,8 @@ public class VisitorHelper {
      *            The invoked method.
      */
     public void addInvokes(MethodDescriptor methodDescriptor, final Integer lineNumber, MethodDescriptor invokedMethodDescriptor) {
-        scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor, new Example<InvokesDescriptor>() {
-            @Override
-            public void prepare(InvokesDescriptor example) {
-                example.setLineNumber(lineNumber);
-            }
-        });
+        InvokesDescriptor invokesDescriptor = scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
+        invokesDescriptor.setLineNumber(lineNumber);
     }
 
     /**
@@ -156,12 +144,8 @@ public class VisitorHelper {
      *            The field.
      */
     public void addReads(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor, new Example<ReadsDescriptor>() {
-            @Override
-            public void prepare(ReadsDescriptor example) {
-                example.setLineNumber(lineNumber);
-            }
-        });
+        ReadsDescriptor readsDescriptor = scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
+        readsDescriptor.setLineNumber(lineNumber);
     }
 
     /**
@@ -175,12 +159,8 @@ public class VisitorHelper {
      *            The field.
      */
     public void addWrites(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor, new Example<WritesDescriptor>() {
-            @Override
-            public void prepare(WritesDescriptor example) {
-                example.setLineNumber(lineNumber);
-            }
-        });
+        WritesDescriptor writesDescriptor = scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
+        writesDescriptor.setLineNumber(lineNumber);
     }
 
     /**
@@ -234,5 +214,18 @@ public class VisitorHelper {
             return annotationDescriptor;
         }
         return null;
+    }
+
+    public void storeDependencies(TypeCache.CachedType<?> cachedType) {
+        Map<TypeDescriptor, Integer> dependencies = cachedType.getDependencies();
+        for (Map.Entry<TypeDescriptor, Integer> entry : dependencies.entrySet()) {
+            TypeDescriptor dependency = entry.getKey();
+            final Integer weight = entry.getValue();
+            TypeDescriptor dependent = cachedType.getTypeDescriptor();
+            TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(dependent, TypeDependsOnDescriptor.class, dependency);
+            if (classModelConfiguration.isTypeDependsOnWeight()) {
+                dependsOnDescriptor.setWeight(weight);
+            }
+        }
     }
 }

@@ -70,7 +70,7 @@ public class TypeCache {
     public static class CachedType<T extends TypeDescriptor> {
         private T typeDescriptor;
         private Map<String, MemberDescriptor> members = null;
-        private Map<String, TypeDependsOnDescriptor> dependencies = null;
+        private Map<TypeDescriptor, Integer> dependencies = null;
 
         /**
          * Constructor.
@@ -99,12 +99,14 @@ public class TypeCache {
             getMembers().put(signature, member);
         }
 
-        public TypeDependsOnDescriptor getDependency(String fullQualifiedName) {
-            return getDependencies().get(fullQualifiedName);
-        }
-
-        public void addDependency(String fullQualifiedName, TypeDependsOnDescriptor dependency) {
-            getDependencies().put(fullQualifiedName, dependency);
+        public void addDependency(TypeDescriptor dependency) {
+            Map<TypeDescriptor, Integer> dependencies = getDependencies();
+            Integer weight = dependencies.get(dependency);
+            if (weight == null) {
+                weight = 0;
+            }
+            weight++;
+            getDependencies().put(dependency, weight);
         }
 
         private Map<String, MemberDescriptor> getMembers() {
@@ -120,11 +122,11 @@ public class TypeCache {
             return members;
         }
 
-        private Map<String, TypeDependsOnDescriptor> getDependencies() {
+        public Map<TypeDescriptor, Integer> getDependencies() {
             if (dependencies == null) {
                 dependencies = new HashMap<>();
                 for (TypeDependsOnDescriptor dependency : typeDescriptor.getDependencies()) {
-                    dependencies.put(dependency.getDependency().getFullQualifiedName(), dependency);
+                    dependencies.put(dependency.getDependency(), dependency.getWeight());
                 }
             }
             return dependencies;
