@@ -18,11 +18,14 @@ import com.buschmais.xo.api.CompositeObject;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
- * Implementation of {@link ReportPlugin} which writes the results of an analysis to an XML file.
+ * Implementation of {@link ReportPlugin} which writes the results of an
+ * analysis to an XML file.
  */
 public class XmlReportWriter implements ReportPlugin {
 
     public static final String TYPE = "xml";
+
+    public static final String ENCODING = "UTF-8";
 
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.3";
     public static final String NAMESPACE_PREFIX = "jqa-report";
@@ -63,7 +66,7 @@ public class XmlReportWriter implements ReportPlugin {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                xmlStreamWriter.writeStartDocument();
+                xmlStreamWriter.writeStartDocument(ENCODING, "1.0");
                 xmlStreamWriter.setPrefix(NAMESPACE_PREFIX, NAMESPACE_URL);
                 xmlStreamWriter.writeStartElement(NAMESPACE_URL, "jqassistant-report");
                 xmlStreamWriter.writeNamespace(NAMESPACE_PREFIX, NAMESPACE_URL);

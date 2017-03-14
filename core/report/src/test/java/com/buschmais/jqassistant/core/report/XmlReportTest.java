@@ -25,14 +25,7 @@ public class XmlReportTest {
     @Test
     public void writeAndReadReport() throws JAXBException, SAXException, ReportException {
         String xmlReport = XmlReportTestHelper.createXmlReport();
-
-        SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
-        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-        JqassistantReport report = unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
+        JqassistantReport report = readReport(xmlReport);
         assertThat(report, notNullValue());
         assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
         GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
@@ -71,21 +64,10 @@ public class XmlReportTest {
         }
     }
 
-    private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
-        assertThat(columnHeaderC1.getValue(), equalTo(expectedName));
-        assertThat(columnHeaderC1.isPrimary(), equalTo(isPrimary));
-    }
-
     @Test
     public void testReportWithConstraint() throws JAXBException, SAXException, ReportException {
         String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
-        SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
-        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-        JqassistantReport report = unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
+        JqassistantReport report = readReport(xmlReport);
         assertThat(report, notNullValue());
         assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
         GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
@@ -104,4 +86,38 @@ public class XmlReportTest {
         verifyColumnHeader(columnHeaders.get(0), "c1", true);
         verifyColumnHeader(columnHeaders.get(1), "c2", false);
     }
+
+    @Test
+    public void reportEncoding() throws ReportException, JAXBException, SAXException {
+        String description = "ÄÖÜß";
+        String xmlReport = XmlReportTestHelper.createXmlWithUmlauts(description);
+        JqassistantReport jqassistantReport = readReport(xmlReport);
+        List<ReferencableRuleType> groups = jqassistantReport.getGroupOrConceptOrConstraint();
+        assertThat(groups.size(), equalTo(1));
+        ReferencableRuleType groupType = groups.get(0);
+        assertThat(groupType, instanceOf(GroupType.class));
+        GroupType defaultGrroup = (GroupType) groupType;
+        List<ReferencableRuleType> concepts = defaultGrroup.getGroupOrConceptOrConstraint();
+        assertThat(concepts.size(), equalTo(1));
+        ReferencableRuleType conceptType = concepts.get(0);
+        assertThat(conceptType, instanceOf(ConceptType.class));
+        ConceptType meinKonzept = (ConceptType) conceptType;
+        assertThat(meinKonzept.getDescription(), equalTo(description));
+    }
+
+    private JqassistantReport readReport(String xmlReport) throws SAXException, JAXBException {
+        SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
+        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+        StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
+        return unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
+    }
+
+    private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
+        assertThat(columnHeaderC1.getValue(), equalTo(expectedName));
+        assertThat(columnHeaderC1.isPrimary(), equalTo(isPrimary));
+    }
+
 }
