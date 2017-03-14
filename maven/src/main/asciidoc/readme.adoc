@@ -150,8 +150,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rule>
-                        <defaultConceptSeverity>minor</defaultConceptSeverity>
-                        <defaultConstraintSeverity>minor</defaultConstraintSeverity>
+                        <defaultConceptSeverity>MINOR</defaultConceptSeverity>
+                        <defaultConstraintSeverity>MAJOR</defaultConstraintSeverity>
                         <defaultGroupSeverity></defaultGroupSeverity>
                     </rule>
                     <rulesDirectory>jqassistant</rulesDirectory>
