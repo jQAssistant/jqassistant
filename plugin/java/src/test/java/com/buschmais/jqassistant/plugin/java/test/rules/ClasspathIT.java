@@ -34,8 +34,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveType() throws Exception {
@@ -55,8 +53,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveMember".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -84,8 +80,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveDependency() throws Exception {
@@ -96,8 +90,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveDependsOn".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -123,8 +115,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveExtends() throws Exception {
@@ -143,8 +133,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveImplements".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -165,8 +153,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveFieldType() throws Exception {
@@ -185,8 +171,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveThrows".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -208,8 +192,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveReturns() throws Exception {
@@ -230,8 +212,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveParameterType() throws Exception {
@@ -251,8 +231,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveAnnotationType".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -296,8 +274,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveValue() throws Exception {
@@ -325,8 +301,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveReads() throws Exception {
@@ -346,8 +320,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveReads".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
 
@@ -375,8 +347,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveWrites() throws Exception {
@@ -396,8 +366,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveWrites" without line number information.
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
 
@@ -425,8 +393,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveInvokes() throws Exception {
@@ -447,8 +413,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:resolveInvokes" without line number information.
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
@@ -480,8 +444,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      * Verifies the concept "classpath:Resolve".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test

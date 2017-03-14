@@ -30,10 +30,8 @@ public class ThrowableIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:Throwable".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -52,8 +50,6 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
     public void error() throws Exception {
@@ -71,8 +67,6 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
     public void exception() throws Exception {
@@ -89,8 +83,6 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      * Verifies the concept "java:RuntimeException".
      *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

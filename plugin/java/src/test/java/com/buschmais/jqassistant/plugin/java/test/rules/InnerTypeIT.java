@@ -19,10 +19,8 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:InnerType".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -41,10 +39,8 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:InnerType".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

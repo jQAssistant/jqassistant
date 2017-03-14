@@ -21,10 +21,8 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:MethodOverloads".
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -46,10 +44,8 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the uniqueness of concept "java:MethodOverloads" with keeping existing properties.
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

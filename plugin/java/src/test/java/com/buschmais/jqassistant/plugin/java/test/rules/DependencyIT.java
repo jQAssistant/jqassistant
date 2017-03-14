@@ -44,7 +44,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "dependency:Type".
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -122,8 +122,6 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
     public void packages() throws Exception {
@@ -144,8 +142,6 @@ public class DependencyIT extends AbstractJavaPluginIT {
      * Verifies the concept "dependency:Artifact".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -181,8 +177,6 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
      */
     @Test
     public void packageCycles() throws Exception {
@@ -206,8 +200,6 @@ public class DependencyIT extends AbstractJavaPluginIT {
      * Verifies the constraint "dependency:ArtifactCycles".
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

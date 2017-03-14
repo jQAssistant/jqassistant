@@ -20,10 +20,8 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:AssignableFrom".
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -38,10 +36,8 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the uniqueness of concept "java:AssignableFrom" with keeping existing properties.
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

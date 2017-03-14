@@ -27,10 +27,8 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "java:MethodOverrides" for a class implementing an
      * interface.
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -53,10 +51,8 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "java:MethodOverrides" for a class implementing an
      * interface.
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -81,10 +77,8 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the uniqueness of concept "java:MethodOverrides" with keeping existing properties.
-     * 
+     *
      * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test

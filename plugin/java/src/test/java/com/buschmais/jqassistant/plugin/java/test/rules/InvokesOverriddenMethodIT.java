@@ -27,10 +27,8 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "java:InvokeOverriddenMethod" for a class
      * implementing an interface.
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -49,10 +47,8 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "java:InvokeOverriddenMethod" for a sub class
      * extending a class.
-     * 
+     *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -73,8 +69,6 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      * information.
      *
      * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
@@ -109,8 +103,6 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveWritesUniqueSameLine() throws Exception {
@@ -132,8 +124,6 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      *
      * @throws IOException
      *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
      */
     @Test
     public void resolveWritesUniqueDifferentLine() throws Exception {
@@ -154,8 +144,6 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      * Verifies the uniqueness of the concept "java:InvokeOverriddenMethod" with keeping existing properties.
      *
      * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
      *             If the test fails.
      */
     @Test
