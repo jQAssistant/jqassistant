@@ -31,7 +31,7 @@ public class GZIPFileScannerPlugin
     public GZipFileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
-        final FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         GZipFileDescriptor gZipFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
         String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
         try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {

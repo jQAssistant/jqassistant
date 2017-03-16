@@ -25,7 +25,7 @@ public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File,
 
     @Override
     public DependentDirectoryDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
-        DirectoryDescriptor descriptor = scanner.getContext().peek(DirectoryDescriptor.class);
+        DirectoryDescriptor descriptor = scanner.getContext().getCurrentDescriptor();
         DependentDirectoryDescriptor dependentDirectoryDescriptor = scanner.getContext().getStore()
                 .addDescriptorType(descriptor, DependentDirectoryDescriptor.class);
         dependentDirectoryDescriptor.setValue("TEST");

@@ -3,6 +3,9 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import java.io.IOException;
 import java.util.zip.ZipException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -11,9 +14,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base implementation for archive scanners.
@@ -42,7 +42,7 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
     @Override
     public D scan(FileResource file, String path, Scope currentScope, Scanner scanner) throws IOException {
         ScannerContext scannerContext = scanner.getContext();
-        FileDescriptor fileDescriptor = scannerContext.peek(FileDescriptor.class);
+        FileDescriptor fileDescriptor = scannerContext.getCurrentDescriptor();
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
         scannerContext.push(ZipArchiveDescriptor.class, archive);
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
@@ -63,14 +63,14 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
 
     /**
      * Return the file extension to match.
-     * 
+     *
      * @return The file extension
      */
     protected abstract String getExtension();
 
     /**
      * Create a scope depending of the archive type.
-     * 
+     *
      * @param currentScope
      *            The current scope.
      * @param archiveDescriptor
