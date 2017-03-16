@@ -1,5 +1,10 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
+import java.io.IOException;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -11,15 +16,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-
-import java.io.IOException;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, JSONFileDescriptor> {
@@ -42,7 +38,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         Store store = context.getStore();
         final String absolutePath = item.getFile().getAbsolutePath();
 
-        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         JSONFileDescriptor jsonFileDescriptor = store.addDescriptorType(fileDescriptor, JSONFileDescriptor.class);
 
         jsonFileDescriptor.setFileName(absolutePath);
