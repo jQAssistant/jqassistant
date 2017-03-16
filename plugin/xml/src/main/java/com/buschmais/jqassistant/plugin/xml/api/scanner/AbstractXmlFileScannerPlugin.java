@@ -5,6 +5,9 @@ import java.io.InputStream;
 
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -13,9 +16,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for XML file scanners
@@ -40,7 +40,7 @@ public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> 
 
     @Override
     public  D scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        FileDescriptor fileDescriptor = scanner.getContext().peek(FileDescriptor.class);
+        FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
         Class<D> descriptorType = getDescriptorType();
         D xmlFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, descriptorType);
         scanner.getContext().push(XmlDocumentDescriptor.class, xmlFileDescriptor);
