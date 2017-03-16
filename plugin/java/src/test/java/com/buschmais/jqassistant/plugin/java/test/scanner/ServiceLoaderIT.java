@@ -7,13 +7,19 @@ import static org.hamcrest.Matchers.any;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -67,10 +73,22 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
      */
     @Test
     public void invalidDescriptor() throws IOException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/some.properties");
+        File file = getClassesDirectory(ServiceLoaderIT.class);
+        final File propsFile = new File(file, "META-INF/test.properties");
+        final String path = "META-INF/services/test.properties";
         store.beginTransaction();
-        List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:File) RETURN s").getColumn("s");
+        JavaClassesDirectoryDescriptor artifactDescriptor = getArtifactDescriptor("a1");
+        execute(artifactDescriptor, new ScanClassPathOperation() {
+            @Override
+            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
+                scanner.scan(propsFile, path, JavaScope.CLASSPATH);
+                return Collections.emptyList();
+            }
+        }, getScanner());
+        List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:Properties:File) RETURN s").getColumn("s");
         assertThat(s.size(), equalTo(1));
+        ServiceLoaderDescriptor serviceLoaderDescriptor = s.get(0);
+        assertThat(serviceLoaderDescriptor.getFileName(), equalTo(path));
         store.commitTransaction();
     }
 
