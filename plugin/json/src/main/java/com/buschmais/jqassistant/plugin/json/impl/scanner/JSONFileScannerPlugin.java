@@ -27,7 +27,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return file.getFile().getName().toLowerCase().endsWith(JSON_FILE_EXTENSION);
+        return path.toLowerCase().endsWith(JSON_FILE_EXTENSION);
     }
 
     @Override
@@ -36,20 +36,18 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
 
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
-        final String absolutePath = item.getFile().getAbsolutePath();
 
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         JSONFileDescriptor jsonFileDescriptor = store.addDescriptorType(fileDescriptor, JSONFileDescriptor.class);
 
-        jsonFileDescriptor.setFileName(absolutePath);
         jsonFileDescriptor.setValid(false);
 
         try {
             JSONLexer lexer = new JSONLexer(new ANTLRInputStream(item.createStream()));
             JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
 
-            lexer.addErrorListener(new MyErrorListener(absolutePath));
-            parser.addErrorListener(new MyErrorListener(absolutePath));
+            lexer.addErrorListener(new MyErrorListener(path));
+            parser.addErrorListener(new MyErrorListener(path));
 
             parser.addParseListener(new JSONNestingListener());
 
