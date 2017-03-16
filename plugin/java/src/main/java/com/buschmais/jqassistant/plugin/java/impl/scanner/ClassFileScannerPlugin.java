@@ -55,7 +55,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
-        final FileDescriptor fileDescriptor = scanner.getContext().peek(FileDescriptor.class);
+        final FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
         VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), classModelConfiguration);
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
         ClassFileDescriptor classFileDescriptor;

@@ -36,7 +36,7 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that service loader descriptor files are scanned.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      */
@@ -58,6 +58,22 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
         verifyServiceLoaderDescriptor();
     }
+
+    /**
+     * Verifies that any files not representing service descriptors are ignored.
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     */
+    @Test
+    public void invalidDescriptor() throws IOException {
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/some.properties");
+        store.beginTransaction();
+        List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:File) RETURN s").getColumn("s");
+        assertThat(s.size(), equalTo(1));
+        store.commitTransaction();
+    }
+
 
     /**
      * Verifies the expected service loader descriptor and its content.

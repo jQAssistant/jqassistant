@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -17,8 +19,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor;
-
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 /**
  * Implementation of the
@@ -41,7 +41,7 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResourc
             Manifest manifest = new Manifest(stream);
             ScannerContext context = scanner.getContext();
             Store store = context.getStore();
-            FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+            FileDescriptor fileDescriptor = context.getCurrentDescriptor();
             ManifestFileDescriptor manifestFileDescriptor = store.addDescriptorType(fileDescriptor, ManifestFileDescriptor.class);
             ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
             mainSectionDescriptor.setName(SECTION_MAIN);
