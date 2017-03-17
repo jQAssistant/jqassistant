@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.any;
@@ -9,7 +10,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -81,8 +81,7 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
         execute(artifactDescriptor, new ScanClassPathOperation() {
             @Override
             public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                scanner.scan(propsFile, path, JavaScope.CLASSPATH);
-                return Collections.emptyList();
+                return singletonList(scanner.<File, FileDescriptor>scan(propsFile, path, JavaScope.CLASSPATH));
             }
         }, getScanner());
         List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:Properties:File) RETURN s").getColumn("s");
