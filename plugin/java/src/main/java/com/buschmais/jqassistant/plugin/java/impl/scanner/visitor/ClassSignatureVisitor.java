@@ -34,7 +34,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new AbstractTypeSignatureVisitor<TypeDescriptor>(cachedType, visitorHelper) {
+        return new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
             @Override
             public SignatureVisitor visitArrayType() {
                 return dependentTypeSignatureVisitor;
@@ -55,7 +55,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new AbstractTypeSignatureVisitor<TypeDescriptor>(cachedType, visitorHelper) {
+        return new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
 
             @Override
             public SignatureVisitor visitArrayType() {

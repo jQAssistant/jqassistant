@@ -8,11 +8,11 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 /**
  * Type signature visitor which adds a dependency to a resolved types.
  */
-public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<TypeDescriptor> {
+public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor {
 
     /**
      * Constructor
-     * 
+     *
      * @param containingType
      *            The type containing the dependent element.
      * @param visitorHelper

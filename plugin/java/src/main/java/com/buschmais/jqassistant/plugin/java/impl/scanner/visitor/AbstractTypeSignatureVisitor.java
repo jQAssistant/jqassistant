@@ -1,17 +1,16 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.signature.SignatureVisitor;
+
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.signature.SignatureVisitor;
-
 /**
  * Abstract implementation of a types signature visitor.
  */
-public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends SignatureVisitor {
+public abstract class AbstractTypeSignatureVisitor extends SignatureVisitor {
 
     /**
      * The resolved types descriptor.
@@ -19,7 +18,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     private TypeDescriptor resolvedTypeDescriptor;
 
     /**
-     * 
+     *
      */
     private TypeCache.CachedType containingType;
 
@@ -27,7 +26,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     /**
      * Constructor.
-     * 
+     *
      * @param containingType
      *            The descriptor using the resolved types descriptor.
      * @param visitorHelper
@@ -37,10 +36,6 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
         super(Opcodes.ASM5);
         this.containingType = containingType;
         this.visitorHelper = visitorHelper;
-    }
-
-    protected TypeCache.CachedType getContainingType() {
-        return containingType;
     }
 
     protected VisitorHelper getVisitorHelper() {

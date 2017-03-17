@@ -22,7 +22,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Constructor.
-     * 
+     *
      * @param fileDescriptor
      *            The file descriptor to be migrated to a type descriptor.
      * @param visitorHelper
@@ -36,7 +36,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Return the type descriptor created by visiting the class.
-     * 
+     *
      * @return The type descriptor.
      */
     public ClassFileDescriptor getTypeDescriptor() {
@@ -80,7 +80,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType).getTypeDescriptor();
             fieldDescriptor.setType(type);
         } else {
-            new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor<FieldDescriptor>(cachedType, visitorHelper) {
+            new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
                 @Override
                 public SignatureVisitor visitArrayType() {
                     return dependentTypeSignatureVisitor;
@@ -129,9 +129,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setReturns(visitorHelper.resolveType(returnType, cachedType).getTypeDescriptor());
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
-                ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
                 String parameterType = SignatureHelper.getType(types[i]);
-                parameterDescriptor.setType(visitorHelper.resolveType(parameterType, cachedType).getTypeDescriptor());
+                TypeDescriptor typeDescriptor = visitorHelper.resolveType(parameterType, cachedType).getTypeDescriptor();
+                ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
+                parameterDescriptor.setType(typeDescriptor);
             }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper, dependentTypeSignatureVisitor));
@@ -209,7 +210,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Checks whether the value contains the flag.
-     * 
+     *
      * @param value
      *            the value
      * @param flag
@@ -223,7 +224,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Returns the AccessModifier for the flag pattern.
-     * 
+     *
      * @param flags
      *            the flags
      * @return the AccessModifier
@@ -242,7 +243,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Determine the types label to be applied to a class node.
-     * 
+     *
      * @param flags
      *            The access flags.
      * @return The types label.
