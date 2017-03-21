@@ -1,0 +1,39 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <concept id="test:DefaultVerification">
+        <description>A test concept.</description>
+        <cypher><![CDATA[
+            match
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            return
+              testType as TestType, count(testMethod) as TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:AggregationVerification">
+        <description>A test concept.</description>
+        <cypher><![CDATA[
+            match
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            return
+              testType as TestType, count(testMethod) as TestMethods
+        ]]></cypher>
+        <verify>
+            <aggregation min="1" max="2" column="TestMethods"/>
+        </verify>
+    </concept>
+
+    <concept id="test:RowCountVerification">
+        <description>A test concept.</description>
+        <cypher><![CDATA[
+            match
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            return
+              testType as TestType, count(testMethod) as TestMethods
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="2"/>
+        </verify>
+    </concept>
+
+</jqa:jqassistant-rules>
