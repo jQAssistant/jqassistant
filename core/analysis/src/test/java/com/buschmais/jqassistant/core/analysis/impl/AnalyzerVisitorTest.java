@@ -24,8 +24,9 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
@@ -40,6 +41,7 @@ public class AnalyzerVisitorTest {
     private static final String RULESOURCE = "test.xml";
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
     private static final String PARAMETER_WITH_DEFAULT = "withDefault";
+    public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
 
     @Mock
     private Store store;
@@ -234,10 +236,9 @@ public class AnalyzerVisitorTest {
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
-        Verification verification = new RowCountVerification();
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
         return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(verification).report(report).get();
+                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).get();
     }
 
     private Constraint createConstraint(String statement) {
@@ -247,10 +248,9 @@ public class AnalyzerVisitorTest {
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
-        Verification verification = new RowCountVerification();
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
         return Constraint.Builder.newConstraint().id("test:Constraint").description("Test Constraint").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(verification).report(report).get();
+                .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).get();
     }
 
     private Query.Result<Query.Result.CompositeRowObject> createResult(List<String> columnNames) {

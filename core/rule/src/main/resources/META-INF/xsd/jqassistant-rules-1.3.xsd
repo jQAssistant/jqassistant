@@ -85,10 +85,15 @@
         </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="rowCountVerificationType"/>
+    <xs:complexType name="rowCountVerificationType">
+        <xs:attribute name="min" type="xs:int" use="optional"/>
+        <xs:attribute name="max" type="xs:int" use="optional"/>
+    </xs:complexType>
 
     <xs:complexType name="aggregationVerificationType">
         <xs:attribute name="column" type="xs:string" use="optional"/>
+        <xs:attribute name="min" type="xs:int" use="optional"/>
+        <xs:attribute name="max" type="xs:int" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="severityRuleType" abstract="true">

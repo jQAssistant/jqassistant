@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
 /**
  * Provides functionality for XML report tests.
@@ -16,6 +17,7 @@ public final class XmlReportTestHelper {
 
     public static final String C1 = "c1";
     public static final String C2 = "c2";
+    public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
 
     /**
      * Constructor.
@@ -27,14 +29,16 @@ public final class XmlReportTestHelper {
      * Creates a test report.
      *
      * @return The test report.
-     * @throws ReportException If the test fails.
+     * @throws ReportException
+     *             If the test fails.
      */
     public static String createXmlReport() throws ReportException {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = Concept.Builder.newConcept().id("my:concept").description("My concept description").severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
+                .report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = Group.Builder.newGroup().id("default").description("My group").conceptIds(concepts).get();
@@ -55,7 +59,8 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = Concept.Builder.newConcept().id("mein:Konzept").description(description).severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
+                .report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("mein:Konzept", Severity.INFO);
         Group group = Group.Builder.newGroup().id("default").description("Meine Gruppe").conceptIds(concepts).get();
@@ -75,15 +80,16 @@ public final class XmlReportTestHelper {
      * Creates a test report with {@link Constraint}.
      *
      * @return The test report.
-     * @throws ReportException If the test fails.
+     * @throws ReportException
+     *             If the test fails.
      */
     public static String createXmlReportWithConstraints() throws ReportException {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
 
-        Constraint constraint = Constraint.Builder.newConstraint().id("my:Constraint").description("My constraint description")
-                .severity(Severity.BLOCKER).executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(Report.Builder.newInstance().get()).get();
+        Constraint constraint = Constraint.Builder.newConstraint().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().get()).get();
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
         Group group = Group.Builder.newGroup().id("default").description("My group").constraintIds(constraints).get();

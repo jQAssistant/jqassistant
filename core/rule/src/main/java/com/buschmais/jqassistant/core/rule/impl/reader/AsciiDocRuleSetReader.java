@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -50,6 +52,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     public static final String VERIFY = "verify";
     public static final String AGGREGATION = "aggregation";
     public static final String AGGREGATION_COLUMN = "aggregationColumn";
+    public static final String AGGREGATION_MIN = "aggregationMin";
+    public static final String AGGREGATION_MAX = "aggregationMax";
+    public static final String ROW_COUNT_MIN = "rowCountMin";
+    public static final String ROW_COUNT_MAX = "rowCountMax";
     public static final String TITLE = "title";
     public static final String LISTING = "listing";
     public static final String SOURCE = "source";
@@ -118,19 +124,15 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private void extractExecutableRules(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
         for (ContentPart part : findExecutableRules(doc.getParts())) {
-            Map<String, Object> attributes = part.getAttributes();
+            Attributes attributes = new Attributes(part.getAttributes());
             String id = part.getId();
-            String description = "";
-            Object title = attributes.get(TITLE);
-            if (title != null) {
-                description = title.toString();
-            } else {
+            String description = attributes.getString(TITLE);
+            if (description == null) {
                 LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
             }
             Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
-
-            Map<String, Parameter> parameters = getParameters(part.getAttributes().get(REQUIRES_PARAMETERS));
-            Object language = part.getAttributes().get(LANGUAGE);
+            Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
+            String language = attributes.getString(LANGUAGE);
             String source = unescapeHtml(part.getContent());
             Executable executable;
             if (CYPHER.equals(language)) {
@@ -139,12 +141,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 executable = new ScriptExecutable(language.toString(), source);
             }
             Verification verification;
-            boolean aggregation = AGGREGATION.equals(part.getAttributes().get(VERIFY));
-            if (aggregation) {
-                Object aggregationColumn = part.getAttributes().get(AGGREGATION_COLUMN);
-                verification = new AggregationVerification(aggregationColumn != null ? aggregationColumn.toString() : null);
+            if (AGGREGATION.equals(attributes.getString(VERIFY))) {
+                verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
+                        .max(attributes.getInt(AGGREGATION_MAX)).build();
             } else {
-                verification = new RowCountVerification();
+                verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
             }
             Report report = getReport(part);
             if (CONCEPT.equals(part.getRole())) {
@@ -163,7 +164,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     /**
      * Evaluates required concepts of a rule.
-     * 
+     *
      * @param ruleSource
      *            The rule source.
      * @param attributes
@@ -175,7 +176,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @throws RuleException
      *             If the dependencies cannot be evaluated.
      */
-    private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Map<String, Object> attributes) throws RuleException {
+    private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Attributes attributes) throws RuleException {
         Map<String, String> requiresDeclarations = getDependencyDeclarations(attributes, REQUIRES_CONCEPTS);
         Map<String, String> depends = getDependencyDeclarations(attributes, DEPENDS);
         if (!depends.isEmpty()) {
@@ -207,7 +208,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      */
     private void extractGroups(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (ContentPart contentPart : findGroups(doc.getParts())) {
-            Map<String, Object> attributes = contentPart.getAttributes();
+            Attributes attributes = new Attributes(contentPart.getAttributes());
             Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
             Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
             Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
@@ -218,7 +219,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
     }
 
-    private Map<String, Severity> getGroupElements(Map<String, Object> attributes, String attributeName) throws RuleException {
+    private Map<String, Severity> getGroupElements(Attributes attributes, String attributeName) throws RuleException {
         Map<String, String> dependencyDeclarations = getDependencyDeclarations(attributes, attributeName);
         Map<String, Severity> result = new HashMap<>();
         for (Map.Entry<String, String> entry : dependencyDeclarations.entrySet()) {
@@ -240,8 +241,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @return A map containing the ids of the dependencies as keys and their
      *         severity (optional).
      */
-    private Map<String, String> getDependencyDeclarations(Map<String, Object> attributes, String attributeName) throws RuleException {
-        String attribute = (String) attributes.get(attributeName);
+    private Map<String, String> getDependencyDeclarations(Attributes attributes, String attributeName) throws RuleException {
+        String attribute = attributes.getString(attributeName);
         Set<String> dependencies = new HashSet<>();
         if (attribute != null && !attribute.trim().isEmpty()) {
             dependencies.addAll(asList(attribute.split("\\s*,\\s*")));
@@ -392,4 +393,28 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return parameters;
     }
 
+    private static final class Attributes {
+
+        private final Map<String, Object> attributes;
+
+        private Attributes(Map<String, Object> attributes) {
+            this.attributes = attributes;
+        }
+
+        private Integer getInt(String key) {
+            Object value = attributes.get(key);
+            if (value != null) {
+                return Integer.valueOf(value.toString());
+            }
+            return null;
+        }
+
+        private String getString(String key) {
+            Object value = attributes.get(key);
+            if (value != null) {
+                return value.toString();
+            }
+            return null;
+        }
+    }
 }

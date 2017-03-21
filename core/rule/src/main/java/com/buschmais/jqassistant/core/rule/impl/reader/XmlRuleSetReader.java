@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -28,7 +30,7 @@ public class XmlRuleSetReader implements RuleSetReader {
     public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.3.xsd";
 
     public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
-    public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
+    public static final RowCountVerification DEFAULT_VERIFICATION = RowCountVerification.builder().build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
@@ -185,10 +187,10 @@ public class XmlRuleSetReader implements RuleSetReader {
             RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
             AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
             if (rowCountVerificationType != null) {
-                return new RowCountVerification();
+                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
             } else if (aggregationVerificationType != null) {
-                String column = aggregationVerificationType.getColumn();
-                return new AggregationVerification(column);
+                return AggregationVerification.builder().column(aggregationVerificationType.getColumn()).min(aggregationVerificationType.getMin())
+                        .max(aggregationVerificationType.getMax()).build();
             } else {
                 throw new RuleException("Unsupported verification " + verificationType);
             }
