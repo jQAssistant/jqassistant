@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,14 @@ public class AggregationVerificationStrategyTest {
         result = asList(createRow(0, 1), createRow(0, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+    }
+
+    @Test
+    public void emptyResult() throws RuleExecutorException {
+        AggregationVerification aggregationVerification = AggregationVerification.builder().build();
+        result = Collections.emptyList();
+        assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
     }
 
     private Map<String, Object> createRow(int... values) {

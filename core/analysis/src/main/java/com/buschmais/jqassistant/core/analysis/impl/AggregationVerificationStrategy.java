@@ -24,6 +24,9 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
     public <T extends ExecutableRule> Result.Status verify(T executable, AggregationVerification verification, List<String> columnNames,
             List<Map<String, Object>> rows) throws RuleExecutorException {
         LOGGER.debug("Verifying result of " + executable);
+        if (rows.isEmpty()) {
+            return getStatus(executable, 0, verification.getMin(), verification.getMax());
+        }
         if (columnNames.isEmpty()) {
             throw new RuleExecutorException("Result contains no columns, at least one with a numeric value is expected.");
         }
