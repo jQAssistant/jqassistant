@@ -359,29 +359,27 @@ as parameters, i.e. they may be used directly in the code.
 
 ==== Result verification
 
-The default strategy verifies a result of a concept or constraint by counting the number of returned rows, i.e.
+The default strategy (`rowCount`) verifies a result of a concept or constraint by counting the number of returned rows, i.e.
 
 - a concept is valid if it returns at least one row
 - a constraint is valid if it returns no row
 
-It is also possible to verify aggregated results reported as numeric values in a column, e.g.
+This behavior can be customized by specifing `min` and `max` thresholds:
 
 [source,xml]
 ----
-<concept id="my-rules:MyConcept">
-    <description>A human readable description of the concept.</description>
+<constraint id="my-rules:MyConstraint">
+    <description>A human readable description of the constraint.</description>
     <cypher><![CDATA[
         MATCH
           (n)
         WHERE
           ...
-        SET
-          ...
         RETURN
-          n as Element, count(n) as Count
+          n as Element
     ]]></cypher>
     <verify>
-        <aggregation column="Count"/>
+        <rowCount max="20"/>
     </verify>
 </concept>
 ----
@@ -389,9 +387,46 @@ It is also possible to verify aggregated results reported as numeric values in a
 [source,asciidoc]
 ....
 
-[[my-rules:MyConcept]]
-.A human readable description of the concept.
-[source,cypher,role=concept,verify=aggregation,aggregationColumn="Count"]
+[[my-rules:MyConstraint]]
+.A human readable description of the constraint.
+[source,cypher,role=constraint,rowCountMax=20]
+----
+MATCH
+  (n)
+WHERE
+  ...
+RETURN
+  n as Element
+----
+
+....
+
+It is also possible to verify aggregated results reported as numeric values in a column, e.g.
+
+[source,xml]
+----
+<concept id="my-rules:MyConstraint">
+    <description>A human readable description of the constraint.</description>
+    <cypher><![CDATA[
+        MATCH
+          (n)
+        WHERE
+          ...
+        RETURN
+          count(n) as Count
+    ]]></cypher>
+    <verify>
+        <aggregation column="Count" max="20"/>
+    </verify>
+</concept>
+----
+
+[source,asciidoc]
+....
+
+[[my-rules:MyConstraint]]
+.A human readable description of the constraint.
+[source,cypher,role=constraint,verify=aggregation,aggregationMax=20,aggregationColumn="Count"]
 ----
 MATCH
   (n)
@@ -400,13 +435,15 @@ WHERE
 SET
   ...
 RETURN
-  n as Element, count(n) as Count
+  count(n) as Count
 ----
 
 ....
 
-For each returned row the value in column "Count" will be verified following the same principles as described above. The
-rule will fail if at least one row does not match the expected result.
+* For each returned row the value of the column "Count" will be verified following the same principles as described above
+* The rule fails if at least one returned row does not match the expected result
+* The attribute `column`/`aggregationColumn` can be omitted, in this case the first column of the result is evaluated
+* Similar to the row count verification the attributes `min`/`aggregationMin` and `max`/`aggregationMax` can be specified for individual thresholds
 
 ==== Report
 
