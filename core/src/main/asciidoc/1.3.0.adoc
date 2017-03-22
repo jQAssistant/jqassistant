@@ -8,3 +8,6 @@ ifdef::jqa-in-manual[== Core Framework 1.3.0]
 - Upgraded embedded Neo4j database to 2.3.9
 - Raised default severity for concepts to MINOR and constraints to MAJOR
 - Added support for default severities for groups, concepts and rules
+- Added `min` and `max` attributes to verification strategies for rule results
+
+

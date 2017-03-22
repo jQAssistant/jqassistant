@@ -10,6 +10,17 @@ return
   testType as TestType, count(testMethod) as TestMethods
 ----
 
+[[test:CustomizedDefaultVerification]]
+.A test concept.
+[source,cypher,role=concept,rowCountMin=1,rowCountMax=2,primaryReportColumn=TestType]]
+----
+match
+  (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+return
+  testType as TestType, count(testMethod) as TestMethods
+----
+
+
 [[test:AggregationVerification]]
 .A test concept.
 [source,cypher,role=concept,verify=aggregation,aggregationMin=1,aggregationMax=2,aggregationColumn="TestMethods",primaryReportColumn=TestType]]

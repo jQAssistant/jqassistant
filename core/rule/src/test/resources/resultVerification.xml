@@ -10,6 +10,19 @@
         ]]></cypher>
     </concept>
 
+    <concept id="test:CustomizedDefaultVerification">
+        <description>A test concept.</description>
+        <cypher><![CDATA[
+            match
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            return
+              testType as TestType, count(testMethod) as TestMethods
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="2"/>
+        </verify>
+    </concept>
+
     <concept id="test:AggregationVerification">
         <description>A test concept.</description>
         <cypher><![CDATA[
