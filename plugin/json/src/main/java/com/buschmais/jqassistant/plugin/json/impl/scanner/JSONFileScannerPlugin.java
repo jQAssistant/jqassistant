@@ -65,10 +65,39 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         } catch (RecognitionException | IllegalStateException e) {
             LOGGER.warn("JSON file '{}' seems not to be valid, skipping.", path);
         }
-//    catch (Exception e) {
-//            System.out.println(e);
-//            e.printStackTrace();
-//        }
+        catch (NullPointerException e) {
+            // todo Get rid of this strange error handling
+            /*
+             * This error handling is a kind of abuse of a stack trace, but
+             * let me explain why I wrote such code.
+             *
+             * As of 2017-03-29 we use ANTLR 4.6 to parse JSON files.
+             * In some cases where the JSON file is not valid ANTLR
+             * will throw an RecognitionException and tries determine
+             * the line number there the error occured in the JSON file.
+             * ANTLR tries to get the line number from the current token
+             * but this token might not exist and an NPE is thrown by
+             * the JVM.
+             *
+             * See https://github.com/antlr/antlr4/issues/746 for the
+             * corresponding bug report for ANTLR.
+             *
+             * Oliver B. Fischer, 2017-03-29
+             */
+            boolean stacktraceAvailable = e.getStackTrace().length > 0;
+            if (stacktraceAvailable) {
+                StackTraceElement stackTraceElement = e.getStackTrace()[0];
+                boolean correctClass = "org.antlr.v4.runtime.Parser".equals(stackTraceElement.getClassName());
+                boolean correctMethod = "notifyErrorListeners".equals(stackTraceElement.getMethodName());
+
+                // Suppress NPE caused by a bug in ANTLR
+                if (!correctClass && !correctMethod) {
+                    throw e;
+                }
+            } else {
+                throw e;
+            }
+        }
 
         return jsonFileDescriptor;
     }
