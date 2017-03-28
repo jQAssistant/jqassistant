@@ -16,9 +16,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, JSONFileDescriptor> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONFileScannerPlugin.class);
 
     /**
      * Supported file extension for JSON file resources.
@@ -59,9 +62,13 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             // In case the content of the file is not parseable set valid=false
             // to help the user to identify non-parseable files
             jsonFileDescriptor.setValid(true);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to parse the file " + item.getFile().getAbsolutePath() + ".", e);
+        } catch (RecognitionException | IllegalStateException e) {
+            LOGGER.warn("JSON file '{}' seems not to be valid, skipping.", path);
         }
+//    catch (Exception e) {
+//            System.out.println(e);
+//            e.printStackTrace();
+//        }
 
         return jsonFileDescriptor;
     }
@@ -74,8 +81,13 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         }
 
         @Override
-        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int l, int c, String msg, RecognitionException e) {
-            throw new IllegalStateException("Failed to parse " + absolutePath + " at line " + l + " due to " + msg, e);
+        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
+                                int line, int charPositionInLine,
+                                String msg, RecognitionException e) {
+            LOGGER.warn("Failed to parse '{}' at {}:{}, due to '{}'.",
+                        absolutePath, line, charPositionInLine, msg);
+
+            throw e;
         }
     }
 }

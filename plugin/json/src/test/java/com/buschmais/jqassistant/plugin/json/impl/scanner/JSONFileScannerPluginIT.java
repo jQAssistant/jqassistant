@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.mockito.Matchers.eq;
 
 public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
@@ -275,13 +276,26 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         assertThat(objectTwo, Matchers.<Object>equalTo("B"));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test()
     public void scannerCanHandleEmptyFile() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/empty-file.json");
+                                 "/probes/invalid/empty-file.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        assertThat(file.isValid(), Matchers.equalTo(false));
+    }
+
+    @Test
+    public void parserCopesWithInvalidJSONFile() throws Exception {
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
+                                 "/probes/invalid/json-file-as-template.json");
+
+        Scanner scanner = getScanner();
+        JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
+
+        assertThat(file.isValid(), Matchers.equalTo(false));
     }
 
     @Test
