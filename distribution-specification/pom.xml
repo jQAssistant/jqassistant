@@ -69,7 +69,7 @@
         <jqa-java-plugin.version>1.3-SNAPSHOT</jqa-java-plugin.version>
         <jqa-jaxrs-plugin.version>1.3-SNAPSHOT</jqa-jaxrs-plugin.version>
         <jqa-jpa2-plugin.version>1.3-SNAPSHOT</jqa-jpa2-plugin.version>
-        <jqa-json-plugin.version>1.0-SNAPSHOT</jqa-json-plugin.version>
+        <jqa-json-plugin.version>1.3-SNAPSHOT</jqa-json-plugin.version>
         <jqa-junit-plugin.version>1.3-SNAPSHOT</jqa-junit-plugin.version>
         <jqa-osgi-plugin.version>1.3-SNAPSHOT</jqa-osgi-plugin.version>
         <jqa-own-constraints.version>1.3.0-SNAPSHOT</jqa-own-constraints.version>
