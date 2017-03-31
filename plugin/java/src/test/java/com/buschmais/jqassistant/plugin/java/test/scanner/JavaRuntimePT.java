@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -24,16 +26,16 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
     /**
      * Scans the rt.jar of the Java Runtime Environment specified by the
      * environment variable java.home.
-     * 
+     *
      * @throws IOException
      *             If scanning fails.
      */
     @Test
     public void javaRuntime01Scan() throws Exception {
         String javaHome = System.getProperty("java.home");
-        Assume.assumeNotNull("java.home is not set.", javaHome);
+        assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
-        Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
+        assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
         store.beginTransaction();
         getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
