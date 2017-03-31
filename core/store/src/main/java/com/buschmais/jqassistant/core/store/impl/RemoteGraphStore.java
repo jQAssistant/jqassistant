@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
+import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider.Property;
 
 public class RemoteGraphStore extends AbstractGraphStore {
 
@@ -31,15 +32,15 @@ public class RemoteGraphStore extends AbstractGraphStore {
         Properties properties = new Properties();
         String username = storeConfiguration.getUsername();
         if (username != null) {
-            properties.setProperty("neo4j.remote.username", username);
+            properties.setProperty(Property.USERNAME.getKey(), username);
         }
         String password = storeConfiguration.getPassword();
         if (password != null) {
-            properties.setProperty("neo4j.remote.password", password);
+            properties.setProperty(Property.PASSWORD.getKey(), password);
         }
         String encryptionLevel = storeConfiguration.getEncryptionLevel();
         if (encryptionLevel != null) {
-            properties.setProperty("neo4j.remote.encryptionLevel", encryptionLevel);
+            properties.setProperty(Property.ENCRYPTION_LEVEL.getKey(), encryptionLevel);
         }
         Properties storeConfigurationProperties = storeConfiguration.getProperties();
         if (storeConfigurationProperties != null) {
