@@ -16,6 +16,7 @@
 = jQAssistant Framework Release Notes
 
 //:numbered!:
+include::include/1.3.0.adoc[]
 include::include/1.2.0.adoc[]
 include::include/1.1.3.adoc[]
 include::include/1.1.2.adoc[]
