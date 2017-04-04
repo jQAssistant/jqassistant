@@ -1,6 +1,6 @@
 
 = jQAssistant JSON Plugin Release Notes
 
-include::1.0.adoc[]
+include::1.3.adoc[]
 
 
