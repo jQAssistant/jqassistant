@@ -1,4 +1,4 @@
 ifndef::jqa-in-manual[== Version 1.3]
 ifdef::jqa-in-manual[== JUnit Plugin 1.3]
 
-- TBW.
+- Only internal changes.
