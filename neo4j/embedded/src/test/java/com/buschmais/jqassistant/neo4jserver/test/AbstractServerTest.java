@@ -2,14 +2,13 @@ package com.buschmais.jqassistant.neo4jserver.test;
 
 import java.io.IOException;
 
-import com.buschmais.jqassistant.neo4jserver.impl.ExtendedCommunityNeoServer;
 import org.junit.After;
 import org.junit.Before;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.api.Server;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-
 
 /**
  * Abstract base class for server tests.
@@ -23,7 +22,7 @@ public class AbstractServerTest extends AbstractPluginIT {
     @Before
     public void startServer() throws IOException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
-        server = new ExtendedCommunityNeoServer(embeddedGraphStore, ExtendedCommunityNeoServer.DEFAULT_ADDRESS, SERVER_PORT);
+        server = new EmbeddedNeoServer(embeddedGraphStore, Server.DEFAULT_ADDRESS, SERVER_PORT);
         server.start();
     }
 

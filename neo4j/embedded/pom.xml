@@ -28,35 +28,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>store</artifactId>
-            <version>${jqa-core.version}</version>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>neo4jserver.bootstrap</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j.embedded</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j.remote</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-io</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j.app</groupId>
-            <artifactId>neo4j-server</artifactId>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>common</artifactId>
+            <version>${jqa-plugin-common.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -77,16 +57,42 @@
             <version>2.0.0.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
         <profile>
             <id>neo4jv2</id>
+            <activation>
+                <property>
+                    <name>!jqassistant.neo4jVersion</name>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
-                    <groupId>org.neo4j.app</groupId>
-                    <artifactId>neo4j-server</artifactId>
-                    <classifier>static-web</classifier>
+                    <groupId>com.buschmais.jqassistant</groupId>
+                    <artifactId>neo4jserver.neo4jv2</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>neo4jv3</id>
+            <activation>
+                <property>
+                    <name>jqassistant.neo4jVersion</name>
+                    <value>3</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.buschmais.jqassistant</groupId>
+                    <artifactId>neo4jserver.neo4jv3</artifactId>
+                    <version>${project.version}</version>
                 </dependency>
             </dependencies>
         </profile>

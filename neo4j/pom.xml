@@ -170,6 +170,9 @@
     </repositories>
 
     <modules>
+        <module>bootstrap</module>
+        <module>neo4jv2</module>
+        <module>neo4jv3</module>
         <module>embedded</module>
     </modules>
 </project>
