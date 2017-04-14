@@ -171,7 +171,5 @@
 
     <modules>
         <module>embedded</module>
-        <module>neo4j_2.3</module>
-        <module>neo4j_3.1</module>
     </modules>
 </project>
