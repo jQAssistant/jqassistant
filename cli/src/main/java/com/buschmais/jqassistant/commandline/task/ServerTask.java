@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.api.Server;
-import com.buschmais.jqassistant.neo4jserver.impl.ExtendedCommunityNeoServer;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -30,7 +30,7 @@ public class ServerTask extends AbstractTask {
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         Server server;
-        server = new ExtendedCommunityNeoServer((EmbeddedGraphStore) store, serverAddress, serverPort);
+        server = new EmbeddedNeoServer((EmbeddedGraphStore) store, serverAddress, serverPort);
         server.start();
         LOGGER.info("Running server");
         LOGGER.info("Press <Enter> to finish.");
@@ -54,7 +54,7 @@ public class ServerTask extends AbstractTask {
 
     @Override
     public void withOptions(CommandLine options) {
-        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, ExtendedCommunityNeoServer.DEFAULT_ADDRESS);
-        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(ExtendedCommunityNeoServer.DEFAULT_PORT)));
+        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, EmbeddedNeoServer.DEFAULT_ADDRESS);
+        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(EmbeddedNeoServer.DEFAULT_PORT)));
     }
 }
