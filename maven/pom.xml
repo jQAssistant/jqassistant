@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -31,8 +32,8 @@
         <connection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</developerConnection>
         <url>https://github.com/buschmais/jqa-maven-plugin</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <jqa.distribution-spec.version>1.3.0-SNAPSHOT</jqa.distribution-spec.version>
@@ -59,7 +60,8 @@
         <profile>
             <id>IT</id>
             <properties>
-                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
+                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo
+                </maven.invoker.localRepositoryPath>
             </properties>
             <build>
                 <plugins>
@@ -112,6 +114,16 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>neo4jv2</id>
+            <dependencies>
+                <!-- Lucene version used by maven-indexer is incompatible with Neo4j 3.x -->
+                <dependency>
+                    <groupId>com.buschmais.jqassistant.plugin</groupId>
+                    <artifactId>m2repo</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -202,29 +214,29 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
-                                	<pluginExecutionFilter>
-                                		<groupId>
-                                			org.codehaus.plexus
-                                		</groupId>
-                                		<artifactId>
-                                			plexus-component-metadata
-                                		</artifactId>
-                                		<versionRange>
-                                			[1.5.5,)
-                                		</versionRange>
-                                		<goals>
-                                			<goal>
-                                				generate-metadata
-                                			</goal>
-                                		</goals>
-                                	</pluginExecutionFilter>
-                                	<action>
-                                		<ignore />
-                                	</action>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.plexus
+                                        </groupId>
+                                        <artifactId>
+                                            plexus-component-metadata
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.5.5,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                generate-metadata
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
                                 </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
@@ -393,10 +405,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>m2repo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>maven3</artifactId>
         </dependency>
         <dependency>
@@ -423,7 +431,6 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>yaml</artifactId>
         </dependency>
-
 
 
         <!--

@@ -224,7 +224,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Determine if the store shall be reset before execution of the mofo.
-     * 
+     *
      * @return `true` if the store shall be reset.
      */
     protected abstract boolean isResetStoreBeforeExecution();
@@ -319,7 +319,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         } else {
             synchronized (storeFactory) {
                 Store store = getStore(rootModule);
-//              boolean shouldReset = reactorProjects.contains(rootModule) ? currentProject.equals(rootModule) : currentProject.isExecutionRoot();
                 if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
                     store.reset();
                 }
