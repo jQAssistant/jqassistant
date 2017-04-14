@@ -4,9 +4,10 @@
 ifndef::jqa-in-manual[== Version 1.3.0]
 ifdef::jqa-in-manual[== Plugin for Maven 1.3.0]
 
+- Added initial support for remote Neo4j 3.x databases (embedded or using bolt protocol)
+- Allow switching to Neo4j 3 using property `-Djqassistant.neo4jVersion=3` (experimental)
 - Added 'store' configuration section providing configuration options for remote database instances
 - Added 'rule' configuration section providing default severities for groups, concepts and constraints
-- Added initial support for remote Neo4j 3.x databases using bolt protocol
 - Deprecated configuration attributes `severity` and `failOnViolations` and replaced them with `warnOnSeverity` and `failOnSeverity`
 - Fixed a problem where dependencies between types in different Maven modules have not been resolved
 
