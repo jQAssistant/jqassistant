@@ -81,7 +81,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.8.1</com.buschmais.xo.version>
-        <org.neo4j.version>2.3.10</org.neo4j.version>
+        <org.neo4j_2x.version>2.3.10</org.neo4j_2x.version>
+        <org.neo4j_3x.version>3.1.3</org.neo4j_3x.version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>1.9.1</maven.buildhelper.version>
         <maven.clean.version>3.0.0</maven.clean.version>
@@ -428,12 +429,6 @@
 
     <profiles>
         <profile>
-            <id>jQA_Neo4j_3.1</id>
-            <properties>
-                <org.neo4j.version>3.1.1</org.neo4j.version>
-            </properties>
-        </profile>
-        <profile>
             <id>IT</id>
             <build>
                 <plugins>
@@ -488,6 +483,119 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>neo4jv2</id>
+            <activation>
+                <property>
+                    <name>!jqassistant.neo4jVersion</name>
+                </property>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j.app</groupId>
+                        <artifactId>neo4j-server</artifactId>
+                        <version>${org.neo4j_2x.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>asm</groupId>
+                                <artifactId>asm</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-access</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-classic</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j.app</groupId>
+                        <artifactId>neo4j-server</artifactId>
+                        <classifier>static-web</classifier>
+                        <version>${org.neo4j_2x.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-access</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-classic</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>neo4jv3</id>
+            <activation>
+                <property>
+                    <name>jqassistant.neo4jVersion</name>
+                    <value>3</value>
+                </property>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j.app</groupId>
+                        <artifactId>neo4j-server</artifactId>
+                        <version>${org.neo4j_3x.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>asm</groupId>
+                                <artifactId>asm</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-access</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-classic</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -512,23 +620,6 @@
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.remote</artifactId>
                 <version>${com.buschmais.xo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.neo4j</groupId>
-                <artifactId>neo4j</artifactId>
-                <version>${org.neo4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.neo4j</groupId>
-                <artifactId>neo4j-kernel</artifactId>
-                <type>test-jar</type>
-                <version>${org.neo4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.neo4j</groupId>
-                <artifactId>neo4j-io</artifactId>
-                <type>test-jar</type>
-                <version>${org.neo4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
