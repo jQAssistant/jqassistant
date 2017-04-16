@@ -18,9 +18,7 @@ public class JSONParserWithInvalidFilesIT {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-             {"/probes/invalid/empty-file.json"}
-        });
+        return DataProvider.invalidOwnExamples();
     }
 
     public JSONParserWithInvalidFilesIT(String path) {
