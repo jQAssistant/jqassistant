@@ -46,13 +46,11 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         jsonFileDescriptor.setValid(false);
 
         try {
-            JSONLexer lexer = new JSONLexer(CharStreams.fromStream(item.createStream()));
-            JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
+            JSONLexer lexer = new ConfiguredJSONLexer(CharStreams.fromStream(item.createStream()),
+                                                      path);
 
-            lexer.addErrorListener(new MyErrorListener(path));
-            parser.addErrorListener(new MyErrorListener(path));
-
-            parser.addParseListener(new JSONNestingListener());
+            JSONParser parser = new ConfiguredJSONParser(new CommonTokenStream(lexer),
+                                                         path);
 
             JSONParser.DocumentContext jsonDocumentContext = parser.document();
 
@@ -62,10 +60,9 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             // In case the content of the file is not parseable set valid=false
             // to help the user to identify non-parseable files
             jsonFileDescriptor.setValid(true);
-        } catch (RecognitionException | IllegalStateException e) {
+        } catch (RecoverableParsingException | RecognitionException | IllegalStateException e) {
             LOGGER.warn("JSON file '{}' seems not to be valid, skipping.", path);
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             // todo Get rid of this strange error handling
             /*
              * This error handling is a kind of abuse of a stack trace, but
@@ -102,7 +99,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         return jsonFileDescriptor;
     }
 
-    private static class MyErrorListener extends BaseErrorListener {
+    public static class MyErrorListener extends BaseErrorListener {
         private final String absolutePath;
 
         public MyErrorListener(String absolutePath) {
@@ -113,10 +110,34 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
                                 int line, int charPositionInLine,
                                 String msg, RecognitionException e) {
+            RuntimeException toPropagate = e;
             LOGGER.warn("Failed to parse '{}' at {}:{}, due to '{}'.",
                         absolutePath, line, charPositionInLine, msg);
 
-            throw e;
+            /* There might be no exception and this is ok. Check the Javadoc
+             * of the interface of this listener for more details.
+             *
+             * We throw our own exception if there is no exception to signal
+             * that the current JSON document is not valid, even if the parser
+             * was able to recover. But this is ignored by us.
+             */
+            if (null == toPropagate) {
+                toPropagate = new RecoverableParsingException(msg);
+            }
+
+            throw toPropagate;
+        }
+    }
+
+    public  static class RecoverableParsingException extends RuntimeException {
+        RecoverableParsingException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            // Makes an exception cheep
+            return this;
         }
     }
 }

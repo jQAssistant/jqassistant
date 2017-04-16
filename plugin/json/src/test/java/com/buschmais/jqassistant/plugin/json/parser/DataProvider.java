@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,6 +89,18 @@ public class DataProvider {
         });
     }
 
+    public static Collection<Object[]> invalidFilesOfJsonParsingTestSuite() throws URISyntaxException {
+        Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
+
+        List<Object[]> invalidFiles = basis.stream().map(element -> (T) element[0])
+                                           .filter(T::isNotAcceptable)
+                                           .map(T::getFile)
+                                           .map(filePath -> new Object[]{filePath})
+                                           .collect(Collectors.toList());
+
+        return invalidFiles;
+    }
+
     static class T {
 
         private boolean acceptable;
@@ -104,6 +117,10 @@ public class DataProvider {
 
         public boolean isAcceptable() {
             return acceptable;
+        }
+
+        public boolean isNotAcceptable() {
+            return !isAcceptable();
         }
 
         public File getFile() {
