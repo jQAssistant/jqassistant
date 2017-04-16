@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -43,7 +44,7 @@ public class JSONLexerTest {
 
     @Test
     public void lexerOuput() throws Exception {
-        JSONLexer lexer = new JSONLexer(CharStreams.fromString(input));
+        JSONLexer lexer = new ConfiguredJSONLexer(CharStreams.fromString(input), "/not/given");
 
         List<? extends Token> foundTokens = lexer.getAllTokens();
 

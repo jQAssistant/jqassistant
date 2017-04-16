@@ -28,6 +28,8 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
      */
     public final static String JSON_FILE_EXTENSION = ".json";
 
+    private IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
+
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(JSON_FILE_EXTENSION);
@@ -81,19 +83,11 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
              *
              * Oliver B. Fischer, 2017-03-29
              */
-            boolean stacktraceAvailable = e.getStackTrace().length > 0;
-            if (stacktraceAvailable) {
-                StackTraceElement stackTraceElement = e.getStackTrace()[0];
-                boolean correctClass = "org.antlr.v4.runtime.Parser".equals(stackTraceElement.getClassName());
-                boolean correctMethod = "notifyErrorListeners".equals(stackTraceElement.getMethodName());
+            boolean isCausedByANTLR = antlrPredicate.isNPECausedByANTLRIssue746Predicate(e);
 
-                // Suppress NPE caused by a bug in ANTLR
-                if (!correctClass && !correctMethod) {
-                    throw e;
-                }
-            } else {
+            if (!isCausedByANTLR) {
                 throw e;
-            }
+            } // else suppress the exception
         }
 
         return jsonFileDescriptor;

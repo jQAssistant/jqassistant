@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.plugin.json.parser;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,21 +29,11 @@ public class JSONParserWithValidFilesIT {
 
     @Test
     public void canParseValidJSONFile() throws Exception {
-
-        InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile);
-        JSONLexer l = new JSONLexer(CharStreams.fromStream(inputStream));
-        JSONParser p = new JSONParser(new CommonTokenStream(l));
-        p.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
-                                    int charPos, String msg, RecognitionException e) {
-                String message = String.format("Failed to parse %s at %d:%d. Parser failed with: %s",
-                                               pathToJSONFile, line, charPos, msg);
-                throw new IllegalStateException(message);
-            }
-        });
-
-        p.document();
+        try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
+            JSONLexer l = new ConfiguredJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
+            JSONParser p = new ConfiguredJSONParser(new CommonTokenStream(l), pathToJSONFile);
+            p.document();
+        }
     }
 
  }

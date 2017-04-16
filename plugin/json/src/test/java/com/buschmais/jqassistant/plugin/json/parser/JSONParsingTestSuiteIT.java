@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.json.parser;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONNestingListener;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.*;
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,32 +32,23 @@ public class JSONParsingTestSuiteIT {
 
     @Test
     public void canHandleTheJSONParsingTestSuite() throws Exception {
-        boolean passed = true;
+        boolean passed = false;
 
-        System.out.println(input.getFile().getName());
         try (InputStream inputStream = Files.newInputStream(input.getFile().toPath())) {
-            BaseErrorListener errorListener = new BaseErrorListener() {
-                @Override
-                public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
-                                        int charPos, String msg, RecognitionException e) {
-                    String message = String.format("Failed to parse %s at %d:%d. Parser failed with: %s",
-                                                   input.getFile().getName(), line, charPos, msg);
-                    throw new IllegalStateException(message);
-                }
-            };
-
-            JSONLexer l = new JSONLexer(CharStreams.fromStream(inputStream));
-            JSONParser p = new JSONParser(new CommonTokenStream(l));
-            p.removeErrorListeners();
-            p.addErrorListener(errorListener);
-            p.addParseListener(new JSONNestingListener());
-            l.removeErrorListeners();
-            l.addErrorListener(errorListener);
+            JSONLexer l = new ConfiguredJSONLexer(CharStreams.fromStream(inputStream), "/not/given");
+            JSONParser p = new ConfiguredJSONParser(new CommonTokenStream(l), "/not/given");
 
             p.document();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+            passed = true;
+        } catch (JSONFileScannerPlugin.RecoverableParsingException | RecognitionException | IllegalStateException  e) {
+
             passed = false;
+        } catch (NullPointerException t) {
+            boolean isFromANTLR = new IsNPECausedByANTLRIssue746Predicate().isNPECausedByANTLRIssue746Predicate(t);
+
+            if (!isFromANTLR) {
+                throw t;
+            }
         }
 
         if (input.isAcceptable()) {
