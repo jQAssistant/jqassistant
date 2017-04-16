@@ -28,7 +28,7 @@
     </licenses>
 
     <properties>
-        <org.antlr.version>4.6</org.antlr.version>
+        <org.antlr.version>4.7</org.antlr.version>
         <plugin-common.version>1.3-SNAPSHOT</plugin-common.version>
         <plugin-java.version>1.3-SNAPSHOT</plugin-java.version>
     </properties>
