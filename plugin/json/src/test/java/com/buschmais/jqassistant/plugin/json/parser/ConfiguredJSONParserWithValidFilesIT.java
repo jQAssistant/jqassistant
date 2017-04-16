@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class JSONParserWithValidFilesIT {
+public class ConfiguredJSONParserWithValidFilesIT {
 
     private String pathToJSONFile;
 
@@ -23,7 +23,7 @@ public class JSONParserWithValidFilesIT {
         return DataProvider.validOwnExamples();
     }
 
-    public JSONParserWithValidFilesIT(String path) {
+    public ConfiguredJSONParserWithValidFilesIT(String path) {
         pathToJSONFile = path;
     }
 

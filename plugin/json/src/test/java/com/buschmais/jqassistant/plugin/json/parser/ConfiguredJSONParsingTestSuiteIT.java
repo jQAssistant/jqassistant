@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(Parameterized.class)
-public class JSONParsingTestSuiteIT {
+public class ConfiguredJSONParsingTestSuiteIT {
 
     private DataProvider.T input;
 
@@ -26,7 +26,7 @@ public class JSONParsingTestSuiteIT {
         return DataProvider.jsonParsingTestSuiteWithMetaData();
     }
 
-    public JSONParsingTestSuiteIT(DataProvider.T i) {
+    public ConfiguredJSONParsingTestSuiteIT(DataProvider.T i) {
         input = i;
     }
 

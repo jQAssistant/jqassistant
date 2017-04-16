@@ -19,7 +19,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class JSONParserWithInvalidFilesIT {
+public class ConfiguredJSONParserWithInvalidFilesIT {
 
     private String pathToJSONFile;
 
@@ -28,7 +28,7 @@ public class JSONParserWithInvalidFilesIT {
         return DataProvider.invalidOwnExamples();
     }
 
-    public JSONParserWithInvalidFilesIT(String path) {
+    public ConfiguredJSONParserWithInvalidFilesIT(String path) {
         pathToJSONFile = path;
     }
 

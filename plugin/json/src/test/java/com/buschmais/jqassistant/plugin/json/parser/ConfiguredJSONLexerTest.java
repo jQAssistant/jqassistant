@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 
 @RunWith(Parameterized.class)
-public class JSONLexerTest {
+public class ConfiguredJSONLexerTest {
 
     @Parameter(0)
     public String input;
@@ -43,7 +43,7 @@ public class JSONLexerTest {
     }
 
     @Test
-    public void lexerOuput() throws Exception {
+    public void lexerOutput() throws Exception {
         JSONLexer lexer = new ConfiguredJSONLexer(CharStreams.fromString(input), "/not/given");
 
         List<? extends Token> foundTokens = lexer.getAllTokens();

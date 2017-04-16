@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,7 +40,7 @@ public class DataProvider {
             "i_structure_UTF-8_BOM_empty_object.json"
         );
 
-        URL resource = JSONParsingTestSuiteIT.class.getResource("/json_parsing_test_suite");
+        URL resource = ConfiguredJSONParsingTestSuiteIT.class.getResource("/json_parsing_test_suite");
         File directory = new File(resource.toURI());
 
         File[] jsons = directory.listFiles(f -> f.isFile() && f.getName().endsWith(".json"));
