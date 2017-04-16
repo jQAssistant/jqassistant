@@ -1,4 +1,4 @@
-== jQAssistant Framework 1.0.0-M4
+== jQAssistant 1.0.0-M4
 
 === General
 - license changed from ASL 2.0 to GPLv3 to solve compatibility issues with Neo4j community edition

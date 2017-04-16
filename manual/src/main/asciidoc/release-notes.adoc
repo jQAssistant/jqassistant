@@ -13,7 +13,7 @@
 // Oliver B. Fischer, 2017-02-13
 :jqa-in-manual: true
 
-= jQAssistant Framework Release Notes
+= jQAssistant Release Notes
 
 //:numbered!:
 include::include/1.3.0.adoc[]

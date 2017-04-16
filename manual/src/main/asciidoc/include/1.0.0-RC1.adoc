@@ -1,4 +1,4 @@
-== jQAssistant Framework 1.0.0-RC1
+== jQAssistant 1.0.0-RC1
 
 === Core
 

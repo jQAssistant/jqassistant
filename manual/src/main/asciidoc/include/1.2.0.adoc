@@ -1,4 +1,4 @@
-== jQAssistant Framework 1.2.0
+== jQAssistant 1.2.0
 
 - Improved the layout of the wording and the structure of the
   user manual of jQAssistant.
