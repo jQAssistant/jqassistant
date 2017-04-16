@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.json.parser;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class JSONLexerTest {
 
     @Test
     public void lexerOuput() throws Exception {
-        JSONLexer lexer = new JSONLexer(new ANTLRInputStream(input));
+        JSONLexer lexer = new JSONLexer(CharStreams.fromString(input));
 
         List<? extends Token> foundTokens = lexer.getAllTokens();
 

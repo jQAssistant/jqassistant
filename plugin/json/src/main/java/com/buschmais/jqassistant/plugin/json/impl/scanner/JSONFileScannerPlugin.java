@@ -46,7 +46,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         jsonFileDescriptor.setValid(false);
 
         try {
-            JSONLexer lexer = new JSONLexer(new ANTLRInputStream(item.createStream()));
+            JSONLexer lexer = new JSONLexer(CharStreams.fromStream(item.createStream()));
             JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
 
             lexer.addErrorListener(new MyErrorListener(path));

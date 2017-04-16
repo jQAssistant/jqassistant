@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.plugin.json.parser;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONNestingListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -89,7 +85,7 @@ public class JSONParsingTestSuiteIT {
                 }
             };
 
-            JSONLexer l = new JSONLexer(new ANTLRInputStream(inputStream));
+            JSONLexer l = new JSONLexer(CharStreams.fromStream(inputStream));
             JSONParser p = new JSONParser(new CommonTokenStream(l));
             p.removeErrorListeners();
             p.addErrorListener(errorListener);
