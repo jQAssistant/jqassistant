@@ -17,8 +17,8 @@ import lombok.*;
 @AllArgsConstructor(access = PRIVATE)
 public class RowCountVerification implements Verification {
 
-    Integer max = null;
+    private Integer max;
 
-    Integer min = null;
+    private Integer min;
 
 }

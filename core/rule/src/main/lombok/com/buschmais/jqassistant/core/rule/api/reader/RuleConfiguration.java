@@ -7,24 +7,21 @@ import static lombok.AccessLevel.PRIVATE;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 import lombok.*;
+import lombok.Builder.Default;
 
 @Getter
 @ToString
-@Builder(toBuilder = true)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = PRIVATE)
 public class RuleConfiguration {
 
-    public static final RuleConfiguration DEFAULT = new RuleConfiguration();
+    public static final RuleConfiguration DEFAULT = RuleConfiguration.builder().build();
 
-    public static RuleConfigurationBuilder builder() {
-        return DEFAULT.toBuilder();
-    }
+    private Severity defaultGroupSeverity;
 
-    private Severity defaultGroupSeverity = null;
+    @Default private Severity defaultConceptSeverity = MINOR;
 
-    private Severity defaultConceptSeverity = MINOR;
-
-    private Severity defaultConstraintSeverity = MAJOR;
+    @Default private Severity defaultConstraintSeverity = MAJOR;
 
 }
