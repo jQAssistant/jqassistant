@@ -110,9 +110,9 @@
         <maven.source.plugin>3.0.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0</maven.xml.version>
-        <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
-        <lombok.maven.version>1.16.10.0</lombok.maven.version>
-        <lombok.version>1.16.10</lombok.version>
+        <org.asciidoctor-plugin.version>1.5.5</org.asciidoctor-plugin.version>
+        <lombok.version>1.16.16</lombok.version>
+        <lombok.maven.version>1.16.16.0</lombok.maven.version>
     </properties>
 
     <build>
