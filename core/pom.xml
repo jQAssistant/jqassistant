@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
+        <version>1.3.0</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant.core</groupId>
@@ -39,8 +39,8 @@
     </scm>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>1.3.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa.own-constraints.version>1.3.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.3.0</jqa-asciidoctor-utilities.version>
+        <jqa.own-constraints.version>1.3.0</jqa.own-constraints.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <junit.version>4.12</junit.version>
         <org.asciidoctor.version>1.5.4.1</org.asciidoctor.version>
