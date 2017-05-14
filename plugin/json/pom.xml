@@ -9,7 +9,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>json</artifactId>
-    <version>1.3</version>
+    <version>1.4-SNAPSHOT</version>
 
     <name>jQAssistant JSON Plugin</name>
     <url>http://jqassistant.org/</url>
@@ -18,7 +18,7 @@
         <connection>scm:git:git@github.com:buschmais/jqa-json-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-json-plugin.git</developerConnection>
         <url>https://github.com/buschmais/jqa-json-plugin</url>
-      <tag>1.3</tag>
+      <tag>HEAD</tag>
   </scm>
 
 
