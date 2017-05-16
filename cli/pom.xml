@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant-commandline</artifactId>
@@ -37,9 +37,9 @@
   </scm>
 
     <properties>
-        <jqa-asciidoc-utilities.version>1.3.0</jqa-asciidoc-utilities.version>
-        <jqa-distribution-spec.version>1.3.0</jqa-distribution-spec.version>
-        <jqa.own-constraints.version>1.3.0</jqa.own-constraints.version>
+        <jqa-asciidoc-utilities.version>1.4.0-SNAPSHOT</jqa-asciidoc-utilities.version>
+        <jqa-distribution-spec.version>1.4.0-SNAPSHOT</jqa-distribution-spec.version>
+        <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
