@@ -32,6 +32,15 @@ public class SeverityTest {
     }
 
     @Test
+    public void lowerCaseSeverity() throws RuleException {
+        String value = Severity.INFO.name();
+
+        Severity result = Severity.fromValue(value);
+
+        assertThat(result, equalTo(Severity.INFO));
+    }
+
+    @Test
     public void asciidocSeverity() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc");
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);

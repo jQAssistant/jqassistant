@@ -9,7 +9,11 @@ import java.util.EnumSet;
  */
 public enum Severity {
 
-    BLOCKER("blocker", 0), CRITICAL("critical", 1), MAJOR("major", 2), MINOR("minor", 3), INFO("info", 4), ;
+    BLOCKER("blocker", 0),
+    CRITICAL("critical", 1),
+    MAJOR("major", 2),
+    MINOR("minor", 3),
+    INFO("info", 4);
 
     private final String value;
     private final Integer level;
