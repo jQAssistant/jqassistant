@@ -40,7 +40,7 @@ public class DataProvider {
             "i_structure_UTF-8_BOM_empty_object.json"
         );
 
-        URL resource = ConfiguredJSONParsingTestSuiteIT.class.getResource("/json_parsing_test_suite");
+        URL resource = ConfiguredJSONParsingTestSuiteValidIT.class.getResource("/json_parsing_test_suite");
         File directory = new File(resource.toURI());
 
         File[] jsons = directory.listFiles(f -> f.isFile() && f.getName().endsWith(".json"));
@@ -93,6 +93,18 @@ public class DataProvider {
 
         List<Object[]> invalidFiles = basis.stream().map(element -> (T) element[0])
                                            .filter(T::isNotAcceptable)
+                                           .map(T::getFile)
+                                           .map(filePath -> new Object[]{filePath})
+                                           .collect(Collectors.toList());
+
+        return invalidFiles;
+    }
+
+    public static Collection<Object[]> validFilesOfJsonParsingTestSuite() throws URISyntaxException {
+        Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
+
+        List<Object[]> invalidFiles = basis.stream().map(element -> (T) element[0])
+                                           .filter(T::isAcceptable)
                                            .map(T::getFile)
                                            .map(filePath -> new Object[]{filePath})
                                            .collect(Collectors.toList());

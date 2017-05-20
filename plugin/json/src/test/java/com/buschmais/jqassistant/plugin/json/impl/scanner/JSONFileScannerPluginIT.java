@@ -361,7 +361,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(object, Matchers.notNullValue());
         assertThat(object, Matchers.instanceOf(String.class));
-        assertThat(object, Matchers.<Object>equalTo("B"));
+        assertThat(object, Matchers.equalTo("B"));
     }
 
     @Test
