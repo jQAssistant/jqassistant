@@ -39,6 +39,12 @@
         <org.antlr.version>4.7</org.antlr.version>
         <plugin-common.version>1.4-SNAPSHOT</plugin-common.version>
         <plugin-java.version>1.4-SNAPSHOT</plugin-java.version>
+
+        <!--
+         ! See https://github.com/buschmais/jqa-json-plugin/issues/7
+         ! Oliver B. Fischer, 2017-05-20
+         !-->
+        <jqassistant.skip>true</jqassistant.skip>
     </properties>
 
 
