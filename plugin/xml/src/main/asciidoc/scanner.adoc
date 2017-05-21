@@ -7,11 +7,21 @@ The files to scan may be configured using include and exclude filters.
 === Configuration
 
 .Configuration properties
-[options="header"]
+[options="header", cols="3"]
 |====
-| Property         | Description													                			           | Default
-| xml.file.include | A comma separated list of file name patterns, wildcards (?,\*) are allowed, e.g. "/*-INF/ejb-jar.xml" |
-| xml.file.exclude | A comma separated list of file name patterns, wildcards (?,\*) are allowed, e.g. "/*-INF/ejb-jar.xml" |
+| Property
+| Description
+| Default
+
+| `xml.file.include`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/*-INF/ejb-jar.xml`.
+|
+
+| `xml.file.exclude`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/*-INF/ejb-jar.xml`.
+|
 |====
 
 [[XmlSourceScanner]]
