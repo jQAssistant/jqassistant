@@ -8,6 +8,24 @@
 Scanner to scan https://www.rfc-editor.org/info/rfc7159[RFC 7159^]
 compliant JSON files.
 
+
+=== Configuration
+
+.Configuration properties
+[options="header", cols="2"]
+|====
+| Property
+| Description
+
+| `json.file.include`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/data/town.json.tmpl`.
+
+| `json.file.exclude`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/data/data.json`.
+|====
+
 [[:Json:File]]
 === Nodes labled with `:Json:File`
 

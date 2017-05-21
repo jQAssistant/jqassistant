@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -23,6 +24,11 @@ import org.slf4j.LoggerFactory;
 public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, JSONFileDescriptor> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONFileScannerPlugin.class);
 
+    public static final String PROPERTY_INCLUDE = "json.file.include";
+    public static final String PROPERTY_EXCLUDE = "json.file.exclude";
+
+    private FilePatternMatcher filePatternMatcher;
+
     /**
      * Supported file extension for JSON file resources.
      */
@@ -30,9 +36,37 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
 
     private IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
 
+    protected FilePatternMatcher getFilePatternMatcher() {
+        return filePatternMatcher;
+    }
+
+    protected boolean isFilePatternMatcherActive() {
+        return null != getFilePatternMatcher();
+    }
+
+    @Override
+    protected void configure() {
+        String inclusionPattern = getStringProperty(PROPERTY_INCLUDE, null);
+        String exclusionPattern = getStringProperty(PROPERTY_EXCLUDE, null);
+
+        if (null != inclusionPattern || null != exclusionPattern) {
+            filePatternMatcher = FilePatternMatcher.Builder.newInstance()
+                                                           .include(inclusionPattern)
+                                                           .exclude(exclusionPattern).build();
+        }
+    }
+
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(JSON_FILE_EXTENSION);
+        boolean decision = true;
+
+        if (isFilePatternMatcherActive()) {
+            decision = getFilePatternMatcher().accepts(path);
+        } else {
+            decision = path.toLowerCase().endsWith(JSON_FILE_EXTENSION);
+        }
+
+        return decision;
     }
 
     @Override

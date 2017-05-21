@@ -1,0 +1,10 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.4]
+ifdef::jqa-in-manual[== JSON Plugin 1.4]
+
+- Added support to exclude or include specific files via a simple filename pattern
+  by setting the parameters `json.file.include` and `json.file.exclude`.
+
+
