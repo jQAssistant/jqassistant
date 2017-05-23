@@ -19,7 +19,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 /**
  * Exports the database as a file containing cypher statements.
  */
-@Mojo(name = "export-database", threadSafe = true)
+@Mojo(name = "export-database", threadSafe = true,
+      configurator = "custom")
 public class ExportDatabaseMojo extends AbstractProjectMojo {
 
     private static final String EXPORT_FILE = "jqassistant.cypher";

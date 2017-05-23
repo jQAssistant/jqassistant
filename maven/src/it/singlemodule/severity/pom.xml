@@ -41,5 +41,20 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>failOnSeverityWithLowerCaseLetters</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <configuration>
+                            <warnOnSeverity>minor</warnOnSeverity>
+                            <failOnSeverity>major</failOnSeverity>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

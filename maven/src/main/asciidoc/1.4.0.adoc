@@ -1,0 +1,8 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.4.0]
+ifdef::jqa-in-manual[== Plugin for Maven 1.4.0]
+
+* Users can now provide the severty for the configuration parameters
+  `failOnSeverity` and `warnOnSeverity` also in lower case.

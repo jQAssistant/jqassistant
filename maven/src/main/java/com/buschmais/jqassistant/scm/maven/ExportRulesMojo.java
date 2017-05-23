@@ -19,7 +19,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * Exports the all rules to an XML file.
  */
-@Mojo(name = "export-rules", threadSafe = true)
+@Mojo(name = "export-rules", threadSafe = true,
+      configurator = "custom")
 public class ExportRulesMojo extends AbstractProjectMojo {
 
     @Override

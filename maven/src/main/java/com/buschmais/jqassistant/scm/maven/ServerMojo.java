@@ -17,7 +17,8 @@ import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
 /**
  * Starts an embedded Neo4j server.
  */
-@Mojo(name = "server", threadSafe = true)
+@Mojo(name = "server", threadSafe = true,
+      configurator = "custom")
 public class ServerMojo extends AbstractProjectMojo {
 
     /**

@@ -17,7 +17,8 @@ import java.util.List;
 /**
  * Lists all available rules.
  */
-@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
+      configurator = "custom")
 public class AvailableRulesMojo extends AbstractProjectMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesMojo.class);
 

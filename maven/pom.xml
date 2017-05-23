@@ -43,6 +43,8 @@
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>2.0.0.0</hamcrest.version>
 
         <!--
          ! Properties used for the IT with the Maven Invoker Plugin.
@@ -81,7 +83,7 @@
                                 <pomInclude>singlemodule/junit-report/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/export-rules/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/skip/pom.xml</pomInclude>
-                                <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
+                                <pomInclud>singlemodule/scanincludes/pom.xml</pomInclud>
                                 <pomInclude>singlemodule/severity/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/defaultseverity/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/shade/pom.xml</pomInclude>
@@ -490,6 +492,22 @@
             <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
             <artifactId>slf4j-maven-plugin-log</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
         </dependency>
     </dependencies>
 

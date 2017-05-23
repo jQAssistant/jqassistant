@@ -27,7 +27,8 @@ import org.apache.maven.project.MavenProject;
 /**
  * Scans the the output directory and test output directory.
  */
-@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, threadSafe = true)
+@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, threadSafe = true,
+      configurator = "custom")
 public class ScanMojo extends AbstractModuleMojo {
 
     /**

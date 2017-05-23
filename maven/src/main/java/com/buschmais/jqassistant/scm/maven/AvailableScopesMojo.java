@@ -16,7 +16,8 @@ import java.util.List;
 /**
  * Lists all available scopes.
  */
-@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
+      configurator = "custom")
 public class AvailableScopesMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AvailableScopesMojo.class);

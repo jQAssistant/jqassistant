@@ -19,7 +19,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * Lists all effective rules.
  */
-@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
+      configurator = "custom")
 public class EffectiveRulesMojo extends AbstractProjectMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveRulesMojo.class);
 

@@ -36,7 +36,8 @@ import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 /**
  * Runs analysis according to the defined rules.
  */
-@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true,
+      configurator = "custom")
 public class AnalyzeMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
