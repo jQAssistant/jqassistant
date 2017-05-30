@@ -8,7 +8,7 @@ WARNING: Do not raise any new issues for this repository.
          Raise new issues only in the affected repository.
 
 If you have questions related to jQAssistant please get in touch
-with us via the https://groups.google.com/forum/#!forum/jqassistant[QAssistant forum].
+with us via the https://groups.google.com/forum/#!forum/jqassistant[jQAssistant forum].
 
 The table below lists all existing repositories jQAssistant is
 made of. 
