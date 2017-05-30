@@ -183,8 +183,8 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     @Before
-    public void startStore() throws PluginRepositoryException, URISyntaxException {
-        String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
+    public void startStore() throws PluginRepositoryException, URISyntaxException, IOException {
+        String fileName = "target/jqassistant/";//  + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
         URI uri = new File(fileName).toURI();
         // URI uri = new URI("bolt://localhost:7687");
         // URI uri = new URI("memory:///");
