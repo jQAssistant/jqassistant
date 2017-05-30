@@ -207,6 +207,7 @@ A method declared in a Java type.
 | READS        | <<:Java:Field>>            | 0..n        | References a field which is read by the method
 | WRITES       | <<:Java:Field>>            | 0..n        | References a field which is written by the method
 | INVOKES      | <<:Java:Method>>           | 0..n        | References a method which is invoked by the method
+| DECLARES     | <<:Java:Variable>>         | 0..n        | References a variable method which is declared by the method
 |====
 
 *NOTE* Methods which are referenced by scanned classes but have not been
@@ -233,6 +234,18 @@ A method parameter.
 | Name         | Target label(s)            | Cardinality | Description
 | OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the parameter
 | ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
+|====
+
+[[:Java:Variable]]
+=== Nodes labled with `:Java:Variable`
+A variable declared in a method.
+
+.Properties of `:Java:Variable`
+[options="header"]
+|====
+| Name       | Description
+| name       | The variable name, e.g. `i`
+| signature  | The raw signature of the variable, e.g. `int i`, `java.lang.String name`
 |====
 
 [[:Java:Value]]

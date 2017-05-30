@@ -31,14 +31,16 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     public static final String PROPERTY_TYPE_DEPENDS_ON_WEIGHT = "java.class.model.Type.DEPENDS_ON.weight";
 
+    public static final String PROPERTY_METHOD_DECLARES_VARIABLE = "java.class.model.Method.DECLARES.Variable";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
 
     private ClassModelConfiguration classModelConfiguration;
 
     @Override
     protected void configure() {
-        classModelConfiguration = ClassModelConfiguration.Builder.newConfiguration().typeDependsOnWeight(getBooleanProperty(PROPERTY_TYPE_DEPENDS_ON_WEIGHT, true))
-                .build();
+        classModelConfiguration = ClassModelConfiguration.builder().typeDependsOnWeight(getBooleanProperty(PROPERTY_TYPE_DEPENDS_ON_WEIGHT, true))
+                .methodDeclaresVariable(getBooleanProperty(PROPERTY_METHOD_DECLARES_VARIABLE, true)).build();
     }
 
     @Override

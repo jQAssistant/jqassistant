@@ -1,0 +1,5 @@
+ifndef::jqa-in-manual[== Version 1.4]
+ifdef::jqa-in-manual[== Java Plugin 1.4]
+
+- Added support for method variables in Java class scanner, i.e. `(:Method)-[:DECLARES]->(:Variable)`
+

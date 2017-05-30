@@ -1,18 +1,17 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import java.util.HashSet;
+import java.util.Set;
 
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
+import org.objectweb.asm.signature.SignatureVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
@@ -24,6 +23,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
      * Annotation indicating a synthetic parameter of a method.
      */
     private static final String JAVA_LANG_SYNTHETIC = "java.lang.Synthetic";
+    private static final String THIS = "this";
 
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
@@ -34,7 +34,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private Integer lineNumber = null;
     private Integer firstLineNumber = null;
     private Integer lastLineNumber = null;
-    private HashSet<Integer> effectiveLines = new HashSet<>();
+    private Set<Integer> effectiveLines = new HashSet<>();
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
             DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
@@ -108,8 +108,31 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
-        if (signature != null) {
-            new SignatureReader(signature).accept(dependentTypeSignatureVisitor);
+        if (visitorHelper.getClassModelConfiguration().isMethodDeclaresVariable() && !THIS.equals(name)) {
+            final VariableDescriptor variableDescriptor = visitorHelper.getVariableDescriptor(name, SignatureHelper.getFieldSignature(name, desc));
+            if (signature == null) {
+                TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), containingType).getTypeDescriptor();
+                variableDescriptor.setType(type);
+            } else {
+                new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor(containingType, visitorHelper) {
+
+                    @Override
+                    public SignatureVisitor visitArrayType() {
+                        return dependentTypeSignatureVisitor;
+                    }
+
+                    @Override
+                    public SignatureVisitor visitTypeArgument(char wildcard) {
+                        return dependentTypeSignatureVisitor;
+                    }
+
+                    @Override
+                    public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
+                        variableDescriptor.setType(resolvedTypeDescriptor);
+                    }
+                });
+            }
+            methodDescriptor.getVariables().add(variableDescriptor);
         }
     }
 

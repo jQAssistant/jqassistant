@@ -4,6 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguage
 
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRuleBucket;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.report.Java;
@@ -17,11 +18,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  */
 @Java(Method)
 @Label(value = "Method")
-public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
+public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
 
     /**
      * Return all declared parameters of this method.
-     * 
+     *
      * @return The declared parameters.
      */
     @Relation("HAS")
@@ -29,7 +30,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     /**
      * Return the return type of this method.
-     * 
+     *
      * @return The return type.
      */
     @Relation("RETURNS")
@@ -44,7 +45,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     /**
      * Return all declared throwables of this method.
-     * 
+     *
      * @return The declared throwables.
      */
     @Relation("THROWS")
@@ -52,21 +53,21 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     /**
      * Return all read accesses to fields this method performs.
-     * 
+     *
      * @return All read accesses to fields this method performs.
      */
     List<ReadsDescriptor> getReads();
 
     /**
      * Return all write accesses to fields this method performs.
-     * 
+     *
      * @return All write accesses to fields this method performs.
      */
     List<WritesDescriptor> getWrites();
 
     /**
      * Return all invocations this method performs.
-     * 
+     *
      * @return All invocations this method performs.
      */
     @Outgoing
@@ -74,15 +75,18 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     /**
      * Return all invocations of this method by other methods.
-     * 
+     *
      * @return The invocations of this method by other methods.
      */
     @Incoming
     List<InvokesDescriptor> getInvokedBy();
 
+    @Declares
+    List<VariableDescriptor> getVariables();
+
     /**
      * Return <code>true</code> if this method is native.
-     * 
+     *
      * @return <code>true</code> if this method is native.
      */
     Boolean isNative();
@@ -91,7 +95,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
 
     /**
      * Return the cyclomatic complexity of the method.
-     * 
+     *
      * @return The cyclomatic complexity.
      */
     int getCyclomaticComplexity();
@@ -101,9 +105,12 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
     @Declares
     List<TypeDescriptor> getDeclaredInnerClasses();
 
+    @Declares
+    List<FieldDescriptor> getFields();
+
     /**
      * Return the first line number of the method.
-     * 
+     *
      * @return The first line number of the method.
      */
     Integer getFirstLineNumber();
@@ -127,4 +134,5 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
     int getEffectiveLineCount();
 
     void setEffectiveLineCount(int effectiveLineCount);
+
 }

@@ -6,8 +6,11 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
@@ -61,6 +64,27 @@ public class PojoIT extends AbstractJavaPluginIT {
         assertThat(equalsList.size(), equalTo(1));
         MethodDescriptor equals = equalsList.get(0);
         assertThat(equals.getEffectiveLineCount(), equalTo(5));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void variables() throws IOException {
+        scanClasses(Pojo.class);
+        store.beginTransaction();
+        List<VariableDescriptor> variables = query("MATCH (:Java:Method{name:'equals'})-[:DECLARES]->(v:Java:Variable) return v").getColumn("v");
+        assertThat(variables.size(), equalTo(2));
+        Map<String, VariableDescriptor> map = new HashMap<>();
+        for (VariableDescriptor variable : variables) {
+            map.put(variable.getName(), variable);
+        }
+        VariableDescriptor o = map.get("o");
+        assertThat(o, notNullValue());
+        assertThat(o.getSignature(), equalTo(Object.class.getName() + " o"));
+        assertThat(o.getType(), typeDescriptor(Object.class));
+        VariableDescriptor pojo = map.get("pojo");
+        assertThat(pojo, notNullValue());
+        assertThat(pojo.getSignature(), equalTo(Pojo.class.getName() + " pojo"));
+        assertThat(pojo.getType(), typeDescriptor(Pojo.class));
         store.commitTransaction();
     }
 }

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -86,6 +87,26 @@ public class GenericLanguageElementTest {
         SourceProvider<MethodDescriptor> sourceProvider = Method.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#int getValue()"));
+    }
+
+    @Test
+    public void variableName() {
+        ClassFileDescriptor type = mock(ClassFileDescriptor.class);
+        MethodDescriptor method = mock(MethodDescriptor.class);
+        VariableDescriptor variable = mock(VariableDescriptor.class);
+        when(method.getDeclaringType()).thenReturn(type);
+        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
+        when(type.getFileName()).thenReturn("/com/buschmais/Type");
+        when(method.getSignature()).thenReturn("void doSomething()");
+        when(method.getFirstLineNumber()).thenReturn(10);
+        when(method.getLastLineNumber()).thenReturn(20);
+        when(variable.getMethod()).thenReturn(method);
+        when(variable.getName()).thenReturn("i");
+        when(variable.getSignature()).thenReturn("int i");
+        SourceProvider<VariableDescriptor> sourceProvider = Variable.getSourceProvider();
+        assertThat(sourceProvider.getName(variable), equalTo("com.buschmais.Type#void doSomething()#int i"));
+        assertThat(sourceProvider.getLineNumber(variable), equalTo(10));
+        assertThat(sourceProvider.getSourceFile(variable), equalTo("/com/buschmais/Type"));
     }
 
     @Test

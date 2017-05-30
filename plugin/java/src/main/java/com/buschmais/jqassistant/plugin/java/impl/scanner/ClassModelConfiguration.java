@@ -1,29 +1,23 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@Builder
+@AllArgsConstructor(access = PRIVATE)
+@ToString
 public class ClassModelConfiguration {
 
+    @Default
     private boolean typeDependsOnWeight = true;
 
-    public boolean isTypeDependsOnWeight() {
-        return typeDependsOnWeight;
-    }
+    @Default
+    private boolean methodDeclaresVariable = true;
 
-    public static class Builder {
-
-        private ClassModelConfiguration instance = new ClassModelConfiguration();
-
-        public static Builder newConfiguration() {
-            return new Builder();
-        }
-
-        public Builder typeDependsOnWeight(boolean enabled) {
-            instance.typeDependsOnWeight = enabled;
-            return this;
-        }
-
-        public ClassModelConfiguration build() {
-            return instance;
-        }
-
-    }
 }

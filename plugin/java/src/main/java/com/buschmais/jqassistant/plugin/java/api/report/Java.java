@@ -71,6 +71,30 @@ public @interface Java {
                 return new MemberSourceProvider();
             }
         },
+        Variable {
+            @Override
+            public SourceProvider<? extends Descriptor> getSourceProvider() {
+                return new SourceProvider<VariableDescriptor>() {
+
+                    @Override
+                    public String getName(VariableDescriptor descriptor) {
+                        return descriptor.getMethod().getDeclaringType().getFullQualifiedName() + "#" + descriptor.getMethod().getSignature() + "#"
+                                + descriptor.getSignature();
+                    }
+
+                    @Override
+                    public String getSourceFile(VariableDescriptor descriptor) {
+                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
+                        return declaringType instanceof ClassFileDescriptor ? ((ClassFileDescriptor) declaringType).getFileName() : null;
+                    }
+
+                    @Override
+                    public Integer getLineNumber(VariableDescriptor descriptor) {
+                        return descriptor.getMethod().getFirstLineNumber();
+                    }
+                };
+            }
+        },
         ReadField {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
@@ -155,7 +179,7 @@ public @interface Java {
                 return new SourceProvider<TypeDependsOnDescriptor>() {
                     @Override
                     public String getName(TypeDependsOnDescriptor descriptor) {
-                        return descriptor.getDependent().getName() + "->" +descriptor.getDependency().getName();
+                        return descriptor.getDependent().getName() + "->" + descriptor.getDependency().getName();
                     }
 
                     @Override
@@ -203,7 +227,7 @@ public @interface Java {
          * Returns the file name of the given descriptor if it extends
          * {@link com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor}
          * .
-         * 
+         *
          * @param descriptor
          *            The descriptor.
          * @return The

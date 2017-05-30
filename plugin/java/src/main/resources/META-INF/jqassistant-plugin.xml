@@ -29,6 +29,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</class>
     </model>
     <scope>
         <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
