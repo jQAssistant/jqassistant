@@ -80,7 +80,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.9.0-SNAPSHOT</com.buschmais.xo.version>
-        <org.neo4j_2x.version>2.3.10</org.neo4j_2x.version>
+        <org.neo4j_2x.version>2.3.11</org.neo4j_2x.version>
         <org.neo4j_3x.version>3.2.0</org.neo4j_3x.version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>1.9.1</maven.buildhelper.version>
