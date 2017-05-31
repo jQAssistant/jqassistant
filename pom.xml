@@ -111,7 +111,6 @@
         <maven.xml.version>1.0</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.5</org.asciidoctor-plugin.version>
         <lombok.version>1.16.16</lombok.version>
-        <lombok.maven.version>1.16.16.0</lombok.maven.version>
     </properties>
 
     <build>
@@ -395,21 +394,6 @@
                     <artifactId>xml-maven-plugin</artifactId>
                     <version>${maven.xml.version}</version>
                 </plugin>
-
-                <plugin>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok-maven-plugin</artifactId>
-                    <version>${lombok.maven.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>delombok</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
             </plugins>
         </pluginManagement>
 
