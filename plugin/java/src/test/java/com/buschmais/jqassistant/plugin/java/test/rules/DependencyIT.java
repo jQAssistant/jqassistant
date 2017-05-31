@@ -102,7 +102,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
         TypeDependsOnDescriptor dependsOn = (TypeDependsOnDescriptor) row.get("d");
-        assertThat(dependsOn.getWeight(), equalTo(6));
+        assertThat(dependsOn.getWeight(), equalTo(7));
         store.commitTransaction();
     }
 
