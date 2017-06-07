@@ -96,6 +96,18 @@
         <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
 
         <!--
+         ! This two properties controls on which severity of constraint
+         ! violations jQAssistant will fail a build or issue a warning.
+         !
+         ! Please do not configure this as parameter of the plugin
+         ! configuration. This way is the only one which allows
+         ! us to override this parameters on the commandline.
+         ! Oliver B. Fischer, 2017-06-07
+         !-->
+        <jqassistant.warnOnSeverity>INFO</jqassistant.warnOnSeverity>
+        <jqassistant.failOnSeverity>MINOR</jqassistant.failOnSeverity>
+
+        <!--
          ! The current version of jQAssistant is always scanned by the
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
@@ -135,7 +147,13 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <failOnViolations>true</failOnViolations>
+                        <!--
+                         ! To not configure failOnSeverity and warnOnSeverity
+                         ! directly. Please control these parameters via
+                         ! the user properties set in the properties section
+                         ! of the Ueber Parant of jQAssistant.
+                         ! Oliver B. Fischer, 2017-06-07
+                         !-->
                     </configuration>
                 </plugin>
 
