@@ -104,7 +104,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Will fail on violation of constraints with severity '" + failOnSeverity + "'.");
+        getLog().info("Will warn on violation of constraints starting form severity '" + warnOnSeverity + "'");
+        getLog().info("Will fail on violation of constraints starting from severity '" + failOnSeverity + "'.");
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
 
         RuleSet ruleSet = readRules(rootModule);
