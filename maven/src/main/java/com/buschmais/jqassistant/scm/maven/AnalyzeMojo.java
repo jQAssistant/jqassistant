@@ -113,7 +113,69 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
+        ReportPlugin xmlReportWriter = getReportPlugin(rootModule);
+        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
+        Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
+        Map<String, ReportPlugin> reportPlugins;
+        try {
+            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot get report plugins.", e);
+        }
+        reportWriters.putAll(reportPlugins);
+        CompositeReportPlugin reportWriter = new CompositeReportPlugin(reportWriters);
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        try {
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
+            analyzer.execute(ruleSet, ruleSelection, ruleParameters);
+        } catch (RuleExecutorException e) {
+            throw new MojoExecutionException("Analysis failed.", e);
+        }
+        ReportHelper reportHelper = new ReportHelper(logger);
+        store.beginTransaction();
+        try {
+            Severity effectiveFailOnSeverity;
+            if (failOnViolations != null) {
+                getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
+            }
+            if (severity != null) {
+                getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
+                try {
+                    effectiveFailOnSeverity = Severity.fromValue(severity);
+                } catch (RuleException e) {
+                    throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
+                }
+            } else {
+                effectiveFailOnSeverity = failOnSeverity ;
+            }
+
+            verifyAnalysisResults(inMemoryReportWriter, reportHelper, effectiveFailOnSeverity);
+        } finally {
+            store.commitTransaction();
+        }
+    }
+
+    private void verifyAnalysisResults(InMemoryReportWriter inMemoryReportWriter, ReportHelper reportHelper,
+                                       Severity effectiveFailOnSeverity)
+        throws MojoFailureException {
+        int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
+        int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
+
+        boolean hasConceptViolations = conceptViolations > 0;
+        boolean hasConstraintViolations = constraintViolations > 0;
+        boolean hasViolations = hasConceptViolations || hasConstraintViolations;
+
+        if (hasViolations) {
+            throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
+        }
+    }
+
+    private ReportPlugin getReportPlugin(MavenProject rootModule)
+        throws MojoExecutionException {
         ReportPlugin xmlReportWriter = null;
+
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
             case JQA:
@@ -136,50 +198,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 throw new MojoExecutionException("Unknown report type " + reportType);
             }
         }
-        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
-        Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
-        Map<String, ReportPlugin> reportPlugins;
-        try {
-            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get report plugins.", e);
-        }
-        reportWriters.putAll(reportPlugins);
-        CompositeReportPlugin reportWriter = new CompositeReportPlugin(reportWriters);
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
-        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
-        Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
-        try {
-            analyzer.execute(ruleSet, ruleSelection, ruleParameters);
-        } catch (RuleExecutorException e) {
-            throw new MojoExecutionException("Analysis failed.", e);
-        }
-        ReportHelper reportHelper = new ReportHelper(logger);
-        store.beginTransaction();
-        try {
-            Severity effectiveFailOnSeverity;
-            if (failOnViolations != null) {
-                getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
-            }
-            if (severity != null) {
-                getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
-                try {
-                    effectiveFailOnSeverity = Severity.fromValue(severity);
-                } catch (RuleException e) {
-                    throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
-                }
-            } else {
-                effectiveFailOnSeverity = failOnSeverity ;
-            }
-            int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
-            int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
-            if ((failOnViolations == null || Boolean.TRUE.equals(failOnViolations)) && (conceptViolations > 0 || constraintViolations > 0)) {
-                throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
-            }
-        } finally {
-            store.commitTransaction();
-        }
+
+        return xmlReportWriter;
     }
 
     private JUnitReportWriter getJunitReportWriter(MavenProject baseProject) throws MojoExecutionException {
