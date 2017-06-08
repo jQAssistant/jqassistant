@@ -52,7 +52,10 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
+        LOGGER.info("Will warn on violation of constraints starting form severity '" + warnOnSeverity + "'");
+        LOGGER.info("Will fail on violation of constraints starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
+
         Writer xmlReportFileWriter;
         try {
             xmlReportFileWriter = new OutputStreamWriter(new FileOutputStream(getXmlReportFile()), XmlReportWriter.ENCODING);
