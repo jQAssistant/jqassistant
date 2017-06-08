@@ -4,4 +4,7 @@
 ifndef::jqa-in-manual[== Version 1.4.0]
 ifdef::jqa-in-manual[== Commandline Tool 1.4.0]
 
-TBW
+* jQAssistant now logs the severity of constraint violations
+  which will cause jQAssistant to fail.
+  It also logs the severity of constraint violations which will
+  cause warnings.
