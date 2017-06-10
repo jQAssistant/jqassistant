@@ -184,7 +184,13 @@ public abstract class AbstractPluginIT {
      */
     @Before
     public void startStore() throws PluginRepositoryException, URISyntaxException, IOException {
-        String fileName = "target/jqassistant/";//  + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
+        /* You might break IT of depending jQAssistant plugins if you change the
+         * location of the used database.
+         * Oliver B. Fischer, 2017-06-10
+         */
+        String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" +
+                          testContextRule.getTestMethod().getName();
+
         URI uri = new File(fileName).toURI();
         // URI uri = new URI("bolt://localhost:7687");
         // URI uri = new URI("memory:///");
