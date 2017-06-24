@@ -1,0 +1,4 @@
+com.buschmais.jqassistant.plugin.junit.api.model
+com.buschmais.jqassistant.plugin.junit.api.scanner
+com.buschmais.jqassistant.plugin.junit.impl.scanner
+com.buschmais.jqassistant.plugin.junit.impl.schema

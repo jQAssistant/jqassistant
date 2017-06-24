@@ -1,0 +1,4 @@
+com.buschmais.jqassistant.plugin.javaee6.api.model
+com.buschmais.jqassistant.plugin.javaee6.api.scanner
+com.buschmais.jqassistant.plugin.javaee6.impl.scanner
+com.sun.java.xml.ns.javaee
