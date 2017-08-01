@@ -216,7 +216,7 @@ Adding the following lines to the file settings.xml (usually located in the $HOM
 [source,xml]
 ----
 <pluginGroups>
-    <pluginGroup>com.buschmais.jqassistant.scm</pluginGroup>
+    <pluginGroup>com.buschmais.jqassistant</pluginGroup>
 </pluginGroups>
 ----
 
