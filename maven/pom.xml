@@ -69,7 +69,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>2.0.0</version>
+                        <version>3.0.0</version>
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <settingsFile>src/it/settings.xml</settingsFile>
@@ -254,7 +254,13 @@
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <configuration>
-                    <severity>minor</severity>
+                    <!--
+                     ! To not configure failOnSeverity and warnOnSeverity
+                     ! directly. Please control these parameters via
+                     ! the user properties set in the properties section
+                     ! of the Ueber Parant of jQAssistant.
+                     ! Oliver B. Fischer, 2017-06-07
+                     !-->
                     <scanIncludes>
                         <scanInclude>
                             <path>${project.basedir}</path>
