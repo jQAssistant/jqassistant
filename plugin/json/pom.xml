@@ -44,7 +44,7 @@
          ! See https://github.com/buschmais/jqa-json-plugin/issues/7
          ! Oliver B. Fischer, 2017-05-20
          !-->
-        <jqassistant.skip>true</jqassistant.skip>
+        <jqassistant.scan.continueOnError>true</jqassistant.scan.continueOnError>
     </properties>
 
 
@@ -121,8 +121,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <testSource>1.8</testSource>
+                    <testTarget>1.8</testTarget>
                 </configuration>
             </plugin>
         </plugins>
