@@ -24,8 +24,18 @@ public class XMLFileFilterTest {
     }
 
     @Test
-    public void matchIfRootElementISRequestedOneAndDocumentHasDeclaration() throws IOException {
+    public void matchIfRootElementISRequestedAndDocumentHasDeclaration() throws IOException {
         ByteArrayInputStream stream = new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project><a></<a></project>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(true));
+    }
+
+    @Test
+    public void matchIfRootElementISRequestedAndDocumentHasDeclarationAndComment() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!-- Comment --><project><a></<a></project>".getBytes());
         FileResource resource = Mockito.mock(FileResource.class);
 
         doReturn(stream).when(resource).createStream();
