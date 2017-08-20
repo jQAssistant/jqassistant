@@ -4,4 +4,4 @@
 ifndef::jqa-in-manual[== Version 1.4]
 ifdef::jqa-in-manual[== Maven 3 Plugin 1.4]
 
- TBW
+- Fixed wrong compiler settings to generate Java 7 bytecode instead of Java 8
