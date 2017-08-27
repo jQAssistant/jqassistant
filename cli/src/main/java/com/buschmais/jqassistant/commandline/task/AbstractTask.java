@@ -32,7 +32,9 @@ public abstract class AbstractTask implements Task {
     protected static final String CMDLINE_OPTION_STORE_URI = "storeUri";
     protected static final String CMDLINE_OPTION_STORE_USERNAME = "storeUsername";
     protected static final String CMDLINE_OPTION_STORE_PASSWORD = "storePassword";
+    @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
+    @Deprecated
     protected static final String CMDLINE_OPTION_STORE_DIRECTORY = "storeDirectory";
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
@@ -77,7 +79,7 @@ public abstract class AbstractTask implements Task {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         String storeUri = getOptionValue(options, CMDLINE_OPTION_STORE_URI);
         String storeDirectory = getOptionValue(options, CMDLINE_OPTION_S);
-        if (storeUri != null && storeDirectory != null ) {
+        if (storeUri != null && storeDirectory != null) {
             throw new CliConfigurationException("Expecting either parameter '" + CMDLINE_OPTION_STORE_DIRECTORY + "' or '" + CMDLINE_OPTION_STORE_URI + "'.");
         }
         if (storeUri != null) {
@@ -105,8 +107,10 @@ public abstract class AbstractTask implements Task {
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt(CMDLINE_OPTION_STORE_DIRECTORY)
-                .withDescription("The location of the Neo4j database.").hasArgs().create(CMDLINE_OPTION_S));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_URI).withDescription("The URI of the Neo4j database.").hasArgs()
+                .withDescription("The location of the Neo4j database. Deprecated, use '" + CMDLINE_OPTION_STORE_URI + "' instead.").hasArgs()
+                .create(CMDLINE_OPTION_S));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_URI)
+                .withDescription("The URI of the Neo4j database, e.g. 'file:jqassistant/store' or 'bolt://localhost:7687'.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_URI));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_USERNAME).withDescription("The user name for connecting to Neo4j database.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_USERNAME));

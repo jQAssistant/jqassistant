@@ -46,7 +46,9 @@ jqassistant.sh scan -u maven:repository::http://my.maven.repository
 ----
 
 ===== Options
-* <<cli:storeDirectory>>
+* <<cli:storeUri>>
+* <<cli:storeUsername>>
+* <<cli:storePassword>>
 
 * -f [<scope>::]<file1>,[<scope>::]<file2> or --files [<scope>::]<file1>,[<scope>::]<file2>
 ** specifies a list of files or directories to scan
@@ -78,7 +80,9 @@ Executes an analysis.
 * <<cli:concepts>>
 * <<cli:constraints>>
 * <<cli:groups>>
-* <<cli:storeDirectory>>
+* <<cli:storeUri>>
+* <<cli:storeUsername>>
+* <<cli:storePassword>>
 * <<cli:ruleDirectory>>
 * <<cli:rulesUrl>>
 * <<cli:reportDirectory>>
@@ -149,7 +153,9 @@ Starts the integrated Neo4j web server.
 ** specifies the binding port for the server (default: 7474)
 
 ===== Options
-* <<cli:storeDirectory>>
+* <<cli:storeUri>>
+* <<cli:storeUsername>>
+* <<cli:storePassword>>
 
 ==== Common options
 
@@ -157,6 +163,20 @@ Starts the integrated Neo4j web server.
 ===== -s, --storeDirectory <directory>
 * specifies the location of the database to use
 * default: './jqassistant/store'
+* Deprecated: use <<cli:storeUri>> instead
+
+[[cli:storeUri]]
+===== -storeUri <uri>
+* specifies the URI of the database to use, for remote databases 'bolt://localhost:7687'
+* default: 'file:jqassistant/store'
+
+[[cli:storeUsername]]
+===== -storeUsername <username>
+* specifies the user name for authentication against remote databases
+
+[[cli:storePassword]]
+===== -storePassword <password>
+* specifies the password for authentication against remote databases
 
 [[cli:groups]]
 ===== -groups <group1>,<group2>
