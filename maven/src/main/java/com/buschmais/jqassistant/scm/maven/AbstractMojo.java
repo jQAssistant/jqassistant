@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +20,7 @@ import org.apache.maven.rtinfo.RuntimeInformation;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
@@ -99,7 +102,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The rule configuration
      */
     @Parameter
-    protected RuleConfiguration rule;
+    private RuleConfiguration rule;
 
     /**
      * Determines if the execution root module shall be used as project root, i.e. to create the store and read the rules from.
@@ -262,10 +265,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     protected RuleConfiguration getRuleConfiguration() {
-        if (rule != null) {
-            return rule;
-        }
-        return RuleConfiguration.builder().build();
+        Severity defaultConceptSeverity = rule.getDefaultConceptSeverity();
+        Severity defaultConstraintSeverity = rule.getDefaultConstraintSeverity();
+        Severity defaultGroupSeverity = rule.getDefaultGroupSeverity();
+        return RuleConfiguration.builder()
+                .defaultConceptSeverity(defaultConceptSeverity != null ? defaultConceptSeverity : DEFAULT.getDefaultConceptSeverity())
+                .defaultConstraintSeverity(
+                        defaultConstraintSeverity != null ? defaultConstraintSeverity : DEFAULT.getDefaultConstraintSeverity())
+                .defaultGroupSeverity(defaultGroupSeverity != null ? defaultGroupSeverity : DEFAULT.getDefaultGroupSeverity()).build();
     }
 
     /**

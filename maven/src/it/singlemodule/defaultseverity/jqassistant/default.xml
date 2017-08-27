@@ -14,4 +14,24 @@
         </verify>
     </constraint>
 
+    <concept id="severity:ConceptWithDefaultSeverity">
+        <description>A concept with default severity.</description>
+        <cypher>
+            RETURN 0
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <constraint id="severity:ConstraintWithDefaultSeverity">
+        <description>A constraint with default severity.</description>
+        <cypher>
+            RETURN 1
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
 </jqa:jqassistant-rules>

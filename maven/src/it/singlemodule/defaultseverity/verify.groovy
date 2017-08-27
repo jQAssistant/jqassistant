@@ -1,7 +1,6 @@
-assert new File(basedir, 'target/jqassistant/jqassistant-report.xml').exists()
-def reportFile = new File(basedir, 'target/jqassistant/jqassistant-report.xml')
-assert reportFile.exists()
-def jqassistantReport = new XmlSlurper().parse(reportFile)
+def reportFile1 = new File(basedir, 'target/jqassistant/jqassistant-report.1.xml')
+assert reportFile1.exists()
+def jqassistantReport = new XmlSlurper().parse(reportFile1)
 def defaultGroup = jqassistantReport.group.find { it.@id = 'default' }
 def constraint = defaultGroup.constraint.find { it.@id == 'severity:Blocker' }
 assert constraint.status == 'failure'

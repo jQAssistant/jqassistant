@@ -30,6 +30,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 
@@ -79,14 +80,14 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     /**
      * The severity threshold to warn on rule violations.
      */
-    @Parameter(property = "jqassistant.warnOnSeverity", defaultValue = "INFO")
-    protected Severity warnOnSeverity;
+    @Parameter(property = "jqassistant.warnOnSeverity")
+    protected Severity warnOnSeverity = RuleConfiguration.DEFAULT.getDefaultConceptSeverity();
 
     /**
      * The severity threshold to fail on rule violations, i.e. break the build.
      */
-    @Parameter(property = "jqassistant.failOnSeverity", defaultValue = "CRITICAL")
-    protected Severity failOnSeverity;
+    @Parameter(property = "jqassistant.failOnSeverity")
+    protected Severity failOnSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
 
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
@@ -104,9 +105,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Will warn on violation of constraints starting form severity '" + warnOnSeverity + "'");
-        getLog().info("Will fail on violation of constraints starting from severity '" + failOnSeverity + "'.");
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
+        getLog().info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
+        getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
 
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
