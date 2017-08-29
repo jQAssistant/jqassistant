@@ -265,9 +265,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     protected RuleConfiguration getRuleConfiguration() {
-        Severity defaultConceptSeverity = rule.getDefaultConceptSeverity();
-        Severity defaultConstraintSeverity = rule.getDefaultConstraintSeverity();
-        Severity defaultGroupSeverity = rule.getDefaultGroupSeverity();
+        Severity defaultConceptSeverity = DEFAULT.getDefaultConceptSeverity();
+        Severity defaultConstraintSeverity = DEFAULT.getDefaultConstraintSeverity();
+        Severity defaultGroupSeverity = DEFAULT.getDefaultGroupSeverity();
+        if (rule != null) {
+            defaultConceptSeverity = rule.getDefaultConceptSeverity();
+            defaultConstraintSeverity = rule.getDefaultConstraintSeverity();
+            defaultGroupSeverity = rule.getDefaultGroupSeverity();
+        }
         return RuleConfiguration.builder()
                 .defaultConceptSeverity(defaultConceptSeverity != null ? defaultConceptSeverity : DEFAULT.getDefaultConceptSeverity())
                 .defaultConstraintSeverity(
