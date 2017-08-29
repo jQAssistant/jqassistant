@@ -1,0 +1,7 @@
+[[documentGroup]]
+:role: group
+:includesConcepts: test:Concept1,test:Concept2
+:includesConstraints: test:Constraint1,test:Constraint2
+:includesGroups: test:Group1,test:Group2
+= Default Rules
+

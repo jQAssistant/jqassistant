@@ -130,6 +130,22 @@ public class AsciiDocRuleSetReaderTest {
         // verifyParameters(constraintWithDefaultValues, true);
     }
 
+    @Test
+    public void documentAsGroup() throws RuleException {
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/document-as-group.adoc");
+        Group documentGroup = ruleSet.getGroupsBucket().getById("documentGroup");
+        assertThat(documentGroup.getId(), equalTo("documentGroup"));
+    }
+
+    @Test
+    public void definitionList() throws RuleException {
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/definition-list.adoc");
+        Group testGroup = ruleSet.getGroupsBucket().getById("test:Default");
+        assertThat(testGroup.getId(), equalTo("test:Default"));
+        Concept testConcept = ruleSet.getConceptBucket().getById("test:Concept");
+        assertThat(testConcept.getId(), equalTo("test:Concept"));
+    }
+
     private void verifyParameters(ExecutableRule rule, boolean assertDefaultValue) {
         Map<String, Parameter> parameters = rule.getParameters();
         RuleSetTestHelper.verifyParameter(parameters, "charParam", Parameter.Type.CHAR, assertDefaultValue ? (byte) 4 : null);

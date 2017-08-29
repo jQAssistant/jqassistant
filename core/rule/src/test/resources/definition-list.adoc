@@ -1,0 +1,22 @@
+= Rules
+
+This file verifies that parsing a document containing a definition list does not fail.
+
+[[test:Default]]
+[role=group]
+== Default Rules
+
+Item 1 Title::
+item 1 definition
+Item 2 Title::
+item 2 definition
+
+[[test:Concept]]
+.Test Concept
+[source,cypher,role=concept]
+----
+match
+  (n)
+return
+  n
+----

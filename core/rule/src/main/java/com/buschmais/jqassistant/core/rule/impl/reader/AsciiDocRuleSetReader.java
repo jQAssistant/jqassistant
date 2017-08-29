@@ -4,14 +4,14 @@ import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.ast.ContentPart;
-import org.asciidoctor.ast.StructuredDocument;
+import org.asciidoctor.ast.AbstractBlock;
+import org.asciidoctor.ast.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +94,19 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *             If building fails.
      */
     private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
         try {
             stream = source.getInputStream();
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
-        StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
-        extractExecutableRules(source, doc, builder);
-        extractGroups(source, doc, builder);
+        Document document;
+        try {
+            document = getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object>emptyMap());
+        } catch (IOException e) {
+            throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
+        }
+        extractRules(source, Collections.singletonList(document), builder);
     }
 
     /**
@@ -116,49 +118,74 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      */
     private Asciidoctor getAsciidoctor() {
         if (cachedAsciidoctor == null) {
-            LOGGER.debug("Creating Asciidoctor instance.");
+            LOGGER.debug("Loading Asciidoctor...");
             cachedAsciidoctor = Asciidoctor.Factory.create();
         }
         return cachedAsciidoctor;
     }
 
-    private void extractExecutableRules(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
-        for (ContentPart part : findExecutableRules(doc.getParts())) {
-            Attributes attributes = new Attributes(part.getAttributes());
-            String id = part.getId();
-            String description = attributes.getString(TITLE);
-            if (description == null) {
-                LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
+    /**
+     * Find all content parts representing source code listings with a role that
+     * represents a rule.
+     *
+     *
+     * @param ruleSource
+     * @param blocks
+     *            The content parts of the document.
+     * @param builder
+     * @return A collection of content parts representing rules.
+     */
+    private  void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
+        for (Object element : blocks) {
+            if (element instanceof AbstractBlock) {
+                AbstractBlock block = (AbstractBlock) element;
+                if (LISTING.equals(block.getContext()) && SOURCE.equals(block.getStyle()) && EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
+                    extractExecutableRule(ruleSource, block, builder);
+                } else if (GROUP.equals(block.getRole())) {
+                    extractGroup(ruleSource, block, builder);
+                }
+                extractRules(ruleSource, block.getBlocks(), builder);
+            } else if (element instanceof Collection<?>) {
+                extractRules(ruleSource, (Collection<?>) element, builder);
             }
-            Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
-            Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
-            String language = attributes.getString(LANGUAGE);
-            String source = unescapeHtml(part.getContent());
-            Executable executable;
-            if (CYPHER.equals(language)) {
-                executable = new CypherExecutable(source);
-            } else {
-                executable = new ScriptExecutable(language.toString(), source);
-            }
-            Verification verification;
-            if (AGGREGATION.equals(attributes.getString(VERIFY))) {
-                verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
-                        .max(attributes.getInt(AGGREGATION_MAX)).build();
-            } else {
-                verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
-            }
-            Report report = getReport(part);
-            if (CONCEPT.equals(part.getRole())) {
-                Severity severity = getSeverity(part, ruleConfiguration.getDefaultConceptSeverity());
-                Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
-                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
-                builder.addConcept(concept);
-            } else if (CONSTRAINT.equals(part.getRole())) {
-                Severity severity = getSeverity(part, ruleConfiguration.getDefaultConstraintSeverity());
-                Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
-                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
-                builder.addConstraint(constraint);
-            }
+        }
+    }
+
+    private void extractExecutableRule(RuleSource ruleSource, AbstractBlock executableRuleBlock, RuleSetBuilder builder) throws RuleException {
+        Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
+        String id = executableRuleBlock.id();
+        String description = attributes.getString(TITLE);
+        if (description == null) {
+            LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
+        }
+        Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
+        Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
+        String language = attributes.getString(LANGUAGE);
+        String source = unescapeHtml(executableRuleBlock.getContent());
+        Executable executable;
+        if (CYPHER.equals(language)) {
+            executable = new CypherExecutable(source);
+        } else {
+            executable = new ScriptExecutable(language.toString(), source);
+        }
+        Verification verification;
+        if (AGGREGATION.equals(attributes.getString(VERIFY))) {
+            verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
+                    .max(attributes.getInt(AGGREGATION_MAX)).build();
+        } else {
+            verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
+        }
+        Report report = getReport(executableRuleBlock);
+        if (CONCEPT.equals(executableRuleBlock.getRole())) {
+            Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
+            Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+            builder.addConcept(concept);
+        } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
+            Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
+            Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+            builder.addConstraint(constraint);
         }
     }
 
@@ -194,29 +221,15 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return required;
     }
 
-    /**
-     * Extract the defined groups from a document.
-     *
-     * @param ruleSource
-     *            The source of the document.
-     * @param doc
-     *            The document.
-     * @param ruleSetBuilder
-     *            The rule set builder.
-     * @throws RuleException
-     *             If the rules cannot be built.
-     */
-    private void extractGroups(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder ruleSetBuilder) throws RuleException {
-        for (ContentPart contentPart : findGroups(doc.getParts())) {
-            Attributes attributes = new Attributes(contentPart.getAttributes());
-            Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
-            Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
-            Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
-            Severity severity = getSeverity(contentPart, ruleConfiguration.getDefaultGroupSeverity());
-            Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource)
-                    .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
-            ruleSetBuilder.addGroup(group);
-        }
+    private void extractGroup(RuleSource ruleSource, AbstractBlock groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
+        Attributes attributes = new Attributes(groupBlock.getAttributes());
+        Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
+        Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
+        Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
+        Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
+        Group group = Group.Builder.newGroup().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
+                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
+        ruleSetBuilder.addGroup(group);
     }
 
     private Map<String, Severity> getGroupElements(Attributes attributes, String attributeName) throws RuleException {
@@ -268,7 +281,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The default severity to use if no severity is specified.
      * @return The severity.
      */
-    private Severity getSeverity(ContentPart part, Severity defaultSeverity) throws RuleException {
+    private Severity getSeverity(AbstractBlock part, Severity defaultSeverity) throws RuleException {
         Object severity = part.getAttributes().get(SEVERITY);
         if (severity == null) {
             return defaultSeverity;
@@ -287,42 +300,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The content of a rule.
      * @return The unescaped rule
      */
-    private String unescapeHtml(String content) {
-        return content.replace("&lt;", "<").replace("&gt;", ">");
-    }
-
-    /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
-     *
-     * @param parts
-     *            The content parts of the document.
-     * @return A collection of content parts representing rules.
-     */
-    private static Collection<ContentPart> findExecutableRules(Collection<ContentPart> parts) {
-        Set<ContentPart> result = new LinkedHashSet<>();
-        if (parts != null) {
-            for (ContentPart part : parts) {
-                if (LISTING.equals(part.getContext()) && SOURCE.equals(part.getStyle()) && EXECUTABLE_RULE_TYPES.contains(part.getRole())) {
-                    result.add(part);
-                }
-                result.addAll(findExecutableRules(part.getParts()));
-            }
-        }
-        return result;
-    }
-
-    private static Collection<ContentPart> findGroups(Collection<ContentPart> parts) {
-        Set<ContentPart> result = new LinkedHashSet<>();
-        if (parts != null) {
-            for (ContentPart part : parts) {
-                if (GROUP.equals(part.getRole())) {
-                    result.add(part);
-                }
-                result.addAll(findGroups(part.getParts()));
-            }
-        }
-        return result;
+    private String unescapeHtml(Object content) {
+        return content.toString().replace("&lt;", "<").replace("&gt;", ">");
     }
 
     /**
@@ -332,7 +311,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The content part.
      * @return The report.
      */
-    private Report getReport(ContentPart part) {
+    private Report getReport(AbstractBlock part) {
         Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
         Object reportType = part.getAttributes().get(REPORT_TYPE);
         Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
@@ -355,7 +334,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The attribute name.
      * @return The properties.
      */
-    private Properties parseProperties(ContentPart part, String attributeName) {
+    private Properties parseProperties(AbstractBlock part, String attributeName) {
         Properties properties = new Properties();
         Object attribute = part.getAttributes().get(attributeName);
         if (attribute == null) {
