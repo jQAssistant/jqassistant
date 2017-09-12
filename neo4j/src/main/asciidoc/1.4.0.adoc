@@ -1,4 +1,8 @@
-== jQAssistant Neo4j Backend Version 1.4.0
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.4.0]
+ifdef::jqa-in-manual[== Neo4j Backend Version 1.4.0]
 
 - TBW
 
