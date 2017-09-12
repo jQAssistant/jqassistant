@@ -1,0 +1,4 @@
+== jQAssistant Neo4j Backend Version 1.4.0
+
+- TBW
+
