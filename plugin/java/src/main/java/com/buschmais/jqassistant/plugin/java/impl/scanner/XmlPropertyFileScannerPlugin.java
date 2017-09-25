@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
 import org.slf4j.Logger;
@@ -43,7 +44,8 @@ public class XmlPropertyFileScannerPlugin
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
-        PropertyFileDescriptor propertyFileDescriptor = store.addDescriptorType(fileDescriptor, PropertyFileDescriptor.class);
+        Class<XmlPropertyFileDescriptor> descriptorType = XmlPropertyFileDescriptor.class;
+        PropertyFileDescriptor propertyFileDescriptor = store.addDescriptorType(fileDescriptor, descriptorType);
         Properties properties = new Properties();
         try (InputStream stream = item.createStream()) {
             properties.loadFromXML(stream);

@@ -1,0 +1,10 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <comment>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+    nonumy eirmod tempor invidunt ut labore et
+    dolore magna aliquyam erat, sed diam voluptua.
+  </comment>
+  <entry key="keyA">valueA</entry>
+  <entry key="keyB">valueB</entry>
+</properties>
