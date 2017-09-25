@@ -16,6 +16,7 @@
     <url>http://jqassistant.org/</url>
 
     <properties>
+        <jqa-xml-plugin.version>1.4-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
         <org.ow2.asm.version>5.2</org.ow2.asm.version>
     </properties>
@@ -102,6 +103,11 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>xml</artifactId>
+            <version>${jqa-xml-plugin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
