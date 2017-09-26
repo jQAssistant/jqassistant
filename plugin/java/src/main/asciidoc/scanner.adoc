@@ -367,23 +367,30 @@ A manifest entry.
 
 [[PropertyFileScanner]]
 == Property File Scanner
-Imports property files, i.e. all files having a suffix `.properties`.
+
+Imports text-based property files and XML-based property files,
+i.e. all files having a suffix `.properties` or `.xml` with
+the doctype
+`<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">`.
 
 [[:File:Java:Properties]]
-=== Nodes labled with `:File:Properties
-A property file containing key/value pairs.
+=== Nodes labled with `:File:Properties` or `:File:Properties:Xml`
 
-.Properties of `:File:Java:Properties`
+A property file containing key/value pairs. A node with the labels
+`:File:Properties` can represent a text based property file (`\*.properties`)
+or a XML based property file (`*.xml`).
+
+.Properties of `:File:Java:Properties` and `:File:Java:Properties:Xml`
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of `:File:Java:Properties`
+.Relations of `:File:Java:Properties` and `:File:Java:Properties:Xml`
 [options="header"]
 |====
-| Name | Target label(s)     | Cardinality | Description
+| Name | Target label(s)          | Cardinality | Description
 | HAS  | <<:Java:Value:Property>> | 0..n        | References a property value
 |====
 
