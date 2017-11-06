@@ -192,10 +192,10 @@ public abstract class AbstractPluginIT {
                           testContextRule.getTestMethod().getName();
 
         URI uri = new File(fileName).toURI();
-        // URI uri = new URI("bolt://localhost:7687");
+        //URI uri = new URI("bolt://localhost:7687");
         // URI uri = new URI("memory:///");
         Properties properties = new Properties();
-        properties.put("neo4j.remote.statement.log", "info");
+        properties.put("neo4j.remote.statement.log.level", "info");
         StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).username("neo4j").password("admin").properties(properties).build();
         store = StoreFactory.getStore(configuration);
         store.start(getDescriptorTypes());
