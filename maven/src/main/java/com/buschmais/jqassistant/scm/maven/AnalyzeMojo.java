@@ -29,7 +29,6 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
@@ -132,7 +131,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
-        } catch (RuleExecutorException e) {
+        } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
         ReportHelper reportHelper = new ReportHelper(logger);
@@ -146,7 +145,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
                 try {
                     effectiveFailOnSeverity = Severity.fromValue(severity);
-                } catch (RuleException e) {
+                } catch (com.buschmais.jqassistant.core.analysis.api.rule.RuleException e) {
                     throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
                 }
             } else {

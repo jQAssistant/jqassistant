@@ -10,9 +10,9 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -37,7 +37,7 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection);
-        } catch (RuleExecutorException e) {
+        } catch (RuleException e) {
             throw new MojoExecutionException("Cannot print effective rules.", e);
         }
     }
