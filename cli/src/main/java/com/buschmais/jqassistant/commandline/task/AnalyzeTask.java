@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -26,7 +27,6 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -80,7 +80,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
-        } catch (RuleExecutorException e) {
+        } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
         } finally {
             IOUtils.closeQuietly(xmlReportFileWriter);
@@ -101,7 +101,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     /**
      * Reads the given rule parameters file.
-     * 
+     *
      * @return The map containing the rule parameters.
      * @throws CliExecutionException
      *             If the file cannot be read.
