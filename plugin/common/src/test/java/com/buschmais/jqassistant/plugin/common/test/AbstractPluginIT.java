@@ -33,7 +33,6 @@ import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -145,7 +144,7 @@ public abstract class AbstractPluginIT {
     private ReportPluginRepository reportPluginRepository;
 
     @Before
-    public void configurePlugins() throws PluginRepositoryException, RuleException, IOException {
+    public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
@@ -325,7 +324,7 @@ public abstract class AbstractPluginIT {
      *            The id.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws RuleException {
         return applyConcept(id, Collections.<String, String> emptyMap());
     }
 
@@ -338,7 +337,7 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws Exception {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
@@ -353,7 +352,7 @@ public abstract class AbstractPluginIT {
      *            The id.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws RuleException {
         return validateConstraint(id, Collections.<String, String> emptyMap());
     }
 
@@ -366,7 +365,7 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws Exception {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
@@ -380,7 +379,7 @@ public abstract class AbstractPluginIT {
      * @param id
      *            The id.
      */
-    protected void executeGroup(String id) throws RuleExecutorException, NoGroupException {
+    protected void executeGroup(String id) throws RuleException {
         executeGroup(id, Collections.<String, String> emptyMap());
     }
 
@@ -392,7 +391,7 @@ public abstract class AbstractPluginIT {
      * @param parameters
      *            The rule parameters.
      */
-    protected void executeGroup(String id, Map<String, String> parameters) throws RuleExecutorException, NoGroupException {
+    protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertNotNull("The request group cannot be found: " + id, group);
