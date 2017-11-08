@@ -19,8 +19,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -376,7 +375,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      * Verifies the group "junit4:default".
      */
     @Test
-    public void defaultGroup() throws RuleExecutorException, NoGroupException {
+    public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion",
