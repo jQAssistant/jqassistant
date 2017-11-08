@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
 public class RowCountVerificationStrategy extends AbstractMinMaxVerificationStrategy implements VerificationStrategy<RowCountVerification> {
@@ -17,7 +17,7 @@ public class RowCountVerificationStrategy extends AbstractMinMaxVerificationStra
 
     @Override
     public <T extends ExecutableRule> Result.Status verify(T executable, RowCountVerification verification, List<String> columnNames,
-            List<Map<String, Object>> rows) throws RuleExecutorException {
+            List<Map<String, Object>> rows) throws RuleException {
         return getStatus(executable, rows.size(), verification.getMin(), verification.getMax());
     }
 

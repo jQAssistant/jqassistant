@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 /**
  * Represents the configuration of the rule executor.
  */
-public class RuleExecutorConfiguration {
+public class RuleSetExecutorConfiguration {
 
     private boolean requiredConceptsAreOptionalByDefault = true;
 

@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class AggregationVerificationStrategyTest {
     private AggregationVerificationStrategy strategy = new AggregationVerificationStrategy();
 
     @Test
-    public void defaultConcept() throws RuleExecutorException {
+    public void defaultConcept() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -51,7 +51,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void min() throws RuleExecutorException {
+    public void min() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().min(1).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -65,7 +65,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void max() throws RuleExecutorException {
+    public void max() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().max(0).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -79,7 +79,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void minMax() throws RuleExecutorException {
+    public void minMax() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().min(1).max(1).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -99,7 +99,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void colum() throws RuleExecutorException {
+    public void colum() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().column("c1").build();
         result = asList(createRow(0, 1), createRow(0, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -107,7 +107,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void emptyResult() throws RuleExecutorException {
+    public void emptyResult() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().build();
         result = Collections.emptyList();
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));

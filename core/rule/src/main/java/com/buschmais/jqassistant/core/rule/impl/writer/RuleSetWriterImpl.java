@@ -13,9 +13,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
@@ -31,7 +30,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
 
     private JAXBContext jaxbContext;
 
-    private RuleExecutorConfiguration configuration = new RuleExecutorConfiguration();
+    private RuleSetExecutorConfiguration configuration = new RuleSetExecutorConfiguration();
 
     public RuleSetWriterImpl(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
@@ -43,15 +42,11 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     }
 
     @Override
-    public void write(RuleSet ruleSet, Writer writer) throws RuleException {
+    public void write(RuleSet ruleSet, Writer writer) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroupsBucket().getIds())
                 .addConstraintIds(ruleSet.getConstraintBucket().getIds()).addConceptIds(ruleSet.getConceptBucket().getIds()).get();
-        try {
-            new RuleExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
-        } catch (RuleExecutorException e) {
-            throw new RuleException("Cannot create rule set", e);
-        }
+        new RuleSetExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
         writeConcepts(visitor.getConcepts().keySet(), rules);
@@ -103,7 +98,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws RuleException {
+    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
@@ -115,7 +110,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) throws RuleException {
+    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         for (Constraint constraint : constraints) {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
@@ -127,7 +122,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeRequiredConcepts(ExecutableRule rule, ExecutableRuleType ruleType) {
+    private void writeRequiredConcepts(ExecutableRule<?> rule, ExecutableRuleType ruleType) {
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
             ReferenceType conceptReferenceType = new ReferenceType();
             conceptReferenceType.setRefId(entry.getKey());
@@ -136,7 +131,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) throws RuleException {
+    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         Executable executable = executableRule.getExecutable();
         if (executable instanceof CypherExecutable) {
             CypherExecutable cypherExecutable = (CypherExecutable) executable;
@@ -148,7 +143,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             scriptType.setValue(scriptExecutable.getSource());
             executableRuleType.setScript(scriptType);
         } else {
-            throw new RuleException("Unsupport executable type " + executable);
+            throw new com.buschmais.jqassistant.core.analysis.api.rule.RuleException("Unsupport executable type " + executable);
         }
     }
 

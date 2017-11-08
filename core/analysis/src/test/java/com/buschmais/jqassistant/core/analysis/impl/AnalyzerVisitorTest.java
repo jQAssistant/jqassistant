@@ -25,7 +25,6 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -86,11 +85,11 @@ public class AnalyzerVisitorTest {
      * Verifies that columns of a query a reported in the order given by the
      * query.
      *
-     * @throws RuleException
+     * @throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException
      *             If the test fails.
      */
     @Test
-    public void columnOrder() throws RuleException {
+    public void columnOrder() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -104,7 +103,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConcept() throws RuleException {
+    public void executeConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         boolean visitConcept = analyzerVisitor.visitConcept(concept, Severity.MAJOR);
         assertThat(visitConcept, equalTo(true));
 
@@ -125,7 +124,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConcept() throws RuleException {
+    public void skipConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         analyzerVisitor.skipConcept(concept, Severity.MAJOR);
 
         verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
@@ -141,7 +140,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConstraint() throws RuleException {
+    public void executeConstraint() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         analyzerVisitor.visitConstraint(constraint, Severity.BLOCKER);
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
@@ -160,7 +159,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConstraint() throws RuleException {
+    public void skipConstraint() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         analyzerVisitor.skipConstraint(constraint, Severity.BLOCKER);
 
         verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
@@ -175,7 +174,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipAppliedConcept() throws RuleException {
+    public void skipAppliedConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
         analyzerVisitor.visitConcept(concept, Severity.MINOR);
@@ -187,7 +186,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeAppliedConcept() throws RuleException {
+    public void executeAppliedConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
@@ -198,15 +197,15 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void missingParameter() throws RuleException {
+    public void missingParameter() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
-            fail("Expecting an " + RuleExecutorException.class.getName());
-        } catch (RuleExecutorException e) {
+            fail("Expecting an " + RuleException.class.getName());
+        } catch (RuleException e) {
             String message = e.getMessage();
             assertThat(message, containsString(concept.getId()));
             assertThat(message, containsString(PARAMETER_WITHOUT_DEFAULT));
@@ -214,7 +213,7 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void ruleSourceInErrorMessage() throws RuleException {
+    public void ruleSourceInErrorMessage() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
@@ -222,8 +221,8 @@ public class AnalyzerVisitorTest {
         try {
             AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
-            fail("Expecting an " + RuleExecutorException.class.getName());
-        } catch (RuleExecutorException e) {
+            fail("Expecting a " + RuleException.class.getName());
+        } catch (RuleException e) {
             String message = e.getMessage();
             assertThat(message, containsString(RULESOURCE));
         }

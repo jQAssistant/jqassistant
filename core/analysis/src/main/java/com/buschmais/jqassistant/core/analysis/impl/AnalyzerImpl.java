@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
-import java.util.Map;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Implementation of the {@link Analyzer}.
@@ -45,11 +46,11 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> ruleParameters) throws RuleExecutorException {
+    public void execute(RuleSet ruleSet, RuleSelection ruleSelection, Map<String, String> ruleParameters) throws RuleException {
         reportPlugin.begin();
         try {
             AnalyzerVisitor visitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportPlugin, logger);
-            RuleExecutor executor = new RuleExecutor(visitor, configuration.getRuleExecutorConfiguration());
+            RuleSetExecutor executor = new RuleSetExecutor(visitor, configuration.getRuleSetExecutorConfiguration());
             executor.execute(ruleSet, ruleSelection);
         } finally {
             reportPlugin.end();

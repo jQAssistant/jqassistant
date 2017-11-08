@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class RowCountVerificationStrategyTest {
     private RowCountVerificationStrategy strategy = new RowCountVerificationStrategy();
 
     @Test
-    public void defaultConfiguration() throws RuleExecutorException {
+    public void defaultConfiguration() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -48,7 +48,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void min() throws RuleExecutorException {
+    public void min() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().min(1).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -59,7 +59,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void max() throws RuleExecutorException {
+    public void max() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().max(0).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -70,7 +70,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void minMax() throws RuleExecutorException {
+    public void minMax() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().min(1).max(1).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));

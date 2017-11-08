@@ -5,8 +5,6 @@ import static org.mockito.Mockito.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,17 +12,19 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RuleExecutorTest {
+public class RuleSetExecutorTest {
 
     @Mock
     private RuleVisitor visitor;
 
-    private RuleExecutorConfiguration configuration;
+    private RuleSetExecutorConfiguration configuration;
 
-    private RuleExecutor ruleExecutor;
+    private RuleSetExecutor ruleExecutor;
 
     private Concept defaultConcept;
     private Concept overriddenConcept;
@@ -33,8 +33,8 @@ public class RuleExecutorTest {
 
     @Before
     public void setUp() throws Exception {
-        configuration = new RuleExecutorConfiguration();
-        ruleExecutor = new RuleExecutor(visitor, configuration);
+        configuration = new RuleSetExecutorConfiguration();
+        ruleExecutor = new RuleSetExecutor(visitor, configuration);
         defaultConcept = Concept.Builder.newConcept().id("concept:Default").severity(Severity.MAJOR).get();
         overriddenConcept = Concept.Builder.newConcept().id("concept:Overridden").severity(Severity.MAJOR).get();
         defaultConstraint = Constraint.Builder.newConstraint().id("constraint:Default").severity(Severity.MAJOR).get();

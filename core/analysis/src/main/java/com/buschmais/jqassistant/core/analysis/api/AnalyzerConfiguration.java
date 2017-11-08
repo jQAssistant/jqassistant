@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import com.buschmais.jqassistant.core.rule.api.executor.RuleExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 
 /**
  * Represents the configuration of the analyzer.
@@ -9,7 +9,7 @@ public class AnalyzerConfiguration {
 
     private boolean executeAppliedConcepts = false;
 
-    private RuleExecutorConfiguration ruleExecutorConfiguration = new RuleExecutorConfiguration();
+    private RuleSetExecutorConfiguration ruleSetExecutorConfiguration = new RuleSetExecutorConfiguration();
 
     public boolean isExecuteAppliedConcepts() {
         return executeAppliedConcepts;
@@ -19,11 +19,11 @@ public class AnalyzerConfiguration {
         this.executeAppliedConcepts = executeAppliedConcepts;
     }
 
-    public RuleExecutorConfiguration getRuleExecutorConfiguration() {
-        return ruleExecutorConfiguration;
+    public RuleSetExecutorConfiguration getRuleSetExecutorConfiguration() {
+        return ruleSetExecutorConfiguration;
     }
 
-    public void setRuleExecutorConfiguration(RuleExecutorConfiguration ruleExecutorConfiguration) {
-        this.ruleExecutorConfiguration = ruleExecutorConfiguration;
+    public void setRuleSetExecutorConfiguration(RuleSetExecutorConfiguration ruleSetExecutorConfiguration) {
+        this.ruleSetExecutorConfiguration = ruleSetExecutorConfiguration;
     }
 }

@@ -8,9 +8,9 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
- * Executes rules.
+ * Controls execution of {@link RuleSet}s.
  */
-public class RuleExecutor {
+public class RuleSetExecutor {
 
     private Map<Concept, Boolean> executedConcepts = new HashMap<>();
 
@@ -20,14 +20,14 @@ public class RuleExecutor {
 
     private RuleVisitor ruleVisitor;
 
-    private RuleExecutorConfiguration configuration;
+    private RuleSetExecutorConfiguration configuration;
 
-    public RuleExecutor(RuleVisitor ruleVisitor, RuleExecutorConfiguration configuration) {
+    public RuleSetExecutor(RuleVisitor ruleVisitor, RuleSetExecutorConfiguration configuration) {
         this.ruleVisitor = ruleVisitor;
         this.configuration = configuration;
     }
 
-    public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleExecutorException {
+    public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
         for (String conceptId : ruleSelection.getConceptIds()) {
             Concept concept = resolveConcept(ruleSet, conceptId);
             applyConcept(ruleSet, concept, concept.getSeverity());
@@ -52,7 +52,7 @@ public class RuleExecutor {
      * @param severity
      *            The severity.
      */
-    private void executeGroup(RuleSet ruleSet, Group group, Severity severity) throws RuleExecutorException {
+    private void executeGroup(RuleSet ruleSet, Group group, Severity severity) throws RuleException {
         if (!executedGroups.contains(group)) {
             ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, severity, severity));
             for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
@@ -98,10 +98,10 @@ public class RuleExecutor {
      *
      * @param constraint
      *            The constraint.
-     * @throws RuleExecutorException
+     * @throws RuleException
      *             If the constraint cannot be validated.
      */
-    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws RuleExecutorException {
+    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws RuleException {
         if (!executedConstraints.contains(constraint)) {
             if (applyRequiredConcepts(ruleSet, constraint)) {
                 ruleVisitor.visitConstraint(constraint, severity);
@@ -112,7 +112,7 @@ public class RuleExecutor {
         }
     }
 
-    private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule rule) throws RuleExecutorException {
+    private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule) throws RuleException {
         boolean requiredConceptsApplied = true;
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
             String conceptId = entry.getKey();
@@ -132,11 +132,11 @@ public class RuleExecutor {
      *
      * @param concept
      *            The concept.
-     * @throws RuleExecutorException
+     * @throws RuleException
      *             If the concept cannot be applied.
      */
-    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity severity) throws RuleExecutorException {
-        Boolean result =  executedConcepts.get(concept);
+    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity severity) throws RuleException {
+        Boolean result = executedConcepts.get(concept);
         if (result == null) {
             if (applyRequiredConcepts(ruleSet, concept)) {
                 result = ruleVisitor.visitConcept(concept, severity);
@@ -149,27 +149,27 @@ public class RuleExecutor {
         return result;
     }
 
-    public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws RuleExecutorException {
+    public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws RuleException {
         try {
             return ruleSet.getConceptBucket().getById(requiredConceptId);
         } catch (NoConceptException e) {
-            throw new RuleExecutorException("Concept '" + requiredConceptId + "' is not defined.");
+            throw new RuleException("Concept '" + requiredConceptId + "' is not defined.");
         }
     }
 
-    public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws RuleExecutorException {
+    public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws RuleException {
         try {
             return ruleSet.getConstraintBucket().getById(constraintId);
         } catch (NoRuleException e) {
-            throw new RuleExecutorException("Constraint '" + constraintId + "' not found.");
+            throw new RuleException("Constraint '" + constraintId + "' not found.");
         }
     }
 
-    public Group resolveGroup(RuleSet ruleSet, String groupId) throws RuleExecutorException {
+    public Group resolveGroup(RuleSet ruleSet, String groupId) throws RuleException {
         try {
             return ruleSet.getGroupsBucket().getById(groupId);
         } catch (NoGroupException e) {
-            throw new RuleExecutorException("Group '" + groupId + "' is not defined.", e);
+            throw new RuleException("Group '" + groupId + "' is not defined.", e);
         }
     }
 

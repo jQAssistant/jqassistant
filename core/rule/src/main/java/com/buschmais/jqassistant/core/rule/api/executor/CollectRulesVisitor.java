@@ -22,18 +22,18 @@ public class CollectRulesVisitor extends AbstractRuleVisitor {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleExecutorException {
+    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         concepts.put(concept, effectiveSeverity);
         return true;
     }
 
     @Override
-    public void  visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleExecutorException {
+    public void  visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         constraints.put(constraint, effectiveSeverity);
     }
 
     @Override
-    public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleExecutorException {
+    public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
         groups.add(group);
     }
 
