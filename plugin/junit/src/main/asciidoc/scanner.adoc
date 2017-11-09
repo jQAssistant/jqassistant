@@ -27,7 +27,7 @@ A file containing results of a JUnit4 test suite.
 |====
 
 [[:TestCase]]
-=== :JUnit::TestCase
+=== :JUnit:TestCase
 A test case.
 
 .Properties of `:JUnit::TestCase`
