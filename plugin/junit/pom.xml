@@ -43,6 +43,10 @@
         <jqa-java-plugin.version>1.4-SNAPSHOT</jqa-java-plugin.version>
         <jqa-xml-plugin.version>1.4-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
+
+        <junit-plattform-launcher.version>1.0.1</junit-plattform-launcher.version>
+        <junit-jupiter-engine.version>5.0.1</junit-jupiter-engine.version>
+        <junit-vintage-engine.version>4.12.1</junit-vintage-engine.version>
     </properties>
 
     <build>
@@ -105,6 +109,24 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-plattform-launcher.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter-engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit-vintage-engine.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
