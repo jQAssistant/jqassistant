@@ -1,0 +1,36 @@
+= Requirements for JUnit 5 Support in jQA
+
+- Detect methods annotated with `@Test`, `@ParameterizedTest`, and `@RepeatedTest`
+  and label them with the labels `TestMethod` and `junit5`.
+- Detect classes (also inner classes) containing tests and label them with the labels
+  `junit5` and `TestClass`.
+- Detect all test methods and classes with tests and label them with the labels
+  `junit5` and `Test`
+- Detect all test classes and test methods annoated with `@Disabled` and
+  label them with `Junit5`, `Disabled` and `Ignore`.
+- Detect all JUnit 4 test classes and test methods annotated with `@Ignore` and
+  label them with the label `Disabled`
+- Detect all methods annotated with `@BeforeEach` and label them with
+  `Junit5`, `BeforeMethod`, `BeforeEach`.
+- Detect all methods annotated with `@AfterEach` and label them with
+  `Junit5`, `AfterMethod`, `AfterEach`
+- Detect all methods annotated with `@BeforeAll` and label them with `Junit5`, `BeforeClassMethod`
+  and `BeforeAll`
+- Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClassMethod`
+  and `AfterAll`
+
+
+== Unclear
+
+- @TestFactory
+- @TestInstance
+- @TestTemplate
+- @DisplayName
+- @Nested
+- @Tag
+- @Displayname
+- Meta-Annotations and Composed Annotations
+- Constraints to support the transistion from 4 to 5
+
+
+
