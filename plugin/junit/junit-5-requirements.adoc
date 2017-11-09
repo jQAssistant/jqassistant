@@ -19,6 +19,9 @@
 - Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClassMethod`
   and `AfterAll`
 
+== Other issues
+
+- Check if the Surefire reports can be still processed
 
 == Unclear
 
