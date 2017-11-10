@@ -16,10 +16,15 @@
 
   Done:
     - Methods are handley correctly
+    - disabled classes
 
   Open:
-    - disabled classes
-    
+
+  To decide:
+    - should methods in a class annotated with @Disabled also be labled
+      with Disabled?
+      - if yes, should we to this also for JUnit 4?
+
 - Detect all JUnit 4 test classes and test methods annotated with `@Ignore` and
   label them with the label `Disabled`
 - Detect all methods annotated with `@BeforeEach` and label them with
