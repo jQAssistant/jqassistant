@@ -7,8 +7,11 @@
     - Methods annoated with @Test will be processed correctly
 
 
-- Detect classes (also inner classes) containing tests and label them with the labels
+- Detect classes (also inner classes, nested classes ) containing tests and label them with the labels
   `junit5` and `TestClass`.
+
+- Label nested test classes with the label Junit5, TestClass, NestedTestClass
+
 - Detect all test methods and classes with tests and label them with the labels
   `junit5` and `Test`
 - Detect all test classes and test methods annoated with `@Disabled` and
