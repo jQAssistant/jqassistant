@@ -25,15 +25,28 @@
       with Disabled?
       - if yes, should we to this also for JUnit 4?
 
-- Detect all JUnit 4 test classes and test methods annotated with `@Ignore` and
+- Detect all JUnit 5 test classes and test methods annotated with `@Ignore` and
   label them with the label `Disabled`
+
+  Open:
+    - Check if we lable them also with Ignore
+
 - Detect all methods annotated with `@BeforeEach` and label them with
-  `Junit5`, `BeforeMethod`, `BeforeEach`.
+  `Junit5`, `Before`, `BeforeEach`.
+
+  Done:
+    - all
+
 - Detect all methods annotated with `@AfterEach` and label them with
-  `Junit5`, `AfterMethod`, `AfterEach`
-- Detect all methods annotated with `@BeforeAll` and label them with `Junit5`, `BeforeClassMethod`
+  `Junit5`, `After`, `AfterEach`
+
+  Done:
+    - all
+
+- Detect all methods annotated with `@BeforeAll` and label them with `Junit5`, `BeforeClass`
   and `BeforeAll`
-- Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClassMethod`
+
+- Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClass`
   and `AfterAll`
 
 == Other issues

@@ -34,4 +34,38 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:BeforeEach">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.BeforeEach"
+            with "Junit5", "Before" and "BeforeEach".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.BeforeEach"
+            SET
+              m:Junit5:BeforeEach:Before
+            RETURN
+              m AS BeforeEachMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit5:AfterEach">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
+            with "Junit5", "After", and "AfterEach".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.AfterEach"
+            SET
+              m:Junit5:AfterEach:After
+            RETURN
+              m AS AfterEachMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>
