@@ -54,7 +54,7 @@
     <concept id="junit5:DisabledTestClassOrMethod">
         <description>
             Labels all classes or methods annotated with "@org.junit.jupiter.api.Disabled"
-            with "Junit5", "Ignore" and "Disabled".
+            with "Junit5" and "Ignore".
         </description>
         <cypher><![CDATA[
             MATCH
@@ -62,7 +62,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.Disabled"
             SET
-              e:Junit5:Ignore:Disabled
+              e:Junit5:Ignore
             RETURN
               e AS IgnoredElement
         ]]></cypher>
@@ -71,7 +71,7 @@
     <concept id="junit5:BeforeEach">
         <description>
             Labels all methods annotated by "@org.junit.jupiter.api.BeforeEach"
-            with "Junit5", "Before" and "BeforeEach".</description>
+            with "Junit5" and "Before".</description>
         <cypher><![CDATA[
             MATCH
               (c:Type:Class)-[:DECLARES]->(m:Method),
@@ -79,16 +79,16 @@
             WHERE
               a.fqn="org.junit.jupiter.api.BeforeEach"
             SET
-              m:Junit5:BeforeEach:Before
+              m:Junit5:Before
             RETURN
-              m AS BeforeEachMethod, c AS TestClass
+              m AS BeforeMethod, c AS TestClass
         ]]></cypher>
     </concept>
 
     <concept id="junit5:AfterEach">
         <description>
             Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
-            with "Junit5", "After", and "AfterEach".</description>
+            with "Junit5" and "After".</description>
         <cypher><![CDATA[
             MATCH
               (c:Type:Class)-[:DECLARES]->(m:Method),
@@ -96,7 +96,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.AfterEach"
             SET
-              m:Junit5:AfterEach:After
+              m:Junit5:After
             RETURN
               m AS AfterEachMethod, c AS TestClass
         ]]></cypher>

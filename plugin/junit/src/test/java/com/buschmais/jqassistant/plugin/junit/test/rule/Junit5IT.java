@@ -88,8 +88,6 @@ public class Junit5IT extends AbstractJavaPluginIT {
                    hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
         assertThat(query("MATCH (m:Method:Junit5:Test:Ignore) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test:Disabled) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
     }
 
     @Test
@@ -102,8 +100,6 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         assertThat(query("MATCH (c:Class:Junit5:Ignore) RETURN c").getColumn("c"),
                    hasItem(TypeDescriptorMatcher.typeDescriptor(DisabledTestClass.class)));
-        assertThat(query("MATCH (c:Class:Junit5:Disabled) RETURN c").getColumn("c"),
-                   hasItem(TypeDescriptorMatcher.typeDescriptor(DisabledTestClass.class)));
     }
 
     @Test
@@ -113,8 +109,6 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:BeforeEach) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
         assertThat(query("MATCH (m:Method:Junit5:Before) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
     }
@@ -132,8 +126,6 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:AfterEach) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "afterEach")));
         assertThat(query("MATCH (m:Method:Junit5:After) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "afterEach")));
     }

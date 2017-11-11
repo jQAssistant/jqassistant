@@ -1,20 +1,12 @@
 = Requirements for JUnit 5 Support in jQA
 
-- Detect methods annotated with `@Test`, `@ParameterizedTest`, and `@RepeatedTest`
-  and label them with the labels `Test` and `junit5`
 
-  Done:
-    - Methods annoated with @Test will be processed correctly
-    - Methods annotated with @RepeatedTests will be processed correctly
-    - Methods annotated with @ParameterizedTest will be processed correctly
 
 - Detect classes (also inner classes, nested classes ) containing tests and label them with the labels
   `junit5` and `Class`.
 
 - Label nested test classes with the label Junit5, TestClass, NestedT
 
-- Detect all test methods and classes with tests and label them with the labels
-  `junit5` and `Test`
 - Detect all test classes and test methods annoated with `@Disabled` and
   label them with `Junit5`, `Disabled` and `Ignore`.
 
@@ -35,11 +27,6 @@
   Open:
     - Check if we lable them also with Ignore
 
-- Detect all methods annotated with `@BeforeEach` and label them with
-  `Junit5`, `Before`, `BeforeEach`.
-
-  Done:
-    - all
 
 - Detect all methods annotated with `@AfterEach` and label them with
   `Junit5`, `After`, `AfterEach`
@@ -53,9 +40,12 @@
 - Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClass`
   and `AfterAll`
 
+
 == Other issues
 
 - Check if the Surefire reports can be still processed
+- Compare the lables used by the testNG plugin with the lables
+  used by the Junit plugin
 
 == Unclear
 
@@ -71,6 +61,29 @@
 == Doc updates
 
 - Classes with tests are not longer labled as Test, also for Junit 4 & 3. Ask Dirk about it.!?
+
+== Done
+
+
+- Detect all test methods and classes with tests and label them with the labels
+  `junit5` and `Test`
+
+  Done:
+  - all
+
+- Detect methods annotated with `@Test`, `@ParameterizedTest`, and `@RepeatedTest`
+  and label them with the labels `Test` and `junit5`
+
+  Done:
+    - Methods annoated with @Test will be processed correctly
+    - Methods annotated with @RepeatedTests will be processed correctly
+    - Methods annotated with @ParameterizedTest will be processed correctly
+
+- Detect all methods annotated with `@BeforeEach` and label them with
+  `Junit5`, `Before`, `BeforeEach`.
+
+  Done:
+    - all
 
 
 
