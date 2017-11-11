@@ -2,8 +2,7 @@ package com.buschmais.jqassistant.plugin.junit.test.rule;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.StandardTest;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,6 +31,49 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "activeTest")));
+    }
+
+    @Test
+    public void nestedTestsMethodsFound() throws Exception {
+        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class,
+                    ParentTestClass.ChildTestClass.GrandChildTestClass.class);
+        assertThat(applyConcept("junit5:TestMethod").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(ParentTestClass.class, "aTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(ParentTestClass.ChildTestClass.class, "bTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class, "cTest")));
+    }
+
+    @Test
+    public void parameterizedTestFound() throws Exception {
+        scanClasses(ParamterizedTestClass.class);
+        assertThat(applyConcept("junit5:ParameterizedTestMethod").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+        assertThat(query("MATCH (m:Method:Junit5:Parameterized) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+    }
+
+    @Test
+    public void repeatedTestFound() throws Exception {
+        scanClasses(RepeatedTestClass.class);
+        assertThat(applyConcept("junit5:RepeatedTestMethod").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test:Repeated) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
     }
 
     @Test

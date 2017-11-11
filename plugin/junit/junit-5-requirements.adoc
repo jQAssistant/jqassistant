@@ -1,16 +1,17 @@
 = Requirements for JUnit 5 Support in jQA
 
 - Detect methods annotated with `@Test`, `@ParameterizedTest`, and `@RepeatedTest`
-  and label them with the labels `Test` and `junit5`.
+  and label them with the labels `Test` and `junit5`
 
   Done:
     - Methods annoated with @Test will be processed correctly
-
+    - Methods annotated with @RepeatedTests will be processed correctly
+    - Methods annotated with @ParameterizedTest will be processed correctly
 
 - Detect classes (also inner classes, nested classes ) containing tests and label them with the labels
-  `junit5` and `TestClass`.
+  `junit5` and `Class`.
 
-- Label nested test classes with the label Junit5, TestClass, NestedTestClass
+- Label nested test classes with the label Junit5, TestClass, NestedT
 
 - Detect all test methods and classes with tests and label them with the labels
   `junit5` and `Test`
@@ -66,6 +67,10 @@
 - @Displayname
 - Meta-Annotations and Composed Annotations
 - Constraints to support the transistion from 4 to 5
+
+== Doc updates
+
+- Classes with tests are not longer labled as Test, also for Junit 4 & 3. Ask Dirk about it.!?
 
 
 

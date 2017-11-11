@@ -17,6 +17,40 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:RepeatedTestMethod">
+        <description>
+            Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
+            labels them with "Test", "Repeated", and "Junit5".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.RepeatedTest"
+            SET
+              m:Repeated:Test:Junit5
+            RETURN
+              m AS Test
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit5:ParameterizedTestMethod">
+        <description>
+            Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
+            labels them with "Test", "Paramterized", and "Junit5".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.params.ParameterizedTest"
+            SET
+              m:Parameterized:Test:Junit5
+            RETURN
+              m AS Test
+        ]]></cypher>
+    </concept>
+
     <concept id="junit5:DisabledTestClassOrMethod">
         <description>
             Labels all classes or methods annotated with "@org.junit.jupiter.api.Disabled"
