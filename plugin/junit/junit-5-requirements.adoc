@@ -7,39 +7,6 @@
 
 - Label nested test classes with the label Junit5, TestClass, NestedT
 
-- Detect all test classes and test methods annoated with `@Disabled` and
-  label them with `Junit5`, `Disabled` and `Ignore`.
-
-  Done:
-    - Methods are handley correctly
-    - disabled classes
-
-  Open:
-
-  To decide:
-    - should methods in a class annotated with @Disabled also be labled
-      with Disabled?
-      - if yes, should we to this also for JUnit 4?
-
-- Detect all JUnit 5 test classes and test methods annotated with `@Ignore` and
-  label them with the label `Disabled`
-
-  Open:
-    - Check if we lable them also with Ignore
-
-
-- Detect all methods annotated with `@AfterEach` and label them with
-  `Junit5`, `After`, `AfterEach`
-
-  Done:
-    - all
-
-- Detect all methods annotated with `@BeforeAll` and label them with `Junit5`, `BeforeClass`
-  and `BeforeAll`
-
-- Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClass`
-  and `AfterAll`
-
 
 == Other issues
 
@@ -84,6 +51,24 @@
 
   Done:
     - all
+
+- Detect all methods annotated with `@BeforeAll` and label them with `Junit5`, `BeforeClass`.
+
+- Detect all methods annotated with `@AfterAll` and label them with `Junit5`, `AfterClass`.
+
+- Detect all JUnit 5 test classes and test methods annotated with `@Ignore` and
+  label them with the label `Disabled`
+
+- Detect all methods annotated with `@AfterEach` and label them with
+  `Junit5`, `After`, `AfterEach`
+
+  Done:
+    - Methods are handley correctly
+    - disabled classes
+
+- Detect all test classes and test methods annoated with `@Disabled` and
+  label them with `Junit5` and `Ignore`.
+
 
 
 

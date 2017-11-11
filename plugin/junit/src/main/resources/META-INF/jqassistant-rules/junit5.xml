@@ -85,6 +85,23 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:BeforeAll">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.BeforeAll"
+            with "Junit5" and "BeforeClass".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.BeforeAll"
+            SET
+              m:Junit5:BeforeClass
+            RETURN
+              m AS BeforeClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
     <concept id="junit5:AfterEach">
         <description>
             Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
@@ -101,5 +118,23 @@
               m AS AfterEachMethod, c AS TestClass
         ]]></cypher>
     </concept>
+
+    <concept id="junit5:AfterAll">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.AfterAll"
+            with "Junit5" and "AfterClass".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.AfterAll"
+            SET
+              m:Junit5:AfterClass
+            RETURN
+              m AS AfterClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
 
 </jqa:jqassistant-rules>

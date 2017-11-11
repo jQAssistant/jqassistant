@@ -113,10 +113,15 @@ public class Junit5IT extends AbstractJavaPluginIT {
                    hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
     }
 
-    @Ignore
     @Test
     public void beforeAllMethodFound() throws Exception {
-        throw new RuntimeException("Not implemented yet!");
+        scanClasses(StandardTest.class);
+        assertThat(applyConcept("junit5:BeforeAll").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (m:Method:Junit5:BeforeClass) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(StandardTest.class, "beforeAll")));
     }
 
     @Test
@@ -130,9 +135,14 @@ public class Junit5IT extends AbstractJavaPluginIT {
                    hasItem(methodDescriptor(StandardTest.class, "afterEach")));
     }
 
-    @Ignore
     @Test
     public void afterAllMethodFound() throws Exception {
-        throw new RuntimeException("Not implemented yet!");
+        scanClasses(StandardTest.class);
+        assertThat(applyConcept("junit5:AfterAll").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (m:Method:Junit5:AfterClass) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(StandardTest.class, "afterAll")));
     }
 }
