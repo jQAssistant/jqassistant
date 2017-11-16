@@ -86,7 +86,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test:Ignore) RETURN m").getColumn("m"),
+        assertThat(query("MATCH (m:Method:Junit5:Test:Disabled) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
     }
 
@@ -98,7 +98,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (c:Class:Junit5:Ignore) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (c:Class:Junit5:Disabled) RETURN c").getColumn("c"),
                    hasItem(TypeDescriptorMatcher.typeDescriptor(DisabledTestClass.class)));
     }
 
@@ -109,7 +109,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:Before) RETURN m").getColumn("m"),
+        assertThat(query("MATCH (m:Method:Junit5:BeforeEach) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
     }
 
@@ -120,7 +120,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:BeforeClass) RETURN m").getColumn("m"),
+        assertThat(query("MATCH (m:Method:Junit5:BeforeAll) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "beforeAll")));
     }
 
@@ -131,7 +131,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:After) RETURN m").getColumn("m"),
+        assertThat(query("MATCH (m:Method:Junit5:AfterEach) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "afterEach")));
     }
 
@@ -142,7 +142,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:AfterClass) RETURN m").getColumn("m"),
+        assertThat(query("MATCH (m:Method:Junit5:AfterAll) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "afterAll")));
     }
 }

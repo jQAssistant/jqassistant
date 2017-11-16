@@ -8,6 +8,10 @@
 - Label nested test classes with the label Junit5, TestClass, NestedT
 
 
+- Reason why a test has been disabled should be accessible.
+
+
+
 == Other issues
 
 - Check if the Surefire reports can be still processed
@@ -16,7 +20,7 @@
 
 == Unclear
 
-- @TestFactory
+- @TestFactory   (:Junit5:Testfactory)
 - @TestInstance
 - @TestTemplate
 - @Nested
@@ -24,6 +28,12 @@
 - @Displayname
 - Meta-Annotations and Composed Annotations
 - Constraints to support the transistion from 4 to 5
+- Usage of label testcase in the following concepts in junit4.xml
+   - junit4:TestCaseDefinedByClass
+   - junit4:TestCaseImplementedByMethod
+- Support of contrainsts in junit4.xml
+-
+
 
 == Doc updates
 

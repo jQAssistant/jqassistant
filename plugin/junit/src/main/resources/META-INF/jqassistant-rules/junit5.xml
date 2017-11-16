@@ -62,7 +62,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.Disabled"
             SET
-              e:Junit5:Ignore
+              e:Junit5:Disabled
             RETURN
               e AS IgnoredElement
         ]]></cypher>
@@ -79,7 +79,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.BeforeEach"
             SET
-              m:Junit5:Before
+              m:Junit5:BeforeEach
             RETURN
               m AS BeforeMethod, c AS TestClass
         ]]></cypher>
@@ -96,7 +96,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.BeforeAll"
             SET
-              m:Junit5:BeforeClass
+              m:Junit5:BeforeAll
             RETURN
               m AS BeforeClassMethod, c AS TestClass
         ]]></cypher>
@@ -113,7 +113,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.AfterEach"
             SET
-              m:Junit5:After
+              m:Junit5:AfterEach
             RETURN
               m AS AfterEachMethod, c AS TestClass
         ]]></cypher>
@@ -130,7 +130,7 @@
             WHERE
               a.fqn="org.junit.jupiter.api.AfterAll"
             SET
-              m:Junit5:AfterClass
+              m:Junit5:AfterAll
             RETURN
               m AS AfterClassMethod, c AS TestClass
         ]]></cypher>
