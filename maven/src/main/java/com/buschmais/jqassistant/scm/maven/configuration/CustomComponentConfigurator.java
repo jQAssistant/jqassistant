@@ -19,5 +19,6 @@ public class CustomComponentConfigurator
     @Override
     public void initialize() throws InitializationException {
         this.converterLookup.registerConverter(new SeverityConfigurationConverter());
+        this.converterLookup.registerConverter(new StoreLifeCycleConverter());
     }
 }

@@ -5,6 +5,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.converters.basic.AbstractBasicConverter;
 
+import static java.lang.String.format;
+
 public class SeverityConfigurationConverter extends AbstractBasicConverter {
     @Override
     public boolean canConvert(Class<?> type) {
@@ -12,12 +14,13 @@ public class SeverityConfigurationConverter extends AbstractBasicConverter {
     }
 
     @Override
-    protected Object fromString(String str) throws ComponentConfigurationException {
+    protected Object fromString(String value) throws ComponentConfigurationException {
         try {
-            return Severity.fromValue(str);
+            return Severity.fromValue(value);
         }
         catch (RuleException re) {
-            throw new ComponentConfigurationException("Unknown or illegal value for severity.", re);
+            String message = format("'%s' is not a known severity.", value);
+            throw new ComponentConfigurationException(message);
         }
     }
 }
