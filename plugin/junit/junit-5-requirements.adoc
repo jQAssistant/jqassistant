@@ -21,7 +21,7 @@
 == Unclear
 
 - @TestFactory   (:Junit5:Testfactory)
-- @TestInstance
+
 - @TestTemplate
 - @Nested
 - @Tag
@@ -41,6 +41,7 @@
 
 == Done
 
+- @TestInstance will be not supported with labels and concepts
 
 - Detect all test methods and classes with tests and label them with the labels
   `junit5` and `Test`

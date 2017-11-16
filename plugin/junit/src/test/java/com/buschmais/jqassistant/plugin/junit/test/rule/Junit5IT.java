@@ -145,4 +145,16 @@ public class Junit5IT extends AbstractJavaPluginIT {
         assertThat(query("MATCH (m:Method:Junit5:AfterAll) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(StandardTest.class, "afterAll")));
     }
+
+
+    @Test
+    public void testTemplateFound() throws Exception {
+        scanClasses(TestTemplateClass.class);
+        assertThat(applyConcept("junit5:TestTemplateMethod").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (m:Method:Junit5:Test:Template) RETURN m").getColumn("m"),
+                   hasItem(methodDescriptor(TestTemplateClass.class, "templatedMethod", int.class)));
+    }
 }

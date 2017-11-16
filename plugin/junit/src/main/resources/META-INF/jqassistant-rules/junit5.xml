@@ -136,5 +136,21 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:TestTemplateMethod">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
+            with "Junit5", "Test" and "Template".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.TestTemplate"
+            SET
+              m:Junit5:Test:Template
+            RETURN
+              m AS AfterClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
 
 </jqa:jqassistant-rules>
