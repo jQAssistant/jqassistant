@@ -260,7 +260,7 @@ gathered information in database.
 * continueOnError
 ** continue scanning even if a plugin fails with an unrecoverable error
 
-NOTE: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
+WARNING: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
 
 [[available-scopes]]
 ==== jqassistant:available-scopes
