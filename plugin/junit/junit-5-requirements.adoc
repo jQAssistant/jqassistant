@@ -10,6 +10,7 @@
 
 - Reason why a test has been disabled should be accessible.
 
+- Relation DEFINED_BY
 
 
 == Other issues
@@ -22,7 +23,6 @@
 
 - @TestFactory   (:Junit5:Testfactory)
 
-- @TestTemplate
 - @Nested
 - @Tag
 - @Displayname
@@ -40,6 +40,8 @@
 - Classes with tests are not longer labled as Test, also for Junit 4 & 3. Ask Dirk about it.!?
 
 == Done
+
+- @TestTemplate
 
 - @TestInstance will be not supported with labels and concepts
 

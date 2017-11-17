@@ -153,4 +153,39 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:TaggedMethod">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.Tag"
+            with "Junit5", "Test" and "Tag".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.Tag"
+            SET
+              m:Junit5:Test:Tag
+            RETURN
+              m AS TestMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit5:TaggedMethodTags">
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.Tag"
+            with "Junit5", "Test" and "Tag".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.jupiter.api.Tag"
+            SET
+              m:Junit5:Test:Tag
+            RETURN
+              m AS TestMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+
 </jqa:jqassistant-rules>

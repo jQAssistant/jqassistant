@@ -1,16 +1,23 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.resolver.A;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class Junit5IT extends AbstractJavaPluginIT {
@@ -156,5 +163,26 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         assertThat(query("MATCH (m:Method:Junit5:Test:Template) RETURN m").getColumn("m"),
                    hasItem(methodDescriptor(TestTemplateClass.class, "templatedMethod", int.class)));
+    }
+
+    @Test
+    public void taggedTestsFound() throws Exception {
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
+                    TagTestClass.C.class, TagTestClass.XY.class);
+
+        assertThat(applyConcept("junit5:TaggedMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("junit5:TaggedMethodTags").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        List<MethodDescriptor> methods = query("MATCH (m:Method:Junit5:Test:Tag) RETURN m").getColumn("m");
+
+        assertThat(methods, notNullValue());
+        assertThat(methods, Matchers.not(Matchers.empty()));
+
+        assertThat(methods,
+                   hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
+
+        //tag value
     }
 }
