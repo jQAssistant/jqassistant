@@ -202,7 +202,7 @@
                 AND tag.fqn="org.junit.jupiter.api.Tag"
 
             WITH
-                collect(tagValue.value) AS tagValues, m
+                collect(distinct tagValue.value) AS tagValues, m
 
             SET
                 m.tags = tagValues
@@ -221,7 +221,7 @@
                 t.fqn="org.junit.jupiter.api.Tag"
 
             WITH
-                collect(v.value) as tagValues, m
+                collect(distinct v.value) as tagValues, m
 
             SET
                 m.tags = tagValues
@@ -230,6 +230,76 @@
                 m
         ]]></cypher>
     </concept>
+
+    <concept id="junit5:TaggedClass">
+        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:TestTemplateMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <description>
+            Labels all methods annotated by "@org.junit.jupiter.api.Tag"
+            with "Junit5", "Test" and "Tag".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type),
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test)
+            WHERE
+              a.fqn="org.junit.jupiter.api.Tag"
+            SET
+              c:Test:Junit5:Tag
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
+            UNION
+            MATCH
+              (c:Type:Class)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tags:Type),
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test),
+              (a)-[:HAS]->(v:Array:Value)-[:CONTAINS]->(b:Annotation:Value)-[:OF_TYPE]->(tag:Type)
+            SET
+              c:Test:Junit5:Tag
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit5:TaggedClassTags">
+        <description>
+            Collects all tags of classes annotated with
+            "@org.junit.jupiter.api.Tag" and containing test methods (":Test:Method:Junit5")
+            and stores them in an array property of the class descriptor.</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tag:Type),
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test),
+              // (m:Method)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tag:Type),
+              (a)-[:HAS]->(tagValue:Value)
+            WHERE
+              tag.fqn="org.junit.jupiter.api.Tag"
+            WITH
+              collect(distinct tagValue.value) AS tagValues, c
+            SET
+              c.tags = tagValues, c:Test:Junit5
+            RETURN
+              c
+            UNION
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method:Test:Junit5),
+              (c:Type:Class)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tags:Type),
+              (a)-[:HAS]->(v:Array:Value)-[:CONTAINS]->(b:Annotation:Value)-[:OF_TYPE]->(tag:Type),
+              (b)-[:HAS]->(tagValue:Value)
+            WHERE
+              tags.fqn="org.junit.jupiter.api.Tags"
+              AND tag.fqn="org.junit.jupiter.api.Tag"
+            WITH
+              collect(distinct tagValue.value) AS tagValues, c
+            SET
+              c.tags = tagValues, c:Test:Junit5
+            RETURN
+              c
+
+
+        ]]></cypher>
+    </concept>
+
 
 
 </jqa:jqassistant-rules>
