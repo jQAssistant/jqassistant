@@ -171,19 +171,47 @@
     </concept>
 
     <concept id="junit5:TaggedMethodTags">
-        <description>
-            Labels all methods annotated by "@org.junit.jupiter.api.Tag"
-            with "Junit5", "Test" and "Tag".</description>
+        <description>Collects all tags of methods annotated with
+            "@org.junit.jupiter.api.Tag" and "@org.junit.jupiter.api.Test"
+            and stores them in an array property of the method descriptor.</description>
         <cypher><![CDATA[
             MATCH
-              (c:Type:Class)-[:DECLARES]->(m:Method),
-              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+                (c:Type:Class)-[:DECLARES]->(m:Method),
+                (m:Method)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tags:Type),
+                (a)-[:HAS]->(v:Array:Value)-[:CONTAINS]->(b:Annotation:Value)-[:OF_TYPE]->(tag:Type),
+                (b)-[:HAS]->(tagValue:Value)
+
             WHERE
-              a.fqn="org.junit.jupiter.api.Tag"
+                tags.fqn="org.junit.jupiter.api.Tags"
+                AND tag.fqn="org.junit.jupiter.api.Tag"
+
+            WITH
+                collect(tagValue.value) AS tagValues, m
+
             SET
-              m:Junit5:Test:Tag
+                m.tags = tagValues
+
             RETURN
-              m AS TestMethod, c AS TestClass
+                m
+
+            UNION
+
+            MATCH
+                (c:Type:Class)-[:DECLARES]->(m:Method),
+                (m:Method)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(t:Type),
+                (a:Annotation)-[:HAS]->(v:Value)
+
+            WHERE
+                t.fqn="org.junit.jupiter.api.Tag"
+
+            WITH
+                collect(v.value) as tagValues, m
+
+            SET
+                m.tags = tagValues
+
+            RETURN
+                m
         ]]></cypher>
     </concept>
 

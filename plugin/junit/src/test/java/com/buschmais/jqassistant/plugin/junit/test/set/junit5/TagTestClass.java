@@ -35,6 +35,15 @@ public class TagTestClass {
     }
 
     @Nested
+    public class D {
+
+        @Tag("d")
+        @Test
+        void activeTest() {
+        }
+    }
+
+    @Nested
     @Tag("x")
     @Tag("y")
     public class XY {

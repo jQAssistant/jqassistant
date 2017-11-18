@@ -180,9 +180,25 @@ public class Junit5IT extends AbstractJavaPluginIT {
         assertThat(methods, notNullValue());
         assertThat(methods, Matchers.not(Matchers.empty()));
 
-        assertThat(methods,
-                   hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
+        assertThat(methods, hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
+    }
 
-        //tag value
+    @Test
+    public void taggedTestsFoundByTag() throws Exception {
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
+                    TagTestClass.C.class, TagTestClass.XY.class);
+
+        assertThat(applyConcept("junit5:TaggedMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("junit5:TaggedMethodTags").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        List<MethodDescriptor> methods =
+            query("match (m:Test:Method:Junit5) where (\"bm\" in m.tags) return m").getColumn("m");
+
+        assertThat(methods, notNullValue());
+        assertThat(methods, Matchers.not(Matchers.empty()));
+
+        assertThat(methods, hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
     }
 }
