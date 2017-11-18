@@ -18,6 +18,7 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescripto
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 
 public class Junit5IT extends AbstractJavaPluginIT {
@@ -180,7 +181,8 @@ public class Junit5IT extends AbstractJavaPluginIT {
         assertThat(methods, notNullValue());
         assertThat(methods, Matchers.not(Matchers.empty()));
 
-        assertThat(methods, hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
+        assertThat(methods, hasItems(methodDescriptor(TagTestClass.B.class, "activeTest"),
+                                     methodDescriptor(TagTestClass.C.class, "activeTest")));;
     }
 
     @Test
