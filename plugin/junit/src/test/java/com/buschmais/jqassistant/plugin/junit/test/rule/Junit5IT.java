@@ -251,4 +251,25 @@ public class Junit5IT extends AbstractJavaPluginIT {
         assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.B.class),
                                                typeDescriptor(TagTestClass.XY.class)));
     }
+
+    @Test
+    public void constraintTestClassFindsAllClassesWithTests() throws Exception {
+        scanClasses(DisabledTestClass.class, ParamterizedTestClass.class, TestTemplateClass.class,
+                    RepeatedTestClass.class, TagTestClass.A.class);
+
+        assertThat(applyConcept("junit5:TestClass").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        List<TypeDescriptor> classes = query("match (c:Test:Class:Junit5) return c").getColumn("c");
+
+        assertThat(classes, notNullValue());
+        assertThat(classes, Matchers.not(Matchers.empty()));
+
+        assertThat(classes, containsInAnyOrder(typeDescriptor(DisabledTestClass.class),
+                                               typeDescriptor(RepeatedTestClass.class),
+                                               typeDescriptor(TestTemplateClass.class),
+                                               typeDescriptor(TagTestClass.A.class),
+                                               typeDescriptor(ParamterizedTestClass.class)));
+    }
 }

@@ -295,8 +295,23 @@
               c.tags = tagValues, c:Test:Junit5
             RETURN
               c
+        ]]></cypher>
+    </concept>
 
+    <concept id="junit5:TestClass">
+        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:TestTemplateMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
 
+        <description>Labels all classes containing test methods with "Test" and "Junit5".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test)
+            SET
+              c:Test:Junit5
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
         ]]></cypher>
     </concept>
 
