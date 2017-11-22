@@ -57,6 +57,20 @@ public class Junit5IT extends AbstractJavaPluginIT {
     }
 
     @Test
+    public void nestedTestClassesAreLabledWithNested() throws Exception {
+        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class,
+                    ParentTestClass.ChildTestClass.GrandChildTestClass.class);
+
+        assertThat(applyConcept("junit5:NestedTestClass").getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        assertThat(query("MATCH (c:Class:Junit5:Nested) RETURN c").getColumn("c"),
+                   containsInAnyOrder(typeDescriptor(ParentTestClass.ChildTestClass.class),
+                                      typeDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class)));
+    }
+
+    @Test
     public void parameterizedTestFound() throws Exception {
         scanClasses(ParamterizedTestClass.class);
         assertThat(applyConcept("junit5:ParameterizedTestMethod").getStatus(), equalTo(SUCCESS));

@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit.test.set.junit5;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 public class ParentTestClass {
@@ -8,12 +9,14 @@ public class ParentTestClass {
     void aTest() {
     }
 
+    @Nested
     public class ChildTestClass {
 
         @Test
         void bTest() {
         }
 
+        @Nested
         public class GrandChildTestClass {
 
             @Test

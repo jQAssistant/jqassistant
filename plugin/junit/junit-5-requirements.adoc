@@ -2,12 +2,6 @@
 
 
 
-- Detect classes (also inner classes, nested classes ) containing tests and label them with the labels
-  `junit5` and `Class`.
-
-- Label nested test classes with the label Junit5, TestClass, NestedT
-
-
 - Reason why a test has been disabled should be accessible.
 
 - Relation DEFINED_BY
@@ -41,6 +35,7 @@
 
 == Done
 
+- Label nested test classes with the label Junit5, TestClass, NestedT
 - @Tag support
 
 - @TestTemplate

@@ -315,6 +315,23 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:NestedTestClass">
+        <description>Labels all nested test classes annotated with "@org.junit.jupiter.api.Nested",
+            independently from the number of tests contained in the method, with
+            "Junit5" and "Nested".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(n:Type)
+            WHERE
+              n.fqn = "org.junit.jupiter.api.Nested"
+            SET
+              c:Junit5:Nested
+            RETURN
+              c
+        ]]></cypher>
+    </concept>
+
 
 
 </jqa:jqassistant-rules>
