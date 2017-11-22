@@ -30,8 +30,8 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
-import com.buschmais.jqassistant.plugin.junit.test.set.report.AbstractExample;
-import com.buschmais.jqassistant.plugin.junit.test.set.report.Example;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 
 /**
  * Tests for Junit4 concepts.

@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDetailDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit.test.set.report.Example;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 
 public class TestReportScannerIT extends AbstractJavaPluginIT {
 
