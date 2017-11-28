@@ -1,40 +1,35 @@
 = Requirements for JUnit 5 Support in jQA
 
-
-
+- Check if the Surefire reports can be still processed
+- support for Meta-Annotations and Composed Annotations
+- port junit4:TestCaseImplementedByMethod
+- port junit4:AssertMethod
+- port junit4:AssertionMustProvideMessage
+- port <constraint id="junit4:TestMethodWithoutAssertion">
+- port <constraint id="junit4:IgnoreWithoutMessage">
 - Reason why a test has been disabled should be accessible.
-
+- support for @Displayname
 - Relation DEFINED_BY
 
 
 == Other issues
 
-- Check if the Surefire reports can be still processed
-- Compare the lables used by the testNG plugin with the lables
-  used by the Junit plugin
-
 == Unclear
 
 - @TestFactory   (:Junit5:Testfactory)
 
-- @Nested
-
-- @Displayname
-- Meta-Annotations and Composed Annotations
-- Constraints to support the transistion from 4 to 5
 - Usage of label testcase in the following concepts in junit4.xml
    - junit4:TestCaseDefinedByClass
    - junit4:TestCaseImplementedByMethod
-- Support of contrainsts in junit4.xml
--
 
 
 == Doc updates
 
-- Classes with tests are not longer labled as Test, also for Junit 4 & 3. Ask Dirk about it.!?
 
 == Done
 
+- Compare the lables used by the testNG plugin with the lables
+  used by the Junit plugin
 - Label nested test classes with the label Junit5, TestClass, NestedT
 - @Tag support
 
