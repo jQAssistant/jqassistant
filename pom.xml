@@ -93,7 +93,7 @@
         <maven.install.version>2.5.2</maven.install.version>
         <maven.jar.version>2.6</maven.jar.version>
         <maven.javadoc.version>2.10.4</maven.javadoc.version>
-        <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
+        <maven.jaxb2-plugin.version>0.9.1</maven.jaxb2-plugin.version>
 
         <!--
          ! This two properties controls on which severity of constraint
@@ -250,7 +250,7 @@
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>${maven-jaxb2-plugin.version}</version>
+                    <version>${maven.jaxb2-plugin.version}</version>
                     <executions>
                         <execution>
                             <goals>
