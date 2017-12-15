@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -65,7 +66,8 @@ public class Junit5IT extends AbstractJavaPluginIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (c:Class:Junit5:Nested) RETURN c").getColumn("c"),
+        List<TypeDescriptor> classes = query("MATCH (c:Class:Junit5:Nested) RETURN c").getColumn("c");
+        assertThat(classes,
                    containsInAnyOrder(typeDescriptor(ParentTestClass.ChildTestClass.class),
                                       typeDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class)));
     }
@@ -285,5 +287,13 @@ public class Junit5IT extends AbstractJavaPluginIT {
                                                typeDescriptor(TestTemplateClass.class),
                                                typeDescriptor(TagTestClass.A.class),
                                                typeDescriptor(ParamterizedTestClass.class)));
+    }
+
+
+    @Test
+    public void surefireTestReportForJunit5IsProcessedCorrectly() throws Exception {
+
+        // Testen, ob der Report richtig eingelesen wurde
+        throw new RuntimeException("Not implemented yet!");
     }
 }
