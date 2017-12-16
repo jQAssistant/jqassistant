@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -290,6 +291,7 @@ public class Junit5IT extends AbstractJavaPluginIT {
     }
 
 
+    @Ignore("See buschmais/jqa-junit-plugin#2 for details")
     @Test
     public void surefireTestReportForJunit5IsProcessedCorrectly() throws Exception {
 
