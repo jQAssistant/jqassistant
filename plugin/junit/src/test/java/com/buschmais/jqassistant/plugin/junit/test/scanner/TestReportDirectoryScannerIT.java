@@ -30,7 +30,7 @@ public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
         TestReportDirectoryDescriptor directory = getScanner().scan(classesDirectory, absolutePath, JunitScope.TESTREPORTS);
         assertThat(directory.getFileName(), equalTo(absolutePath.replace('\\', '/')));
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
-        assertThat(testSuiteDescriptors.size(), equalTo(1));
+        assertThat(testSuiteDescriptors.size(), equalTo(2));
         store.commitTransaction();
     }
 
