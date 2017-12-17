@@ -1,13 +1,15 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
-import com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJunit5Example;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 import org.hamcrest.Matchers;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,14 +17,14 @@ import java.util.List;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static java.lang.Boolean.FALSE;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 
-public class Junit5IT extends AbstractJavaPluginIT {
+public class Junit5IT extends AbstractJunitIT {
 
     @After
     public void commitTransaction() {
@@ -291,11 +293,49 @@ public class Junit5IT extends AbstractJavaPluginIT {
     }
 
 
-    @Ignore("See buschmais/jqa-junit-plugin#2 for details")
     @Test
     public void surefireTestReportForJunit5IsProcessedCorrectly() throws Exception {
+        scanClasses(Junit5Example.class, AbstractJunit5Example.class);
+        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example.xml");
 
-        // Testen, ob der Report richtig eingelesen wurde
-        throw new RuntimeException("Not implemented yet!");
+        Result<Concept> implementedByResult = applyConcept("junit:TestCaseImplementedByMethod");
+        Result<Concept> definedByResult = applyConcept("junit:TestCaseDefinedByClass");
+
+        assertThat(implementedByResult.getStatus(), equalTo(SUCCESS));
+        assertThat(implementedByResult.isEmpty(), is(FALSE));
+        assertThat(definedByResult.isEmpty(), is(FALSE));
+        assertThat(definedByResult.getStatus(), equalTo(SUCCESS));
+
+        store.beginTransaction();
+
+        verifyRelationForImplementedBy("inherited", "inherited", "AbstractJunit5Example");
+        verifyRelationForDefinedBy("inherited", "Junit5Example");
+        verifyRelationForImplementedBy("success", "success", "Junit5Example");
+        verifyRelationForDefinedBy("success", "Junit5Example");
+        verifyRelationForImplementedBy("error", "error", "Junit5Example");
+        verifyRelationForDefinedBy("error", "Junit5Example");
+        verifyRelationForImplementedBy("failure", "failure", "Junit5Example");
+        verifyRelationForDefinedBy("failure", "Junit5Example");
+        verifyRelationForImplementedBy("skipped", "skipped", "Junit5Example");
+        verifyRelationForDefinedBy("skipped", "Junit5Example");
+
+        /* todo: Add later verifications for testcases of the methods repeatedTest()
+         * and parameterizedTest()
+         *
+         * At the moment of writing this Junit 5 provides wrong values for the test report
+         * written by Maven Surefire if the test itself is an repeated or parameterized
+         * test. In such cases Junit reports the name of the method and not the FQN of
+         * the classes.
+         *
+         * Complete the test if this will be fixed by Junit 5.
+         *
+         * see https://github.com/buschmais/jqa-junit-plugin/issues/2
+         * see https://github.com/junit-team/junit5/issues/1182
+         *
+         * Oliver B. Fischer, 2017-12-17
+         */
+
+        store.commitTransaction();
     }
+
 }

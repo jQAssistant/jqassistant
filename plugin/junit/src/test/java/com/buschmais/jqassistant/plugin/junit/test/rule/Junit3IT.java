@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit3.Junit3Test;
 /**
  * Tests for Junit3 concepts.
  */
-public class Junit3IT extends AbstractJavaPluginIT {
+public class Junit3IT extends AbstractJunitIT {
 
     /**
      * Verifies the concept "junit3:TestClass".

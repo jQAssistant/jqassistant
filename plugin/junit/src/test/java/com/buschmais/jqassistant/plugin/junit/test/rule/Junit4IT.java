@@ -23,7 +23,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.assertion.Assertions;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
@@ -36,7 +35,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 /**
  * Tests for Junit4 concepts.
  */
-public class Junit4IT extends AbstractJavaPluginIT {
+public class Junit4IT extends AbstractJunitIT {
 
     /**
      * Verifies the concept "junit4:TestMethod".
@@ -181,56 +180,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
                 Assert.fail("Unexpected result");
             }
         }
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "junit4:TestCaseImplementedByMethod".
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void testCaseImplementedByMethod() throws Exception {
-        scanClasses(AbstractExample.class, Example.class);
-        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
-        assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyTestCaseImplementedByMethod(Example.class, "success");
-        verifyTestCaseImplementedByMethod(AbstractExample.class, "inherited");
-        verifyTestCaseImplementedByMethod(Example.class, "failure");
-        verifyTestCaseImplementedByMethod(Example.class, "error");
-        verifyTestCaseImplementedByMethod(Example.class, "skipped");
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of concept "junit4:TestCaseImplementedByMethod" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void testCaseImplementedByMethodUnique() throws Exception {
-        scanClasses(Example.class);
-        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (m:Method {name: 'success'}) MERGE (t)-[r:IMPLEMENTED_BY {prop: 'value'}]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (m:Method {name: 'failure'}) MERGE (t)-[r:IMPLEMENTED_BY]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY]->(c) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("IMPLEMENTED_BY", 2);
-        verifyUniqueRelation("DEFINED_BY", 2);
-        store.commitTransaction();
-        assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("IMPLEMENTED_BY", 4);
-        verifyUniqueRelation("DEFINED_BY", 5);
         store.commitTransaction();
     }
 
@@ -380,33 +329,5 @@ public class Junit4IT extends AbstractJavaPluginIT {
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion",
                 "junit4:IgnoreWithoutMessage"));
-    }
-
-    /**
-     * Verifies if a IMPLEMENTED_BY relation exists between a test case and and test method.
-     *
-     * @param declaringType
-     *            The class declaring the test method.
-     * @param testcase
-     *            The name of the test case.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    private void verifyTestCaseImplementedByMethod(Class<?> declaringType, String testcase) throws NoSuchMethodException {
-        assertThat(query("MATCH (testcase:TestCase)-[:DEFINED_BY]->(testclass:Type) WHERE testcase.name ='" + testcase + "' RETURN testclass")
-                .getColumn("testclass"), hasItem(typeDescriptor(Example.class)));
-        assertThat(query(
-                "MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:Method) WHERE testcase.name ='" + testcase + "' RETURN testmethod")
-                .getColumn("testmethod"), hasItem(methodDescriptor(declaringType, testcase)));
-    }
-
-    /**
-     * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     */
-    private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }

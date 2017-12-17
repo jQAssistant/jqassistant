@@ -127,41 +127,7 @@
         ]]></cypher>
     </concept>
 
-    <concept id="junit4:TestCaseDefinedByClass">
-        <description>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</description>
-        <cypher><![CDATA[
-            MATCH
-              (testcase:TestCase)
-            WITH
-              testcase
-            MATCH
-              (testclass:Type)
-            WHERE
-              testclass.fqn = testcase.className
-            MERGE
-              (testcase)-[:DEFINED_BY]->(testclass)
-            RETURN
-              testcase.name AS TestCase, testclass AS TestClass
-    ]]></cypher>
-    </concept>
 
-    <concept id="junit4:TestCaseImplementedByMethod">
-        <requiresConcept refId="junit4:TestCaseDefinedByClass" />
-        <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
-            methods.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-              (testcase:TestCase)-[:DEFINED_BY]->(testclass:Type),
-              (testclass)-[:EXTENDS*0..]->(:Type)-[:DECLARES]->(testmethod:Method)
-            WHERE
-              testmethod.name = testcase.name
-            MERGE
-              (testcase)-[:IMPLEMENTED_BY]->(testmethod)
-            RETURN
-              testcase.name AS TestCase, testmethod as TestMethod
-    ]]></cypher>
-    </concept>
 
     <concept id="junit4:AssertMethod">
         <description>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</description>

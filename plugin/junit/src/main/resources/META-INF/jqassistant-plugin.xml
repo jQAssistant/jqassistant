@@ -18,5 +18,6 @@
         <resource>junit3.xml</resource>
         <resource>junit4.xml</resource>
         <resource>junit5.xml</resource>
+        <resource>junit-common.xml</resource>
     </rules>
 </v1:jqassistant-plugin>

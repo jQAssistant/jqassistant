@@ -1,0 +1,37 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+    <concept id="junit:TestCaseDefinedByClass">
+        <description>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testcase:TestCase)
+            WITH
+              testcase
+            MATCH
+              (testclass:Type)
+            WHERE
+              testclass.fqn = testcase.className
+            MERGE
+              (testcase)-[:DEFINED_BY]->(testclass)
+            RETURN
+              testcase.name AS TestCase, testclass AS TestClass
+    ]]></cypher>
+    </concept>
+
+    <concept id="junit:TestCaseImplementedByMethod">
+        <requiresConcept refId="junit:TestCaseDefinedByClass" />
+        <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
+            methods.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (testcase:TestCase)-[:DEFINED_BY]->(testclass:Type),
+              (testclass)-[:EXTENDS*0..]->(:Type)-[:DECLARES]->(testmethod:Method)
+            WHERE
+              testmethod.name = testcase.name
+            MERGE
+              (testcase)-[:IMPLEMENTED_BY]->(testmethod)
+            RETURN
+              testcase.name AS TestCase, testmethod as TestMethod
+    ]]></cypher>
+    </concept>
+</jqa:jqassistant-rules>
