@@ -12,7 +12,8 @@
 
 
 - Replaced Tag with Tagged
-
+- Also class with @Tag and without tests should be tagged with Tag
+- Classes with tags might not have tests
 
 == Other issues
 

@@ -6,10 +6,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.MultipleTagAnnotation;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.MultipleTagAnnotationTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.SingleTagAnnotation;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.SingleTagAnnotationTestClass;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJunit5Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 import org.hamcrest.Matchers;
@@ -344,8 +341,8 @@ public class Junit5IT extends AbstractJunitIT {
     }
 
     @Test
-    public void metaAnnotationWithSingleTagIsProcessedCorrectly() throws Exception {
-        scanClasses(SingleTagAnnotation.class, SingleTagAnnotationTestClass.class);
+    public void methodWithMetaAnnotationWithSingleTagIsProcessedCorrectly() throws Exception {
+        scanClasses(SingleTagAnnotation.class, SingleTagAnnotationTest.class);
 
         Result<Concept> methods = applyConcept("junit5:TaggedMethodWithMetaAnnotation");
 
@@ -354,16 +351,16 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        List<TypeDescriptor> tests = query("match (m:Test:Junit5) return m").getColumn("m");
+        List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
         assertThat(tests, Matchers.notNullValue());
         assertThat(tests, Matchers.hasSize(1));
-        assertThat(tests, hasItem(methodDescriptor(SingleTagAnnotationTestClass.class, "getInt")));
+        assertThat(tests, hasItem(methodDescriptor(SingleTagAnnotationTest.class, "getInt")));
     }
 
     @Test
-    public void metaAnnotationWithMultipleTagsIsProcessedCorrectly() throws Exception {
-        scanClasses(MultipleTagAnnotation.class, MultipleTagAnnotationTestClass.class);
+    public void methodWithMetaAnnotationWithMultipleTagsIsProcessedCorrectly() throws Exception {
+        scanClasses(MultipleTagAnnotation.class, MultipleTagAnnotationTest.class);
 
         Result<Concept> methods = applyConcept("junit5:TaggedMethodWithMetaAnnotation");
 
@@ -372,11 +369,47 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        List<TypeDescriptor> tests = query("match (m:Test:Junit5) return m").getColumn("m");
+        List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
         assertThat(tests, Matchers.notNullValue());
         assertThat(tests, Matchers.hasSize(1));
-        assertThat(tests, hasItem(methodDescriptor(MultipleTagAnnotationTestClass.class, "getLong")));
+        assertThat(tests, hasItem(methodDescriptor(MultipleTagAnnotationTest.class, "getLong")));
+    }
+
+    @Test
+    public void classWithMetaAnnotationWithMultipleTagsIsProcessedCorrectly() throws Exception {
+        scanClasses(MultipleTagAnnotation.class, MultipleTagAnnotationClass.class);
+
+        Result<Concept> classes = applyConcept("junit5:TaggedClassWithMetaAnnotation");
+
+        assertThat(classes.getStatus(), equalTo(SUCCESS));
+        assertThat(classes.isEmpty(), is(FALSE));
+
+        store.beginTransaction();
+
+        List<TypeDescriptor> tests = query("match (c:Type:Tag:Junit5) return c").getColumn("c");
+
+        assertThat(tests, Matchers.notNullValue());
+        assertThat(tests, Matchers.hasSize(1));
+        assertThat(tests, hasItem(typeDescriptor(MultipleTagAnnotationClass.class)));
+    }
+
+    @Test
+    public void classWithMetaAnnotationWithSingleTagIsProcessedCorrectly() throws Exception {
+        scanClasses(SingleTagAnnotation.class, SingleTagAnnotationClass.class);
+
+        Result<Concept> classes = applyConcept("junit5:TaggedClassWithMetaAnnotation");
+
+        assertThat(classes.getStatus(), equalTo(SUCCESS));
+        assertThat(classes.isEmpty(), is(FALSE));
+
+        store.beginTransaction();
+
+        List<TypeDescriptor> tests = query("match (c:Type:Tag:Junit5) return c").getColumn("c");
+
+        assertThat(tests, Matchers.notNullValue());
+        assertThat(tests, Matchers.hasSize(1));
+        assertThat(tests, hasItem(typeDescriptor(SingleTagAnnotationClass.class)));
     }
 
 }

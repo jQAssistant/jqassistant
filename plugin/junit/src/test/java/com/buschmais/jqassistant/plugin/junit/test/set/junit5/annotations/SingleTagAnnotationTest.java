@@ -2,10 +2,11 @@ package com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations;
 
 import org.junit.jupiter.api.Test;
 
-public class MultipleTagAnnotationTestClass {
-    @MultipleTagAnnotation
+public class SingleTagAnnotationTest {
+
+    @SingleTagAnnotation
     @Test
-    public long getLong() {
-        return 0L;
+    public int getInt() {
+        return 0;
     }
 }
