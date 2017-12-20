@@ -239,7 +239,7 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        List<TypeDescriptor> classes = query("match (c:Test:Tag:Class:Junit5) return c").getColumn("c");
+        List<TypeDescriptor> classes = query("match (c:Tag:Type:Junit5) return c").getColumn("c");
 
         assertThat(classes, notNullValue());
         assertThat(classes, Matchers.not(Matchers.empty()));

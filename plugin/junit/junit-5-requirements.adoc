@@ -4,13 +4,11 @@
 - port junit4:AssertionMustProvideMessage
 - port <constraint id="junit4:TestMethodWithoutAssertion">
 - port <constraint id="junit4:IgnoreWithoutMessage">
-ONGOING => - Reason why a test has been disabled should be accessible.
+- Reason why a test has been disabled should be accessible.
 - support for @Displayname
 
 
 - Replaced Tag with Tagged
-- Also class with @Tag and without tests should be tagged with Tag
-- Classes with tags might not have tests
 
 == Other issues
 
@@ -27,6 +25,7 @@ ONGOING => - Reason why a test has been disabled should be accessible.
 
 
 == Done
+- Also class with @Tag and without tests should be tagged with Tag
 - support for Meta-Annotations and Composed Annotations
 - Usage of label testcase in the following concepts in junit4.xml
    - junit4:TestCaseDefinedByClass

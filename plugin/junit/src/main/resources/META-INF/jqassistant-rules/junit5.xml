@@ -316,26 +316,24 @@
         <requiresConcept refId="junit5:ParameterizedTestMethod"/>
         <description>
             Labels all methods annotated by "@org.junit.jupiter.api.Tag"
-            with "Junit5", "Test" and "Tag".</description>
+            with "Junit5", and "Tag".</description>
         <cypher><![CDATA[
             MATCH
-              (c:Type:Class)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type),
-              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test)
+              (c:Type:Class)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
             WHERE
               a.fqn="org.junit.jupiter.api.Tag"
             SET
-              c:Test:Junit5:Tag
+              c:Junit5:Tag
             RETURN
-              c AS TestClass, COLLECT(m) AS TestMethods
+              c AS TestClass
             UNION
             MATCH
               (c:Type:Class)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(tags:Type),
-              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test),
               (a)-[:HAS]->(v:Array:Value)-[:CONTAINS]->(b:Annotation:Value)-[:OF_TYPE]->(tag:Type)
             SET
-              c:Test:Junit5:Tag
+              c:Junit5:Tag
             RETURN
-              c AS TestClass, COLLECT(m) AS TestMethods
+              c AS TestClass
         ]]></cypher>
     </concept>
 
