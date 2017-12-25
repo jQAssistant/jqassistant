@@ -7,6 +7,8 @@ import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -151,37 +154,6 @@ public class Junit4IT extends AbstractJunitIT {
         store.commitTransaction();
     }
 
-    /**
-     * Verifies the concept "junit4:IgnoreWithoutMessage".
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void ignoreWithoutMessage() throws Exception {
-        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
-        assertThat(validateConstraint("junit4:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
-        store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
-        Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit4:IgnoreWithoutMessage")));
-        List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(2));
-        for (Map<String, Object> row : rows) {
-            Object ignoredElement = row.get("IgnoreWithoutMessage");
-            if (ignoredElement instanceof TypeDescriptor) {
-                assertThat((TypeDescriptor) ignoredElement, typeDescriptor(IgnoredTest.class));
-            } else if (ignoredElement instanceof MethodDescriptor) {
-                assertThat((MethodDescriptor) ignoredElement, methodDescriptor(IgnoredTest.class, "ignoredTest"));
-            } else {
-                Assert.fail("Unexpected result");
-            }
-        }
-        store.commitTransaction();
-    }
 
     /**
      * Verifies the concept "junit4:AssertMethod".
@@ -327,7 +299,8 @@ public class Junit4IT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion",
-                "junit4:IgnoreWithoutMessage"));
+        assertThat(constraintViolations, aMapWithSize(2));
+        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage",
+                                                           "junit4:TestMethodWithoutAssertion"));
     }
 }

@@ -3,12 +3,21 @@
 - port junit4:AssertMethod
 - port junit4:AssertionMustProvideMessage
 - port <constraint id="junit4:TestMethodWithoutAssertion">
-- port <constraint id="junit4:IgnoreWithoutMessage">
-- Reason why a test has been disabled should be accessible.
+
+- Reason why a test has been disabled should be accessible.
 - support for @Displayname
 
 
 - Replaced Tag with Tagged
+
+- Ask Dirk about the implication of     <group id="junit4:Default">
+                                            <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
+                                            <includeConstraint refId="junit4:TestMethodWithoutAssertion"/>
+                                            <includeConstraint refId="junit4:IgnoreWithoutMessage"/>
+                                        </group>
+
+   moved to junit-common.xml
+   Are default groups activated by default?
 
 == Other issues
 
@@ -25,6 +34,7 @@
 
 
 == Done
+- port <constraint id="junit4:IgnoreWithoutMessage">
 - Also class with @Tag and without tests should be tagged with Tag
 - support for Meta-Annotations and Composed Annotations
 - Usage of label testcase in the following concepts in junit4.xml

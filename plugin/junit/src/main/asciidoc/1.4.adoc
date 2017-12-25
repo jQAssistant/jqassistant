@@ -1,4 +1,10 @@
 ifndef::jqa-in-manual[== Version 1.4]
 ifdef::jqa-in-manual[== JUnit Plugin 1.4]
 
-TBW
+=== Support for Junit 5 added
+
+=== Renamed constraints
+
+* Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
+  of added support for Junit 5.
+

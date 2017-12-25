@@ -1,4 +1,9 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="junit:Default">
+        <includeConstraint refId="junit:IgnoreWithoutMessage"/>
+    </group>
+
     <concept id="junit:TestCaseDefinedByClass">
         <description>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</description>
         <cypher><![CDATA[
@@ -34,4 +39,27 @@
               testcase.name AS TestCase, testmethod as TestMethod
     ]]></cypher>
     </concept>
+
+    <constraint id="junit:IgnoreWithoutMessage">
+        <description>All @Ignore annotations must provide a message.</description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
+            WHERE
+              ignoreType.fqn= "org.junit.Ignore"
+              AND NOT (ignore)-[:HAS]->(:Value{name:"value"})
+            RETURN
+              e AS IgnoreWithoutMessage
+            UNION
+            MATCH
+              (e)-[:ANNOTATED_BY]->(disabled:Annotation)-[:OF_TYPE]->(disabledType:Type)
+            WHERE
+              disabledType.fqn = "org.junit.jupiter.api.Disabled"
+              AND NOT (disabled)-[:HAS]->(:Value{name:"value"})
+            RETURN
+              e AS IgnoreWithoutMessage
+
+        ]]></cypher>
+    </constraint>
+
 </jqa:jqassistant-rules>

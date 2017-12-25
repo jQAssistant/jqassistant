@@ -1,14 +1,41 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
+import junit.framework.Assert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class JunitCommonIT extends AbstractJunitIT {
@@ -61,5 +88,83 @@ public class JunitCommonIT extends AbstractJunitIT {
         verifyUniqueRelation("IMPLEMENTED_BY", 4);
         verifyUniqueRelation("DEFINED_BY", 5);
         store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:IgnoreWithoutMessage".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void ignoreWithoutMessage() throws Exception {
+        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class,
+                    DisabledTestWithoutMessage.class);
+        assertThat(validateConstraint("junit:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(4));
+
+        List<MethodDescriptor> methods = rows.stream()
+                                             .map(map -> new Tuple<>("IgnoreWithoutMessage", map.get("IgnoreWithoutMessage")))
+                                             .filter(tuple -> tuple.b() instanceof MethodDescriptor)
+                                             .map(tuple -> MethodDescriptor.class.cast(tuple.b()))
+                                             .collect(toList());
+
+        List<TypeDescriptor> types = rows.stream()
+                                         .map(map -> new Tuple<>("IgnoreWithoutMessage", map.get("IgnoreWithoutMessage")))
+                                         .filter(tuple -> tuple.b() instanceof TypeDescriptor)
+                                         .map(tuple -> TypeDescriptor.class.cast(tuple.b()))
+                                         .collect(toList());
+
+        assertThat(methods, containsInAnyOrder(methodDescriptor(IgnoredTest.class, "ignoredTest"),
+                                               methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage")));
+        assertThat(types, containsInAnyOrder(typeDescriptor(IgnoredTest.class),
+                                             typeDescriptor(DisabledTestWithoutMessage.class)));
+
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the group "junit:default".
+     */
+    @Test
+    public void defaultGroup() throws RuleException {
+        executeGroup("junit:Default");
+        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
+        assertThat(constraintViolations, aMapWithSize(1));
+        assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage"));
+    }
+
+    private class Tuple<A, B> {
+        private A a;
+        private B b;
+
+        public Tuple(A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public A a() {
+            return a;
+        }
+
+        public void a(A a) {
+            this.a = a;
+        }
+
+        public B b() {
+            return b;
+        }
+
+        public void b(B b) {
+            this.b = b;
+        }
     }
 }

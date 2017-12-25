@@ -3,7 +3,6 @@
     <group id="junit4:Default">
         <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
         <includeConstraint refId="junit4:TestMethodWithoutAssertion"/>
-        <includeConstraint refId="junit4:IgnoreWithoutMessage"/>
     </group>
 
     <concept id="junit4:TestMethod">
@@ -195,17 +194,5 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="junit4:IgnoreWithoutMessage">
-        <description>All @Ignore annotations must provide a message.</description>
-        <cypher><![CDATA[
-            MATCH
-              (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
-            WHERE
-              ignoreType.fqn= "org.junit.Ignore"
-              AND NOT (ignore)-[:HAS]->(:Value{name:"value"})
-            RETURN
-              e AS IgnoreWithoutMessage
-        ]]></cypher>
-    </constraint>
 
 </jqa:jqassistant-rules>
