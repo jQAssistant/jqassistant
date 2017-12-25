@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
+import com.buschmais.jqassistant.plugin.junit.test.set.assertion.Assertions;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
@@ -138,9 +139,34 @@ public class JunitCommonIT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations, aMapWithSize(1));
-        assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage"));
+        assertThat(constraintViolations, aMapWithSize(2));
+        assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage",
+                                                           "junit:AssertionMustProvideMessage"));
     }
+
+    /**
+     * Verifies the constraint "junit:AssertionMustProvideMessage".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void assertionMustProvideMessage() throws Exception {
+        scanClasses(Assertions.class);
+        assertThat(validateConstraint("junit:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(1));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "assertWithoutMessage"));
+        store.commitTransaction();
+    }
+
 
     private class Tuple<A, B> {
         private A a;

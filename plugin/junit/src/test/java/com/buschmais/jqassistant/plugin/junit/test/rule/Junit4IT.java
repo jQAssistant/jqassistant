@@ -174,28 +174,6 @@ public class Junit4IT extends AbstractJunitIT {
         store.commitTransaction();
     }
 
-    /**
-     * Verifies the constraint "junit4:AssertionMustProvideMessage".
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void assertionMustProvideMessage() throws Exception {
-        scanClasses(Assertions.class);
-        assertThat(validateConstraint("junit4:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
-        store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
-        Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
-        List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "assertWithoutMessage"));
-        store.commitTransaction();
-    }
 
     /**
      * Verifies the constraint "junit4:TestMethodWithoutAssertion".
@@ -299,8 +277,7 @@ public class Junit4IT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations, aMapWithSize(2));
-        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage",
-                                                           "junit4:TestMethodWithoutAssertion"));
+        assertThat(constraintViolations, aMapWithSize(1));
+        assertThat(constraintViolations.keySet(), hasItems("junit4:TestMethodWithoutAssertion"));
     }
 }

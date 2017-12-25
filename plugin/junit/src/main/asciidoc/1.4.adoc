@@ -8,3 +8,6 @@ ifdef::jqa-in-manual[== JUnit Plugin 1.4]
 * Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
   of added support for Junit 5.
 
+* Renamed `junit:IgnoreWithoutMessage` to `junit:AssertionMustProvideMessage` because
+  of added support for Junit 5.
+
