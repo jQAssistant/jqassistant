@@ -1,23 +1,15 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.anEmptyMap;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -164,9 +156,9 @@ public class Junit4IT extends AbstractJunitIT {
         scanClasses(Assertions4Junit4.class);
         assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        List<Object> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
-        assertThat(methods, allOf(hasItem(methodDescriptor(Assert.class, "assertTrue", boolean.class)), hasItem(methodDescriptor(Assert.class,
-                "assertTrue", String.class, boolean.class))));
+        List<MethodDescriptor> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, containsInAnyOrder(methodDescriptor(Assert.class, "assertTrue", boolean.class),
+                                               methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class)));
         store.commitTransaction();
     }
 

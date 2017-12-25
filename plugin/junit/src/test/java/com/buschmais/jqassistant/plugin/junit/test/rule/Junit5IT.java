@@ -5,20 +5,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJunit5Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 import org.hamcrest.Matchers;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -289,7 +286,6 @@ public class Junit5IT extends AbstractJunitIT {
 
         assertThat(classes, notNullValue());
         assertThat(classes, Matchers.not(Matchers.empty()));
-
         assertThat(classes, containsInAnyOrder(typeDescriptor(DisabledTestClass.class),
                                                typeDescriptor(RepeatedTestClass.class),
                                                typeDescriptor(TestTemplateClass.class),
@@ -416,7 +412,7 @@ public class Junit5IT extends AbstractJunitIT {
     }
 
     /**
-     * Verifies the concept "junit4:AssertMethod".
+     * Verifies the concept "junit5:AssertMethod".
      *
      * @throws IOException
      *             If the test fails.
@@ -428,11 +424,11 @@ public class Junit5IT extends AbstractJunitIT {
         scanClasses(Assertions4Junit5.class, Assertions.class);
         assertThat(applyConcept("junit5:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        List<Object> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
+        List<MethodDescriptor> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
 
-        assertThat(methods, hasSize(104)); //
-        assertThat(methods, allOf(hasItem(methodDescriptor(Assertions.class, "assertTrue", boolean.class)),
-                                  hasItem(methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class))));
+        assertThat(methods, hasSize(104));
+        assertThat(methods, hasItems(methodDescriptor(Assertions.class, "assertTrue", boolean.class),
+                                     methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class)));
         store.commitTransaction();
     }
 
