@@ -6,24 +6,19 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit.test.set.assertion.Assertions;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
-import junit.framework.Assert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
@@ -154,7 +149,7 @@ public class JunitCommonIT extends AbstractJunitIT {
      */
     @Test
     public void assertionMustProvideMessage() throws Exception {
-        scanClasses(Assertions.class);
+        scanClasses(Assertions4Junit4.class);
         assertThat(validateConstraint("junit:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
@@ -163,7 +158,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "assertWithoutMessage"));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
 

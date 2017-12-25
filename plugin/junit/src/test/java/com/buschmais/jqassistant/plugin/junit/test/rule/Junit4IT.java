@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,15 +24,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit.test.set.assertion.Assertions;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 
 /**
  * Tests for Junit4 concepts.
@@ -165,7 +159,7 @@ public class Junit4IT extends AbstractJunitIT {
      */
     @Test
     public void assertMethod() throws Exception {
-        scanClasses(Assertions.class);
+        scanClasses(Assertions4Junit4.class);
         assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
@@ -185,7 +179,7 @@ public class Junit4IT extends AbstractJunitIT {
      */
     @Test
     public void testMethodWithoutAssertion() throws Exception {
-        scanClasses(Assertions.class);
+        scanClasses(Assertions4Junit4.class);
         assertThat(validateConstraint("junit4:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
@@ -194,7 +188,7 @@ public class Junit4IT extends AbstractJunitIT {
         assertThat(result, result(constraint("junit4:TestMethodWithoutAssertion")));
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "testWithoutAssertion"));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"));
         store.commitTransaction();
     }
 

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit.test.set.assertion;
+package com.buschmais.jqassistant.plugin.junit.test.set.junit4;
 
 import static org.junit.Assert.assertTrue;
 
@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("This is not an actual test")
-public class Assertions {
+public class Assertions4Junit4 {
 
     @Test
     public void assertWithoutMessage() {

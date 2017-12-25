@@ -408,5 +408,24 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit5:AssertMethod">
+        <description>
+            Labels all assertion methods declared by "org.junit.jupiter.api.Assertions" with "Junit5"
+            and "Assert".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (assertType:Type)-[:DECLARES]->(assertMethod)
+            WHERE
+              assertType.fqn = 'org.junit.jupiter.api.Assertions'
+              and assertMethod.signature =~ 'void assert.*'
+            SET
+              assertMethod:Junit5:Assert
+            RETURN
+              assertMethod
+            ]]></cypher>
+    </concept>
+
+
 
 </jqa:jqassistant-rules>

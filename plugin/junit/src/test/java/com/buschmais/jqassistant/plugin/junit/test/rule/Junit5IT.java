@@ -5,22 +5,25 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJunit5Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.lang.Boolean.FALSE;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
@@ -411,5 +414,27 @@ public class Junit5IT extends AbstractJunitIT {
         assertThat(tests, Matchers.hasSize(1));
         assertThat(tests, hasItem(typeDescriptor(SingleTagAnnotationClass.class)));
     }
+
+    /**
+     * Verifies the concept "junit4:AssertMethod".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void assertMethod() throws Exception {
+        scanClasses(Assertions4Junit5.class, Assertions.class);
+        assertThat(applyConcept("junit5:AssertMethod").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        List<Object> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
+
+        assertThat(methods, hasSize(104)); //
+        assertThat(methods, allOf(hasItem(methodDescriptor(Assertions.class, "assertTrue", boolean.class)),
+                                  hasItem(methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class))));
+        store.commitTransaction();
+    }
+
 
 }
