@@ -21,9 +21,17 @@ public class Assertions4Junit5 {
         assertTrue(() -> true, "Condition must be true");
     }
 
+    @RepeatedTest(21)
+    public void repeatedTestWithoutAssertion() {
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"a", "b"})
-    public void testWithoutAssertion(String v) {
+    public void parameterizedTestWithoutAssertion(String v) {
+    }
+
+    @Test
+    public void testWithoutAssertion() {
     }
 
     @Test

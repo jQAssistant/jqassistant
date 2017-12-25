@@ -8,6 +8,7 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescripto
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -170,29 +172,6 @@ public class Junit4IT extends AbstractJunitIT {
 
 
     /**
-     * Verifies the constraint "junit4:TestMethodWithoutAssertion".
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void testMethodWithoutAssertion() throws Exception {
-        scanClasses(Assertions4Junit4.class);
-        assertThat(validateConstraint("junit4:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
-        store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
-        Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit4:TestMethodWithoutAssertion")));
-        List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"));
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "junit4:BeforeMethod".
      *
      * @throws IOException
@@ -271,7 +250,6 @@ public class Junit4IT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations, aMapWithSize(1));
-        assertThat(constraintViolations.keySet(), hasItems("junit4:TestMethodWithoutAssertion"));
+        assertThat(constraintViolations, anEmptyMap());
     }
 }

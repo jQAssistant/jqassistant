@@ -3,6 +3,7 @@
     <group id="junit:Default">
         <includeConstraint refId="junit:AssertionMustProvideMessage"/>
         <includeConstraint refId="junit:IgnoreWithoutMessage"/>
+        <includeConstraint refId="junit:TestMethodWithoutAssertion"/>
     </group>
 
     <concept id="junit:TestCaseDefinedByClass">
@@ -78,6 +79,26 @@
               testMethod AS Method
         ]]></cypher>
     </constraint>
+
+    <constraint id="junit:TestMethodWithoutAssertion">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <requiresConcept refId="junit5:AssertMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:TestMethod"/>
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            WHERE
+              NOT (testMethod)-[:INVOKES*..3]->(:Method:Assert)
+            RETURN
+              testType AS DeclaringType,
+              testMethod AS Method
+        ]]></cypher>
+    </constraint>
+
 
 
 </jqa:jqassistant-rules>

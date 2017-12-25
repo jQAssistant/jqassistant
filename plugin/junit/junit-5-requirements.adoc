@@ -1,13 +1,8 @@
 = Requirements for JUnit 5 Support in jQA
 
-- port junit4:AssertionMustProvideMessage
-- port <constraint id="junit4:TestMethodWithoutAssertion">
 
-- Reason why a test has been disabled should be accessible.
 - support for @Displayname
 
-
-- Replaced Tag with Tagged
 
 - Ask Dirk about the implication of     <group id="junit4:Default">
                                             <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
@@ -33,6 +28,10 @@
 
 
 == Done
+- Reason why a test has been disabled should be accessible.
+- port junit4:AssertionMustProvideMessage
+- port <constraint id="junit4:TestMethodWithoutAssertion">
+
 - add junit5:AssertMethod as junit4:AssertMethod
 - port <constraint id="junit4:IgnoreWithoutMessage">
 - Also class with @Tag and without tests should be tagged with Tag

@@ -11,14 +11,17 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
@@ -31,6 +34,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
@@ -134,9 +138,10 @@ public class JunitCommonIT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations, aMapWithSize(2));
+        assertThat(constraintViolations, aMapWithSize(3));
         assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage",
-                                                           "junit:AssertionMustProvideMessage"));
+                                                           "junit:AssertionMustProvideMessage",
+                                                           "junit:TestMethodWithoutAssertion"));
     }
 
     /**
@@ -162,6 +167,35 @@ public class JunitCommonIT extends AbstractJunitIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verifies the constraint "junit:TestMethodWithoutAssertion".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void testMethodWithoutAssertion() throws Exception {
+        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class);
+        assertThat(validateConstraint("junit:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit:TestMethodWithoutAssertion")));
+        List<MethodDescriptor> methods = result.getRows().stream()
+                                               .map(row -> row.get("Method"))
+                                               .map(MethodDescriptor.class::cast).collect(toList());
+        assertThat(methods.size(), equalTo(4));
+
+        assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
+                                               methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
+                                               methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class),
+                                               methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")));
+
+        store.commitTransaction();
+    }
 
     private class Tuple<A, B> {
         private A a;
