@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.rule.api.matcher;
 
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 public class RuleSourceMatcher extends TypeSafeMatcher<RuleSource> {
 

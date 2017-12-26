@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertThat;
-
 import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.Assert.assertThat;
 
 /**
  * Verifies reading the report part of rules.

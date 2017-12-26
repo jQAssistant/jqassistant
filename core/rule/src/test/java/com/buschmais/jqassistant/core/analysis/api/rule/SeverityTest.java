@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.Map;
+
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
-
-import java.util.Map;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
 public class SeverityTest {
 

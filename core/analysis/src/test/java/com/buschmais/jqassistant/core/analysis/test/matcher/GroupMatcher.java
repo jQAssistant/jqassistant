@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
-import org.hamcrest.Matcher;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+
+import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link Group}s.

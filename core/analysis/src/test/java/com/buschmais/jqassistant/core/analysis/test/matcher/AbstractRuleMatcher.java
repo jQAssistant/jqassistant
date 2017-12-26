@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
  * Abstract base class for rules matchers.

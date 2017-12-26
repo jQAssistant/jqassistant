@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.core.report.api;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.xo.api.CompositeObject;
+
+import org.slf4j.Logger;
 
 /**
  * Provides utility functionality for creating reports.

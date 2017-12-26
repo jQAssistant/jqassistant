@@ -2,8 +2,6 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -12,6 +10,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.store.api.Store;
+
+import org.slf4j.Logger;
 
 /**
  * Implementation of the {@link Analyzer}.

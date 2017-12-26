@@ -18,7 +18,17 @@ import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfigura
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
-import com.buschmais.jqassistant.core.rule.schema.v1.*;
+import com.buschmais.jqassistant.core.rule.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ExecutableRuleType;
+import com.buschmais.jqassistant.core.rule.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.rule.schema.v1.IncludedReferenceType;
+import com.buschmais.jqassistant.core.rule.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.rule.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.rule.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ScriptType;
+import com.buschmais.jqassistant.core.rule.schema.v1.SeverityEnumType;
+
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**

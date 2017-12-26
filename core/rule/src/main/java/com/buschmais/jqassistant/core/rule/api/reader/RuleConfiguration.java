@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.rule.api.reader;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.Severity.MAJOR;
-import static com.buschmais.jqassistant.core.analysis.api.rule.Severity.MINOR;
-import static lombok.AccessLevel.PRIVATE;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 import lombok.*;
 import lombok.Builder.Default;
+
+import static com.buschmais.jqassistant.core.analysis.api.rule.Severity.MAJOR;
+import static com.buschmais.jqassistant.core.analysis.api.rule.Severity.MINOR;
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 @ToString

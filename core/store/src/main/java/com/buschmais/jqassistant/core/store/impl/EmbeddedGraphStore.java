@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.io.File;
 import java.util.Properties;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
+
+import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.

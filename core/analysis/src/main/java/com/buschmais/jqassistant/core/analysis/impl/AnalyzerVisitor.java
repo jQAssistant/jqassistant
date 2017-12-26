@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -15,6 +13,8 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOException;
+
+import org.slf4j.Logger;
 
 /**
  * Implementation of a rule visitor for analysis execution.

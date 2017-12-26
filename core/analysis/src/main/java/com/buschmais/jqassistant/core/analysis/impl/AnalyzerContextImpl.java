@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.store.api.Store;
+
+import org.slf4j.Logger;
 
 public class AnalyzerContextImpl implements AnalyzerContext {
 

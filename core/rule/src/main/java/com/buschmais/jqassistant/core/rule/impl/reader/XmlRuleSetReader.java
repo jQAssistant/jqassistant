@@ -6,17 +6,32 @@ import java.util.*;
 
 import javax.xml.validation.Schema;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.schema.v1.*;
+import com.buschmais.jqassistant.core.rule.schema.v1.AggregationVerificationType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ExecutableRuleType;
+import com.buschmais.jqassistant.core.rule.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.rule.schema.v1.IncludedReferenceType;
+import com.buschmais.jqassistant.core.rule.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.rule.schema.v1.ParameterType;
+import com.buschmais.jqassistant.core.rule.schema.v1.PropertyType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ReportType;
+import com.buschmais.jqassistant.core.rule.schema.v1.RowCountVerificationType;
+import com.buschmais.jqassistant.core.rule.schema.v1.ScriptType;
+import com.buschmais.jqassistant.core.rule.schema.v1.SeverityEnumType;
+import com.buschmais.jqassistant.core.rule.schema.v1.SeverityRuleType;
+import com.buschmais.jqassistant.core.rule.schema.v1.VerificationType;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link RuleSetReader} implementation.

@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.report;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-
 import java.io.StringReader;
 import java.util.List;
 
@@ -14,11 +11,30 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnHeaderType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnsHeaderType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.report.schema.v1.ExecutableRuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
+import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.ReferencableRuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
+import com.buschmais.jqassistant.core.report.schema.v1.RowType;
+import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
+import com.buschmais.jqassistant.core.report.schema.v1.StatusEnumType;
+
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.schema.v1.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class XmlReportTest {
 

@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.rule.api.reader;
 
-import static lombok.AccessLevel.PRIVATE;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 
 import lombok.*;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Indicates that a result shall be verified by the count of returned rows.

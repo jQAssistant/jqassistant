@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRuleBucketSpec;
-import com.buschmais.jqassistant.core.analysis.api.rule.ConceptBucket;
-import com.buschmais.jqassistant.core.analysis.api.rule.DuplicateConceptException;
-import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
 import org.junit.Test;
 
 public class ConceptBucketTest implements AbstractRuleBucketSpec {

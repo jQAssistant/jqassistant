@@ -1,12 +1,36 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
-import static java.util.Arrays.asList;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Parameter;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
@@ -15,12 +39,7 @@ import org.asciidoctor.ast.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import static java.util.Arrays.asList;
 
 /**
  * @author mh
@@ -179,12 +198,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         if (CONCEPT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
             Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+                                             .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
             builder.addConcept(concept);
         } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
             Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+                                                      .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
             builder.addConstraint(constraint);
         }
     }
@@ -228,7 +247,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
         Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
         Group group = Group.Builder.newGroup().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
-                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
+                                   .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
         ruleSetBuilder.addGroup(group);
     }
 

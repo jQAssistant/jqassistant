@@ -1,5 +1,9 @@
 package com.buschmais.jqassistant.plugin.impl;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
@@ -8,12 +12,9 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin;
 import com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;

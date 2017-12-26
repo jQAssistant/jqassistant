@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 public class AbstractRuleBucketTest {
 

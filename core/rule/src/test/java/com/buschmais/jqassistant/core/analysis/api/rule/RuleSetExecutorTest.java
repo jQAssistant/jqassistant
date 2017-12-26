@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.mockito.Mockito.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +14,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 
-import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuleSetExecutorTest {

@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.store.test.matcher;
 
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-
-import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 
 /**
  * Abstract base class for descriptor matchers.

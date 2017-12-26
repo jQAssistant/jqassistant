@@ -1,10 +1,15 @@
 package com.buschmais.jqassistant.core.rule.api.reader;
 
-import static lombok.AccessLevel.PRIVATE;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Indicates that a result shall be verified by evaluating aggregated values

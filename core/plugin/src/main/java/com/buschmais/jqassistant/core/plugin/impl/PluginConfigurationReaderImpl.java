@@ -8,9 +8,9 @@ import java.util.*;
 
 import javax.xml.validation.Schema;
 
-import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
 import org.slf4j.Logger;

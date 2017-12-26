@@ -1,14 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import java.io.File;
 import java.net.URL;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
@@ -17,6 +10,13 @@ import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
+
+import org.junit.Test;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class CompoundRuleSetReaderTest {
 

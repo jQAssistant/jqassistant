@@ -3,13 +3,13 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AggregationVerificationStrategy extends AbstractMinMaxVerificationStrategy implements VerificationStrategy<AggregationVerification> {
 

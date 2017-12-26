@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.report.model;
 
-import static com.buschmais.jqassistant.core.report.model.TestLanguage.TestLanguageElement.TestElement;
-
 import com.buschmais.xo.api.CompositeObject;
+
+import static com.buschmais.jqassistant.core.report.model.TestLanguage.TestLanguageElement.TestElement;
 
 /**
  * A test descriptor.

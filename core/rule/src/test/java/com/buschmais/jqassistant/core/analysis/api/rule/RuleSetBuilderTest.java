@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.io.File;
 
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
  * Verifies functionality of the rule set builder.

@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import org.slf4j.Logger;
-
 import java.util.Map;
+
+import org.slf4j.Logger;
 
 /**
  * Provides common functionality for working with scopes.

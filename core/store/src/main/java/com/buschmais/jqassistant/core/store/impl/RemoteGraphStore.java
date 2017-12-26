@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.util.Properties;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider.Property;
+
+import org.neo4j.graphdb.GraphDatabaseService;
 
 public class RemoteGraphStore extends AbstractGraphStore {
 

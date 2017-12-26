@@ -1,19 +1,19 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-
-import org.hamcrest.Matchers;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+
+import org.hamcrest.Matchers;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 public final class RuleSetTestHelper {
 

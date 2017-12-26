@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
-import static java.util.Arrays.asList;
-
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -9,6 +7,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Michael Hunger

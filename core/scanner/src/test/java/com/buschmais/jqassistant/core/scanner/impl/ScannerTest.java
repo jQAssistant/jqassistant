@@ -1,17 +1,18 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;

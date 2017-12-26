@@ -1,12 +1,10 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.Parameter;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class ParameterTest {
 

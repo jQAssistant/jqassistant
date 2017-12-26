@@ -1,23 +1,25 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.*;
+import com.buschmais.xo.api.Example;
+import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.ResultIterable;
+import com.buschmais.xo.api.ValidationMode;
+import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -44,7 +46,7 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start(Collection<Class<?>> types) {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
-                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+                                             .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
         configure(builder);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
         xoManager = xoManagerFactory.createXOManager();
@@ -141,7 +143,7 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
+    public Result<Result.CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
         return xoManager.createQuery(query).withParameters(parameters).execute();
     }
 
@@ -151,7 +153,7 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public Result<CompositeRowObject> executeQuery(String query) {
+    public Result<Result.CompositeRowObject> executeQuery(String query) {
         return xoManager.createQuery(query).execute();
     }
 
@@ -198,7 +200,7 @@ public abstract class AbstractGraphStore implements Store {
         params.put("limit", BATCH_LIMIT);
         do {
             beginTransaction();
-            CompositeRowObject result = executeQuery(
+            Result.CompositeRowObject result = executeQuery(
                     "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
                     params).getSingleResult();
             nodes = result.get("nodes", Long.class);

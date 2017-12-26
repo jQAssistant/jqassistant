@@ -1,16 +1,15 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-
 import java.util.Collection;
 import java.util.Map;
-
-import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.Example;
+import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
+
+import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * Defines the store for {@link Descriptor}s.

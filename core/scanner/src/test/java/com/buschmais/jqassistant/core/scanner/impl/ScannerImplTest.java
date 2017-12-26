@@ -1,17 +1,16 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;

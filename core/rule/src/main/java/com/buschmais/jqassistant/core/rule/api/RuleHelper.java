@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.core.rule.api;
 
 import java.util.Set;
 
-import org.slf4j.Logger;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
+
+import org.slf4j.Logger;
 
 /**
  * Provides utility functionality for creating reports.

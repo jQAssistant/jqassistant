@@ -1,16 +1,16 @@
 package com.buschmais.jqassistant.plugin.impl;
 
-import static org.junit.Assert.assertThat;
-
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+import static org.junit.Assert.assertThat;
 
 public class ScopePluginRepositoryTest {
 

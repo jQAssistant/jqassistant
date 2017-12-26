@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.core.analysis.test.matcher;
 
 import java.util.Map;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher for {@link Result}s.

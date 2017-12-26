@@ -3,13 +3,13 @@ package com.buschmais.jqassistant.core.plugin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.rule.api.source.ClasspathRuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.RulesType;
+import com.buschmais.jqassistant.core.rule.api.source.ClasspathRuleSource;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
  * Rule repository implementation.

@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.buschmais.jqassistant.core.store.api.Store;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Verifies the functionality of {@link ScannerContextImpl}.
