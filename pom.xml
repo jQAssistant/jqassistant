@@ -84,6 +84,7 @@
         <org.neo4j_3x.version>3.2.0</org.neo4j_3x.version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>3.0.0</maven.buildhelper.version>
+        <maven.checkstyle.version>2.17</maven.checkstyle.version>
         <maven.clean.version>3.0.0</maven.clean.version>
         <maven.compiler.version>3.7.0</maven.compiler.version>
         <maven.dependency.version>2.10</maven.dependency.version>
@@ -156,7 +157,11 @@
                          !-->
                     </configuration>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven.checkstyle.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
