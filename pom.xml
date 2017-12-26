@@ -120,7 +120,7 @@
         <maven.site.version>3.4</maven.site.version>
         <maven.source.plugin>3.0.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
-        <maven.xml.version>1.0</maven.xml.version>
+        <maven.xml.version>1.0.1</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
         <lombok.version>1.16.16</lombok.version>
     </properties>
