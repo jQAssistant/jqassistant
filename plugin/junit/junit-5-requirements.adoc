@@ -1,5 +1,6 @@
 = Requirements for JUnit 5 Support in jQA
 
+- Write some usefull stuff for the release notes
 
 - support for @Displayname
 
