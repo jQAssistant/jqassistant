@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit3.Junit3Test;
 
 /**
- * Tests for Junit3 concepts.
+ * Tests for JUnit3 concepts.
  */
 public class Junit3IT extends AbstractJunitIT {
 

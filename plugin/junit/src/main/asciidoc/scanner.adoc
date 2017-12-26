@@ -1,10 +1,11 @@
 [[Junit4TestSuiteScanner]]
 == Scanner for JUnit4 test suite results
-Imports results from JUnit4 test suites matching the file name `*TEST-*.xml`.
+Imports results from JUnit 4 and JUnit 5 test suites written by Maven
+Surefire and Maven Failsave matching the file name `*TEST-*.xml`.
 
 [[:File:TestSuite]]
 === Nodes labled with `:File:Junit:TestSuite`
-A file containing results of a JUnit4 test suite.
+A file containing results of a JUnit 4 or JUnit 5 test suite.
 
 .Properties of `:File:JUnit:TestSuite`
 [options="header"]
@@ -51,7 +52,7 @@ A test case.
 
 [[:JUnit:Failure]]
 === :JUnit:Failure
-Provides detail information about a test case with result "FAILURE".
+Provides detail information about a test case with result `FAILURE`.
 
 .Properties of `:JUnit:Failure`
 [options="header"]

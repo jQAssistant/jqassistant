@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
 
 /**
- * Tests for Junit4 concepts.
+ * Tests for JUnit4 concepts.
  */
 public class Junit4IT extends AbstractJunitIT {
 

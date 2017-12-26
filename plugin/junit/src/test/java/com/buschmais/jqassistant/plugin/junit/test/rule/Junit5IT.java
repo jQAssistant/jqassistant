@@ -323,12 +323,12 @@ public class Junit5IT extends AbstractJunitIT {
         /* todo: Add later verifications for testcases of the methods repeatedTest()
          * and parameterizedTest()
          *
-         * At the moment of writing this Junit 5 provides wrong values for the test report
+         * At the moment of writing this JUnit 5 provides wrong values for the test report
          * written by Maven Surefire if the test itself is an repeated or parameterized
-         * test. In such cases Junit reports the name of the method and not the FQN of
+         * test. In such cases JUnit reports the name of the method and not the FQN of
          * the classes.
          *
-         * Complete the test if this will be fixed by Junit 5.
+         * Complete the test if this will be fixed by JUnit 5.
          *
          * see https://github.com/buschmais/jqa-junit-plugin/issues/2
          * see https://github.com/junit-team/junit5/issues/1182
