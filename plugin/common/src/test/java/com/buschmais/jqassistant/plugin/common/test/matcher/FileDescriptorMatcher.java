@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.test.matcher;
 
-import org.hamcrest.CoreMatchers;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
-
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 /**
  * A matcher for {@link FileDescriptor}s.
@@ -29,6 +29,6 @@ public class FileDescriptorMatcher extends TypeSafeMatcher<FileDescriptor> {
     }
 
     public static Matcher<? super FileDescriptor> fileDescriptorMatcher(String fileName) {
-        return new FileDescriptorMatcher(CoreMatchers.equalTo(fileName));
+        return new FileDescriptorMatcher(Matchers.equalTo(fileName));
     }
 }

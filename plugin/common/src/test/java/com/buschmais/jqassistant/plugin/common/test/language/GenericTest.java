@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.test.language;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+
 import org.junit.Test;
 
 import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.ArtifactFile;

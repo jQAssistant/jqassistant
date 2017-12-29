@@ -1,20 +1,22 @@
 package com.buschmais.jqassistant.plugin.common.test.rule;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor;
+
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Verifies rules execution based of scripts.
@@ -23,19 +25,19 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void javaScriptXmlConcept() throws Exception {
-        assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
+        assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void JavaScriptAsciiDocConcept() throws Exception {
-        assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
+        assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConceptUsingGDS() throws Exception {
-        assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(Result.Status.SUCCESS));
+        assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
     }
 
@@ -53,7 +55,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void groovyXmlConcept() throws Exception {
-        assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
+        assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
@@ -65,7 +67,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void rubyXmlConcept() throws Exception {
-        assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
+        assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
     }
 

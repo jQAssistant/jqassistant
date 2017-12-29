@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
+
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class FilePatternMatcherTest {
 

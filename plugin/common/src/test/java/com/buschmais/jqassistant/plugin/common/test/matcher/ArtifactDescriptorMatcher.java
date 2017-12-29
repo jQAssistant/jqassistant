@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.test.matcher;
 
-import org.hamcrest.Matcher;
-
 import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+
+import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link ArtifactFileDescriptor}s.

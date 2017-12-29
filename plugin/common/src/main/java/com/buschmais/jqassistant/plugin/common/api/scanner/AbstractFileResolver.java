@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 
 /**
  * Abstract base class for {@link FileResolver}s.
