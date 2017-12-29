@@ -1,20 +1,20 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static java.lang.Integer.valueOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.metric.CyclomaticComplexityType;
+
+import org.junit.Test;
+
+import static java.lang.Integer.valueOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class CyclomaticComplexityIT extends AbstractJavaPluginIT {
 

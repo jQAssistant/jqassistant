@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-
 import java.lang.annotation.Annotation;
+
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 
 /**
  * A matcher for {@link AnnotationValueDescriptor}s.

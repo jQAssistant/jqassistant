@@ -1,20 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.any;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -27,6 +16,17 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.OuterClass;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Service;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.ServiceImpl;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding service loader descriptors.

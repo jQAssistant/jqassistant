@@ -1,5 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -13,12 +17,9 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * Implementation of a {@link AbstractScannerPlugin} for XML based property files.

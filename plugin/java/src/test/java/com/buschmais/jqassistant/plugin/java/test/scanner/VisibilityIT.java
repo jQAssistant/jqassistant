@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.io.IOException;
+
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.vsibility.Public;
+
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.vsibility.Public;
 
 public class VisibilityIT extends AbstractJavaPluginIT {
 

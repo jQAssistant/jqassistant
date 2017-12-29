@@ -1,20 +1,20 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
+import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding packages.

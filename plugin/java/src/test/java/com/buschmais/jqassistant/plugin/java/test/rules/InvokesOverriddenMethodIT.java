@@ -1,15 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.List;
-
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -18,6 +10,16 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InvokeClient;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
+
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the concept java:InvokeOverriddenMethod.

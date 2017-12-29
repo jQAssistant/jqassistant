@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static lombok.AccessLevel.PRIVATE;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.ToString;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 @Builder

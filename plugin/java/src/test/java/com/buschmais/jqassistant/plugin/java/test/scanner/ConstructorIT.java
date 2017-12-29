@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.ImplicitDefaultConstructor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.OverloadedConstructor;
+
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Contains test which verify correct scanning of constructors.

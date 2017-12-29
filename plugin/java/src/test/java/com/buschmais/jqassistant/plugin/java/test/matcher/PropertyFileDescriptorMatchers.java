@@ -1,14 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 public class PropertyFileDescriptorMatchers {
 

@@ -3,7 +3,15 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -11,9 +19,6 @@ import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 

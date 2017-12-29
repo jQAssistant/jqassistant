@@ -1,19 +1,19 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.array.Array;
+
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.array.Array;
 
 public class ArrayIT extends AbstractJavaPluginIT {
 

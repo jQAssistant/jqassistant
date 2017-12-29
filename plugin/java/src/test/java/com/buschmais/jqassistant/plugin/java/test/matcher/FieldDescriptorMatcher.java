@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.plugin.java.test.matcher;
 
 import java.lang.reflect.Field;
 
-import org.hamcrest.Matcher;
-
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+
+import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@FieldDescriptor}s.

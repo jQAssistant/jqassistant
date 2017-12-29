@@ -24,11 +24,17 @@ public class Pojo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         // this is a line not containing any code to verify effectiveLineCount metric
         Pojo pojo = (Pojo) o;
-        if (intValue != pojo.intValue) return false;
+        if (intValue != pojo.intValue) {
+            return false;
+        }
         return stringValue != null ? stringValue.equals(pojo.stringValue) : pojo.stringValue == null;
     }
 

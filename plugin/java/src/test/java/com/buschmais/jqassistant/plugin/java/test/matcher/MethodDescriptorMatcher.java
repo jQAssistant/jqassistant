@@ -4,9 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
-import org.hamcrest.Matcher;
-
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+
+import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link MethodDescriptorMatcher}s.

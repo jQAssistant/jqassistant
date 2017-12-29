@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.List;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyDescriptorMatcher.propertyDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.containsProperties;

@@ -1,18 +1,18 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.List;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding manifest files.

@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation;
 
-import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
 
 /**
  * An annotation containing values of all supported types.

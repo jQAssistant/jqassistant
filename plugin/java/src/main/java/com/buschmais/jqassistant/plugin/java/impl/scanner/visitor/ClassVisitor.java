@@ -1,14 +1,26 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VisibilityModifier;
+import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
-
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * A class visitor implementation.

@@ -1,5 +1,29 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.LineNumberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.AnnotationType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.EnumType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ExceptionType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ValueType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
@@ -10,19 +34,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.*;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
 
 /**
  * Tests for the dependency concepts and result.

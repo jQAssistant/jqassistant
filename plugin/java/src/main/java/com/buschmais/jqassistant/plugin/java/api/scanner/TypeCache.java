@@ -4,8 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.google.common.cache.*;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 /**
  * Cache for resolved types.
@@ -134,13 +143,16 @@ public class TypeCache {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (!(o instanceof CachedType))
+            }
+            if (!(o instanceof CachedType)) {
                 return false;
+            }
             CachedType that = (CachedType) o;
-            if (!typeDescriptor.equals(that.typeDescriptor))
+            if (!typeDescriptor.equals(that.typeDescriptor)) {
                 return false;
+            }
             return true;
         }
 

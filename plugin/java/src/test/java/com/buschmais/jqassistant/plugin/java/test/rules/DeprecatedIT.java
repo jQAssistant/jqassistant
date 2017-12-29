@@ -1,5 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated.DeprecatedType;
+
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -7,12 +13,6 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated.DeprecatedType;
 
 /**
  * Tests for the concept java:Deprecated.

@@ -5,13 +5,22 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
-import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Class containing helper methods for ASM visitors.

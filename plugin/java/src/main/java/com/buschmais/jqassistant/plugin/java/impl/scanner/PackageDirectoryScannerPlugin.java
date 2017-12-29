@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -12,6 +10,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.DirectoryResource;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java packages.

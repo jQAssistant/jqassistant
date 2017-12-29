@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
-import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 
 /**
  * A matcher for {@link ValueDescriptor}s.

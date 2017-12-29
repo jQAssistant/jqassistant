@@ -1,27 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -35,7 +19,42 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldAnnotationValueType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldTypeParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.ImplementedInterface;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.ImplementedInterfaceTypeParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.InvokeMethodType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.LocalVariable;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodAnnotationValueType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodException;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodParameterTypeParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodReturnType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodReturnTypeParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperClass;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperClassTypeParameter;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotationValueType;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the dependency concepts and result.

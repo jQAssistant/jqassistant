@@ -1,20 +1,27 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelError;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelException;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelRuntimeException;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelThrowable;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelError;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelException;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelRuntimeException;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelThrowable;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.*;
 
 /**
  * Tests for the concepts java:Throwable, java:Error, java:Exception and

@@ -1,17 +1,32 @@
 package com.buschmais.jqassistant.plugin.java.test.language;
 
-import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.*;
+import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Field;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Method;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.MethodInvocation;
 import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Package;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.ReadField;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Type;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.TypeDepdendency;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Variable;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.WriteField;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import com.buschmais.jqassistant.plugin.java.api.report.Java;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.report.api.SourceProvider;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 public class GenericLanguageElementTest {
 

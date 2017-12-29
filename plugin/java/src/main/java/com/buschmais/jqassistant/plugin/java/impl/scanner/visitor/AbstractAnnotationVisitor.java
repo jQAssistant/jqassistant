@@ -5,7 +5,12 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 

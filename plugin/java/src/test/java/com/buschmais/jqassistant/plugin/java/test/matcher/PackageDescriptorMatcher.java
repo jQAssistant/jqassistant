@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import org.hamcrest.Matcher;
-
 import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+
+import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link PackageDescriptor}s.

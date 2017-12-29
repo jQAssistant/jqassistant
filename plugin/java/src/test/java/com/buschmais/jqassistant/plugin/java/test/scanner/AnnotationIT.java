@@ -1,5 +1,22 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
+
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.plugin.java.test.matcher.AnnotationValueDescriptorMatcher.annotationValueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
@@ -8,22 +25,12 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
 import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.NON_DEFAULT;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anything;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.*;
 
 /**
  * Contains test which verify correct scanning of annotations and annotated

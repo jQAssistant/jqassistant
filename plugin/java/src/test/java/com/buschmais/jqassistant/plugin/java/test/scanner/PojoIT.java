@@ -1,22 +1,26 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
+
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 public class PojoIT extends AbstractJavaPluginIT {
 
@@ -63,7 +67,7 @@ public class PojoIT extends AbstractJavaPluginIT {
         List<MethodDescriptor> equalsList = query("MATCH (equals:Method{name:'equals'}) return equals ").getColumn("equals");
         assertThat(equalsList.size(), equalTo(1));
         MethodDescriptor equals = equalsList.get(0);
-        assertThat(equals.getEffectiveLineCount(), equalTo(5));
+        assertThat(equals.getEffectiveLineCount(), equalTo(8));
         store.commitTransaction();
     }
 
