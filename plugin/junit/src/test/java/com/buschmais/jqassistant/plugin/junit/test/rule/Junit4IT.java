@@ -1,17 +1,8 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -22,6 +13,18 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for JUnit4 concepts.

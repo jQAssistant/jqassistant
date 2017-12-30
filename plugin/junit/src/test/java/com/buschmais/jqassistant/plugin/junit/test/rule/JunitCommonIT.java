@@ -1,5 +1,10 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -14,12 +19,8 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.junit.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;

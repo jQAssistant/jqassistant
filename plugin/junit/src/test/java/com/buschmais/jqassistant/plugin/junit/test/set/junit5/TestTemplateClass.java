@@ -1,11 +1,17 @@
 package com.buschmais.jqassistant.plugin.junit.test.set.junit5;
 
-import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.*;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 public class TestTemplateClass {
     @TestTemplate

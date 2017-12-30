@@ -1,18 +1,18 @@
 package com.buschmais.jqassistant.plugin.junit.test.scanner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
 

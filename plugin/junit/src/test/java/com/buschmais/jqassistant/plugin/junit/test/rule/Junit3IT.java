@@ -1,16 +1,15 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import com.buschmais.jqassistant.plugin.junit.test.set.junit3.Junit3Test;
+
+import org.junit.Test;
+
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit3.Junit3Test;
 
 /**
  * Tests for JUnit3 concepts.

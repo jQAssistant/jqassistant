@@ -1,17 +1,8 @@
 package com.buschmais.jqassistant.plugin.junit.test.scanner;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
@@ -21,6 +12,15 @@ import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDetailDescriptor
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class TestReportScannerIT extends AbstractJavaPluginIT {
 

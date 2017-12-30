@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.junit.test.set.junit4;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 @Ignore("This is not an actual test")
 public class Assertions4Junit4 {
