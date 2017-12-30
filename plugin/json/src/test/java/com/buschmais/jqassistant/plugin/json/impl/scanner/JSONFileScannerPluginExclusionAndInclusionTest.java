@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
+import java.io.IOException;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.IOException;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

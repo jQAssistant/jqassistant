@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;

@@ -1,19 +1,20 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
+import java.io.File;
+import java.util.Collection;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.json.api.model.*;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.File;
-import java.util.Collection;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
 public class ConfiguredJSONParsingTestSuiteInvalidIT extends AbstractPluginIT {

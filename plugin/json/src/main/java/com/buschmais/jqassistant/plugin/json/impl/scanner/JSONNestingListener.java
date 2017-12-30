@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
-
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONBaseListener;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 

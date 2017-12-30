@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+
 import org.antlr.v4.runtime.CharStream;
 
 /**

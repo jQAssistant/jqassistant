@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.json.api.model;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
-import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**

@@ -1,20 +1,23 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
+import java.io.InputStream;
+import java.util.Collection;
+
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.IsNPECausedByANTLRIssue746Predicate;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin;
-import org.antlr.v4.runtime.*;
+
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.InputStream;
-import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

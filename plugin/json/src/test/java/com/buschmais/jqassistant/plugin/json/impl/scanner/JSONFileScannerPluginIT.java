@@ -1,18 +1,25 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.json.api.model.*;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
+import com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -22,7 +29,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.mockito.Matchers.eq;
 
 public class JSONFileScannerPluginIT extends AbstractPluginIT {
 

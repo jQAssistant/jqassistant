@@ -1,17 +1,18 @@
 package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
+import java.io.File;
+import java.util.List;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
+
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

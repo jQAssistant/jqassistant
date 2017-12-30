@@ -1,21 +1,22 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.*;
-import org.antlr.v4.runtime.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.IsNPECausedByANTLRIssue746Predicate;
+
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class ConfiguredJSONParsingTestSuiteValidIT {

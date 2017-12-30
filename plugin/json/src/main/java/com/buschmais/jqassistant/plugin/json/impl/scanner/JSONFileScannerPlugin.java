@@ -2,10 +2,6 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import java.io.IOException;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -13,10 +9,18 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

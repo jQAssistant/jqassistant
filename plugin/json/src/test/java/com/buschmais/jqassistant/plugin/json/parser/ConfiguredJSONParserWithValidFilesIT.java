@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
+import java.io.InputStream;
+import java.util.Collection;
+
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
+
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.InputStream;
-import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class ConfiguredJSONParserWithValidFilesIT {

@@ -1,8 +1,12 @@
 package com.buschmais.jqassistant.plugin.json.parser;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
-import org.antlr.v4.runtime.ANTLRInputStream;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import org.hamcrest.Matchers;
@@ -11,10 +15,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__4;
 import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__5;
