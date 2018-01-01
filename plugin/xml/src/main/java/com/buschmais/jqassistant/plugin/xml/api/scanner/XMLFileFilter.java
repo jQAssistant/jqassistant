@@ -1,15 +1,18 @@
 package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
-import java.io.InputStream;
+
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Provides functionality to verify if a file resource represents a specific XML

@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.plugin.xml.test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -12,14 +8,27 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.xml.api.model.*;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
+
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Tests the generic XML scanner.

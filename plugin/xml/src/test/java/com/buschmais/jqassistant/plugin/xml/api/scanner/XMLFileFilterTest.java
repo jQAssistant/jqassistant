@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
