@@ -37,6 +37,7 @@
   </scm>
 
     <properties>
+        <checkstyle.version>8.7</checkstyle.version>
         <jqa-asciidoc-utilities.version>1.4.0-SNAPSHOT</jqa-asciidoc-utilities.version>
         <jqa-distribution-spec.version>1.4.0-SNAPSHOT</jqa-distribution-spec.version>
         <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
@@ -111,6 +112,11 @@
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>checkstyle-config</artifactId>
                         <version>${project.parent.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
