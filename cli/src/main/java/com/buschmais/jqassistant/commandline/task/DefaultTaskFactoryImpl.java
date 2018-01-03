@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.TaskFactory;
-import com.google.common.base.CaseFormat;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.CaseFormat;
 
 /**
  * Default implementation of a task factory.

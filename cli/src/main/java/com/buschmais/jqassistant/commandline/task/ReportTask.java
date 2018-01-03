@@ -1,21 +1,23 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.report.api.ReportTransformer;
-import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
-import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
-import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.cli.CommandLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.core.report.api.ReportTransformer;
+import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
+import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+import com.buschmais.jqassistant.core.store.api.Store;
+
+import org.apache.commons.cli.CommandLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportTask extends AbstractTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResetTask.class);

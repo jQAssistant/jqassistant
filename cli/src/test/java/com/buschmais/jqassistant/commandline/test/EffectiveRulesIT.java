@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
+
+import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;

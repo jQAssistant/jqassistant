@@ -1,12 +1,5 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -14,9 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Verifies command line analysis.

@@ -1,22 +1,5 @@
 package com.buschmais.jqassistant.commandline;
 
-import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +16,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main class, i.e. the entry point for the CLI.

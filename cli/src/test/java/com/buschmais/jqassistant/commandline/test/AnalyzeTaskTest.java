@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline.test;
 
+import java.util.HashMap;
+
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.task.AnalyzeTask;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
@@ -7,14 +9,13 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+
 import org.apache.commons.cli.CommandLine;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.HashMap;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

@@ -1,20 +1,21 @@
 package com.buschmais.jqassistant.commandline.test;
 
+import java.io.File;
+import java.util.Map;
+
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.TaskFactory;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.File;
-import java.util.Map;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;

@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
