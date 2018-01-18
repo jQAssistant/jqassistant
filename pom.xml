@@ -84,6 +84,7 @@
         <org.neo4j_3x.version>3.3.1</org.neo4j_3x.version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>3.0.0</maven.buildhelper.version>
+        <maven.checkstyle.version>2.17</maven.checkstyle.version>
         <maven.clean.version>3.0.0</maven.clean.version>
         <maven.compiler.version>3.7.0</maven.compiler.version>
         <maven.dependency.version>2.10</maven.dependency.version>
@@ -93,7 +94,7 @@
         <maven.install.version>2.5.2</maven.install.version>
         <maven.jar.version>2.6</maven.jar.version>
         <maven.javadoc.version>2.10.4</maven.javadoc.version>
-        <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
+        <maven.jaxb2-plugin.version>0.9.1</maven.jaxb2-plugin.version>
 
         <!--
          ! This two properties controls on which severity of constraint
@@ -120,8 +121,8 @@
         <maven.site.version>3.4</maven.site.version>
         <maven.source.plugin>3.0.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
-        <maven.xml.version>1.0</maven.xml.version>
-        <org.asciidoctor-plugin.version>1.5.5</org.asciidoctor-plugin.version>
+        <maven.xml.version>1.0.1</maven.xml.version>
+        <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
         <lombok.version>1.16.16</lombok.version>
     </properties>
 
@@ -156,7 +157,11 @@
                          !-->
                     </configuration>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven.checkstyle.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -250,7 +255,7 @@
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>${maven-jaxb2-plugin.version}</version>
+                    <version>${maven.jaxb2-plugin.version}</version>
                     <executions>
                         <execution>
                             <goals>
