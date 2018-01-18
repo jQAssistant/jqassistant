@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.neo4jserver.neo4jv3;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseDependencies;
 import org.neo4j.kernel.configuration.Config;
@@ -13,9 +14,6 @@ import org.neo4j.logging.Level;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.database.WrappedDatabase;
-
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
 
 public class Neo4jV3CommunityNeoServer implements Server {
 
