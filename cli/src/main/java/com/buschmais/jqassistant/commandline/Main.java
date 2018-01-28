@@ -16,14 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
-
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,9 +27,16 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+
 /**
  * The main class, i.e. the entry point for the CLI.
- * 
+ *
  * @author jn4, Kontext E GmbH, 23.01.14
  * @author Dirk Mahler
  */
@@ -51,7 +50,7 @@ public class Main {
 
     /**
      * The main method.
-     * 
+     *
      * @param args
      *            The command line arguments.
      * @throws IOException
@@ -70,7 +69,7 @@ public class Main {
 
     /**
      * Constructor.
-     * 
+     *
      * @param taskFactory
      *            The task factory to use.
      */
@@ -80,7 +79,7 @@ public class Main {
 
     /**
      * Run tasks according to the given arguments.
-     * 
+     *
      * @param args
      *            The arguments.
      * @throws CliExecutionException
@@ -94,7 +93,7 @@ public class Main {
 
     /**
      * Extract an error message from the given exception and its causes.
-     * 
+     *
      * @param e
      *            The exception.
      * @return The error message.
@@ -113,7 +112,7 @@ public class Main {
 
     /**
      * Initialize the plugin repository.
-     * 
+     *
      * @return The repository.
      * @throws CliExecutionException
      *             If initialization fails.
@@ -129,7 +128,7 @@ public class Main {
 
     /**
      * Gather all options which are supported by the task (i.e. including standard and specific options).
-     * 
+     *
      * @return The options.
      */
     private Options gatherOptions(TaskFactory taskFactory) {
@@ -141,7 +140,7 @@ public class Main {
 
     /**
      * Gathers the standard options shared by all tasks.
-     * 
+     *
      * @param options
      *            The standard options.
      */
@@ -154,7 +153,7 @@ public class Main {
 
     /**
      * Gathers the task specific options for all tasks.
-     * 
+     *
      * @param options
      *            The task specific options.
      */
@@ -181,7 +180,7 @@ public class Main {
 
     /**
      * Parse the command line and execute the requested task.
-     * 
+     *
      * @param commandLine
      *            The command line.
      * @param options
@@ -209,7 +208,7 @@ public class Main {
 
     /**
      * Parse the command line
-     * 
+     *
      * @param args
      *            The arguments.
      * @param options
@@ -230,7 +229,7 @@ public class Main {
 
     /**
      * Executes a task.
-     * 
+     *
      * @param task
      *            The task.
      * @param option
@@ -256,7 +255,7 @@ public class Main {
 
     /**
      * Read the plugin properties file if specified on the command line or if it exists on the class path.
-     * 
+     *
      * @param commandLine
      *            The command line.
      * @return The plugin properties.
@@ -295,7 +294,7 @@ public class Main {
 
     /**
      * Print usage information.
-     * 
+     *
      * @param options
      *            The known options.
      * @param errorMessage
@@ -305,7 +304,7 @@ public class Main {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), options);
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f target/classes,target/test-classes");
+        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
     /**
