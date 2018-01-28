@@ -189,6 +189,11 @@ public class Main {
      *             If an error occurs.
      */
     private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
+        if(options.hasOption("-help")) {
+            printUsage(options, null);
+            System.exit(1);
+        }
+
         List<String> taskNames = commandLine.getArgList();
         if (taskNames.isEmpty()) {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
@@ -301,9 +306,12 @@ public class Main {
      *            The error message to append.
      */
     private void printUsage(final Options options, final String errorMessage) {
-        System.out.println(errorMessage);
+        if(errorMessage != null) {
+            System.out.println("Error: " + errorMessage);
+        }
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(Main.class.getCanonicalName(), options);
+        formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
+        System.out.println("Tasks are: " + gatherTaskNames(taskFactory));
         System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
