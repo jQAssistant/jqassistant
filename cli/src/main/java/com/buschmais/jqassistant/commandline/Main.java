@@ -304,7 +304,7 @@ public class Main {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), options);
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f target/classes,target/test-classes");
+        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
     /**
