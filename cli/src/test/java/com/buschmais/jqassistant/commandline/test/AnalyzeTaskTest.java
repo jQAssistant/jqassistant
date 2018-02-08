@@ -4,11 +4,7 @@ import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.task.AnalyzeTask;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.junit.Before;
@@ -17,9 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzeTaskTest {
@@ -36,12 +30,16 @@ public class AnalyzeTaskTest {
     @Mock
     private RulePluginRepository rulePluginRepository;
 
+    @Mock
+    private RuleLanguagePluginRepository ruleLanguagePluginRepository;
+
     @Before
     public void before() throws PluginRepositoryException {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getModelPluginRepository()).thenReturn(modelPluginRepository);
         when(pluginRepository.getReportPluginRepository()).thenReturn(reportPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
+        when(pluginRepository.getRuleLanguagePluginRepository()).thenReturn(ruleLanguagePluginRepository);
     }
 
     @Test

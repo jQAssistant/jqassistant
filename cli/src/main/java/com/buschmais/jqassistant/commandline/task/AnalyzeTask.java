@@ -1,23 +1,14 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -62,8 +53,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
-        LOGGER.info("Will warn on violation of constraints starting form severity '" + warnOnSeverity + "'");
-        LOGGER.info("Will fail on violation of constraints starting from severity '" + failOnSeverity + "'.");
+        LOGGER.info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
+        LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
 
         Writer xmlReportFileWriter;
@@ -87,7 +78,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportWriter, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -136,6 +127,21 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     /**
+     * Get all configured rule language plugins.
+     *
+     * @return The list of rule language plugins.
+     * @throws CliExecutionException
+     *             If the plugins cannot be loaded or configured.
+     */
+    private Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws CliExecutionException {
+        try {
+            return pluginRepository.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot get report plugins.", e);
+        }
+    }
+
+    /**
      * Get all configured report plugins.
      *
      * @return The list of report plugins.
@@ -178,8 +184,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         String severityValue = getOptionValue(options, CMDLINE_OPTION_SEVERITY, null);
         if (severityValue != null) {
-            Severity severity = getSeverity(severityValue);
-            failOnSeverity = severity;
+            failOnSeverity = getSeverity(severityValue);
             LOGGER.warn("'" + CMDLINE_OPTION_SEVERITY + "' has been deprecated, please use '" + CMDLINE_OPTION_FAIL_ON_SEVERITY + "' instead.");
         } else {
             failOnSeverity = getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
