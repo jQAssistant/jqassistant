@@ -8,38 +8,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -61,8 +38,8 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import junit.framework.Assert;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -111,12 +88,12 @@ public abstract class AbstractPluginIT {
             }
         }
 
-        public Method getTestMethod() {
+        Method getTestMethod() {
             return testMethod;
         }
     }
 
-    public static final String ARTIFACT_ID = "artifact";
+    protected static final String ARTIFACT_ID = "artifact";
 
     @Rule
     public TestContextRule testContextRule = new TestContextRule();
@@ -165,6 +142,7 @@ public abstract class AbstractPluginIT {
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
     private ReportPluginRepository reportPluginRepository;
+    private RuleLanguagePluginRepository ruleLanguagePluginRepository;
 
     @Before
     public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
@@ -174,6 +152,7 @@ public abstract class AbstractPluginIT {
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
+        ruleLanguagePluginRepository = new RuleLanguagePluginRepositoryImpl(pluginConfigurationReader);
 
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
         // read rules from rules directory
@@ -190,10 +169,14 @@ public abstract class AbstractPluginIT {
     }
 
     @Before
-    public void initializeAnalyzer() {
+    public void initializeAnalyzer() throws PluginRepositoryException {
         reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        analyzer = new AnalyzerImpl(configuration, store, reportWriter, LOGGER);
+        analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), reportWriter, LOGGER);
+    }
+
+    protected Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws PluginRepositoryException {
+        return ruleLanguagePluginRepository.getRuleLanguagePlugins();
     }
 
     /**
@@ -205,16 +188,15 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     @Before
-    public void startStore() throws PluginRepositoryException, URISyntaxException, IOException {
-        /* You might break IT of depending jQAssistant plugins if you change the
-         * location of the used database.
-         * Oliver B. Fischer, 2017-06-10
+    public void startStore() {
+        /*
+         * You might break IT of depending jQAssistant plugins if you change the
+         * location of the used database. Oliver B. Fischer, 2017-06-10
          */
-        String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" +
-                          testContextRule.getTestMethod().getName();
+        String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
 
         URI uri = new File(fileName).toURI();
-        //URI uri = new URI("bolt://localhost:7687");
+        // URI uri = new URI("bolt://localhost:7687");
         // URI uri = new URI("memory:///");
         Properties properties = new Properties();
         properties.put("neo4j.remote.statement.log.level", "info");
@@ -267,8 +249,7 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Determines the directory a class is located in (e.g.
-     * target/test-classes).
+     * Determines the directory a class is located in (e.g. target/test-classes).
      *
      * @param rootClass
      *            The class.
@@ -281,13 +262,10 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Deletes the node representing the test class and all its relationships
-     * from the store.
-     *
-     * @throws IOException
-     *             If an error occurs.
+     * Deletes the node representing the test class and all its relationships from
+     * the store.
      */
-    protected void removeTestClass() throws IOException {
+    protected void removeTestClass() {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("className", this.getClass().getName());
@@ -297,8 +275,7 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
-     * .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
      *            The query.
@@ -309,8 +286,7 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
-     * .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
      *            The query.
@@ -388,7 +364,8 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters)
+            throws RuleException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
