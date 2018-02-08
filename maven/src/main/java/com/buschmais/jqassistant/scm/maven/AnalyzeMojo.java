@@ -6,17 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -33,11 +25,19 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Runs analysis according to the defined rules.
  */
-@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true,
-      configurator = "custom")
+@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, configurator = "custom")
 public class AnalyzeMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
@@ -129,7 +129,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportWriter, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
@@ -149,7 +149,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                     throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
                 }
             } else {
-                effectiveFailOnSeverity = failOnSeverity ;
+                effectiveFailOnSeverity = failOnSeverity;
             }
 
             verifyAnalysisResults(inMemoryReportWriter, reportHelper, effectiveFailOnSeverity);
@@ -158,9 +158,16 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private void verifyAnalysisResults(InMemoryReportWriter inMemoryReportWriter, ReportHelper reportHelper,
-                                       Severity effectiveFailOnSeverity)
-        throws MojoFailureException {
+    private Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws MojoExecutionException {
+        try {
+            return pluginRepositoryProvider.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot get rule language plugins.", e);
+        }
+    }
+
+    private void verifyAnalysisResults(InMemoryReportWriter inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)
+            throws MojoFailureException {
         int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
         int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
 
@@ -173,8 +180,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private ReportPlugin getReportPlugin(MavenProject rootModule)
-        throws MojoExecutionException {
+    private ReportPlugin getReportPlugin(MavenProject rootModule) throws MojoExecutionException {
         ReportPlugin xmlReportWriter = null;
 
         for (ReportType reportType : reportTypes) {

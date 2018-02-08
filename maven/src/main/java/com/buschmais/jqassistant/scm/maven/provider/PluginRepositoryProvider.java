@@ -98,4 +98,19 @@ public class PluginRepositoryProvider {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
     }
+
+    /**
+     * Return the rule language plugin repository.
+     *
+     * @return The rule language plugin repository.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *             If the repository cannot be created.
+     */
+    public RuleLanguagePluginRepository getRuleLanguagePluginRepository() throws MojoExecutionException {
+        try {
+            return pluginRepository.getRuleLanguagePluginRepository();
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot create rule language plugin repository.", e);
+        }
+    }
 }

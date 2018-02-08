@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
+import com.buschmais.jqassistant.core.rule.impl.writer.XmlRuleSetWriter;
+import com.buschmais.jqassistant.core.store.api.Store;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
-import com.buschmais.jqassistant.core.rule.impl.writer.RuleSetWriterImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Exports the all rules to an XML file.
@@ -29,10 +29,10 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
         final RuleSet ruleSet = readRules(rootModule);
-        RuleSetWriter ruleSetWriter = new RuleSetWriterImpl(getRuleConfiguration());
+        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(getRuleConfiguration());
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {
