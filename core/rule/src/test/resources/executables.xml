@@ -1,0 +1,60 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+
+    <concept id="test:CypherConcept">
+        <description></description>
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ScriptConcept">
+        <description></description>
+        <script language="javascript"><![CDATA[
+            Script Concept
+        ]]></script>
+    </concept>
+
+    <concept id="test:SourceConcept">
+        <description></description>
+        <source language="cypher"><![CDATA[
+          Source Concept
+        ]]></source>
+    </concept>
+
+    <concept id="test:SourceConceptUpperCase">
+        <description></description>
+        <source language="CYPHER"><![CDATA[
+          Source Concept (upper case)
+        ]]></source>
+    </concept>
+
+
+    <constraint id="test:CypherConstraint">
+        <description></description>
+        <cypher><![CDATA[
+            Cypher Constraint
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:ScriptConstraint">
+        <description></description>
+        <script language="javascript"><![CDATA[
+            Script Constraint
+        ]]></script>
+    </constraint>
+
+    <constraint id="test:SourceConstraint">
+        <description></description>
+        <source language="cypher"><![CDATA[
+            Source Constraint
+        ]]></source>
+    </constraint>
+
+    <constraint id="test:SourceConstraintUpperCase">
+        <description></description>
+        <source language="CYPHER"><![CDATA[
+            Source Constraint (upper case)
+        ]]></source>
+    </constraint>
+
+</jqa:jqassistant-rules>

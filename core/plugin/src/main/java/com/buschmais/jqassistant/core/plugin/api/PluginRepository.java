@@ -13,6 +13,8 @@ public interface PluginRepository {
 
     RulePluginRepository getRulePluginRepository() throws PluginRepositoryException;
 
+    RuleLanguagePluginRepository getRuleLanguagePluginRepository() throws PluginRepositoryException;
+
     ReportPluginRepository getReportPluginRepository() throws PluginRepositoryException;
 
     ClassLoader getClassLoader();

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2"
-           elementFormDefault="unqualified">
+           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4">
 
     <xs:element name="jqassistant-plugin">
         <xs:complexType>
@@ -12,6 +11,7 @@
                 <xs:element name="scope" type="jqassistant-plugin:ScopeType" minOccurs="0"/>
                 <xs:element name="scanner" type="jqassistant-plugin:ScannerType" minOccurs="0"/>
                 <xs:element name="rules" type="jqassistant-plugin:RulesType" minOccurs="0"/>
+                <xs:element name="language" type="jqassistant-plugin:RuleLanguageType" minOccurs="0"/>
                 <xs:element name="report" type="jqassistant-plugin:ReportType" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="required"/>
@@ -42,6 +42,12 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="RuleLanguageType">
+        <xs:sequence>
+            <xs:element name="class" type="jqassistant-plugin:IdClassType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="ReportType">
         <xs:sequence>
             <xs:element name="class" type="jqassistant-plugin:IdClassType" minOccurs="0" maxOccurs="unbounded"/>
@@ -51,7 +57,7 @@
     <xs:complexType name="IdClassType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="id" type="xs:string" use="optional"/>
+                <xs:attribute name="id" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

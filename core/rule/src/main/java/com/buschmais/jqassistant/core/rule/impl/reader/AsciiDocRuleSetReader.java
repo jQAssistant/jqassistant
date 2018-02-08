@@ -2,30 +2,11 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Parameter;
-import com.buschmais.jqassistant.core.analysis.api.rule.Report;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
@@ -53,34 +34,34 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
 
-    public static final String CONCEPT = "concept";
-    public static final String CONSTRAINT = "constraint";
-    public static final String GROUP = "group";
+    private static final String CONCEPT = "concept";
+    private static final String CONSTRAINT = "constraint";
+    private static final String GROUP = "group";
 
-    public static final String INCLUDES_GROUPS = "includesGroups";
-    public static final String INCLUDES_CONCEPTS = "includesConcepts";
-    public static final String INCLUDES_CONSTRAINTS = "includesConstraints";
+    private static final String INCLUDES_GROUPS = "includesGroups";
+    private static final String INCLUDES_CONCEPTS = "includesConcepts";
+    private static final String INCLUDES_CONSTRAINTS = "includesConstraints";
 
-    public static final String SEVERITY = "severity";
-    public static final String DEPENDS = "depends";
-    public static final String REQUIRES_CONCEPTS = "requiresConcepts";
-    public static final String REQUIRES_PARAMETERS = "requiresParameters";
-    public static final String REPORT_TYPE = "reportType";
-    public static final String PRIMARY_REPORT_COLUM = "primaryReportColumn";
-    public static final String REPORT_PROPERTIES = "reportProperties";
-    public static final String VERIFY = "verify";
-    public static final String AGGREGATION = "aggregation";
-    public static final String AGGREGATION_COLUMN = "aggregationColumn";
-    public static final String AGGREGATION_MIN = "aggregationMin";
-    public static final String AGGREGATION_MAX = "aggregationMax";
-    public static final String ROW_COUNT_MIN = "rowCountMin";
-    public static final String ROW_COUNT_MAX = "rowCountMax";
-    public static final String TITLE = "title";
-    public static final String LISTING = "listing";
-    public static final String SOURCE = "source";
-    public static final String LANGUAGE = "language";
-    public static final String CYPHER = "cypher";
-    public static final String OPTIONAL = "optional";
+    private static final String SEVERITY = "severity";
+    private static final String DEPENDS = "depends";
+    private static final String REQUIRES_CONCEPTS = "requiresConcepts";
+    private static final String REQUIRES_PARAMETERS = "requiresParameters";
+    private static final String REPORT_TYPE = "reportType";
+    private static final String PRIMARY_REPORT_COLUM = "primaryReportColumn";
+    private static final String REPORT_PROPERTIES = "reportProperties";
+    private static final String VERIFY = "verify";
+    private static final String AGGREGATION = "aggregation";
+    private static final String AGGREGATION_COLUMN = "aggregationColumn";
+    private static final String AGGREGATION_MIN = "aggregationMin";
+    private static final String AGGREGATION_MAX = "aggregationMax";
+    private static final String ROW_COUNT_MIN = "rowCountMin";
+    private static final String ROW_COUNT_MAX = "rowCountMax";
+    private static final String TITLE = "title";
+    private static final String LISTING = "listing";
+    private static final String SOURCE = "source";
+    private static final String LANGUAGE = "language";
+    private static final String CYPHER = "cypher";
+    private static final String OPTIONAL = "optional";
 
     private RuleConfiguration ruleConfiguration;
 
@@ -89,7 +70,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      */
     private Asciidoctor cachedAsciidoctor = null;
 
-    public AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
+    AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
     }
 
@@ -121,7 +102,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         Document document;
         try {
-            document = getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object>emptyMap());
+            document = getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object> emptyMap());
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
@@ -149,16 +130,17 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *
      *
      * @param ruleSource
+     *            The rule source.
      * @param blocks
      *            The content parts of the document.
      * @param builder
-     * @return A collection of content parts representing rules.
+     *            The {@link RuleSetBuilder}.
      */
-    private  void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
+    private void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
         for (Object element : blocks) {
             if (element instanceof AbstractBlock) {
                 AbstractBlock block = (AbstractBlock) element;
-                if (LISTING.equals(block.getContext()) && SOURCE.equals(block.getStyle()) && EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
+                if (LISTING.equals(block.getContext()) && EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
                     extractExecutableRule(ruleSource, block, builder);
                 } else if (GROUP.equals(block.getRole())) {
                     extractGroup(ruleSource, block, builder);
@@ -172,20 +154,28 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private void extractExecutableRule(RuleSource ruleSource, AbstractBlock executableRuleBlock, RuleSetBuilder builder) throws RuleException {
         Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
+        String source = unescapeHtml(executableRuleBlock.getContent());
         String id = executableRuleBlock.id();
-        String description = attributes.getString(TITLE);
+        if (id == null) {
+            throw new RuleException("An id is required for block with content'" + source + "'.");
+        }
+        String description = attributes.getString(TITLE, "");
         if (description == null) {
             LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
         }
         Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
         Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
-        String language = attributes.getString(LANGUAGE);
-        String source = unescapeHtml(executableRuleBlock.getContent());
+        String language;
+        if (SOURCE.equals(executableRuleBlock.getStyle())) {
+            language = attributes.getString(LANGUAGE);
+        } else {
+            language = executableRuleBlock.getStyle();
+        }
         Executable executable;
         if (CYPHER.equals(language)) {
             executable = new CypherExecutable(source);
         } else {
-            executable = new ScriptExecutable(language.toString(), source);
+            executable = new ScriptExecutable(language, source);
         }
         Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
@@ -198,12 +188,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         if (CONCEPT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
             Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
-                                             .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
             builder.addConcept(concept);
         } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
             Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
-                                                      .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
             builder.addConstraint(constraint);
         }
     }
@@ -217,8 +207,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The attributes of an asciidoc rule block
      * @param id
      *            The id.
-     * @return A map where the keys represent the ids of required concepts and
-     *         the values if they are optional.
+     * @return A map where the keys represent the ids of required concepts and the
+     *         values if they are optional.
      * @throws RuleException
      *             If the dependencies cannot be evaluated.
      */
@@ -247,7 +237,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
         Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
         Group group = Group.Builder.newGroup().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
-                                   .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
+                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
         ruleSetBuilder.addGroup(group);
     }
 
@@ -273,7 +263,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @return A map containing the ids of the dependencies as keys and their
      *         severity (optional).
      */
-    private Map<String, String> getDependencyDeclarations(Attributes attributes, String attributeName) throws RuleException {
+    private Map<String, String> getDependencyDeclarations(Attributes attributes, String attributeName) {
         String attribute = attributes.getString(attributeName);
         Set<String> dependencies = new HashSet<>();
         if (attribute != null && !attribute.trim().isEmpty()) {
@@ -320,7 +310,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @return The unescaped rule
      */
     private String unescapeHtml(Object content) {
-        return content.toString().replace("&lt;", "<").replace("&gt;", ">");
+        return content != null ? content.toString().replace("&lt;", "<").replace("&gt;", ">") : "";
     }
 
     /**
@@ -408,11 +398,15 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
 
         private String getString(String key) {
+            return getString(key, null);
+        }
+
+        private String getString(String key, String defaultValue) {
             Object value = attributes.get(key);
             if (value != null) {
                 return value.toString();
             }
-            return null;
+            return defaultValue;
         }
     }
 }

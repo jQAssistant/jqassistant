@@ -15,7 +15,7 @@ import static java.util.Arrays.asList;
  */
 public class CompoundRuleSetReader implements RuleSetReader {
 
-    private List<RuleSetReader> ruleSetReaders;
+    private List<? extends RuleSetReader> ruleSetReaders;
 
     public CompoundRuleSetReader(RuleConfiguration ruleConfiguration) {
         ruleSetReaders = asList(new XmlRuleSetReader(ruleConfiguration), new AsciiDocRuleSetReader(ruleConfiguration));
@@ -27,5 +27,4 @@ public class CompoundRuleSetReader implements RuleSetReader {
             ruleSetReader.read(sources, ruleSetBuilder);
         }
     }
-
 }

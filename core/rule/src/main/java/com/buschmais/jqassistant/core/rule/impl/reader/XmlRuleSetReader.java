@@ -12,22 +12,8 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.schema.v1.AggregationVerificationType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ExecutableRuleType;
-import com.buschmais.jqassistant.core.rule.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.rule.schema.v1.IncludedReferenceType;
-import com.buschmais.jqassistant.core.rule.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.rule.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.rule.schema.v1.PropertyType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ReportType;
-import com.buschmais.jqassistant.core.rule.schema.v1.RowCountVerificationType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ScriptType;
-import com.buschmais.jqassistant.core.rule.schema.v1.SeverityEnumType;
-import com.buschmais.jqassistant.core.rule.schema.v1.SeverityRuleType;
-import com.buschmais.jqassistant.core.rule.schema.v1.VerificationType;
+import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
+import com.buschmais.jqassistant.core.rule.schema.v1.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
 import org.slf4j.Logger;
@@ -38,14 +24,15 @@ import org.slf4j.LoggerFactory;
  */
 public class XmlRuleSetReader implements RuleSetReader {
 
-    public static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
-    public static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
-    public static final String NAMESPACE_RULES_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
-    public static final String NAMESPACE_RULES_1_3 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.3";
-    public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.3.xsd";
+    private static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
+    private static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
+    private static final String NAMESPACE_RULES_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
+    private static final String NAMESPACE_RULES_1_3 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.3";
+    private static final String NAMESPACE_RULES_1_4 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.4";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.4.xsd";
 
-    public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
-    public static final RowCountVerification DEFAULT_VERIFICATION = RowCountVerification.builder().build();
+    private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
+    private static final RowCountVerification DEFAULT_VERIFICATION = RowCountVerification.builder().build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
@@ -56,9 +43,10 @@ public class XmlRuleSetReader implements RuleSetReader {
     public XmlRuleSetReader(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
         Map<String, String> namespaceMappings = new HashMap<>();
-        namespaceMappings.put(NAMESPACE_RULES_1_0, NAMESPACE_RULES_1_3);
-        namespaceMappings.put(NAMESPACE_RULES_1_1, NAMESPACE_RULES_1_3);
-        namespaceMappings.put(NAMESPACE_RULES_1_2, NAMESPACE_RULES_1_3);
+        namespaceMappings.put(NAMESPACE_RULES_1_0, NAMESPACE_RULES_1_4);
+        namespaceMappings.put(NAMESPACE_RULES_1_1, NAMESPACE_RULES_1_4);
+        namespaceMappings.put(NAMESPACE_RULES_1_2, NAMESPACE_RULES_1_4);
+        namespaceMappings.put(NAMESPACE_RULES_1_3, NAMESPACE_RULES_1_4);
         this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, namespaceMappings);
     }
 
@@ -184,11 +172,17 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
+        SourceType source = executableRuleType.getSource();
+        if (source != null) {
+            return new SourceExecutable(source.getLanguage(), source.getValue());
+        }
+        // for compatibility
         String cypher = executableRuleType.getCypher();
-        ScriptType scriptType = executableRuleType.getScript();
         if (cypher != null) {
             return new CypherExecutable(cypher);
-        } else if (scriptType != null) {
+        }
+        SourceType scriptType = executableRuleType.getScript();
+        if (scriptType != null) {
             return new ScriptExecutable(scriptType.getLanguage(), scriptType.getValue());
         }
         throw new RuleException("Cannot determine executable for " + executableRuleType.getId());

@@ -10,18 +10,18 @@ import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 public interface PluginConfigurationReader {
 
     String PLUGIN_RESOURCE = "META-INF/jqassistant-plugin.xml";
-    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/xsd/jqassistant-plugin-1.2.xsd";
+    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/xsd/jqassistant-plugin-1.4.xsd";
 
     /**
      * Return the class loader used to resolve plugins.
-     * 
+     *
      * @return The class loader.
      */
     ClassLoader getClassLoader();
 
     /**
      * Return the list of detected plugins.
-     * 
+     *
      * @return The plugins.
      */
     List<JqassistantPlugin> getPlugins();

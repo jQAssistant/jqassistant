@@ -18,23 +18,14 @@ import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfigura
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
-import com.buschmais.jqassistant.core.rule.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ExecutableRuleType;
-import com.buschmais.jqassistant.core.rule.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.rule.schema.v1.IncludedReferenceType;
-import com.buschmais.jqassistant.core.rule.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.rule.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.rule.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.rule.schema.v1.ScriptType;
-import com.buschmais.jqassistant.core.rule.schema.v1.SeverityEnumType;
+import com.buschmais.jqassistant.core.rule.schema.v1.*;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
  */
-public class RuleSetWriterImpl implements RuleSetWriter {
+public class XmlRuleSetWriter implements RuleSetWriter {
 
     private RuleConfiguration ruleConfiguration;
 
@@ -42,7 +33,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
 
     private RuleSetExecutorConfiguration configuration = new RuleSetExecutorConfiguration();
 
-    public RuleSetWriterImpl(RuleConfiguration ruleConfiguration) {
+    public XmlRuleSetWriter(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
@@ -64,13 +55,13 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         marshal(writer, rules);
     }
 
-    private void marshal(Writer writer, JqassistantRules rules) {
+    private void marshal(Writer writer, JqassistantRules rules) throws RuleException {
         XMLOutputFactory xof = XMLOutputFactory.newInstance();
-        XMLStreamWriter streamWriter = null;
+        XMLStreamWriter streamWriter;
         try {
             streamWriter = xof.createXMLStreamWriter(writer);
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            throw new RuleException("Cannot create stream writer.", e);
         }
         XMLStreamWriter indentingStreamWriter = new IndentingXMLStreamWriter(new CDataXMLStreamWriter(streamWriter));
         try {
@@ -78,7 +69,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.marshal(rules, indentingStreamWriter);
         } catch (JAXBException e) {
-            throw new IllegalArgumentException("Cannot write rules to " + writer, e);
+            throw new RuleException("Cannot write rules to " + writer, e);
         }
     }
 
@@ -108,7 +99,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
@@ -120,7 +111,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) {
         for (Constraint constraint : constraints) {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
@@ -141,20 +132,12 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) {
         Executable executable = executableRule.getExecutable();
-        if (executable instanceof CypherExecutable) {
-            CypherExecutable cypherExecutable = (CypherExecutable) executable;
-            executableRuleType.setCypher(cypherExecutable.getStatement());
-        } else if (executable instanceof ScriptExecutable) {
-            ScriptExecutable scriptExecutable = (ScriptExecutable) executable;
-            ScriptType scriptType = new ScriptType();
-            scriptType.setLanguage(scriptExecutable.getLanguage());
-            scriptType.setValue(scriptExecutable.getSource());
-            executableRuleType.setScript(scriptType);
-        } else {
-            throw new com.buschmais.jqassistant.core.analysis.api.rule.RuleException("Unsupport executable type " + executable);
-        }
+        SourceType sourceType = new SourceType();
+        sourceType.setLanguage(executable.getLanguage());
+        sourceType.setValue(executable.getSource());
+        executableRuleType.setSource(sourceType);
     }
 
     /**

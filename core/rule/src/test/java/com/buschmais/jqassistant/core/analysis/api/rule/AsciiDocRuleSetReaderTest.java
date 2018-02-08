@@ -32,7 +32,7 @@ public class AsciiDocRuleSetReaderTest {
 
         Executable executable1 = concept1.getExecutable();
         assertThat(executable1, instanceOf(CypherExecutable.class));
-        assertThat(((CypherExecutable) executable1).getStatement(), containsString("c:Test:Junit4, m:Test:Junit4"));
+        assertThat(executable1.getSource(), containsString("c:Test:Junit4, m:Test:Junit4"));
         assertThat(concept1.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
 
         Concept concept2 = concepts.getById("junit4:AssertMethod");
@@ -41,7 +41,7 @@ public class AsciiDocRuleSetReaderTest {
 
         Executable executable2 = concept2.getExecutable();
         assertThat(executable2, instanceOf(CypherExecutable.class));
-        assertThat(((CypherExecutable) executable2).getStatement(), containsString("and assertMethod.signature =~ 'void assert.*'"));
+        assertThat(executable2.getSource(), containsString("and assertMethod.signature =~ 'void assert.*'"));
         assertThat(concept2.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
 
         ConstraintBucket constraints = ruleSet.getConstraintBucket();
@@ -55,7 +55,7 @@ public class AsciiDocRuleSetReaderTest {
 
         Executable constraintExecutable = constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
-        assertThat(((CypherExecutable) constraintExecutable).getStatement(), containsString("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
+        assertThat(constraintExecutable.getSource(), containsString("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
 
         assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder(constraint.getRequiresConcepts().keySet().toArray()));
     }
@@ -156,7 +156,7 @@ public class AsciiDocRuleSetReaderTest {
         RuleSetTestHelper.verifyParameter(parameters, "byteParam", Parameter.Type.BYTE, assertDefaultValue ? (byte) 42 : null);
         RuleSetTestHelper.verifyParameter(parameters, "shortParam", Parameter.Type.SHORT, assertDefaultValue ? (short) 42 : null);
         RuleSetTestHelper.verifyParameter(parameters, "intParam", Parameter.Type.INT, assertDefaultValue ? 42 : null);
-        RuleSetTestHelper.verifyParameter(parameters, "longParam", Parameter.Type.LONG, assertDefaultValue ? 42l : null);
+        RuleSetTestHelper.verifyParameter(parameters, "longParam", Parameter.Type.LONG, assertDefaultValue ? 42L : null);
         RuleSetTestHelper.verifyParameter(parameters, "floatParam", Parameter.Type.FLOAT, assertDefaultValue ? (float) 42.0 : null);
         RuleSetTestHelper.verifyParameter(parameters, "doubleParam", Parameter.Type.DOUBLE, assertDefaultValue ? 42.0 : null);
         RuleSetTestHelper.verifyParameter(parameters, "booleanParam", Parameter.Type.BOOLEAN, assertDefaultValue ? true : null);

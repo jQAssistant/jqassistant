@@ -24,6 +24,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
     private static final Schema SCHEMA = XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE);
+    private static final String NAMESPACE = "http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4";
 
     private final ClassLoader pluginClassLoader;
 
@@ -47,8 +48,9 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     public PluginConfigurationReaderImpl(ClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
         Map<String, String> namespaceMappings = new HashMap<>();
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0", "http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2");
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1", "http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2");
+        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0", NAMESPACE);
+        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1", NAMESPACE);
+        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2", NAMESPACE);
         this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantPlugin.class, SCHEMA, namespaceMappings);
     }
 

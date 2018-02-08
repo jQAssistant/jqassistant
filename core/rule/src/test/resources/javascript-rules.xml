@@ -9,9 +9,24 @@
 
     <constraint id="test:JavaScriptConstraint">
         <description>A test constraint based on JavaScript.</description>
-        <script language="JavaSscript">
+        <script language="JavaScript">
 
         </script>
     </constraint>
+
+    <concept id="test:JavaScriptExecutableConcept">
+        <description>A test concept based on JavaScript.</description>
+        <source language="JavaScript">
+
+        </source>
+    </concept>
+
+    <constraint id="test:JavaScriptExecutableConstraint">
+        <description>A test constraint based on JavaScript.</description>
+        <source language="JavaScript">
+
+        </source>
+    </constraint>
+
 
 </jqa:jqassistant-rules>

@@ -1,0 +1,49 @@
+= Executables
+
+[[test:CypherConcept]]
+[cypher,role=concept]
+----
+MATCH (n) RETURN n
+----
+
+[[test:ScriptConcept]]
+[source,javascript,role=concept]
+----
+----
+
+[[test:SourceConcept]]
+[source,cypher,role=concept]
+----
+MATCH (n) RETURN n
+----
+
+[[test:SourceConceptUpperCase]]
+[source,CYPHER,role=concept]
+----
+MATCH (n) RETURN n
+----
+
+[[test:CypherConstraint]]
+[cypher,role=constraint]
+----
+MATCH (n) RETURN n
+----
+
+[[test:ScriptConstraint]]
+[source,javascript,role=constraint]
+----
+MATCH (n) RETURN n
+----
+
+[[test:SourceConstraint]]
+[source,cypher,role=constraint]
+----
+MATCH (n) RETURN n
+----
+
+[[test:SourceConstraintUpperCase]]
+[source,CYPHER,role=constraint]
+----
+MATCH (n) RETURN n
+----
+

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -48,7 +49,7 @@ public class AnalyzerVisitorTest {
     private static final String RULESOURCE = "test.xml";
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
     private static final String PARAMETER_WITH_DEFAULT = "withDefault";
-    public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
+    private static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
 
     @Mock
     private Store store;
@@ -61,6 +62,8 @@ public class AnalyzerVisitorTest {
 
     @Mock
     private AnalyzerConfiguration configuration;
+
+    private Map<String, RuleLanguagePlugin> ruleLanguagePlugins = new HashMap<>();
 
     private AnalyzerVisitor analyzerVisitor;
 
@@ -75,7 +78,7 @@ public class AnalyzerVisitorTest {
     private Map<String, String> ruleParameters;
 
     @Before
-    public void setUp() throws RuleHandlingException {
+    public void setUp() {
         statement = "match (n) return n";
         concept = createConcept(statement);
         constraint = createConstraint(statement);
@@ -86,7 +89,8 @@ public class AnalyzerVisitorTest {
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenReturn(result);
 
-        analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
+        ruleLanguagePlugins.put("cypher", new CypherLanguagePlugin());
+        analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleLanguagePlugins, reportWriter, console);
     }
 
     /**
@@ -205,12 +209,12 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void missingParameter() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    public void missingParameter() {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, ruleLanguagePlugins, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
@@ -221,13 +225,13 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void ruleSourceInErrorMessage() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    public void ruleSourceInErrorMessage() {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleLanguagePlugins, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {

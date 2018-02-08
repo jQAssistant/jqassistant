@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3"
-           elementFormDefault="unqualified">
+           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
 
     <xs:element name="jqassistant-rules">
         <xs:complexType>
@@ -19,7 +18,7 @@
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="scriptType">
+    <xs:complexType name="sourceType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="language" type="xs:string"/>
@@ -30,7 +29,7 @@
     <xs:complexType name="parameterType">
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
-        <xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
     </xs:complexType>
 
     <xs:simpleType name="parameterTypes">
@@ -67,7 +66,7 @@
 
     <xs:complexType name="referenceType">
         <xs:attribute name="refId" type="xs:string" use="required"/>
-        <xs:attribute name="optional" type="xs:boolean" use="optional"/>
+        <xs:attribute name="optional" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="includedReferenceType">
@@ -79,21 +78,21 @@
     </xs:complexType>
 
     <xs:complexType name="verificationType">
-        <xs:choice maxOccurs="1">
-            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType" maxOccurs="1"/>
-            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType" maxOccurs="1"/>
+        <xs:choice>
+            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType"/>
+            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType"/>
         </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="rowCountVerificationType">
-        <xs:attribute name="min" type="xs:int" use="optional"/>
-        <xs:attribute name="max" type="xs:int" use="optional"/>
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int"/>
     </xs:complexType>
 
     <xs:complexType name="aggregationVerificationType">
-        <xs:attribute name="column" type="xs:string" use="optional"/>
-        <xs:attribute name="min" type="xs:int" use="optional"/>
-        <xs:attribute name="max" type="xs:int" use="optional"/>
+        <xs:attribute name="column" type="xs:string"/>
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int"/>
     </xs:complexType>
 
     <xs:complexType name="severityRuleType" abstract="true">
@@ -115,11 +114,12 @@
                     <xs:element name="description" type="xs:string" minOccurs="0"/>
                     <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
                     <xs:choice>
+                        <xs:element name="source" type="jqassistant-rules:sourceType"/>
                         <xs:element name="cypher" type="xs:string"/>
-                        <xs:element name="script" type="jqassistant-rules:scriptType"/>
+                        <xs:element name="script" type="jqassistant-rules:sourceType"/>
                     </xs:choice>
-                    <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
-                    <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0"/>
+                    <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -156,8 +156,8 @@
         <xs:sequence>
             <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="type" type="xs:string" use="optional"/>
-        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
+        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="primaryColumn" type="xs:string"/>
     </xs:complexType>
 
 </xs:schema>

@@ -1,7 +1,11 @@
 <jqa-plugin:jqassistant-plugin
-        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1" name="Core Analysis">
+        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4" name="Core Analysis">
     <description>Provides elements for storing analysis results.</description>
     <model>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
     </model>
+    <language>
+        <class>com.buschmais.jqassistant.core.analysis.impl.CypherLanguagePlugin</class>
+        <class>com.buschmais.jqassistant.core.analysis.impl.ScriptLanguagePlugin</class>
+    </language>
 </jqa-plugin:jqassistant-plugin>
