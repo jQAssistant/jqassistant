@@ -45,6 +45,7 @@
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
 
         <!--
          ! Properties used for the IT with the Maven Invoker Plugin.
@@ -68,8 +69,35 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>checkstyle</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <logViolationsToConsole>true</logViolationsToConsole>
+                            <configLocation>checkstyle/jqa-code-style.xml</configLocation>
+                            <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
+                            <excludes>**/generated-sources/**/*</excludes>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.buschmais.jqassistant</groupId>
+                                <artifactId>checkstyle-config</artifactId>
+                                <version>${project.parent.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>${maven-invoker-plugin.version}</version>
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <settingsFile>src/it/settings.xml</settingsFile>
