@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.scm.maven.configuration;
 
+import java.util.Locale;
+
 import com.buschmais.jqassistant.scm.maven.StoreLifecycle;
+
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.converters.basic.AbstractBasicConverter;
-
-import java.util.Locale;
 
 import static java.lang.String.format;
 

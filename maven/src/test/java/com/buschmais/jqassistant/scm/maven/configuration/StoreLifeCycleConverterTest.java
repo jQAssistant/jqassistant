@@ -1,14 +1,13 @@
 package com.buschmais.jqassistant.scm.maven.configuration;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.scm.maven.StoreLifecycle;
+
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 
 public class StoreLifeCycleConverterTest {
     private StoreLifeCycleConverter converter = new StoreLifeCycleConverter();

@@ -12,7 +12,6 @@ import com.buschmais.jqassistant.core.rule.impl.writer.XmlRuleSetWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 

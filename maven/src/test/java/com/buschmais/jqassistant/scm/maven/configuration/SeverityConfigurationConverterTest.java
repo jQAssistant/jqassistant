@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.scm.maven.configuration;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
