@@ -45,9 +45,9 @@
         <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
 
         <assertj.version>3.8.0</assertj.version>
-        <junit-plattform-launcher.version>1.0.2</junit-plattform-launcher.version>
-        <junit-jupiter-engine.version>5.0.2</junit-jupiter-engine.version>
-        <junit-vintage-engine.version>4.12.2</junit-vintage-engine.version>
+        <junit-plattform-launcher.version>1.1.0</junit-plattform-launcher.version>
+        <junit-jupiter-engine.version>5.1.0</junit-jupiter-engine.version>
+        <junit-vintage-engine.version>5.1.0</junit-vintage-engine.version>
     </properties>
 
     <build>
