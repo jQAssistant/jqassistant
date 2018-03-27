@@ -40,7 +40,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on class level.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -49,14 +49,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class, Enumeration.class);
         // verify annotation type
         store.beginTransaction();
-        TestResult testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN t, a, at");
+        TestResult testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN t, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((TypeDescriptor) row.get("t"), typeDescriptor(AnnotatedType.class));
         assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
         // verify values
-        testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
+        testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(6));
         List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("class"))));
@@ -71,7 +71,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on method level.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -80,14 +80,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method level
         store.beginTransaction();
-        TestResult testResult = query("MATCH (m:Method)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
+        TestResult testResult = query("MATCH (m:Method)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((MethodDescriptor) row.get("m"), methodDescriptor(AnnotatedType.class, "annotatedMethod", String.class));
         assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
         // verify values on method level
-        testResult = query("MATCH (m:Method)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
+        testResult = query("MATCH (m:Method)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("method"))));
@@ -96,7 +96,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on method parameter level.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -105,14 +105,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method parameter level
         store.beginTransaction();
-        TestResult testResult = query("MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
+        TestResult testResult = query("MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((MethodDescriptor) row.get("m"), methodDescriptor(AnnotatedType.class, "annotatedMethod", String.class));
         assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
         // verify values on method parameter level
-        testResult = query("MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
+        testResult = query("MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("parameter"))));
@@ -121,7 +121,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on field level.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -130,14 +130,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
-        TestResult testResult = query("MATCH (f:Field)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN f, a, at");
+        TestResult testResult = query("MATCH (f:Field)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN f, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((FieldDescriptor) row.get("f"), fieldDescriptor(AnnotatedType.class, "annotatedField"));
         assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
         // verify values
-        testResult = query("MATCH (f:Field)-[:ANNOTATED_BY]->(a:Java:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
+        testResult = query("MATCH (f:Field)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:HAS]->(value:Value) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("field"))));
@@ -146,7 +146,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies dependencies generated by default values of annotation methods.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */

@@ -28,19 +28,19 @@ public class PojoIT extends AbstractJavaPluginIT {
     public void attributes() throws IOException {
         scanClasses(Pojo.class);
         store.beginTransaction();
-        TestResult testResult = query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
+        TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
         assertThat(testResult.getRows().size(), equalTo(1));
         ClassFileDescriptor typeDescriptor = (ClassFileDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
         assertThat(typeDescriptor.getFileName(), equalTo("/" + Pojo.class.getName().replace('.', '/') + ".class"));
         assertThat(typeDescriptor.getSourceFileName(), equalTo(Pojo.class.getSimpleName() + ".java"));
-        assertThat(query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t.name as name").getColumn("name"), hasItem(equalTo("Pojo")));
+        assertThat(query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t.name as name").getColumn("name"), hasItem(equalTo("Pojo")));
 
-        testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(f:Field) RETURN f.signature as signature, f.name as name");
+        testResult = query("MATCH (t:Java:ByteCode:Type:Class)-[:DECLARES]->(f:Java:ByteCode:Field) RETURN f.signature as signature, f.name as name");
         assertThat(testResult.getColumn("signature"), allOf(hasItem(equalTo("java.lang.String stringValue")), hasItem(equalTo("int intValue"))));
         assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("stringValue")), hasItem(equalTo("intValue"))));
 
-        testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(m:Method) RETURN m.signature as signature, m.name as name");
+        testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(m:Java:ByteCode:Method) RETURN m.signature as signature, m.name as name");
         assertThat(testResult.getColumn("signature"), allOf(hasItem(equalTo("java.lang.String getStringValue()")),
                 hasItem(equalTo("void setStringValue(java.lang.String)")), hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
         assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")),
@@ -54,9 +54,9 @@ public class PojoIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         List<int[]> lines = query("MATCH (:Method{name:'hashCode'})-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH (:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
+        lines = query("MATCH ((:Java:ByteCode:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH (:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
+        lines = query("MATCH ((:Java:ByteCode:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
         List<MethodDescriptor> hashCodeList = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
         assertThat(hashCodeList.size(), equalTo(1));
@@ -75,7 +75,7 @@ public class PojoIT extends AbstractJavaPluginIT {
     public void variables() throws IOException {
         scanClasses(Pojo.class);
         store.beginTransaction();
-        List<VariableDescriptor> variables = query("MATCH (:Java:Method{name:'equals'})-[:DECLARES]->(v:Java:Variable) return v").getColumn("v");
+        List<VariableDescriptor> variables = query("MATCH (:Java:ByteCode:Method{name:'equals'})-[:DECLARES]->(v:Java:ByteCode:Variable) return v").getColumn("v");
         assertThat(variables.size(), equalTo(2));
         Map<String, VariableDescriptor> map = new HashMap<>();
         for (VariableDescriptor variable : variables) {

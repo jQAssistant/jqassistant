@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  */
 @Java(Java.JavaLanguageElement.Field)
 @Label(value = "Variable")
-public interface VariableDescriptor extends JavaDescriptor, SignatureDescriptor, NamedDescriptor, TypedDescriptor {
+public interface VariableDescriptor extends JavaByteCodeDescriptor, SignatureDescriptor, NamedDescriptor, TypedDescriptor {
 
     @Declares
     @Incoming
