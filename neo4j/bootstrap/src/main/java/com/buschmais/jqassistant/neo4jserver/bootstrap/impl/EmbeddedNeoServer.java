@@ -3,28 +3,35 @@ package com.buschmais.jqassistant.neo4jserver.bootstrap.impl;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.spi.ServerFactory;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.api.ServerFactory;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.spi.Server;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+
 
 public class EmbeddedNeoServer implements Server {
 
     private Server delegate;
 
-    public EmbeddedNeoServer(EmbeddedGraphStore store, String address, int port) {
+    public EmbeddedNeoServer() {
         ServiceLoader<ServerFactory> serverFactories = ServiceLoader.load(ServerFactory.class);
         Iterator<ServerFactory> iterator = serverFactories.iterator();
         if (iterator.hasNext()) {
             ServerFactory serverFactory = iterator.next();
-            delegate = serverFactory.getServer(store, address, port);
+            delegate = serverFactory.getServer();
         } else {
             throw new IllegalStateException("Cannot find server factory.");
         }
     }
 
     @Override
-    public void start() {
-        delegate.start();
+    public void init(GraphDatabaseService graphDatabaseService) {
+        delegate.init(graphDatabaseService);
+    }
+
+    @Override
+    public void start(String httpAddress, int httpPort) {
+        delegate.start(httpAddress, httpPort);
     }
 
     @Override

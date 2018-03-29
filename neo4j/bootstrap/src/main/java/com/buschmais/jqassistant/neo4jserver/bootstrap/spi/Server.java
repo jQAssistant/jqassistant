@@ -1,4 +1,6 @@
-package com.buschmais.jqassistant.neo4jserver.bootstrap.api;
+package com.buschmais.jqassistant.neo4jserver.bootstrap.spi;
+
+import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * Defines the interface for the server providing Neo4j and jQAssistant
@@ -10,7 +12,9 @@ public interface Server {
 
     int DEFAULT_PORT = 7474;
 
-    void start();
+    void init(GraphDatabaseService graphDatabaseService);
+
+    void start(String httpAddress, int httpPort);
 
     void stop();
 

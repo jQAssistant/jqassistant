@@ -6,8 +6,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.spi.AbstractServer;
 
 import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,25 +21,18 @@ import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.database.WrappedDatabase;
 
-public class Neo4jV2CommunityNeoServer implements Server {
-
-    private GraphDatabaseService databaseService;
-
-    private String httpAddress;
-    private int httpPort;
+public class Neo4jV2CommunityNeoServer extends AbstractServer {
 
     private Path tempDirectory;
 
     private CommunityNeoServer communityNeoServer;
 
-    public Neo4jV2CommunityNeoServer(EmbeddedGraphStore store, String address, int port) {
-        this.databaseService = store.getGraphDatabaseService();
-        this.httpAddress = address;
-        this.httpPort = port;
+    @Override
+    protected void configure(GraphDatabaseService graphDatabaseService) {
     }
 
     @Override
-    public void start() {
+    public void start(String httpAddress, int httpPort) {
         tempDirectory = createTempDirectory();
         Map<String, String> opts = new HashMap<>();
         // Neo4j 2.x
@@ -58,7 +50,7 @@ public class Neo4jV2CommunityNeoServer implements Server {
         Database.Factory factory = new Database.Factory() {
             @Override
             public Database newDatabase(Config config, GraphDatabaseFacadeFactory.Dependencies dependencies) {
-                return new WrappedDatabase((GraphDatabaseAPI) databaseService);
+                return new WrappedDatabase((GraphDatabaseAPI) graphDatabaseService);
             }
         };
         communityNeoServer = new CommunityNeoServer(defaults, factory, graphDatabaseDependencies, logProvider);

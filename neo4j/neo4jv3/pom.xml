@@ -27,6 +27,11 @@
             <artifactId>neo4j-server</artifactId>
             <version>${org.neo4j_3x.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.neo4j.procedure</groupId>
+            <artifactId>apoc</artifactId>
+            <version>${org.neo4j.procedure_version}</version>
+        </dependency>
     </dependencies>
 
 </project>
