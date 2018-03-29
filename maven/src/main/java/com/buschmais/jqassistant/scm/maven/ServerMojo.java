@@ -5,11 +5,10 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
 import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
+import com.buschmais.jqassistant.neo4jserver.bootstrap.spi.Server;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -18,7 +17,7 @@ import org.apache.maven.project.MavenProject;
  * Starts an embedded Neo4j server.
  */
 @Mojo(name = "server", threadSafe = true,
-      configurator = "custom")
+    configurator = "custom")
 public class ServerMojo extends AbstractProjectMojo {
 
     /**
@@ -39,10 +38,12 @@ public class ServerMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        Server server = new EmbeddedNeoServer((EmbeddedGraphStore) store, serverAddress,
-                serverPort != null ? serverPort : Server.DEFAULT_PORT);
-        server.start();
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
+        EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
+        Server server = new EmbeddedNeoServer();
+        server.init(embeddedGraphStore.getGraphDatabaseService());
+        server.start(serverAddress,
+            serverPort != null ? serverPort : Server.DEFAULT_PORT);
         getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
         getLog().info("Press <Enter> to finish.");
         try {
