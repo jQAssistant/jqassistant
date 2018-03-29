@@ -6,7 +6,6 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.api.Server;
 import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
 
 import org.apache.commons.cli.CommandLine;
@@ -29,9 +28,10 @@ public class ServerTask extends AbstractTask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
-        Server server;
-        server = new EmbeddedNeoServer((EmbeddedGraphStore) store, serverAddress, serverPort);
-        server.start();
+        EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
+        EmbeddedNeoServer server = new EmbeddedNeoServer();
+        server.init(embeddedGraphStore.getGraphDatabaseService());
+        server.start(serverAddress, serverPort);
         LOGGER.info("Running server");
         LOGGER.info("Press <Enter> to finish.");
         try {
