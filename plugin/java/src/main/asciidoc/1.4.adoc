@@ -4,4 +4,4 @@ ifdef::jqa-in-manual[== Java Plugin 1.4]
 - Added support for method variables in Java class scanner, i.e. `(:Method)-[:DECLARES]->(:Variable)`.
 - Added support for XML based Property files. See
   https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
-
+- Added support for Java 10
