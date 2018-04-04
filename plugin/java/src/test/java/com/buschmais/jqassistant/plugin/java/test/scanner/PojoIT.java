@@ -54,9 +54,9 @@ public class PojoIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         List<int[]> lines = query("MATCH (:Method{name:'hashCode'})-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH ((:Java:ByteCode:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
+        lines = query("MATCH (:Java:ByteCode:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH ((:Java:ByteCode:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
+        lines = query("MATCH (:Java:ByteCode:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
         List<MethodDescriptor> hashCodeList = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
         assertThat(hashCodeList.size(), equalTo(1));
