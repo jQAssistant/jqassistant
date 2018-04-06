@@ -43,6 +43,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericType.class)));
         assertThat(query("MATCH (n:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"),
                 hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
+        store.commitTransaction();
     }
 
     @Test
@@ -79,7 +80,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void genericMembers() throws IOException, NoSuchMethodException, NoSuchFieldException {
+    public void genericMembers() throws IOException {
         scanClasses(GenericMembers.class);
         store.beginTransaction();
         TestResult result = query("MATCH (gm:Type)-[:DEPENDS_ON]->(tv) RETURN tv");
