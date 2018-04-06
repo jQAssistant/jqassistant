@@ -20,6 +20,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</class>

@@ -7,12 +7,6 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 /**
  * Represents a primitive value.
  */
-public interface PrimitiveValueDescriptor extends PrimitiveDescriptor, TypedDescriptor, ValueDescriptor<Object> {
-
-    @Property("value")
-    @Override
-    Object getValue();
-
-    @Override
-    void setValue(Object value);
+@Label("Primitive")
+public interface PrimitiveDescriptor extends JavaByteCodeDescriptor {
 }
