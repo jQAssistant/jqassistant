@@ -337,7 +337,7 @@ public abstract class AbstractPluginIT {
      * @return The result.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
+        RuleSelection ruleSelection = RuleSelection.builder().addConceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
         analyzer.execute(ruleSet, ruleSelection, parameters);
@@ -366,7 +366,7 @@ public abstract class AbstractPluginIT {
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters)
             throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
+        RuleSelection ruleSelection = RuleSelection.builder().addConstraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
         analyzer.execute(ruleSet, ruleSelection, parameters);
@@ -392,7 +392,7 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      */
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
+        RuleSelection ruleSelection = RuleSelection.builder().addGroupId(id).build();
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertNotNull("The request group cannot be found: " + id, group);
         analyzer.execute(ruleSet, ruleSelection, parameters);
