@@ -68,7 +68,7 @@ public class RuleSetBuilder {
         @Override
         public String toString() {
             return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() +
-                    ", rules=" + conceptBucket.size() + "}";
+                    ", concepts=" + conceptBucket.size() + "}";
         }
     }
 }

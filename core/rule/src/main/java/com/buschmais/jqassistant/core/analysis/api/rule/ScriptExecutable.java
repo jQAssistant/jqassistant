@@ -8,9 +8,9 @@ import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
  */
 @Deprecated
 @ToBeRemovedInVersion(major = 1, minor = 5)
-public class ScriptExecutable extends SourceExecutable {
+public class ScriptExecutable<S> extends SourceExecutable<S> {
 
-    public ScriptExecutable(String language, String source) {
-        super(language, source);
+    public ScriptExecutable(String language, String source, S ruleSource) {
+        super(language, source, ruleSource);
     }
 }

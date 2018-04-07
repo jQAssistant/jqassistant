@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 /**
  * Defines a group.
  */
@@ -38,12 +40,18 @@ public class Group extends AbstractSeverityRule {
         return groups;
     }
 
+    public static Builder builder() {
+        return new Builder(new Group());
+    }
+
     public static class Builder extends AbstractSeverityRule.Builder<Group.Builder, Group> {
 
         protected Builder(Group rule) {
             super(rule);
         }
 
+        @Deprecated
+        @ToBeRemovedInVersion(major = 1, minor = 5)
         public static Builder newGroup() {
             return new Builder(new Group());
         }

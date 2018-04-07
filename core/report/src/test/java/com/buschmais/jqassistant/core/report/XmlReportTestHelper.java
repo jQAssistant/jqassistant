@@ -36,12 +36,12 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Concept concept = Concept.Builder.newConcept().id("my:concept").description("My concept description").severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
-                .report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
+        Concept concept = Concept.builder().id("my:concept").description("My concept description").severity(Severity.MAJOR)
+                .executable(new CypherExecutable<>("match...","match...")).verification(ROW_COUNT_VERIFICATION)
+                .report(Report.Builder.newInstance().primaryColumn("c2").get()).build();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
-        Group group = Group.Builder.newGroup().id("default").description("My group").conceptIds(concepts).get();
+        Group group = Group.builder().id("default").description("My group").conceptIds(concepts).build();
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -58,12 +58,12 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Concept concept = Concept.Builder.newConcept().id("mein:Konzept").description(description).severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
-                .report(Report.Builder.newInstance().primaryColumn("c2").get()).get();
+        Concept concept = Concept.builder().id("mein:Konzept").description(description).severity(Severity.MAJOR)
+                .executable(new CypherExecutable<>("match...","match...")).verification(ROW_COUNT_VERIFICATION)
+                .report(Report.Builder.newInstance().primaryColumn("c2").get()).build();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("mein:Konzept", Severity.INFO);
-        Group group = Group.Builder.newGroup().id("default").description("Meine Gruppe").conceptIds(concepts).get();
+        Group group = Group.builder().id("default").description("Meine Gruppe").conceptIds(concepts).build();
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -88,11 +88,11 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
 
-        Constraint constraint = Constraint.Builder.newConstraint().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
-                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().get()).get();
+        Constraint constraint = Constraint.builder().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
+                .executable(new CypherExecutable<>("match...","match")).verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().get()).build();
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
-        Group group = Group.Builder.newGroup().id("default").description("My group").constraintIds(constraints).get();
+        Group group = Group.builder().id("default").description("My group").constraintIds(constraints).build();
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConstraint(constraint);
         List<Map<String, Object>> rows = new ArrayList<>();

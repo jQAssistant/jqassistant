@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 /**
  * Abstract base class for rules.
@@ -80,7 +81,13 @@ public abstract class AbstractRule implements Rule {
             this.rule = rule;
         }
 
+        @Deprecated
+        @ToBeRemovedInVersion(major = 1, minor = 5)
         public R get() {
+            return build();
+        }
+
+        public R build () {
             return (R) rule;
         }
 

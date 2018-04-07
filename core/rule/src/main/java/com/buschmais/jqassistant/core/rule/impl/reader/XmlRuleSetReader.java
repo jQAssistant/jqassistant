@@ -112,8 +112,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
-        return Group.Builder.newGroup().id(id).severity(severity).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints)
-                .groupIds(includeGroups).get();
+        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints)
+                .groupIds(includeGroups).build();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
@@ -127,8 +127,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
-        return Concept.Builder.newConcept().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
-                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+        return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
+                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
     }
 
     /**
@@ -167,23 +167,23 @@ public class XmlRuleSetReader implements RuleSetReader {
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
-        return Constraint.Builder.newConstraint().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
-                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
+                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
     }
 
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
         SourceType source = executableRuleType.getSource();
         if (source != null) {
-            return new SourceExecutable(source.getLanguage(), source.getValue());
+            return new SourceExecutable<>(source.getLanguage(), source.getValue(), executableRuleType);
         }
         // for compatibility
         String cypher = executableRuleType.getCypher();
         if (cypher != null) {
-            return new CypherExecutable(cypher);
+            return new CypherExecutable<>(cypher, executableRuleType);
         }
         SourceType scriptType = executableRuleType.getScript();
         if (scriptType != null) {
-            return new ScriptExecutable(scriptType.getLanguage(), scriptType.getValue());
+            return new ScriptExecutable<>(scriptType.getLanguage(), scriptType.getValue(), executableRuleType);
         }
         throw new RuleException("Cannot determine executable for " + executableRuleType.getId());
     }

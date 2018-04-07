@@ -18,7 +18,9 @@ public class ExecutablesTest {
 
     @Test
     public void asciidoc() throws Exception {
-        veritfyRuleset(readRuleSet("/executables.adoc"));
+        RuleSet ruleSet = readRuleSet("/executables.adoc");
+        veritfyRuleset(ruleSet);
+        verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class);
     }
 
     private void veritfyRuleset(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
@@ -35,7 +37,7 @@ public class ExecutablesTest {
     private void verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConceptException {
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertThat(concept, notNullValue());
-        assertThat(concept.getExecutable(), CoreMatchers.<Executable> instanceOf(type));
+        assertThat(concept.getId(), concept.getExecutable(), CoreMatchers.<Executable> instanceOf(type));
     }
 
     private void verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConstraintException {

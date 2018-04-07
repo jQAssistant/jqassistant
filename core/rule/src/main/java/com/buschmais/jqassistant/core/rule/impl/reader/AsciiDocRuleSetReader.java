@@ -140,7 +140,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         for (Object element : blocks) {
             if (element instanceof AbstractBlock) {
                 AbstractBlock block = (AbstractBlock) element;
-                if (LISTING.equals(block.getContext()) && EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
+                if (EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
                     extractExecutableRule(ruleSource, block, builder);
                 } else if (GROUP.equals(block.getRole())) {
                     extractGroup(ruleSource, block, builder);
@@ -154,10 +154,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private void extractExecutableRule(RuleSource ruleSource, AbstractBlock executableRuleBlock, RuleSetBuilder builder) throws RuleException {
         Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
-        String source = unescapeHtml(executableRuleBlock.getContent());
         String id = executableRuleBlock.id();
         if (id == null) {
-            throw new RuleException("An id is required for block with content'" + source + "'.");
+            throw new RuleException("An id attribute is required for the rule '" + executableRuleBlock + "'.");
         }
         String description = attributes.getString(TITLE, "");
         if (description == null) {
@@ -171,11 +170,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         } else {
             language = executableRuleBlock.getStyle();
         }
+        String source = unescapeHtml(executableRuleBlock.getContent());
         Executable executable;
         if (CYPHER.equals(language)) {
-            executable = new CypherExecutable(source);
+            executable = new CypherExecutable<>(source, executableRuleBlock);
         } else {
-            executable = new ScriptExecutable(language, source);
+            executable = new ScriptExecutable<>(language, source, executableRuleBlock);
         }
         Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
@@ -187,13 +187,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Report report = getReport(executableRuleBlock);
         if (CONCEPT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
-            Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+            Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable)
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
             builder.addConcept(concept);
         } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
-            Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).get();
+            Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
+                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
             builder.addConstraint(constraint);
         }
     }
@@ -236,8 +236,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
         Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
-        Group group = Group.Builder.newGroup().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
-                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
+        Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
+                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).build();
         ruleSetBuilder.addGroup(group);
     }
 

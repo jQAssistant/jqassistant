@@ -18,8 +18,8 @@ public class RuleSetBuilderTest {
         RuleSource ruleSource = new FileRuleSource(new File("test.xml"));
         // Concepts
 
-        Concept concept1 = Concept.Builder.newConcept().id("test").ruleSource(ruleSource).get();
-        Concept concept2 = Concept.Builder.newConcept().id("test").ruleSource(ruleSource).get();
+        Concept concept1 = Concept.builder().id("test").ruleSource(ruleSource).build();
+        Concept concept2 = Concept.builder().id("test").ruleSource(ruleSource).build();
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         builder.addConcept(concept1);
         try {
@@ -28,8 +28,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Constraints
-        Constraint constraint1 = Constraint.Builder.newConstraint().id("test").ruleSource(ruleSource).get();
-        Constraint constraint2 = Constraint.Builder.newConstraint().id("test").ruleSource(ruleSource).get();
+        Constraint constraint1 = Constraint.builder().id("test").ruleSource(ruleSource).build();
+        Constraint constraint2 = Constraint.builder().id("test").ruleSource(ruleSource).build();
         builder.addConstraint(constraint1);
         try {
             builder.addConstraint(constraint2);
@@ -37,8 +37,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Groups
-        Group group1 = Group.Builder.newGroup().id("test").ruleSource(ruleSource).get();
-        Group group2 = Group.Builder.newGroup().id("test").ruleSource(ruleSource).get();
+        Group group1 = Group.builder().id("test").ruleSource(ruleSource).build();
+        Group group2 = Group.builder().id("test").ruleSource(ruleSource).build();
         builder.addGroup(group1);
         try {
             builder.addGroup(group2);

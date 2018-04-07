@@ -1,12 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -35,10 +30,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Verifies the functionality of the analyzer visitor.
@@ -241,27 +233,27 @@ public class AnalyzerVisitorTest {
     }
 
     private Concept createConcept(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable executable = new CypherExecutable<>(statement, "");
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
-        return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).get();
+        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
+                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
     }
 
     private Constraint createConstraint(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable executable = new CypherExecutable<>(statement, "");
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
-        return Constraint.Builder.newConstraint().id("test:Constraint").description("Test Constraint").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).get();
+        return Constraint.builder().id("test:Constraint").description("Test Constraint").ruleSource(new FileRuleSource(new File(RULESOURCE)))
+                .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
     }
 
     private Query.Result<Query.Result.CompositeRowObject> createResult(List<String> columnNames) {

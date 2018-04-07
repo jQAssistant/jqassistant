@@ -1,5 +1,12 @@
 = Executables
 
+[[test:Table]]
+[options="header",role=concept]
+|===
+| Header
+| Content
+|===
+
 [[test:CypherConcept]]
 [cypher,role=concept]
 ----
@@ -24,7 +31,7 @@ MATCH (n) RETURN n
 ----
 
 [[test:CypherConstraint]]
-[cypher,role=constraint]
+[source,cypher,role=constraint]
 ----
 MATCH (n) RETURN n
 ----

@@ -2,8 +2,11 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 /**
  * Defines an executable, e.g. a cypher query, script or template.
+ *
+ * @param <S>
+ *            The rule source type, e.g. an Asciidoc block or XML type
  */
-public interface Executable {
+public interface Executable<S> {
 
     /**
      * Return the language.
@@ -18,4 +21,11 @@ public interface Executable {
      * @return The source.
      */
     String getSource();
+
+    /**
+     * Return the rule source.
+     *
+     * @return The rule source.
+     */
+    S getRuleSource();
 }
