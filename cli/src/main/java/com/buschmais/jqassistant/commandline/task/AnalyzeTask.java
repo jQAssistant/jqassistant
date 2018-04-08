@@ -133,7 +133,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
      * @throws CliExecutionException
      *             If the plugins cannot be loaded or configured.
      */
-    private Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws CliExecutionException {
+    private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws CliExecutionException {
         try {
             return pluginRepository.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
         } catch (PluginRepositoryException e) {
