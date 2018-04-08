@@ -175,7 +175,7 @@ public abstract class AbstractPluginIT {
         analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), reportWriter, LOGGER);
     }
 
-    protected Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws PluginRepositoryException {
+    protected Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
         return ruleLanguagePluginRepository.getRuleLanguagePlugins();
     }
 
