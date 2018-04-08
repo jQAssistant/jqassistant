@@ -20,6 +20,18 @@ public interface RuleLanguagePlugin {
     Set<String> getLanguages();
 
     /**
+     * Determines if the plugin is able to execute the given {@link ExecutableRule}.
+     *
+     * @param executableRule
+     *            The {@link ExecutableRule}.
+     * @param <T>
+     *            The {@link ExecutableRule} type.
+     * @return <code>true</code> if the plugin is able to execute the given
+     *         {@link ExecutableRule}.
+     */
+    <T extends ExecutableRule<?>> boolean accepts(T executableRule);
+
+    /**
      * Execute a {@link ExecutableRule}.
      *
      * @param executableRule

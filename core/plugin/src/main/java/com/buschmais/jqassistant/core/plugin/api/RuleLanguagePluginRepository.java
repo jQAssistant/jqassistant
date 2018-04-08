@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
@@ -14,5 +15,5 @@ public interface RuleLanguagePluginRepository {
      *
      * @return The {@link RuleLanguagePlugin}s.
      */
-    Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws PluginRepositoryException;
+    Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException;
 }

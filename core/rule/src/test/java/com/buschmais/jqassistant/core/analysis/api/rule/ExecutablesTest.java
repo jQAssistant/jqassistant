@@ -2,10 +2,12 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
+import org.asciidoctor.ast.AbstractBlock;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -20,24 +22,26 @@ public class ExecutablesTest {
     public void asciidoc() throws Exception {
         RuleSet ruleSet = readRuleSet("/executables.adoc");
         veritfyRuleset(ruleSet);
-        verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class);
+        verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, AbstractBlock.class);
     }
 
     private void veritfyRuleset(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
-        verifyConceptExecutable(ruleSet, "test:CypherConcept", CypherExecutable.class);
-        verifyConceptExecutable(ruleSet, "test:ScriptConcept", ScriptExecutable.class);
-        verifyConceptExecutable(ruleSet, "test:SourceConcept", SourceExecutable.class);
-        verifyConceptExecutable(ruleSet, "test:SourceConceptUpperCase", SourceExecutable.class);
+        verifyConceptExecutable(ruleSet, "test:CypherConcept", CypherExecutable.class, String.class);
+        verifyConceptExecutable(ruleSet, "test:ScriptConcept", ScriptExecutable.class, String.class);
+        verifyConceptExecutable(ruleSet, "test:SourceConcept", SourceExecutable.class, String.class);
+        verifyConceptExecutable(ruleSet, "test:SourceConceptUpperCase", SourceExecutable.class, String.class);
         verifyConstraintExecutable(ruleSet, "test:CypherConstraint", CypherExecutable.class);
         verifyConstraintExecutable(ruleSet, "test:ScriptConstraint", ScriptExecutable.class);
         verifyConstraintExecutable(ruleSet, "test:SourceConstraint", SourceExecutable.class);
         verifyConstraintExecutable(ruleSet, "test:SourceConstraintUpperCase", SourceExecutable.class);
     }
 
-    private void verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConceptException {
+    private void verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type, Class<?> expectedSourceType) throws NoConceptException {
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertThat(concept, notNullValue());
-        assertThat(concept.getId(), concept.getExecutable(), CoreMatchers.<Executable> instanceOf(type));
+        Executable<?> executable = concept.getExecutable();
+        assertThat(concept.getId(), executable, CoreMatchers.<Executable> instanceOf(type));
+        assertThat(concept.getId(), executable.getSource(), instanceOf(expectedSourceType));
     }
 
     private void verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConstraintException {

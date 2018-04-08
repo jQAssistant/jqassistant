@@ -20,12 +20,6 @@ public interface Executable<S> {
      *
      * @return The source.
      */
-    String getSource();
+    S getSource();
 
-    /**
-     * Return the rule source.
-     *
-     * @return The rule source.
-     */
-    S getRuleSource();
 }

@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private Map<String, String> ruleParameters;
     private ReportPlugin reportPlugin;
     private AnalyzerContext analyzerContext;
-    private Map<String, RuleLanguagePlugin> ruleLanguagePlugins;
+    private Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins;
 
     /**
      * Constructor.
@@ -43,7 +44,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @param log
      *            The {@link Logger}.
      */
-    AnalyzerVisitor(AnalyzerConfiguration configuration, Map<String, String> ruleParameters, Store store, Map<String, RuleLanguagePlugin> ruleLanguagePlugins, ReportPlugin reportPlugin, Logger log) {
+    AnalyzerVisitor(AnalyzerConfiguration configuration, Map<String, String> ruleParameters, Store store,
+            Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins, ReportPlugin reportPlugin, Logger log) {
         this.configuration = configuration;
         this.ruleParameters = ruleParameters;
         this.ruleLanguagePlugins = ruleLanguagePlugins;
@@ -143,14 +145,17 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
 
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {
         Map<String, Object> ruleParameters = getRuleParameters(executableRule);
-        Executable executable = executableRule.getExecutable();
+        Executable<?> executable = executableRule.getExecutable();
         String language = executable.getLanguage().toLowerCase();
-        RuleLanguagePlugin languagePlugin = ruleLanguagePlugins.get(language);
-        if (languagePlugin != null) {
-            return languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
-        } else {
-            throw new RuleException("Rule language '" + language + "' is not supported.");
+        Collection<RuleLanguagePlugin> languagePlugins = ruleLanguagePlugins.get(language);
+        if (languagePlugins != null) {
+            for (RuleLanguagePlugin languagePlugin : languagePlugins) {
+                if (languagePlugin.accepts(executableRule)) {
+                    return languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
+                }
+            }
         }
+        throw new RuleException("Could not determine plugin to execute " + executableRule);
     }
 
     private Map<String, Object> getRuleParameters(ExecutableRule executableRule) throws RuleException {

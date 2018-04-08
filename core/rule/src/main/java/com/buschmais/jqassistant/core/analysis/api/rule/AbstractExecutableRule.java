@@ -12,7 +12,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     /**
      * The executable.
      */
-    private Executable executable;
+    private Executable<?> executable;
 
     /**
      * The required parameters.
@@ -40,7 +40,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
     }
 
     @Override
-    public Executable getExecutable() {
+    public Executable<?> getExecutable() {
         return executable;
     }
 

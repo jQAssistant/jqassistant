@@ -5,6 +5,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -22,9 +23,15 @@ public class CypherLanguagePlugin implements RuleLanguagePlugin {
     }
 
     @Override
+    public <T extends ExecutableRule<?>> boolean accepts(T executableRule) {
+        return true;
+    }
+
+    @Override
     public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> parameters, Severity severity, AnalyzerContext context)
             throws RuleException {
-        String cypher = executableRule.getExecutable().getSource();
+        Executable<String> executable = executableRule.getExecutable();
+        String cypher = executable.getSource();
         List<Map<String, Object>> rows = new ArrayList<>();
         context.getLogger().debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
         try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = context.getStore().executeQuery(cypher, parameters)) {

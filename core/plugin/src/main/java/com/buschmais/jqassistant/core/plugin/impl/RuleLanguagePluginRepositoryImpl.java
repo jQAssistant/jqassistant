@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -22,15 +20,20 @@ public class RuleLanguagePluginRepositoryImpl extends AbstractPluginRepository i
     }
 
     @Override
-    public Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws PluginRepositoryException {
-        Map<String, RuleLanguagePlugin> ruleLanguagePlugins = new HashMap<>();
+    public Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
+        Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins = new HashMap<>();
         for (JqassistantPlugin plugin : plugins) {
             RuleLanguageType pluginLanguage = plugin.getLanguage();
             if (pluginLanguage != null) {
                 for (IdClassType pluginType : pluginLanguage.getClazz()) {
                     RuleLanguagePlugin ruleLanguagePlugin = createInstance(pluginType.getValue());
                     for (String language : ruleLanguagePlugin.getLanguages()) {
-                        ruleLanguagePlugins.put(language.toLowerCase(), ruleLanguagePlugin);
+                        Collection<RuleLanguagePlugin> plugins = ruleLanguagePlugins.get(language.toLowerCase());
+                        if (plugins == null) {
+                            plugins = new ArrayList<>();
+                            ruleLanguagePlugins.put(language.toLowerCase(), plugins);
+                        }
+                        plugins.add(ruleLanguagePlugin);
                     }
                 }
             }

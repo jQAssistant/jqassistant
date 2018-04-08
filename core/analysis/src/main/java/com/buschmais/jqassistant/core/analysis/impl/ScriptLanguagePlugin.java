@@ -10,6 +10,7 @@ import javax.script.ScriptException;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -52,9 +53,15 @@ public class ScriptLanguagePlugin implements RuleLanguagePlugin {
     }
 
     @Override
+    public <T extends ExecutableRule<?>> boolean accepts(T executableRule) {
+        return true;
+    }
+
+    @Override
     public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> ruleParameters, Severity severity, AnalyzerContext context)
             throws RuleException {
-        String language = executableRule.getExecutable().getLanguage();
+        Executable<String> executable = executableRule.getExecutable();
+        String language = executable.getLanguage();
         ScriptEngine scriptEngine = scriptEngineManager.getEngineByName(language);
         if (scriptEngine == null) {
             List<String> availableLanguages = new ArrayList<>();
@@ -74,7 +81,7 @@ public class ScriptLanguagePlugin implements RuleLanguagePlugin {
         }
         Object scriptResult;
         try {
-            scriptResult = scriptEngine.eval(executableRule.getExecutable().getSource());
+            scriptResult = scriptEngine.eval(executable.getSource());
         } catch (ScriptException e) {
             throw new RuleException("Cannot execute script.", e);
         }

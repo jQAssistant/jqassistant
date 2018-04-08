@@ -37,7 +37,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("my:concept").description("My concept description").severity(Severity.MAJOR)
-                .executable(new CypherExecutable<>("match...","match...")).verification(ROW_COUNT_VERIFICATION)
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
                 .report(Report.Builder.newInstance().primaryColumn("c2").get()).build();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
@@ -59,7 +59,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("mein:Konzept").description(description).severity(Severity.MAJOR)
-                .executable(new CypherExecutable<>("match...","match...")).verification(ROW_COUNT_VERIFICATION)
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
                 .report(Report.Builder.newInstance().primaryColumn("c2").get()).build();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("mein:Konzept", Severity.INFO);
@@ -89,7 +89,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.begin();
 
         Constraint constraint = Constraint.builder().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
-                .executable(new CypherExecutable<>("match...","match")).verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().get()).build();
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().get()).build();
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
         Group group = Group.builder().id("default").description("My group").constraintIds(constraints).build();

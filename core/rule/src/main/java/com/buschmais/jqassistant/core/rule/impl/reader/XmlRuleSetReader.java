@@ -174,16 +174,16 @@ public class XmlRuleSetReader implements RuleSetReader {
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
         SourceType source = executableRuleType.getSource();
         if (source != null) {
-            return new SourceExecutable<>(source.getLanguage(), source.getValue(), executableRuleType);
+            return new SourceExecutable<>(source.getLanguage(), source.getValue());
         }
         // for compatibility
         String cypher = executableRuleType.getCypher();
         if (cypher != null) {
-            return new CypherExecutable<>(cypher, executableRuleType);
+            return new CypherExecutable(cypher);
         }
         SourceType scriptType = executableRuleType.getScript();
         if (scriptType != null) {
-            return new ScriptExecutable<>(scriptType.getLanguage(), scriptType.getValue(), executableRuleType);
+            return new ScriptExecutable(scriptType.getLanguage(), scriptType.getValue());
         }
         throw new RuleException("Cannot determine executable for " + executableRuleType.getId());
     }

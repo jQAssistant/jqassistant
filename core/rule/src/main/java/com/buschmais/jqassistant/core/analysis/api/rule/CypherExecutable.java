@@ -8,12 +8,12 @@ import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
  */
 @Deprecated
 @ToBeRemovedInVersion(major = 1, minor = 5)
-public class CypherExecutable<S> extends SourceExecutable<S> {
+public class CypherExecutable extends SourceExecutable<String> {
 
     private static final String LANGUAGE = "cypher";
 
-    public CypherExecutable(String statement, S ruleSource) {
-        super(LANGUAGE, statement, ruleSource);
+    public CypherExecutable(String statement) {
+        super(LANGUAGE, statement);
     }
 
     @Deprecated

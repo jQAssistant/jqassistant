@@ -55,7 +55,7 @@ public class AnalyzerVisitorTest {
     @Mock
     private AnalyzerConfiguration configuration;
 
-    private Map<String, RuleLanguagePlugin> ruleLanguagePlugins = new HashMap<>();
+    private Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins = new HashMap<>();
 
     private AnalyzerVisitor analyzerVisitor;
 
@@ -81,7 +81,9 @@ public class AnalyzerVisitorTest {
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenReturn(result);
 
-        ruleLanguagePlugins.put("cypher", new CypherLanguagePlugin());
+        List<RuleLanguagePlugin> languagePlugins = new ArrayList<>();
+        languagePlugins.add(new CypherLanguagePlugin());
+        ruleLanguagePlugins.put("cypher", languagePlugins);
         analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleLanguagePlugins, reportWriter, console);
     }
 
@@ -233,7 +235,7 @@ public class AnalyzerVisitorTest {
     }
 
     private Concept createConcept(String statement) {
-        Executable executable = new CypherExecutable<>(statement, "");
+        Executable executable = new CypherExecutable(statement);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
@@ -245,7 +247,7 @@ public class AnalyzerVisitorTest {
     }
 
     private Constraint createConstraint(String statement) {
-        Executable executable = new CypherExecutable<>(statement, "");
+        Executable executable = new CypherExecutable(statement);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();

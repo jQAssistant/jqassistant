@@ -17,8 +17,6 @@ public class SourceExecutable<S> implements Executable<S>  {
 
     private String language;
 
-    private String source;
-
-    private S ruleSource;
+    private S source;
 
 }

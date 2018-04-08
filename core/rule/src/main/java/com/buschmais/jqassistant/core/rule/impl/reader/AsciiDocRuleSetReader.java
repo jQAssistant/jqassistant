@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
@@ -165,17 +166,18 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
         Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
         String language;
+        Executable executable;
         if (SOURCE.equals(executableRuleBlock.getStyle())) {
             language = attributes.getString(LANGUAGE);
+            String source = unescapeHtml(executableRuleBlock.getContent());
+            if (CYPHER.equals(language)) {
+                executable = new CypherExecutable(source);
+            } else {
+                executable = new ScriptExecutable(language, source);
+            }
         } else {
             language = executableRuleBlock.getStyle();
-        }
-        String source = unescapeHtml(executableRuleBlock.getContent());
-        Executable executable;
-        if (CYPHER.equals(language)) {
-            executable = new CypherExecutable<>(source, executableRuleBlock);
-        } else {
-            executable = new ScriptExecutable<>(language, source, executableRuleBlock);
+            executable = new SourceExecutable<>(language, executableRuleBlock);
         }
         Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {

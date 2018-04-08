@@ -30,7 +30,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(concept1.getId(), equalTo("junit4:TestClassOrMethod"));
         assertThat(concept1.getDescription(), CoreMatchers.containsString("labels them and their containing classes with `:Test` and `:Junit4`."));
 
-        Executable executable1 = concept1.getExecutable();
+        Executable<String> executable1 = (Executable<String>) concept1.getExecutable();
         assertThat(executable1, instanceOf(CypherExecutable.class));
         assertThat(executable1.getSource(), containsString("c:Test:Junit4, m:Test:Junit4"));
         assertThat(concept1.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
@@ -39,7 +39,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(concept2.getId(), containsString("junit4:AssertMethod"));
         assertThat(concept2.getDescription(), containsString("Labels all assertion methods declared by `org.junit.Assert` with `:Assert`."));
 
-        Executable executable2 = concept2.getExecutable();
+        Executable<String> executable2 = (Executable<String>) concept2.getExecutable();
         assertThat(executable2, instanceOf(CypherExecutable.class));
         assertThat(executable2.getSource(), containsString("and assertMethod.signature =~ 'void assert.*'"));
         assertThat(concept2.getRequiresConcepts().keySet(), IsEmptyCollection.<String> empty());
@@ -53,7 +53,7 @@ public class AsciiDocRuleSetReaderTest {
         assertEquals("junit4:TestMethodWithoutAssertion", constraint.getId());
         assertEquals("All test methods must perform assertions.", constraint.getDescription());
 
-        Executable constraintExecutable = constraint.getExecutable();
+        Executable<String> constraintExecutable = (Executable<String>) constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
         assertThat(constraintExecutable.getSource(), containsString("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
 

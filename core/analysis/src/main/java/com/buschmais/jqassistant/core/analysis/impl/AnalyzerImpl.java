@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -23,7 +24,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private final Store store;
 
-    private final Map<String, RuleLanguagePlugin> ruleLanguagePlugins;
+    private final Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins;
     private final ReportPlugin reportPlugin;
 
     private final Logger logger;
@@ -42,8 +43,8 @@ public class AnalyzerImpl implements Analyzer {
      * @param log
      *            The {@link Logger}.
      */
-    public AnalyzerImpl(AnalyzerConfiguration configuration, Store store, Map<String, RuleLanguagePlugin> ruleLanguagePlugins, ReportPlugin reportPlugin,
-            Logger log) {
+    public AnalyzerImpl(AnalyzerConfiguration configuration, Store store, Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins,
+            ReportPlugin reportPlugin, Logger log) {
         this.configuration = configuration;
         this.store = store;
         this.ruleLanguagePlugins = ruleLanguagePlugins;

@@ -133,10 +133,10 @@ public class XmlRuleSetWriter implements RuleSetWriter {
     }
 
     private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) {
-        Executable executable = executableRule.getExecutable();
+        Executable<?> executable = executableRule.getExecutable();
         SourceType sourceType = new SourceType();
         sourceType.setLanguage(executable.getLanguage());
-        sourceType.setValue(executable.getSource());
+        sourceType.setValue(executable.getSource().toString());
         executableRuleType.setSource(sourceType);
     }
 
