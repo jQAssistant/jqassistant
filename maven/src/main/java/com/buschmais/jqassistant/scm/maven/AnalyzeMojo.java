@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
@@ -158,7 +155,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private Map<String, RuleLanguagePlugin> getRuleLanguagePlugins() throws MojoExecutionException {
+    private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws MojoExecutionException {
         try {
             return pluginRepositoryProvider.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
         } catch (PluginRepositoryException e) {
