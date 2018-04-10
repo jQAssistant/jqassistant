@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.neo4jserver.neo4jv2;
+package com.buschmais.jqassistant.neo4j.backend.neo4jv2;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.neo4jserver.bootstrap.spi.AbstractServer;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
 
 import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -21,7 +21,7 @@ import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.database.WrappedDatabase;
 
-public class Neo4jV2CommunityNeoServer extends AbstractServer {
+public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
     private Path tempDirectory;
 
