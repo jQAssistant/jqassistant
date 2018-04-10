@@ -43,7 +43,7 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
         EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
         store.beginTransaction();
         try {
-            GraphDatabaseService databaseService = graphStore.getGraphDatabaseService();
+            GraphDatabaseService databaseService = graphStore.getServer().getGraphDatabaseService();
             SubGraph graph = DatabaseSubGraph.from(databaseService);
             new SubGraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
         } catch (IOException e) {
