@@ -6,7 +6,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4jserver.bootstrap.impl.EmbeddedNeoServer;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -29,8 +29,7 @@ public class ServerTask extends AbstractTask {
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
-        EmbeddedNeoServer server = new EmbeddedNeoServer();
-        server.init(embeddedGraphStore.getGraphDatabaseService());
+        EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
         server.start(serverAddress, serverPort);
         LOGGER.info("Running server");
         LOGGER.info("Press <Enter> to finish.");
@@ -54,7 +53,7 @@ public class ServerTask extends AbstractTask {
 
     @Override
     public void withOptions(CommandLine options) {
-        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, EmbeddedNeoServer.DEFAULT_ADDRESS);
-        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(EmbeddedNeoServer.DEFAULT_PORT)));
+        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, EmbeddedNeo4jServer.DEFAULT_ADDRESS);
+        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(EmbeddedNeo4jServer.DEFAULT_PORT)));
     }
 }

@@ -299,10 +299,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>neo4jserver.embedded</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
         </dependency>
