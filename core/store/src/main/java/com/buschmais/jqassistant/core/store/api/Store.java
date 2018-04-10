@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.api;
 import java.util.Collection;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.Example;
@@ -69,7 +70,7 @@ public interface Store {
 
     /**
      * Creates a {@link Descriptor} of the given type.
-     * 
+     *
      * @param type
      *            The type.
      * @return The {@link Descriptor}.
@@ -89,7 +90,7 @@ public interface Store {
 
     /**
      * Creates a relation between to {@link Descriptor}s.
-     * 
+     *
      * @param source
      *            The source descriptor.
      * @param relationType
@@ -117,7 +118,7 @@ public interface Store {
 
     /**
      * Creates a {@link Descriptor} of the given type with a full qualified name
-     * 
+     *
      * @param type
      *            The type.
      * @param fullQualifiedName
@@ -129,7 +130,7 @@ public interface Store {
 
     /**
      * Delete a descriptor.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @param <T>
@@ -139,7 +140,7 @@ public interface Store {
 
     /**
      * Migrates the descriptor instance to the given sub-type.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @param concreteType
@@ -153,7 +154,7 @@ public interface Store {
 
     /**
      * Add a descriptor type to an existing descriptor.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @param newDescriptorType
@@ -202,7 +203,7 @@ public interface Store {
 
     /**
      * Finds a {@link Descriptor}.
-     * 
+     *
      * @param type
      *            The type.
      * @param fullQualifiedName
@@ -250,9 +251,11 @@ public interface Store {
 
     /**
      * Return the underlying graph database service instance.
-     * 
+     *
      * @return The graph data base service.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 5)
     GraphDatabaseService getGraphDatabaseService();
 
 }

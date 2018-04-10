@@ -14,10 +14,8 @@ import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
-import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +44,8 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start(Collection<Class<?>> types) {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
-                                             .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
-        configure(builder);
-        xoManagerFactory = XO.createXOManagerFactory(builder.build());
+            .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+        xoManagerFactory = configure(builder);
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -185,11 +182,6 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public GraphDatabaseService getGraphDatabaseService() {
-        return getGraphDatabaseService(xoManager);
-    }
-
-    @Override
     public void reset() {
         LOGGER.info("Resetting store.");
         long nodes;
@@ -213,18 +205,9 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     /**
-     * Return the graph database service wrapped by the given XOManager.
-     * 
-     * @param xoManager
-     *            The XOManager.
-     * @return The graph database service instance.
-     */
-    protected abstract GraphDatabaseService getGraphDatabaseService(XOManager xoManager);
-
-    /**
      * Configure store specific options.
      */
-    protected abstract void configure(XOUnit.XOUnitBuilder builder);
+    protected abstract XOManagerFactory configure(XOUnit.XOUnitBuilder builder);
 
     protected abstract int getAutocommitThreshold();
 

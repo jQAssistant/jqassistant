@@ -3,7 +3,8 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
-import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
+import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider.Property;
@@ -17,7 +18,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseService getGraphDatabaseService(XOManager xoManager) {
+    public GraphDatabaseService getGraphDatabaseService() {
         throw new IllegalStateException("Not Supported.");
     }
 
@@ -27,7 +28,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected void configure(XOUnit.XOUnitBuilder builder) {
+    protected XOManagerFactory configure(XOUnit.XOUnitBuilder builder) {
         builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
         String username = storeConfiguration.getUsername();
@@ -47,5 +48,6 @@ public class RemoteGraphStore extends AbstractGraphStore {
             properties.putAll(storeConfigurationProperties);
         }
         builder.properties(properties);
+        return XO.createXOManagerFactory(builder.build());
     }
 }
