@@ -253,8 +253,6 @@
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <logViolationsToConsole>true</logViolationsToConsole>
                     <configLocation>checkstyle/jqa-code-style.xml</configLocation>
-                    <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
-                    <excludes>**/generated-sources/**/*</excludes>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -346,6 +344,13 @@
                 <artifactId>shared</artifactId>
                 <version>${jqa.core-framework.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>analysis</artifactId>
+                <version>${jqa.core-framework.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
@@ -369,14 +374,6 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>analysis</artifactId>
-                <version>${jqa.core-framework.version}</version>
-            </dependency>
-
-
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 
