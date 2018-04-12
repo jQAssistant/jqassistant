@@ -516,6 +516,27 @@
             <properties>
                 <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
         <profile>
             <id>neo4jv3</id>
@@ -528,6 +549,27 @@
             <properties>
                 <org.neo4j.version>${org.neo4j_3x.version}</org.neo4j.version>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
     </profiles>
 
