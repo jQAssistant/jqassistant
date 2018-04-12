@@ -454,16 +454,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j.embedded</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j.remote</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>asciidoctor-utilities</artifactId>
             <type>xsl</type>
