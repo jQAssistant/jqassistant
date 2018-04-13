@@ -48,7 +48,6 @@
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
         <org.jruby.version>9.1.7.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
-        <org.ow2.asm.version>5.2</org.ow2.asm.version>
     </properties>
 
     <dependencyManagement>
@@ -123,26 +122,6 @@
                 <groupId>org.jruby</groupId>
                 <artifactId>jruby-stdlib</artifactId>
                 <version>${org.jruby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>${org.ow2.asm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-analysis</artifactId>
-                <version>${org.ow2.asm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-commons</artifactId>
-                <version>${org.ow2.asm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-util</artifactId>
-                <version>${org.ow2.asm.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

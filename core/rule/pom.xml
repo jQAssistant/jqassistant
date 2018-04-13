@@ -61,32 +61,10 @@
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-core</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>asm</artifactId>
-            		<groupId>org.ow2.asm</groupId>
-            	</exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-stdlib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-analysis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
