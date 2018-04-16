@@ -8,3 +8,5 @@ ifdef::jqa-in-manual[== Commandline Tool 1.4.0]
   which will cause jQAssistant to fail.
   It also logs the severity of constraint violations which will
   cause warnings.
+
+* Added `-daemon` parameter to server task

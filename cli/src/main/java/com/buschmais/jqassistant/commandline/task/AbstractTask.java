@@ -47,7 +47,7 @@ public abstract class AbstractTask implements Task {
     protected Map<String, Object> pluginProperties;
 
     @Override
-    public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException {
+    public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) {
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(LOGGER);
