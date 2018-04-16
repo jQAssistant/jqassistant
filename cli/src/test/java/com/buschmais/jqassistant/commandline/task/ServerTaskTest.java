@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+
 import org.apache.commons.cli.*;
 import org.junit.Before;
 import org.junit.Test;
