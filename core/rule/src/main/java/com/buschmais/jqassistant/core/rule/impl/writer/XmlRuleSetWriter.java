@@ -144,15 +144,15 @@ public class XmlRuleSetWriter implements RuleSetWriter {
      * Converts {@link Severity} to {@link SeverityEnumType}
      *
      * @param severity
-     *            {@link Severity}
+     *            {@link Severity}, can be <code>null</code>
      * @param defaultSeverity
-     *            default severity level
+     *            default severity level, can be <code>null</code>
      * @return {@link SeverityEnumType}
      */
     private SeverityEnumType getSeverity(Severity severity, Severity defaultSeverity) {
         if (severity == null) {
             severity = defaultSeverity;
         }
-        return SeverityEnumType.fromValue(severity.getValue());
+        return defaultSeverity != null ? SeverityEnumType.fromValue(severity.getValue()) : null;
     }
 }
