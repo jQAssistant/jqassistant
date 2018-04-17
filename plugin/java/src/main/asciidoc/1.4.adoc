@@ -5,3 +5,4 @@ ifdef::jqa-in-manual[== Java Plugin 1.4]
 - Added support for XML based Property files. See
   https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
 - Added label 'ByteCode' for Java class elements (types, methods, fields, etc.)
+- Added support for Java 10
