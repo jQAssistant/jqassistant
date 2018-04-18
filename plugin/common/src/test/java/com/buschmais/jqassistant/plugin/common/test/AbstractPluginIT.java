@@ -214,7 +214,9 @@ public abstract class AbstractPluginIT {
      */
     @After
     public void stopStore() {
-        store.stop();
+        if (store != null) {
+            store.stop();
+        }
     }
 
     /**
