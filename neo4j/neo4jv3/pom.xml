@@ -47,6 +47,12 @@
             <artifactId>apoc</artifactId>
             <version>${org.neo4j.procedure_version}</version>
         </dependency>
+        <dependency>
+            <!-- Required by ExtractEmail -->
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
 
 </project>
