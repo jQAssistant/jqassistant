@@ -45,7 +45,7 @@
         <jqa.core-framework.version>1.4.0-SNAPSHOT</jqa.core-framework.version>
         <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
-        <org.jruby.version>9.0.5.0</org.jruby.version>
+        <org.jruby.version>9.1.16.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
         <junit.version>4.12</junit.version>
@@ -397,14 +397,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>java-hamcrest</artifactId>
                 <version>2.0.0.0</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <!-- Why do we need JRuby here? -->
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby-core</artifactId>
-                <version>${org.jruby.version}</version>
                 <scope>test</scope>
             </dependency>
 
