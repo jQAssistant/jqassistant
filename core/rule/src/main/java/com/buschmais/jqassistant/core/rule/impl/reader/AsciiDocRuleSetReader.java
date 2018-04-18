@@ -13,9 +13,9 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
+import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
 import org.slf4j.Logger;
@@ -66,11 +66,6 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private RuleConfiguration ruleConfiguration;
 
-    /**
-     * The cached rule set reader, initialized lazily.
-     */
-    private Asciidoctor cachedAsciidoctor = null;
-
     AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
     }
@@ -103,26 +98,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         Document document;
         try {
-            document = getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object> emptyMap());
+            document = AsciidoctorFactory.getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object> emptyMap());
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
         extractRules(source, Collections.singletonList(document), builder);
-    }
-
-    /**
-     * Return an Asciidoctor instance.
-     *
-     * Initialization is quite expensive, therefore doing it lazy.
-     *
-     * @return The Asciidoctor instance.
-     */
-    private Asciidoctor getAsciidoctor() {
-        if (cachedAsciidoctor == null) {
-            LOGGER.debug("Loading Asciidoctor...");
-            cachedAsciidoctor = Asciidoctor.Factory.create();
-        }
-        return cachedAsciidoctor;
     }
 
     /**
@@ -189,13 +169,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Report report = getReport(executableRuleBlock);
         if (CONCEPT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
-            Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+            Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
+                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
             builder.addConcept(concept);
         } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
             Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
-            Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
-                    .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+            Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
+                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
             builder.addConstraint(constraint);
         }
     }
@@ -238,8 +218,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
         Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
-        Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource)
-                .conceptIds(concepts).constraintIds(constraints).groupIds(groups).build();
+        Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).conceptIds(concepts)
+                .constraintIds(constraints).groupIds(groups).build();
         ruleSetBuilder.addGroup(group);
     }
 

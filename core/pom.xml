@@ -46,7 +46,10 @@
         <junit.version>4.12</junit.version>
         <org.asciidoctor.version>1.5.6</org.asciidoctor.version>
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
-        <org.jruby.version>9.1.7.0</org.jruby.version>
+        <org.asciidoctorj-diagram.version>1.5.8</org.asciidoctorj-diagram.version>
+        <org.asciidoctorj-pdf.version>1.5.0-alpha.16</org.asciidoctorj-pdf.version>
+        <net.sourceforge.plantuml.version>1.2018.3</net.sourceforge.plantuml.version>
+        <org.jruby.version>9.1.16.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
     </properties>
 
@@ -122,6 +125,27 @@
                 <groupId>org.jruby</groupId>
                 <artifactId>jruby-stdlib</artifactId>
                 <version>${org.jruby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctorj-diagram</artifactId>
+                <version>${org.asciidoctorj-diagram.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctorj-pdf</artifactId>
+                <version>${org.asciidoctorj-pdf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.plantuml</groupId>
+                <artifactId>plantuml</artifactId>
+                <version>${net.sourceforge.plantuml.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
