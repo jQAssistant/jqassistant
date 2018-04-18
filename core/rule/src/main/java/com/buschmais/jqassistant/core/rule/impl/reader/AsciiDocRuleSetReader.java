@@ -35,9 +35,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
 
-    private static final String CONCEPT = "concept";
-    private static final String CONSTRAINT = "constraint";
-    private static final String GROUP = "group";
+    public static final String CONCEPT = "concept";
+    public static final String CONSTRAINT = "constraint";
+    public static final String GROUP = "group";
 
     private static final String INCLUDES_GROUPS = "includesGroups";
     private static final String INCLUDES_CONCEPTS = "includesConcepts";
@@ -66,7 +66,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private RuleConfiguration ruleConfiguration;
 
-    AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
+    public AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
     }
 
