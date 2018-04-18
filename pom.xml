@@ -92,7 +92,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.9.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
-        <org.neo4j_3x.version>3.3.4</org.neo4j_3x.version>
+        <org.neo4j_3x.version>3.3.5</org.neo4j_3x.version>
         <org.neo4j.procedure_version>3.3.0.2</org.neo4j.procedure_version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>3.0.0</maven.buildhelper.version>
@@ -570,6 +570,29 @@
                     </dependency>
                 </dependencies>
             </dependencyManagement>
+        </profile>
+        <profile>
+            <id>IntelliJ</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>idea.maven.embedder.version</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <testSource>1.8</testSource>
+                            <testTarget>1.8</testTarget>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
