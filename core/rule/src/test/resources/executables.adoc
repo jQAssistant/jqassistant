@@ -1,11 +1,6 @@
 = Executables
 
-[[test:Table]]
-[options="header",role=concept]
-|===
-| Header
-| Content
-|===
+== Cypher And Script Rules
 
 [[test:CypherConcept]]
 [source,cypher,role=concept]
@@ -53,3 +48,25 @@ MATCH (n) RETURN n
 MATCH (n) RETURN n
 ----
 
+== Asciidoc
+
+[[test:Table]]
+[options="header",role=concept]
+|===
+| Header
+| Content
+|===
+
+== PlantUML
+
+[[test:PlantUML]]
+[plantuml,role=concept]
+----
+[artifactId:xo.impl] as impl <<:Maven:Project>>
+[artifactId:xo.api] as api <<:Maven:Project>>
+[artifactId:xo.spi] as spi <<:Maven:Project>>
+
+impl -> api : Defines Dependency
+impl -> spi : Defines Dependency
+spi -> api : Defines Dependency
+----

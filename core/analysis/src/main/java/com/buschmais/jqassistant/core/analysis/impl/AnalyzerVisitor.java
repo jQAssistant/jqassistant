@@ -146,8 +146,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {
         Map<String, Object> ruleParameters = getRuleParameters(executableRule);
         Executable<?> executable = executableRule.getExecutable();
-        String language = executable.getLanguage().toLowerCase();
-        Collection<RuleLanguagePlugin> languagePlugins = ruleLanguagePlugins.get(language);
+        Collection<RuleLanguagePlugin> languagePlugins = ruleLanguagePlugins.get(executable.getLanguage());
         if (languagePlugins != null) {
             for (RuleLanguagePlugin languagePlugin : languagePlugins) {
                 if (languagePlugin.accepts(executableRule)) {

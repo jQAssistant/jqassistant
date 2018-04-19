@@ -16,8 +16,10 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
+import org.asciidoctor.extension.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,20 +91,24 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @throws RuleException
      *             If building fails.
      */
-    private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
+    private void readDocument(final RuleSource source, final RuleSetBuilder builder) throws RuleException {
         InputStream stream;
         try {
             stream = source.getInputStream();
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
-        Document document;
         try {
-            document = AsciidoctorFactory.getAsciidoctor().load(IOUtils.toString(stream), Collections.<String, Object> emptyMap());
+            Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
+            Treeprocessor treeprocessor = new Treeprocessor(source, builder);
+            JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
+            extensionRegistry.treeprocessor(treeprocessor);
+            asciidoctor.load(IOUtils.toString(stream), Collections.<String, Object>emptyMap());
+            extractRules(source, Collections.singletonList(treeprocessor.getDocument()), builder);
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
-        extractRules(source, Collections.singletonList(document), builder);
+
     }
 
     /**
@@ -137,7 +143,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
         String id = executableRuleBlock.id();
         if (id == null) {
-            throw new RuleException("An id attribute is required for the rule '" + executableRuleBlock + "'.");
+            throw new RuleException("An id attribute is required for the rule '" + executableRuleBlock + "' (i.e. '[[rule:id]]' is required.");
         }
         String description = attributes.getString(TITLE, "");
         if (description == null) {
@@ -145,39 +151,59 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
         Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
+        Executable<?> executable = getExecutable(executableRuleBlock, attributes);
+        if (executable != null) {
+            Verification verification = getVerification(attributes);
+            Report report = getReport(executableRuleBlock);
+            if (CONCEPT.equals(executableRuleBlock.getRole())) {
+                Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
+                Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
+                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                builder.addConcept(concept);
+            } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
+                Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
+                Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
+                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                builder.addConstraint(constraint);
+            }
+        }
+    }
+
+    private Executable<?> getExecutable(AbstractBlock block, Attributes attributes) {
         String language;
-        Executable executable;
-        if (SOURCE.equals(executableRuleBlock.getStyle())) {
+        if (SOURCE.equals(block.getStyle())) {
             language = attributes.getString(LANGUAGE);
-            String source = unescapeHtml(executableRuleBlock.getContent());
+            String source = unescapeHtml(block.getContent());
             if (CYPHER.equals(language)) {
-                executable = new CypherExecutable(source);
+                return new CypherExecutable(source);
             } else {
-                executable = new ScriptExecutable(language, source);
+                return new ScriptExecutable(language.toLowerCase(), source);
             }
         } else {
-            language = executableRuleBlock.getStyle();
-            executable = new SourceExecutable<>(language, executableRuleBlock);
+            // Use style for native Asciidoc blocks
+            language = block.getStyle();
+            if (language == null) {
+                // PlantUML extension
+                language = (String) block.getAttributes().get(1);
+            }
+            if (language != null) {
+                return new SourceExecutable<>(language.toLowerCase(), block);
+            } else {
+                LOGGER.warn("Cannot determine language for '" + block + "'.");
+            }
         }
+        return null;
+    }
+
+    private Verification getVerification(Attributes attributes) {
         Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
             verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
-                    .max(attributes.getInt(AGGREGATION_MAX)).build();
+                .max(attributes.getInt(AGGREGATION_MAX)).build();
         } else {
             verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
         }
-        Report report = getReport(executableRuleBlock);
-        if (CONCEPT.equals(executableRuleBlock.getRole())) {
-            Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
-            Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
-                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
-            builder.addConcept(concept);
-        } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
-            Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
-            Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
-                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
-            builder.addConstraint(constraint);
-        }
+        return verification;
     }
 
     /**
@@ -389,6 +415,29 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 return value.toString();
             }
             return defaultValue;
+        }
+    }
+
+    private class Treeprocessor extends org.asciidoctor.extension.Treeprocessor {
+
+        private final RuleSource source;
+        private final RuleSetBuilder builder;
+
+        private Document document;
+
+        public Treeprocessor(RuleSource source, RuleSetBuilder builder) {
+            this.source = source;
+            this.builder = builder;
+        }
+
+        @Override
+        public Document process(Document document) {
+            this.document = document;
+            return document;
+        }
+
+        public Document getDocument() {
+            return document;
         }
     }
 }
