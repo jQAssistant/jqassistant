@@ -78,7 +78,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
                 if (conceptDescriptor == null) {
                     conceptDescriptor = analyzerContext.getStore().create(ConceptDescriptor.class);
                     conceptDescriptor.setId(concept.getId());
-                    conceptDescriptor.setStatus(result.getStatus());
+                    conceptDescriptor.setStatus(status);
                 }
                 reportPlugin.endConcept();
             } else {

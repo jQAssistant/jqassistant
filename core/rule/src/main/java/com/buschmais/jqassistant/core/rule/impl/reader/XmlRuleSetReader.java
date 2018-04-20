@@ -157,7 +157,7 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {
-        Executable executable = createExecutable(referenceableType);
+        Executable<?> executable = createExecutable(referenceableType);
         String description = referenceableType.getDescription();
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
@@ -171,7 +171,7 @@ public class XmlRuleSetReader implements RuleSetReader {
                 .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
     }
 
-    private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
+    private Executable<?> createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
         SourceType source = executableRuleType.getSource();
         if (source != null) {
             return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue());
@@ -183,7 +183,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         }
         SourceType scriptType = executableRuleType.getScript();
         if (scriptType != null) {
-            return new ScriptExecutable(scriptType.getLanguage(), scriptType.getValue());
+            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
         }
         throw new RuleException("Cannot determine executable for " + executableRuleType.getId());
     }

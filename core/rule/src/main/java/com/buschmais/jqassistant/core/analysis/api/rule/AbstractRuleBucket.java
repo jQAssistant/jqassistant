@@ -17,7 +17,7 @@ import java.util.TreeMap;
  */
 public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoRuleException,
                                          DRE extends DuplicateRuleException> {
-    TreeMap<String, T> rules = new TreeMap<>();
+    private TreeMap<String, T> rules = new TreeMap<>();
 
     /**
      * Returns the number of rules of type {@code T} contained in the bucket.

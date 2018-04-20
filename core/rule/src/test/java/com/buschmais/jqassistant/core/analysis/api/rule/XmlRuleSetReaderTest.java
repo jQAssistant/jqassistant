@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.junit.Test;
@@ -7,16 +8,29 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class XmlRuleSetReaderTest {
 
     @Test
     public void readScriptRule() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml");
-        assertThat(ruleSet.getConceptBucket().size(), equalTo(2));
-        assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:JavaScriptConcept", "test:JavaScriptExecutableConcept"));
-        assertThat(ruleSet.getConstraintBucket().size(), equalTo(2));
-        assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:JavaScriptConstraint", "test:JavaScriptExecutableConstraint"));
+        ConceptBucket conceptBucket = ruleSet.getConceptBucket();
+        assertThat(conceptBucket.size(), equalTo(2));
+        assertThat(conceptBucket.getIds(), hasItems("test:JavaScriptConcept", "test:JavaScriptExecutableConcept"));
+        Collection<? extends AbstractRule> all = conceptBucket.getAll();
+        verifyExecutableRule(all);
+        ConstraintBucket constraintBucket = ruleSet.getConstraintBucket();
+        assertThat(constraintBucket.size(), equalTo(2));
+        assertThat(constraintBucket.getIds(), hasItems("test:JavaScriptConstraint", "test:JavaScriptExecutableConstraint"));
+        verifyExecutableRule(constraintBucket.getAll());
+    }
+
+    private void verifyExecutableRule(Collection<? extends AbstractRule> rules) {
+        for (AbstractRule rule : rules) {
+            assertThat(rule, instanceOf(ExecutableRule.class));
+            assertThat(((ExecutableRule<?>) rule).getExecutable().getLanguage(), equalTo("javascript"));
+        }
     }
 
     @Test
