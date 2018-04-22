@@ -17,9 +17,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -417,8 +419,15 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
+        File reportDirectory = new File("target/jqassistant/report");
+        reportDirectory.mkdirs();
+        ReportContext reportContext = new ReportContextImpl(reportDirectory);
+        return getReportPlugins(reportContext, properties);
+    }
+
+    protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
         try {
-            return reportPluginRepository.getReportPlugins(properties);
+            return reportPluginRepository.getReportPlugins(reportContext, properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get report plugins.", e);
         }

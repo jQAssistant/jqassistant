@@ -9,14 +9,10 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Abstract base implementation of a {@link ScannerPlugin}.
  */
 public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements ScannerPlugin<I, D> {
-    private static Logger LOGGER = LoggerFactory.getLogger(AbstractScannerPlugin.class);
 
     private Map<String, Object> properties;
 
@@ -58,7 +54,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Determines the type parameter for a generic super class.
-     * 
+     *
      * @param expectedSuperClass
      *            The generic super class.
      * @param genericTypeParameterIndex
@@ -80,7 +76,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Get all properties.
-     * 
+     *
      * @return The properties.
      */
     protected Map<String, Object> getProperties() {
@@ -89,7 +85,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Get the value of a property.
-     * 
+     *
      * @param name
      *            The name of the property.
      * @param type
@@ -104,7 +100,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Get a property as string.
-     * 
+     *
      * @param name
      *            The name.
      * @param defaultValue
@@ -132,7 +128,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Return the scanner context.
-     * 
+     *
      * @return The scanner context.
      */
     protected ScannerContext getScannerContext() {
@@ -141,7 +137,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     /**
      * Return the relative path of a file within a directory.
-     * 
+     *
      * @param directory
      *            The directory.
      * @param entry
