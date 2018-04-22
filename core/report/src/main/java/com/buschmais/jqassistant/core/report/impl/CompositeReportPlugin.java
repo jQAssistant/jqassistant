@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -15,7 +16,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
  * <p>
  * A rule (i.e. concept or concept) may explicitly select one or more reports by their id to delegate to.
  */
-public class CompositeReportPlugin implements ReportPlugin {
+public class CompositeReportPlugin extends AbstractReportPlugin {
 
     private interface DelegateOperation {
         void run(ReportPlugin reportWriter) throws ReportException;
@@ -23,19 +24,11 @@ public class CompositeReportPlugin implements ReportPlugin {
 
     private Map<String, ReportPlugin> reportWriters;
 
-    private Iterable<ReportPlugin> selectedReportWriters = Collections.emptyList();
+    private Iterable<ReportPlugin> selectedReportWriters;
 
     public CompositeReportPlugin(Map<String, ReportPlugin> reportWriters) {
         this.reportWriters = reportWriters;
         this.selectedReportWriters = reportWriters.values();
-    }
-
-    @Override
-    public void initialize() throws ReportException {
-    }
-
-    @Override
-    public void configure(Map<String, Object> properties) throws ReportException {
     }
 
     @Override

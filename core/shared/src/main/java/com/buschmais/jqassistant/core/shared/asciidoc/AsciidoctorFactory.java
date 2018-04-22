@@ -14,17 +14,29 @@ public class AsciidoctorFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidoctorFactory.class);
 
-    private static final AsciidoctorFactory INSTANCE = new AsciidoctorFactory();
+    private static AsciidoctorFactory INSTANCE = new AsciidoctorFactory();
 
-    private final Asciidoctor asciidoctor;
+    private Asciidoctor asciidoctor = null;
 
     /**
-     * Constructor.
+     * Private constructor.
      */
     private AsciidoctorFactory() {
-        asciidoctor = Asciidoctor.Factory.create();
-        asciidoctor.requireLibrary(ASCIIDOCTOR_DIAGRAM);
-        LOGGER.info("Loaded Asciidoctor " + asciidoctor.asciidoctorVersion());
+    }
+
+    /**
+     * Returns the {@link Asciidoctor} instance which is created on demand (due to
+     * JRuby/Asciidoctor loading time).
+     *
+     * @return The Asciidoctor.
+     */
+    private synchronized Asciidoctor getOrCreateAsciidoctor() {
+        if (asciidoctor == null) {
+            asciidoctor = Asciidoctor.Factory.create();
+            asciidoctor.requireLibrary(ASCIIDOCTOR_DIAGRAM);
+            LOGGER.info("Loaded Asciidoctor " + asciidoctor.asciidoctorVersion());
+        }
+        return asciidoctor;
     }
 
     /**
@@ -32,8 +44,8 @@ public class AsciidoctorFactory {
      *
      * @return The {@link Asciidoctor} instance.
      */
-    public static Asciidoctor getAsciidoctor() {
-        return INSTANCE.asciidoctor;
+    public synchronized static Asciidoctor getAsciidoctor() {
+        return INSTANCE.getOrCreateAsciidoctor();
     }
 
 }

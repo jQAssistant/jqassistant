@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -13,7 +14,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
  * implementation collection the concept results and constraint violations
  * in-memory.
  */
-public class InMemoryReportWriter implements ReportPlugin {
+public class InMemoryReportWriter extends AbstractReportPlugin {
 
     private ReportPlugin delegate;
 
@@ -24,14 +25,6 @@ public class InMemoryReportWriter implements ReportPlugin {
 
     public InMemoryReportWriter(ReportPlugin delegate) {
         this.delegate = delegate;
-    }
-
-    @Override
-    public void initialize() throws ReportException {
-    }
-
-    @Override
-    public void configure(Map<String, Object> properties) throws ReportException {
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -28,7 +29,8 @@ public class PluginRepositoryTest {
     /**
      * Verifies that properties are loaded and passed to plugins.
      *
-     * @throws PluginRepositoryException If the test fails.
+     * @throws PluginRepositoryException
+     *             If the test fails.
      */
     @Test
     public void pluginProperties() throws PluginRepositoryException {
@@ -48,12 +50,14 @@ public class PluginRepositoryTest {
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, Collections.<String, Object>emptyMap());
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext,
+                Collections.<String, Object> emptyMap());
         assertThat(scannerPlugins.size(), equalTo(2));
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName()), notNullValue());
         assertThat(scannerPlugins.get("testScanner"), notNullValue());
         // Report plugins
-        Map<String, ReportPlugin> reportPlugins = pluginRepository.getReportPluginRepository().getReportPlugins(Collections.<String, Object>emptyMap());
+        ReportContext reportContext = mock(ReportContext.class);
+        Map<String, ReportPlugin> reportPlugins = pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, Collections.emptyMap());
         assertThat(reportPlugins.size(), equalTo(2));
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName()), notNullValue());
         assertThat(reportPlugins.get("testReport"), notNullValue());
@@ -61,7 +65,7 @@ public class PluginRepositoryTest {
 
     private void verifyProperties(Map<String, Object> pluginProperties) {
         assertThat(pluginProperties, notNullValue());
-        assertThat(pluginProperties.get("testKey"), CoreMatchers.<Object>equalTo("testValue"));
+        assertThat(pluginProperties.get("testKey"), CoreMatchers.<Object> equalTo("testValue"));
     }
 
     private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
@@ -79,7 +83,7 @@ public class PluginRepositoryTest {
 
     private Map<String, Object> getReportPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
         ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository();
-        Map<String, ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(properties);
+        Map<String, ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(mock(ReportContext.class), properties);
         assertThat(reportPlugins.size(), greaterThan(0));
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             if (reportPlugin instanceof TestReportPlugin) {

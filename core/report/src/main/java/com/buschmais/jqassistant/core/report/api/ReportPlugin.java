@@ -20,13 +20,15 @@ public interface ReportPlugin {
 
     /**
      * Initializes the plugin with the given properties.
-     * 
+     *
+     * @param reportContext
+     *            The {@link ReportContext}.
      * @param properties
      *            The properties.
      * @throws ReportException
      *             If the plugin cannot be initialized.
      */
-    void configure(Map<String, Object> properties) throws ReportException;
+    void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException;
 
     void begin() throws ReportException;
 

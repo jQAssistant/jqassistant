@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ReportType;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -30,10 +31,10 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
     }
 
     @Override
-    public Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) throws PluginRepositoryException {
+    public Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws PluginRepositoryException {
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             try {
-                reportPlugin.configure(properties);
+                reportPlugin.configure(reportContext, properties);
             } catch (ReportException e) {
                 throw new PluginRepositoryException("Cannot configure report plugin " + reportPlugin, e);
             }

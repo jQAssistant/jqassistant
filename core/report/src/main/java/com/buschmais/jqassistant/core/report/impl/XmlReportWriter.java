@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.io.Writer;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,20 +22,31 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * Implementation of {@link ReportPlugin} which writes the results of an
  * analysis to an XML file.
  */
-public class XmlReportWriter implements ReportPlugin {
+public class XmlReportWriter extends AbstractReportPlugin {
+
+    // Properties
+    public static final String XML_REPORT_FILE = "xml.report.file";
+
+    // Default values
+    public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
     public static final String TYPE = "xml";
 
     public static final String ENCODING = "UTF-8";
 
-    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.3";
+    public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.4";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
+
     private interface XmlOperation {
-        void run() throws XMLStreamException, ReportException;
+        void run() throws XMLStreamException, IOException;
     }
 
+    private XMLOutputFactory xmlOutputFactory;
+
     private XMLStreamWriter xmlStreamWriter;
+
+    private File xmlReportFile;
 
     private Result<? extends ExecutableRule> result;
 
@@ -45,28 +56,25 @@ public class XmlReportWriter implements ReportPlugin {
 
     private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public XmlReportWriter(Writer writer) throws ReportException {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        try {
-            xmlStreamWriter = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(writer));
-        } catch (XMLStreamException e) {
-            throw new ReportException("Cannot create XML stream writer.", e);
-        }
+    @Override
+    public void initialize() {
+        this.xmlOutputFactory = XMLOutputFactory.newInstance();
     }
 
     @Override
-    public void initialize() throws ReportException {
-    }
-
-    @Override
-    public void configure(Map<String, Object> properties) throws ReportException {
+    public void configure(ReportContext reportContext, Map<String, Object> properties) {
+        String xmlReport = (String) properties.get(XML_REPORT_FILE);
+        this.xmlReportFile = xmlReport != null ? new File(xmlReport) : new File(reportContext.getReportDirectory(), DEFAULT_XML_REPORT_FILE);
     }
 
     @Override
     public void begin() throws ReportException {
         run(new XmlOperation() {
             @Override
-            public void run() throws XMLStreamException {
+            public void run() throws XMLStreamException, IOException {
+                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), ENCODING);
+                XMLStreamWriter streamWriter= xmlOutputFactory.createXMLStreamWriter(writer);
+                xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
                 xmlStreamWriter.writeStartDocument(ENCODING, "1.0");
                 xmlStreamWriter.setPrefix(NAMESPACE_PREFIX, NAMESPACE_URL);
                 xmlStreamWriter.writeStartElement(NAMESPACE_URL, "jqassistant-report");
@@ -82,17 +90,13 @@ public class XmlReportWriter implements ReportPlugin {
             public void run() throws XMLStreamException {
                 xmlStreamWriter.writeEndElement();
                 xmlStreamWriter.writeEndDocument();
+                xmlStreamWriter.close();
             }
         });
-        try {
-            xmlStreamWriter.close();
-        } catch (XMLStreamException e) {
-            throw new ReportException("Cannot close XML stream writer", e);
-        }
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ReportException {
+    public void beginConcept(Concept concept) {
         beginExecutable();
     }
 
@@ -127,7 +131,7 @@ public class XmlReportWriter implements ReportPlugin {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws ReportException {
+    public void beginConstraint(Constraint constraint) {
         beginExecutable();
     }
 
@@ -137,7 +141,7 @@ public class XmlReportWriter implements ReportPlugin {
     }
 
     @Override
-    public void setResult(final Result<? extends ExecutableRule> result) throws ReportException {
+    public void setResult(final Result<? extends ExecutableRule> result) {
         this.result = result;
     }
 
@@ -160,7 +164,7 @@ public class XmlReportWriter implements ReportPlugin {
             final String primaryColumn = getPrimaryColumn(rule, columnNames);
             run(new XmlOperation() {
                 @Override
-                public void run() throws XMLStreamException, ReportException {
+                public void run() throws XMLStreamException {
                     xmlStreamWriter.writeStartElement(elementName);
                     xmlStreamWriter.writeAttribute("id", rule.getId());
                     xmlStreamWriter.writeStartElement("description");
@@ -203,6 +207,10 @@ public class XmlReportWriter implements ReportPlugin {
         }
     }
 
+    public File getXmlReportFile() {
+        return xmlReportFile;
+    }
+
     private String getPrimaryColumn(ExecutableRule rule, List<String> columnNames) {
         String primaryColumn = rule.getReport().getPrimaryColumn();
         if (primaryColumn == null && columnNames != null && !columnNames.isEmpty()) {
@@ -214,7 +222,8 @@ public class XmlReportWriter implements ReportPlugin {
     /**
      * Write the status of the current result.
      *
-     * @throws XMLStreamException If a problem occurs.
+     * @throws XMLStreamException
+     *             If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("status");
@@ -223,15 +232,17 @@ public class XmlReportWriter implements ReportPlugin {
     }
 
     /**
-     * Determines the language and language element of a descriptor from a
-     * result column.
+     * Determines the language and language element of a descriptor from a result
+     * column.
      *
-     * @param columnName The name of the column.
-     * @param value      The value.
-     * @throws XMLStreamException                                                    If a problem occurs.
-     * @throws ReportException If a problem occurs.
+     * @param columnName
+     *            The name of the column.
+     * @param value
+     *            The value.
+     * @throws XMLStreamException
+     *             If a problem occurs.
      */
-    private void writeColumn(String columnName, Object value) throws XMLStreamException, ReportException {
+    private void writeColumn(String columnName, Object value) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue = null;
@@ -268,8 +279,10 @@ public class XmlReportWriter implements ReportPlugin {
     /**
      * Writes the duration.
      *
-     * @param beginTime The begin time.
-     * @throws XMLStreamException If writing fails.
+     * @param beginTime
+     *            The begin time.
+     * @throws XMLStreamException
+     *             If writing fails.
      */
     private void writeDuration(long beginTime) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("duration");
@@ -280,8 +293,10 @@ public class XmlReportWriter implements ReportPlugin {
     /**
      * Writes the severity of the rule.
      *
-     * @param severity The severity the rule has been executed with
-     * @throws XMLStreamException If writing fails.
+     * @param severity
+     *            The severity the rule has been executed with
+     * @throws XMLStreamException
+     *             If writing fails.
      */
     private void writeSeverity(Severity severity) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("severity");
@@ -293,13 +308,15 @@ public class XmlReportWriter implements ReportPlugin {
     /**
      * Defines an operation to write XML elements.
      *
-     * @param operation The operation.
-     * @throws ReportException If writing fails.
+     * @param operation
+     *            The operation.
+     * @throws ReportException
+     *             If writing fails.
      */
     private void run(XmlOperation operation) throws ReportException {
         try {
             operation.run();
-        } catch (XMLStreamException e) {
+        } catch (XMLStreamException | IOException e) {
             throw new ReportException("Cannot write to XML report.", e);
         }
     }

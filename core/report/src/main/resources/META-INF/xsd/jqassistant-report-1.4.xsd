@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.3"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.3"
+           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.4"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.4"
            elementFormDefault="unqualified">
 
     <xs:group name="RuleGroup">

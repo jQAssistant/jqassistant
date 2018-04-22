@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report;
 
-import java.io.StringReader;
+import java.io.*;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -12,35 +12,20 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnHeaderType;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnsHeaderType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.report.schema.v1.ExecutableRuleType;
-import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
-import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.ReferencableRuleType;
-import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
-import com.buschmais.jqassistant.core.report.schema.v1.RowType;
-import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
-import com.buschmais.jqassistant.core.report.schema.v1.StatusEnumType;
+import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.schema.v1.*;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class XmlReportTest {
 
     @Test
-    public void writeAndReadReport() throws JAXBException, SAXException, ReportException {
-        String xmlReport = XmlReportTestHelper.createXmlReport();
+    public void writeAndReadReport() throws JAXBException, SAXException, ReportException, IOException {
+        File xmlReport = XmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report, notNullValue());
         assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
@@ -81,8 +66,8 @@ public class XmlReportTest {
     }
 
     @Test
-    public void testReportWithConstraint() throws JAXBException, SAXException, ReportException {
-        String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
+    public void testReportWithConstraint() throws JAXBException, SAXException, ReportException, IOException {
+        File xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report, notNullValue());
         assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
@@ -104,9 +89,9 @@ public class XmlReportTest {
     }
 
     @Test
-    public void reportEncoding() throws ReportException, JAXBException, SAXException {
+    public void reportEncoding() throws ReportException, JAXBException, SAXException, IOException {
         String description = "ÄÖÜß";
-        String xmlReport = XmlReportTestHelper.createXmlWithUmlauts(description);
+        File xmlReport = XmlReportTestHelper.createXmlWithUmlauts(description);
         JqassistantReport jqassistantReport = readReport(xmlReport);
         List<ReferencableRuleType> groups = jqassistantReport.getGroupOrConceptOrConstraint();
         assertThat(groups.size(), equalTo(1));
@@ -121,11 +106,11 @@ public class XmlReportTest {
         assertThat(meinKonzept.getDescription(), equalTo(description));
     }
 
-    private JqassistantReport readReport(String xmlReport) throws SAXException, JAXBException {
+    private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.3.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.4.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
+        StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportWriter.ENCODING));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
         return unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
