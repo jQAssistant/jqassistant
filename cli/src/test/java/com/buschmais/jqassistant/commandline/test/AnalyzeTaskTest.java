@@ -1,18 +1,23 @@
 package com.buschmais.jqassistant.commandline.test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.task.AnalyzeTask;
 import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 
 import org.apache.commons.cli.CommandLine;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,7 +50,7 @@ public class AnalyzeTaskTest {
     @Test
     public void loadPlugins() throws CliExecutionException, PluginRepositoryException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
-        HashMap<String, Object> pluginProperties = new HashMap<>();
+        Map<String, Object> pluginProperties = new HashMap<>();
         analyzeTask.initialize(pluginRepository, pluginProperties);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
@@ -55,7 +60,9 @@ public class AnalyzeTaskTest {
         analyzeTask.withStandardOptions(standardOptions);
         analyzeTask.run();
 
-        verify(reportPluginRepository).getReportPlugins(pluginProperties);
+        ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(reportPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
+        Assert.assertThat(propertiesCaptor.getValue(), is(pluginProperties));
         verify(rulePluginRepository).getRuleSources();
         verify(modelPluginRepository).getDescriptorTypes();
     }
