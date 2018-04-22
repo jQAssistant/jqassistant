@@ -11,6 +11,7 @@ import javax.xml.bind.Marshaller;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
@@ -22,7 +23,7 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
  * Each group is rendered as a test suite to a separate file.
  *
  */
-public class JUnitReportWriter implements ReportPlugin {
+public class JUnitReportWriter extends AbstractReportPlugin {
 
     private File directory;
     private JAXBContext jaxbContext;
@@ -42,24 +43,7 @@ public class JUnitReportWriter implements ReportPlugin {
     }
 
     @Override
-    public void initialize() throws ReportException {
-    }
-
-    @Override
-    public void configure(Map<String, Object> properties) throws ReportException {
-
-    }
-
-    @Override
-    public void begin() throws ReportException {
-    }
-
-    @Override
-    public void end() throws ReportException {
-    }
-
-    @Override
-    public void beginGroup(Group group) throws ReportException {
+    public void beginGroup(Group group) {
         this.group = group;
         this.groupBeginTimestamp = System.currentTimeMillis();
     }
@@ -126,25 +110,17 @@ public class JUnitReportWriter implements ReportPlugin {
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ReportException {
+    public void beginConcept(Concept concept) {
         this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConcept() throws ReportException {
-    }
-
-    @Override
-    public void beginConstraint(Constraint constraint) throws ReportException {
+    public void beginConstraint(Constraint constraint) {
         this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConstraint() throws ReportException {
-    }
-
-    @Override
-    public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
+    public void setResult(Result<? extends ExecutableRule> result) {
         long ruleEndTimestamp = System.currentTimeMillis();
         long time = ruleEndTimestamp - ruleBeginTimestamp;
         this.results.put(result, Long.valueOf(time));

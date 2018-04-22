@@ -12,6 +12,7 @@ import javax.xml.transform.stream.StreamSource;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
@@ -56,7 +57,7 @@ public class ReportMojo extends AbstractMavenReport {
         if (xmlReportFile != null) {
             selectedXmlReportFile = xmlReportFile;
         } else {
-            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + ProjectResolver.OUTPUT_DIRECTORY + "/" + AbstractMojo.REPORT_XML);
+            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + ProjectResolver.OUTPUT_DIRECTORY + "/" + XmlReportWriter.DEFAULT_XML_REPORT_FILE);
         }
         if (selectedXmlReportFile.exists()) {
             StringWriter writer = new StringWriter();

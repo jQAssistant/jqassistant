@@ -87,8 +87,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
     }
 
-    public static final String REPORT_XML = "jqassistant-report.xml";
-
     public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
 
     /**

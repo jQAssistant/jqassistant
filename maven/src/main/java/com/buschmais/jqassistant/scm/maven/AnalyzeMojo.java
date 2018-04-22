@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -12,11 +12,13 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -107,16 +109,17 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
+        ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Map<String, ReportPlugin> reportWriters = new HashMap<>();
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
-        ReportPlugin xmlReportWriter = getReportPlugin(rootModule);
+        ReportPlugin xmlReportWriter = getReportPlugin(rootModule, reportContext);
         reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
         Map<String, ReportPlugin> reportPlugins;
         try {
-            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
+            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(reportContext, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get report plugins.", e);
         }
@@ -177,20 +180,19 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private ReportPlugin getReportPlugin(MavenProject rootModule) throws MojoExecutionException {
+    private ReportPlugin getReportPlugin(MavenProject rootModule, ReportContext reportContext) throws MojoExecutionException {
         ReportPlugin xmlReportWriter = null;
-
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
             case JQA:
-                Writer xmlReportFileWriter;
-                try {
-                    xmlReportFileWriter = new OutputStreamWriter(new FileOutputStream(getXmlReportFile(rootModule)), XmlReportWriter.ENCODING);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot create XML report file.", e);
+                Map<String, Object> properties = new HashMap<>();
+                if (xmlReportFile != null) {
+                    properties.put(XmlReportWriter.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
                 }
                 try {
-                    xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
+                    xmlReportWriter = new XmlReportWriter();
+                    xmlReportWriter.initialize();
+                    xmlReportWriter.configure(reportContext, properties);
                 } catch (ReportException e) {
                     throw new MojoExecutionException("Cannot create XML report file writer.", e);
                 }
@@ -202,7 +204,6 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 throw new MojoExecutionException("Unknown report type " + reportType);
             }
         }
-
         return xmlReportWriter;
     }
 
@@ -215,22 +216,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         try {
             junitReportWriter = new JUnitReportWriter(junitReportDirectory);
         } catch (ReportException e) {
-            throw new MojoExecutionException("Cannot create XML report file writer.", e);
+            throw new MojoExecutionException("Cannot create JUnit report file writer.", e);
         }
         return junitReportWriter;
-    }
-
-    /**
-     * Returns the {@link File} to write the XML report to.
-     *
-     * @return The {@link File} to write the XML report to.
-     * @throws MojoExecutionException
-     *             If the file cannot be determined.
-     */
-    private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
-        File selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);
-        selectedXmlReportFile.getParentFile().mkdirs();
-        return selectedXmlReportFile;
     }
 
 }
