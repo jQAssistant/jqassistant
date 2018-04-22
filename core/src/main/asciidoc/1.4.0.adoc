@@ -4,6 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.4.0]
 ifdef::jqa-in-manual[== Core Framework 1.4.0]
 
-- Upgraded to Neo4j 2.3.12
 - Fixed a problem of parsing AsciiDoc files containing definition lists
 - API change (breaking): Added `ReportContext` as 1st parameter to `ReportPlugin#initialize`
