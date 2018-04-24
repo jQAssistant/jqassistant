@@ -23,6 +23,8 @@ public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescript
     @HasElement
     XmlElementDescriptor getParent();
 
+    void setParent(XmlElementDescriptor parent);
+
     @Relation("HAS_ATTRIBUTE")
     List<XmlAttributeDescriptor> getAttributes();
 

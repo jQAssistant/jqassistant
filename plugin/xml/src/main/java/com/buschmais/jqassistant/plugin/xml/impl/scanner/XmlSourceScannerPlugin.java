@@ -52,7 +52,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
                 int eventType = streamReader.getEventType();
                 switch (eventType) {
                 case XMLStreamConstants.START_DOCUMENT:
-                    documentDescriptor = startDocument(streamReader, documentDescriptor, store);
+                    documentDescriptor = startDocument(streamReader, documentDescriptor);
                     break;
                 case XMLStreamConstants.START_ELEMENT:
                     XmlElementDescriptor childElement = startElement(streamReader, documentDescriptor, parentElement, namespaceMappings, store);
@@ -100,7 +100,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         }
     }
 
-    private XmlDocumentDescriptor startDocument(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor, Store store) {
+    private XmlDocumentDescriptor startDocument(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor) {
         documentDescriptor.setXmlVersion(streamReader.getVersion());
         documentDescriptor.setCharacterEncodingScheme(streamReader.getCharacterEncodingScheme());
         documentDescriptor.setStandalone(streamReader.isStandalone());
@@ -110,6 +110,11 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     private XmlElementDescriptor startElement(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor, XmlElementDescriptor parentElement,
             Map<String, XmlNamespaceDescriptor> namespaceMappings, Store store) {
         XmlElementDescriptor elementDescriptor = store.create(XmlElementDescriptor.class);
+        if (parentElement == null) {
+            documentDescriptor.setRootElement(elementDescriptor);
+        } else {
+            elementDescriptor.setParent(parentElement);
+        }
         // get namespace declaration
         for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
             XmlNamespaceDescriptor namespaceDescriptor = store.create(XmlNamespaceDescriptor.class);
@@ -130,26 +135,18 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             attributeDescriptor.setValue(streamReader.getAttributeValue(i));
             elementDescriptor.getAttributes().add(attributeDescriptor);
         }
-
-        if (parentElement == null) {
-            documentDescriptor.setRootElement(elementDescriptor);
-        } else {
-            parentElement.getElements().add(elementDescriptor);
-        }
-        parentElement = elementDescriptor;
-        return parentElement;
+        return elementDescriptor;
     }
 
     private XmlElementDescriptor endElement(XMLStreamReader streamReader, XmlElementDescriptor parentElement,
             Map<String, XmlNamespaceDescriptor> namespaceMappings) {
-        parentElement = parentElement.getParent();
         for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
             String prefix = streamReader.getNamespacePrefix(i);
             if (!Strings.isNullOrEmpty(prefix)) {
                 namespaceMappings.remove(prefix);
             }
         }
-        return parentElement;
+        return parentElement.getParent();
     }
 
     private <T extends XmlTextDescriptor> T characters(XMLStreamReader streamReader, Class<T> type, XmlElementDescriptor parentElement, Store store) {
