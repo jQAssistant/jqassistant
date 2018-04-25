@@ -414,12 +414,17 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>tycho</artifactId>
-			<scope>provided</scope>
+            <artifactId>rdbms</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>rdbms</artifactId>
+            <artifactId>spring</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>tycho</artifactId>
 			<scope>provided</scope>
         </dependency>
 

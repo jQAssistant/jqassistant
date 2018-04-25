@@ -21,9 +21,8 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -60,17 +59,13 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Executing analysis.");
 
         ReportContextImpl reportContext = new ReportContextImpl(reportDirectory);
-        XmlReportWriter xmlReportWriter = getXmlReportWriter(reportContext);
-        Map<String, ReportPlugin> reportWriters = new HashMap<>();
-        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
-        reportWriters.putAll(getReportPlugins(reportContext));
-        CompositeReportPlugin reportWriter = new CompositeReportPlugin(reportWriters);
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportWriter, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -80,21 +75,14 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
         try {
             final ReportHelper reportHelper = new ReportHelper(LOGGER);
-            final int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, failOnSeverity, inMemoryReportWriter);
-            final int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, failOnSeverity, inMemoryReportWriter);
+            final int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, failOnSeverity, inMemoryReportPlugin);
+            final int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, failOnSeverity, inMemoryReportPlugin);
             if (conceptViolations > 0 || constraintViolations > 0) {
                 throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
         } finally {
             store.commitTransaction();
         }
-    }
-
-    private XmlReportWriter getXmlReportWriter(ReportContextImpl reportContext) {
-        XmlReportWriter xmlReportWriter = new XmlReportWriter();
-        xmlReportWriter.initialize();
-        xmlReportWriter.configure(reportContext, Collections.<String, Object> emptyMap());
-        return xmlReportWriter;
     }
 
     /**
