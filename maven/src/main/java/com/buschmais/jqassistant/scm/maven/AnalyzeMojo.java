@@ -13,16 +13,15 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
-import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
+import com.buschmais.jqassistant.plugin.common.impl.report.JUnitReportPlugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -110,26 +109,16 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
-        Map<String, ReportPlugin> reportWriters = new HashMap<>();
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
-        ReportPlugin xmlReportWriter = getReportPlugin(rootModule, reportContext);
-        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
-        Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
-        Map<String, ReportPlugin> reportPlugins;
-        try {
-            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(reportContext, properties);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get report plugins.", e);
-        }
-        reportWriters.putAll(reportPlugins);
-        CompositeReportPlugin reportWriter = new CompositeReportPlugin(reportWriters);
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        Map<String, Object> properties = getReportProperties(rootModule);
+        Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportWriter, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
@@ -152,10 +141,31 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 effectiveFailOnSeverity = failOnSeverity;
             }
 
-            verifyAnalysisResults(inMemoryReportWriter, reportHelper, effectiveFailOnSeverity);
+            verifyAnalysisResults(inMemoryReportPlugin, reportHelper, effectiveFailOnSeverity);
         } finally {
             store.commitTransaction();
         }
+    }
+
+    private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws MojoExecutionException {
+        Map<String, ReportPlugin> reportPlugins;
+        try {
+            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(reportContext, properties);
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot get report plugins.", e);
+        }
+        return reportPlugins;
+    }
+
+    private Map<String, Object> getReportProperties(MavenProject rootModule) {
+        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
+        if (xmlReportFile != null) {
+            properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
+        }
+        String junitReportDirectory = this.junitReportDirectory != null ? this.junitReportDirectory.getAbsolutePath()
+                : new File(rootModule.getBuild().getDirectory() + "/surefire-reports").getAbsolutePath();
+        properties.put(JUnitReportPlugin.JUNIT_REPORT_DIRECTORY, junitReportDirectory);
+        return properties;
     }
 
     private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws MojoExecutionException {
@@ -166,7 +176,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private void verifyAnalysisResults(InMemoryReportWriter inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)
+    private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)
             throws MojoFailureException {
         int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
         int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
@@ -179,46 +189,4 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
         }
     }
-
-    private ReportPlugin getReportPlugin(MavenProject rootModule, ReportContext reportContext) throws MojoExecutionException {
-        ReportPlugin xmlReportWriter = null;
-        for (ReportType reportType : reportTypes) {
-            switch (reportType) {
-            case JQA:
-                Map<String, Object> properties = new HashMap<>();
-                if (xmlReportFile != null) {
-                    properties.put(XmlReportWriter.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
-                }
-                try {
-                    xmlReportWriter = new XmlReportWriter();
-                    xmlReportWriter.initialize();
-                    xmlReportWriter.configure(reportContext, properties);
-                } catch (ReportException e) {
-                    throw new MojoExecutionException("Cannot create XML report file writer.", e);
-                }
-                break;
-            case JUNIT:
-                xmlReportWriter = getJunitReportWriter(rootModule);
-                break;
-            default:
-                throw new MojoExecutionException("Unknown report type " + reportType);
-            }
-        }
-        return xmlReportWriter;
-    }
-
-    private JUnitReportWriter getJunitReportWriter(MavenProject baseProject) throws MojoExecutionException {
-        JUnitReportWriter junitReportWriter;
-        if (junitReportDirectory == null) {
-            junitReportDirectory = new File(baseProject.getBuild().getDirectory() + "/surefire-reports");
-        }
-        junitReportDirectory.mkdirs();
-        try {
-            junitReportWriter = new JUnitReportWriter(junitReportDirectory);
-        } catch (ReportException e) {
-            throw new MojoExecutionException("Cannot create JUnit report file writer.", e);
-        }
-        return junitReportWriter;
-    }
-
 }
