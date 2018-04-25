@@ -26,55 +26,55 @@ public class ScriptIT extends AbstractPluginIT {
     @Test
     public void javaScriptXmlConcept() throws Exception {
         assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
+        verifyResults(reportPlugin.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void JavaScriptAsciiDocConcept() throws Exception {
         assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
+        verifyResults(reportPlugin.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConceptUsingGDS() throws Exception {
         assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
+        verifyResults(reportPlugin.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConstraint() throws Exception {
         assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportPlugin.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void JavaScriptAsciiDocConstraint() throws Exception {
         assertThat(validateConstraint("javascript:AsciiDocTestConstraint").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
+        verifyResults(reportPlugin.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void groovyXmlConcept() throws Exception {
         assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
+        verifyResults(reportPlugin.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void groovyXmlConstraint() throws Exception {
         assertThat(validateConstraint("groovy:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportPlugin.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void rubyXmlConcept() throws Exception {
         assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportWriter.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
+        verifyResults(reportPlugin.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void rubyXmlConstraint() throws Exception {
         assertThat(validateConstraint("ruby:XmlTestConstraint").getStatus(), equalTo(FAILURE));
-        verifyResults(reportWriter.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportPlugin.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
     private <R extends ExecutableRule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {

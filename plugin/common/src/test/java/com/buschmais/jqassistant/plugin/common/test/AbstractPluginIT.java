@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
@@ -33,6 +34,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -137,7 +139,10 @@ public abstract class AbstractPluginIT {
 
     protected Analyzer analyzer;
 
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 5)
     protected InMemoryReportWriter reportWriter;
+    protected InMemoryReportPlugin reportPlugin;
 
     private RulePluginRepository rulePluginRepository;
     private ModelPluginRepository modelPluginRepository;
@@ -173,8 +178,9 @@ public abstract class AbstractPluginIT {
     @Before
     public void initializeAnalyzer() throws PluginRepositoryException {
         reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
+        reportPlugin = reportWriter;
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), reportWriter, LOGGER);
+        analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), reportPlugin, LOGGER);
     }
 
     protected Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
@@ -345,7 +351,7 @@ public abstract class AbstractPluginIT {
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
         analyzer.execute(ruleSet, ruleSelection, parameters);
-        return reportWriter.getConceptResults().get(id);
+        return reportPlugin.getConceptResults().get(id);
     }
 
     /**
@@ -374,7 +380,7 @@ public abstract class AbstractPluginIT {
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
         analyzer.execute(ruleSet, ruleSelection, parameters);
-        return reportWriter.getConstraintResults().get(id);
+        return reportPlugin.getConstraintResults().get(id);
     }
 
     /**

@@ -28,4 +28,7 @@
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.ZipFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.GZIPFileScannerPlugin</class>
     </scanner>
+    <report>
+        <class id="junit">com.buschmais.jqassistant.plugin.common.impl.report.JUnitReportPlugin</class>
+    </report>
 </jqa-plugin:jqassistant-plugin>
