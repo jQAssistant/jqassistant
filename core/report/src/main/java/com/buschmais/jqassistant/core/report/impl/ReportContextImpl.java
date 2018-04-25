@@ -22,6 +22,13 @@ public class ReportContextImpl implements ReportContext {
     }
 
     @Override
+    public File getReportDirectory(String path) {
+        File directory = new File(reportDirectory, path);
+        directory.mkdirs();
+        return directory;
+    }
+
+    @Override
     public File getReportDirectory() {
         return reportDirectory;
     }

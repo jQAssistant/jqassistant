@@ -12,7 +12,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.report.schema.v1.*;
 
 import org.junit.Test;
@@ -110,7 +110,7 @@ public class XmlReportTest {
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.4.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportWriter.ENCODING));
+        StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportPlugin.ENCODING));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
         return unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();

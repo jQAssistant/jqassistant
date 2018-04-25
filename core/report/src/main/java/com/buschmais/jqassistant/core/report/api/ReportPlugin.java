@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -8,11 +10,19 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Defines the interface for report plugins.
  */
 public interface ReportPlugin {
 
+    @Retention(RUNTIME)
+    @Target(TYPE)
+    @interface Selectable {
+
+    }
     /*
      * Initializes the plugin.
      */

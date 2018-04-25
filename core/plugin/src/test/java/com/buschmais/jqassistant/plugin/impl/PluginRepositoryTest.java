@@ -58,7 +58,7 @@ public class PluginRepositoryTest {
         // Report plugins
         ReportContext reportContext = mock(ReportContext.class);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, Collections.emptyMap());
-        assertThat(reportPlugins.size(), equalTo(2));
+        assertThat(reportPlugins.size(), equalTo(3));
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName()), notNullValue());
         assertThat(reportPlugins.get("testReport"), notNullValue());
     }

@@ -12,150 +12,186 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
 /**
- * A {@link com.buschmais.jqassistant.core.report.api.ReportPlugin} implementation which delegates all method calls to the {@link ReportPlugin}s.
+ * A {@link com.buschmais.jqassistant.core.report.api.ReportPlugin}
+ * implementation which delegates all method calls to the {@link ReportPlugin}s.
  * <p>
- * A rule (i.e. concept or concept) may explicitly select one or more reports by their id to delegate to.
+ * A rule (i.e. concept or concept) may explicitly select one or more reports by
+ * their id to delegate to.
  */
 public class CompositeReportPlugin extends AbstractReportPlugin {
 
-    private interface DelegateOperation {
-        void run(ReportPlugin reportWriter) throws ReportException;
+    private interface ReportOperation {
+        void run(ReportPlugin reportPlugin) throws ReportException;
     }
 
-    private Map<String, ReportPlugin> reportWriters;
+    private Map<String, ReportPlugin> selectableReportPlugins = new HashMap<>();
 
-    private Iterable<ReportPlugin> selectedReportWriters;
+    private Map<String, ReportPlugin> defaultReportPlugins = new HashMap<>();
 
-    public CompositeReportPlugin(Map<String, ReportPlugin> reportWriters) {
-        this.reportWriters = reportWriters;
-        this.selectedReportWriters = reportWriters.values();
+    private Map<String, ReportPlugin> selectedReportPlugins = Collections.emptyMap();
+
+    public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins) {
+        for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
+            String id = entry.getKey();
+            ReportPlugin reportPlugin = entry.getValue();
+            if (!reportPlugin.getClass().isAnnotationPresent(Selectable.class)) {
+                defaultReportPlugins.put(id, reportPlugin);
+            }
+            selectableReportPlugins.put(id, reportPlugin);
+        }
     }
 
     @Override
     public void begin() throws ReportException {
-        run(new DelegateOperation() {
+        this.selectedReportPlugins = selectableReportPlugins;
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.begin();
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.begin();
             }
         });
     }
 
     @Override
     public void end() throws ReportException {
-        run(new DelegateOperation() {
+        this.selectedReportPlugins = selectableReportPlugins;
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.end();
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.end();
             }
         });
     }
 
     @Override
     public void beginConcept(final Concept concept) throws ReportException {
-        selectReportWriter(concept);
-        run(new DelegateOperation() {
+        this.selectedReportPlugins = selectReportPlugins(concept);
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.beginConcept(concept);
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.beginConcept(concept);
             }
         });
     }
 
     @Override
     public void endConcept() throws ReportException {
-        run(new DelegateOperation() {
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.endConcept();
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.endConcept();
             }
         });
-        resetReportWriter();
     }
 
     @Override
     public void beginGroup(final Group group) throws ReportException {
-        run(new DelegateOperation() {
+        this.selectedReportPlugins = Collections.emptyMap();
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.beginGroup(group);
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.beginGroup(group);
             }
         });
     }
 
     @Override
     public void endGroup() throws ReportException {
-        run(new DelegateOperation() {
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.endGroup();
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.endGroup();
             }
         });
     }
 
     @Override
     public void beginConstraint(final Constraint constraint) throws ReportException {
-        selectReportWriter(constraint);
-        run(new DelegateOperation() {
+        this.selectedReportPlugins = selectReportPlugins(constraint);
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.beginConstraint(constraint);
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.beginConstraint(constraint);
             }
         });
     }
 
     @Override
     public void endConstraint() throws ReportException {
-        run(new DelegateOperation() {
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.endConstraint();
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.endConstraint();
             }
         });
-        resetReportWriter();
     }
 
     @Override
     public void setResult(final Result<? extends ExecutableRule> result) throws ReportException {
-        run(new DelegateOperation() {
+        run(new ReportOperation() {
             @Override
-            public void run(ReportPlugin reportWriter) throws ReportException {
-                reportWriter.setResult(result);
+            public void run(ReportPlugin reportPlugin) throws ReportException {
+                reportPlugin.setResult(result);
             }
         });
     }
 
-    private void run(DelegateOperation operation) throws ReportException {
-        for (ReportPlugin reportWriter : selectedReportWriters) {
-            operation.run(reportWriter);
+    /**
+     * Execute the {@link ReportOperation} on the selected and default
+     * {@link ReportPlugin}s.
+     *
+     * @param operation
+     *            The {@link ReportOperation}.
+     * @throws ReportException
+     *             If a problem is reported.
+     */
+    private void run(ReportOperation operation) throws ReportException {
+        Set<String> executedPlugins = new HashSet<>();
+        run(selectedReportPlugins, operation, executedPlugins);
+        run(defaultReportPlugins, operation, executedPlugins);
+    }
+
+    /**
+     * Execute a {@link ReportOperation} on the provided {@link ReportPlugin}s but
+     * assure that this happens only once.
+     *
+     * @param reportPlugins
+     *            The {@link ReportPlugin}s.
+     * @param operation
+     *            The {@link ReportOperation}.
+     * @param executedPlugins
+     *            The already executed {@link ReportPlugin}s.
+     * @throws ReportException
+     *             If a problem is reported.
+     */
+    private void run(Map<String, ReportPlugin> reportPlugins, ReportOperation operation, Set<String> executedPlugins) throws ReportException {
+        for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
+            if (executedPlugins.add(entry.getKey())) {
+                operation.run(entry.getValue());
+            }
         }
     }
 
     /**
      * Select the report writers for the given rule.
      *
-     * @param rule The rule.
-     * @throws ReportException If no writer exists for a specified id.
+     * @param rule
+     *            The rule.
+     * @throws ReportException
+     *             If no writer exists for a specified id.
      */
-    private void selectReportWriter(ExecutableRule rule) throws ReportException {
+    private Map<String, ReportPlugin> selectReportPlugins(ExecutableRule rule) throws ReportException {
         Set<String> selection = rule.getReport().getSelectedTypes();
-        if (selection == null) {
-            // no writer explicitly selected, use all registered.
-            selectedReportWriters = reportWriters.values();
-        } else {
-            List<ReportPlugin> reportPlugins = new ArrayList<>();
+        Map<String, ReportPlugin> reportPlugins = new HashMap<>();
+        if (selection != null) {
             for (String type : selection) {
-                ReportPlugin reportPlugin = this.reportWriters.get(type);
-                if (reportPlugin == null) {
+                ReportPlugin candidate = this.selectableReportPlugins.get(type);
+                if (candidate == null) {
                     throw new ReportException("Unknown report selection '" + type + "' selected for '" + rule + "'");
                 }
-                reportPlugins.add(reportPlugin);
+                reportPlugins.put(type, candidate);
             }
-            this.selectedReportWriters = reportPlugins;
         }
-    }
-
-    private void resetReportWriter() {
-        selectedReportWriters = reportWriters.values();
+        return reportPlugins;
     }
 }

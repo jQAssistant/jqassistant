@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +25,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * Implementation of {@link ReportPlugin} which writes the results of an
  * analysis to an XML file.
  */
-public class XmlReportWriter extends AbstractReportPlugin {
+public class XmlReportPlugin extends AbstractReportPlugin {
 
     // Properties
     public static final String XML_REPORT_FILE = "xml.report.file";
@@ -36,11 +39,6 @@ public class XmlReportWriter extends AbstractReportPlugin {
 
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.4";
     public static final String NAMESPACE_PREFIX = "jqa-report";
-
-
-    private interface XmlOperation {
-        void run() throws XMLStreamException, IOException;
-    }
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -320,4 +318,9 @@ public class XmlReportWriter extends AbstractReportPlugin {
             throw new ReportException("Cannot write to XML report.", e);
         }
     }
+
+    private interface XmlOperation {
+        void run() throws XMLStreamException, IOException;
+    }
+
 }

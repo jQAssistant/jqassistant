@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
@@ -34,7 +34,7 @@ public final class XmlReportTestHelper {
      *             If the test fails.
      */
     public static File createXmlReport() throws ReportException {
-        XmlReportWriter xmlReportWriter = getXmlReportWriter();
+        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("my:concept").description("My concept description").severity(Severity.MAJOR)
                 .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
@@ -55,7 +55,7 @@ public final class XmlReportTestHelper {
     }
 
     public static File createXmlWithUmlauts(String description) throws ReportException {
-        XmlReportWriter xmlReportWriter = getXmlReportWriter();
+        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("mein:Konzept").description(description).severity(Severity.MAJOR).executable(new CypherExecutable("match..."))
                 .verification(ROW_COUNT_VERIFICATION).report(Report.Builder.newInstance().primaryColumn("c2").get()).build();
@@ -82,7 +82,7 @@ public final class XmlReportTestHelper {
      *             If the test fails.
      */
     public static File createXmlReportWithConstraints() throws ReportException {
-        XmlReportWriter xmlReportWriter = getXmlReportWriter();
+        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
         xmlReportWriter.begin();
 
         Constraint constraint = Constraint.builder().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
@@ -102,8 +102,8 @@ public final class XmlReportTestHelper {
         return xmlReportWriter.getXmlReportFile();
     }
 
-    private static XmlReportWriter getXmlReportWriter() {
-        XmlReportWriter xmlReportWriter = new XmlReportWriter();
+    private static XmlReportPlugin getXmlReportWriter() {
+        XmlReportPlugin xmlReportWriter = new XmlReportPlugin();
         xmlReportWriter.initialize();
         File reportDirectory = new File("target/test");
         reportDirectory.mkdirs();

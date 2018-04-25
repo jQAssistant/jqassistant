@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class ReportHelperTest {
     private Logger logger;
 
     @Mock
-    private InMemoryReportWriter inMemoryReportWriter;
+    private InMemoryReportPlugin inMemoryReportWriter;
 
     private List<String> debugMessages;
 

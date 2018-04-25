@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.xo.api.CompositeObject;
 
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public final class ReportHelper {
     }
 
     /**
-     * Verifies the concept results returned by the {@link InMemoryReportWriter}
+     * Verifies the concept results returned by the {@link InMemoryReportPlugin}
      * .
      *
      * @param warnOnSeverity
@@ -69,29 +69,29 @@ public final class ReportHelper {
      * @param failOnSeverity
      *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The {@link InMemoryReportWriter}
+     *            The {@link InMemoryReportPlugin}
      * @return The number of failed concepts, i.e. for breaking the build if
      *         higher than 0.
      */
-    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         return verifyRuleResults(conceptResults, warnOnSeverity, failOnSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
      * Verifies the constraint results returned by the
-     * {@link InMemoryReportWriter} .
+     * {@link InMemoryReportPlugin} .
      *
      * @param warnOnSeverity
      *            The severity threshold to warn.
      * @param failOnSeverity
      *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The {@link InMemoryReportWriter}
+     *            The {@link InMemoryReportPlugin}
      * @return The number of failed concepts, i.e. for breaking the build if
      *         higher than 0.
      */
-    public int verifyConstraintResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConstraintResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
         return verifyRuleResults(constraintResults, warnOnSeverity, failOnSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
