@@ -244,7 +244,7 @@ public class Junit4IT extends AbstractJunitIT {
     @Test
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
-        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
+        Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, anEmptyMap());
     }
 }

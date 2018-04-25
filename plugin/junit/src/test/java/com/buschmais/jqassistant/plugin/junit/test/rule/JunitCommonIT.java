@@ -101,7 +101,7 @@ public class JunitCommonIT extends AbstractJunitIT {
                     DisabledTestWithoutMessage.class);
         assertThat(validateConstraint("junit:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
@@ -134,7 +134,7 @@ public class JunitCommonIT extends AbstractJunitIT {
     @Test
     public void defaultGroup() throws RuleException {
         executeGroup("junit:Default");
-        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
+        Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, aMapWithSize(3));
         assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage",
                                                            "junit:AssertionMustProvideMessage",
@@ -154,7 +154,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         scanClasses(Assertions4Junit4.class);
         assertThat(validateConstraint("junit:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
@@ -177,7 +177,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         scanClasses(Assertions4Junit4.class, Assertions4Junit5.class);
         assertThat(validateConstraint("junit:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:TestMethodWithoutAssertion")));
