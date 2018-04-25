@@ -202,7 +202,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClassPathDirectory(getClassesDirectory(A.class));
         assertThat(validateConstraint("dependency:PackageCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
+        Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
         assertThat(constraintViolations.values(), matcher);
         Result<Constraint> result = constraintViolations.get("dependency:PackageCycles");
@@ -227,7 +227,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses("b", B.class);
         assertThat(validateConstraint("dependency:ArtifactCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
+        Collection<Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
