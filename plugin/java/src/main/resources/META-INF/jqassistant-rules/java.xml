@@ -173,7 +173,7 @@
         <description>Set a human readable property "javaVersion" on a class file based on its byte code version.</description>
         <cypher><![CDATA[
             MATCH
-              (type:Type:File)
+              (:Artifact)-[:CONTAINS]->(type:Java:Type)
             SET
               type.javaVersion=
               CASE type.byteCodeVersion

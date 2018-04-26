@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
@@ -35,7 +34,7 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
     @Test
     public void javaVersion() throws Exception {
         scanClasses(Pojo.class);
-        assertThat(applyConcept("java:JavaVersion").getStatus(), CoreMatchers.equalTo(SUCCESS));
+        assertThat(applyConcept("java:JavaVersion").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java 8' RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
