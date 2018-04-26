@@ -112,7 +112,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
-        Map<String, Object> properties = getReportProperties(rootModule);
+        Severity effectiveFailOnSeverity = getFailOnSeverity();
+        Map<String, Object> properties = getReportProperties(rootModule, effectiveFailOnSeverity);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
@@ -126,25 +127,28 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportHelper reportHelper = new ReportHelper(logger);
         store.beginTransaction();
         try {
-            Severity effectiveFailOnSeverity;
-            if (failOnViolations != null) {
-                getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
-            }
-            if (severity != null) {
-                getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
-                try {
-                    effectiveFailOnSeverity = Severity.fromValue(severity);
-                } catch (com.buschmais.jqassistant.core.analysis.api.rule.RuleException e) {
-                    throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
-                }
-            } else {
-                effectiveFailOnSeverity = failOnSeverity;
-            }
-
             verifyAnalysisResults(inMemoryReportPlugin, reportHelper, effectiveFailOnSeverity);
         } finally {
             store.commitTransaction();
         }
+    }
+
+    private Severity getFailOnSeverity() throws MojoExecutionException {
+        Severity effectiveFailOnSeverity;
+        if (failOnViolations != null) {
+            getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
+        }
+        if (severity != null) {
+            getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
+            try {
+                effectiveFailOnSeverity = Severity.fromValue(severity);
+            } catch (RuleException e) {
+                throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
+            }
+        } else {
+            effectiveFailOnSeverity = failOnSeverity;
+        }
+        return effectiveFailOnSeverity;
     }
 
     private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws MojoExecutionException {
@@ -157,7 +161,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         return reportPlugins;
     }
 
-    private Map<String, Object> getReportProperties(MavenProject rootModule) {
+    private Map<String, Object> getReportProperties(MavenProject rootModule, Severity effectiveFailOnSeverity) {
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
@@ -165,6 +169,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         String junitReportDirectory = this.junitReportDirectory != null ? this.junitReportDirectory.getAbsolutePath()
                 : new File(rootModule.getBuild().getDirectory() + "/surefire-reports").getAbsolutePath();
         properties.put(JUnitReportPlugin.JUNIT_REPORT_DIRECTORY, junitReportDirectory);
+        properties.put(JUnitReportPlugin.JUNIT_ERROR_SEVERITY, effectiveFailOnSeverity.name());
         return properties;
     }
 
