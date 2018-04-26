@@ -18,14 +18,14 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 
 /**
  * {@link ReportPlugin} implementation to write JUnit style reports.
- *
+ * <p>
  * Each group is rendered as a test suite to a separate file.
- *
  */
 public class JUnitReportPlugin extends AbstractReportPlugin {
 
     // Properties
     public static final String JUNIT_REPORT_DIRECTORY = "junit.report.directory";
+    public static final String JUNIT_ERROR_SEVERITY = "junit.error.severity";
 
     // Default values
     public static final String DEFAULT_JUNIT_REPORT_DIRECTORY = "junit";
@@ -38,6 +38,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     private long ruleBeginTimestamp;
     private long groupBeginTimestamp;
     private Map<Group, Map<Result<? extends ExecutableRule>, Long>> results = new HashMap<>();
+    private Severity errorSeverity = Severity.MAJOR;
 
     @Override
     public void initialize() throws ReportException {
@@ -49,9 +50,18 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     }
 
     @Override
-    public void configure(ReportContext reportContext, Map<String, Object> properties) {
+    public void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
         String junitReportDirectory = (String) properties.get(JUNIT_REPORT_DIRECTORY);
         this.reportDirectory = junitReportDirectory != null ? new File(junitReportDirectory) : reportContext.getReportDirectory(DEFAULT_JUNIT_REPORT_DIRECTORY);
+        this.reportDirectory.mkdirs();
+        String errorSeverity = (String) properties.get(JUNIT_ERROR_SEVERITY);
+        if (errorSeverity != null) {
+            try {
+                this.errorSeverity = Severity.fromValue(errorSeverity);
+            } catch (RuleException e) {
+                throw new ReportException("Cannot parse error severity " + errorSeverity, e);
+            }
+        }
     }
 
     @Override
@@ -70,36 +80,38 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        String id = "jQAssistant-" + group.getId().replaceAll("\\:", "_");
+        String id = "jQAssistant-" + unescapeRuleId(group);
         for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupResults.entrySet()) {
             // TestCase
             Result<? extends Rule> result = entry.getKey();
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
             Rule rule = result.getRule();
-            testcase.setName(rule.getId());
+            testcase.setName(rule.getClass().getSimpleName() + "_" + unescapeRuleId(rule));
             testcase.setClassname(id);
             testcase.setTime(Long.toString(time));
             List<Map<String, Object>> rows = result.getRows();
             if (Result.Status.FAILURE.equals(result.getStatus())) {
-                if (rule instanceof Concept) {
+                StringBuilder sb = new StringBuilder();
+                for (Map<String, Object> row : rows) {
+                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                        sb.append(rowEntry.getKey());
+                        sb.append("=");
+                        sb.append(rowEntry.getValue());
+                    }
+                }
+                String content = sb.toString();
+                Severity severity = result.getSeverity();
+                if (severity.getLevel() < errorSeverity.getLevel()) {
                     Failure failure = new Failure();
                     failure.setMessage(rule.getDescription());
-                    failure.setContent("The concept could not be applied");
+                    failure.setContent(content);
                     testcase.getFailure().add(failure);
                     failures++;
-                } else if (rule instanceof Constraint) {
+                } else {
                     Error error = new Error();
                     error.setMessage(rule.getDescription());
-                    StringBuilder sb = new StringBuilder();
-                    for (Map<String, Object> row : rows) {
-                        for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                            sb.append(rowEntry.getKey());
-                            sb.append("=");
-                            sb.append(rowEntry.getValue());
-                        }
-                    }
-                    error.setContent(sb.toString());
+                    error.setContent(content);
                     testcase.getError().add(error);
                     errors++;
                 }
@@ -123,6 +135,10 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         } catch (JAXBException e) {
             throw new ReportException("Cannot write JUnit report.", e);
         }
+    }
+
+    private String unescapeRuleId(Rule rule) {
+        return rule.getId().replaceAll("\\:", "_");
     }
 
     @Override
