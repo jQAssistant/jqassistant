@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.report;
 
 import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -36,10 +34,10 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
 
     private File reportDirectory;
 
-    private Group group;
+    private Deque<Group> groups = new LinkedList<>();
     private long ruleBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result<? extends ExecutableRule>, Long> results = new LinkedHashMap<>();
+    private Map<Group, Map<Result<? extends ExecutableRule>, Long>> results = new HashMap<>();
 
     @Override
     public void initialize() throws ReportException {
@@ -58,59 +56,65 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
 
     @Override
     public void beginGroup(Group group) {
-        this.group = group;
+        this.groups.push(group);
+        this.results.put(group, new LinkedHashMap<Result<? extends ExecutableRule>, Long>());
         this.groupBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
     public void endGroup() throws ReportException {
+        Group group = groups.pop();
+        Map<Result<? extends ExecutableRule>, Long> groupResults = this.results.remove(group);
         // TestSuite
         Testsuite testsuite = new Testsuite();
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : results.entrySet()) {
+        String id = "jQAssistant-" + group.getId().replaceAll("\\:", "_");
+        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupResults.entrySet()) {
             // TestCase
             Result<? extends Rule> result = entry.getKey();
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
             Rule rule = result.getRule();
             testcase.setName(rule.getId());
-            testcase.setClassname(group.getId());
+            testcase.setClassname(id);
             testcase.setTime(Long.toString(time));
             List<Map<String, Object>> rows = result.getRows();
-            if (rule instanceof Concept && rows.isEmpty()) {
-                Failure failure = new Failure();
-                failure.setMessage(rule.getDescription());
-                failure.setContent("The concept returned an empty result.");
-                testcase.getFailure().add(failure);
-                failures++;
-            } else if (rule instanceof Constraint && !rows.isEmpty()) {
-                Error error = new Error();
-                error.setMessage(rule.getDescription());
-                StringBuilder sb = new StringBuilder();
-                for (Map<String, Object> row : rows) {
-                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                        sb.append(rowEntry.getKey());
-                        sb.append("=");
-                        sb.append(rowEntry.getValue());
+            if (Result.Status.FAILURE.equals(result.getStatus())) {
+                if (rule instanceof Concept) {
+                    Failure failure = new Failure();
+                    failure.setMessage(rule.getDescription());
+                    failure.setContent("The concept could not be applied");
+                    testcase.getFailure().add(failure);
+                    failures++;
+                } else if (rule instanceof Constraint) {
+                    Error error = new Error();
+                    error.setMessage(rule.getDescription());
+                    StringBuilder sb = new StringBuilder();
+                    for (Map<String, Object> row : rows) {
+                        for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                            sb.append(rowEntry.getKey());
+                            sb.append("=");
+                            sb.append(rowEntry.getValue());
+                        }
                     }
+                    error.setContent(sb.toString());
+                    testcase.getError().add(error);
+                    errors++;
                 }
-                error.setContent(sb.toString());
-                testcase.getError().add(error);
-                errors++;
+                tests++;
+                testsuite.getTestcase().add(testcase);
             }
-            tests++;
-            testsuite.getTestcase().add(testcase);
         }
         testsuite.setTests(Integer.toString(tests));
         testsuite.setFailures(Integer.toString(failures));
         testsuite.setErrors(Integer.toString(errors));
-        testsuite.setName(group.getId());
+        testsuite.setName(id);
         long groupTime = System.currentTimeMillis() - groupBeginTimestamp;
         testsuite.setTime(Long.toString(groupTime));
         // TestSuite
-        File file = new File(reportDirectory, "TEST-" + group.getId() + ".xml");
+        File file = new File(reportDirectory, "TEST-" + id + ".xml");
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -119,8 +123,6 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         } catch (JAXBException e) {
             throw new ReportException("Cannot write JUnit report.", e);
         }
-        this.group = null;
-        this.results.clear();
     }
 
     @Override
@@ -137,6 +139,8 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     public void setResult(Result<? extends ExecutableRule> result) {
         long ruleEndTimestamp = System.currentTimeMillis();
         long time = ruleEndTimestamp - ruleBeginTimestamp;
-        this.results.put(result, Long.valueOf(time));
+        Group group = groups.peek();
+        Map<Result<? extends ExecutableRule>, Long> groupResults = results.get(group);
+        groupResults.put(result, Long.valueOf(time));
     }
 }
