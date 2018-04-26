@@ -60,7 +60,7 @@ public abstract class AbstractRule implements Rule {
 
         AbstractRule that = (AbstractRule) o;
 
-        return id.equals(that.id);
+        return this.getClass().equals(that.getClass()) && id.equals(that.id);
     }
 
     @Override
