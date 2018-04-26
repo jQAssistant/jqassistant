@@ -53,8 +53,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
         String junitReportDirectory = (String) properties.get(JUNIT_REPORT_DIRECTORY);
-        this.reportDirectory = junitReportDirectory != null ? new File(junitReportDirectory)
-                : new File(reportContext.getReportDirectory("junit"), DEFAULT_JUNIT_REPORT_DIRECTORY);
+        this.reportDirectory = junitReportDirectory != null ? new File(junitReportDirectory) : reportContext.getReportDirectory(DEFAULT_JUNIT_REPORT_DIRECTORY);
     }
 
     @Override
