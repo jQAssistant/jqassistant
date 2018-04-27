@@ -1,12 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
@@ -14,6 +8,10 @@ import net.sourceforge.plantuml.png.MetadataTag;
 import org.asciidoctor.ast.AbstractBlock;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExecutablesTest {
 
