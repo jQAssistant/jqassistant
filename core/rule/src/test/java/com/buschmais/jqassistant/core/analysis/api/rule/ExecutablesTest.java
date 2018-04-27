@@ -1,16 +1,19 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
+import net.sourceforge.plantuml.png.MetadataTag;
 import org.asciidoctor.ast.AbstractBlock;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-
-import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExecutablesTest {
 
@@ -24,7 +27,20 @@ public class ExecutablesTest {
         RuleSet ruleSet = readRuleSet("/executables.adoc");
         verifyRuleset(ruleSet);
         verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, AbstractBlock.class, "table");
-        verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, AbstractBlock.class, "plantuml");
+    }
+
+    @Test
+    public void plantuml() throws Exception {
+        RuleSet ruleSet = readRuleSet("/executables.adoc");
+        Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, AbstractBlock.class, "plantuml");
+        AbstractBlock abstractBlock = (AbstractBlock) concept.getExecutable().getSource();
+        String fileName = (String) abstractBlock.getAttr("target");
+        assertThat(fileName, notNullValue());
+        File diagramFile = new File(fileName);
+        assertThat(diagramFile.exists(), equalTo(true));
+        String diagramMetadata = new MetadataTag(diagramFile, "plantuml").getData();
+        assertThat(diagramMetadata, containsString("@startuml"));
+        assertThat(diagramMetadata, containsString("@enduml"));
     }
 
     private void verifyRuleset(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
@@ -38,7 +54,7 @@ public class ExecutablesTest {
         verifyConstraintExecutable(ruleSet, "test:SourceConstraintUpperCase", SourceExecutable.class);
     }
 
-    private void verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type, Class<?> expectedSourceType, String expectedLanguage)
+    private Concept verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type, Class<?> expectedSourceType, String expectedLanguage)
             throws NoConceptException {
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertThat(concept, notNullValue());
@@ -46,12 +62,14 @@ public class ExecutablesTest {
         assertThat(concept.getId(), executable, CoreMatchers.<Executable> instanceOf(type));
         assertThat(concept.getId(), executable.getSource(), instanceOf(expectedSourceType));
         assertThat(concept.getId(), executable.getLanguage(), equalTo(expectedLanguage));
+        return concept;
     }
 
-    private void verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConstraintException {
+    private Constraint verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConstraintException {
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertThat(constraint, notNullValue());
         assertThat(constraint.getExecutable(), CoreMatchers.<Executable> instanceOf(type));
+        return constraint;
     }
 
 }

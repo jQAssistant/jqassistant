@@ -62,6 +62,7 @@ MATCH (n) RETURN n
 [[test:PlantUML]]
 [plantuml,role=concept]
 ----
+@startuml
 [artifactId:xo.impl] as impl <<:Maven:Project>>
 [artifactId:xo.api] as api <<:Maven:Project>>
 [artifactId:xo.spi] as spi <<:Maven:Project>>
@@ -69,4 +70,5 @@ MATCH (n) RETURN n
 impl -> api : Defines Dependency
 impl -> spi : Defines Dependency
 spi -> api : Defines Dependency
+@enduml
 ----
