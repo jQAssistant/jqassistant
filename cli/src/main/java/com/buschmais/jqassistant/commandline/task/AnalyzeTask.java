@@ -47,7 +47,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private File ruleParametersFile;
-    private File reportDirectory;
+    private File outputDirectory;
     private Severity failOnSeverity;
     private Severity warnOnSeverity;
     private boolean executeAppliedConcepts;
@@ -58,7 +58,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
 
-        ReportContextImpl reportContext = new ReportContextImpl(reportDirectory);
+        ReportContext reportContext = new ReportContextImpl(outputDirectory, outputDirectory);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
@@ -159,8 +159,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             this.ruleParametersFile = null;
         }
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
-        reportDirectory = new File(reportDirectoryValue);
-        reportDirectory.mkdirs();
+        outputDirectory = new File(reportDirectoryValue);
+        outputDirectory.mkdirs();
         String severityValue = getOptionValue(options, CMDLINE_OPTION_SEVERITY, null);
         if (severityValue != null) {
             failOnSeverity = getSeverity(severityValue);
