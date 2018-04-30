@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 
@@ -21,6 +22,7 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
  * <p>
  * Each group is rendered as a test suite to a separate file.
  */
+@Default
 public class JUnitReportPlugin extends AbstractReportPlugin {
 
     // Properties
