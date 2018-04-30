@@ -26,6 +26,8 @@ public class ReportContextImpl implements ReportContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportContextImpl.class);
 
+    private final File outputDirectory;
+
     private final File reportDirectory;
 
     private final Map<String, List<Report<?>>> reports = new HashMap<>();
@@ -33,10 +35,21 @@ public class ReportContextImpl implements ReportContext {
     /**
      * Constructor.
      *
-     * @param reportDirectory
-     *            The report directory.
+     * @param outputDirectory
+     *            The output directory.
      */
-    public ReportContextImpl(File reportDirectory) {
+    public ReportContextImpl(File outputDirectory) {
+        this(outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param outputDirectory
+     *            The output directory.
+     */
+    public ReportContextImpl(File outputDirectory, File reportDirectory) {
+        this.outputDirectory = outputDirectory;
         this.reportDirectory = reportDirectory;
     }
 
@@ -50,8 +63,8 @@ public class ReportContextImpl implements ReportContext {
     }
 
     @Override
-    public File getReportDirectory() {
-        return reportDirectory;
+    public File getOutputDirectory() {
+        return outputDirectory;
     }
 
     @Override

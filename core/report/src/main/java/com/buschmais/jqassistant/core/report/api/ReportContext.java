@@ -11,6 +11,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
  */
 public interface ReportContext {
 
+    String REPORT_DIRECTORY = "report";
+
+
     /**
      * Return the directory relative to the directory where report files shall be
      * written to.
@@ -26,7 +29,7 @@ public interface ReportContext {
      *
      * @return The output directory.
      */
-    File getReportDirectory();
+    File getOutputDirectory();
 
     /**
      * Add a report for a {@link ExecutableRule}.

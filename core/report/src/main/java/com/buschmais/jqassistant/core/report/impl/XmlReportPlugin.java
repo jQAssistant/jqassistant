@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.*;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -25,16 +26,14 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * Implementation of {@link ReportPlugin} which writes the results of an
  * analysis to an XML file.
  */
+@Default
 public class XmlReportPlugin extends AbstractReportPlugin {
 
     // Properties
-    public static final String XML_REPORT_SKIP = "xml.report.skip";
     public static final String XML_REPORT_FILE = "xml.report.file";
 
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
-
-    public static final String TYPE = "xml";
 
     public static final String ENCODING = "UTF-8";
 
@@ -63,7 +62,7 @@ public class XmlReportPlugin extends AbstractReportPlugin {
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
         String xmlReport = (String) properties.get(XML_REPORT_FILE);
-        this.xmlReportFile = xmlReport != null ? new File(xmlReport) : new File(reportContext.getReportDirectory(), DEFAULT_XML_REPORT_FILE);
+        this.xmlReportFile = xmlReport != null ? new File(xmlReport) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
     }
 
     @Override
