@@ -38,8 +38,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
 
     private Deque<Group> groups = new LinkedList<>();
     private long ruleBeginTimestamp;
-    private long groupBeginTimestamp;
-    private Map<Group, Map<Result<? extends ExecutableRule>, Long>> results = new HashMap<>();
+    private Map<Group, GroupInfo> results = new HashMap<>();
     private Severity errorSeverity = Severity.MAJOR;
 
     @Override
@@ -67,80 +66,24 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     }
 
     @Override
+    public void begin() {
+        pushGroup(null);
+    }
+
+    @Override
+    public void end() throws ReportException {
+        popGroup(null);
+    }
+
+    @Override
     public void beginGroup(Group group) {
-        this.groups.push(group);
-        this.results.put(group, new LinkedHashMap<Result<? extends ExecutableRule>, Long>());
-        this.groupBeginTimestamp = System.currentTimeMillis();
+        pushGroup(group);
     }
 
     @Override
     public void endGroup() throws ReportException {
         Group group = groups.pop();
-        Map<Result<? extends ExecutableRule>, Long> groupResults = this.results.remove(group);
-        // TestSuite
-        Testsuite testsuite = new Testsuite();
-        int tests = 0;
-        int failures = 0;
-        int errors = 0;
-        String id = "jQAssistant-" + unescapeRuleId(group);
-        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupResults.entrySet()) {
-            // TestCase
-            Result<? extends Rule> result = entry.getKey();
-            long time = entry.getValue().longValue();
-            Testcase testcase = new Testcase();
-            Rule rule = result.getRule();
-            testcase.setName(rule.getClass().getSimpleName() + "_" + unescapeRuleId(rule));
-            testcase.setClassname(id);
-            testcase.setTime(Long.toString(time));
-            List<Map<String, Object>> rows = result.getRows();
-            if (Result.Status.FAILURE.equals(result.getStatus())) {
-                StringBuilder sb = new StringBuilder();
-                for (Map<String, Object> row : rows) {
-                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                        sb.append(rowEntry.getKey());
-                        sb.append("=");
-                        sb.append(rowEntry.getValue());
-                    }
-                }
-                String content = sb.toString();
-                Severity severity = result.getSeverity();
-                if (severity.getLevel() < errorSeverity.getLevel()) {
-                    Failure failure = new Failure();
-                    failure.setMessage(rule.getDescription());
-                    failure.setContent(content);
-                    testcase.getFailure().add(failure);
-                    failures++;
-                } else {
-                    Error error = new Error();
-                    error.setMessage(rule.getDescription());
-                    error.setContent(content);
-                    testcase.getError().add(error);
-                    errors++;
-                }
-                tests++;
-                testsuite.getTestcase().add(testcase);
-            }
-        }
-        testsuite.setTests(Integer.toString(tests));
-        testsuite.setFailures(Integer.toString(failures));
-        testsuite.setErrors(Integer.toString(errors));
-        testsuite.setName(id);
-        long groupTime = System.currentTimeMillis() - groupBeginTimestamp;
-        testsuite.setTime(Long.toString(groupTime));
-        // TestSuite
-        File file = new File(reportDirectory, "TEST-" + id + ".xml");
-        try {
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.marshal(testsuite, file);
-        } catch (JAXBException e) {
-            throw new ReportException("Cannot write JUnit report.", e);
-        }
-    }
-
-    private String unescapeRuleId(Rule rule) {
-        return rule.getId().replaceAll("\\:", "_");
+        popGroup(group);
     }
 
     @Override
@@ -158,7 +101,112 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         long ruleEndTimestamp = System.currentTimeMillis();
         long time = ruleEndTimestamp - ruleBeginTimestamp;
         Group group = groups.peek();
-        Map<Result<? extends ExecutableRule>, Long> groupResults = results.get(group);
-        groupResults.put(result, Long.valueOf(time));
+        GroupInfo groupInfo = results.get(group);
+        groupInfo.getResults().put(result, Long.valueOf(time));
     }
+
+    private void pushGroup(Group group) {
+        this.groups.push(group);
+        this.results.put(group, new GroupInfo(System.currentTimeMillis()));
+    }
+
+    private void popGroup(Group group) throws ReportException {
+        GroupInfo groupInfo = this.results.remove(group);
+        // TestSuite
+        Testsuite testsuite = new Testsuite();
+        int tests = 0;
+        int failures = 0;
+        int errors = 0;
+        String testSuiteId = getTestSuiteId(group);
+        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupInfo.getResults().entrySet()) {
+            // TestCase
+            Result<? extends Rule> result = entry.getKey();
+            long time = entry.getValue().longValue();
+            Testcase testcase = new Testcase();
+            Rule rule = result.getRule();
+            testcase.setName(rule.getClass().getSimpleName() + "_" + unescapeRuleId(rule));
+            testcase.setClassname(testSuiteId);
+            testcase.setTime(Long.toString(time));
+            List<Map<String, Object>> rows = result.getRows();
+            if (Result.Status.FAILURE.equals(result.getStatus())) {
+                StringBuilder sb = new StringBuilder();
+                for (Map<String, Object> row : rows) {
+                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                        sb.append(rowEntry.getKey());
+                        sb.append("=");
+                        sb.append(rowEntry.getValue());
+                        sb.append('\n');
+                    }
+                }
+                String content = sb.toString();
+                Severity severity = result.getSeverity();
+                if (severity.getLevel() < errorSeverity.getLevel()) {
+                    Failure failure = new Failure();
+                    failure.setMessage(rule.getDescription());
+                    failure.setContent(content);
+                    testcase.getFailure().add(failure);
+                    failures++;
+                } else {
+                    Error error = new Error();
+                    error.setMessage(rule.getDescription());
+                    error.setContent(content);
+                    testcase.getError().add(error);
+                    errors++;
+                }
+            }
+            tests++;
+            testsuite.getTestcase().add(testcase);
+        }
+        testsuite.setTests(Integer.toString(tests));
+        testsuite.setFailures(Integer.toString(failures));
+        testsuite.setErrors(Integer.toString(errors));
+        testsuite.setName(testSuiteId);
+        long groupTime = System.currentTimeMillis() - groupInfo.getBeginTimestamp();
+        testsuite.setTime(Long.toString(groupTime));
+        // TestSuite
+        File file = new File(reportDirectory, "TEST-" + testSuiteId + ".xml");
+        try {
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.marshal(testsuite, file);
+        } catch (JAXBException e) {
+            throw new ReportException("Cannot write JUnit report.", e);
+        }
+    }
+
+    private String getTestSuiteId(Group group) {
+        StringBuilder testSuiteIdBuilder = new StringBuilder("jQAssistant");
+        if (group != null) {
+            testSuiteIdBuilder.append('-').append(unescapeRuleId(group));
+        }
+        return testSuiteIdBuilder.toString();
+    }
+
+    private String unescapeRuleId(Rule rule) {
+        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
+    }
+
+    /**
+     * Holds the results for an executed {@link Group}.
+     */
+    private static class GroupInfo {
+
+        private final long beginTimestamp;
+
+        private final Map<Result<? extends ExecutableRule>, Long> results = new HashMap<>();
+
+        GroupInfo(long beginTimestamp) {
+            this.beginTimestamp = beginTimestamp;
+        }
+
+        long getBeginTimestamp() {
+            return beginTimestamp;
+        }
+
+        Map<Result<? extends ExecutableRule>, Long> getResults() {
+            return results;
+        }
+    }
+
 }

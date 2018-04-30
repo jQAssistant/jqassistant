@@ -425,9 +425,9 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
-        File reportDirectory = new File("target/jqassistant/report");
-        reportDirectory.mkdirs();
-        ReportContext reportContext = new ReportContextImpl(reportDirectory);
+        File outputDirectory = new File("target/jqassistant");
+        outputDirectory.mkdirs();
+        ReportContext reportContext = new ReportContextImpl(outputDirectory);
         return getReportPlugins(reportContext, properties);
     }
 
