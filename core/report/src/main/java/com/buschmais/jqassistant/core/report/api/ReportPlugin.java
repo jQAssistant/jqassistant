@@ -18,11 +18,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public interface ReportPlugin {
 
+    /**
+     * Marks a {@link ReportPlugin} as default, i.e. it will be executed for every
+     * rule without explicit selection.
+     */
     @Retention(RUNTIME)
     @Target(TYPE)
-    @interface Selectable {
-
+    @interface Default {
     }
+
     /*
      * Initializes the plugin.
      */

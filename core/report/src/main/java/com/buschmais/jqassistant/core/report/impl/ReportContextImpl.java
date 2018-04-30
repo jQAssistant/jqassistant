@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
-import com.buschmais.jqassistant.core.report.api.ReportException;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,8 +55,8 @@ public class ReportContextImpl implements ReportContext {
     }
 
     @Override
-    public <E extends ExecutableRule<?>> Report<E> addReport(E rule, ReportType reportType, URL url) throws ReportException {
-        Report<E> report = ReportImpl.<E> builder().rule(rule).reportType(reportType).url(url).build();
+    public <E extends ExecutableRule<?>> Report<E> addReport(String label, E rule, ReportType reportType, URL url) {
+        Report<E> report = ReportImpl.<E> builder().label(label).rule(rule).reportType(reportType).url(url).build();
         getReports(rule).add(report);
         return report;
     }
@@ -77,6 +76,8 @@ public class ReportContextImpl implements ReportContext {
     @AllArgsConstructor(access = PRIVATE)
     @ToString
     private static final class ReportImpl<E extends ExecutableRule<?>> implements Report<E> {
+
+        private String label;
 
         private E rule;
 

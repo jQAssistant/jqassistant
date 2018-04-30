@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin.Selectable;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 
 import org.junit.Before;
@@ -32,6 +32,9 @@ public class CompositeReportPluginTest {
     ReportPlugin reportPlugin2;
 
     @Mock
+    ReportPlugin reportPlugin3;
+
+    @Mock
     ReportPlugin selectableReportPlugin1;
 
     @Mock
@@ -49,13 +52,14 @@ public class CompositeReportPluginTest {
     private CompositeReportPlugin compositeReportPlugin;
 
     @Before
-    public void createReportWriter() {
-        Map<String, ReportPlugin> reportWriters = new HashMap<>();
-        reportWriters.put("plugin1", reportPlugin1);
-        reportWriters.put("plugin2", reportPlugin2);
-        reportWriters.put("selectablePlugin1", new SelectableReportPlugin(selectableReportPlugin1));
-        reportWriters.put("selectablePlugin2", new SelectableReportPlugin(selectableReportPlugin2));
-        compositeReportPlugin = new CompositeReportPlugin(reportWriters);
+    public void setUp() {
+        Map<String, ReportPlugin> reportPlugins = new HashMap<>();
+        reportPlugins.put("plugin1", new DefaultReportPlugin(reportPlugin1));
+        reportPlugins.put("plugin2", new DefaultReportPlugin(reportPlugin2));
+        reportPlugins.put("plugin3", new DefaultReportPlugin(reportPlugin3));
+        reportPlugins.put("selectablePlugin1", selectableReportPlugin1);
+        reportPlugins.put("selectablePlugin2", selectableReportPlugin2);
+        compositeReportPlugin = new CompositeReportPlugin(reportPlugins, new HashSet<>(asList("plugin1", "plugin2")));
     }
 
     @Test
@@ -66,9 +70,9 @@ public class CompositeReportPluginTest {
         write(concept, constraint);
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2);
-        verifyNotInvoked(concept, selectableReportPlugin1, selectableReportPlugin2);
+        verifyNotInvoked(concept, reportPlugin3, selectableReportPlugin1, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2);
-        verifyNotInvoked(constraint, selectableReportPlugin1, selectableReportPlugin2);
+        verifyNotInvoked(constraint, reportPlugin3, selectableReportPlugin1, selectableReportPlugin2);
         verifyGroup();
     }
 
@@ -80,9 +84,9 @@ public class CompositeReportPluginTest {
         write(concept, constraint);
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2, selectableReportPlugin1);
-        verifyNotInvoked(concept, selectableReportPlugin2);
+        verifyNotInvoked(concept, reportPlugin3, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2, selectableReportPlugin1);
-        verifyNotInvoked(constraint, selectableReportPlugin2);
+        verifyNotInvoked(constraint, reportPlugin3, selectableReportPlugin2);
         verifyGroup();
     }
 
@@ -95,6 +99,8 @@ public class CompositeReportPluginTest {
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2, selectableReportPlugin1, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2, selectableReportPlugin1, selectableReportPlugin2);
+        verifyNotInvoked(concept, reportPlugin3);
+        verifyNotInvoked(constraint, reportPlugin3);
         verifyGroup();
     }
 
@@ -173,12 +179,12 @@ public class CompositeReportPluginTest {
         return rule;
     }
 
-    @Selectable
-    private static final class SelectableReportPlugin implements ReportPlugin {
+    @Default
+    private static final class DefaultReportPlugin implements ReportPlugin {
 
         private final ReportPlugin delegate;
 
-        private SelectableReportPlugin(ReportPlugin delegate) {
+        private DefaultReportPlugin(ReportPlugin delegate) {
             this.delegate = delegate;
         }
 

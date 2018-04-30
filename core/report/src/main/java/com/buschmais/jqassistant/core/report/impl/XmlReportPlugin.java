@@ -28,6 +28,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 public class XmlReportPlugin extends AbstractReportPlugin {
 
     // Properties
+    public static final String XML_REPORT_SKIP = "xml.report.skip";
     public static final String XML_REPORT_FILE = "xml.report.file";
 
     // Default values

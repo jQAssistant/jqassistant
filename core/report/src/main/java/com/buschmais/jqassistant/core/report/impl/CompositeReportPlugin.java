@@ -11,6 +11,9 @@ import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A {@link com.buschmais.jqassistant.core.report.api.ReportPlugin}
  * implementation which delegates all method calls to the {@link ReportPlugin}s.
@@ -19,6 +22,8 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
  * their id to delegate to.
  */
 public class CompositeReportPlugin extends AbstractReportPlugin {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompositeReportPlugin.class);
 
     private interface ReportOperation {
         void run(ReportPlugin reportPlugin) throws ReportException;
@@ -31,14 +36,29 @@ public class CompositeReportPlugin extends AbstractReportPlugin {
     private Map<String, ReportPlugin> selectedReportPlugins = Collections.emptyMap();
 
     public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins) {
+        this(reportPlugins, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param reportPlugins
+     *            The available {@link ReportPlugin}s.
+     * @param defaultReportFilter
+     *            The filter for active default reports identified by their id.
+     */
+    public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins, Set<String> defaultReportFilter) {
         for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
             String id = entry.getKey();
             ReportPlugin reportPlugin = entry.getValue();
-            if (!reportPlugin.getClass().isAnnotationPresent(Selectable.class)) {
-                defaultReportPlugins.put(id, reportPlugin);
+            if (reportPlugin.getClass().isAnnotationPresent(Default.class)) {
+                if (defaultReportFilter == null || defaultReportFilter.contains(id)) {
+                    defaultReportPlugins.put(id, reportPlugin);
+                }
             }
             selectableReportPlugins.put(id, reportPlugin);
         }
+        LOGGER.debug("Using " + defaultReportPlugins + " as default reports.");
     }
 
     @Override
