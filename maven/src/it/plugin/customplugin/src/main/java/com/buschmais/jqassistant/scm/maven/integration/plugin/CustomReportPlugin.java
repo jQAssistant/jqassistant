@@ -15,9 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin.Selectable;
 
-@Selectable
 public class CustomReportPlugin extends AbstractReportPlugin {
     private static final String PROPERTY_FILENAME = "customReport.fileName";
 

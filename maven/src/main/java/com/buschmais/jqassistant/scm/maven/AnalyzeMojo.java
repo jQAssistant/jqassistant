@@ -32,6 +32,8 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
+
 /**
  * Runs analysis according to the defined rules.
  */
@@ -39,13 +41,6 @@ import org.slf4j.LoggerFactory;
 public class AnalyzeMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
-
-    /**
-     * Defines the supported report types.
-     */
-    public enum ReportType {
-        JQA, JUNIT
-    }
 
     /**
      * The rule parameters to use (optional).
@@ -89,8 +84,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
 
+    /**
+     * Defines the set of reports which shall be created by default. If empty all available reports will be used.
+     */
     @Parameter(property = "jqassistant.reportTypes")
-    private List<ReportType> reportTypes;
+    private Set<String> reportTypes = new HashSet<>(asList(XmlReportPlugin.TYPE));
 
     @Parameter(property = "jqassistant.reportProperties")
     private Map<String, Object> reportProperties;
@@ -109,13 +107,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
-        if (reportTypes == null || reportTypes.isEmpty()) {
-            reportTypes = Collections.singletonList(ReportType.JQA);
-        }
         Severity effectiveFailOnSeverity = getFailOnSeverity();
         Map<String, Object> properties = getReportProperties(rootModule, effectiveFailOnSeverity);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
-        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins, reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
