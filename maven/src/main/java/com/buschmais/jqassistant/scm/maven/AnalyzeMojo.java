@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.File;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -31,8 +30,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Arrays.asList;
 
 /**
  * Runs analysis according to the defined rules.
@@ -88,7 +85,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      * Defines the set of reports which shall be created by default. If empty all available reports will be used.
      */
     @Parameter(property = "jqassistant.reportTypes")
-    private Set<String> reportTypes = new HashSet<>(asList(XmlReportPlugin.TYPE));
+    private Set<String> reportTypes;
 
     @Parameter(property = "jqassistant.reportProperties")
     private Map<String, Object> reportProperties;
@@ -108,9 +105,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = getFailOnSeverity();
-        Map<String, Object> properties = getReportProperties(rootModule, effectiveFailOnSeverity);
+        Map<String, Object> properties = getReportProperties(effectiveFailOnSeverity);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
-        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins, reportTypes));
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
+                new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
@@ -156,14 +154,15 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         return reportPlugins;
     }
 
-    private Map<String, Object> getReportProperties(MavenProject rootModule, Severity effectiveFailOnSeverity) {
+    private Map<String, Object>
+    getReportProperties(Severity effectiveFailOnSeverity) {
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
-        String junitReportDirectory = this.junitReportDirectory != null ? this.junitReportDirectory.getAbsolutePath()
-                : new File(rootModule.getBuild().getDirectory() + "/surefire-reports").getAbsolutePath();
-        properties.put(JUnitReportPlugin.JUNIT_REPORT_DIRECTORY, junitReportDirectory);
+        if (junitReportDirectory != null) {
+            properties.put(JUnitReportPlugin.JUNIT_REPORT_DIRECTORY, junitReportDirectory);
+        }
         properties.put(JUnitReportPlugin.JUNIT_ERROR_SEVERITY, effectiveFailOnSeverity.name());
         return properties;
     }
