@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -17,7 +17,7 @@ public interface RuleLanguagePlugin {
      *
      * @return The languag
      */
-    Set<String> getLanguages();
+    Collection<String> getLanguages();
 
     /**
      * Determines if the plugin is able to execute the given {@link ExecutableRule}.

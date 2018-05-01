@@ -15,10 +15,10 @@ import static java.util.Collections.singletonList;
 
 public class CypherLanguagePlugin implements RuleLanguagePlugin {
 
-    private static final Set<String> LANGUAGES = new HashSet<>(singletonList("cypher"));
+    private static final Collection<String> LANGUAGES = singletonList("cypher");
 
     @Override
-    public Set<String> getLanguages() {
+    public Collection<String> getLanguages() {
         return LANGUAGES;
     }
 
