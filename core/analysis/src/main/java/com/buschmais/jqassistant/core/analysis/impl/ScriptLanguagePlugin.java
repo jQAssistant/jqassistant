@@ -48,7 +48,7 @@ public class ScriptLanguagePlugin implements RuleLanguagePlugin {
     }
 
     @Override
-    public Set<String> getLanguages() {
+    public Collection<String> getLanguages() {
         return languages;
     }
 
