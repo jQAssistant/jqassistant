@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +19,8 @@ import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.*;
@@ -24,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.asciidoctor.AttributesBuilder.attributes;
+import static org.asciidoctor.OptionsBuilder.options;
 
 /**
  * @author mh
@@ -103,8 +110,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Treeprocessor treeprocessor = new Treeprocessor(source, builder);
             JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
             extensionRegistry.treeprocessor(treeprocessor);
-            asciidoctor.load(IOUtils.toString(stream), Collections.<String, Object>emptyMap());
-            extractRules(source, Collections.singletonList(treeprocessor.getDocument()), builder);
+            File imagesOutDir = Files.createTempDirectory("jQA").toFile();
+            OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE)
+                    .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, imagesOutDir.getAbsolutePath()).experimental(true));
+            asciidoctor.load(IOUtils.toString(stream), optionsBuilder.asMap());
+            extractRules(source, singletonList(treeprocessor.getDocument()), builder);
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
@@ -158,12 +168,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
                 Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
                 Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
-                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                        .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
                 Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
-                Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
-                    .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
+                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConstraint(constraint);
             }
         }
@@ -199,7 +209,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
             verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
-                .max(attributes.getInt(AGGREGATION_MAX)).build();
+                    .max(attributes.getInt(AGGREGATION_MAX)).build();
         } else {
             verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
         }

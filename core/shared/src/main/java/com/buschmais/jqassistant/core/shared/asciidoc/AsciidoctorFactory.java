@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AsciidoctorFactory {
 
+    public static final String ATTRIBUTE_IMAGES_OUT_DIR = "imagesoutdir";
+
     private static final String ASCIIDOCTOR_DIAGRAM = "asciidoctor-diagram";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidoctorFactory.class);
