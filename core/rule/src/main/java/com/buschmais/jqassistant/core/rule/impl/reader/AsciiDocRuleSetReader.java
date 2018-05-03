@@ -67,7 +67,6 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     private static final String ROW_COUNT_MIN = "rowCountMin";
     private static final String ROW_COUNT_MAX = "rowCountMax";
     private static final String TITLE = "title";
-    private static final String LISTING = "listing";
     private static final String SOURCE = "source";
     private static final String LANGUAGE = "language";
     private static final String CYPHER = "cypher";
