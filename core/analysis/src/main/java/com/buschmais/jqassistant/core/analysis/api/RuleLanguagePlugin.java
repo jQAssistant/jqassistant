@@ -13,6 +13,28 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 public interface RuleLanguagePlugin {
 
     /**
+     * Initialize the plugin.
+     *
+     * Life cycle callback for a plugin to do static initialization. Will be exactly
+     * once after the plugin has been instantiated.
+     */
+    void initialize();
+
+    /**
+     * Configure the plugin.
+     *
+     * This method is always called at least once after {@link #initialize()} and
+     * allows re-configuring a plugin instance at runtime (e.g. in a Maven
+     * multi-module build process).
+     *
+     * @param analyzerContext
+     *            The scanner context.
+     * @param properties
+     *            The plugin properties.
+     */
+    void configure(AnalyzerContext analyzerContext, Map<String, Object> properties);
+
+    /**
      * Return the languages supported by this plugin.
      *
      * @return The languag
