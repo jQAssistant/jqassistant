@@ -147,14 +147,18 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         Map<String, Object> ruleParameters = getRuleParameters(executableRule);
         Executable<?> executable = executableRule.getExecutable();
         Collection<RuleLanguagePlugin> languagePlugins = ruleLanguagePlugins.get(executable.getLanguage());
-        if (languagePlugins != null) {
-            for (RuleLanguagePlugin languagePlugin : languagePlugins) {
-                if (languagePlugin.accepts(executableRule)) {
-                    return languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
+        if (languagePlugins == null) {
+            throw new RuleException("Could not determine plugin to execute " + executableRule);
+        }
+        for (RuleLanguagePlugin languagePlugin : languagePlugins) {
+            if (languagePlugin.accepts(executableRule)) {
+                Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
+                if (result != null) {
+                    return result;
                 }
             }
         }
-        throw new RuleException("Could not determine plugin to execute " + executableRule);
+        throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
     }
 
     private Map<String, Object> getRuleParameters(ExecutableRule executableRule) throws RuleException {
