@@ -4,6 +4,7 @@
 
 - support for @Displayname
 
+- Do we need support for labeling of Assumptions.
 
 - Ask Dirk about the implication of     <group id="junit4:Default">
                                             <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
