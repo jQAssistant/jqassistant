@@ -512,6 +512,9 @@
                 <property>
                     <name>!jqassistant.neo4jVersion</name>
                 </property>
+                <!--
+                <jdk>(,1.7]</jdk>
+                -->
             </activation>
             <properties>
                 <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
@@ -545,6 +548,9 @@
                     <name>jqassistant.neo4jVersion</name>
                     <value>3</value>
                 </property>
+                <!--
+                <jdk>[1.8,)</jdk>
+                -->
             </activation>
             <properties>
                 <org.neo4j.version>${org.neo4j_3x.version}</org.neo4j.version>
