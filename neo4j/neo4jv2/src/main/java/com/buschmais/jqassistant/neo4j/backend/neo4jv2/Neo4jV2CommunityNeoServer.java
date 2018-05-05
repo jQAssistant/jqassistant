@@ -32,6 +32,11 @@ public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
+    public String getVersion() {
+        return "2.x";
+    }
+
+    @Override
     public void start(String httpAddress, int httpPort) {
         tempDirectory = createTempDirectory();
         Map<String, String> opts = new HashMap<>();

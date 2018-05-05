@@ -12,6 +12,8 @@ public interface EmbeddedNeo4jServer {
 
     int DEFAULT_PORT = 7474;
 
+    String getVersion();
+
     void init(GraphDatabaseService graphDatabaseService);
 
     GraphDatabaseService getGraphDatabaseService();

@@ -58,6 +58,11 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     private CommunityNeoServer communityNeoServer;
 
     @Override
+    public String getVersion() {
+        return "3.x";
+    }
+
+    @Override
     public void start(String httpAddress, int httpPort) {
         Map<String, String> opts = new HashMap<>();
         // Neo4j 3.x
