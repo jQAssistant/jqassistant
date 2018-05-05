@@ -96,6 +96,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         } else {
             throw new IllegalStateException("Cannot find server factory.");
         }
+        LOGGER.info("Using embedded Neo4j server " + server.getVersion());
         try (XOManager xoManager = xoManagerFactory.createXOManager()) {
             GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
             server.init(graphDatabaseService);
