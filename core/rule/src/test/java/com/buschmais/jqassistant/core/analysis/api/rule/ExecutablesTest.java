@@ -35,7 +35,7 @@ public class ExecutablesTest {
         String fileName = (String) abstractBlock.getAttr("target");
         assertThat(fileName, notNullValue());
         File diagramFile = new File(fileName);
-        assertThat(diagramFile.exists(), equalTo(true));
+        assertThat("Expected file "+ diagramFile + " does not exist.", diagramFile.exists(), equalTo(true));
         String diagramMetadata = new MetadataTag(diagramFile, "plantuml").getData();
         assertThat(diagramMetadata, containsString("@startuml"));
         assertThat(diagramMetadata, containsString("@enduml"));
