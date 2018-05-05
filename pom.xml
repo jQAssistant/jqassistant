@@ -102,7 +102,7 @@
         <maven.dependency.version>2.10</maven.dependency.version>
         <maven.deploy.version>2.8.2</maven.deploy.version>
         <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
-        <maven.failsafe.version>2.20.1</maven.failsafe.version>
+        <maven.failsafe.version>2.21.0</maven.failsafe.version>
         <maven.install.version>2.5.2</maven.install.version>
         <maven.jar.version>2.6</maven.jar.version>
         <maven.javadoc.version>2.10.4</maven.javadoc.version>
@@ -133,7 +133,7 @@
         <maven.site.version>3.4</maven.site.version>
         <maven.source.plugin>3.0.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
-        <maven.xml.version>1.0.1</maven.xml.version>
+        <maven.xml.version>1.0.2</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
         <lombok.version>1.16.16</lombok.version>
     </properties>
