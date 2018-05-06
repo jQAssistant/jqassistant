@@ -139,6 +139,8 @@ public abstract class AbstractPluginIT {
 
     protected Analyzer analyzer;
 
+    protected ReportContext reportContext;
+
     @Deprecated
     @ToBeRemovedInVersion(major = 1, minor = 5)
     protected InMemoryReportWriter reportWriter;
@@ -177,6 +179,9 @@ public abstract class AbstractPluginIT {
 
     @Before
     public void initializeAnalyzer() throws PluginRepositoryException {
+        File outputDirectory = new File("target/jqassistant");
+        outputDirectory.mkdirs();
+        this.reportContext = new ReportContextImpl(outputDirectory);
         reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
         reportPlugin = reportWriter;
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
@@ -425,9 +430,6 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
-        File outputDirectory = new File("target/jqassistant");
-        outputDirectory.mkdirs();
-        ReportContext reportContext = new ReportContextImpl(outputDirectory);
         return getReportPlugins(reportContext, properties);
     }
 
