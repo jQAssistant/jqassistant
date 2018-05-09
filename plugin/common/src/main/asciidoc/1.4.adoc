@@ -4,5 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.4.0]
 ifdef::jqa-in-manual[== Common Plugin 1.4.0]
 
-TBW.
+No Changes.
 
