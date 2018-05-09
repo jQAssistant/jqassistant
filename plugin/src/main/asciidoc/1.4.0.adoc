@@ -4,5 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.4.0]
 ifdef::jqa-in-manual[== Plugin Parent POM 1.4.0]
 
-TBW.
-- Checkstyle
+- Added Checkstyle rules
+
