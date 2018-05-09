@@ -23,7 +23,7 @@ NOTE: -XX:MaxPermSize=512M is only required for Java 7
 ==== Installation
 
 * Download and unpack the distribution, a directory
-  `jqassistant-commandline-_version_` will be created.
+  `jqassistant-commandline-neo4jvx-_version_` will be created.
 
 ==== Scan
 
