@@ -16,18 +16,14 @@
 						<id>scan</id>
 						<goals>
 							<goal>scan</goal>
-						</goals>
-						<phase>test</phase>
-					</execution>
-					<execution>
-						<id>analyze</id>
-						<goals>
 							<goal>analyze</goal>
 						</goals>
-						<phase>verify</phase>
 					</execution>
 				</executions>
-			</plugin>
+                <configuration>
+                    <storeLifecycle>MODULE</storeLifecycle>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
