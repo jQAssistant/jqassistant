@@ -20,7 +20,7 @@ public abstract class AbstractPluginRepository {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pluginConfigurationReader
      *            The
      *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
@@ -33,7 +33,7 @@ public abstract class AbstractPluginRepository {
 
     /**
      * Create and return an instance of the given type name.
-     * 
+     *
      * @param typeName
      *            The type name.
      * @param <T>
@@ -52,7 +52,7 @@ public abstract class AbstractPluginRepository {
 
     /**
      * Create an instance of the given scanner plugin class.
-     * 
+     *
      * @param typeName
      *            The type name.
      * @param <T>
@@ -68,6 +68,8 @@ public abstract class AbstractPluginRepository {
             throw new PluginRepositoryException("Cannot create instance of class " + type.getName(), e);
         } catch (IllegalAccessException e) {
             throw new PluginRepositoryException("Cannot access class " + typeName, e);
+        } catch (LinkageError e) {
+            throw new PluginRepositoryException("Cannot load plugin class " + typeName, e);
         }
     }
 
