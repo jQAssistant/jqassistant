@@ -67,21 +67,17 @@ public class ScanIT extends AbstractCLIIT {
 
     @Test
     public void reset() throws IOException, InterruptedException {
-        assumeThat("This test requires Neo4j V3.", neo4jVersion, equalTo(NEO4JV3));
+        assumeThat("This test requires Neo4j V2.", neo4jVersion, equalTo(NEO4JV2));
         // Scan a file
         URL file1 = getResource(ScanIT.class);
         String[] args1 = new String[] { "scan", "-f", file1.getFile() };
         assertThat(execute(args1).getExitCode(), equalTo(0));
-        verifyFilesScanned(getDefaultStoreDirectory(), new File(file1.getFile()));
         // Scan a second file using reset
         URL file2 = getResource(AnalyzeIT.class);
         String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
         assertThat(execute(args2).getExitCode(), equalTo(0));
         verifyFilesScanned(getDefaultStoreDirectory(),  new File(file2.getFile()));
         verifyFilesNotScanned(getDefaultStoreDirectory(),  new File(file1.getFile()));
-        // Scan the first file again without reset
-        assertThat(execute(args1).getExitCode(), equalTo(0));
-        verifyFilesScanned(getDefaultStoreDirectory(),  new File(file1.getFile()));
     }
 
     @Test
