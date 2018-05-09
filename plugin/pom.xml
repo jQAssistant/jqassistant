@@ -319,42 +319,58 @@
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
 
+            <!--
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>common</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
+            -->
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>plugin</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
                 <version>${jqa.core-framework.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.api</artifactId>
+                <version>${com.buschmais.xo.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -464,6 +480,13 @@
             <type>xsl</type>
             <classifier>rules2asciidoc-v2</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+            <artifactId>neo4jv2</artifactId>
+            <version>${jqa.core-framework.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
