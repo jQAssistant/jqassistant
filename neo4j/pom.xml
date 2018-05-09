@@ -7,11 +7,12 @@
         <version>1.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>neo4jserver</artifactId>
+    <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+    <artifactId>parent</artifactId>
     <version>1.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>jQAssistant Neo4j Server Integration</name>
+    <name>jQAssistant Neo4j Server Parent</name>
     <url>http://jqassistant.org/</url>
 
     <description>
