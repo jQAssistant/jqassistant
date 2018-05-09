@@ -7,6 +7,7 @@
         <version>1.4.0-SNAPSHOT</version>
     </parent>
     <artifactId>plugins</artifactId>
+    <packaging>pom</packaging>
 
     <name>jQAssistant Commandline Plugins</name>
 

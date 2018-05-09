@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.commandline.test;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -13,18 +16,18 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assume.assumeTrue;
-
 /**
  * Abstract base implementation for CLI tests.
  */
 @RunWith(Parameterized.class)
 public abstract class AbstractCLIIT {
 
+    public static final String NEO4JV2 = "neo4jv2";
+    public static final String NEO4JV3 = "neo4jv3";
+
     @Parameters
     public static Collection<Object> data() {
-        return asList("neo4jv2", "neo4jv3");
+        return asList(NEO4JV2, NEO4JV3);
     }
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
@@ -39,7 +42,7 @@ public abstract class AbstractCLIIT {
 
     private Properties properties = new Properties();
 
-    private final String neo4jVersion;
+    protected final String neo4jVersion;
 
     /**
      * Represents the result of a CLI execution containing exit code and console
