@@ -112,7 +112,7 @@
                         <quiet>true</quiet>
                         <detectLinks>false</detectLinks>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <additionalparam>-Xdoclint:none --base-dir ${project.basedir}</additionalparam>
                         <groups>
                             <group>
                                 <!--<title>API</title>-->
@@ -129,10 +129,6 @@
                             <version>1.5.4</version>
                         </docletArtifact>
                         <!--<overview>src/main/java/overview.adoc</overview>-->
-                        <additionalparam>
-                            --base-dir ${project.basedir}
-                        </additionalparam>
-
                     </configuration>
                 </plugin>
 
@@ -221,8 +217,7 @@
                                     <parameters>
                                         <parameter>
                                             <name>dirOfRules</name>
-                                            <value>${project.basedir}/src/main/resources/META-INF/jqassistant-rules
-                                            </value>
+                                            <value>${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
                                         </parameter>
                                     </parameters>
                                 </transformationSet>
@@ -396,8 +391,24 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
-            <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
+            <!-- 3rd party -->
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${org.slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>20.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
             <dependency>
                 <groupId>junit</groupId>
@@ -405,7 +416,6 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-
 
             <dependency>
                 <!-- todo Why do we need Groovy here? -->
