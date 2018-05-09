@@ -93,6 +93,8 @@
         <com.buschmais.xo.version>0.9.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
         <org.neo4j_3x.version>3.3.5</org.neo4j_3x.version>
+        <!-- use Neo4jv2 for building and testing -->
+        <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
         <org.neo4j.procedure_version>3.3.0.2</org.neo4j.procedure_version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>3.0.0</maven.buildhelper.version>
@@ -506,77 +508,7 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>neo4jv2</id>
-            <activation>
-                <property>
-                    <name>!jqassistant.neo4jVersion</name>
-                </property>
-                <!--
-                <jdk>(,1.7]</jdk>
-                -->
-            </activation>
-            <properties>
-                <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${org.neo4j_2x.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-kernel</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_2x.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-io</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_2x.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-        <profile>
-            <id>neo4jv3</id>
-            <activation>
-                <property>
-                    <name>jqassistant.neo4jVersion</name>
-                    <value>3</value>
-                </property>
-                <!--
-                <jdk>[1.8,)</jdk>
-                -->
-            </activation>
-            <properties>
-                <org.neo4j.version>${org.neo4j_3x.version}</org.neo4j.version>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${org.neo4j_3x.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-kernel</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_3x.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-io</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_3x.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
+
         <profile>
             <id>IntelliJ</id>
             <activation>
@@ -633,6 +565,31 @@
                 <version>${com.buschmais.xo.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j</artifactId>
+                <version>${org.neo4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j-kernel</artifactId>
+                <type>test-jar</type>
+                <version>${org.neo4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j-io</artifactId>
+                <type>test-jar</type>
+                <version>${org.neo4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.1.0.Final</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.7.21</version>
@@ -649,6 +606,7 @@
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
