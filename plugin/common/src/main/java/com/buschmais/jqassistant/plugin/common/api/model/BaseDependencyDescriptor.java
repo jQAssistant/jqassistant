@@ -11,14 +11,14 @@ public interface BaseDependencyDescriptor extends Descriptor {
      * compilation, testing, and so on. It also assists in determining which
      * artifacts to include in a distribution of this project.
      *
-     * @see http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html[Introduction to the Dependency Mechanism^]
+     * @link http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html[Introduction to the Dependency Mechanism^]
      * @return The scope.
      */
     String getScope();
 
     /**
      * Set the scope.
-     * 
+     *
      * @param scope
      *            The scope.
      */
@@ -29,14 +29,14 @@ public interface BaseDependencyDescriptor extends Descriptor {
      * the version of the dependency will be taken into account for dependency
      * calculation if the library is used elsewhere, it will not be passed on
      * transitively.
-     * 
+     *
      * @return Is optional?
      */
     boolean isOptional();
 
     /**
      * Set optional.
-     * 
+     *
      * @param optional
      *            Is optional?
      */

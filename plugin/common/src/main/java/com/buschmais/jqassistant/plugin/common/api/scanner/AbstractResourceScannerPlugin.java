@@ -5,7 +5,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 /**
  * Abstract base implementation for plugins handling file or directory
  * resources.
- * 
+ *
  * @param <I>
  *            The resource item type.
  * @param <D>
@@ -25,9 +25,9 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
     }
 
     /**
-     *
      * @param path
-     * @return
+     *            The path.
+     * @return The slashified path.
      */
     protected String slashify(String path) {
         return path.replace('\\', '/');
