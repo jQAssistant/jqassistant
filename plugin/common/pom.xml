@@ -76,6 +76,10 @@
             <artifactId>report</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.buschmais.xo</groupId>
+            <artifactId>xo.api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>store</artifactId>
             <type>test-jar</type>
@@ -86,13 +90,18 @@
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>java-hamcrest</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.10</version>
+            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -102,6 +111,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
