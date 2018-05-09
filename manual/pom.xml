@@ -374,6 +374,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>spring</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>testng</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
