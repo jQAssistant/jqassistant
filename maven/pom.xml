@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -59,6 +60,75 @@
     </properties>
 
     <profiles>
+        <profile>
+            <id>neo4jv2</id>
+            <activation>
+                <jdk>(,1.7]</jdk>
+            </activation>
+            <properties>
+                <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
+            </properties>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+                        <artifactId>neo4jv2</artifactId>
+                        <version>${jqa-core.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_2x.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_2x.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+        </profile>
+        <profile>
+            <id>neo4jv3</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+                        <artifactId>neo4jv3</artifactId>
+                        <version>${jqa-core.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j</artifactId>
+                        <version>${org.neo4j_3x.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-kernel</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-io</artifactId>
+                        <type>test-jar</type>
+                        <version>${org.neo4j_3x.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+        </profile>
         <profile>
             <id>IT</id>
             <properties>
@@ -144,16 +214,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>neo4jv2</id>
-            <dependencies>
-                <!-- Lucene version used by maven-indexer is incompatible with Neo4j 3.x -->
-                <dependency>
-                    <groupId>com.buschmais.jqassistant.plugin</groupId>
-                    <artifactId>m2repo</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 
@@ -244,7 +304,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -265,7 +325,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -393,7 +453,7 @@
         </dependency>
 
         <!--
-         ! Depedencies to plugins of jQAssistant must be added here!
+         ! Dependencies to plugins of jQAssistant must be added here!
          !-->
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
