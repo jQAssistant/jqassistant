@@ -107,7 +107,7 @@
         <maven.failsafe.version>2.21.0</maven.failsafe.version>
         <maven.install.version>2.5.2</maven.install.version>
         <maven.jar.version>2.6</maven.jar.version>
-        <maven.javadoc.version>2.10.4</maven.javadoc.version>
+        <maven.javadoc.version>3.0.0</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.9.1</maven.jaxb2-plugin.version>
 
         <!--
