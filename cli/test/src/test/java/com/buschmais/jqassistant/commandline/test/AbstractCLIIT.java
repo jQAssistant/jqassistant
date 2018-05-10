@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assume.assumeTrue;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -15,6 +12,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import static java.util.Arrays.asList;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Abstract base implementation for CLI tests.
