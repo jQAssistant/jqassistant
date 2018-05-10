@@ -77,7 +77,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.api</artifactId>
+            <artifactId>xo.spi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
