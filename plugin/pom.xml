@@ -112,7 +112,10 @@
                         <quiet>true</quiet>
                         <detectLinks>false</detectLinks>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalparam>-Xdoclint:none --base-dir ${project.basedir}</additionalparam>
+                        <additionalOptions>
+                            <additionalOption>-Xdoclint:none</additionalOption>
+                            <additionalOption>--base-dir ${project.basedir}</additionalOption>
+                        </additionalOptions>
                         <groups>
                             <group>
                                 <!--<title>API</title>-->
@@ -364,6 +367,20 @@
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.api</artifactId>
+                <version>${com.buschmais.xo.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.spi</artifactId>
+                <version>${com.buschmais.xo.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.neo4.api</artifactId>
                 <version>${com.buschmais.xo.version}</version>
                 <scope>provided</scope>
             </dependency>
