@@ -4,7 +4,7 @@
 ifndef::jqa-in-manual[== Version 1.4.0]
 ifdef::jqa-in-manual[== Plugin for Maven 1.4.0]
 
-* Maven plugin automatically selects Neo4j v2 or Neo4j v3 dependending on the available JRE version
+* Maven plugin automatically selects Neo4j v2 or Neo4j v3 depending on the available Java runtime environment
 * Users can now provide the severity for the configuration parameters
   `failOnSeverity`, `warnOnSeverity`, and `storeLifecycle`
   also in lower case letters.

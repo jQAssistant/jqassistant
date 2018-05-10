@@ -202,10 +202,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
 </project>
 ----
 
-TIP: The Maven plugin allows switching between Neo4j versions 2.x (default for compatibility with Java 7) and 3.x by
-specifying the system property `-Djqassistant.neo4jVersion=2` or `-Djqassistant.neo4jVersion=3` on the command line.
-For convenience reasons it is recommended to set this property either in the environment variable `MAVEN_OPTS` or in
-the file `.mvn/maven.config` in the root module of the project.
+NOTE: Depending on the available Java Runtime environment the Maven plugin automatically uses Neo4j 2.x (Java 7) or
+Neo4j 3.x (Java 8 or later).
 
 ==== Command Line
 
