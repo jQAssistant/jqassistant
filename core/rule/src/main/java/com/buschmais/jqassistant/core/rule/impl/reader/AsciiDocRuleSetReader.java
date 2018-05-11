@@ -24,6 +24,7 @@ import org.asciidoctor.SafeMode;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.DocumentRuby;
+import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.JavaExtensionRegistry;
 import org.asciidoctor.extension.PreprocessorReader;
 import org.slf4j.Logger;
@@ -110,17 +111,18 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
         Treeprocessor treeprocessor = new Treeprocessor();
-        IncludeProcessor includeProcessor = new IncludeProcessor();
+        IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
         try {
+            includeProcessor.activate();
             JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
             extensionRegistry.treeprocessor(treeprocessor);
             extensionRegistry.includeProcessor(includeProcessor);
             OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
-                .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
+                    .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
             asciidoctor.load(content, optionsBuilder.asMap());
             extractRules(source, singletonList(treeprocessor.getDocument()), builder);
         } finally {
-            asciidoctor.unregisterAllExtensions();
+            includeProcessor.deactivate();
         }
     }
 
@@ -455,16 +457,26 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Include processor that ignores all included files.
      */
-    private class IncludeProcessor extends org.asciidoctor.extension.IncludeProcessor {
+    private class IgnoreIncludeProcessor extends IncludeProcessor {
+
+        private boolean acceptAll = false;
 
         @Override
         public boolean handles(String target) {
-            return true;
+            return acceptAll;
         }
 
         @Override
         public void process(DocumentRuby document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
             LOGGER.debug("Skipping included file '{}'.", target);
+        }
+
+        public void activate() {
+            acceptAll = true;
+        }
+
+        public void deactivate() {
+            acceptAll = false;
         }
     }
 }
