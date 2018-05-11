@@ -23,7 +23,9 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
+import org.asciidoctor.ast.DocumentRuby;
 import org.asciidoctor.extension.JavaExtensionRegistry;
+import org.asciidoctor.extension.PreprocessorReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,9 +109,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
         Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
-        Treeprocessor treeprocessor = new Treeprocessor(source, builder);
+        Treeprocessor treeprocessor = new Treeprocessor();
         JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
         extensionRegistry.treeprocessor(treeprocessor);
+        extensionRegistry.includeProcessor(new IncludeProcessor());
         OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
                 .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
         asciidoctor.load(content, optionsBuilder.asMap());
@@ -423,16 +426,14 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
     }
 
+    /**
+     * Used to retrieve the "raw" document.
+     */
     private class Treeprocessor extends org.asciidoctor.extension.Treeprocessor {
-
-        private final RuleSource source;
-        private final RuleSetBuilder builder;
 
         private Document document;
 
-        public Treeprocessor(RuleSource source, RuleSetBuilder builder) {
-            this.source = source;
-            this.builder = builder;
+        public Treeprocessor() {
         }
 
         @Override
@@ -443,6 +444,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
         public Document getDocument() {
             return document;
+        }
+    }
+
+    /**
+     * Include processor that ignores all included files.
+     */
+    private class IncludeProcessor extends org.asciidoctor.extension.IncludeProcessor {
+
+        @Override
+        public boolean handles(String target) {
+            return true;
+        }
+
+        @Override
+        public void process(DocumentRuby document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
+            LOGGER.debug("Skipping included file '{}'.", target);
         }
     }
 }
