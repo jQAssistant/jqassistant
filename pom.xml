@@ -90,7 +90,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <com.buschmais.xo.version>0.10.0-SNAPSHOT</com.buschmais.xo.version>
+        <com.buschmais.xo.version>0.10.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
         <org.neo4j_3x.version>3.3.5</org.neo4j_3x.version>
         <!-- use Neo4jv2 for building and testing -->
