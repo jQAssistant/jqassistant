@@ -23,7 +23,7 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.ast.AbstractBlock;
 import org.asciidoctor.ast.Document;
-import org.asciidoctor.extension.*;
+import org.asciidoctor.extension.JavaExtensionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,26 +98,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *             If building fails.
      */
     private void readDocument(final RuleSource source, final RuleSetBuilder builder) throws RuleException {
-        InputStream stream;
-        try {
-            stream = source.getInputStream();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
-        }
-        try {
-            Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
-            Treeprocessor treeprocessor = new Treeprocessor(source, builder);
-            JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-            extensionRegistry.treeprocessor(treeprocessor);
-            File imagesOutDir = Files.createTempDirectory("jQA").toFile();
-            OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE)
-                    .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, imagesOutDir.getAbsolutePath()).experimental(true));
-            asciidoctor.load(IOUtils.toString(stream), optionsBuilder.asMap());
-            extractRules(source, singletonList(treeprocessor.getDocument()), builder);
+        File tempDir;
+        String content;
+        try (InputStream stream = source.getInputStream();) {
+            tempDir = Files.createTempDirectory("jQA").toFile();
+            content = IOUtils.toString(stream);
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
-
+        Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
+        Treeprocessor treeprocessor = new Treeprocessor(source, builder);
+        JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
+        extensionRegistry.treeprocessor(treeprocessor);
+        OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
+                .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
+        asciidoctor.load(content, optionsBuilder.asMap());
+        extractRules(source, singletonList(treeprocessor.getDocument()), builder);
     }
 
     /**

@@ -45,7 +45,7 @@ public interface ReportContext {
      * @throws ReportException
      *             If a problem occurs.
      */
-    <E extends ExecutableRule<?>> Report<E> addReport(String label, E rule, ReportType reportType, URL url) throws ReportException;
+    <E extends ExecutableRule<?>> Report<E> addReport(String label, E rule, ReportType reportType, URL url);
 
     /**
      * Return all {@link Report}s for the given {@link ExecutableRule}.
@@ -58,7 +58,7 @@ public interface ReportContext {
      * @throws ReportException
      *             If a problem occurs.
      */
-    <E extends ExecutableRule<?>> List<Report<?>> getReports(E rule) throws ReportException;
+    <E extends ExecutableRule<?>> List<Report<?>> getReports(E rule);
 
     /**
      * Defines supported report types.

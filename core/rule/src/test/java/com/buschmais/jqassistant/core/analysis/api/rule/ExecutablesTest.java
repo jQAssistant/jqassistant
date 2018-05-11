@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.io.File;
 
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
+import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import net.sourceforge.plantuml.png.MetadataTag;
 import org.asciidoctor.ast.AbstractBlock;
@@ -32,9 +33,13 @@ public class ExecutablesTest {
         RuleSet ruleSet = readRuleSet("/executables.adoc");
         Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, AbstractBlock.class, "plantuml");
         AbstractBlock abstractBlock = (AbstractBlock) concept.getExecutable().getSource();
+        String imagesDirectoryAttribute = (String) abstractBlock.getDocument().getAttributes().get(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR);
+        assertThat(imagesDirectoryAttribute, notNullValue());
+        File imagesOutDir = new File(imagesDirectoryAttribute);
+        assertThat(imagesOutDir.exists(), equalTo(true));
         String fileName = (String) abstractBlock.getAttr("target");
         assertThat(fileName, notNullValue());
-        File diagramFile = new File(fileName);
+        File diagramFile = new File(imagesOutDir, fileName);
         assertThat("Expected file "+ diagramFile + " does not exist.", diagramFile.exists(), equalTo(true));
         String diagramMetadata = new MetadataTag(diagramFile, "plantuml").getData();
         assertThat(diagramMetadata, containsString("@startuml"));
