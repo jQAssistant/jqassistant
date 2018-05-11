@@ -110,13 +110,18 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
         Treeprocessor treeprocessor = new Treeprocessor();
-        JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-        extensionRegistry.treeprocessor(treeprocessor);
-        extensionRegistry.includeProcessor(new IncludeProcessor());
-        OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
+        IncludeProcessor includeProcessor = new IncludeProcessor();
+        try {
+            JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
+            extensionRegistry.treeprocessor(treeprocessor);
+            extensionRegistry.includeProcessor(includeProcessor);
+            OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
                 .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
-        asciidoctor.load(content, optionsBuilder.asMap());
-        extractRules(source, singletonList(treeprocessor.getDocument()), builder);
+            asciidoctor.load(content, optionsBuilder.asMap());
+            extractRules(source, singletonList(treeprocessor.getDocument()), builder);
+        } finally {
+            asciidoctor.unregisterAllExtensions();
+        }
     }
 
     /**
