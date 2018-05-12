@@ -5,6 +5,9 @@ import java.util.*;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -26,7 +29,7 @@ public abstract class AbstractCLIIT {
     public static final String NEO4JV3 = "neo4jv3";
 
     @Parameters
-    public static Collection<Object> data() {
+    public static final Collection<Object> data() {
         return asList(NEO4JV2, NEO4JV3);
     }
 
@@ -104,7 +107,8 @@ public abstract class AbstractCLIIT {
      */
     @Before
     public void before() throws IOException {
-        FileUtils.deleteDirectory(getDefaultStoreDirectory());
+        File workingDirectory = getWorkingDirectory();
+        FileUtils.cleanDirectory(workingDirectory);
     }
 
     /**
@@ -157,7 +161,7 @@ public abstract class AbstractCLIIT {
      * @return The working directory.
      */
     protected File getWorkingDirectory() {
-        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
+        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName() + "/" + neo4jVersion);
         workingDirectory.mkdirs();
         return workingDirectory;
     }
@@ -167,7 +171,7 @@ public abstract class AbstractCLIIT {
      *
      * @return The default store directory.
      */
-    protected File getDefaultStoreDirectory() {
+    protected File getDefaultStoreDirectory() throws IOException {
         return new File(getWorkingDirectory(), Task.DEFAULT_STORE_DIRECTORY);
     }
 
@@ -176,8 +180,37 @@ public abstract class AbstractCLIIT {
      *
      * @return The default report directory.
      */
-    protected File getDefaultReportDirectory() {
+    protected File getDefaultReportDirectory() throws IOException {
         return new File(getWorkingDirectory(), Task.DEFAULT_REPORT_DIRECTORY);
+    }
+
+    /**
+     * Return the {@link Store}.
+     *
+     * @param directory
+     *            The directory.
+     * @return The {@link Store}.
+     */
+    protected Store getStore(File directory) {
+        StoreConfiguration storeConfiguration = StoreConfiguration.builder().uri(directory.toURI()).build();
+        return StoreFactory.getStore(storeConfiguration);
+    }
+
+
+    protected void withStore(File directory, StoreOperation storeOperation) {
+        Store store = getStore(directory);
+        store.start(Collections.<Class<?>> emptyList());
+        try {
+            storeOperation.run(store);
+        } finally {
+            store.stop();
+        }
+    }
+
+    interface StoreOperation {
+
+        void run(Store store);
+
     }
 
     /**
