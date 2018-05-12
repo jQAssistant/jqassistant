@@ -31,8 +31,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>neo4jserver.bootstrap</artifactId>
+            <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+            <artifactId>bootstrap</artifactId>
             <version>${project.version}</version>
         </dependency>
 		<dependency>
