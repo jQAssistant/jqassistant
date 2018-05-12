@@ -575,8 +575,8 @@
              ! Dependency to the documentation sources of the commandline tool.
              !-->
             <dependency>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-commandline</artifactId>
+                <groupId>com.buschmais.jqassistant.cli</groupId>
+                <artifactId>parent</artifactId>
                 <version>${jqa-commandline-tool.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
@@ -590,7 +590,7 @@
             </dependency>
 
             <!--
-             ! Dependency to the documentation sources of the commandline tool.
+             ! Dependency to the documentation sources of the Maven plugin.
              !-->
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
