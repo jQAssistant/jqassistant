@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -10,6 +7,9 @@ import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.task.ReportTask;
 
 import org.junit.Test;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Verifies command line reporting.
