@@ -419,8 +419,8 @@
          ! The documentation sources of the commandline tool
          !-->
         <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>jqassistant-commandline</artifactId>
+            <groupId>com.buschmais.jqassistant.cli</groupId>
+            <artifactId>parent</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
