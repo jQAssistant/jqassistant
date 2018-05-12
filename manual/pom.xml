@@ -261,8 +261,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>neo4jserver</artifactId>
+            <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+            <artifactId>parent</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
