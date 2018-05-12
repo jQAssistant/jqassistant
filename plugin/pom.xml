@@ -197,6 +197,10 @@
                                     </fileMappers>
                                     <parameters>
                                         <parameter>
+                                            <name>groupId</name>
+                                            <value>${project.groupId}</value>
+                                        </parameter>
+                                        <parameter>
                                             <name>artifactId</name>
                                             <value>${project.artifactId}</value>
                                         </parameter>
@@ -220,7 +224,7 @@
                                     <parameters>
                                         <parameter>
                                             <name>dirOfRules</name>
-                                            <value>${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
+                                            <value>file:/${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
                                         </parameter>
                                     </parameters>
                                 </transformationSet>
