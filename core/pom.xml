@@ -168,7 +168,10 @@
                         <quiet>true</quiet>
                         <detectLinks>false</detectLinks>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <additionalOptions>
+                            <additionalOption>-Xdoclint:none</additionalOption>
+                            <additionalOption>--base-dir ${project.basedir}</additionalOption>
+                        </additionalOptions>
                         <groups>
                             <group>
                                 <title>Public API</title>
@@ -184,10 +187,6 @@
                             <version>1.5.4</version>
                         </docletArtifact>
                         <!--<overview>src/main/java/overview.adoc</overview>-->
-                        <additionalparam>
-                            --base-dir ${project.basedir}
-                        </additionalparam>
-
                     </configuration>
                 </plugin>
             </plugins>
