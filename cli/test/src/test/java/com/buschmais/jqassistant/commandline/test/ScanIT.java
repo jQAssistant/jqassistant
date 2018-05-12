@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -34,7 +34,7 @@ public class ScanIT extends AbstractCLIIT {
         String directory = ScanIT.class.getResource("/").getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
+        withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ScanIT extends AbstractCLIIT {
         String[] args = new String[] { "scan", "-f", directory.getFile() };
         assertThat(execute(args).getExitCode(), equalTo(0));
 
-        EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
+        Store store = getStore(getDefaultStoreDirectory());
         store.start(Collections.emptyList());
         Map<String, Object> params = new HashMap<>();
         params.put("fileName", "/META-INF");
@@ -58,7 +58,7 @@ public class ScanIT extends AbstractCLIIT {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
+        Store store = getStore(getDefaultStoreDirectory());
         store.start(Collections.<Class<?>> emptyList());
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
         assertThat("Expecting one beans.xml descriptor.", count, equalTo(1l));
@@ -76,8 +76,10 @@ public class ScanIT extends AbstractCLIIT {
         URL file2 = getResource(AnalyzeIT.class);
         String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
         assertThat(execute(args2).getExitCode(), equalTo(0));
-        verifyFilesScanned(getDefaultStoreDirectory(),  new File(file2.getFile()));
-        verifyFilesNotScanned(getDefaultStoreDirectory(),  new File(file1.getFile()));
+        withStore(getDefaultStoreDirectory(), store -> {
+            verifyFilesScanned(store, new File(file2.getFile()));
+            verifyFilesNotScanned(store, new File(file1.getFile()));
+        });
     }
 
     @Test
@@ -85,9 +87,9 @@ public class ScanIT extends AbstractCLIIT {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath()};
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath() };
         assertThat(execute(args2).getExitCode(), equalTo(0));
-        verifyFilesScanned(directory,  new File(file.getFile()));
+        withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
     @Test
@@ -97,7 +99,7 @@ public class ScanIT extends AbstractCLIIT {
         URL file = getResource(ScanIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-storeUri", directory.toURI().toString() };
         assertThat(execute(args2).getExitCode(), equalTo(0));
-        verifyFilesScanned(directory,  new File(file.getFile()));
+        withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
     /**
@@ -113,10 +115,9 @@ public class ScanIT extends AbstractCLIIT {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath(), "-storeUri",
-                directory.toURI().toString() };
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath(), "-storeUri", directory.toURI().toString() };
         assertThat(execute(args2).getExitCode(), equalTo(1));
-        verifyFilesNotScanned(directory, new File(file.getFile()));
+        withStore(directory, store -> verifyFilesNotScanned(store, new File(file.getFile())));
     }
 
     /**
@@ -142,7 +143,7 @@ public class ScanIT extends AbstractCLIIT {
      * @return The result.
      */
 
-    private <T> T executeQuery(EmbeddedGraphStore store, String query, Map<String, Object> params, String resultColumn, Class<T> resultType) {
+    private <T> T executeQuery(Store store, String query, Map<String, Object> params, String resultColumn, Class<T> resultType) {
         store.beginTransaction();
         Result<CompositeRowObject> result = store.executeQuery(query, params);
         assertThat(result.hasResult(), equalTo(true));
@@ -160,7 +161,7 @@ public class ScanIT extends AbstractCLIIT {
      *            The type
      * @return <code>true</code> if the type is represented in the database.
      */
-    private boolean isTypeScanned(EmbeddedGraphStore store, Class<?> type) {
+    private boolean isTypeScanned(Store store, Class<?> type) {
         Map<String, Object> params = new HashMap<>();
         params.put("type", type.getName());
         String query = "match (t:Type:Class) where t.fqn={type} return count(t) as count";
@@ -177,7 +178,7 @@ public class ScanIT extends AbstractCLIIT {
      *            The file
      * @return <code>true</code> if the file is represented in the database.
      */
-    private boolean isFileScanned(EmbeddedGraphStore store, File file) {
+    private boolean isFileScanned(Store store, File file) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", file.getAbsolutePath().replace("\\", "/"));
         String query = "match (t:File) where t.fileName={name} return count(t) as count";
@@ -188,51 +189,42 @@ public class ScanIT extends AbstractCLIIT {
     /**
      * Verifies if a database is created not containing the the given files.
      *
-     * @param directory
-     *            The database directory.
+     * @param store
+     *            The {@link Store}.
      * @param files
      *            The types.
      */
-    private void verifyFilesNotScanned(File directory, File... files) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
-        store.start(Collections.<Class<?>> emptyList());
+    private void verifyFilesNotScanned(Store store, File... files) {
         for (File file : files) {
             assertThat("Expecting no result for " + file, isFileScanned(store, file), equalTo(false));
         }
-        store.stop();
     }
 
     /**
      * Verifies if a database is created containing the the given types.
      *
-     * @param directory
-     *            The database directory.
+     * @param store
+     *            The {@link Store}.
      * @param types
      *            The types.
      */
-    private void verifyTypesScanned(File directory, Class<?>... types) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
-        store.start(Collections.<Class<?>> emptyList());
+    private void verifyTypesScanned(Store store, Class<?>... types) {
         for (Class<?> type : types) {
             assertThat("Expecting a result for " + type.getName(), isTypeScanned(store, type), equalTo(true));
         }
-        store.stop();
     }
 
     /**
      * Verifies if a database is created containing the the given types.
      *
-     * @param directory
-     *            The database directory.
+     * @param store
+     *            The {@link Store}.
      * @param files
      *            The files.
      */
-    private void verifyFilesScanned(File directory, File... files) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
-        store.start(Collections.<Class<?>> emptyList());
+    private void verifyFilesScanned(Store store, File... files) {
         for (File file : files) {
             assertThat("Expecting a result for " + file, isFileScanned(store, file), equalTo(true));
         }
-        store.stop();
     }
 }

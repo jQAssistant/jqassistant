@@ -2,14 +2,12 @@ package com.buschmais.jqassistant.commandline.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import static com.buschmais.xo.api.Query.Result;
@@ -32,28 +30,28 @@ public class AnalyzeIT extends AbstractCLIIT {
     public void defaultGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY };
         assertThat(execute(args).getExitCode(), equalTo(2));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", CUSTOM_GROUP };
         assertThat(execute(args).getExitCode(), equalTo(2));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
     @Test
     public void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
         assertThat(execute(args).getExitCode(), equalTo(2));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
     @Test
@@ -62,21 +60,21 @@ public class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER, "-ruleParameters",
                 ruleParameters.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT_WITH_PARAMETER);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT_WITH_PARAMETER));
     }
 
     @Test
     public void constraintSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "critical" };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void constraintFailOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
         assertThat(execute(args).getExitCode(), equalTo(2));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     /**
@@ -91,7 +89,7 @@ public class AnalyzeIT extends AbstractCLIIT {
                 "critical" };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store ->  verifyConcepts(store, TEST_CONCEPT));
         List<String> console = executionResult.getErrorConsole();
         assertThat(console, hasItem(containsString("Test constraint."))); // The description
         assertThat(console, hasItem(containsString(TEST_CONSTRAINT)));
@@ -103,41 +101,37 @@ public class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "minor",
                 "-defaultConstraintSeverity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void defaultGroupSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-failOnSeverity", "minor", "-defaultGroupSeverity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void storeDirectory() throws IOException, InterruptedException {
-        String customStoreDirectory = "tmp/customStore";
-        FileUtils.deleteDirectory(new File(customStoreDirectory));
+        File customStoreDir = new File(getWorkingDirectory(), "customStore");
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
+        String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDir.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(2));
-        verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), TEST_CONCEPT);
+        withStore(customStoreDir, store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     /**
      * Verifies if the database contains the given concepts.
      *
-     * @param directory
-     *            The database directory.
+     * @param store
+     *            The {@link Store}.
      * @param concepts
      *            The concepts
      */
-    private void verifyConcepts(File directory, String... concepts) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
-        store.start(Collections.<Class<?>> emptyList());
+    private void verifyConcepts(Store store, String... concepts) {
         for (String concept : concepts) {
             assertThat("Expecting a result for " + concept, isConceptPresent(store, concept), equalTo(true));
         }
-        store.stop();
     }
 
     /**
@@ -149,7 +143,7 @@ public class AnalyzeIT extends AbstractCLIIT {
      *            The concept
      * @return <code>true</code> if the concept is represented in the database.
      */
-    private boolean isConceptPresent(EmbeddedGraphStore store, String concept) {
+    private boolean isConceptPresent(Store store, String concept) {
         store.beginTransaction();
         Map<String, Object> params = new HashMap<>();
         params.put("concept", concept);
