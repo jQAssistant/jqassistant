@@ -112,18 +112,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Asciidoctor asciidoctor = AsciidoctorFactory.getAsciidoctor();
         Treeprocessor treeprocessor = new Treeprocessor();
         IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
-        try {
-            includeProcessor.activate();
-            JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-            extensionRegistry.treeprocessor(treeprocessor);
-            extensionRegistry.includeProcessor(includeProcessor);
-            OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
-                    .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
-            asciidoctor.load(content, optionsBuilder.asMap());
-            extractRules(source, singletonList(treeprocessor.getDocument()), builder);
-        } finally {
-            includeProcessor.deactivate();
-        }
+        OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
+                .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
+        JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
+        extensionRegistry.treeprocessor(treeprocessor);
+        extensionRegistry.includeProcessor(includeProcessor);
+        asciidoctor.load(content, optionsBuilder.asMap());
+        extractRules(source, singletonList(treeprocessor.getDocument()), builder);
     }
 
     /**
@@ -459,11 +454,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      */
     private class IgnoreIncludeProcessor extends IncludeProcessor {
 
-        private boolean acceptAll = false;
-
         @Override
         public boolean handles(String target) {
-            return acceptAll;
+            return true;
         }
 
         @Override
@@ -471,12 +464,5 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             LOGGER.debug("Skipping included file '{}'.", target);
         }
 
-        public void activate() {
-            acceptAll = true;
-        }
-
-        public void deactivate() {
-            acceptAll = false;
-        }
     }
 }
