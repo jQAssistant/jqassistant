@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import static com.buschmais.xo.api.Query.Result;
@@ -114,8 +115,9 @@ public class AnalyzeIT extends AbstractCLIIT {
 
     @Test
     public void storeDirectory() throws IOException, InterruptedException {
-        String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
+        FileUtils.deleteDirectory(new File(customStoreDirectory));
+        String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
         assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), TEST_CONCEPT);
