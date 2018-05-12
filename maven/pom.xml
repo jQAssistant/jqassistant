@@ -235,7 +235,10 @@
                         <quiet>true</quiet>
                         <detectLinks>false</detectLinks>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <additionalOptions>
+                            <additionalOption>-Xdoclint:none</additionalOption>
+                            <additionalOption>--base-dir ${project.basedir}</additionalOption>
+                        </additionalOptions>
                         <source>1.7</source>
                         <doclet>org.asciidoctor.Asciidoclet</doclet>
                         <docletArtifact>
@@ -244,10 +247,6 @@
                             <version>1.5.4</version>
                         </docletArtifact>
                         <!--<overview>src/main/java/overview.adoc</overview>-->
-                        <additionalparam>
-                            --base-dir ${project.basedir}
-                        </additionalparam>
-
                     </configuration>
                 </plugin>
                 <plugin>
