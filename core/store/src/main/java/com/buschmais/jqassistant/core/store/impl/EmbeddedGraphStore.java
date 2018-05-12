@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -36,17 +35,6 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final String PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED = "neo4j.dbms.connector.bolt.enabled";
 
     private EmbeddedNeo4jServer server;
-
-    /**
-     * Constructor.
-     *
-     * @param databaseDirectory
-     *            The directory of the database.
-     */
-    @Deprecated
-    public EmbeddedGraphStore(String databaseDirectory) {
-        super(StoreConfiguration.builder().uri(new File(databaseDirectory).toURI()).build());
-    }
 
     /**
      * Constructor.
