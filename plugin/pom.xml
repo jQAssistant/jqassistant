@@ -43,7 +43,8 @@
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa.core-framework.version>1.4.0-SNAPSHOT</jqa.core-framework.version>
+        <jqa-core-framework.version>1.4.0-SNAPSHOT</jqa-core-framework.version>
+        <jqa-neo4jserver.version>1.4.0-SNAPSHOT</jqa-neo4jserver.version>
         <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.1.16.0</org.jruby.version>
@@ -320,7 +321,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -336,35 +337,35 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>plugin</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -393,14 +394,14 @@
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
                 <type>test-jar</type>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -408,7 +409,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
-                <version>${jqa.core-framework.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -515,7 +516,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
             <artifactId>neo4jv2</artifactId>
-            <version>${jqa.core-framework.version}</version>
+            <version>${jqa-neo4jserver.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
