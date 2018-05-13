@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -14,9 +15,10 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 
 /**
  * Verifies command line scanning.
@@ -67,18 +69,14 @@ public class ScanIT extends AbstractCLIIT {
 
     @Test
     public void reset() throws IOException, InterruptedException {
-        assumeThat("This test requires Neo4j V2.", neo4jVersion, equalTo(NEO4JV2));
-        // Scan a file
-        URL file1 = getResource(ScanIT.class);
-        String[] args1 = new String[] { "scan", "-f", file1.getFile() };
-        assertThat(execute(args1).getExitCode(), equalTo(0));
-        // Scan a second file using reset
-        URL file2 = getResource(AnalyzeIT.class);
-        String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
-        assertThat(execute(args2).getExitCode(), equalTo(0));
+        URL file = getResource(AnalyzeIT.class);
+        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-reset" };
+        ExecutionResult executionResult = execute(args2);
+        assertThat(executionResult.getExitCode(), equalTo(0));
+        List<String> console = executionResult.getErrorConsole();
+        assertThat(console, hasItem(containsString("Resetting store.")));
         withStore(getDefaultStoreDirectory(), store -> {
-            verifyFilesScanned(store, new File(file2.getFile()));
-            verifyFilesNotScanned(store, new File(file1.getFile()));
+            verifyFilesScanned(store, new File(file.getFile()));
         });
     }
 
