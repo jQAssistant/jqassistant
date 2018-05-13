@@ -48,7 +48,7 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
             apoc.refactor.GraphRefactoring.class, apoc.refactor.rename.Rename.class, apoc.schema.Schemas.class, apoc.search.ParallelNodeSearch.class,
             apoc.spatial.Distance.class, apoc.spatial.Geocode.class, apoc.stats.DegreeDistribution.class, apoc.text.Phonetic.class, apoc.trigger.Trigger.class,
             apoc.util.Utils.class, apoc.warmup.Warmup.class);
-    private static final List<Class<?>> USER_FUNCTION_TYPES = asList(apoc.algo.Similarity.class, apoc.bitwise.BitwiseOperations.class, apoc.coll.Coll.class,
+    private static final List<Class<?>> FUNCTION_TYPES = asList(apoc.algo.Similarity.class, apoc.bitwise.BitwiseOperations.class, apoc.coll.Coll.class,
             apoc.convert.Convert.class, apoc.convert.Json.class, apoc.create.Create.class, apoc.cypher.CypherFunctions.class, apoc.data.Extract.class,
             apoc.data.email.ExtractEmail.class, apoc.data.url.ExtractURL.class, apoc.date.Date.class, apoc.map.Maps.class, apoc.math.Maths.class,
             apoc.meta.Meta.class, apoc.nodes.Nodes.class, apoc.number.ArabicRoman.class, apoc.number.Numbers.class, apoc.number.exact.Exact.class,
@@ -99,12 +99,12 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
                 LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
             }
         }
-        for (Class<?> userFunctionType : USER_FUNCTION_TYPES) {
+        for (Class<?> functionType : FUNCTION_TYPES) {
             try {
-                LOGGER.debug("Registering user function class " + userFunctionType.getName());
-                procedures.registerFunction(userFunctionType);
+                LOGGER.debug("Registering function class " + functionType.getName());
+                procedures.registerFunction(functionType);
             } catch (KernelException e) {
-                LOGGER.warn("Cannot user function class " + userFunctionType.getName(), e);
+                LOGGER.warn("Cannot register function class " + functionType.getName(), e);
             }
         }
     }
