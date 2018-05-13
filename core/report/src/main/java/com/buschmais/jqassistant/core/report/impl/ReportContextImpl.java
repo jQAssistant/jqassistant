@@ -57,7 +57,7 @@ public class ReportContextImpl implements ReportContext {
     public File getReportDirectory(String path) {
         File directory = new File(reportDirectory, path);
         if (directory.mkdirs()) {
-            LOGGER.info("Created report directory '{}.'", directory.getAbsolutePath());
+            LOGGER.debug("Created report directory '{}'.", directory.getAbsolutePath());
         }
         return directory;
     }
