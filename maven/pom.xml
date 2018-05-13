@@ -72,7 +72,6 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                         <artifactId>neo4jv2</artifactId>
-                        <version>${jqa-core.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.neo4j</groupId>
@@ -105,7 +104,6 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                         <artifactId>neo4jv3</artifactId>
-                        <version>${jqa-core.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.neo4j</groupId>
