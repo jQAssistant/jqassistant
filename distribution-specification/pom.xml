@@ -171,6 +171,16 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+                <artifactId>neo4jv2</artifactId>
+                <version>${jqa-neo4jserver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+                <artifactId>neo4jv3</artifactId>
+                <version>${jqa-neo4jserver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>parent</artifactId>
                 <version>${jqa-neo4jserver.version}</version>
                 <type>zip</type>
