@@ -17,12 +17,13 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ServerTask extends AbstractTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
+public class ServerTask extends AbstractStoreTask {
 
     public static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
     public static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
     public static final String CMDLINE_OPTION_DAEMON = "daemon";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
 
     private String serverAddress;
     private int serverPort;
@@ -50,8 +51,7 @@ public class ServerTask extends AbstractTask {
     }
 
     @Override
-    protected void addTaskOptions(final List<Option> options) {
-        super.addTaskOptions(options);
+    public void addTaskOptions(final List<Option> options) {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
                 .create(CMDLINE_OPTION_SERVERADDRESS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()

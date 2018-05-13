@@ -11,9 +11,9 @@ public interface TaskFactory {
      *            The name.
      * @return The task.
      */
-    com.buschmais.jqassistant.commandline.Task fromName(String name) throws com.buschmais.jqassistant.commandline.CliExecutionException;
+    Task fromName(String name) throws CliExecutionException;
 
-    List<com.buschmais.jqassistant.commandline.Task> getTasks();
+    List<Task> getTasks();
 
     List<String> getTaskNames();
 

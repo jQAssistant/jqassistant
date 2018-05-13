@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ScanTask extends AbstractTask {
+public class ScanTask extends AbstractStoreTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanTask.class);
 
     public static final String CMDLINE_OPTION_FILES = "f";
@@ -43,7 +43,7 @@ public class ScanTask extends AbstractTask {
 
     @SuppressWarnings("static-access")
     @Override
-    protected void addTaskOptions(final List<Option> options) {
+    public void addTaskOptions(final List<Option> options) {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files")
                 .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
                 .create(CMDLINE_OPTION_FILES));

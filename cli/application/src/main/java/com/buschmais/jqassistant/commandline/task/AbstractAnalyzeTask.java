@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for all tasks working with rules.
  */
-public abstract class AbstractAnalyzeTask extends AbstractTask {
+public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
 
     private static final String CMDLINE_OPTION_R = "r";
     private static final String CMDLINE_OPTION_RULEDIRECTORY = "ruleDirectory";
@@ -82,7 +82,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
 
     /**
      * Return the selection of rules.
-     * 
+     *
      * @param ruleSet
      *            The rule set.
      * @return The selection of rules.
@@ -134,7 +134,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
     }
 
     @Override
-    protected void addTaskOptions(List<Option> options) {
+    public void addTaskOptions(List<Option> options) {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_R).withLongOpt(CMDLINE_OPTION_RULEDIRECTORY).withDescription("The directory containing rules.")
                 .hasArgs().create(CMDLINE_OPTION_R));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULESURL).withDescription("The URL of a file containing rules.").hasArgs()

@@ -13,13 +13,13 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReportTask extends AbstractTask {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResetTask.class);
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
@@ -27,7 +27,12 @@ public class ReportTask extends AbstractTask {
     private String reportDirectory;
 
     @Override
-    protected void executeTask(final Store store) throws CliExecutionException {
+    public void withOptions(CommandLine options) {
+        reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
+    }
+
+    @Override
+    public void run() throws CliExecutionException {
         File xmlReportFile = new File(reportDirectory, REPORT_FILE_XML);
         if (!xmlReportFile.exists()) {
             LOGGER.error(xmlReportFile.getName() + " does not exist.");
@@ -51,8 +56,4 @@ public class ReportTask extends AbstractTask {
         }
     }
 
-    @Override
-    public void withOptions(CommandLine options) {
-        reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
-    }
 }

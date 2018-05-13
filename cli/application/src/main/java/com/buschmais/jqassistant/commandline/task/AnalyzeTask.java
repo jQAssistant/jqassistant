@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class AnalyzeTask extends AbstractAnalyzeTask {
 
     @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 5)
     private static final String CMDLINE_OPTION_SEVERITY = "severity";
     private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
     private static final String CMDLINE_OPTION_WARN_ON_SEVERITY = "warnOnSeverity";
@@ -175,7 +177,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    protected void addTaskOptions(final List<Option> options) {
+    public void addTaskOptions(final List<Option> options) {
         super.addTaskOptions(options);
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULEPARAMETERS).withDescription("The name of a properties file providing rule parameters.")
                 .hasArgs().create(CMDLINE_OPTION_RULEPARAMETERS));
