@@ -1,10 +1,5 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.asciidoctor.AttributesBuilder.attributes;
-import static org.asciidoctor.OptionsBuilder.options;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +29,11 @@ import org.asciidoctor.extension.JavaExtensionRegistry;
 import org.asciidoctor.extension.PreprocessorReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.asciidoctor.AttributesBuilder.attributes;
+import static org.asciidoctor.OptionsBuilder.options;
 
 /**
  * @author mh
