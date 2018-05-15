@@ -538,6 +538,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.api</artifactId>
+                <version>${com.buschmais.xo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.api</artifactId>
                 <version>${com.buschmais.xo.version}</version>
             </dependency>
