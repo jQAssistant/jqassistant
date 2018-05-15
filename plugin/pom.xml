@@ -53,7 +53,6 @@
         <junit.version>4.12</junit.version>
     </properties>
 
-
     <build>
         <pluginManagement>
             <plugins>
@@ -517,6 +516,18 @@
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
             <artifactId>neo4jv2</artifactId>
             <version>${jqa-neo4jserver.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-io</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
