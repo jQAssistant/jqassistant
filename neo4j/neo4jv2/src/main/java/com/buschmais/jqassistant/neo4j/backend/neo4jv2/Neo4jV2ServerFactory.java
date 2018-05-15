@@ -1,13 +1,18 @@
 package com.buschmais.jqassistant.neo4j.backend.neo4jv2;
 
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
+import java.util.Properties;
 
-public class Neo4jV2ServerFactory implements EmbeddedNeo4jServerFactory {
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+
+public class Neo4jV2ServerFactory extends AbstractEmbeddedNeo4jServerFactory {
 
     @Override
     public EmbeddedNeo4jServer getServer() {
         return new Neo4jV2CommunityNeoServer();
     }
 
+    @Override
+    protected void setXOUnitProperties(Properties properties) {
+    }
 }
