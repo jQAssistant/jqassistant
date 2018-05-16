@@ -9,10 +9,7 @@ import javax.xml.bind.Marshaller;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
-import com.buschmais.jqassistant.core.report.api.ReportContext;
-import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
@@ -126,15 +123,18 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
             Rule rule = result.getRule();
             testcase.setName(rule.getClass().getSimpleName() + "_" + unescapeRuleId(rule));
             testcase.setClassname(testSuiteId);
-            testcase.setTime(Long.toString(time));
+            testcase.setTime(toTime(time));
             List<Map<String, Object>> rows = result.getRows();
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 StringBuilder sb = new StringBuilder();
                 for (Map<String, Object> row : rows) {
+                    if (sb.length() > 0) {
+                        sb.append("---\n");
+                    }
                     for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                         sb.append(rowEntry.getKey());
-                        sb.append("=");
-                        sb.append(rowEntry.getValue());
+                        sb.append(" = ");
+                        sb.append(ReportHelper.getLabel(rowEntry.getValue()));
                         sb.append('\n');
                     }
                 }
@@ -162,7 +162,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         testsuite.setErrors(Integer.toString(errors));
         testsuite.setName(testSuiteId);
         long groupTime = System.currentTimeMillis() - groupInfo.getBeginTimestamp();
-        testsuite.setTime(Long.toString(groupTime));
+        testsuite.setTime(toTime(groupTime));
         // TestSuite
         File file = new File(reportDirectory, "TEST-" + testSuiteId + ".xml");
         try {
@@ -173,6 +173,17 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         } catch (JAXBException e) {
             throw new ReportException("Cannot write JUnit report.", e);
         }
+    }
+
+    /**
+     * Convert the given time (ms) to a string representation.
+     *
+     * @param time
+     *            The time.
+     * @return The string representation.
+     */
+    private String toTime(long time) {
+        return Double.toString(time / 1000);
     }
 
     private String getTestSuiteId(Group group) {
