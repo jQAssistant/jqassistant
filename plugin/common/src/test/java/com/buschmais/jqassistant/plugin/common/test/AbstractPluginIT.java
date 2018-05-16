@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -51,8 +52,8 @@ import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Abstract base class for analysis tests.
@@ -64,7 +65,15 @@ public abstract class AbstractPluginIT {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     protected @interface TestStore {
+
         boolean reset() default true;
+
+        Type type() default Type.FILE;
+
+        enum Type {
+            FILE, MEMORY, REMOTE;
+        }
+
     }
 
     /**
@@ -137,6 +146,11 @@ public abstract class AbstractPluginIT {
 
     protected RuleSet ruleSet;
 
+    /**
+     * The store.
+     */
+    protected Store store;
+
     protected Analyzer analyzer;
 
     protected ReportContext reportContext;
@@ -193,33 +207,50 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * The store.
-     */
-    protected Store store;
-
-    /**
      * Initializes and resets the store.
      */
     @Before
-    public void startStore() {
+    public void startStore() throws URISyntaxException {
+        TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
+        TestStore.Type type = getTestStoreType(testStore);
+        Properties properties = new Properties();
+        URI uri;
+        switch (type) {
+        case FILE:
+            String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
+            uri = new File(fileName).toURI();
+            break;
+        case MEMORY:
+            uri = new URI("memory:///");
+            break;
+        case REMOTE:
+            uri = new URI("bolt://localhost:7687");
+            properties.put("neo4j.remote.statement.log.level", "info");
+            break;
+        default:
+            throw new AssertionError("Test store type not supported: " + type);
+        }
         /*
          * You might break IT of depending jQAssistant plugins if you change the
          * location of the used database. Oliver B. Fischer, 2017-06-10
          */
-        String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
-
-        URI uri = new File(fileName).toURI();
-        // URI uri = new URI("bolt://localhost:7687");
-        // URI uri = new URI("memory:///");
-        Properties properties = new Properties();
-        properties.put("neo4j.remote.statement.log.level", "info");
         StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).username("neo4j").password("admin").properties(properties).build();
         store = StoreFactory.getStore(configuration);
         store.start(getDescriptorTypes());
-        TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
+    }
+
+    /**
+     * Determines the type of the test store to use.
+     *
+     * @param testStore
+     *            The {@link TestStore} annotation (if present).
+     * @return The {@link TestStore.Type}.
+     */
+    protected TestStore.Type getTestStoreType(TestStore testStore) {
+        return testStore != null ? testStore.type() : TestStore.Type.FILE;
     }
 
     /**
