@@ -27,7 +27,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
 
     // Properties
     public static final String JUNIT_REPORT_DIRECTORY = "junit.report.directory";
-    public static final String JUNIT_ERROR_SEVERITY = "junit.error.severity";
+    public static final String JUNIT_ERROR_SEVERITY = "junit.report.errorSeverity";
 
     // Default values
     public static final String DEFAULT_JUNIT_REPORT_DIRECTORY = "junit";
