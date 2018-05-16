@@ -140,18 +140,18 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
                 }
                 String content = sb.toString();
                 Severity severity = result.getSeverity();
-                if (severity.getLevel() < errorSeverity.getLevel()) {
-                    Failure failure = new Failure();
-                    failure.setMessage(rule.getDescription());
-                    failure.setContent(content);
-                    testcase.getFailure().add(failure);
-                    failures++;
-                } else {
+                if (severity.getLevel() <= errorSeverity.getLevel()) {
                     Error error = new Error();
                     error.setMessage(rule.getDescription());
                     error.setContent(content);
                     testcase.getError().add(error);
                     errors++;
+                } else {
+                    Failure failure = new Failure();
+                    failure.setMessage(rule.getDescription());
+                    failure.setContent(content);
+                    testcase.getFailure().add(failure);
+                    failures++;
                 }
             }
             tests++;

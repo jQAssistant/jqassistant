@@ -9,7 +9,7 @@ import org.junit.Before;
 /**
  * Abstract base class for server tests.
  */
-public class AbstractEmbeddedNeo4jServerTest extends AbstractPluginIT {
+public class AbstractEmbeddedNeo4jServerIT extends AbstractPluginIT {
 
     public static final int SERVER_PORT = 17474;
 

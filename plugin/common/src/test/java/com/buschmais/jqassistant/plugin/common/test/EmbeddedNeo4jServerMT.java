@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Manual test to start a server.
  */
-public class EmbeddedNeo4jServerMT extends AbstractEmbeddedNeo4jServerTest {
+public class EmbeddedNeo4jServerMT extends AbstractEmbeddedNeo4jServerIT {
 
     @Test
     public void server() throws IOException {
