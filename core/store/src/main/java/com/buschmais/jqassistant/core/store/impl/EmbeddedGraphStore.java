@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.store.impl;
 
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.ServiceLoader;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -29,11 +29,6 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private static final int AUTOCOMMIT_THRESHOLD = 32678;
 
-    private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
-    private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
-    private static final String PROPERTY_NEO4J_DBMS_ALLOW_FORMAT_MIGRATION = "neo4j.dbms.allow_format_migration";
-    private static final String PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED = "neo4j.dbms.connector.bolt.enabled";
-
     private EmbeddedNeo4jServer server;
 
     /**
@@ -50,46 +45,36 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         return server;
     }
 
+    @ToBeRemovedInVersion(major = 1, minor = 5)
     @Deprecated
     public GraphDatabaseService getGraphDatabaseService() {
-        LOGGER.warn("Access to the Neo4j GraphDatabaseService should be avoided.");
+        LOGGER.warn("Access to the Neo4j GraphDatabaseService is deprecated.");
         return server.getGraphDatabaseService();
     }
 
     @Override
     protected XOManagerFactory configure(XOUnit.XOUnitBuilder builder) {
-        XOManagerFactory xoManagerFactory = getXoManagerFactory(builder);
-        this.server = getServer(xoManagerFactory);
-        return xoManagerFactory;
-    }
-
-    private XOManagerFactory getXoManagerFactory(XOUnit.XOUnitBuilder builder) {
+        EmbeddedNeo4jServerFactory serverFactory = getEmbeddedNeo4jServerFactory();
         builder.provider(EmbeddedNeo4jXOProvider.class);
-        Properties properties = new Properties();
-        properties.put(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
-        properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
-        properties.put(PROPERTY_NEO4J_DBMS_ALLOW_FORMAT_MIGRATION, Boolean.TRUE.toString());
-        properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-        builder.properties(properties);
-        return XO.createXOManagerFactory(builder.build());
-    }
-
-    private EmbeddedNeo4jServer getServer(XOManagerFactory xoManagerFactory) {
-        ServiceLoader<EmbeddedNeo4jServerFactory> serverFactories = ServiceLoader.load(EmbeddedNeo4jServerFactory.class);
-        Iterator<EmbeddedNeo4jServerFactory> iterator = serverFactories.iterator();
-        EmbeddedNeo4jServer server;
-        if (iterator.hasNext()) {
-            EmbeddedNeo4jServerFactory serverFactory = iterator.next();
-            server = serverFactory.getServer();
-        } else {
-            throw new IllegalStateException("Cannot find server factory.");
-        }
+        serverFactory.configure(builder);
+        this.server = serverFactory.getServer();
         LOGGER.info("Using embedded Neo4j server " + server.getVersion());
+        XOManagerFactory xoManagerFactory = XO.createXOManagerFactory(builder.build());
         try (XOManager xoManager = xoManagerFactory.createXOManager()) {
             GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
             server.init(graphDatabaseService);
         }
-        return server;
+        return xoManagerFactory;
+    }
+
+    private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
+        ServiceLoader<EmbeddedNeo4jServerFactory> serverFactories = ServiceLoader.load(EmbeddedNeo4jServerFactory.class);
+        Iterator<EmbeddedNeo4jServerFactory> iterator = serverFactories.iterator();
+        if (iterator.hasNext()) {
+            return iterator.next();
+        } else {
+            throw new IllegalStateException("Cannot find server factory.");
+        }
     }
 
     @Override

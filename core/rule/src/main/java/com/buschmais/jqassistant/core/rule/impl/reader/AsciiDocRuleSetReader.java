@@ -77,22 +77,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private RuleConfiguration ruleConfiguration;
 
-    private Asciidoctor asciidoctor;
+    private Asciidoctor asciidoctor = null;
 
     private Treeprocessor treeprocessor;
 
     public AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
-        init();
-    }
-
-    private void init() {
-        asciidoctor = AsciidoctorFactory.getAsciidoctor();
-        treeprocessor = new Treeprocessor();
-        IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
-        JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-        extensionRegistry.treeprocessor(treeprocessor);
-        extensionRegistry.includeProcessor(includeProcessor);
     }
 
     @Override
@@ -125,8 +115,26 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         }
         OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
                 .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
-        asciidoctor.load(content, optionsBuilder.asMap());
+        getAsciidoctor().load(content, optionsBuilder.asMap());
         extractRules(source, singletonList(treeprocessor.getDocument()), builder);
+    }
+
+    /**
+     * Returns an {@link Asciidoctor} instance which is created lazliy to reduce
+     * startup time.
+     *
+     * @return The {@link Asciidoctor} instance.
+     */
+    private Asciidoctor getAsciidoctor() {
+        if (asciidoctor == null) {
+            asciidoctor = AsciidoctorFactory.getAsciidoctor();
+            treeprocessor = new Treeprocessor();
+            IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
+            JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
+            extensionRegistry.treeprocessor(treeprocessor);
+            extensionRegistry.includeProcessor(includeProcessor);
+        }
+        return asciidoctor;
     }
 
     /**

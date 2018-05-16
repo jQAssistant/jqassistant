@@ -49,7 +49,7 @@
         <org.asciidoctorj-diagram.version>1.5.8</org.asciidoctorj-diagram.version>
         <org.asciidoctorj-pdf.version>1.5.0-alpha.16</org.asciidoctorj-pdf.version>
         <net.sourceforge.plantuml.version>1.2018.5</net.sourceforge.plantuml.version>
-        <org.jruby.version>9.1.16.0</org.jruby.version>
+        <org.jruby.version>9.1.17.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
     </properties>
 
