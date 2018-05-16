@@ -78,7 +78,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     protected Severity failOnSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
 
     /**
-     * Defines the set of reports which shall be created by default. If empty all available reports will be used.
+     * Defines the set of reports which shall be created by default. If empty all
+     * available reports will be used.
      */
     @Parameter(property = "jqassistant.reportTypes")
     private Set<String> reportTypes;
@@ -150,8 +151,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         return reportPlugins;
     }
 
-    private Map<String, Object>
-    getReportProperties() {
+    private Map<String, Object> getReportProperties() {
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
