@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 
@@ -24,6 +25,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
 
     // Properties
     public static final String JUNIT_REPORT_DIRECTORY = "junit.report.directory";
+    public static final String JUNIT_FAILURE_SEVERITY = "junit.report.failureSeverity";
     public static final String JUNIT_ERROR_SEVERITY = "junit.report.errorSeverity";
 
     // Default values
@@ -36,7 +38,9 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     private Deque<Group> groups = new LinkedList<>();
     private long ruleBeginTimestamp;
     private Map<Group, GroupInfo> results = new HashMap<>();
-    private Severity errorSeverity = Severity.MAJOR;
+
+    private Severity failureSeverity = RuleConfiguration.DEFAULT.getDefaultConceptSeverity();
+    private Severity errorSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
 
     @Override
     public void initialize() throws ReportException {
@@ -52,13 +56,21 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
         String junitReportDirectory = (String) properties.get(JUNIT_REPORT_DIRECTORY);
         this.reportDirectory = junitReportDirectory != null ? new File(junitReportDirectory) : reportContext.getReportDirectory(DEFAULT_JUNIT_REPORT_DIRECTORY);
         this.reportDirectory.mkdirs();
+        String failureSeverity = (String) properties.get(JUNIT_FAILURE_SEVERITY);
+        if (failureSeverity != null) {
+            this.failureSeverity = getSeverity(failureSeverity);
+        }
         String errorSeverity = (String) properties.get(JUNIT_ERROR_SEVERITY);
         if (errorSeverity != null) {
-            try {
-                this.errorSeverity = Severity.fromValue(errorSeverity);
-            } catch (RuleException e) {
-                throw new ReportException("Cannot parse error severity " + errorSeverity, e);
-            }
+            this.errorSeverity = getSeverity(errorSeverity);
+        }
+    }
+
+    private Severity getSeverity(String errorSeverity) throws ReportException {
+        try {
+            return Severity.fromValue(errorSeverity);
+        } catch (RuleException e) {
+            throw new ReportException("Cannot parse error severity " + errorSeverity, e);
         }
     }
 
@@ -140,18 +152,18 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
                 }
                 String content = sb.toString();
                 Severity severity = result.getSeverity();
-                if (severity.getLevel() <= errorSeverity.getLevel()) {
-                    Error error = new Error();
-                    error.setMessage(rule.getDescription());
-                    error.setContent(content);
-                    testcase.getError().add(error);
-                    errors++;
-                } else {
+                if (severity.getLevel() <= failureSeverity.getLevel()) {
                     Failure failure = new Failure();
                     failure.setMessage(rule.getDescription());
                     failure.setContent(content);
                     testcase.getFailure().add(failure);
                     failures++;
+                } else if (severity.getLevel() <= errorSeverity.getLevel()) {
+                    Error error = new Error();
+                    error.setMessage(rule.getDescription());
+                    error.setContent(content);
+                    testcase.getError().add(error);
+                    errors++;
                 }
             }
             tests++;

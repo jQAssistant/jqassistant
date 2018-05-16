@@ -35,7 +35,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class JUnitReportPluginTest {
 
-    public static final String EXPECTED_CONTENT = "c = foo\n" + "---\n" + "c = bar\n";
+    private static final String EXPECTED_CONTENT = "c = foo\n" + "---\n" + "c = bar\n";
+
     private JUnitReportPlugin plugin = new JUnitReportPlugin();
 
     private ReportContext reportContext;
@@ -43,12 +44,15 @@ public class JUnitReportPluginTest {
     private JAXBUnmarshaller<Testsuite> unmarshaller = new JAXBUnmarshaller(Testsuite.class);
 
     private Group testGroup = Group.builder().id("test:Group").description("testGroup").build();
-    private Concept concept = Concept.builder().id("test:concept").description("testConcept").severity(Severity.MINOR).build();
-    private Concept majorConcept = Concept.builder().id("test:majorConcept").description("testMajorConcept").severity(Severity.MINOR).build();
-    private Concept criticalConcept = Concept.builder().id("test:criticalConcept").description("testCriticalConcept").severity(Severity.CRITICAL).build();
-    private Constraint constraint = Constraint.builder().id("test:constraint").description("testConstraint").severity(Severity.MAJOR).build();
-    private Constraint majorConstraint = Constraint.builder().id("test:majorConstraint").description("testMajorConstraint").severity(Severity.MAJOR).build();
-    private Constraint criticalConstraint = Constraint.builder().id("test:criticalConstraint").description("testCriticalConstraint").severity(Severity.CRITICAL)
+    private Concept concept = Concept.builder().id("test:Concept").description("testConcept").severity(Severity.MINOR).build();
+    private Concept majorConcept = Concept.builder().id("test:MajorConcept").description("testMajorConcept").severity(Severity.MAJOR).build();
+    private Concept blockerConcept = Concept.builder().id("test:BlockerConcept").description("testBlockerConcept").severity(Severity.BLOCKER).build();
+    private Concept criticalConcept = Concept.builder().id("test:CriticalConcept").description("testCriticalConcept").severity(Severity.CRITICAL).build();
+    private Constraint constraint = Constraint.builder().id("test:Constraint").description("testConstraint").severity(Severity.MINOR).build();
+    private Constraint majorConstraint = Constraint.builder().id("test:MajorConstraint").description("testMajorConstraint").severity(Severity.MAJOR).build();
+    private Constraint blockerConstraint = Constraint.builder().id("test:BlockerConstraint").description("testBlockerConstraint").severity(Severity.BLOCKER)
+            .build();
+    private Constraint criticalConstraint = Constraint.builder().id("test:CriticalConstraint").description("testCriticalConstraint").severity(Severity.CRITICAL)
             .build();
 
     @Before
@@ -61,6 +65,7 @@ public class JUnitReportPluginTest {
     @Test
     public void junitReport() throws ReportException, IOException {
         Map<String, Object> properties = new HashMap<>();
+        properties.put(JUnitReportPlugin.JUNIT_FAILURE_SEVERITY, Severity.BLOCKER.name());
         properties.put(JUnitReportPlugin.JUNIT_ERROR_SEVERITY, Severity.CRITICAL.name());
 
         plugin.configure(reportContext, properties);
@@ -69,8 +74,10 @@ public class JUnitReportPluginTest {
         process(constraint, SUCCESS);
         plugin.beginGroup(testGroup);
         process(majorConcept, FAILURE);
+        process(blockerConcept, FAILURE);
         process(criticalConcept, FAILURE);
         process(majorConstraint, FAILURE);
+        process(blockerConstraint, FAILURE);
         process(criticalConstraint, FAILURE);
         plugin.endGroup();
         plugin.end();
@@ -83,16 +90,20 @@ public class JUnitReportPluginTest {
         Testsuite rootTestSuite = getTestsuite(junitReportDirectory, "TEST-jQAssistant.xml");
         verifyTestSuite(rootTestSuite, 2, 0, 0);
         Map<String, Testcase> rootTestCases = getTestCases(rootTestSuite);
-        verifyTestCaseSuccess(rootTestCases.get("Concept_test_concept"), "jQAssistant");
-        verifyTestCaseSuccess(rootTestCases.get("Constraint_test_constraint"), "jQAssistant");
+        verifyTestCaseSuccess(rootTestCases.get("Concept_test_Concept"), "jQAssistant");
+        verifyTestCaseSuccess(rootTestCases.get("Constraint_test_Constraint"), "jQAssistant");
 
         Testsuite groupTestSuite = getTestsuite(junitReportDirectory, "TEST-jQAssistant-test_Group.xml");
-        verifyTestSuite(groupTestSuite, 4, 2, 2);
+        verifyTestSuite(groupTestSuite, 6, 2, 2);
         Map<String, Testcase> groupTestCases = getTestCases(groupTestSuite);
-        verifyTestCaseFailure(groupTestCases.get("Concept_test_majorConcept"), "jQAssistant-test_Group", "testMajorConcept");
-        verifyTestCaseFailure(groupTestCases.get("Constraint_test_majorConstraint"), "jQAssistant-test_Group", "testMajorConstraint");
-        verifyTestCaseError(groupTestCases.get("Concept_test_criticalConcept"), "jQAssistant-test_Group", "testCriticalConcept");
-        verifyTestCaseError(groupTestCases.get("Constraint_test_criticalConstraint"), "jQAssistant-test_Group", "testCriticalConstraint");
+
+        verifyTestCaseSuccess(groupTestCases.get("Concept_test_MajorConcept"), "jQAssistant-test_Group");
+        verifyTestCaseFailure(groupTestCases.get("Concept_test_BlockerConcept"), "jQAssistant-test_Group", "testBlockerConcept");
+        verifyTestCaseError(groupTestCases.get("Concept_test_CriticalConcept"), "jQAssistant-test_Group", "testCriticalConcept");
+
+        verifyTestCaseSuccess(groupTestCases.get("Constraint_test_MajorConstraint"), "jQAssistant-test_Group");
+        verifyTestCaseFailure(groupTestCases.get("Constraint_test_BlockerConstraint"), "jQAssistant-test_Group", "testBlockerConstraint");
+        verifyTestCaseError(groupTestCases.get("Constraint_test_CriticalConstraint"), "jQAssistant-test_Group", "testCriticalConstraint");
     }
 
     private Map<String, Testcase> getTestCases(Testsuite rootTestSuite) {
