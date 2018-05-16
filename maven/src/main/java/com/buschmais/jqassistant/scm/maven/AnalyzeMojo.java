@@ -20,7 +20,6 @@ import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.report.JUnitReportPlugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -78,9 +77,6 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Parameter(property = "jqassistant.failOnSeverity")
     protected Severity failOnSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
 
-    @Parameter(property = "jqassistant.junitReportDirectory")
-    private java.io.File junitReportDirectory;
-
     /**
      * Defines the set of reports which shall be created by default. If empty all available reports will be used.
      */
@@ -105,7 +101,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = getFailOnSeverity();
-        Map<String, Object> properties = getReportProperties(effectiveFailOnSeverity);
+        Map<String, Object> properties = getReportProperties();
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
@@ -155,15 +151,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     private Map<String, Object>
-    getReportProperties(Severity effectiveFailOnSeverity) {
+    getReportProperties() {
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
-        if (junitReportDirectory != null) {
-            properties.put(JUnitReportPlugin.JUNIT_REPORT_DIRECTORY, junitReportDirectory);
-        }
-        properties.put(JUnitReportPlugin.JUNIT_ERROR_SEVERITY, effectiveFailOnSeverity.name());
         return properties;
     }
 
