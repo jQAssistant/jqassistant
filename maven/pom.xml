@@ -63,7 +63,7 @@
         <profile>
             <id>neo4jv2</id>
             <activation>
-                <jdk>(,1.7]</jdk>
+                <jdk>[,1.8)</jdk>
             </activation>
             <properties>
                 <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
