@@ -196,6 +196,18 @@ public final class ReportHelper {
     }
 
     /**
+     * Escape the id of the given rule in a way such that it can be used as file
+     * name.
+     *
+     * @param rule
+     *            The rule.
+     * @return The escaped name.
+     */
+    public static String escapeRuleId(Rule rule) {
+        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
+    }
+
+    /**
      * Converts a value to its string representation.
      *
      * @param value
