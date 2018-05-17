@@ -133,7 +133,7 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
             Rule rule = result.getRule();
-            testcase.setName(rule.getClass().getSimpleName() + "_" + unescapeRuleId(rule));
+            testcase.setName(rule.getClass().getSimpleName() + "_" + ReportHelper.escapeRuleId(rule));
             testcase.setClassname(testSuiteId);
             testcase.setTime(toTime(time));
             List<Map<String, Object>> rows = result.getRows();
@@ -201,13 +201,9 @@ public class JUnitReportPlugin extends AbstractReportPlugin {
     private String getTestSuiteId(Group group) {
         StringBuilder testSuiteIdBuilder = new StringBuilder("jQAssistant");
         if (group != null) {
-            testSuiteIdBuilder.append('-').append(unescapeRuleId(group));
+            testSuiteIdBuilder.append('-').append(ReportHelper.escapeRuleId(group));
         }
         return testSuiteIdBuilder.toString();
-    }
-
-    private String unescapeRuleId(Rule rule) {
-        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
     }
 
     /**
