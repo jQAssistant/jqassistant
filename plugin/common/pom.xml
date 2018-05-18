@@ -85,6 +85,11 @@
             <type>test-jar</type>
         </dependency>
         <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>4.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
             <type>test-jar</type>

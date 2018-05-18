@@ -30,5 +30,6 @@
     </scanner>
     <report>
         <class id="junit">com.buschmais.jqassistant.plugin.common.impl.report.JUnitReportPlugin</class>
+        <class id="csv">com.buschmais.jqassistant.plugin.common.impl.report.CSVReportPlugin</class>
     </report>
 </jqa-plugin:jqassistant-plugin>
