@@ -37,7 +37,7 @@
     <concept id="junit5:ParameterizedTestMethod">
         <description>
             Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
-            labels them with "Test", "Paramterized", and "Junit5".
+            labels them with "Test", "Parameterized", and "Junit5".
         </description>
         <cypher><![CDATA[
             MATCH
