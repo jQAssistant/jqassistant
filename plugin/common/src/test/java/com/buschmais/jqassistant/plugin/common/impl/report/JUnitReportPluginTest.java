@@ -9,16 +9,13 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Testsuite;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -33,13 +30,9 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JUnitReportPluginTest {
+public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private static final String EXPECTED_CONTENT = "c = foo\n" + "---\n" + "c = bar\n";
-
-    private JUnitReportPlugin plugin = new JUnitReportPlugin();
-
-    private ReportContext reportContext;
 
     private JAXBUnmarshaller<Testsuite> unmarshaller = new JAXBUnmarshaller(Testsuite.class);
 
@@ -55,11 +48,8 @@ public class JUnitReportPluginTest {
     private Constraint criticalConstraint = Constraint.builder().id("test:CriticalConstraint").description("testCriticalConstraint").severity(Severity.CRITICAL)
             .build();
 
-    @Before
-    public void setUp() throws ReportException {
-        plugin.initialize();
-        File outputDirectory = new File("target/test");
-        reportContext = new ReportContextImpl(outputDirectory);
+    public JUnitReportPluginTest() {
+        super(new JUnitReportPlugin());
     }
 
     @Test
@@ -70,21 +60,19 @@ public class JUnitReportPluginTest {
 
         plugin.configure(reportContext, properties);
         plugin.begin();
-        process(concept, SUCCESS);
-        process(constraint, SUCCESS);
+        apply(concept, SUCCESS);
+        apply(constraint, SUCCESS);
         plugin.beginGroup(testGroup);
-        process(majorConcept, FAILURE);
-        process(blockerConcept, FAILURE);
-        process(criticalConcept, FAILURE);
-        process(majorConstraint, FAILURE);
-        process(blockerConstraint, FAILURE);
-        process(criticalConstraint, FAILURE);
+        apply(majorConcept, FAILURE);
+        apply(blockerConcept, FAILURE);
+        apply(criticalConcept, FAILURE);
+        apply(majorConstraint, FAILURE);
+        apply(blockerConstraint, FAILURE);
+        apply(criticalConstraint, FAILURE);
         plugin.endGroup();
         plugin.end();
 
-        File reportDirectory = new File(reportContext.getOutputDirectory(), "report");
-        assertThat(reportDirectory.exists(), equalTo(true));
-        File junitReportDirectory = new File(reportDirectory, "junit");
+        File junitReportDirectory = reportContext.getReportDirectory("junit");
         assertThat(junitReportDirectory.exists(), equalTo(true));
 
         Testsuite rootTestSuite = getTestsuite(junitReportDirectory, "TEST-jQAssistant.xml");
@@ -155,19 +143,8 @@ public class JUnitReportPluginTest {
         assertThat(Double.valueOf(testCase.getTime()), greaterThanOrEqualTo(0.0));
     }
 
-    private void process(Constraint constraint, Result.Status status) throws ReportException {
-        plugin.beginConstraint(constraint);
-        plugin.setResult(this.<ExecutableRule> createResult(constraint, status));
-        plugin.endConstraint();
-    }
-
-    private void process(Concept concept, Result.Status status) throws ReportException {
-        plugin.beginConcept(concept);
-        plugin.setResult(this.<ExecutableRule> createResult(concept, status));
-        plugin.endConcept();
-    }
-
-    private <T extends ExecutableRule<?>> Result<T> createResult(T rule, Result.Status status) {
+    @Override
+    protected <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status) {
         HashMap<String, Object> row1 = new HashMap<>();
         row1.put("c", "foo");
         HashMap<String, Object> row2 = new HashMap<>();
