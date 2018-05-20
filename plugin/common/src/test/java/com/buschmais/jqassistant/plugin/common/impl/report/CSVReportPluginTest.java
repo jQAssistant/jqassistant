@@ -78,14 +78,17 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         Map<String, Object> properties = Collections.emptyMap();
         plugin.configure(reportContext, properties);
         plugin.begin();
-        apply(conceptWithRows, SUCCESS);
+        apply(conceptWithoutRows, SUCCESS);
         plugin.end();
 
         File csvReportDirectory = reportContext.getReportDirectory("csv");
         assertThat(csvReportDirectory.exists(), equalTo(true));
 
         File report = new File(csvReportDirectory, "test_conceptWithoutRows.csv");
-        assertThat(report.exists(), equalTo(false));
+        assertThat(report.exists(), equalTo(true));
+
+        String content = FileUtils.readFileToString(report);
+        assertThat(content, equalTo(""));
     }
 
     @Override
