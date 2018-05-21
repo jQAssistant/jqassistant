@@ -4,17 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,9 +23,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-@Ignore("Running on win, problems on unix. Need to verify it.")
 @RunWith(MockitoJUnitRunner.class)
 public class CSVReportPluginTest extends AbstractReportPluginTest {
 
@@ -47,10 +48,18 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         File csvReportDirectory = reportContext.getReportDirectory("csv");
         assertThat(csvReportDirectory.exists(), equalTo(true));
 
-        File report = new File(csvReportDirectory, "test_conceptWithRows.csv");
-        assertThat(report.exists(), equalTo(true));
+        File reportFile = new File(csvReportDirectory, "test_ConceptWithRows.csv");
+        assertThat(reportFile.exists(), equalTo(true));
 
-        String content = FileUtils.readFileToString(report);
+        List<ReportContext.Report<?>> reports = reportContext.getReports(conceptWithRows);
+        assertThat(reports.size(), equalTo(1));
+        ReportContext.Report<?> report = reports.get(0);
+        assertThat(report.getRule(), is(conceptWithRows));
+        assertThat(report.getLabel(), equalTo("CSV"));
+        assertThat(report.getReportType(), equalTo(ReportContext.ReportType.LINK));
+        assertThat(report.getUrl(), equalTo(reportFile.toURI().toURL()));
+
+        String content = FileUtils.readFileToString(reportFile);
         assertThat(content, equalTo("\"String\",\"Double\",\"Named\",\"EscapedString\"\n" + "\"foo\",\"42.0\",\"Test\",\"\"\"'\"\n"));
     }
 
@@ -68,7 +77,7 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         File csvReportDirectory = reportContext.getReportDirectory("csv");
         assertThat(csvReportDirectory.exists(), equalTo(true));
 
-        File report = new File(csvReportDirectory, "test_conceptWithRows.csv");
+        File report = new File(csvReportDirectory, "test_ConceptWithRows.csv");
         assertThat(report.exists(), equalTo(true));
 
         String content = FileUtils.readFileToString(report);
