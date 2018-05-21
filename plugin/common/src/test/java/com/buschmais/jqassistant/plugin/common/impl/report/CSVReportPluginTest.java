@@ -95,7 +95,7 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         File csvReportDirectory = reportContext.getReportDirectory("csv");
         assertThat(csvReportDirectory.exists(), equalTo(true));
 
-        File report = new File(csvReportDirectory, "test_conceptWithoutRows.csv");
+        File report = new File(csvReportDirectory, "test_ConceptWithoutRows.csv");
         assertThat(report.exists(), equalTo(true));
 
         String content = FileUtils.readFileToString(report);
