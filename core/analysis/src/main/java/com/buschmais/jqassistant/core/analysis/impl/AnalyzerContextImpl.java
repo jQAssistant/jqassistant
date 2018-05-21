@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
  * Implementation of the {@link AnalyzerContext}.
  */
 public class AnalyzerContextImpl implements AnalyzerContext {
+
+    private static final Verification DEFAULT_VERIFICATION = RowCountVerification.builder().build();
 
     private Store store;
 
@@ -50,9 +53,18 @@ public class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, AnalyzerContext context)
+    public <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows)
             throws RuleException {
         Verification verification = executable.getVerification();
+        if (verification == null) {
+            getLogger().debug("Using default verification for '{}'." + executable);
+            verification = DEFAULT_VERIFICATION;
+        }
+        return verify(executable, columnNames, rows, verification);
+    }
+
+    @Override
+    public <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, Verification verification) throws RuleException {
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());
         if (strategy == null) {
             throw new RuleException("Result verification not supported: " + verification.getClass().getName());

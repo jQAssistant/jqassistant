@@ -37,10 +37,7 @@ public class VerificationTest {
     private void verifyDefault(RuleSet ruleSet) throws NoConceptException {
         Concept concept = ruleSet.getConceptBucket().getById("test:DefaultVerification");
         Verification verification = concept.getVerification();
-        assertThat(verification, instanceOf(RowCountVerification.class));
-        RowCountVerification rowCountVerification = (RowCountVerification) verification;
-        assertThat(rowCountVerification.getMin(), nullValue());
-        assertThat(rowCountVerification.getMax(), nullValue());
+        assertThat(verification, nullValue());
     }
 
     private void verifyCustomizedDefault(RuleSet ruleSet) throws NoConceptException {

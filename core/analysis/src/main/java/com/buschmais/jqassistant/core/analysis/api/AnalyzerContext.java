@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.impl.AnalyzerContextImpl;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;
@@ -40,13 +40,29 @@ public interface AnalyzerContext {
      *            The column names.
      * @param rows
      *            The rows.
-     * @param context
-     *            The {@link AnalyzerContextImpl}.
      * @return The status.
      * @throws RuleException
      *             If no valid verification strategy can be found.
      */
-    <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, AnalyzerContext context)
-            throws RuleException;
+    <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows) throws RuleException;
 
+    /**
+     * Verifies the rows returned by a cypher query for an executable.
+     *
+     * @param <T>
+     *            The type of the executable.
+     * @param executable
+     *            The executable.
+     * @param columnNames
+     *            The column names.
+     * @param rows
+     *            The rows.
+     * @param verification
+     *            The {@link Verification} to perform.
+     * @return The status.
+     * @throws RuleException
+     *             If no valid verification strategy can be found.
+     */
+    <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, Verification verification)
+            throws RuleException;
 }

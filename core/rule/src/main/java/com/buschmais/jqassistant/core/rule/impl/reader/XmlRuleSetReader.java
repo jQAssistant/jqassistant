@@ -32,7 +32,6 @@ public class XmlRuleSetReader implements RuleSetReader {
     private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.4.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
-    private static final RowCountVerification DEFAULT_VERIFICATION = RowCountVerification.builder().build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
@@ -127,8 +126,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
-        return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
-                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
+        return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
+                .parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
     }
 
     /**
@@ -167,8 +166,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
-        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated)
-                .executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
+        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
+                .parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
     }
 
     private Executable<?> createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
@@ -195,16 +194,16 @@ public class XmlRuleSetReader implements RuleSetReader {
         if (verificationType != null) {
             RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
             AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
-            if (rowCountVerificationType != null) {
-                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
-            } else if (aggregationVerificationType != null) {
+            if (aggregationVerificationType != null) {
                 return AggregationVerification.builder().column(aggregationVerificationType.getColumn()).min(aggregationVerificationType.getMin())
                         .max(aggregationVerificationType.getMax()).build();
+            } else if (rowCountVerificationType != null) {
+                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
             } else {
                 throw new RuleException("Unsupported verification " + verificationType);
             }
         }
-        return DEFAULT_VERIFICATION;
+        return null;
     }
 
     private Map<String, Boolean> getRequiresConcepts(List<? extends ReferenceType> referenceTypes) {

@@ -222,14 +222,16 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     private Verification getVerification(Attributes attributes) {
-        Verification verification;
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
-            verification = AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
+           return AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
                     .max(attributes.getInt(AGGREGATION_MAX)).build();
-        } else {
-            verification = RowCountVerification.builder().min(attributes.getInt(ROW_COUNT_MIN)).max(attributes.getInt(ROW_COUNT_MAX)).build();
         }
-        return verification;
+        Integer min = attributes.getInt(ROW_COUNT_MIN);
+        Integer max = attributes.getInt(ROW_COUNT_MAX);
+        if (min !=null || max!=null) {
+            return RowCountVerification.builder().min(min).max(max).build();
+        }
+        return null;
     }
 
     /**

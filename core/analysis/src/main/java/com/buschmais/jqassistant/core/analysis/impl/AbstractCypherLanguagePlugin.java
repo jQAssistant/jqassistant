@@ -63,7 +63,7 @@ public abstract class AbstractCypherLanguagePlugin extends AbstractRuleLanguageP
      */
     protected <T extends ExecutableRule<?>> Status getStatus(T executableRule, List<String> columnNames, List<Map<String, Object>> rows,
             AnalyzerContext context) throws RuleException {
-        return context.verify(executableRule, columnNames, rows, context);
+        return context.verify(executableRule, columnNames, rows);
     }
 
 }
