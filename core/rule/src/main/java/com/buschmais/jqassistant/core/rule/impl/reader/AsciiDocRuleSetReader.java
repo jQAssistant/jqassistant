@@ -182,12 +182,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Verification verification = getVerification(attributes);
             Report report = getReport(executableRuleBlock);
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
-                Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConceptSeverity());
+                Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConceptSeverity());
                 Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
                         .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
-                Severity severity = getSeverity(executableRuleBlock, ruleConfiguration.getDefaultConstraintSeverity());
+                Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConstraintSeverity());
                 Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
                         .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConstraint(constraint);
@@ -223,12 +223,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private Verification getVerification(Attributes attributes) {
         if (AGGREGATION.equals(attributes.getString(VERIFY))) {
-           return AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
+            return AggregationVerification.builder().column(attributes.getString(AGGREGATION_COLUMN)).min(attributes.getInt(AGGREGATION_MIN))
                     .max(attributes.getInt(AGGREGATION_MAX)).build();
         }
         Integer min = attributes.getInt(ROW_COUNT_MIN);
         Integer max = attributes.getInt(ROW_COUNT_MAX);
-        if (min !=null || max!=null) {
+        if (min != null || max != null) {
             return RowCountVerification.builder().min(min).max(max).build();
         }
         return null;
@@ -271,7 +271,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
-        Severity severity = getSeverity(groupBlock, ruleConfiguration.getDefaultGroupSeverity());
+        Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultGroupSeverity());
         Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).conceptIds(concepts)
                 .constraintIds(constraints).groupIds(groups).build();
         ruleSetBuilder.addGroup(group);
@@ -320,18 +320,18 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Extract the optional severity of a rule.
      *
-     * @param part
-     *            The part representing a rule.
+     * @param attributes
+     *            The attributes of the rule.
      * @param defaultSeverity
      *            The default severity to use if no severity is specified.
      * @return The severity.
      */
-    private Severity getSeverity(AbstractBlock part, Severity defaultSeverity) throws RuleException {
-        Object severity = part.getAttributes().get(SEVERITY);
+    private Severity getSeverity(Attributes attributes, Severity defaultSeverity) throws RuleException {
+        String severity = attributes.getString(SEVERITY);
         if (severity == null) {
             return defaultSeverity;
         }
-        Severity value = Severity.fromValue(severity.toString().toLowerCase());
+        Severity value = Severity.fromValue(severity.toLowerCase());
         return value != null ? value : defaultSeverity;
     }
 
