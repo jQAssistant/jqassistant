@@ -907,12 +907,11 @@ p a > code:hover {
 #footer {
     width: 100%;
     max-width: 62.5em;
-    background-color: #747270;
     padding: 1.25em;
 }
 
 #footer-text {
-    color: #3d3a37;
+    color: #c8c8c8;
     line-height: 1.44;
 }
 
