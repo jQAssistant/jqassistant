@@ -12,6 +12,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     private ScopePluginRepository scopePluginRepository;
     private RulePluginRepository rulePluginRepository;
     private RuleLanguagePluginRepository ruleLanguagePluginRepository;
+    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
     private ReportPluginRepository reportPluginRepository;
 
     private ClassLoader classLoader;
@@ -28,6 +29,7 @@ public class PluginRepositoryImpl implements PluginRepository {
         this.scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         this.ruleLanguagePluginRepository = new RuleLanguagePluginRepositoryImpl(pluginConfigurationReader);
+        this.ruleSourceReaderPluginRepository = new RuleSourceReaderPluginRepositoryImpl(pluginConfigurationReader);
         this.reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
         classLoader = pluginConfigurationReader.getClassLoader();
     }
@@ -55,6 +57,11 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public RuleLanguagePluginRepository getRuleLanguagePluginRepository() {
         return ruleLanguagePluginRepository;
+    }
+
+    @Override
+    public RuleSourceReaderPluginRepository getRuleSourceReaderPluginRepository() {
+        return ruleSourceReaderPluginRepository;
     }
 
     @Override

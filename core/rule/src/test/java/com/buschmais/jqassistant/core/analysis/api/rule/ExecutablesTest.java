@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.io.File;
 
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
@@ -18,19 +19,19 @@ public class ExecutablesTest {
 
     @Test
     public void xml() throws Exception {
-        verifyRuleset(readRuleSet("/executables.xml"));
+        verifyRuleset(readRuleSet("/executables.xml", RuleConfiguration.DEFAULT));
     }
 
     @Test
     public void asciidoc() throws Exception {
-        RuleSet ruleSet = readRuleSet("/executables.adoc");
+        RuleSet ruleSet = readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
         verifyRuleset(ruleSet);
         verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, AbstractBlock.class, "table");
     }
 
     @Test
     public void plantuml() throws Exception {
-        RuleSet ruleSet = readRuleSet("/executables.adoc");
+        RuleSet ruleSet = readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
         Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, AbstractBlock.class, "plantuml");
         AbstractBlock abstractBlock = (AbstractBlock) concept.getExecutable().getSource();
         String imagesDirectoryAttribute = (String) abstractBlock.getDocument().getAttributes().get(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR);

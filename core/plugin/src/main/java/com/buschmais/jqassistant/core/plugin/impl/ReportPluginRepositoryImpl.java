@@ -26,7 +26,6 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
      */
     public ReportPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.reportPlugins = getReportPlugins(plugins);
     }
 

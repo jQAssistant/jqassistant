@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -13,13 +15,13 @@ public class RuleDependencyReaderTest {
 
     @Test
     public void asciidoc() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.adoc", RuleConfiguration.DEFAULT);
         verifyRules(ruleSet);
     }
 
     @Test
     public void xml() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.xml");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.xml", RuleConfiguration.DEFAULT);
         verifyRules(ruleSet);
     }
 

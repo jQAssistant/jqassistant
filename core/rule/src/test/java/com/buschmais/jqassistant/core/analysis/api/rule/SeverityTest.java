@@ -42,7 +42,7 @@ public class SeverityTest {
 
     @Test
     public void asciidocSeverity() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", RuleConfiguration.DEFAULT);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", Severity.BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint",
@@ -51,7 +51,7 @@ public class SeverityTest {
 
     @Test
     public void xmlSeverity() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", RuleConfiguration.DEFAULT);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", Severity.BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint",

@@ -24,7 +24,6 @@ public class ScopePluginRepositoryImpl extends AbstractPluginRepository implemen
      */
     public ScopePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.scopes = Collections.unmodifiableMap(this.getScopes(plugins));
     }
 

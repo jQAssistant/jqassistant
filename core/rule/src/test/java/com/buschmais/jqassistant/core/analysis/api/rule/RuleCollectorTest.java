@@ -17,9 +17,9 @@ public class RuleCollectorTest {
 
     @Test
     public void testReadCompoundSources() throws Exception {
+        RuleCollector ruleCollector = new RuleCollector(RuleSetTestHelper.getDefaultRuleSourceReaderPlugins(RuleConfiguration.DEFAULT));
         File adocFile = ClasspathResource.getFile("/junit-without-assert.adoc");
         File xmlFile = ClasspathResource.getFile("/test-concepts.xml");
-        RuleCollector ruleCollector = new RuleCollector(RuleConfiguration.builder().build());
         RuleSet ruleSet = ruleCollector.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
         assertThat(ruleSet.getConceptBucket().size(), equalTo(3));
         assertThat(ruleSet.getConstraintBucket().size(), equalTo(2));

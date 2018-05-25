@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReader;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
@@ -39,11 +39,11 @@ import static org.asciidoctor.OptionsBuilder.options;
  * @author mh
  * @since 12.10.14
  */
-public class AsciiDocRuleSourceReader implements RuleSourceReader {
+public class AsciiDocRuleSourceReaderPlugin implements RuleSourceReaderPlugin {
 
     private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList("concept", "constraint"));
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSourceReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSourceReaderPlugin.class);
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
 

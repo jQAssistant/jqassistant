@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReader;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReaderPlugin;
 
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class XmlRuleSourceReaderTest {
 
     @Test
     public void readScriptRule() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml", RuleConfiguration.DEFAULT);
         ConceptBucket conceptBucket = ruleSet.getConceptBucket();
         assertThat(conceptBucket.size(), equalTo(2));
         assertThat(conceptBucket.getIds(), hasItems("test:JavaScriptConcept", "test:JavaScriptExecutableConcept"));
@@ -40,7 +40,7 @@ public class XmlRuleSourceReaderTest {
 
     @Test
     public void ruleParameters() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml", RuleConfiguration.DEFAULT);
         Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
         Concept conceptWithDefaultValues = ruleSet.getConceptBucket().getById("test:ConceptWithParametersAndDefaultValues");
@@ -68,7 +68,7 @@ public class XmlRuleSourceReaderTest {
     public void testReadUrlSource() throws Exception {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
-        RuleSourceReader reader = new XmlRuleSourceReader();
+        RuleSourceReaderPlugin reader = new XmlRuleSourceReaderPlugin();
         reader.initialize();
         reader.configure(RuleConfiguration.builder().build());
         UrlRuleSource ruleSource = new UrlRuleSource(url);

@@ -25,12 +25,11 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
      */
     public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.scannerPlugins = getScannerPlugins(plugins);
     }
 
     @Override
-    public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) throws PluginRepositoryException {
+    public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
             scannerPlugin.configure(scannerContext, new HashMap<>(properties));
         }

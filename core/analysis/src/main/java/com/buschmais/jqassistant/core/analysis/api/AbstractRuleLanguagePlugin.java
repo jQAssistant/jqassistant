@@ -12,7 +12,7 @@ public abstract class AbstractRuleLanguagePlugin implements RuleLanguagePlugin {
     }
 
     @Override
-    public void configure(AnalyzerContext analyzerContext, Map<String, Object> properties) {
+    public void configure(Map<String, Object> properties) {
     }
 
 }

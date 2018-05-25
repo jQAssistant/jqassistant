@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.util.Properties;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -38,13 +40,13 @@ public class ReportTest {
 
     @Test
     public void asciidocReport() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc", RuleConfiguration.DEFAULT);
         verifyReport(ruleSet);
     }
 
     @Test
     public void xmlReport() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml", RuleConfiguration.DEFAULT);
         verifyReport(ruleSet);
     }
 

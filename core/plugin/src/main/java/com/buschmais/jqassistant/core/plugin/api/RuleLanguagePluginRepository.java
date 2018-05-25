@@ -13,7 +13,9 @@ public interface RuleLanguagePluginRepository {
     /**
      * Return the {@link RuleLanguagePlugin}s.
      *
+     * @param properties
+     *            The configuration properties.
      * @return The {@link RuleLanguagePlugin}s.
      */
-    Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException;
+    Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins(Map<String, Object> properties) throws PluginRepositoryException;
 }

@@ -10,9 +10,9 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 /**
  * Defines the interface of the rule source reader.
  */
-public interface RuleSourceReader {
+public interface RuleSourceReaderPlugin {
 
-    void initialize() throws RuleException;
+    void initialize();
 
     /**
      * Configure the reader.

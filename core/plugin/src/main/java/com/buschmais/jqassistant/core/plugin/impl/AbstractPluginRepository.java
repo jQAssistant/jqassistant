@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractPluginRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginRepository.class);
+
+    protected final List<JqassistantPlugin> plugins;
 
     /*
      * The class loader to use for loading classes and resources.
@@ -27,6 +32,7 @@ public abstract class AbstractPluginRepository {
      *            .
      */
     protected AbstractPluginRepository(PluginConfigurationReader pluginConfigurationReader) {
+        this.plugins = pluginConfigurationReader.getPlugins();
         this.classLoader = pluginConfigurationReader.getClassLoader();
         LOGGER.debug("Using classloader '{}'", this.classLoader);
     }
@@ -44,7 +50,7 @@ public abstract class AbstractPluginRepository {
      */
     protected <T> Class<T> getType(String typeName) throws PluginRepositoryException {
         try {
-            return (Class<T>) classLoader.loadClass(typeName);
+            return (Class<T>) classLoader.loadClass(typeName.trim());
         } catch (ClassNotFoundException e) {
             throw new PluginRepositoryException("Cannot find class " + typeName, e);
         }

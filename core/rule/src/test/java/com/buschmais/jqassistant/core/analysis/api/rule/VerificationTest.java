@@ -13,17 +13,15 @@ import static org.hamcrest.Matchers.nullValue;
 
 public class VerificationTest {
 
-    public static final RuleConfiguration RULE_CONFIGURATION = RuleConfiguration.builder().build();
-
     @Test
     public void adoc() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", RULE_CONFIGURATION);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", RuleConfiguration.DEFAULT);
         verifyRuleSet(ruleSet);
     }
 
     @Test
     public void xml() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", RULE_CONFIGURATION);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", RuleConfiguration.DEFAULT);
         verifyRuleSet(ruleSet);
     }
 

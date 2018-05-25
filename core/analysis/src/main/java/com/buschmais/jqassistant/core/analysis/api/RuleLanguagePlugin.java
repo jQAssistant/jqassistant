@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Plugin interface for rule languages.
@@ -27,12 +28,10 @@ public interface RuleLanguagePlugin {
      * allows re-configuring a plugin instance at runtime (e.g. in a Maven
      * multi-module build process).
      *
-     * @param analyzerContext
-     *            The scanner context.
      * @param properties
      *            The plugin properties.
      */
-    void configure(AnalyzerContext analyzerContext, Map<String, Object> properties);
+    void configure(Map<String, Object> properties);
 
     /**
      * Return the languages supported by this plugin.
@@ -63,8 +62,7 @@ public interface RuleLanguagePlugin {
      * @param severity
      *            The effective {@link Severity}.
      * @param context
-     *            The {@link AnalyzerContext} providing access to the
-     *            {@link com.buschmais.jqassistant.core.store.api.Store}.
+     *            The {@link AnalyzerContext} providing access to the {@link Store}.
      * @param <T>
      *            The {@link ExecutableRule} type.
      * @return The {@link Result}.

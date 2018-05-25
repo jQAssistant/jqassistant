@@ -21,12 +21,11 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
      */
     public ModelPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
     }
 
     @Override
-    public List<Class<?>> getDescriptorTypes() throws PluginRepositoryException {
+    public List<Class<?>> getDescriptorTypes() {
         return descriptorTypes;
     }
 

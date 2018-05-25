@@ -12,21 +12,31 @@ import com.buschmais.jqassistant.core.plugin.schema.v1.RuleLanguageType;
 
 public class RuleLanguagePluginRepositoryImpl extends AbstractPluginRepository implements RuleLanguagePluginRepository {
 
-    private final List<JqassistantPlugin> plugins;
+    private Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins;
 
-    public RuleLanguagePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
+    public RuleLanguagePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        this.plugins = pluginConfigurationReader.getPlugins();
+        ruleLanguagePlugins = initialize();
     }
 
     @Override
-    public Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
+    public Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins(Map<String, Object> properties) {
+        for (Collection<RuleLanguagePlugin> languagePlugins : ruleLanguagePlugins.values()) {
+            for (RuleLanguagePlugin languagePlugin : languagePlugins) {
+                languagePlugin.configure(properties);
+            }
+        }
+        return ruleLanguagePlugins;
+    };
+
+    private Map<String, Collection<RuleLanguagePlugin>> initialize() throws PluginRepositoryException {
         Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins = new HashMap<>();
         for (JqassistantPlugin plugin : plugins) {
-            RuleLanguageType pluginLanguage = plugin.getLanguage();
+            RuleLanguageType pluginLanguage = plugin.getRuleLanguage();
             if (pluginLanguage != null) {
                 for (IdClassType pluginType : pluginLanguage.getClazz()) {
                     RuleLanguagePlugin ruleLanguagePlugin = createInstance(pluginType.getValue());
+                    ruleLanguagePlugin.initialize();
                     for (String language : ruleLanguagePlugin.getLanguages()) {
                         Collection<RuleLanguagePlugin> plugins = ruleLanguagePlugins.get(language.toLowerCase());
                         if (plugins == null) {
