@@ -25,6 +25,7 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
@@ -164,6 +165,7 @@ public abstract class AbstractPluginIT {
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
     private ReportPluginRepository reportPluginRepository;
+    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
     private RuleLanguagePluginRepository ruleLanguagePluginRepository;
 
     @Before
@@ -174,6 +176,7 @@ public abstract class AbstractPluginIT {
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
+        ruleSourceReaderPluginRepository = new RuleSourceReaderPluginRepositoryImpl(pluginConfigurationReader);
         ruleLanguagePluginRepository = new RuleLanguagePluginRepositoryImpl(pluginConfigurationReader);
 
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
@@ -184,7 +187,8 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(rulePluginRepository.getRuleSources());
-        RuleCollector ruleCollector = new RuleCollector(RuleConfiguration.builder().build());
+        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins = ruleSourceReaderPluginRepository.getRuleSourceReaderPlugins(RuleConfiguration.DEFAULT);
+        RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
         ruleSet = ruleCollector.read(sources);
     }
 
@@ -200,7 +204,7 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
-        return ruleLanguagePluginRepository.getRuleLanguagePlugins();
+        return ruleLanguagePluginRepository.getRuleLanguagePlugins(Collections.emptyMap());
     }
 
     /**
