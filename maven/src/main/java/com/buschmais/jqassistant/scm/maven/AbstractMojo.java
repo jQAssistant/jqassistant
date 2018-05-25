@@ -14,15 +14,13 @@ import javax.inject.Inject;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -257,14 +255,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        RuleSetReader ruleSetReader = new CompoundRuleSetReader(getRuleConfiguration());
         try {
-            ruleSetReader.read(sources, ruleSetBuilder);
+            RuleCollector ruleCollector = new RuleCollector(getRuleConfiguration());
+            return ruleCollector.read(sources);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
         }
-        return ruleSetBuilder.getRuleSet();
     }
 
     protected RuleConfiguration getRuleConfiguration() {
