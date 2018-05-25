@@ -25,10 +25,9 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -185,10 +184,8 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(rulePluginRepository.getRuleSources());
-        RuleSetReader ruleSetReader = new CompoundRuleSetReader(RuleConfiguration.builder().build());
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        ruleSetReader.read(sources, ruleSetBuilder);
-        ruleSet = ruleSetBuilder.getRuleSet();
+        RuleCollector ruleCollector = new RuleCollector(RuleConfiguration.builder().build());
+        ruleSet = ruleCollector.read(sources);
     }
 
     @Before
