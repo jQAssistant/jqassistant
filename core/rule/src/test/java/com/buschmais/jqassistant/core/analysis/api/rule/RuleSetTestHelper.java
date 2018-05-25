@@ -7,7 +7,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
 
 import org.hamcrest.Matchers;
 
@@ -25,13 +25,11 @@ public final class RuleSetTestHelper {
     }
 
     public static RuleSet readRuleSet(String resource, RuleConfiguration ruleConfiguration) throws RuleException {
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        CompoundRuleSetReader reader = new CompoundRuleSetReader(ruleConfiguration);
+        RuleCollector ruleCollector = new RuleCollector(ruleConfiguration);
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);
-        reader.read(Collections.singletonList(ruleSource), ruleSetBuilder);
-        return ruleSetBuilder.getRuleSet();
+        return ruleCollector.read(Collections.singletonList(ruleSource));
     }
 
     public static <T> void verifyParameter(Map<String, Parameter> parameters, String name, Parameter.Type type, T defaultValue) {

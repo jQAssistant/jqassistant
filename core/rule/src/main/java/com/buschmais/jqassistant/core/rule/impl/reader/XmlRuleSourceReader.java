@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.rule.schema.v1.*;
@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link RuleSetReader} implementation.
+ * A {@link RuleSourceReader} implementation.
  */
-public class XmlRuleSetReader implements RuleSetReader {
+public class XmlRuleSourceReader implements RuleSourceReader {
 
     private static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
     private static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
@@ -33,14 +33,14 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSourceReader.class);
 
     private RuleConfiguration ruleConfiguration;
 
     private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
 
-    public XmlRuleSetReader(RuleConfiguration ruleConfiguration) {
-        this.ruleConfiguration = ruleConfiguration;
+    @Override
+    public void initialize() {
         Map<String, String> namespaceMappings = new HashMap<>();
         namespaceMappings.put(NAMESPACE_RULES_1_0, NAMESPACE_RULES_1_4);
         namespaceMappings.put(NAMESPACE_RULES_1_1, NAMESPACE_RULES_1_4);
@@ -50,13 +50,19 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     @Override
-    public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
-        for (RuleSource ruleSource : sources) {
-            if (ruleSource.isType(RuleSource.Type.XML)) {
-                List<JqassistantRules> rules = readXmlSource(ruleSource);
-                convert(rules, ruleSource, ruleSetBuilder);
-            }
-        }
+    public void configure(RuleConfiguration ruleConfiguration) {
+        this.ruleConfiguration = ruleConfiguration;
+    }
+
+    @Override
+    public boolean accepts(RuleSource ruleSource) {
+        return ruleSource.getId().toLowerCase().endsWith(".xml");
+    }
+
+    @Override
+    public void read(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
+        List<JqassistantRules> rules = readXmlSource(ruleSource);
+        convert(rules, ruleSource, ruleSetBuilder);
     }
 
     /**

@@ -1,16 +1,21 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReader;
+import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
+import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReader;
 
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 
-public class XmlRuleSetReaderTest {
+public class XmlRuleSourceReaderTest {
 
     @Test
     public void readScriptRule() throws Exception {
@@ -59,4 +64,24 @@ public class XmlRuleSetReaderTest {
         RuleSetTestHelper.verifyParameter(parameters, "stringParam", Parameter.Type.STRING, assertDefaultValue ? "FortyTwo" : null);
     }
 
+    @Test
+    public void testReadUrlSource() throws Exception {
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        URL url = getClass().getResource("/test-concepts.xml");
+        RuleSourceReader reader = new XmlRuleSourceReader();
+        reader.initialize();
+        reader.configure(RuleConfiguration.builder().build());
+        UrlRuleSource ruleSource = new UrlRuleSource(url);
+        assertThat(reader.accepts(ruleSource), equalTo(true));
+        reader.read(ruleSource, ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+        assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConstraintBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConceptBucket().getIds(), contains("java:Throwable"));
+        assertThat(ruleSet.getConstraintBucket().getIds(), contains("example:ConstructorOfDateMustNotBeUsed"));
+        assertThat(ruleSet.getGroupsBucket().size(), equalTo(1));
+
+        Group group = ruleSet.getGroupsBucket().getById("default");
+        assertThat(group.getId(), equalTo("default"));
+    }
 }

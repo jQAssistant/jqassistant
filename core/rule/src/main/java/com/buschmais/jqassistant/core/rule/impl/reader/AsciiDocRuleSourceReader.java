@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReader;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
@@ -39,11 +39,11 @@ import static org.asciidoctor.OptionsBuilder.options;
  * @author mh
  * @since 12.10.14
  */
-public class AsciiDocRuleSetReader implements RuleSetReader {
+public class AsciiDocRuleSourceReader implements RuleSourceReader {
 
     private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList("concept", "constraint"));
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSourceReader.class);
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
 
@@ -81,30 +81,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private Treeprocessor treeprocessor;
 
-    public AsciiDocRuleSetReader(RuleConfiguration ruleConfiguration) {
+    @Override
+    public void initialize() {
+    }
+
+    @Override
+    public void configure(RuleConfiguration ruleConfiguration) {
         this.ruleConfiguration = ruleConfiguration;
     }
 
     @Override
-    public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
-        for (RuleSource source : sources) {
-            if (source.isType(RuleSource.Type.AsciiDoc)) {
-                readDocument(source, ruleSetBuilder);
-            }
-        }
+    public boolean accepts(RuleSource ruleSource) {
+        return ruleSource.getId().toLowerCase().endsWith(".adoc");
     }
 
-    /**
-     * Reads and decodes a rule source.
-     *
-     * @param source
-     *            The source.
-     * @param builder
-     *            The builder to use.
-     * @throws RuleException
-     *             If building fails.
-     */
-    private void readDocument(final RuleSource source, final RuleSetBuilder builder) throws RuleException {
+    @Override
+    public void read(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
         File tempDir;
         String content;
         try (InputStream stream = source.getInputStream();) {
@@ -116,7 +108,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
                 .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
         getAsciidoctor().load(content, optionsBuilder.asMap());
-        extractRules(source, singletonList(treeprocessor.getDocument()), builder);
+        extractRules(source, singletonList(treeprocessor.getDocument()), ruleSetBuilder);
     }
 
     /**
