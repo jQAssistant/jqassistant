@@ -5,18 +5,16 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
@@ -60,16 +58,17 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             File selectedDirectory = new File(ruleDirectory);
             // read rules from rules directory
             sources.addAll(readRulesDirectory(selectedDirectory));
-            List<RuleSource> ruleSources;
-            try {
-                ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
-            } catch (PluginRepositoryException e) {
-                throw new CliExecutionException("Cannot get rule plugin repository.", e);
-            }
+            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
+        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins;
         try {
-            RuleCollector ruleCollector = new RuleCollector(ruleConfiguration);
+            ruleSourceReaderPlugins = pluginRepository.getRuleSourceReaderPluginRepository().getRuleSourceReaderPlugins(ruleConfiguration);
+        } catch (RuleException e) {
+            throw new CliExecutionException("Cannot get rule source reader plugins.", e);
+        }
+        try {
+            RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
             return ruleCollector.read(sources);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot read rules.", e);
@@ -141,12 +140,12 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
                 .create(CMDLINE_OPTION_CONSTRAINTS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONCEPTS).withDescription("The concepts to apply.").withValueSeparator(',').hasArgs()
                 .create(CMDLINE_OPTION_CONCEPTS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY).withDescription("The default severity for groups.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY).withDescription("The default severity for concepts.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY).withDescription("The default severity for constraints.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY).withDescription("The default severity for groups.").withValueSeparator(',')
+                .hasArgs().create(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY).withDescription("The default severity for concepts.")
+                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY).withDescription("The default severity for constraints.")
+                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
     }
 
     protected Severity getSeverity(String severityValue) throws CliConfigurationException {

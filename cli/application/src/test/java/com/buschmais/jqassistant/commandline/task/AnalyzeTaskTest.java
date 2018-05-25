@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
 import org.apache.commons.cli.CommandLine;
 import org.junit.Assert;
@@ -35,19 +37,23 @@ public class AnalyzeTaskTest {
     private RulePluginRepository rulePluginRepository;
 
     @Mock
+    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
+
+    @Mock
     private RuleLanguagePluginRepository ruleLanguagePluginRepository;
 
     @Before
-    public void before() throws PluginRepositoryException {
+    public void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getModelPluginRepository()).thenReturn(modelPluginRepository);
         when(pluginRepository.getReportPluginRepository()).thenReturn(reportPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
+        when(pluginRepository.getRuleSourceReaderPluginRepository()).thenReturn(ruleSourceReaderPluginRepository);
         when(pluginRepository.getRuleLanguagePluginRepository()).thenReturn(ruleLanguagePluginRepository);
     }
 
     @Test
-    public void loadPlugins() throws CliExecutionException, PluginRepositoryException {
+    public void loadPlugins() throws CliExecutionException, PluginRepositoryException, RuleException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
         Map<String, Object> pluginProperties = new HashMap<>();
         analyzeTask.initialize(pluginRepository, pluginProperties);
@@ -64,6 +70,8 @@ public class AnalyzeTaskTest {
         Assert.assertThat(propertiesCaptor.getValue(), is(pluginProperties));
         verify(rulePluginRepository).getRuleSources();
         verify(modelPluginRepository).getDescriptorTypes();
+        verify(ruleSourceReaderPluginRepository).getRuleSourceReaderPlugins(any(RuleConfiguration.class));
+        verify(ruleLanguagePluginRepository).getRuleLanguagePlugins(anyMap());
     }
 
     private void stubOption(CommandLine standardOptions, String option, String value) {
@@ -71,3 +79,4 @@ public class AnalyzeTaskTest {
         when(standardOptions.getOptionValue(option)).thenReturn(value);
     }
 }
+

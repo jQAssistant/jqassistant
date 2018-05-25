@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -16,12 +14,8 @@ public class AvailableScopesTask extends AbstractAnalyzeTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableScopesTask.class);
 
     @Override
-    protected void executeTask(Store store) throws CliExecutionException {
+    protected void executeTask(Store store) {
         ScopeHelper scopeHelper = new ScopeHelper(LOGGER);
-        try {
-            scopeHelper.printScopes(pluginRepository.getScopePluginRepository().getScopes());
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot get scope plugin repository.", e);
-        }
+        scopeHelper.printScopes(pluginRepository.getScopePluginRepository().getScopes());
     }
 }

@@ -122,7 +122,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
      */
     private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws CliExecutionException {
         try {
-            return pluginRepository.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
+            return pluginRepository.getRuleLanguagePluginRepository().getRuleLanguagePlugins(Collections.<String, Object>emptyMap());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get report plugins.", e);
         }
