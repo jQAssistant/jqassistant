@@ -3,20 +3,17 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
@@ -241,6 +238,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
+        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         if (rulesUrl != null) {
             getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
             sources.add(new UrlRuleSource(rulesUrl));
@@ -252,11 +250,16 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                     addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
                 }
             }
-            List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
+            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
+        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins;
         try {
-            RuleCollector ruleCollector = new RuleCollector(getRuleConfiguration());
+            ruleSourceReaderPlugins = pluginRepository.getRuleSourceReaderPluginRepository().getRuleSourceReaderPlugins(getRuleConfiguration());
+        } catch (RuleException e) {
+            throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);        }
+        try {
+            RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
             return ruleCollector.read(sources);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
@@ -393,7 +396,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             StoreConfiguration configuration = getStoreConfiguration(rootModule);
             List<Class<?>> descriptorTypes;
             try {
-                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+                descriptorTypes = pluginRepositoryProvider.getPluginRepository().getModelPluginRepository().getDescriptorTypes();
             } catch (PluginRepositoryException e) {
                 throw new MojoExecutionException("Cannot determine model types.", e);
             }

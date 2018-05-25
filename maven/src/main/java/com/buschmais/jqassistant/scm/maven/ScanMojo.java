@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
@@ -80,14 +81,15 @@ public class ScanMojo extends AbstractModuleMojo {
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        ScannerPluginRepository scannerPluginRepository = pluginRepositoryProvider.getScannerPluginRepository();
+        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         Map<String, ScannerPlugin<?, ?>> scannerPlugins;
         try {
             scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, getPluginProperties());
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot determine scanner plugins.", e);
         }
-        ScopePluginRepository scopePluginRepository = pluginRepositoryProvider.getScopePluginRepository();
+        ScopePluginRepository scopePluginRepository = pluginRepository.getScopePluginRepository();
         Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, scopePluginRepository.getScopes());
         store.beginTransaction();
         try {

@@ -144,7 +144,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws MojoExecutionException {
         Map<String, ReportPlugin> reportPlugins;
         try {
-            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(reportContext, properties);
+            reportPlugins = pluginRepositoryProvider.getPluginRepository().getReportPluginRepository().getReportPlugins(reportContext, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get report plugins.", e);
         }
@@ -161,7 +161,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws MojoExecutionException {
         try {
-            return pluginRepositoryProvider.getRuleLanguagePluginRepository().getRuleLanguagePlugins();
+            return pluginRepositoryProvider.getPluginRepository().getRuleLanguagePluginRepository().getRuleLanguagePlugins(Collections.<String, Object>emptyMap());
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get rule language plugins.", e);
         }
