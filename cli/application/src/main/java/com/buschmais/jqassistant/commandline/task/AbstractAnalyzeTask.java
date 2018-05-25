@@ -14,15 +14,13 @@ import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSetReader;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -70,14 +68,12 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             }
             sources.addAll(ruleSources);
         }
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        RuleSetReader ruleSetReader = new CompoundRuleSetReader(ruleConfiguration);
         try {
-            ruleSetReader.read(sources, ruleSetBuilder);
+            RuleCollector ruleCollector = new RuleCollector(ruleConfiguration);
+            return ruleCollector.read(sources);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot read rules.", e);
         }
-        return ruleSetBuilder.getRuleSet();
     }
 
     /**
