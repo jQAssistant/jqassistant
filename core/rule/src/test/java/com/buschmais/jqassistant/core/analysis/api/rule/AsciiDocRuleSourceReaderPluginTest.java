@@ -15,7 +15,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class AsciiDocRuleSourceReaderTest {
+public class AsciiDocRuleSourceReaderPluginTest {
 
     @Test
     public void cypherRules() throws Exception {

@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class XmlRuleSourceReaderTest {
+public class XmlRuleSourceReaderPluginTest {
 
     @Test
     public void readScriptRule() throws Exception {
