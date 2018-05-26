@@ -11,8 +11,8 @@ public class PluginRepositoryImpl implements PluginRepository {
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
     private RulePluginRepository rulePluginRepository;
-    private RuleLanguagePluginRepository ruleLanguagePluginRepository;
-    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
+    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
+    private RuleParserPluginRepository ruleParserPluginRepository;
     private ReportPluginRepository reportPluginRepository;
 
     private ClassLoader classLoader;
@@ -28,8 +28,8 @@ public class PluginRepositoryImpl implements PluginRepository {
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleLanguagePluginRepository = new RuleLanguagePluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleSourceReaderPluginRepository = new RuleSourceReaderPluginRepositoryImpl(pluginConfigurationReader);
+        this.ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
+        this.ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
         this.reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
         classLoader = pluginConfigurationReader.getClassLoader();
     }
@@ -55,13 +55,13 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public RuleLanguagePluginRepository getRuleLanguagePluginRepository() {
-        return ruleLanguagePluginRepository;
+    public RuleInterpreterPluginRepository getRuleInterpreterPluginRepository() {
+        return ruleInterpreterPluginRepository;
     }
 
     @Override
-    public RuleSourceReaderPluginRepository getRuleSourceReaderPluginRepository() {
-        return ruleSourceReaderPluginRepository;
+    public RuleParserPluginRepository getRuleParserPluginRepository() {
+        return ruleParserPluginRepository;
     }
 
     @Override

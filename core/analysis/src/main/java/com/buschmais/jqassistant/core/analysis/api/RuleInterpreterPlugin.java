@@ -9,15 +9,15 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * Plugin interface for rule languages.
+ * Plugin interface for rule interpreters.
  */
-public interface RuleLanguagePlugin {
+public interface RuleInterpreterPlugin {
 
     /**
      * Initialize the plugin.
      *
      * Life cycle callback for a plugin to do static initialization. Will be exactly
-     * once after the plugin has been instantiated.
+     * invoked once after the plugin has been instantiated.
      */
     void initialize();
 

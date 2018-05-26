@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.rule.schema.v1.*;
@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link RuleSourceReaderPlugin} implementation.
+ * A {@link RuleParserPlugin} implementation.
  */
-public class XmlRuleSourceReaderPlugin implements RuleSourceReaderPlugin {
+public class XmlRuleParserPlugin implements RuleParserPlugin {
 
     private static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
     private static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
@@ -33,7 +33,7 @@ public class XmlRuleSourceReaderPlugin implements RuleSourceReaderPlugin {
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSourceReaderPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleParserPlugin.class);
 
     private RuleConfiguration ruleConfiguration;
 

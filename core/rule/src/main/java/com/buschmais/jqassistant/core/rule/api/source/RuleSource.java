@@ -1,52 +1,15 @@
 package com.buschmais.jqassistant.core.rule.api.source;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 /**
+ * Defines a source containing rules.
+ *
  * @author mh
  * @since 12.10.14
  */
 public abstract class RuleSource {
-
-    public boolean isType(Type type) {
-        Type thisType = getType();
-        if (thisType == null) {
-            throw new IllegalArgumentException("No matching type found for " + getId() + " available types " + Arrays.toString(Type.values()));
-        }
-        return type.equals(thisType);
-    }
-
-    public enum Type {
-        AsciiDoc("adoc"), XML("xml");
-        String ext;
-
-        Type(String ext) {
-            this.ext = ext;
-        }
-
-        public boolean matches(File file) {
-            return matches(file.getName());
-        }
-
-        boolean matches(String path) {
-            return path.toLowerCase().endsWith("." + ext);
-        }
-    }
-
-    protected Type selectTypeById() {
-        String path = getId();
-        for (Type type : Type.values()) {
-            if (type.matches(path)) {
-                return type;
-            }
-        }
-        return null;
-    }
-
-    protected abstract Type getType();
 
     public abstract String getId();
 

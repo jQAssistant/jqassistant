@@ -6,26 +6,26 @@ import java.util.List;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
  * @author Michael Hunger
  */
-public class RuleCollector {
+public class RuleParser {
 
-    private Collection<? extends RuleSourceReaderPlugin> ruleSourceReaderPlugins;
+    private Collection<? extends RuleParserPlugin> ruleParserPlugins;
 
-    public RuleCollector(Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins) {
-        this.ruleSourceReaderPlugins = ruleSourceReaderPlugins;
+    public RuleParser(Collection<RuleParserPlugin> ruleParserPlugins) {
+        this.ruleParserPlugins = ruleParserPlugins;
     }
 
-    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
+    public RuleSet parse(List<? extends RuleSource> sources) throws RuleException {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         for (RuleSource source : sources) {
-            for (RuleSourceReaderPlugin ruleSourceReader : ruleSourceReaderPlugins) {
-                if (ruleSourceReader.accepts(source)) {
-                    ruleSourceReader.read(source, ruleSetBuilder);
+            for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
+                if (ruleParserPlugin.accepts(source)) {
+                    ruleParserPlugin.read(source, ruleSetBuilder);
                 }
             }
         }

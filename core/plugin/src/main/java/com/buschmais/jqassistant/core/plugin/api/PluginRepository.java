@@ -13,9 +13,9 @@ public interface PluginRepository {
 
     RulePluginRepository getRulePluginRepository();
 
-    RuleLanguagePluginRepository getRuleLanguagePluginRepository();
+    RuleInterpreterPluginRepository getRuleInterpreterPluginRepository();
 
-    RuleSourceReaderPluginRepository getRuleSourceReaderPluginRepository();
+    RuleParserPluginRepository getRuleParserPluginRepository();
 
     ReportPluginRepository getReportPluginRepository();
 

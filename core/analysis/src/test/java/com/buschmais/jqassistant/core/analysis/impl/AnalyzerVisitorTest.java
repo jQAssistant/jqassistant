@@ -5,7 +5,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -55,7 +55,7 @@ public class AnalyzerVisitorTest {
     @Mock
     private AnalyzerConfiguration configuration;
 
-    private Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins = new HashMap<>();
+    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     private AnalyzerVisitor analyzerVisitor;
 
@@ -81,10 +81,10 @@ public class AnalyzerVisitorTest {
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenReturn(result);
 
-        List<RuleLanguagePlugin> languagePlugins = new ArrayList<>();
-        languagePlugins.add(new CypherLanguagePlugin());
-        ruleLanguagePlugins.put("cypher", languagePlugins);
-        analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleLanguagePlugins, reportWriter, console);
+        List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
+        languagePlugins.add(new CypherRuleInterpreterPlugin());
+        ruleInterpreterPlugins.put("cypher", languagePlugins);
+        analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleInterpreterPlugins, reportWriter, console);
     }
 
     /**
@@ -208,7 +208,7 @@ public class AnalyzerVisitorTest {
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, ruleLanguagePlugins, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, ruleInterpreterPlugins, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
@@ -225,7 +225,7 @@ public class AnalyzerVisitorTest {
         when(store.executeQuery(Mockito.eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleLanguagePlugins, reportWriter, console);
+            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleInterpreterPlugins, reportWriter, console);
             analyzerVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {

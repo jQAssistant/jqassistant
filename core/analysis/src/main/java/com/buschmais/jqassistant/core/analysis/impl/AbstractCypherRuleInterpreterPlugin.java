@@ -5,10 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AbstractRuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.AbstractRuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -17,9 +17,9 @@ import com.buschmais.xo.api.Query;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status;
 
 /**
- * Abstract base class for {@link RuleLanguagePlugin}s executing cypher queries.
+ * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher queries.
  */
-public abstract class AbstractCypherLanguagePlugin extends AbstractRuleLanguagePlugin {
+public abstract class AbstractCypherRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
 
     protected <T extends ExecutableRule<?>> Result<T> execute(String cypher, T executableRule, Map<String, Object> parameters, Severity severity,
             AnalyzerContext context) throws RuleException {

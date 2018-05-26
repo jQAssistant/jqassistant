@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 
 import org.junit.Test;
@@ -13,14 +13,14 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class RuleCollectorTest {
+public class RuleParserTest {
 
     @Test
     public void testReadCompoundSources() throws Exception {
-        RuleCollector ruleCollector = new RuleCollector(RuleSetTestHelper.getDefaultRuleSourceReaderPlugins(RuleConfiguration.DEFAULT));
+        RuleParser ruleParser = new RuleParser(RuleSetTestHelper.getDefaultRuleParserPlugins(RuleConfiguration.DEFAULT));
         File adocFile = ClasspathResource.getFile("/junit-without-assert.adoc");
         File xmlFile = ClasspathResource.getFile("/test-concepts.xml");
-        RuleSet ruleSet = ruleCollector.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
+        RuleSet ruleSet = ruleParser.parse(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
         assertThat(ruleSet.getConceptBucket().size(), equalTo(3));
         assertThat(ruleSet.getConstraintBucket().size(), equalTo(2));
 

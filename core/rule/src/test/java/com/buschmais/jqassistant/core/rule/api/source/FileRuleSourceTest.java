@@ -4,15 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.rule.api.matcher.RuleSourceMatcher;
 import com.buschmais.jqassistant.core.shared.mockito.MethodNotMockedAnswer;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import static com.buschmais.jqassistant.core.rule.api.matcher.RuleSourceMatcher.matchesById;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -50,10 +51,10 @@ public class FileRuleSourceTest {
 
         List<RuleSource> sources = FileRuleSource.getRuleSources(ruleDirectory);
 
-        assertThat(sources, hasSize(2));
-        assertThat(sources, not(Matchers.hasItem(RuleSourceMatcher.matchesById("/path/readme.md"))));
-        assertThat(sources, Matchers.hasItem(RuleSourceMatcher.matchesById("/path/rules.xml")));
-        assertThat(sources, Matchers.hasItem(RuleSourceMatcher.matchesById("/path/rules.adoc")));
+        assertThat(sources, hasSize(3));
+        assertThat(sources, hasItem(matchesById("/path/readme.md")));
+        assertThat(sources, hasItem(matchesById("/path/rules.xml")));
+        assertThat(sources, hasItem(matchesById("/path/rules.adoc")));
     }
 
     @Test
@@ -72,7 +73,7 @@ public class FileRuleSourceTest {
 
         List<RuleSource> sources = FileRuleSource.getRuleSources(ruleDirectory);
 
-        assertThat(sources, Matchers.empty());
+        assertThat(sources.size(), equalTo(1));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class FileRuleSourceTest {
         List<RuleSource> sources = FileRuleSource.getRuleSources(ruleDirectory);
 
         assertThat(sources, hasSize(1));
-        assertThat(sources, Matchers.contains(RuleSourceMatcher.matchesById("/path/rules.adoc")));
+        assertThat(sources, Matchers.contains(matchesById("/path/rules.adoc")));
     }
 
     @Test
@@ -112,6 +113,6 @@ public class FileRuleSourceTest {
         List<RuleSource> sources = FileRuleSource.getRuleSources(ruleDirectory);
 
         assertThat(sources, hasSize(1));
-        assertThat(sources, Matchers.contains(RuleSourceMatcher.matchesById("/path/rules.xml")));
+        assertThat(sources, Matchers.contains(matchesById("/path/rules.xml")));
     }
 }

@@ -4,12 +4,12 @@
     <model>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
     </model>
-    <ruleSourceReader>
-        <class>com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReaderPlugin</class>
-        <class>com.buschmais.jqassistant.core.rule.impl.reader.AsciiDocRuleSourceReaderPlugin</class>
-    </ruleSourceReader>
-    <ruleLanguage>
-        <class>com.buschmais.jqassistant.core.analysis.impl.CypherLanguagePlugin</class>
-        <class>com.buschmais.jqassistant.core.analysis.impl.ScriptLanguagePlugin</class>
-    </ruleLanguage>
+    <ruleParser>
+        <class>com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin</class>
+        <class>com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin</class>
+    </ruleParser>
+    <ruleInterpreter>
+        <class>com.buschmais.jqassistant.core.analysis.impl.CypherRuleInterpreterPlugin</class>
+        <class>com.buschmais.jqassistant.core.analysis.impl.ScriptRuleInterpreterPlugin</class>
+    </ruleInterpreter>
 </jqa-plugin:jqassistant-plugin>

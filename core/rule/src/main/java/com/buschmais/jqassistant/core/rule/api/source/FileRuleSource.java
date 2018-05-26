@@ -23,11 +23,6 @@ public class FileRuleSource extends RuleSource {
     }
 
     @Override
-    protected Type getType() {
-        return selectTypeById();
-    }
-
-    @Override
     public String getId() {
         return file.getAbsolutePath();
     }
@@ -41,12 +36,8 @@ public class FileRuleSource extends RuleSource {
         final List<File> ruleFiles = new ArrayList<>();
         new DirectoryWalker<File>() {
             @Override
-            protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                boolean isFile = file.isFile();
-                boolean isAsciiDocFile = Type.AsciiDoc.matches(file);
-                boolean isXMLFile = Type.XML.matches(file);
-
-                if (isFile && (isAsciiDocFile || isXMLFile)) {
+            protected void handleFile(File file, int depth, Collection<File> results) {
+                if (file.isFile()) {
                     results.add(file);
                 }
             }

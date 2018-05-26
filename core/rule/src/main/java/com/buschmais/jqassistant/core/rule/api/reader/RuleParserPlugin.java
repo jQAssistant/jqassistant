@@ -8,14 +8,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
- * Defines the interface of the rule source reader.
+ * Defines the interface of the rule parser.
  */
-public interface RuleSourceReaderPlugin {
+public interface RuleParserPlugin {
 
+    /**
+     * Initialize the parser.
+     */
     void initialize();
 
     /**
-     * Configure the reader.
+     * Configure the parser.
      *
      * @param ruleConfiguration
      *            The {@link RuleConfiguration} to use.

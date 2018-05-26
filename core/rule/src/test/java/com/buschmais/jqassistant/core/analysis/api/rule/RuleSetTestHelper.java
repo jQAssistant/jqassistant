@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.AsciiDocRuleSourceReaderPlugin;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
-import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
+import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
 import org.hamcrest.Matchers;
 
@@ -26,11 +26,11 @@ public final class RuleSetTestHelper {
     }
 
     public static RuleSet readRuleSet(String resource, RuleConfiguration ruleConfiguration) throws RuleException {
-        RuleCollector ruleCollector = new RuleCollector(getDefaultRuleSourceReaderPlugins(ruleConfiguration));
+        RuleParser ruleParser = new RuleParser(getDefaultRuleParserPlugins(ruleConfiguration));
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);
-        return ruleCollector.read(Collections.singletonList(ruleSource));
+        return ruleParser.parse(Collections.singletonList(ruleSource));
     }
 
     public static <T> void verifyParameter(Map<String, Parameter> parameters, String name, Parameter.Type type, T defaultValue) {
@@ -41,12 +41,12 @@ public final class RuleSetTestHelper {
         assertThat(parameter.getDefaultValue(), Matchers.<Object> equalTo(defaultValue));
     }
 
-    public static List<RuleSourceReaderPlugin> getDefaultRuleSourceReaderPlugins(RuleConfiguration ruleConfiguration) throws RuleException {
-        List<RuleSourceReaderPlugin> ruleSourceReaderPlugins = asList(new XmlRuleSourceReaderPlugin(), new AsciiDocRuleSourceReaderPlugin());
-        for (RuleSourceReaderPlugin ruleSourceReaderPlugin : ruleSourceReaderPlugins) {
-            ruleSourceReaderPlugin.initialize();
-            ruleSourceReaderPlugin.configure(ruleConfiguration);
+    public static List<RuleParserPlugin> getDefaultRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException {
+        List<RuleParserPlugin> ruleParserPlugins = asList(new XmlRuleParserPlugin(), new AsciidocRuleParserPlugin());
+        for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
+            ruleParserPlugin.initialize();
+            ruleParserPlugin.configure(ruleConfiguration);
         }
-        return ruleSourceReaderPlugins;
+        return ruleParserPlugins;
     }
 }

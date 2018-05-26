@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class XmlRuleSourceReaderPluginTest {
+public class XmlRuleParserPluginTest {
 
     @Test
     public void readScriptRule() throws Exception {
@@ -68,7 +68,7 @@ public class XmlRuleSourceReaderPluginTest {
     public void testReadUrlSource() throws Exception {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
-        RuleSourceReaderPlugin reader = new XmlRuleSourceReaderPlugin();
+        RuleParserPlugin reader = new XmlRuleParserPlugin();
         reader.initialize();
         reader.configure(RuleConfiguration.builder().build());
         UrlRuleSource ruleSource = new UrlRuleSource(url);

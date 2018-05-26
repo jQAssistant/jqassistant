@@ -7,7 +7,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -26,7 +26,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private Map<String, String> ruleParameters;
     private ReportPlugin reportPlugin;
     private AnalyzerContext analyzerContext;
-    private Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins;
+    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
 
     /**
      * Constructor.
@@ -37,18 +37,18 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      *            The rule parameter.s
      * @param store
      *            The context.getStore().
-     * @param ruleLanguagePlugins
-     *            The {@link RuleLanguagePlugin}s.
+     * @param ruleInterpreterPlugins
+     *            The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
      *            The report writer.
      * @param log
      *            The {@link Logger}.
      */
     AnalyzerVisitor(AnalyzerConfiguration configuration, Map<String, String> ruleParameters, Store store,
-            Map<String, Collection<RuleLanguagePlugin>> ruleLanguagePlugins, ReportPlugin reportPlugin, Logger log) {
+                    Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins, ReportPlugin reportPlugin, Logger log) {
         this.configuration = configuration;
         this.ruleParameters = ruleParameters;
-        this.ruleLanguagePlugins = ruleLanguagePlugins;
+        this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
         this.analyzerContext = new AnalyzerContextImpl(store, log, initVerificationStrategies());
     }
@@ -146,11 +146,11 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {
         Map<String, Object> ruleParameters = getRuleParameters(executableRule);
         Executable<?> executable = executableRule.getExecutable();
-        Collection<RuleLanguagePlugin> languagePlugins = ruleLanguagePlugins.get(executable.getLanguage());
+        Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
         if (languagePlugins == null) {
             throw new RuleException("Could not determine plugin to execute " + executableRule);
         }
-        for (RuleLanguagePlugin languagePlugin : languagePlugins) {
+        for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
             if (languagePlugin.accepts(executableRule)) {
                 Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
                 if (result != null) {

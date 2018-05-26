@@ -11,8 +11,8 @@
                 <xs:element name="scope" type="jqassistant-plugin:ScopeType" minOccurs="0"/>
                 <xs:element name="scanner" type="jqassistant-plugin:ScannerType" minOccurs="0"/>
                 <xs:element name="rules" type="jqassistant-plugin:RulesType" minOccurs="0"/>
-                <xs:element name="ruleSourceReader" type="jqassistant-plugin:RuleSourceReaderType" minOccurs="0"/>
-                <xs:element name="ruleLanguage" type="jqassistant-plugin:RuleLanguageType" minOccurs="0"/>
+                <xs:element name="ruleParser" type="jqassistant-plugin:RuleParserType" minOccurs="0"/>
+                <xs:element name="ruleInterpreter" type="jqassistant-plugin:RuleInterpreterType" minOccurs="0"/>
                 <xs:element name="report" type="jqassistant-plugin:ReportType" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="required"/>
@@ -43,13 +43,13 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="RuleSourceReaderType">
+    <xs:complexType name="RuleParserType">
         <xs:sequence>
             <xs:element name="class" type="jqassistant-plugin:IdClassType" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="RuleLanguageType">
+    <xs:complexType name="RuleInterpreterType">
         <xs:sequence>
             <xs:element name="class" type="jqassistant-plugin:IdClassType" maxOccurs="unbounded"/>
         </xs:sequence>

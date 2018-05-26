@@ -7,20 +7,21 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.buschmais.jqassistant.core.analysis.api.AbstractRuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.AbstractRuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ScriptLanguagePlugin extends AbstractRuleLanguagePlugin {
+public class ScriptRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptLanguagePlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptRuleInterpreterPlugin.class);
 
     /**
      * Defines the available variables for scripts.
@@ -37,7 +38,7 @@ public class ScriptLanguagePlugin extends AbstractRuleLanguagePlugin {
     private ScriptEngineManager scriptEngineManager;
     private Set<String> languages = new TreeSet<>();
 
-    public ScriptLanguagePlugin() {
+    public ScriptRuleInterpreterPlugin() {
         this.scriptEngineManager = new ScriptEngineManager();
         for (ScriptEngineFactory factory : scriptEngineManager.getEngineFactories()) {
             for (String name : factory.getNames()) {
@@ -54,7 +55,7 @@ public class ScriptLanguagePlugin extends AbstractRuleLanguagePlugin {
 
     @Override
     public <T extends ExecutableRule<?>> boolean accepts(T executableRule) {
-        return true;
+        return executableRule.getExecutable() instanceof SourceExecutable;
     }
 
     @Override

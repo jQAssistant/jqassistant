@@ -5,19 +5,19 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
 import static java.util.Collections.singletonList;
 
 /**
- * Implementation of a
- * {@link com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin} for
- * executing Cypher rules.
+ * Implementation of a {@link RuleInterpreterPlugin} for executing Cypher rules.
  */
-public class CypherLanguagePlugin extends AbstractCypherLanguagePlugin {
+public class CypherRuleInterpreterPlugin extends AbstractCypherRuleInterpreterPlugin {
 
     private static final Collection<String> LANGUAGES = singletonList("cypher");
 
@@ -28,7 +28,7 @@ public class CypherLanguagePlugin extends AbstractCypherLanguagePlugin {
 
     @Override
     public <T extends ExecutableRule<?>> boolean accepts(T executableRule) {
-        return true;
+        return executableRule.getExecutable() instanceof SourceExecutable;
     }
 
     @Override

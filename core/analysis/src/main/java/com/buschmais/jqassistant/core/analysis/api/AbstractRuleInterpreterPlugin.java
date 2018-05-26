@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.Map;
 
 /**
- * Abstract base class for {@link RuleLanguagePlugin}s.
+ * Abstract base class for {@link RuleInterpreterPlugin}s.
  */
-public abstract class AbstractRuleLanguagePlugin implements RuleLanguagePlugin {
+public abstract class AbstractRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     @Override
     public void initialize() {
