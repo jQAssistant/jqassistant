@@ -13,11 +13,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -253,14 +253,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
-        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins;
+        Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleSourceReaderPlugins = pluginRepository.getRuleSourceReaderPluginRepository().getRuleSourceReaderPlugins(getRuleConfiguration());
+            ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(getRuleConfiguration());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);        }
         try {
-            RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
-            return ruleCollector.read(sources);
+            RuleParser ruleParser = new RuleParser(ruleParserPlugins);
+            return ruleParser.parse(sources);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
         }

@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -95,7 +95,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
-        getLog().info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
+        getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
 
         RuleSet ruleSet = readRules(rootModule);
@@ -109,7 +109,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportPlugin, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
@@ -159,11 +159,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         return properties;
     }
 
-    private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws MojoExecutionException {
+    private Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws MojoExecutionException {
         try {
-            return pluginRepositoryProvider.getPluginRepository().getRuleLanguagePluginRepository().getRuleLanguagePlugins(Collections.<String, Object>emptyMap());
+            return pluginRepositoryProvider.getPluginRepository().getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap());
         } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get rule language plugins.", e);
+            throw new MojoExecutionException("Cannot get rule interpreter plugins.", e);
         }
     }
 
