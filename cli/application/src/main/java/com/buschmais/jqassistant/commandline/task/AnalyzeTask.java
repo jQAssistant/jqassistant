@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -67,7 +67,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -114,15 +114,15 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     /**
-     * Get all configured rule language plugins.
+     * Get all configured rule interpreter plugins.
      *
-     * @return The list of rule language plugins.
+     * @return The map of rule interpreter plugins grouped by their supported languages.
      * @throws CliExecutionException
      *             If the plugins cannot be loaded or configured.
      */
-    private Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws CliExecutionException {
+    private Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws CliExecutionException {
         try {
-            return pluginRepository.getRuleLanguagePluginRepository().getRuleLanguagePlugins(Collections.<String, Object>emptyMap());
+            return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get report plugins.", e);
         }

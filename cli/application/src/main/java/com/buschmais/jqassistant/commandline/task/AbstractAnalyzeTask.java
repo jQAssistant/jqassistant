@@ -14,11 +14,11 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -61,15 +61,15 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
-        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins;
+        Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleSourceReaderPlugins = pluginRepository.getRuleSourceReaderPluginRepository().getRuleSourceReaderPlugins(ruleConfiguration);
+            ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(ruleConfiguration);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot get rule source reader plugins.", e);
         }
         try {
-            RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
-            return ruleCollector.read(sources);
+            RuleParser ruleParser = new RuleParser(ruleParserPlugins);
+            return ruleParser.parse(sources);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot read rules.", e);
         }

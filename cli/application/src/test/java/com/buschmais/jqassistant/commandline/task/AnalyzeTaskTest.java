@@ -37,10 +37,10 @@ public class AnalyzeTaskTest {
     private RulePluginRepository rulePluginRepository;
 
     @Mock
-    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
+    private RuleParserPluginRepository ruleParserPluginRepository;
 
     @Mock
-    private RuleLanguagePluginRepository ruleLanguagePluginRepository;
+    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
 
     @Before
     public void before() {
@@ -48,8 +48,8 @@ public class AnalyzeTaskTest {
         when(pluginRepository.getModelPluginRepository()).thenReturn(modelPluginRepository);
         when(pluginRepository.getReportPluginRepository()).thenReturn(reportPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
-        when(pluginRepository.getRuleSourceReaderPluginRepository()).thenReturn(ruleSourceReaderPluginRepository);
-        when(pluginRepository.getRuleLanguagePluginRepository()).thenReturn(ruleLanguagePluginRepository);
+        when(pluginRepository.getRuleParserPluginRepository()).thenReturn(ruleParserPluginRepository);
+        when(pluginRepository.getRuleInterpreterPluginRepository()).thenReturn(ruleInterpreterPluginRepository);
     }
 
     @Test
@@ -70,8 +70,8 @@ public class AnalyzeTaskTest {
         Assert.assertThat(propertiesCaptor.getValue(), is(pluginProperties));
         verify(rulePluginRepository).getRuleSources();
         verify(modelPluginRepository).getDescriptorTypes();
-        verify(ruleSourceReaderPluginRepository).getRuleSourceReaderPlugins(any(RuleConfiguration.class));
-        verify(ruleLanguagePluginRepository).getRuleLanguagePlugins(anyMap());
+        verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
+        verify(ruleInterpreterPluginRepository).getRuleInterpreterPlugins(anyMap());
     }
 
     private void stubOption(CommandLine standardOptions, String option, String value) {
