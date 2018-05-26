@@ -13,7 +13,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleLanguagePlugin;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.*;
@@ -25,10 +25,10 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleSourceReaderPlugin;
+import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleCollector;
+import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -165,8 +165,8 @@ public abstract class AbstractPluginIT {
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
     private ReportPluginRepository reportPluginRepository;
-    private RuleSourceReaderPluginRepository ruleSourceReaderPluginRepository;
-    private RuleLanguagePluginRepository ruleLanguagePluginRepository;
+    private RuleParserPluginRepository ruleParserPluginRepository;
+    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
 
     @Before
     public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
@@ -176,8 +176,8 @@ public abstract class AbstractPluginIT {
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
-        ruleSourceReaderPluginRepository = new RuleSourceReaderPluginRepositoryImpl(pluginConfigurationReader);
-        ruleLanguagePluginRepository = new RuleLanguagePluginRepositoryImpl(pluginConfigurationReader);
+        ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
+        ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
 
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
         // read rules from rules directory
@@ -187,9 +187,9 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(rulePluginRepository.getRuleSources());
-        Collection<RuleSourceReaderPlugin> ruleSourceReaderPlugins = ruleSourceReaderPluginRepository.getRuleSourceReaderPlugins(RuleConfiguration.DEFAULT);
-        RuleCollector ruleCollector = new RuleCollector(ruleSourceReaderPlugins);
-        ruleSet = ruleCollector.read(sources);
+        Collection<RuleParserPlugin> ruleParserPlugins = ruleParserPluginRepository.getRuleParserPlugins(RuleConfiguration.DEFAULT);
+        RuleParser ruleParser = new RuleParser(ruleParserPlugins);
+        ruleSet = ruleParser.parse(sources);
     }
 
     @Before
@@ -200,11 +200,11 @@ public abstract class AbstractPluginIT {
         reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
         reportPlugin = reportWriter;
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        analyzer = new AnalyzerImpl(configuration, store, getRuleLanguagePlugins(), reportPlugin, LOGGER);
+        analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
-    protected Map<String, Collection<RuleLanguagePlugin>> getRuleLanguagePlugins() throws PluginRepositoryException {
-        return ruleLanguagePluginRepository.getRuleLanguagePlugins(Collections.emptyMap());
+    protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws PluginRepositoryException {
+        return ruleInterpreterPluginRepository.getRuleInterpreterPlugins(Collections.emptyMap());
     }
 
     /**
