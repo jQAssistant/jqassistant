@@ -12,15 +12,5 @@ ifdef::jqa-in-manual[== JUnit Plugin 1.4]
 * Renamed `junit4:TestMethodWithoutAssertion` to `junit:TestMethodWithoutAssertion`
   because of added support for JUnit 5.
 
-=== Known problems
-
-* Hier einen Kommentar zu den Problemen hinsicht der Verarbeitung der Reports für JUnit 5
-  und den Issues dazu
-
-           * Complete the test if this will be fixed by JUnit 5.
-           *
-           * see https://github.com/buschmais/jqa-junit-plugin/issues/2
-           * see https://github.com/junit-team/junit5/issues/1182
-           *
 
 
