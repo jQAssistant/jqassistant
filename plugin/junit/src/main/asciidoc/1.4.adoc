@@ -3,6 +3,9 @@ ifdef::jqa-in-manual[== JUnit Plugin 1.4]
 
 === Support for Junit 5 added
 
+This release adds JUnit 5 support to jQAssistant. See
+https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugin#2^].
+
 === Renamed constraints
 
 * Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
