@@ -60,7 +60,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
     }
 
     @Override
-    public void read(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
+    public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
         List<JqassistantRules> rules = readXmlSource(ruleSource);
         convert(rules, ruleSource, ruleSetBuilder);
     }

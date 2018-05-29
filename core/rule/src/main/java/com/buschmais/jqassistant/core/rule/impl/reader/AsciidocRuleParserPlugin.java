@@ -96,7 +96,7 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
     }
 
     @Override
-    public void read(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
+    public void parse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
         File tempDir;
         String content;
         try (InputStream stream = source.getInputStream();) {

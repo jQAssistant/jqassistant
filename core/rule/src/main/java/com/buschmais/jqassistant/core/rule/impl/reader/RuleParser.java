@@ -25,7 +25,7 @@ public class RuleParser {
         for (RuleSource source : sources) {
             for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
                 if (ruleParserPlugin.accepts(source)) {
-                    ruleParserPlugin.read(source, ruleSetBuilder);
+                    ruleParserPlugin.parse(source, ruleSetBuilder);
                 }
             }
         }

@@ -73,7 +73,7 @@ public class XmlRuleParserPluginTest {
         reader.configure(RuleConfiguration.builder().build());
         UrlRuleSource ruleSource = new UrlRuleSource(url);
         assertThat(reader.accepts(ruleSource), equalTo(true));
-        reader.read(ruleSource, ruleSetBuilder);
+        reader.parse(ruleSource, ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
         assertThat(ruleSet.getConstraintBucket().size(), equalTo(1));

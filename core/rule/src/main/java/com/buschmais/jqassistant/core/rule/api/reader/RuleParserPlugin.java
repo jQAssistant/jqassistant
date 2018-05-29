@@ -35,7 +35,7 @@ public interface RuleParserPlugin {
     boolean accepts(RuleSource ruleSource) throws RuleException;
 
     /**
-     * Reads the given {@link Source} and adds contained {@link Rule}s using the
+     * Parse the given {@link Source} and adds contained {@link Rule}s using the
      * {@link RuleSetBuilder}.
      *
      * @param ruleSource
@@ -43,6 +43,6 @@ public interface RuleParserPlugin {
      * @param ruleSetBuilder
      *            {@link RuleSetBuilder}.
      */
-    void read(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException;
+    void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException;
 
 }
