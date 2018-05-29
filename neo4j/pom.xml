@@ -21,10 +21,7 @@
 
     <properties>
         <jqa-asciidoctor-utilities.version>1.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-core.version>1.4.0-SNAPSHOT</jqa-core.version>
-        <jqa-java-plugin.version>1.4-SNAPSHOT</jqa-java-plugin.version>
         <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
-        <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
     </properties>
 
     <organization>
