@@ -33,7 +33,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>com.buschmais.xo</groupId>
