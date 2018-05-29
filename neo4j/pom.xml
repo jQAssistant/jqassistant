@@ -9,7 +9,7 @@
 
     <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Neo4j Server Parent</name>
@@ -40,7 +40,7 @@
         <connection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</developerConnection>
         <url>https://github.com/buschmais/jqa-neo4j-backend</url>
-        <tag>1.4.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
