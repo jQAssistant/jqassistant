@@ -16,8 +16,8 @@
     <url>http://jqassistant.org/</url>
 
     <properties>
-        <jqa-xml-plugin.version>1.4-SNAPSHOT</jqa-xml-plugin.version>
-        <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
+        <jqa-xml-plugin.version>1.4</jqa-xml-plugin.version>
+        <jqa-plugin-common.version>1.4</jqa-plugin-common.version>
         <org.ow2.asm.version>6.1.1</org.ow2.asm.version>
     </properties>
 
