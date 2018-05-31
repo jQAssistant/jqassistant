@@ -40,10 +40,10 @@
   </scm>
 
     <properties>
-        <jqa-plugin-common.version>1.4-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-java-plugin.version>1.4-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-junit-plugin.version>1.4-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-xml-plugin.version>1.4-SNAPSHOT</jqa-xml-plugin.version>
+        <jqa-plugin-common.version>1.4</jqa-plugin-common.version>
+        <jqa-java-plugin.version>1.4</jqa-java-plugin.version>
+        <jqa-junit-plugin.version>1.4</jqa-junit-plugin.version>
+        <jqa-xml-plugin.version>1.4</jqa-xml-plugin.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
     </properties>
 
