@@ -6,4 +6,4 @@ target
 *.log
 /*.html
 .DS_Store
-
+pom.xml.versionsBackup
