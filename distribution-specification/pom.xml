@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>jqa-distribution-specification</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.4.1-SNAPSHOT</version>
 
     <name>jQAssistant Distribution Specification</name>
     <url>http://jqassistant.org/</url>
@@ -75,7 +75,7 @@
         <jqa-own-constraints.version>1.4.0</jqa-own-constraints.version>
         <jqa-m2repo-plugin.version>1.4</jqa-m2repo-plugin.version>
         <jqa-maven3-plugin.version>1.4</jqa-maven3-plugin.version>
-        <jqa-neo4jserver.version>1.4</jqa-neo4jserver.version>
+        <jqa-neo4jserver.version>1.4.0</jqa-neo4jserver.version>
         <jqa-plugin-common.version>1.4</jqa-plugin-common.version>
         <jqa-rdbms-plugin.version>1.4</jqa-rdbms-plugin.version>
         <jqa-spring-plugin.version>1.4</jqa-spring-plugin.version>
