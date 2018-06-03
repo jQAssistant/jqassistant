@@ -36,11 +36,11 @@
     </scm>
 
     <properties>
-        <jqa.distribution-spec.version>1.4.0-SNAPSHOT</jqa.distribution-spec.version>
-        <jqa.own-constraints.version>1.4.0-SNAPSHOT</jqa.own-constraints.version>
-        <jqa-asciidoctor-utilities.version>1.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-core.version>1.4.0-SNAPSHOT</jqa-core.version>
-        <jqa-tycho.version>1.4-SNAPSHOT</jqa-tycho.version>
+        <jqa.distribution-spec.version>1.4.1</jqa.distribution-spec.version>
+        <jqa.own-constraints.version>1.4.0</jqa.own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.4.0</jqa-asciidoctor-utilities.version>
+        <jqa-core.version>1.4.0</jqa-core.version>
+        <jqa-tycho.version>1.4</jqa-tycho.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
@@ -54,9 +54,9 @@
          ! his own lifecyle inclusive versioning.
          ! Oliver B. Fischer, 2016-10-30
          !-->
-        <it.jqa.core.version>1.4.0-SNAPSHOT</it.jqa.core.version>
-        <it.jqa.java-plugin.version>1.4-SNAPSHOT</it.jqa.java-plugin.version>
-        <it.jqa.plugin-common.version>1.4-SNAPSHOT</it.jqa.plugin-common.version>
+        <it.jqa.core.version>1.4.0</it.jqa.core.version>
+        <it.jqa.java-plugin.version>1.4</it.jqa.java-plugin.version>
+        <it.jqa.plugin-common.version>1.4</it.jqa.plugin-common.version>
     </properties>
 
     <profiles>
