@@ -40,9 +40,9 @@
 
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.4.0</jqa-asciidoctor-utilities.version>
-        <jqa.own-constraints.version>1.4.0</jqa.own-constraints.version>
-        <jqa-neo4jserver.version>1.4.0</jqa-neo4jserver.version>
+        <jqa-asciidoctor-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa.own-constraints.version>1.5.0-SNAPSHOT</jqa.own-constraints.version>
+        <jqa-neo4jserver.version>1.5.0-SNAPSHOT</jqa-neo4jserver.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <junit.version>4.12</junit.version>
         <org.asciidoctor.version>1.5.6</org.asciidoctor.version>
