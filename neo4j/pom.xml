@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
@@ -20,8 +20,8 @@
     </description>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>1.4.0</jqa-asciidoctor-utilities.version>
-        <jqa.own-constraints.version>1.4.0</jqa.own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa.own-constraints.version>1.5.0-SNAPSHOT</jqa.own-constraints.version>
     </properties>
 
     <organization>
