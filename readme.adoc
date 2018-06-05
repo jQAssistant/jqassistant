@@ -1,4 +1,4 @@
-# Former jQAssistant Master Repository
+# jQAssistant Master Repository
 
 We splitted jQAssistant in multiple single repositories to be able to 
 build a better and more flexible build an release infrastructure 
@@ -8,32 +8,33 @@ WARNING: Do not raise any new issues for this repository.
          Raise new issues only in the affected repository.
 
 If you have questions related to jQAssistant please get in touch
-with us via the https://groups.google.com/forum/#!forum/jqassistant[jQAssistant forum].
+with us via the https://groups.google.com/forum/#!forum/jqassistant[jQAssistant forum] or https://stackoverflow.com/questions/tagged/jqassistant[Stackoverflow].
 
-The table below lists all existing repositories jQAssistant is
-made of. 
+The table below lists the repositories jQAssistant is made of.
 
-.List of jQAssistant related repositories as of 4-Jul-2016
-|====================
+.List of jQAssistant repositories
+|===
 | Commandline distribution | https://github.com/buschmais/jqa-commandline-tool[^]
-| Plugin for Apache Maven |  https://github.com/buschmais/jqa-maven-plugin[^]
-| jQA Core Framework |  https://github.com/buschmais/jqa-core-framework[^]
-| jQA EJB 3 plugin |  https://github.com/buschmais/jqa-ejb3-plugin[^]
-| jQA CDI plugin | https://github.com/buschmais/jqa-cdi-plugin[^]
-| jQA GraphML plugin |  https://github.com/buschmais/jqa-graphml-plugin[^]
-| jQA Java plugin |  https://github.com/buschmais/jqa-java-plugin[^]
-| jQA Java 8 plugin |  https://github.com/buschmais/jqa-java8-plugin[^]
-| jQA JavaEE 6 plugin |  https://github.com/buschmais/jqa-javaee6-plugin[^]
-| jQA JAX RS |  https://github.com/buschmais/jqa-jaxrs-plugin[^]
-| jQA JPA 2 plugin |  https://github.com/buschmais/jqa-jpa2-plugin[^]
-| jQA JUnit plugin |  https://github.com/buschmais/jqa-junit-plugin[^]
-| jQA M2 Repo plugin |  https://github.com/buschmais/jqa-m2repo-plugin[^]
-| jQA Maven 3 plugin|  https://github.com/buschmais/jqa-maven3-plugin[^]
-| jQA Neo4j backend |  https://github.com/buschmais/jqa-neo4j-backend[^]
-| jQA OSGi plugin |  https://github.com/buschmais/jqa-osgi-plugin[^]
-| jQA TestNG plugin |  https://github.com/buschmais/jqa-testng-plugin[^]
-| jQA Tycho plugin |  https://github.com/buschmais/jqa-tycho-plugin[^]
-| jQA RDMMS plugin |  https://github.com/buschmais/jqa-rdbms-plugin[^]
-| jQA XML plugin |  https://github.com/buschmais/jqa-xml-plugin[^]
-| jQA YAML plugin |  https://github.com/buschmais/jqa-yaml-plugin[^]
-|====================
+| Plugin for Apache Maven  | https://github.com/buschmais/jqa-maven-plugin[^]
+| Core Framework           | https://github.com/buschmais/jqa-core-framework[^]
+| Neo4j Backend            | https://github.com/buschmais/jqa-neo4j-backend[^]
+| CDI plugin               | https://github.com/buschmais/jqa-cdi-plugin[^]
+| EJB 3 plugin             | https://github.com/buschmais/jqa-ejb3-plugin[^]
+| GraphML plugin           | https://github.com/buschmais/jqa-graphml-plugin[^]
+| Java plugin              | https://github.com/buschmais/jqa-java-plugin[^]
+| Java 8 plugin            | https://github.com/buschmais/jqa-java8-plugin[^]
+| Java EE 6 plugin         | https://github.com/buschmais/jqa-javaee6-plugin[^]
+| JAX RS                   | https://github.com/buschmais/jqa-jaxrs-plugin[^]
+| JPA 2 plugin             | https://github.com/buschmais/jqa-jpa2-plugin[^]
+| JSON plugin              | https://github.com/buschmais/jqa-json-plugin[^]
+| JUnit plugin             | https://github.com/buschmais/jqa-junit-plugin[^]
+| M2 Repo plugin           | https://github.com/buschmais/jqa-m2repo-plugin[^]
+| Maven 3 plugin           | https://github.com/buschmais/jqa-maven3-plugin[^]
+| OSGi plugin              | https://github.com/buschmais/jqa-osgi-plugin[^]
+| RDBMS plugin             | https://github.com/buschmais/jqa-rdbms-plugin[^]
+| Srping plugin            | https://github.com/buschmais/jqa-spring-plugin[^]
+| TestNG plugin            | https://github.com/buschmais/jqa-testng-plugin[^]
+| Tycho plugin             | https://github.com/buschmais/jqa-tycho-plugin[^]
+| XML plugin               | https://github.com/buschmais/jqa-xml-plugin[^]
+| YAML plugin              | https://github.com/buschmais/jqa-yaml-plugin[^]
+|===
