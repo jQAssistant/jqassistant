@@ -32,7 +32,7 @@ The table below lists the repositories jQAssistant is made of.
 | Maven 3 plugin           | https://github.com/buschmais/jqa-maven3-plugin[^]
 | OSGi plugin              | https://github.com/buschmais/jqa-osgi-plugin[^]
 | RDBMS plugin             | https://github.com/buschmais/jqa-rdbms-plugin[^]
-| Srping plugin            | https://github.com/buschmais/jqa-spring-plugin[^]
+| Spring plugin            | https://github.com/buschmais/jqa-spring-plugin[^]
 | TestNG plugin            | https://github.com/buschmais/jqa-testng-plugin[^]
 | Tycho plugin             | https://github.com/buschmais/jqa-tycho-plugin[^]
 | XML plugin               | https://github.com/buschmais/jqa-xml-plugin[^]
