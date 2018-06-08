@@ -1,0 +1,7 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.5]
+ifdef::jqa-in-manual[== Common Plugin 1.5]
+
+No changes.
