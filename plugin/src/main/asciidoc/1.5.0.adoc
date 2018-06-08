@@ -1,0 +1,8 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.5.0]
+ifdef::jqa-in-manual[== Plugin Parent POM 1.5.0]
+
+No changes.
+
