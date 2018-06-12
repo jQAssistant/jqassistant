@@ -224,7 +224,7 @@
                                     <parameters>
                                         <parameter>
                                             <name>dirOfRules</name>
-                                            <value>file:/${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
+                                            <value>file:///${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
                                         </parameter>
                                     </parameters>
                                 </transformationSet>
