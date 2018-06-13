@@ -3919,7 +3919,7 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
             <span class="tag">&lt;plugin&gt;</span>
                 <span class="tag">&lt;groupId&gt;</span>com.buschmais.jqassistant<span class="tag">&lt;/groupId&gt;</span>
                 <span class="tag">&lt;artifactId&gt;</span>jqassistant-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
-                <span class="tag">&lt;version&gt;</span>1.4.0<span class="tag">&lt;/version&gt;</span>
+                <span class="tag">&lt;version&gt;</span>1.5.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
                 <span class="tag">&lt;executions&gt;</span>
                     <span class="tag">&lt;execution&gt;</span>
                         <span class="tag">&lt;id&gt;</span>scan<span class="tag">&lt;/id&gt;</span>
@@ -3934,7 +3934,7 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
                                     &lt;path&gt;config&lt;/path&gt;
                                 &lt;/scanInclude&gt;
                                 &lt;scanInclude&gt;
-                                    &lt;path&gt;/opt/jenkins/var-jqa/workspace/rel-jqa-maven-plugin-manual-ManagedBuild/target/checkout/target/extra-classes&lt;/path&gt;
+                                    &lt;path&gt;/opt/jenkins/var-jqa/workspace/jqa-maven-plugin-it-ManagedBuild/target/extra-classes&lt;/path&gt;
                                     &lt;scope&gt;java:classpath&lt;/scope&gt;
                                 &lt;/scanInclude&gt;
                             &lt;/scanIncludes&gt;
@@ -3968,7 +3968,7 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
                             &lt;/ruleParameters&gt;
                             &lt;reportProperties&gt;
                                 &lt;customReport.fileName&gt;
-                                    /opt/jenkins/var-jqa/workspace/rel-jqa-maven-plugin-manual-ManagedBuild/target/checkout/target/customReport.txt
+                                    /opt/jenkins/var-jqa/workspace/jqa-maven-plugin-it-ManagedBuild/target/customReport.txt
                                 &lt;/customReport.fileName&gt;
                             &lt;/reportProperties&gt;
                         &lt;/configuration&gt;
@@ -3993,11 +3993,11 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
                     &lt;rulesDirectory&gt;jqassistant&lt;/rulesDirectory&gt;
                     &lt;rulesDirectories&gt;
                         &lt;rulesDirectory&gt;
-                            /opt/jenkins/var-jqa/workspace/rel-jqa-maven-plugin-manual-ManagedBuild/target/checkout/target/generated-rules
+                            /opt/jenkins/var-jqa/workspace/jqa-maven-plugin-it-ManagedBuild/target/generated-rules
                         &lt;/rulesDirectory&gt;
                     &lt;/rulesDirectories&gt;
                     &lt;xmlReportFile&gt;
-                        /opt/jenkins/var-jqa/workspace/rel-jqa-maven-plugin-manual-ManagedBuild/target/checkout/target/jqassistant/jqassistant-report.xml
+                        /opt/jenkins/var-jqa/workspace/jqa-maven-plugin-it-ManagedBuild/target/jqassistant/jqassistant-report.xml
                     &lt;/xmlReportFile&gt;
                     &lt;serverAddress&gt;localhost&lt;/serverAddress&gt;
                     &lt;serverPort&gt;7474&lt;/serverPort&gt;
@@ -4006,7 +4006,7 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
                     &lt;dependency&gt;
                         &lt;groupId&gt;com.buschmais.jqassistant.plugin&lt;/groupId&gt;
                         &lt;artifactId&gt;jqassistant.plugin.jpa2&lt;/artifactId&gt;
-                        &lt;version&gt;1.4.0&lt;/version&gt;
+                        &lt;version&gt;1.5.0-SNAPSHOT&lt;/version&gt;
                     &lt;/dependency&gt;
                 &lt;/dependencies&gt;
                 --&gt;</span>
@@ -4023,7 +4023,7 @@ as root module by setting the configuration option <a href="#useExecutionRootAsP
             <span class="tag">&lt;plugin&gt;</span>
                 <span class="tag">&lt;groupId&gt;</span>com.buschmais.jqassistant<span class="tag">&lt;/groupId&gt;</span>
                 <span class="tag">&lt;artifactId&gt;</span>jqassistant-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
-                <span class="tag">&lt;version&gt;</span>1.4.0<span class="tag">&lt;/version&gt;</span>
+                <span class="tag">&lt;version&gt;</span>1.5.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
                 <span class="tag">&lt;reportSets&gt;</span>
                     <span class="tag">&lt;reportSet&gt;</span>
                         <span class="tag">&lt;reports&gt;</span>
@@ -4870,7 +4870,573 @@ same data. Setting this flag to 'true' is useful for creating and trying out new
 <h4 id="_concepts_and_constraints_provided_by_the_cdi_plugin">8.1.2. Concepts and Constraints provided by the CDI Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_cdi_plugin">8.1.2.1. Concepts provided by the CDI  plugin</h5>
-
+<div class="sect5">
+<h6 id="cdi:Alternative">8.1.2.1.1. Concept cdi:Alternative</h6>
+<div class="paragraph">
+<p>Labels all types annotated by @javax.enterprise.inject.Alternative with "Cdi" and "Alternative".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (alternative:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(alternativeType:Type)
+WHERE
+  alternativeType.fqn=&quot;javax.enterprise.inject.Alternative&quot;
+SET
+  alternative:Cdi:Alternative
+RETURN
+  alternative AS Alternative</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Any">8.1.2.1.2. Concept cdi:Any</h6>
+<div class="paragraph">
+<p>Labels all elements annotated by "javax.enterprise.inject.Any" with "Cdi" and "Any".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(anyType:Type)
+WHERE
+  anyType.fqn = &quot;javax.enterprise.inject.Any&quot;
+SET
+  e:Cdi:Any
+RETURN
+  e AS Any</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:ApplicationScoped">8.1.2.1.3. Concept cdi:ApplicationScoped</h6>
+<div class="paragraph">
+<p>Labels all beans, fields or methods annotated by @javax.enterprise.context.ApplicationScoped with "Cdi" and "ApplicationScoped".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(scopeType:Type)
+WHERE
+  (e:Type or e:Method or e:Field)
+  and scopeType.fqn=&quot;javax.enterprise.context.ApplicationScoped&quot;
+SET
+  e:Cdi:ApplicationScoped
+RETURN
+  e AS ApplicationScopedElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:ConversationScoped">8.1.2.1.4. Concept cdi:ConversationScoped</h6>
+<div class="paragraph">
+<p>Labels all beans, fields or methods annotated by @javax.enterprise.context.ConversationScoped with "Cdi" and "ConversationScoped".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(scopeType:Type)
+WHERE
+  (e:Type or e:Method or e:Field)
+  and scopeType.fqn=&quot;javax.enterprise.context.ConversationScoped&quot;
+SET
+  e:Cdi:ConversationScoped
+RETURN
+  e AS ConversationScopedElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Decorator">8.1.2.1.5. Concept cdi:Decorator</h6>
+<div class="paragraph">
+<p>Labels all types annotated by @javax.decorator.Decorator with "Cdi" and "Decorator".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (decorator:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(decoratorType:Type)
+WHERE
+  decoratorType.fqn=&quot;javax.decorator.Decorator&quot;
+SET
+  decorator:Cdi:Decorator
+RETURN
+  decorator AS Decorator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#cdi:Delegate">Concept cdi:Delegate</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Default">8.1.2.1.6. Concept cdi:Default</h6>
+<div class="paragraph">
+<p>Labels all elements annotated by "javax.enterprise.inject.Default" with "Cdi" and "Default".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(defaultType:Type)
+WHERE
+  defaultType.fqn = &quot;javax.enterprise.inject.Default&quot;
+SET
+  e:Cdi:Default
+RETURN
+  e AS Default</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Delegate">8.1.2.1.7. Concept cdi:Delegate</h6>
+<div class="paragraph">
+<p>Labels all fields annotated annotated by @javax.decorator.Delegate with "Cdi" and "Delegate".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (delegate:Field)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(delegateType:Type)
+WHERE
+  delegateType.fqn=&quot;javax.decorator.Delegate&quot;
+SET
+  delegate:Cdi:Delegate
+RETURN
+  delegate AS Delegate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Dependent">8.1.2.1.8. Concept cdi:Dependent</h6>
+<div class="paragraph">
+<p>Labels all beans, fields or methods annotated by @javax.enterprise.context.Dependent with "Cdi" and "Dependent".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(scopeType:Type)
+WHERE
+  (e:Type or e:Method or e:Field)
+  and scopeType.fqn=&quot;javax.enterprise.context.Dependent&quot;
+SET
+  e:Cdi:Dependent
+RETURN
+  e AS DependentElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Disposes">8.1.2.1.9. Concept cdi:Disposes</h6>
+<div class="paragraph">
+<p>Creates a relation DISPOSES between a parameter and its type if the parameter is annotated by @javax.enterprise.inject.Disposes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (:Type)-[:DECLARES]-&gt;(disposeMethod:Method)-[:HAS]-&gt;(parameter:Parameter),
+  (parameter)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(disposesType:Type),
+  (parameter)-[:OF_TYPE]-&gt;(type)
+WHERE
+  disposesType.fqn=&quot;javax.enterprise.inject.Disposes&quot;
+CREATE UNIQUE
+  (parameter)-[:DISPOSES]-&gt;(type)
+RETURN
+  disposeMethod AS DisposeMethod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:EventConsumer">8.1.2.1.10. Concept cdi:EventConsumer</h6>
+<div class="paragraph">
+<p>Labels all beans declaring method that has parameter of type "javax.enterprise.event.Observes" with "Cdi" and "EventConsumer".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Type)-[:DECLARES]-&gt;(member:Method)-[:HAS]-&gt;(param:Parameter),
+  (param)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(injectType:Type)
+WHERE
+  injectType.fqn = &quot;javax.enterprise.event.Observes&quot;
+SET
+  a:Cdi:EventConsumer
+RETURN
+  DISTINCT a.fqn AS cdiEventConsumer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#cdi:InjectionPoint">Concept cdi:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:EventProducer">8.1.2.1.11. Concept cdi:EventProducer</h6>
+<div class="paragraph">
+<p>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Type)-[:DECLARES]-&gt;(member:Field:Cdi:InjectionPoint),
+  (member)-[:OF_TYPE]-&gt;(injectType:Type)
+WHERE
+  injectType.fqn = &quot;javax.enterprise.event.Event&quot;
+SET
+  a:Cdi:EventProducer
+RETURN
+  DISTINCT a.fqn AS cdiEventProducers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#cdi:InjectionPoint">Concept cdi:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:InjectionPoint">8.1.2.1.12. Concept cdi:InjectionPoint</h6>
+<div class="paragraph">
+<p>Labels all fields or methods annotated by @javax.inject.Inject with "Cdi" and "InjectionPoint".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (:Type)-[:DECLARES]-&gt;(member),
+  (member)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(injectType:Type)
+WHERE
+  (member:Field or member:Method)
+  and injectType.fqn=&quot;javax.inject.Inject&quot;
+SET
+  member:Cdi:InjectionPoint
+RETURN
+  member AS InjectionPoint</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Named">8.1.2.1.13. Concept cdi:Named</h6>
+<div class="paragraph">
+<p>Labels all types or methods annotated by "javax.inject.Named" with "Cdi" and "Named".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(namedType:Type)
+WHERE
+  namedType.fqn = &quot;javax.inject.Named&quot;
+SET
+  e:Cdi:Named
+RETURN
+  e AS Named</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:New">8.1.2.1.14. Concept cdi:New</h6>
+<div class="paragraph">
+<p>Labels all elements annotated by "javax.enterprise.inject.New" with "Cdi" and "New".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(newType:Type)
+WHERE
+  newType.fqn = &quot;javax.enterprise.inject.New&quot;
+SET
+  e:Cdi:New
+RETURN
+  e AS New</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Produces">8.1.2.1.15. Concept cdi:Produces</h6>
+<div class="paragraph">
+<p>Creates a relation PRODUCES between a field and its type or a method and its return type if the parameter is annotated by
+            @javax.enterprise.inject.Disposes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (:Type)-[:DECLARES]-&gt;(member),
+  (member)-[:OF_TYPE|RETURNS]-&gt;(type),
+  (member)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(producesType:Type)
+WHERE
+  (member:Field or member:Method)
+  and producesType.fqn=&quot;javax.enterprise.inject.Produces&quot;
+CREATE UNIQUE
+  (member)-[:PRODUCES]-&gt;(type)
+RETURN
+  member AS Producer</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Qualifier">8.1.2.1.16. Concept cdi:Qualifier</h6>
+<div class="paragraph">
+<p>Labels all annotation types annotated by @javax.inject.Qualifier with "Cdi" and "Qualifier" and adds the labels "Cdi"
+            and "Nonbinding" to
+            all non-binding annotation values (i.e. which are annotated by @javax.enterprise.util.Nonbinding).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (qualifier:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(qualifierType:Type)
+WHERE
+  qualifierType.fqn = &quot;javax.inject.Qualifier&quot;
+SET
+  qualifier:Cdi:Qualifier
+WITH
+  qualifier
+MATCH
+  (qualifier)-[:DECLARES]-&gt;(attribute:Method),
+  (attribute)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(nonbindingType:Type)
+WHERE
+  nonbindingType.fqn = &quot;javax.enterprise.util.Nonbinding&quot;
+SET
+  attribute:Cdi:Nonbinding
+RETURN
+  distinct qualifier AS Qualifier</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:RequestScoped">8.1.2.1.17. Concept cdi:RequestScoped</h6>
+<div class="paragraph">
+<p>Labels all beans, fields or methods annotated by @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(scopeType:Type)
+WHERE
+  (e:Type or e:Method or e:Field)
+  and scopeType.fqn=&quot;javax.enterprise.context.RequestScoped&quot;
+SET
+  e:Cdi:RequestScoped
+RETURN
+  e AS RequestScopedElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:SessionScoped">8.1.2.1.18. Concept cdi:SessionScoped</h6>
+<div class="paragraph">
+<p>Labels all beans, fields or methods annotated by @javax.enterprise.context.SessionScoped with "Cdi" and "SessionScoped".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(scopeType:Type)
+WHERE
+  (e:Type or e:Method or e:Field)
+  and scopeType.fqn=&quot;javax.enterprise.context.SessionScoped&quot;
+SET
+  e:Cdi:SessionScoped
+RETURN
+  e AS SessionScopedElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:SingletonScoped">8.1.2.1.19. Concept cdi:SingletonScoped</h6>
+<div class="paragraph">
+<p>Labels all beans annotated by @javax.inject.Singleton with "Cdi" and "SingletonScoped".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn = &quot;javax.inject.Singleton&quot;
+SET
+  t:Cdi:SingletonScoped
+RETURN
+  t AS cdiSingleton</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Specializes">8.1.2.1.20. Concept cdi:Specializes</h6>
+<div class="paragraph">
+<p>Labels all types and methods annotated by @javax.enterprise.inject.Specializes with "Cdi" and "Specializes".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (specializes)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(specializesType:Type)
+WHERE
+  (specializes:Type or specializes:Method)
+  and specializesType.fqn=&quot;javax.enterprise.inject.Specializes&quot;
+SET
+  specializes:Cdi:Specializes
+RETURN
+  specializes AS Specialization</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:Stereotype">8.1.2.1.21. Concept cdi:Stereotype</h6>
+<div class="paragraph">
+<p>Labels all annotation types annotated by @javax.enterprise.inject.Stereotype with "Cdi" and "Stereotype".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (stereotype:Type:Annotation)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(stereotypeType:Type)
+WHERE
+  stereotypeType.fqn=&quot;javax.enterprise.inject.Stereotype&quot;
+SET
+  stereotype:Cdi:Stereotype
+RETURN
+  stereotype AS Stereotype</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="decorator:Decorator">8.1.2.1.22. Concept decorator:Decorator</h6>
+<div class="paragraph">
+<p>Labels all types annotated by @javax.decorator.Decorator with "Decorator".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (decorator:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(decoratorType:Type)
+WHERE
+  decoratorType.fqn=&quot;javax.decorator.Decorator&quot;
+SET
+  decorator:Decorator
+RETURN
+  decorator AS Decorator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#decorator:Delegate">Concept decorator:Delegate</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="decorator:Delegate">8.1.2.1.23. Concept decorator:Delegate</h6>
+<div class="paragraph">
+<p>Labels all fields annotated annotated by @javax.decorator.Delegate with "Decorator" and "Delegate".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (delegate:Field)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(delegateType:Type)
+WHERE
+  delegateType.fqn=&quot;javax.decorator.Delegate&quot;
+SET
+  delegate:Decorator:Delegate
+RETURN
+  delegate AS Delegate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="interceptor:Binding">8.1.2.1.24. Concept interceptor:Binding</h6>
+<div class="paragraph">
+<p>Labels all annotations annotated by "javax.interceptor.InterceptorBinding" with "Interceptor" and "Binding".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (binding:Type:Annotation)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(bindingType:Type)
+WHERE
+  bindingType.fqn = &quot;javax.interceptor.InterceptorBinding&quot;
+SET
+  binding:Interceptor:Binding
+RETURN
+  binding AS InterceptorBinding</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="interceptor:Interceptor">8.1.2.1.25. Concept interceptor:Interceptor</h6>
+<div class="paragraph">
+<p>Labels all classes annotated by "javax.interceptor.Interceptor" with "Interceptor".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (interceptor:Type:Class)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(interceptorType:Type)
+WHERE
+  interceptorType.fqn = &quot;javax.interceptor.Interceptor&quot;
+SET
+  interceptor:Interceptor
+RETURN
+  interceptor AS Interceptor</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:BeansMustNotUseFieldInjection">8.1.2.1.26. Constraint cdi:BeansMustNotUseFieldInjection</h6>
+<div class="paragraph">
+<p>CDI beans shall not use field injection (constructor and setter injections are fine.).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Type)-[:DECLARES]-&gt;(member:Field:Cdi:InjectionPoint)
+RETURN
+  DISTINCT a.fqn AS invalidBean</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#cdi:InjectionPoint">Concept cdi:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="cdi:BeansMustUseConstructorInjection">8.1.2.1.27. Constraint cdi:BeansMustUseConstructorInjection</h6>
+<div class="paragraph">
+<p>All CDI beans must use constructor injection.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Type)-[:DECLARES]-&gt;(member:Cdi:InjectionPoint)
+WHERE
+  NOT member:Constructor
+RETURN
+  DISTINCT a.fqn AS invalidBean</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#cdi:InjectionPoint">Concept cdi:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -4890,7 +5456,136 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_ejb3_plugin">8.2.1. Concepts and Constraints provided by the EJB3 Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_ejb3_plugin">8.2.1.1. Concepts provided by the EJB3  plugin</h5>
-
+<div class="sect5">
+<h6 id="ejb3:Local">8.2.1.1.1. Concept ejb3:Local</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.ejb.Local with "Ejb" and "Local".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Local&quot;
+SET t:Ejb:Local
+RETURN t AS LocalBean</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:MessageDrivenBean">8.2.1.1.2. Concept ejb3:MessageDrivenBean</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.ejb.MessageDriven with "Ejb" and "MessageDriven".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.MessageDriven&quot;
+SET t:Ejb:MessageDriven
+RETURN t AS MessageDrivenBean</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:Remote">8.2.1.1.3. Concept ejb3:Remote</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.ejb.Remote with "Ejb" and "Remote".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Remote&quot;
+SET t:Ejb:Remote
+RETURN t AS RemoteBean</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:Schedule">8.2.1.1.4. Concept ejb3:Schedule</h6>
+<div class="paragraph">
+<p>Labels all methods annotated with @javax.ejb.Schedule with "Schedule".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Schedule&quot;
+SET m:Schedule
+RETURN m AS ScheduledMethod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:SingletonBean">8.2.1.1.5. Concept ejb3:SingletonBean</h6>
+<div class="paragraph">
+<p>Labels all classes annotated with @javax.ejb.Singleton with "Ejb" and "Singleton".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Singleton&quot;
+SET t:Ejb:Singleton
+RETURN t AS SingletonEjb</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:StatefulSessionBean">8.2.1.1.6. Concept ejb3:StatefulSessionBean</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.ejb.Stateful with "Ejb" and "Stateful".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Stateful&quot;
+SET t:Ejb:Stateful
+RETURN t AS StatefulEjb</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:StatelessSessionBean">8.2.1.1.7. Concept ejb3:StatelessSessionBean</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.ejb.Stateless with "Ejb" and "Stateless".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE a.fqn=&quot;javax.ejb.Stateless&quot;
+SET t:Ejb:Stateless
+RETURN t AS StatelessEjb</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="ejb3:ScheduleMethodInEjbContext">8.2.1.1.8. Constraint ejb3:ScheduleMethodInEjbContext</h6>
+<div class="paragraph">
+<p>Check that Schedule methods are only delared in EJB classes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH (c:Class)-[:DECLARES]-&gt;(m:Method:Schedule)
+WHERE NOT c:Ejb
+RETURN c.fqn AS invalidBean, m.name AS scheduledMethodName</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#ejb3:StatelessSessionBean">Concept ejb3:StatelessSessionBean</a></p>
+</li>
+<li>
+<p><a href="#ejb3:StatefulSessionBean">Concept ejb3:StatefulSessionBean</a></p>
+</li>
+<li>
+<p><a href="#ejb3:SingletonBean">Concept ejb3:SingletonBean</a></p>
+</li>
+<li>
+<p><a href="#ejb3:Schedule">Concept ejb3:Schedule</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4946,7 +5641,7 @@ and analytics tools like <a href="http://www.yworks.com/en/products/yfiles/yed/"
 <div class="sect4">
 <h5 id="_example">8.3.1.2. Example</h5>
 <div class="paragraph">
-<p>The following concept will return package dependencies (as provided by the concept <a href="#dependency:Package">[dependency:Package]</a>) as GraphML document:</p>
+<p>The following concept will return package dependencies (as provided by the concept <a href="#dependency:Package">Concept dependency:Package</a>) as GraphML document:</p>
 </div>
 <div class="listingblock">
 <div class="title">reports.xml</div>
@@ -6287,7 +6982,886 @@ or a XML based property file (<code>*.xml</code>).</p>
 <h4 id="_concepts_and_constraints_provided_by_the_java_plugin">8.4.7. Concepts and Constraints provided by the Java Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_java_plugin">8.4.7.1. Concepts provided by the Java  plugin</h5>
-
+<div class="sect5">
+<h6 id="classpath:Resolve">8.4.7.1.1. Concept classpath:Resolve</h6>
+<div class="paragraph">
+<p>Includes all concepts for resolving a Java classpath and returns the number of resolved elements.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  ()-[r:RESOLVES_TO]-&gt;()
+RETURN
+  count(r) as ResolvedElements</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveDependsOn">Concept classpath:ResolveDependsOn</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveExtends">Concept classpath:ResolveExtends</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveImplements">Concept classpath:ResolveImplements</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveFieldType">Concept classpath:ResolveFieldType</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveThrows">Concept classpath:ResolveThrows</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveReturns">Concept classpath:ResolveReturns</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveParameterType">Concept classpath:ResolveParameterType</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveAnnotationType">Concept classpath:ResolveAnnotationType</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveValue">Concept classpath:ResolveValue</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveReads">Concept classpath:ResolveReads</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveWrites">Concept classpath:ResolveWrites</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveInvokes">Concept classpath:ResolveInvokes</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveAnnotationType">8.4.7.1.2. Concept classpath:ResolveAnnotationType</h6>
+<div class="paragraph">
+<p>Propagates "OF_TYPE" relations between annotation and types to their resolved types with a
+            property "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Annotation)-[ofType:OF_TYPE]-&gt;(:Type)-[:RESOLVES_TO]-&gt;(t:Type)
+MERGE
+  (a)-[ofType1:OF_TYPE]-&gt;(t)
+SET
+  ofType1=ofType,
+  ofType1.resolved=true
+RETURN
+  count(ofType1) as ResolvedAnnotationTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveDependency">8.4.7.1.3. Concept classpath:ResolveDependency</h6>
+<div class="literalblock">
+<div class="content">
+<pre>_The rule is deprecated: This concept has been replaced by "classpath:ResolveDependsOn"._</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t1:Type)-[:DEPENDS_ON{resolved:true}]-&gt;(t2:Type)
+RETURN
+  count(*) as ResolvedDependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveDependsOn">Concept classpath:ResolveDependsOn</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveDependsOn">8.4.7.1.4. Concept classpath:ResolveDependsOn</h6>
+<div class="paragraph">
+<p>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[dependsOn:DEPENDS_ON]-&gt;(t1:Type)-[:RESOLVES_TO]-&gt;(t2:Type)
+MERGE
+  (t)-[dependsOn1:DEPENDS_ON]-&gt;(t2)
+SET
+  dependsOn1=dependsOn,
+  dependsOn1.resolved=true
+RETURN
+  count(dependsOn1) as ResolvedDependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveExtends">8.4.7.1.5. Concept classpath:ResolveExtends</h6>
+<div class="paragraph">
+<p>Propagates "EXTENDS" relations between types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[extends:EXTENDS]-&gt;(t1:Type)-[:RESOLVES_TO]-&gt;(t2:Type)
+MERGE
+  (t)-[extends1:EXTENDS]-&gt;(t2)
+SET
+  extends1=extends,
+  extends1.resolved=true
+RETURN
+  count(extends1) as ResolvedSuperClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveFieldType">8.4.7.1.6. Concept classpath:ResolveFieldType</h6>
+<div class="paragraph">
+<p>Propagates "OF_TYPE" relations between fields and types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (f:Field)-[ofType:OF_TYPE]-&gt;(:Type)-[:RESOLVES_TO]-&gt;(t:Type)
+MERGE
+  (f)-[ofType1:OF_TYPE]-&gt;(t)
+SET
+  ofType1=ofType,
+  ofType1.resolved=true
+RETURN
+  count(ofType1) as ResolvedFieldTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveImplements">8.4.7.1.7. Concept classpath:ResolveImplements</h6>
+<div class="paragraph">
+<p>Propagates "IMPLEMENTS" relations between types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[implements:IMPLEMENTS]-&gt;(t1:Type)-[:RESOLVES_TO]-&gt;(t2:Type)
+MERGE
+  (t)-[implements1:IMPLEMENTS]-&gt;(t2)
+SET
+  implements1=implements,
+  implements1.resolved=true
+RETURN
+  count(implements1) as ResolvedInterfaces</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveInvokes">8.4.7.1.8. Concept classpath:ResolveInvokes</h6>
+<div class="paragraph">
+<p>Propagates "INVOKES" relations between methods to their resolved methods with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[invokes:INVOKES]-&gt;(m1:Method)-[:RESOLVES_TO]-&gt;(m2:Method)
+MERGE
+  (m)-[invokes1:INVOKES {relationId : id(invokes)}]-&gt;(m2)
+SET
+  invokes1=invokes,
+  invokes1.resolved=true
+REMOVE
+  invokes1.relationId
+RETURN
+  count(invokes1) as ResolvedInvocations</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveMember">Concept classpath:ResolveMember</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveMember">8.4.7.1.9. Concept classpath:ResolveMember</h6>
+<div class="paragraph">
+<p>Adds a relation "RESOLVES_TO" from a member (i.e. field or method) of a type to a member of another
+            type if there is a relation "RESOLVES_TO" between the two types and the members have the same signature.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t1:Type)-[:RESOLVES_TO]-&gt;(t2:Type),
+  (t1)-[:DECLARES]-&gt;(m1),
+  (t2)-[:DECLARES]-&gt;(m2)
+WHERE
+  (m1:Field or m1:Method)
+  and m1.signature = m2.signature
+MERGE
+  (m1)-[r:RESOLVES_TO]-&gt;(m2)
+RETURN
+  count(r) as ResolvedMembers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveParameterType">8.4.7.1.10. Concept classpath:ResolveParameterType</h6>
+<div class="paragraph">
+<p>Propagates "OF_TYPE" relations between method parameters and types to their resolved types with a
+            property "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Parameter)-[ofType:OF_TYPE]-&gt;(:Type)-[:RESOLVES_TO]-&gt;(t:Type)
+MERGE
+  (m)-[ofType1:OF_TYPE]-&gt;(t)
+SET
+  ofType1=ofType,
+  ofType1.resolved=true
+RETURN
+  count(ofType1) as ResolvedParameterTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveReads">8.4.7.1.11. Concept classpath:ResolveReads</h6>
+<div class="paragraph">
+<p>Propagates "READS" relations between methods and fields to their resolved fields with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[reads:READS]-&gt;(f1:Field)-[:RESOLVES_TO]-&gt;(f2:Field)
+MERGE
+  (m)-[reads1:READS {relationId: id(reads)}]-&gt;(f2)
+SET
+  reads1=reads,
+  reads1.resolved=true
+REMOVE
+  reads1.relationId
+RETURN
+  count(reads1) as ResolvedReads</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveMember">Concept classpath:ResolveMember</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveReturns">8.4.7.1.12. Concept classpath:ResolveReturns</h6>
+<div class="paragraph">
+<p>Propagates "RETURNS" relations between methods and types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[returns:RETURNS]-&gt;(:Type)-[:RESOLVES_TO]-&gt;(t:Type)
+MERGE
+  (m)-[returns1:RETURNS]-&gt;(t)
+SET
+  returns1=returns,
+  returns1.resolved=true
+RETURN
+  count(returns1) as ResolvedReturnTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveThrows">8.4.7.1.13. Concept classpath:ResolveThrows</h6>
+<div class="paragraph">
+<p>Propagates "THROWS" relations between methods and types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[throws:THROWS]-&gt;(:Type)-[:RESOLVES_TO]-&gt;(t:Type)
+MERGE
+  (m)-[throws1:THROWS]-&gt;(t)
+SET
+  throws1=throws,
+  throws1.resolved=true
+RETURN
+  count(throws1) as ResolvedExceptionTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveType">8.4.7.1.14. Concept classpath:ResolveType</h6>
+<div class="paragraph">
+<p>Adds a relation "RESOLVES_TO" from a type required by an artifact to a type contained in another
+            artifact if their fully qualified names match.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a1:Artifact)-[:REQUIRES]-&gt;(t1:Type)
+WITH
+  a1, t1, t1.fqn as fqn
+MATCH
+  (a2:Artifact)-[:CONTAINS]-&gt;(t2:Type)
+WHERE
+  t2.fqn=t1.fqn
+MERGE
+  (t1)-[r:RESOLVES_TO]-&gt;(t2)
+RETURN
+  count(r) as ResolvedTypes</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveValue">8.4.7.1.15. Concept classpath:ResolveValue</h6>
+<div class="paragraph">
+<p>Propagates "IS" relations between values and types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (v:Value)-[is:IS]-&gt;(e)-[:RESOLVES_TO]-&gt;(e2)
+MERGE
+  (v)-[is1:IS]-&gt;(e2)
+SET
+  is1=is,
+  is1.resolved=true
+RETURN
+  count(is1) as ResolvedValueTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveType">Concept classpath:ResolveType</a></p>
+</li>
+<li>
+<p><a href="#classpath:ResolveMember">Concept classpath:ResolveMember</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="classpath:ResolveWrites">8.4.7.1.16. Concept classpath:ResolveWrites</h6>
+<div class="paragraph">
+<p>Propagates "WRITES" relations between methods and fields to their resolved fields with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[writes:WRITES]-&gt;(f1:Field)-[:RESOLVES_TO]-&gt;(f2:Field)
+MERGE
+  (m)-[writes1:WRITES {relationId: id(writes)}]-&gt;(f2)
+SET
+  writes1=writes,
+  writes1.resolved=true
+REMOVE
+  writes1.relationId
+RETURN
+  count(writes1) as ResolvedWrites</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classpath:ResolveMember">Concept classpath:ResolveMember</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="dependency:Artifact">8.4.7.1.17. Concept dependency:Artifact</h6>
+<div class="paragraph">
+<p>Creates a new DEPENDS_ON relationship between artifacts or updates an existing one with a 'used'
+            property if there are type dependencies between them, i.e. if an artifact contains a type with a fully
+            qualified
+            name which a type from another artifact requires.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a1:Artifact)-[:CONTAINS]-&gt;(:Type)-[:DEPENDS_ON]-&gt;(type:Type)
+WITH
+  a1,type.fqn as fqn
+MATCH
+  (a2:Artifact)-[:CONTAINS]-&gt;(t2:Type)
+WHERE
+  a1 &lt;&gt; a2
+  and t2.fqn = fqn
+MERGE
+  (a1)-[d:DEPENDS_ON]-&gt;(a2)
+SET
+  d.used=true
+RETURN
+  a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="dependency:Package">8.4.7.1.18. Concept dependency:Package</h6>
+<div class="paragraph">
+<p>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (p1:Package)-[:CONTAINS]-&gt;(t1:Type)-[:DEPENDS_ON]-&gt;(t2:Type)&lt;-[:CONTAINS]-(p2:Package)
+WHERE
+    p1&lt;&gt;p2
+CREATE UNIQUE
+    (p1)-[:DEPENDS_ON]-&gt;(p2)
+RETURN
+    p1 AS package, COUNT(DISTINCT p2) AS PackageDependencies</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:AnonymousInnerType">8.4.7.1.19. Concept java:AnonymousInnerType</h6>
+<div class="paragraph">
+<p>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (innerType:Inner:Type)
+WHERE
+  innerType.name =~ &quot;.*\\$[0-9]*&quot;
+SET
+  innerType:Anonymous
+RETURN
+  innerType AS AnonymousInnerType</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:InnerType">Concept java:InnerType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:Deprecated">8.4.7.1.20. Concept java:Deprecated</h6>
+<div class="paragraph">
+<p>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with "Deprecated".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(dt:Type)
+WHERE
+  dt.fqn='java.lang.Deprecated'
+SET
+  e:Deprecated
+RETURN
+  e AS DeprecatedElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:Error">8.4.7.1.21. Concept java:Error</h6>
+<div class="paragraph">
+<p>Labels types deriving from java.lang.Error as "Error".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (throwable)-[:EXTENDS*]-&gt;(t:Type)
+WHERE
+  t.fqn = 'java.lang.Error'
+SET
+  throwable:Error
+RETURN
+  throwable AS Error</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:Exception">8.4.7.1.22. Concept java:Exception</h6>
+<div class="paragraph">
+<p>Labels types deriving from java.lang.Exception as "Exception".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (exception)-[:EXTENDS*]-&gt;(t:Type)
+WHERE
+  t.fqn = 'java.lang.Exception'
+SET
+  exception:Exception
+RETURN
+  exception AS Exception</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:InnerType">8.4.7.1.23. Concept java:InnerType</h6>
+<div class="paragraph">
+<p>Sets a label "Inner" on inner types.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (:Type)-[:DECLARES]-&gt;(innerType:Type)
+SET
+  innerType:Inner
+RETURN
+  innerType AS InnerType</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:InvokesOverriddenMethod">8.4.7.1.24. Concept java:InvokesOverriddenMethod</h6>
+<div class="paragraph">
+<p>Propagates INVOKES relationships to methods which implement or override the invoked method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (method:Method)-[invocation:INVOKES]-&gt;(invokedMethod:Method),
+  (overridingMethod:Method)-[:OVERRIDES]-&gt;(invokedMethod)
+MERGE
+  (method)-[r:INVOKES{lineNumber:invocation.lineNumber}]-&gt;(overridingMethod)
+RETURN count(r) AS OverridingInvocations</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverrides">Concept java:MethodOverrides</a></p>
+</li>
+<li>
+<p><a href="#java:TypeAssignableFrom">Concept java:TypeAssignableFrom</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:JavaVersion">8.4.7.1.25. Concept java:JavaVersion</h6>
+<div class="paragraph">
+<p>Set a human readable property "javaVersion" on a class file based on its byte code version.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (:Artifact)-[:CONTAINS]-&gt;(type:Java:Type)
+SET
+  type.javaVersion=
+  CASE type.byteCodeVersion
+    WHEN 52 THEN &quot;Java 8&quot;
+    WHEN 51 THEN &quot;Java 7&quot;
+    WHEN 50 THEN &quot;Java 6&quot;
+    WHEN 49 THEN &quot;Java 5&quot;
+    WHEN 48 THEN &quot;Java 1.4&quot;
+    WHEN 47 THEN &quot;Java 1.3&quot;
+    WHEN 46 THEN &quot;Java 1.2&quot;
+    WHEN 45 THEN &quot;Java 1.1/1.0&quot;
+  END
+RETURN
+  count(type) as Types</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:MethodOverloads">8.4.7.1.26. Concept java:MethodOverloads</h6>
+<div class="paragraph">
+<p>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
+            methods
+            have the same name but not the same signature).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(method:Method),
+  (type)-[:DECLARES]-&gt;(otherMethod:Method)
+WHERE
+  method &lt;&gt; otherMethod
+  AND method.name = otherMethod.name
+  AND method.signature &lt;&gt; otherMethod.signature
+MERGE
+  (method)-[:OVERLOADS]-&gt;(otherMethod)
+RETURN method AS OverloadedMethod, type AS DeclaringType</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:MethodOverrides">8.4.7.1.27. Concept java:MethodOverrides</h6>
+<div class="paragraph">
+<p>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods
+            have the same signature).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(method:Method),
+  (superType:Type)-[:DECLARES]-&gt;(otherMethod:Method),
+  (superType)-[:ASSIGNABLE_FROM]-&gt;(type)
+WHERE
+  method.name = otherMethod.name
+  AND method.signature = otherMethod.signature
+  AND method.visibility &lt;&gt; 'private'
+MERGE
+  (method)-[:OVERRIDES]-&gt;(otherMethod)
+RETURN method AS OverriddenMethod, type AS DeclaringType, superType AS SuperType</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:TypeAssignableFrom">Concept java:TypeAssignableFrom</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:RuntimeException">8.4.7.1.28. Concept java:RuntimeException</h6>
+<div class="paragraph">
+<p>Labels types deriving from java.lang.RuntimeException as "RuntimeException".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (runtimeException)-[:EXTENDS*]-&gt;(t:Type)
+WHERE
+  t.fqn = 'java.lang.RuntimeException'
+SET
+  runtimeException:RuntimeException
+RETURN
+  runtimeException AS RuntimeException</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:Throwable">8.4.7.1.29. Concept java:Throwable</h6>
+<div class="paragraph">
+<p>Labels types deriving from java.lang.Throwable as "Throwable".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (throwable)-[:EXTENDS*]-&gt;(t:Type)
+WHERE
+  t.fqn = 'java.lang.Throwable'
+SET
+  throwable:Throwable
+RETURN
+  throwable AS Throwable</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java:TypeAssignableFrom">8.4.7.1.30. Concept java:TypeAssignableFrom</h6>
+<div class="paragraph">
+<p>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable from the other (i.e. a super class or
+            interface).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)
+MERGE
+  (type)-[:ASSIGNABLE_FROM]-&gt;(type)
+WITH
+  type
+MATCH
+  (type)-[:IMPLEMENTS|EXTENDS*]-&gt;(superType:Type)
+MERGE
+  (superType)-[:ASSIGNABLE_FROM]-&gt;(type)
+RETURN type AS AssignableType, superType AS AssignableFrom</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="dependency:ArtifactCycles">8.4.7.1.31. Constraint dependency:ArtifactCycles</h6>
+<div class="paragraph">
+<p>There must be no cyclic artifact dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (a1:Artifact)-[:DEPENDS_ON]-&gt;(a2:Artifact),
+    path=shortestPath((a2)-[:DEPENDS_ON*]-&gt;(a1))
+WHERE
+    a1&lt;&gt;a2
+RETURN
+    a1 AS Artifact, EXTRACT(a IN nodes(path) | a.fqn) AS Cycle
+ORDER BY
+    Artifact.fqn</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#dependency:Artifact">Concept dependency:Artifact</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="dependency:PackageCycles">8.4.7.1.32. Constraint dependency:PackageCycles</h6>
+<div class="paragraph">
+<p>There must be no cyclic package dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (p1:Package)-[:DEPENDS_ON]-&gt;(p2:Package),
+    path=shortestPath((p2)-[:DEPENDS_ON*]-&gt;(p1))
+WHERE
+    p1&lt;&gt;p2
+RETURN
+    p1 AS Package, EXTRACT(p IN nodes(path) | p.fqn) AS Cycle
+ORDER BY
+    Package.fqn</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#dependency:Package">Concept dependency:Package</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -6307,7 +7881,75 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_java_8_plugin">8.5.1. Concepts and Constraints provided by the Java 8 Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_java_8_plugin">8.5.1.1. Concepts provided by the Java 8  plugin</h5>
-
+<div class="sect5">
+<h6 id="java8:DefaultMethod">8.5.1.1.1. Concept java8:DefaultMethod</h6>
+<div class="paragraph">
+<p>Labels default methods of interfaces with <code>Default</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type:Java:Interface)-[:DECLARES]-&gt;(defaultMethod:Java:Method)
+WHERE NOT
+  exists(defaultMethod.abstract)
+SET
+  defaultMethod:Default
+RETURN
+  defaultMethod AS DefaultMethod, type AS Interface</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java8:FunctionalInterface">8.5.1.1.2. Concept java8:FunctionalInterface</h6>
+<div class="paragraph">
+<p>Labels functional interfaces (i.e. to be used as lambda expressions)
+            with <code>FunctionalInterface</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (i:Java:Interface)-[:DECLARES]-&gt;(m:Member:Java:Method {abstract: true})
+WITH
+    i, count(m) AS methods
+WHERE
+    methods = 1
+SET
+    i:FunctionalInterface
+RETURN
+    i AS FunctionInterface</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="java8:LambdaMethod">8.5.1.1.3. Concept java8:LambdaMethod</h6>
+<div class="paragraph">
+<p>Labels lambda methods with <code>Lambda</code> and creates a relation <code>DECLARES</code> from the declaring method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Java:Type)-[:DECLARES]-&gt;(lambda:Method)
+WHERE
+  exists(lambda.synthetic)
+  and exists(lambda.static)
+  and lambda.name starts with(&quot;lambda$&quot;)
+SET
+  lambda:Lambda
+WITH
+  type, lambda
+MATCH
+  (type)-[:DECLARES]-&gt;(method:Method)
+WHERE
+  method &lt;&gt; lambda
+  and method.firstLineNumber &lt;= lambda.firstLineNumber
+  and method.lastLineNumber &gt;= lambda.lastLineNumber
+MERGE
+  (method)-[:DECLARES_LAMBDA]-&gt;(lambda)
+RETURN
+  method, collect(lambda)</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7004,7 +8646,340 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_jax_rs_plugin">8.7.1. Concepts and Constraints provided by the JAX-RS Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_jax_rs_plugin">8.7.1.1. Concepts provided by the JAX-RS  plugin</h5>
-
+<div class="sect5">
+<h6 id="jaxrs:ContextProvider">8.7.1.1.1. Concept jaxrs:ContextProvider</h6>
+<div class="paragraph">
+<p>Finds classes that implement "javax.ws.rs.ext.ContextResolver" and labels them with 'JaxRS' and 'ContextProvider'</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:IMPLEMENTS]-&gt;(a:Type)
+WHERE
+  a.fqn = &quot;javax.ws.rs.ext.ContextResolver&quot;
+SET
+  c:JaxRS:ContextProvider
+RETURN
+  DISTINCT c AS ContextProvider</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:DeleteResourceMethod">8.7.1.1.2. Concept jaxrs:DeleteResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.DELETE" and labels them with 'DeleteResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.DELETE&quot;
+SET
+  m:DeleteResourceMethod
+RETURN
+  m AS DeleteMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:EntityProvider">8.7.1.1.3. Concept jaxrs:EntityProvider</h6>
+<div class="paragraph">
+<p>Finds classes that implement "javax.ws.rs.ext.MessageBodyReader"
+		or "javax.ws.rs.ext.MessageBodyWriter" and labels them with 'JaxRS' and 'EntityProvider'</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:IMPLEMENTS]-&gt;(a:Type)
+WHERE
+  a.fqn IN [&quot;javax.ws.rs.ext.MessageBodyReader&quot;, &quot;javax.ws.rs.ext.MessageBodyWriter&quot;]
+SET
+  c:JaxRS:EntityProvider
+RETURN
+  DISTINCT c AS EntityProvider</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:ExceptionMappingProvider">8.7.1.1.4. Concept jaxrs:ExceptionMappingProvider</h6>
+<div class="paragraph">
+<p>Finds classes that implement "javax.ws.rs.ext.ExceptionMapper" and labels them with 'JaxRS' and 'ExceptionMappingProvider'</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:IMPLEMENTS]-&gt;(a:Type)
+WHERE
+  a.fqn = &quot;javax.ws.rs.ext.ExceptionMapper&quot;
+SET
+  c:JaxRS:ExceptionMappingProvider
+RETURN
+  DISTINCT c AS ExceptionMappingProvider</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:GetResourceMethod">8.7.1.1.5. Concept jaxrs:GetResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.GET" and labels them with 'GetResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.GET&quot;
+SET
+  m:GetResourceMethod
+RETURN
+  m AS GetMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:HeadResourceMethod">8.7.1.1.6. Concept jaxrs:HeadResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.HEAD" and labels them with 'HeadResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.HEAD&quot;
+SET
+  m:HeadResourceMethod
+RETURN
+  m AS HeadMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:OptionsResourceMethod">8.7.1.1.7. Concept jaxrs:OptionsResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.OPTIONS" and labels them with 'OptionsResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.OPTIONS&quot;
+SET
+  m:OptionsResourceMethod
+RETURN
+  m AS OptionsMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:PostResourceMethod">8.7.1.1.8. Concept jaxrs:PostResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.POST" and labels them with 'PostResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.POST&quot;
+SET
+  m:PostResourceMethod
+RETURN
+  m AS PostMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:PutResourceMethod">8.7.1.1.9. Concept jaxrs:PutResourceMethod</h6>
+<div class="paragraph">
+<p>Finds resource methods annotated with "@javax.ws.rs.PUT" and labels them with 'PutResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+WHERE
+  a.fqn = &quot;javax.ws.rs.PUT&quot;
+SET
+  m:PutResourceMethod
+RETURN
+  m AS PutMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:ResourceMethod">Concept jaxrs:ResourceMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:RequestMethodDesignator">8.7.1.1.10. Concept jaxrs:RequestMethodDesignator</h6>
+<div class="paragraph">
+<p>Finds request method designator annotations (i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'RequestMethodDesignator'</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (a:Type)
+WHERE
+  a.fqn IN [&quot;javax.ws.rs.GET&quot;, &quot;javax.ws.rs.POST&quot;, &quot;javax.ws.rs.PUT&quot;, &quot;javax.ws.rs.DELETE&quot;, &quot;javax.ws.rs.HEAD&quot;, &quot;javax.ws.rs.OPTIONS&quot;]
+SET
+  a:JaxRS:RequestMethodDesignator
+RETURN
+  a AS RequestMethodDesignator</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:Resource">8.7.1.1.11. Concept jaxrs:Resource</h6>
+<div class="paragraph">
+<p>Finds classes or interfaces with atleast one method annotated with "@javax.ws.rs.Path" or with request method designator
+		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'Resource'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES]-&gt;(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  (a:JaxRS:RequestMethodDesignator OR a.fqn=&quot;javax.ws.rs.Path&quot;)
+AND
+  (t:Class OR t:Interface)
+SET
+  t:JaxRS:Resource
+RETURN
+  DISTINCT t AS RestResource</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:RequestMethodDesignator">Concept jaxrs:RequestMethodDesignator</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:ResourceMethod">8.7.1.1.12. Concept jaxrs:ResourceMethod</h6>
+<div class="paragraph">
+<p>Finds methods that belong to resource class or interface and annotated with request method designator
+		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'ResourceMethod'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:JaxRS:Resource)-[:DECLARES]-&gt;(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:JaxRS:RequestMethodDesignator)
+SET
+  m:JaxRS:ResourceMethod
+RETURN
+  m AS ResourceMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:Resource">Concept jaxrs:Resource</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jaxrs:SubResourceLocator">8.7.1.1.13. Concept jaxrs:SubResourceLocator</h6>
+<div class="paragraph">
+<p>Finds classes or interfaces with method annotated with "@javax.ws.rs.Path" but no request method designator
+		and no entity parameters and labels the methods with 'JaxRS' and 'SubResourceLocator'.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES]-&gt;(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn = &quot;javax.ws.rs.Path&quot;
+AND
+  (t:Class OR t:Interface)
+AND
+  NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(:JaxRS:RequestMethodDesignator)
+AND
+  (m)-[:HAS]-&gt;(:Parameter)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(:Type)
+SET
+  m:JaxRS:SubResourceLocator
+RETURN
+  DISTINCT m AS RestSubResourceLocator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jaxrs:RequestMethodDesignator">Concept jaxrs:RequestMethodDesignator</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7162,7 +9137,148 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_jpa_2_plugin">8.8.2. Concepts and Constraints provided by the JPA 2 Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_jpa_2_plugin">8.8.2.1. Concepts provided by the JPA 2  plugin</h5>
-
+<div class="sect5">
+<h6 id="jpa2:Embeddable">8.8.2.1.1. Concept jpa2:Embeddable</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.persistence.Embeddable with "Jpa" and "Embeddable".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;javax.persistence.Embeddable&quot;
+SET
+  t:Jpa:Embeddable
+RETURN
+  t AS JpaEmbeddable</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jpa2:Embedded">8.8.2.1.2. Concept jpa2:Embedded</h6>
+<div class="paragraph">
+<p>Labels all fields or methods annotated with @javax.persistence.Embedded with "Jpa" and "Embedded".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES]-&gt;(member),
+  (member)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  (member:Field or member:Method)
+  and a.fqn=&quot;javax.persistence.Embedded&quot;
+SET
+  member:Jpa:Embedded
+RETURN
+  member AS JpaEmbedded</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jpa2:EmbeddedId">8.8.2.1.3. Concept jpa2:EmbeddedId</h6>
+<div class="paragraph">
+<p>Labels all fields or methods annotated with @javax.persistence.EmbeddedId with "Jpa" and "Embedded".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES]-&gt;(member),
+  (member)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  (member:Field or member:Method)
+  and a.fqn=&quot;javax.persistence.EmbeddedId&quot;
+SET
+  member:Jpa:EmbeddedId
+RETURN
+  member AS EmbeddedId</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jpa2:Entity">8.8.2.1.4. Concept jpa2:Entity</h6>
+<div class="paragraph">
+<p>Labels all types annotated with @javax.persistence.Entity with "Jpa" and "Entity".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;javax.persistence.Entity&quot;
+SET
+  t:Jpa:Entity
+RETURN
+  t AS JpaEntity</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jpa2:NamedQuery">8.8.2.1.5. Concept jpa2:NamedQuery</h6>
+<div class="paragraph">
+<p>Creates a node labeled with "Jpa" and "NamedQuery" for each @NamedQuery defined for an entity.
+            Furthermore a relation DEFINES is created between the entity and the named query.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (entity:Jpa:Entity),
+  (entity)-[:ANNOTATED_BY]-&gt;(namedQueries:Annotation)-[:OF_TYPE]-(:Type{fqn:'javax.persistence.NamedQueries'}),
+  (namedQueries)-[:HAS]-&gt;(:Value:Array)-[:CONTAINS]-&gt;(namedQuery),
+  (namedQuery)-[:OF_TYPE]-&gt;(:Type{fqn:'javax.persistence.NamedQuery'}),
+  (namedQuery)-[:HAS]-&gt;(nameAttribute:Value{name:'name'}),
+  (namedQuery)-[:HAS]-&gt;(queryAttribute:Value{name:'query'})
+MERGE
+  (entity)-[:DEFINES]-&gt;(n:Jpa:NamedQuery {name:nameAttribute.value})
+SET
+  n.query=queryAttribute.value
+RETURN
+  entity as Entity, n.name as Name, n.query as Query
+UNION ALL
+MATCH
+  (entity)-[:ANNOTATED_BY]-&gt;(namedQuery:Annotation),
+  (namedQuery)-[:OF_TYPE]-&gt;(:Type{fqn:'javax.persistence.NamedQuery'}),
+  (namedQuery)-[:HAS]-&gt;(nameAttribute:Value{name:'name'}),
+  (namedQuery)-[:HAS]-&gt;(queryAttribute:Value{name:'query'})
+MERGE
+  (entity)-[:DEFINES]-&gt;(n:Jpa:NamedQuery {name:nameAttribute.value})
+SET
+  n.query=queryAttribute.value
+RETURN
+  entity as Entity, n.name as Name, n.query as Query</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jpa2:Entity">Concept jpa2:Entity</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jpa2:ValidationModeMustBeExplicitlySpecified">8.8.2.1.6. Constraint jpa2:ValidationModeMustBeExplicitlySpecified</h6>
+<div class="paragraph">
+<p>The validation mode of all persistence units must be explicitly specified and either set to CALLBACK or NONE.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (pu:PersistenceUnit)
+WHERE
+  not exists(pu.validationMode)
+  OR NOT (
+    pu.validationMode='CALLBACK'
+    OR pu.validationMode='NONE'
+  )
+RETURN
+  pu AS PersistenceUnit</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -7810,7 +9926,1050 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <h4 id="_concepts_and_constraints_provided_by_the_junit_plugin">8.10.2. Concepts and Constraints provided by the JUnit Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_junit_plugin">8.10.2.1. Concepts provided by the JUnit  plugin</h5>
+<div class="sect5">
+<h6 id="junit:TestCaseDefinedByClass">8.10.2.1.1. Concept junit:TestCaseDefinedByClass</h6>
+<div class="paragraph">
+<p>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testcase:TestCase)
+WITH
+  testcase
+MATCH
+  (testclass:Type)
+WHERE
+  testclass.fqn = testcase.className
+MERGE
+  (testcase)-[:DEFINED_BY]-&gt;(testclass)
+RETURN
+  testcase.name AS TestCase, testclass AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit:TestCaseImplementedByMethod">8.10.2.1.2. Concept junit:TestCaseImplementedByMethod</h6>
+<div class="paragraph">
+<p>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
+            methods.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testcase:TestCase)-[:DEFINED_BY]-&gt;(testclass:Type),
+  (testclass)-[:EXTENDS*0..]-&gt;(:Type)-[:DECLARES]-&gt;(testmethod:Method)
+WHERE
+  testmethod.name = testcase.name
+MERGE
+  (testcase)-[:IMPLEMENTED_BY]-&gt;(testmethod)
+RETURN
+  testcase.name AS TestCase, testmethod as TestMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit:TestCaseDefinedByClass">Concept junit:TestCaseDefinedByClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit3:SetUpMethod">8.10.2.1.3. Concept junit3:SetUpMethod</h6>
+<div class="paragraph">
+<p>Labels all setUp methods declared by a test class with "SetUp" and "Junit3".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Class:Test:Junit3)-[:DECLARES]-&gt;(m:Method)
+WHERE
+  m.signature = &quot;void setUp()&quot;
+SET
+  m:SetUp:Junit3
+RETURN
+  m AS SetUpMethod, c AS TestClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit3:TestClass">Concept junit3:TestClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit3:TearDownMethod">8.10.2.1.4. Concept junit3:TearDownMethod</h6>
+<div class="paragraph">
+<p>Labels all tearDown methods declared by a test class with "TearDown" and "Junit3".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Class:Test:Junit3)-[:DECLARES]-&gt;(m:Method)
+WHERE
+  m.signature = &quot;void tearDown()&quot;
+SET
+  m:TearDown:Junit3
+RETURN
+  m AS TearDownMethod, c AS TestClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit3:TestClass">Concept junit3:TestClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit3:TestClass">8.10.2.1.5. Concept junit3:TestClass</h6>
+<div class="paragraph">
+<p>Labels all non-abstract classes extending from junit.framework.TestCase "Test" and "Junit3".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:EXTENDS*]-&gt;(testCaseType:Type)
+WHERE
+  testCaseType.fqn = &quot;junit.framework.TestCase&quot;
+SET
+  c:Test:Junit3
+RETURN
+  c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit3:TestMethod">8.10.2.1.6. Concept junit3:TestMethod</h6>
+<div class="paragraph">
+<p>Labels all test methods declared by a test class with "Test" and "Junit3".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Class:Test:Junit3)-[:DECLARES]-&gt;(m:Method)
+WHERE
+  m.signature =~ &quot;void test.*\\(.*\\)&quot;
+SET
+  m:Test:Junit3
+RETURN
+  m AS Test, c AS TestClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit3:TestClass">Concept junit3:TestClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:AfterClassMethod">8.10.2.1.7. Concept junit4:AfterClassMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.junit.AfterClass" with "Junit4" and "AfterClass".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.AfterClass&quot;
+SET
+  m:Junit4:AfterClass
+RETURN
+  m AS AfterClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:AfterMethod">8.10.2.1.8. Concept junit4:AfterMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.junit.After" with "Junit4" and "After".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.After&quot;
+SET
+  m:Junit4:After
+RETURN
+  m AS AfterMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:AssertMethod">8.10.2.1.9. Concept junit4:AssertMethod</h6>
+<div class="paragraph">
+<p>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+  assertType.fqn = 'org.junit.Assert'
+  and assertMethod.signature =~ 'void assert.*'
+SET
+  assertMethod:Junit4:Assert
+RETURN
+  assertMethod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:BeforeClassMethod">8.10.2.1.10. Concept junit4:BeforeClassMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.junit.BeforeClass" with "Junit4" and "BeforeClass".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.BeforeClass&quot;
+SET
+  m:Junit4:BeforeClass
+RETURN
+  m AS BeforeClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:BeforeMethod">8.10.2.1.11. Concept junit4:BeforeMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.junit.Before" with "Junit4" and "Before".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.Before&quot;
+SET
+  m:Junit4:Before
+RETURN
+  m AS BeforeMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:IgnoreTestClassOrMethod">8.10.2.1.12. Concept junit4:IgnoreTestClassOrMethod</h6>
+<div class="paragraph">
+<p>Labels all classes or methods annotated with "@org.junit.Ignore" with "Junit4" and "Ignore".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.Ignore&quot;
+SET
+  e:Junit4:Ignore
+RETURN
+  e AS IgnoredElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:SuiteClass">8.10.2.1.13. Concept junit4:SuiteClass</h6>
+<div class="paragraph">
+<p>Labels all classes annotated by "@org.junit.runners.Suite.SuiteClasses" with "Junit4" and "Suite" and creates a relation "CONTAINS_TESTCLASS" to all referenced classes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (suite:Type)-[:ANNOTATED_BY]-&gt;(suiteClasses)-[:OF_TYPE]-&gt;(suiteClassesType:Type)
+WHERE
+  suiteClassesType.fqn = &quot;org.junit.runners.Suite$SuiteClasses&quot;
+SET
+  suite:Junit4:Suite
+WITH
+  suite, suiteClasses
+MATCH
+  (suiteClasses)-[:HAS]-&gt;(:Array:Value)-[:CONTAINS]-&gt;(Class:Value)-[:IS]-&gt;(testClass:Type)
+CREATE UNIQUE
+  (suite)-[c:CONTAINS_TESTCLASS]-&gt;(testClass)
+RETURN
+  suite, collect(testClass)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:TestClass">8.10.2.1.14. Concept junit4:TestClass</h6>
+<div class="paragraph">
+<p>Labels all classes containing test methods with "Test" and "Junit4".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit4:Test)
+SET
+  c:Test:Junit4
+RETURN
+  c AS TestClass, COLLECT(m) AS TestMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit4:TestMethod">Concept junit4:TestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:TestClassOrMethod">8.10.2.1.15. Concept junit4:TestClassOrMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>_The rule is deprecated: This concept has been replaced by "junit4:TestMethod" and "junit4:TestClass"._</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing
+            classes with "Test" and "Junit4".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit4:Test)
+RETURN
+  c AS TestClass, COLLECT(m) AS TestMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit4:TestMethod">Concept junit4:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit4:TestClass">Concept junit4:TestClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit4:TestMethod">8.10.2.1.16. Concept junit4:TestMethod</h6>
+<div class="paragraph">
+<p>Finds all test methods (i.e. annotated with "@org.junit.Test") and labels them with "Test" and
+            "Junit4".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.Test&quot;
+SET
+  m:Test:Junit4
+RETURN
+  m AS Test</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:AfterAll">8.10.2.1.17. Concept junit5:AfterAll</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterAll"
+with "Junit5" and "AfterClass".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.AfterAll&quot;
+SET
+  m:Junit5:AfterAll
+RETURN
+  m AS AfterClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:AfterEach">8.10.2.1.18. Concept junit5:AfterEach</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
+with "Junit5" and "After".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.AfterEach&quot;
+SET
+  m:Junit5:AfterEach
+RETURN
+  m AS AfterEachMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:AssertMethod">8.10.2.1.19. Concept junit5:AssertMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all assertion methods declared by "org.junit.jupiter.api.Assertions" with "Junit5"
+and "Assert".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+  assertType.fqn = 'org.junit.jupiter.api.Assertions'
+  and assertMethod.signature =~ 'void assert.*'
+SET
+  assertMethod:Junit5:Assert
+RETURN
+  assertMethod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:BeforeAll">8.10.2.1.20. Concept junit5:BeforeAll</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeAll"
+with "Junit5" and "BeforeClass".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.BeforeAll&quot;
+SET
+  m:Junit5:BeforeAll
+RETURN
+  m AS BeforeClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:BeforeEach">8.10.2.1.21. Concept junit5:BeforeEach</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeEach"
+with "Junit5" and "Before".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.BeforeEach&quot;
+SET
+  m:Junit5:BeforeEach
+RETURN
+  m AS BeforeMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:DisabledTestClassOrMethod">8.10.2.1.22. Concept junit5:DisabledTestClassOrMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all classes or methods annotated with "@org.junit.jupiter.api.Disabled"
+with "Junit5" and "Ignore".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.Disabled&quot;
+SET
+  e:Junit5:Disabled
+RETURN
+  e AS IgnoredElement</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:NestedTestClass">8.10.2.1.23. Concept junit5:NestedTestClass</h6>
+<div class="paragraph">
+<p>Labels all nested test classes annotated with "@org.junit.jupiter.api.Nested",
+            independently from the number of tests contained in the method, with
+            "Junit5" and "Nested".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(n:Type)
+WHERE
+  n.fqn = &quot;org.junit.jupiter.api.Nested&quot;
+SET
+  c:Junit5:Nested
+RETURN
+  c</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:ParameterizedTestMethod">8.10.2.1.24. Concept junit5:ParameterizedTestMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
+labels them with "Test", "Parameterized", and "Junit5".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.params.ParameterizedTest&quot;
+SET
+  m:Parameterized:Test:Junit5
+RETURN
+  m AS Test</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:RepeatedTestMethod">8.10.2.1.25. Concept junit5:RepeatedTestMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
+labels them with "Test", "Repeated", and "Junit5".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.RepeatedTest&quot;
+SET
+  m:Repeated:Test:Junit5
+RETURN
+  m AS Test</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedClass">8.10.2.1.26. Concept junit5:TaggedClass</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
+with "Junit5", and "Tag".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+SET
+  c:Junit5:Tag
+RETURN
+  c AS TestClass
+UNION
+MATCH
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tags:Type),
+  (a)-[:HAS]-&gt;(v:Array:Value)-[:CONTAINS]-&gt;(b:Annotation:Value)-[:OF_TYPE]-&gt;(tag:Type)
+SET
+  c:Junit5:Tag
+RETURN
+  c AS TestClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestTemplateMethod">Concept junit5:TestTemplateMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedClassTags">8.10.2.1.27. Concept junit5:TaggedClassTags</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Collects all tags of classes annotated with
+"@org.junit.jupiter.api.Tag" and containing test methods (":Test:Method:Junit5")
+and stores them in an array property of the class descriptor.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tag:Type),
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit5:Test),
+  // (m:Method)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tag:Type),
+  (a)-[:HAS]-&gt;(tagValue:Value)
+WHERE
+  tag.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+WITH
+  collect(distinct tagValue.value) AS tagValues, c
+SET
+  c.tags = tagValues, c:Test:Junit5
+RETURN
+  c
+UNION
+MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Test:Junit5),
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tags:Type),
+  (a)-[:HAS]-&gt;(v:Array:Value)-[:CONTAINS]-&gt;(b:Annotation:Value)-[:OF_TYPE]-&gt;(tag:Type),
+  (b)-[:HAS]-&gt;(tagValue:Value)
+WHERE
+  tags.fqn=&quot;org.junit.jupiter.api.Tags&quot;
+  AND tag.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+WITH
+  collect(distinct tagValue.value) AS tagValues, c
+SET
+  c.tags = tagValues, c:Test:Junit5
+RETURN
+  c</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedClassWithMetaAnnotation">8.10.2.1.28. Concept junit5:TaggedClassWithMetaAnnotation</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all classes annotated by an Junit meta annotation
+with "Junit5", and "Tag".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Java:Type)-[:ANNOTATED_BY]-&gt;(a:Annotation)
+  -[:OF_TYPE]-&gt;(metaAnn:Java:Type:Annotation)
+  -[:ANNOTATED_BY]-&gt;(tagAnn:Java:Annotation)
+  -[:OF_TYPE]-&gt;(tagAnnType:Java:Type { name: 'Tag'})
+SET
+  c:Tag:Junit5
+RETURN
+  c AS TaggedClass
 
+UNION
+
+MATCH
+   (c:Java:Type)
+   -[:ANNOTATED_BY]-&gt;(a:Annotation)
+   -[:OF_TYPE]-&gt;(metaAnn:Annotation)
+   -[:ANNOTATED_BY]-&gt;(tags:Annotation)
+   -[:OF_TYPE]-&gt;(tagsType { fqn: 'org.junit.jupiter.api.Tags' }),
+
+   (tags)-[:HAS]-&gt;(v:Array:Value)
+   -[:CONTAINS]-&gt;(b:Annotation:Value)
+   -[:OF_TYPE]-&gt;(tag:Type { fqn: 'org.junit.jupiter.api.Tag' })
+SET
+   c:Tag:Junit5
+RETURN
+   c AS TaggedClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestTemplateMethod">Concept junit5:TestTemplateMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedMethod">8.10.2.1.29. Concept junit5:TaggedMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
+with "Junit5", "Test" and "Tag".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method:Junit5:Test)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+SET
+  m:Junit5:Test:Tag
+RETURN
+  m AS TestMethod, c AS TestClass
+UNION
+MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method:Test:Junit5)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tags:Type),
+  (a)-[:HAS]-&gt;(v:Array:Value)-[:CONTAINS]-&gt;(b:Annotation:Value)-[:OF_TYPE]-&gt;(tag:Type)
+WHERE
+  tags.fqn=&quot;org.junit.jupiter.api.Tags&quot;
+  AND tag.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+SET
+  m:Junit5:Test:Tag
+RETURN
+  m AS TestMethod, c AS TestClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestTemplateMethod">Concept junit5:TestTemplateMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedMethodTags">8.10.2.1.30. Concept junit5:TaggedMethodTags</h6>
+<div class="paragraph">
+<p>Collects all tags of methods annotated with
+            "@org.junit.jupiter.api.Tag" and "@org.junit.jupiter.api.Test"
+            and stores them in an array property of the method descriptor.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+    (m:Method)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(tags:Type),
+    (a)-[:HAS]-&gt;(v:Array:Value)-[:CONTAINS]-&gt;(b:Annotation:Value)-[:OF_TYPE]-&gt;(tag:Type),
+    (b)-[:HAS]-&gt;(tagValue:Value)
+
+WHERE
+    tags.fqn=&quot;org.junit.jupiter.api.Tags&quot;
+    AND tag.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+
+WITH
+    collect(distinct tagValue.value) AS tagValues, m
+
+SET
+    m.tags = tagValues
+
+RETURN
+    m
+
+UNION
+
+MATCH
+    (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+    (m:Method)-[:ANNOTATED_BY]-&gt;(a:Annotation)-[:OF_TYPE]-&gt;(t:Type),
+    (a:Annotation)-[:HAS]-&gt;(v:Value)
+
+WHERE
+    t.fqn=&quot;org.junit.jupiter.api.Tag&quot;
+
+WITH
+    collect(distinct v.value) as tagValues, m
+
+SET
+    m.tags = tagValues
+
+RETURN
+    m</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TaggedMethodWithMetaAnnotation">8.10.2.1.31. Concept junit5:TaggedMethodWithMetaAnnotation</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by an Junit meta annotation
+with "Junit5", "Test" and "Tag".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (meth:Java:Method:Junit5:Test)-[:ANNOTATED_BY]-&gt;(a:Annotation)
+  -[:OF_TYPE]-&gt;(metaAnn:Java:Type:Annotation)
+  -[:ANNOTATED_BY]-&gt;(tagAnn:Java:Annotation)
+  -[:OF_TYPE]-&gt;(tagAnnType:Java:Type { name: 'Tag'})
+SET
+  meth:Tag
+RETURN
+  meth AS TestMethod
+
+UNION
+
+MATCH
+   (meth:Java:Method:Junit5:Test)
+    -[:ANNOTATED_BY]-&gt;(a:Annotation)
+   -[:OF_TYPE]-&gt;(metaAnn:Annotation)
+   -[:ANNOTATED_BY]-&gt;(tags:Annotation)
+   -[:OF_TYPE]-&gt;(tagsType { fqn: 'org.junit.jupiter.api.Tags' }),
+
+   (tags)-[:HAS]-&gt;(v:Array:Value)
+   -[:CONTAINS]-&gt;(b:Annotation:Value)
+   -[:OF_TYPE]-&gt;(tag:Type { fqn: 'org.junit.jupiter.api.Tag' })
+SET
+   meth:Tag
+RETURN
+   meth AS TestMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestTemplateMethod">Concept junit5:TestTemplateMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TestClass">8.10.2.1.32. Concept junit5:TestClass</h6>
+<div class="paragraph">
+<p>Labels all classes containing test methods with "Test" and "Junit5".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit5:Test)
+SET
+  c:Test:Junit5
+RETURN
+  c AS TestClass, COLLECT(m) AS TestMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestTemplateMethod">Concept junit5:TestTemplateMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TestMethod">8.10.2.1.33. Concept junit5:TestMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
+labels them with "Test" and "Junit5".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.Test&quot;
+SET
+  m:Test:Junit5
+RETURN
+  m AS Test</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit5:TestTemplateMethod">8.10.2.1.34. Concept junit5:TestTemplateMethod</h6>
+<div class="literalblock">
+<div class="content">
+<pre>Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
+with "Junit5", "Test" and "Template".</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.junit.jupiter.api.TestTemplate&quot;
+SET
+  m:Junit5:Test:Template
+RETURN
+  m AS AfterClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit:AssertionMustProvideMessage">8.10.2.1.35. Constraint junit:AssertionMustProvideMessage</h6>
+<div class="paragraph">
+<p>All assertions must provide a message.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testType:Type)-[:DECLARES]-&gt;(testMethod:Method),
+  (testMethod)-[invocation:INVOKES]-&gt;(assertMethod:Assert:Method)
+WHERE
+  NOT assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+RETURN
+  invocation AS Invocation,
+  testType AS DeclaringType,
+  testMethod AS Method</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit4:AssertMethod">Concept junit4:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit:IgnoreWithoutMessage">8.10.2.1.36. Constraint junit:IgnoreWithoutMessage</h6>
+<div class="paragraph">
+<p>All @Ignore annotations must provide a message.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (e)-[:ANNOTATED_BY]-&gt;(ignore:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type)
+WHERE
+  ignoreType.fqn= &quot;org.junit.Ignore&quot;
+  AND NOT (ignore)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
+RETURN
+  e AS IgnoreWithoutMessage
+UNION
+MATCH
+  (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(disabledType:Type)
+WHERE
+  disabledType.fqn = &quot;org.junit.jupiter.api.Disabled&quot;
+  AND NOT (disabled)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
+RETURN
+  e AS IgnoreWithoutMessage</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="junit:TestMethodWithoutAssertion">8.10.2.1.37. Constraint junit:TestMethodWithoutAssertion</h6>
+<div class="paragraph">
+<p>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
+WHERE
+  NOT (testMethod)-[:INVOKES*..3]-&gt;(:Method:Assert)
+RETURN
+  testType AS DeclaringType,
+  testMethod AS Method</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#junit4:TestMethod">Concept junit4:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit4:AssertMethod">Concept junit4:AssertMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:AssertMethod">Concept junit5:AssertMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:ParameterizedTestMethod">Concept junit5:ParameterizedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:RepeatedTestMethod">Concept junit5:RepeatedTestMethod</a></p>
+</li>
+<li>
+<p><a href="#junit5:TestMethod">Concept junit5:TestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -9116,7 +12275,23 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_maven_3_plugin">8.12.3. Concepts and Constraints provided by the Maven 3 Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_maven_3_plugin">8.12.3.1. Concepts provided by the Maven 3  plugin</h5>
-
+<div class="sect5">
+<h6 id="maven3:HierarchicalParentModuleRelation">8.12.3.1.1. Constraint maven3:HierarchicalParentModuleRelation</h6>
+<div class="paragraph">
+<p>If a parent Maven project declares a module then the parent project must also be declared as the
+            parent of the module (i.e. to keep the project hierarchy consistent).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+  (parent:Maven:Project)-[:HAS_MODULE]-&gt;(module:Maven:Project)
+where
+  not (module)-[:HAS_PARENT]-&gt;(parent)
+return
+  module as InvalidModule</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -9136,7 +12311,237 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_osgi_plugin">8.13.1. Concepts and Constraints provided by the OSGi Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_osgi_plugin">8.13.1.1. Concepts provided by the OSGi  plugin</h5>
-
+<div class="sect5">
+<h6 id="osgi-bundle:Activator">8.13.1.1.1. Concept osgi-bundle:Activator</h6>
+<div class="paragraph">
+<p>Creates an ACTIVATES relation between a class and the bundle artifact if the class is declared as
+            "Bundle-Activator" in the bundle
+            manifest.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+  (bundle:Osgi:Bundle)-[:CONTAINS]-&gt;(manifest:File:Manifest),
+  (manifest)-[:DECLARES]-&gt;(section:ManifestSection),
+  (section)-[:HAS]-&gt;(entry:ManifestEntry),
+  (bundle)-[:CONTAINS]-&gt;(activator:Class)
+where
+  entry.name = &quot;Bundle-Activator&quot;
+  and entry.value = activator.fqn
+create unique
+  (activator)-[:ACTIVATES]-&gt;(bundle)
+return
+  activator as Activator, bundle as Bundle</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:Bundle">Concept osgi-bundle:Bundle</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:Bundle">8.13.1.1.2. Concept osgi-bundle:Bundle</h6>
+<div class="paragraph">
+<p>Labels all artifacts with a manifest declaring a bundle name as "Osgi" and "Bundle" and adds the
+            properties "bundleSymbolicName" and "bundleVersion".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (bundle:Artifact)-[:CONTAINS]-&gt;(manifest:Manifest:File),
+  (manifest)-[DECLARES]-&gt;(section:ManifestSection),
+  (section)-[:HAS]-&gt;(nameEntry:ManifestEntry),
+  (section)-[:HAS]-&gt;(versionEntry:ManifestEntry)
+WHERE
+  nameEntry.name = &quot;Bundle-SymbolicName&quot;
+  AND versionEntry.name = &quot;Bundle-Version&quot;
+SET
+  bundle:Osgi:Bundle,
+  bundle.bundleSymbolicName = nameEntry.value,
+  bundle.bundleVersion = versionEntry.value
+RETURN
+  bundle as Bundle, bundle.bundleSymbolicName as BundleSymbolicName, bundle.bundleVersion as BundleVersion</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:ExportPackage">8.13.1.1.3. Concept osgi-bundle:ExportPackage</h6>
+<div class="paragraph">
+<p>Creates an EXPORTS relation from a bundle artifact to all packages which are declared as
+            "Export-Package" in the bundle manifest.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+ (bundle:Osgi:Bundle)-[:CONTAINS]-&gt;(package:Package)
+with
+  bundle, package, &quot;(^|.*,)\\s*&quot;+ replace(package.fqn, &quot;.&quot;, &quot;\\.&quot;)+&quot;\\s*((;|,).*|$)&quot; as pattern
+match
+  (bundle)-[:CONTAINS]-&gt;(manifest:File:Manifest),
+  (manifest)-[:DECLARES]-&gt;(section:ManifestSection),
+  (section)-[:HAS]-&gt;(entry:ManifestEntry)
+where
+  entry.name = &quot;Export-Package&quot;
+  AND entry.value=~ pattern
+create unique
+  (bundle)-[:EXPORTS]-&gt;(package)
+return
+  bundle as Bundle, collect(package) as ExportedPackages</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:Bundle">Concept osgi-bundle:Bundle</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:ImportPackage">8.13.1.1.4. Concept osgi-bundle:ImportPackage</h6>
+<div class="paragraph">
+<p>Creates an IMPORTS relation from a bundle artifact to all packages which are declared as
+            "Import-Package" in the bundle manifest.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+ (package:Package)
+with
+  package, &quot;(^|.*,)\\s*&quot;+ replace(package.fqn, &quot;.&quot;, &quot;\\.&quot;)+&quot;\\s*((;|,).*|$)&quot; as pattern
+match
+  (bundle:Osgi:Bundle)-[:CONTAINS]-&gt;(manifest:File:Manifest),
+  (manifest)-[:DECLARES]-&gt;(section:ManifestSection),
+  (section)-[:HAS]-&gt;(entry:ManifestEntry)
+where
+  entry.name = &quot;Import-Package&quot;
+  and entry.value =~ pattern
+create unique
+  (bundle)-[:IMPORTS]-&gt;(package)
+return
+  bundle as Bundle, collect(package) as ImportedPackages</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:Bundle">Concept osgi-bundle:Bundle</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:InternalType">8.13.1.1.5. Concept osgi-bundle:InternalType</h6>
+<div class="paragraph">
+<p>Labels all internal types (i.e. which are not located in an exported package) as "Internal".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+  (bundle:Bundle:Osgi)-[:CONTAINS]-&gt;(internalPackage:Package),
+  (bundle)-[:CONTAINS]-&gt;(internalType:Type),
+  (internalPackage)-[:CONTAINS]-&gt;(internalType:Type)
+where not
+    (bundle)-[:EXPORTS]-&gt;(internalPackage)
+set
+  internalType:Internal
+return bundle as Bundle, collect(internalType) as InternalTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:ExportPackage">Concept osgi-bundle:ExportPackage</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:InternalTypeMustNotBePublic">8.13.1.1.6. Constraint osgi-bundle:InternalTypeMustNotBePublic</h6>
+<div class="paragraph">
+<p>Internal types must not be public if no depending types exist in other packages of the bundle.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+  (bundle:Osgi:Bundle)-[:CONTAINS]-&gt;(internalType:Type:Internal),
+  (internalPackage:Package)-[:CONTAINS]-&gt;(internalType)
+optional match
+  (bundle)-[:CONTAINS]-&gt;(otherPackage:Package),
+  (otherPackage)-[:CONTAINS]-&gt;()-[:DEPENDS_ON]-&gt;(internalType)
+where
+  internalType.visibility='public'
+with
+  bundle, internalPackage, internalType, collect(otherPackage) as otherPackages
+where
+  all(otherPackage in otherPackages where internalPackage = otherPackage)
+  and not
+    (internalType)-[:ACTIVATES]-&gt;(bundle)
+return
+  bundle as Bundle, internalType as InternalType</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:InternalType">Concept osgi-bundle:InternalType</a></p>
+</li>
+<li>
+<p><a href="#osgi-bundle:Activator">Concept osgi-bundle:Activator</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="osgi-bundle:UnusedInternalType">8.13.1.1.7. Constraint osgi-bundle:UnusedInternalType</h6>
+<div class="paragraph">
+<p>A bundle must not contain internal types which are not used by other types in the bundle.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">match
+  (bundle:Osgi:Bundle)-[:CONTAINS]-&gt;(internalType:Type:Internal)
+where not (
+    (internalType)-[:ACTIVATES]-&gt;(bundle)
+  or
+    (bundle)-[:CONTAINS]-&gt;(:Type)-[:DEPENDS_ON]-&gt;(internalType)
+)
+return
+  bundle as Bundle, internalType as InternalType</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#osgi-bundle:InternalType">Concept osgi-bundle:InternalType</a></p>
+</li>
+<li>
+<p><a href="#osgi-bundle:Activator">Concept osgi-bundle:Activator</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -9894,7 +13299,768 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_spring_plugin">8.15.1. Concepts and Constraints provided by the Spring Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_spring_plugin">8.15.1.1. Concepts provided by the Spring  plugin</h5>
-
+<div class="sect5">
+<h6 id="spring-boot:Application">8.15.1.1.1. Concept spring-boot:Application</h6>
+<div class="paragraph">
+<p>Labels all Spring Boot Applications with "Spring", "Application", "Configuration" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (application:Type:Class)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.boot.autoconfigure.SpringBootApplication&quot;
+SET
+  application:Spring:Boot:Application:Configuration:Component
+RETURN
+  application as Application</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:AnnotatedInjectables">8.15.1.1.2. Concept spring-component:AnnotatedInjectables</h6>
+<div class="paragraph">
+<p>Labels all Spring Components as "Injectable".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (injectableComponent:Spring)
+SET
+  injectableComponent:Injectable
+RETURN
+  injectableComponent as InjectableComponent</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:Component">Concept spring-component:Component</a></p>
+</li>
+<li>
+<p><a href="#spring-component:Service">Concept spring-component:Service</a></p>
+</li>
+<li>
+<p><a href="#spring-component:Controller">Concept spring-component:Controller</a></p>
+</li>
+<li>
+<p><a href="#spring-component:Repository">Concept spring-component:Repository</a></p>
+</li>
+<li>
+<p><a href="#spring-component:Configuration">Concept spring-component:Configuration</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:Component">8.15.1.1.3. Concept spring-component:Component</h6>
+<div class="paragraph">
+<p>Labels all types annotated with "@org.springframework.stereotype.Component" with "Spring" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (component:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.stereotype.Component&quot;
+SET
+  component:Spring:Component:Injectable
+RETURN
+  component as Component</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:Configuration">8.15.1.1.4. Concept spring-component:Configuration</h6>
+<div class="paragraph">
+<p>Labels all types annotated with "@org.springframework.context.annotation.Configuration" with
+            "Spring", "Configuration" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (configuration:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.context.annotation.Configuration&quot;
+SET
+  configuration:Spring:Configuration:Injectable
+RETURN
+  configuration as Configuration</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:Controller">8.15.1.1.5. Concept spring-component:Controller</h6>
+<div class="paragraph">
+<p>Labels all types annotated with "@org.springframework.stereotype.Controller" with "Spring",
+            "Controller" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (controller:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.stereotype.Controller&quot;
+SET
+  controller:Spring:Controller:Injectable
+RETURN
+  controller as Controller</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:Repository">8.15.1.1.6. Concept spring-component:Repository</h6>
+<div class="paragraph">
+<p>Returns all repositories.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (repository:Spring:Repository:Injectable)
+RETURN
+  repository as Repository</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-data:AnnotatedRepository">Concept spring-data:AnnotatedRepository</a></p>
+</li>
+<li>
+<p><a href="#spring-data:ImplementedRepository">Concept spring-data:ImplementedRepository</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:Service">8.15.1.1.7. Concept spring-component:Service</h6>
+<div class="paragraph">
+<p>Labels all types annotated with "@org.springframework.stereotype.Service" with "Spring", "Service"
+            and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (service:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.stereotype.Service&quot;
+SET
+  service:Spring:Service:Injectable
+RETURN
+  service as Service</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:VirtualDependency">8.15.1.1.8. Concept spring-component:VirtualDependency</h6>
+<div class="paragraph">
+<p>Creates a DEPENDS_ON relation between Spring Components which are connected through interfaces or
+            abstract types and adds a "virtual" property.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+   (component:Spring:Injectable)-[:DEPENDS_ON]-&gt;(superType)&lt;-[:IMPLEMENTS|EXTENDS*]-(otherComponent:Spring:Injectable)
+WHERE
+  component &lt;&gt; otherComponent
+  and not (component)-[:EXTENDS|IMPLEMENTS*]-&gt;(superType) // exclude components sharing the same super classes/interfaces
+MERGE
+  (component)-[d:DEPENDS_ON]-&gt;(otherComponent)
+SET
+  d.virtual=true
+RETURN
+  component as Dependent, collect(distinct otherComponent) as Dependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:AnnotatedInjectables">Concept spring-component:AnnotatedInjectables</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-data:AnnotatedRepository">8.15.1.1.9. Concept spring-data:AnnotatedRepository</h6>
+<div class="paragraph">
+<p>Labels all types annotated with "@org.springframework.stereotype.Repository" with "Spring",
+            "Repository" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (repository:Type)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.stereotype.Repository&quot;
+SET
+  repository:Spring:Repository:Injectable
+RETURN
+  repository as Repository</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-data:ImplementedRepository">8.15.1.1.10. Concept spring-data:ImplementedRepository</h6>
+<div class="paragraph">
+<p>Labels all types implementing "org.springframework.data.repository.Repository" with "Spring",
+            "Repository" and "Component".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (repository:Type)-[:EXTENDS|IMPLEMENTS*]-&gt;(superType:Type)
+WHERE
+  superType.fqn in [
+    &quot;org.springframework.data.repository.Repository&quot;,
+    &quot;org.springframework.data.repository.CrudRepository&quot;,
+    &quot;org.springframework.data.repository.PagingAndSortingRepository&quot;,
+    &quot;org.springframework.data.jpa.repository.JpaRepository&quot;,
+    &quot;org.springframework.data.jpa.repository.support.SimpleJpaRepository&quot;,
+    &quot;org.springframework.data.jpa.repository.support.QueryDslJpaRepository&quot;
+  ]
+SET
+  repository:Spring:Repository:Injectable
+RETURN
+  repository as Repository</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:BeanProducer">8.15.1.1.11. Concept spring-injection:BeanProducer</h6>
+<div class="paragraph">
+<p>Labels methods which are annotated with "@org.springframework.context.annotation.Bean" with
+            "BeanProducer" and their return types with "Spring" and "Injectable".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+   (:Type)-[:DECLARES]-&gt;(beanProducer:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type),
+   (beanProducer)-[:RETURNS]-&gt;(injectable:Type)
+ WHERE
+   annotationType.fqn = &quot;org.springframework.context.annotation.Bean&quot;
+ SET
+   injectable:Spring:Injectable,
+   beanProducer:Spring:BeanProducer
+ RETURN
+   injectable as Injectable, beanProducer as BeanProducer</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:Injectable">8.15.1.1.12. Concept spring-injection:Injectable</h6>
+<div class="paragraph">
+<p>Returns all injectables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (injectable:Spring:Injectable)
+RETURN
+  injectable as Injectable</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:AnnotatedInjectables">Concept spring-component:AnnotatedInjectables</a></p>
+</li>
+<li>
+<p><a href="#spring-injection:BeanProducer">Concept spring-injection:BeanProducer</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:InjectionPoint">8.15.1.1.13. Concept spring-injection:InjectionPoint</h6>
+<div class="paragraph">
+<p>Labels all type members annotated with "@org.springframework.beans.factory.annotation.Autowired"
+            with "Spring" and "InjectionPoint".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (injectionPoint:Member)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn in [
+    &quot;org.springframework.beans.factory.annotation.Autowired&quot;,
+    &quot;javax.inject.Inject&quot;,
+    &quot;javax.annotation.Resource&quot;
+  ]
+SET
+  injectionPoint:Spring:InjectionPoint
+RETURN
+  injectionPoint as InjectionPoint</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-transaction:TransactionalClass">8.15.1.1.14. Concept spring-transaction:TransactionalClass</h6>
+<div class="paragraph">
+<p>Labels a classes which are annotated with
+            "@org.springframework.transaction.annotation.Transactional" and their declared methods with "Spring" and
+            "Transactional".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (transactionalClass:Class)-[:EXTENDS*0..]-&gt;(:Class)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.transaction.annotation.Transactional&quot;
+SET
+  transactionalClass:Spring:Transactional
+WITH
+  transactionalClass
+MATCH
+  (transactionalClass)-[:DECLARES]-&gt;(transactionalMethod:Method)
+WHERE NOT (
+  transactionalMethod:Constructor
+  or (exists(transactionalMethod.static) and transactionalMethod.static)
+)
+SET
+  transactionalMethod:Spring:Transactional
+RETURN
+  transactionalClass as TransactionalClass, collect(transactionalMethod) as TransactionalMethods</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-transaction:TransactionalMethod">8.15.1.1.15. Concept spring-transaction:TransactionalMethod</h6>
+<div class="paragraph">
+<p>Label all methods which are annotated with
+            "@org.springframework.transaction.annotation.Transactional" with "Spring" and "Transactional".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(transactionalMethod:Method),
+  (transactionalMethod:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Type)
+WHERE
+  annotationType.fqn = &quot;org.springframework.transaction.annotation.Transactional&quot;
+  or type:Spring:Transactional
+SET
+  transactionalMethod:Spring:Transactional
+RETURN
+  transactionalMethod as TransactionalMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-transaction:TransactionalClass">Concept spring-transaction:TransactionalClass</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-boot:AllTypesInApplicationPackage">8.15.1.1.16. Constraint spring-boot:AllTypesInApplicationPackage</h6>
+<div class="paragraph">
+<p>All types of of a Spring Boot application must be located in the same package or a sub-package of
+            the application class.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (artifact:Artifact),
+  (artifact)-[:CONTAINS]-&gt;(applicationPackage:Package)-[:CONTAINS]-&gt;(application:Spring:Boot:Application),
+  (artifact)-[:CONTAINS]-&gt;(package:Package)-[:CONTAINS]-&gt;(type:Type)
+WHERE NOT
+  (applicationPackage)-[:CONTAINS*0..]-&gt;(package)
+RETURN
+  application as Application, applicationPackage as ApplicationPackage, collect(type) as TypesOutsideApplicationPackage</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-boot:Application">Concept spring-boot:Application</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:ControllerMustOnlyDependOnServicesRepositoriesOrComponents">8.15.1.1.17. Constraint spring-component:ControllerMustOnlyDependOnServicesRepositoriesOrComponents</h6>
+<div class="paragraph">
+<p>A Spring controller can only have dependencies to other Spring components that are services or
+            repositories.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (controller:Spring:Controller)-[:DEPENDS_ON]-&gt;(other:Spring:Injectable)
+WHERE NOT (
+  other:Service
+  or other:Repository
+  or other:Component
+)
+RETURN
+  controller as Controller, collect(other) as InvalidDependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:VirtualDependency">Concept spring-component:VirtualDependency</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:RepositoryMustOnlyDependOnRepositoriesOrComponents">8.15.1.1.18. Constraint spring-component:RepositoryMustOnlyDependOnRepositoriesOrComponents</h6>
+<div class="paragraph">
+<p>A Spring repository can only have dependencies to other Spring components that are repositories.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (repository:Spring:Repository)-[:DEPENDS_ON]-&gt;(other:Spring:Injectable)
+WHERE NOT (
+  other:Repository
+  or other:Component
+)
+RETURN
+  repository as Repository, collect(other) as InvalidDependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:VirtualDependency">Concept spring-component:VirtualDependency</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-component:ServiceMustOnlyDependOnServicesRepositoriesOrComponents">8.15.1.1.19. Constraint spring-component:ServiceMustOnlyDependOnServicesRepositoriesOrComponents</h6>
+<div class="literalblock">
+<div class="content">
+<pre>A Spring service can only have dependencies to other Spring components that are services or repositories.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (service:Spring:Service)-[:DEPENDS_ON]-&gt;(other:Spring:Injectable)
+WHERE NOT (
+  other:Service
+  or other:Repository
+  or other:Component
+)
+RETURN
+  service as Service, collect(other) as InvalidDependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-component:VirtualDependency">Concept spring-component:VirtualDependency</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:AvoidAwareInterfacesInFavorOfInjection">8.15.1.1.20. Constraint spring-injection:AvoidAwareInterfacesInFavorOfInjection</h6>
+<div class="paragraph">
+<p>Prefer to inject framework components over implementing '…Aware' interfaces.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:IMPLEMENTS]-&gt;(otherType:Type)
+WHERE
+  otherType.fqn in [
+    &quot;org.springframework.beans.factory.BeanFactoryAware&quot;,
+    &quot;org.springframework.context.ApplicationContextAware&quot;,
+    &quot;org.springframework.context.ApplicationEventPublisherAware&quot;
+  ]
+RETURN
+  type as Type, otherType as ImplementedInterface</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:AvoidDisposableBean">8.15.1.1.21. Constraint spring-injection:AvoidDisposableBean</h6>
+<div class="paragraph">
+<p>Prefer to use @PreDestroy over implementing DisposableBean.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:IMPLEMENTS]-&gt;(otherType:Type)
+WHERE
+  otherType.fqn = &quot;org.springframework.beans.factory.DisposableBean&quot;
+RETURN
+  type as Type</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:AvoidInitializingBean">8.15.1.1.22. Constraint spring-injection:AvoidInitializingBean</h6>
+<div class="paragraph">
+<p>Prefer to use @PostConstruct over implementing InitializingBean.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:IMPLEMENTS]-&gt;(otherType:Type)
+WHERE
+  otherType.fqn = &quot;org.springframework.beans.factory.InitializingBean&quot;
+RETURN
+  type as Type</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:BeanProducerMustBeDeclaredInConfigurationComponent">8.15.1.1.23. Constraint spring-injection:BeanProducerMustBeDeclaredInConfigurationComponent</h6>
+<div class="paragraph">
+<p>Bean producer methods must be declared in configuration components.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(beanProducer:Method:BeanProducer)-[:RETURNS]-&gt;(injectable:Injectable)
+WHERE NOT
+  type:Spring:Configuration
+RETURN
+  beanProducer as BeanProducer, injectable as Injectable</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:BeanProducer">Concept spring-injection:BeanProducer</a></p>
+</li>
+<li>
+<p><a href="#spring-component:Configuration">Concept spring-component:Configuration</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:FieldInjectionIsNotAllowed">8.15.1.1.24. Constraint spring-injection:FieldInjectionIsNotAllowed</h6>
+<div class="paragraph">
+<p>Field injection is not allowed, use constructor injection instead.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(field:Field:InjectionPoint),
+  (artifact:Artifact)-[:CONTAINS]-&gt;(type:Type)
+WHERE NOT
+  (exists(artifact.type) and artifact.type=&quot;test-jar&quot;)
+RETURN
+  type as Type, field as Field</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:InjectionPoint">Concept spring-injection:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:FieldsOfInjectablesMustNotBeManipulated">8.15.1.1.25. Constraint spring-injection:FieldsOfInjectablesMustNotBeManipulated</h6>
+<div class="paragraph">
+<p>Fields of injectable types must not be manipulated, except from constructors.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (injectable:Injectable),
+  (injectable)-[:DECLARES]-&gt;(method:Method)-[writes:WRITES]-&gt;(field:Field)
+WHERE NOT (
+   method:Constructor OR // method is a constructor
+   (exists(field.static) AND field.static) // static fields
+)
+RETURN
+  injectable.fqn + &quot;.&quot; + method.name + &quot;(…) writes field '&quot; + field.name + &quot;' at line &quot; + writes.lineNumber as Message,
+  injectable as Injectable, method as Method, field as Field, writes.lineNumber as LineNumber</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:Injectable">Concept spring-injection:Injectable</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:InjectablesMustNotBeAccessedStatically">8.15.1.1.26. Constraint spring-injection:InjectablesMustNotBeAccessedStatically</h6>
+<div class="paragraph">
+<p>Injectable components must not be accessed from static variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (method:Method)-[:READS]-&gt;(field:Field)-[:OF_TYPE]-&gt;(fieldType:Type:Injectable)
+WHERE
+  field.static
+RETURN
+  method as Method, field.name as Field</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:Injectable">Concept spring-injection:Injectable</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:InjectablesMustNotBeHeldInStaticVariables">8.15.1.1.27. Constraint spring-injection:InjectablesMustNotBeHeldInStaticVariables</h6>
+<div class="paragraph">
+<p>Injectable components must not be held in static variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(field:Field)-[:OF_TYPE]-&gt;(fieldType:Type:Injectable)
+WHERE
+  field.static
+RETURN
+  type as Type, field.name as Field</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:Injectable">Concept spring-injection:Injectable</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:InjectablesMustNotBeInstantiated">8.15.1.1.28. Constraint spring-injection:InjectablesMustNotBeInstantiated</h6>
+<div class="paragraph">
+<p>Injectables types must not be instantiated directly except by @Bean methods or test code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (injectable:Injectable:Type)-[:DECLARES]-&gt;(constructor:Constructor),
+  (artifact:Artifact)-[:CONTAINS]-&gt;(type:Type)-[:DECLARES]-&gt;(method:Method)-[newInstance:INVOKES]-&gt;(constructor)
+WHERE NOT (
+  (exists(artifact.type) and artifact.type=&quot;test-jar&quot;)
+  OR method:Spring:BeanProducer
+)
+RETURN
+  type as Type, method as Method, injectable as Injectable,
+  newInstance.lineNumber as LineNumber</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:Injectable">Concept spring-injection:Injectable</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-injection:InjectablesShouldBeHeldInFinalFields">8.15.1.1.29. Constraint spring-injection:InjectablesShouldBeHeldInFinalFields</h6>
+<div class="paragraph">
+<p>Fields holding injectables should be declared final.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (source:Type:Injectable)-[declares:DECLARES]-&gt;(field:Field)-[:OF_TYPE]-&gt;(target:Type:Injectable)
+WHERE NOT
+  (exists(field.final) AND field.final = true)
+RETURN
+  source as InjectableType, field as InjectableField</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-injection:Injectable">Concept spring-injection:Injectable</a></p>
+</li>
+<li>
+<p><a href="#spring-injection:InjectionPoint">Concept spring-injection:InjectionPoint</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="spring-transaction:TransactionalMethodMustNotBeInvokedFromSameClass">8.15.1.1.30. Constraint spring-transaction:TransactionalMethodMustNotBeInvokedFromSameClass</h6>
+<div class="paragraph">
+<p>Transactional methods must not be invoked from the same class.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[:DECLARES]-&gt;(calledMethod:Method:Spring:Transactional),
+  (type:Type)-[:DECLARES]-&gt;(callingMethod:Method),
+  (callingMethod:Method)-[invokes:INVOKES]-&gt;(calledMethod)
+WHERE NOT
+  (callingMethod:Method:Spring:Transactional or type:Spring:Transactional)
+RETURN
+  type as Type, callingMethod as Method, calledMethod as TransactionalMethod, invokes.lineNumber as LineNumber</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#spring-transaction:TransactionalMethod">Concept spring-transaction:TransactionalMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -9907,7 +14073,165 @@ about the model.</p>
 <h4 id="_concepts_and_constraints_provided_by_the_testng_plugin">8.16.1. Concepts and Constraints provided by the TestNG Plugin</h4>
 <div class="sect4">
 <h5 id="_concepts_provided_by_the_testng_plugin">8.16.1.1. Concepts provided by the TestNG  plugin</h5>
-
+<div class="sect5">
+<h6 id="testng:AfterClassMethod">8.16.1.1.1. Concept testng:AfterClassMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.AfterClass" with "TestNG" and "AfterClassMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.AfterClass&quot;
+SET
+  m:TestNG:AfterClassMethod
+RETURN
+  m AS AfterClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:AfterMethod">8.16.1.1.2. Concept testng:AfterMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.AfterMethod" with "TestNG" and "AfterMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.AfterMethod&quot;
+SET
+  m:TestNG:AfterMethod
+RETURN
+  m AS AfterMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:AfterTestMethod">8.16.1.1.3. Concept testng:AfterTestMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.AfterTest" with "TestNG" and "AfterTestMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.AfterTest&quot;
+SET
+  m:TestNG:AfterTestMethod
+RETURN
+  m AS AfterTestMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:BeforeClassMethod">8.16.1.1.4. Concept testng:BeforeClassMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.BeforeClass" with "TestNG" and "BeforeClassMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.BeforeClass&quot;
+SET
+  m:TestNG:BeforeClassMethod
+RETURN
+  m AS BeforeClassMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:BeforeMethod">8.16.1.1.5. Concept testng:BeforeMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.BeforeMethod" with "TestNG" and "BeforeMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.BeforeMethod&quot;
+SET
+  m:TestNG:BeforeMethod
+RETURN
+  m AS BeforeMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:BeforeTestMethod">8.16.1.1.6. Concept testng:BeforeTestMethod</h6>
+<div class="paragraph">
+<p>Labels all methods annotated by "@org.testng.annotations.BeforeTest" with "TestNG" and "BeforeTestMethod".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method),
+  (m:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.BeforeTest&quot;
+SET
+  m:TestNG:BeforeTestMethod
+RETURN
+  m AS BeforeTestMethod, c AS TestClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:TestClass">8.16.1.1.7. Concept testng:TestClass</h6>
+<div class="paragraph">
+<p>Labels all classes containing test methods with "Test" and "TestNG".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:TestNG:Test)
+SET
+  c:Test:TestNG
+RETURN
+  c AS TestClass, COLLECT(m) AS TestMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#testng:TestMethod">Concept testng:TestMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="testng:TestMethod">8.16.1.1.8. Concept testng:TestMethod</h6>
+<div class="paragraph">
+<p>Finds all test methods (i.e. annotated with "@org.testng.annotations.Test") and labels them with "Test" and
+            "TestNG".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]-&gt;(a:Type)
+WHERE
+  a.fqn=&quot;org.testng.annotations.Test&quot;
+SET
+  m:Test:TestNG
+RETURN
+  m AS Test</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -10490,7 +14814,7 @@ about the model.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-04 14:03:18 CEST
+Last updated 2018-05-13 03:38:53 CEST
 </div>
 </div>
 </body>
