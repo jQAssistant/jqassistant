@@ -81,9 +81,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
     <build>
         <plugins>
             <plugin>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}</artifactId>
-                <version>${project.version}</version>
+                <groupId>@{project.groupId}</groupId>
+                <artifactId>@{project.artifactId}</artifactId>
+                <version>@{project.version}</version>
                 <executions>
                     <execution>
                         <id>scan</id>
@@ -167,10 +167,11 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     <serverPort>7474</serverPort>
                 </configuration>
                 <dependencies>
+                    <!-- additional plugins -->
                     <dependency>
-                        <groupId>com.buschmais.jqassistant.plugin</groupId>
-                        <artifactId>jqassistant.plugin.jpa2</artifactId>
-                        <version>${project.version}</version>
+                        <groupId>org.jqassistant.contrib.plugin</groupId>
+                        <artifactId>jqassistant-test-impact-analysis-plugin</artifactId>
+                        <version>1.0.0</version>
                     </dependency>
                 </dependencies>
                 -->
@@ -185,9 +186,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                 <artifactId>maven-project-info-reports-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}</artifactId>
-                <version>${project.version}</version>
+                <groupId>@{project.groupId}</groupId>
+                <artifactId>@{project.artifactId}</artifactId>
+                <version>@{project.version}</version>
                 <reportSets>
                     <reportSet>
                         <reports>
