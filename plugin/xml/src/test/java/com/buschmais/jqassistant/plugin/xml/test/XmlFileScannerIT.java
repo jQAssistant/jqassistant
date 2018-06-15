@@ -72,9 +72,11 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(xmlDocumentDescriptor.getXmlVersion(), equalTo("1.0"));
         assertThat(xmlDocumentDescriptor.getCharacterEncodingScheme(), equalTo("UTF-8"));
         assertThat(xmlDocumentDescriptor.isStandalone(), equalTo(false));
+        assertThat(xmlDocumentDescriptor.getLineNumber(), equalTo(1));
         XmlElementDescriptor rootElement = xmlDocumentDescriptor.getRootElement();
         assertThat(rootElement, notNullValue());
         assertThat(rootElement.getName(), equalTo("RootElement"));
+        assertThat(rootElement.getLineNumber(), equalTo(2));
         List<XmlNamespaceDescriptor> rootNamespaces = rootElement.getDeclaredNamespaces();
         assertThat(rootNamespaces.size(), equalTo(1));
         XmlNamespaceDescriptor rootNS = rootNamespaces.get(0);
@@ -97,6 +99,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
 
     private void verifyChildElement(XmlElementDescriptor childElement) {
         assertThat(childElement.getDeclaredNamespaces().size(), equalTo(0));
+        assertThat(childElement.getLineNumber(), equalTo(3));
         List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
         assertThat(childElementAttributes.size(), equalTo(1));
         XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
@@ -105,10 +108,12 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(childElementTexts.size(), equalTo(1));
         XmlTextDescriptor childElementText = childElementTexts.get(0);
         assertThat(childElementText.getValue(), equalTo("Child Text"));
+        assertThat(childElementText.getLineNumber(), equalTo(5));
     }
 
     private void verifyExtraElement(XmlElementDescriptor childElement) {
         assertThat(childElement.getDeclaredNamespaces().size(), equalTo(1));
+        assertThat(childElement.getLineNumber(), equalTo(6));
         XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
         assertThat(extraNamespace.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/extra"));
         assertThat(extraNamespace.getPrefix(), equalTo("extra"));
@@ -118,11 +123,13 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(extraChildElements.size(), equalTo(1));
         XmlElementDescriptor extraChildElement = extraChildElements.get(0);
         assertThat(extraChildElement.getName(), equalTo("ExtraChildElement"));
+        assertThat(extraChildElement.getLineNumber(), equalTo(7));
         assertThat(extraChildElement.getNamespaceDeclaration(), equalTo(extraNamespace));
         List<XmlTextDescriptor> extraChildElementTexts = extraChildElement.getCharacters();
         assertThat(extraChildElementTexts.size(), equalTo(1));
         XmlTextDescriptor extraChildElementText = extraChildElementTexts.get(0);
         assertThat(extraChildElementText.getValue(), equalTo("Extra Child Text"));
+        assertThat(extraChildElementText.getLineNumber(), equalTo(7));
         List<XmlAttributeDescriptor> extraChildElementAttributes = extraChildElement.getAttributes();
         assertThat(extraChildElementAttributes.size(), equalTo(1));
         XmlAttributeDescriptor extraChildElementAttribute = extraChildElementAttributes.get(0);
@@ -131,18 +138,22 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     private void verifyMixedParentElement(XmlElementDescriptor childElement) {
+        assertThat(childElement.getLineNumber(), equalTo(9));
         XmlDescriptor mixedChildElement1 = childElement.getFirstChild();
         assertThat(mixedChildElement1, notNullValue());
         assertThat(mixedChildElement1, instanceOf(XmlElementDescriptor.class));
         assertThat(((XmlElementDescriptor) mixedChildElement1).getName(), equalTo("MixedChildElement1"));
+        assertThat(((XmlElementDescriptor) mixedChildElement1).getLineNumber(), equalTo(10));
         XmlDescriptor mixedChildText = ((XmlElementDescriptor) mixedChildElement1).getNextSibling();
         assertThat(mixedChildText, notNullValue());
         assertThat(mixedChildText, instanceOf(XmlTextDescriptor.class));
         assertThat(((XmlTextDescriptor) mixedChildText).getValue(), equalTo("Mixed Parent Text"));
+        assertThat(((XmlTextDescriptor) mixedChildText).getLineNumber(), equalTo(12));
         XmlDescriptor mixedChildElement2 = ((XmlTextDescriptor) mixedChildText).getNextSibling();
         assertThat(mixedChildElement2, notNullValue());
         assertThat(mixedChildElement2, instanceOf(XmlElementDescriptor.class));
         assertThat(((XmlElementDescriptor) mixedChildElement2).getName(), equalTo("MixedChildElement2"));
+        assertThat(((XmlElementDescriptor) mixedChildElement2).getLineNumber(), equalTo(12));
         assertThat(childElement.getLastChild(), equalTo(mixedChildElement2));
     }
 

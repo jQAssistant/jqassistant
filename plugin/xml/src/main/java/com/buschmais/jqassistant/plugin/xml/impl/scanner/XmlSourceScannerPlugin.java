@@ -48,6 +48,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         Map<XmlElementDescriptor, SiblingDescriptor> siblings = new HashMap<>();
         try {
             XMLStreamReader streamReader = inputFactory.createXMLStreamReader(item);
+
             while (streamReader.hasNext()) {
                 int eventType = streamReader.getEventType();
                 switch (eventType) {
@@ -104,6 +105,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         documentDescriptor.setXmlVersion(streamReader.getVersion());
         documentDescriptor.setCharacterEncodingScheme(streamReader.getCharacterEncodingScheme());
         documentDescriptor.setStandalone(streamReader.isStandalone());
+        documentDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
         return documentDescriptor;
     }
 
@@ -135,6 +137,9 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             attributeDescriptor.setValue(streamReader.getAttributeValue(i));
             elementDescriptor.getAttributes().add(attributeDescriptor);
         }
+
+        elementDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
+
         return elementDescriptor;
     }
 
@@ -157,6 +162,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             if (!Strings.isNullOrEmpty(text)) {
                 T textDescriptor = store.create(type);
                 textDescriptor.setValue(text);
+                textDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
                 parentElement.getCharacters().add(textDescriptor);
                 return textDescriptor;
             }

@@ -1,4 +1,4 @@
 ifndef::jqa-in-manual[== Version 1.5]
 ifdef::jqa-in-manual[== XML Plugin 1.5]
 
-To be written.
+- Add property lineNumber to :Xml:Document, :Xml:Element, :Xml:CData and :Xml:Text
