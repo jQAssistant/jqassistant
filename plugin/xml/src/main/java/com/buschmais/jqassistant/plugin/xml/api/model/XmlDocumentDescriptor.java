@@ -5,7 +5,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Label("Document")
-public interface XmlDocumentDescriptor extends XmlDescriptor {
+public interface XmlDocumentDescriptor extends XmlDescriptor, LineNumberDescriptor {
 
     @Relation("HAS_ROOT_ELEMENT")
     @Outgoing

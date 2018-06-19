@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Label("Element")
-public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor, SiblingDescriptor {
+public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor, SiblingDescriptor, LineNumberDescriptor {
 
     @Outgoing
     @HasElement

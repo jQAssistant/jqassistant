@@ -42,6 +42,7 @@ Represents an XML document.
 | standalone              | The "standalone" attribute of the XML declaration.
 | characterEncodingScheme | The encoding of the XML file.
 | xmlWellFormed           | Indicates if the document is well-formed, i.e. could be parsed.
+| lineNumber              | Last line number
 |====
 
 .Relations of :Xml:Document
@@ -55,6 +56,14 @@ Represents an XML document.
 === :Xml:Element
 An XML element.
 
+.Properties of :Xml:Element
+[options="header"]
+|====
+| Name       | Description
+| value      | The text value.
+| lineNumber | Last line number of the start tag of the element.
+|====
+
 .Relations of :Xml:Element
 [options="header"]
 |====
@@ -65,6 +74,7 @@ An XML element.
 | HAS_ATTRIBUTE      | <<:Xml:Attribute>> | 0..n         | References attributes of the element.
 | HAS_TEXT           | <<:Xml:Text>>      | 0..n         | References the text values of the element.
 |====
+
 
 [[:Xml:Namespace]]
 === :Xml:Namespace
@@ -103,11 +113,12 @@ An XML attribute.
 === :Xml:Text
 A text value of an XML element.
 
-.Properties of :Xml:Element
+.Properties of :Xml:Text
 [options="header"]
 |====
-| Name   | Description
-| value  | The text value.
+| Name       | Description
+| value      | The text value.
+| lineNumber | Last line number
 |====
 
 [[XsdFileScanner]]
