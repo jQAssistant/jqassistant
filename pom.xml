@@ -127,7 +127,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>1.4.0</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>1.3.0</maven.jqassistant.previous.version>
         <maven.min.version>3.2.5</maven.min.version>
         <maven.release.version>2.5.3</maven.release.version>
         <maven.resources.version>3.0.2</maven.resources.version>
