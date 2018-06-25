@@ -99,6 +99,7 @@
                     <groups>
                         <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
+                        <group>jqa-maven-dependency-constraints</group>
                         <group>jqa-project-layout</group>
                     </groups>
                 </configuration>
