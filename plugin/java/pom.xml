@@ -18,7 +18,7 @@
     <properties>
         <jqa-xml-plugin.version>1.5-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.5-SNAPSHOT</jqa-plugin-common.version>
-        <org.ow2.asm.version>6.1.1</org.ow2.asm.version>
+        <org.ow2.asm.version>6.2</org.ow2.asm.version>
     </properties>
 
     <organization>
