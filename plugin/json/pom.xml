@@ -37,7 +37,7 @@
     <properties>
         <assertj.version>3.8.0</assertj.version>
         <org.antlr.version>4.7.1</org.antlr.version>
-        <plugin-common.version>1.4</plugin-common.version>
+        <jqa-plugin-common.version>1.4</jqa-plugin-common.version>
         <jqa-java-plugin.version>1.5-SNAPSHOT</jqa-java-plugin.version>
 
         <!--
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>${plugin-common.version}</version>
+            <version>${jqa-plugin-common.version}</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -81,7 +81,7 @@
             <artifactId>common</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-            <version>${plugin-common.version}</version>
+            <version>${jqa-plugin-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
