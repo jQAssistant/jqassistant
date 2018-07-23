@@ -39,7 +39,7 @@
         <jqa.distribution-spec.version>1.5.0-SNAPSHOT</jqa.distribution-spec.version>
         <jqa.own-constraints.version>1.5.0-SNAPSHOT</jqa.own-constraints.version>
         <jqa-asciidoctor-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-core.version>1.5.0-SNAPSHOT</jqa-core.version>
+        <jqa-core-framework.version>1.5.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-tycho.version>1.5-SNAPSHOT</jqa-tycho.version>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
@@ -451,7 +451,7 @@
              ! https://github.com/buschmais/jqa-distribution-specification/issues/1
              ! Oliver B. Fischer, 2016-10-27
              !-->
-            <version>${jqa-core.version}</version>
+            <version>${jqa-core-framework.version}</version>
         </dependency>
 
         <!--
