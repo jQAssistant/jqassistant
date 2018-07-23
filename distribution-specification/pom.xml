@@ -62,7 +62,7 @@
          ! Versions of the plugins to be include an a release.
          !-->
         <jqa-cdi-plugin.version>1.5-SNAPSHOT</jqa-cdi-plugin.version>
-        <jqa-core.version>1.5.0-SNAPSHOT</jqa-core.version>
+        <jqa-core-framework.version>1.5.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-graphml-plugin.version>1.5-SNAPSHOT</jqa-graphml-plugin.version>
         <jqa-ejb3-plugin.version>1.5-SNAPSHOT</jqa-ejb3-plugin.version>
         <jqa-java8-plugin.version>1.5-SNAPSHOT</jqa-java8-plugin.version>
@@ -130,7 +130,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>parent</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -144,32 +144,32 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>store</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>plugin</artifactId>
-                <version>${jqa-core.version}</version>
+                <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
