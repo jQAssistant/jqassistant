@@ -76,7 +76,7 @@
         <jqa-own-constraints.version>1.5.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-m2repo-plugin.version>1.5-SNAPSHOT</jqa-m2repo-plugin.version>
         <jqa-maven3-plugin.version>1.5-SNAPSHOT</jqa-maven3-plugin.version>
-        <jqa-neo4jserver.version>1.5.0-SNAPSHOT</jqa-neo4jserver.version>
+        <jqa-neo4jbackend.version>1.5.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-plugin-common.version>1.5-SNAPSHOT</jqa-plugin-common.version>
         <jqa-rdbms-plugin.version>1.5-SNAPSHOT</jqa-rdbms-plugin.version>
         <jqa-spring-plugin.version>1.5-SNAPSHOT</jqa-spring-plugin.version>
@@ -174,17 +174,17 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>neo4jv2</artifactId>
-                <version>${jqa-neo4jserver.version}</version>
+                <version>${jqa-neo4jbackend.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>neo4jv3</artifactId>
-                <version>${jqa-neo4jserver.version}</version>
+                <version>${jqa-neo4jbackend.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>parent</artifactId>
-                <version>${jqa-neo4jserver.version}</version>
+                <version>${jqa-neo4jbackend.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
