@@ -5,6 +5,7 @@
         <artifactId>parent</artifactId>
         <version>1.5.0-SNAPSHOT</version>
     </parent>
+    <groupId>com.buschmais.jqassistant.cli</groupId>
     <artifactId>test</artifactId>
 
     <name>jQAssistant Commandline Integration Test</name>

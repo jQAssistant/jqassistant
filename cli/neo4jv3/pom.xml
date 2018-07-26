@@ -6,6 +6,7 @@
         <version>1.5.0-SNAPSHOT</version>
     </parent>
     <artifactId>jqassistant-commandline-neo4jv3</artifactId>
+    <groupId>com.buschmais.jqassistant.cli</groupId>
 
     <name>jQAssistant Commandline Neo4jv3</name>
 
