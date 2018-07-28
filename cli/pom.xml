@@ -43,6 +43,7 @@
         <jqa-core.version>1.5.0-SNAPSHOT</jqa-core.version>
         <jqa-asciidoc-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoc-utilities.version>
         <jqa-distribution-spec.version>1.5.0-SNAPSHOT</jqa-distribution-spec.version>
+        <jqa-neo4jbackend.version>1.5.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>1.5.0-SNAPSHOT</jqa-own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
