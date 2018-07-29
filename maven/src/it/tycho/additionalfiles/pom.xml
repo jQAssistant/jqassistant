@@ -33,7 +33,7 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant.plugin</groupId>
                         <artifactId>tycho</artifactId>
-                        <version>@jqa-tycho.version@</version>
+                        <version>@jqa-tycho-plugin.version@</version>
                     </dependency>
                 </dependencies>
             </plugin>
