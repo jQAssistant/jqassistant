@@ -19,7 +19,6 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
         ruleSet.conceptBucket.add(concept);
-
         return this;
     }
 

@@ -9,6 +9,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
  * Controls execution of {@link RuleSet}s.
+ * <p/>
+ * Execution order is determined by
+ * <ul>
+ * <li>Declared dependencies between rules, i.e. required concepts</li>
+ * <li>Group hierarchy: first concepts of a group, second all nested groups and
+ * finally all constraints of a group.</li>
+ * </ul>
+ * The second rule ensures that before any constraint of a group is validated
+ * all concepts and nested concepts are applied. This allows for non-explicit
+ * dependencies between rules, e.g. a constraint relying on a specific label may
+ * include results of concepts that are not explicitly required.
  */
 public class RuleSetExecutor {
 
@@ -32,13 +43,13 @@ public class RuleSetExecutor {
             Concept concept = resolveConcept(ruleSet, conceptId);
             applyConcept(ruleSet, concept, concept.getSeverity());
         }
-        for (String constraintId : ruleSelection.getConstraintIds()) {
-            Constraint constraint = resolveConstraint(ruleSet, constraintId);
-            validateConstraint(ruleSet, constraint, constraint.getSeverity());
-        }
         for (String groupId : ruleSelection.getGroupIds()) {
             Group group = resolveGroup(ruleSet, groupId);
             executeGroup(ruleSet, group, group.getSeverity());
+        }
+        for (String constraintId : ruleSelection.getConstraintIds()) {
+            Constraint constraint = resolveConstraint(ruleSet, constraintId);
+            validateConstraint(ruleSet, constraint, constraint.getSeverity());
         }
     }
 
@@ -55,16 +66,16 @@ public class RuleSetExecutor {
     private void executeGroup(RuleSet ruleSet, Group group, Severity severity) throws RuleException {
         if (!executedGroups.contains(group)) {
             ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, severity, severity));
-            for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
-                String groupId = groupEntry.getKey();
-                Group includedGroup = resolveGroup(ruleSet, groupId);
-                executeGroup(ruleSet, includedGroup, getEffectiveSeverity(includedGroup, severity, groupEntry.getValue()));
-            }
             Map<String, Severity> concepts = group.getConcepts();
             for (Map.Entry<String, Severity> conceptEntry : concepts.entrySet()) {
                 String conceptId = conceptEntry.getKey();
                 Concept concept = resolveConcept(ruleSet, conceptId);
                 applyConcept(ruleSet, concept, getEffectiveSeverity(concept, severity, conceptEntry.getValue()));
+            }
+            for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
+                String groupId = groupEntry.getKey();
+                Group includedGroup = resolveGroup(ruleSet, groupId);
+                executeGroup(ruleSet, includedGroup, getEffectiveSeverity(includedGroup, severity, groupEntry.getValue()));
             }
             Map<String, Severity> constraints = group.getConstraints();
             for (Map.Entry<String, Severity> constraintEntry : constraints.entrySet()) {
@@ -72,8 +83,8 @@ public class RuleSetExecutor {
                 Constraint constraint = resolveConstraint(ruleSet, constraintId);
                 validateConstraint(ruleSet, constraint, getEffectiveSeverity(constraint, severity, constraintEntry.getValue()));
             }
-            executedGroups.add(group);
             ruleVisitor.afterGroup(group);
+            executedGroups.add(group);
         }
     }
 
@@ -149,28 +160,16 @@ public class RuleSetExecutor {
         return result;
     }
 
-    public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws RuleException {
-        try {
-            return ruleSet.getConceptBucket().getById(requiredConceptId);
-        } catch (NoConceptException e) {
-            throw new RuleException("Concept '" + requiredConceptId + "' is not defined.");
-        }
+    private Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws RuleException {
+        return ruleSet.getConceptBucket().getById(requiredConceptId);
     }
 
-    public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws RuleException {
-        try {
-            return ruleSet.getConstraintBucket().getById(constraintId);
-        } catch (NoRuleException e) {
-            throw new RuleException("Constraint '" + constraintId + "' not found.");
-        }
+    private Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws RuleException {
+        return ruleSet.getConstraintBucket().getById(constraintId);
     }
 
-    public Group resolveGroup(RuleSet ruleSet, String groupId) throws RuleException {
-        try {
-            return ruleSet.getGroupsBucket().getById(groupId);
-        } catch (NoGroupException e) {
-            throw new RuleException("Group '" + groupId + "' is not defined.", e);
-        }
+    private Group resolveGroup(RuleSet ruleSet, String groupId) throws RuleException {
+        return ruleSet.getGroupsBucket().getById(groupId);
     }
 
 }

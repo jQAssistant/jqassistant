@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
@@ -13,17 +13,17 @@ public class Group extends AbstractSeverityRule {
     /**
      * The set of rules contained in the group.
      */
-    private Map<String, Severity> concepts = new HashMap<>();
+    private Map<String, Severity> concepts = new LinkedHashMap<>();
 
     /**
      * The set of constraints contained in the group.
      */
-    private Map<String, Severity> constraints = new HashMap<>();
+    private Map<String, Severity> constraints = new LinkedHashMap<>();
 
     /**
      * The set of groups contained in the group.
      */
-    private Map<String, Severity> groups = new HashMap<>();
+    private Map<String, Severity> groups = new LinkedHashMap<>();
 
     protected Group() {
     }

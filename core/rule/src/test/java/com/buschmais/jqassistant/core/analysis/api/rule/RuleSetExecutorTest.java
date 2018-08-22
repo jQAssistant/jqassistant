@@ -10,14 +10,12 @@ import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuleSetExecutorTest {
@@ -35,7 +33,7 @@ public class RuleSetExecutorTest {
     private Constraint overriddenConstraint;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         configuration = new RuleSetExecutorConfiguration();
         ruleExecutor = new RuleSetExecutor(visitor, configuration);
         defaultConcept = Concept.builder().id("concept:Default").severity(Severity.MAJOR).build();
@@ -110,6 +108,43 @@ public class RuleSetExecutorTest {
     @Test
     public void optionalSuccessfulConceptDependencies() throws RuleException {
         verifyConceptDependencies(true, true, times(1), never());
+    }
+
+    @Test
+    public void executionOrder() throws RuleException {
+        Concept nestedConcept1 = Concept.builder().id("concept:Nested1").build();
+        Concept nestedConcept2 = Concept.builder().id("concept:Nested2").build();
+        Constraint nestetConstraint = Constraint.builder().id("constraint:Nested").build();
+        Group nestedGroup = Group.builder().id("group:Nested").conceptId("concept:Nested1").conceptId("concept:Nested2").constraintId("constraint:Nested")
+                .build();
+        Concept parentConcept1 = Concept.builder().id("concept:Parent1").build();
+        Concept parentConcept2 = Concept.builder().id("concept:Parent2").build();
+        Constraint parentConstraint = Constraint.builder().id("constraint:Parent").build();
+        Group parentGroup = Group.builder().id("group:Parent").conceptId("concept:Parent1").conceptId("concept:Parent2").constraintId("constraint:Parent")
+                .groupId("group:Nested").build();
+        Concept rootConcept = Concept.builder().id("concept:Root").build();
+        Constraint rootConstraint = Constraint.builder().id("constraint:Root").build();
+        RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(nestedConcept1).addConcept(nestedConcept2).addConstraint(nestetConstraint)
+                .addGroup(nestedGroup).addConcept(parentConcept1).addConcept(parentConcept2).addConstraint(parentConstraint).addGroup(parentGroup)
+                .addConcept(rootConcept).addConstraint(rootConstraint).getRuleSet();
+        RuleSelection ruleSelection = RuleSelection.builder().addConceptId("concept:Root").addConstraintId("constraint:Root").addGroupId("group:Parent")
+                .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        InOrder inOrder = inOrder(visitor);
+        inOrder.verify(visitor).visitConcept(rootConcept, null);
+        inOrder.verify(visitor).beforeGroup(parentGroup, null);
+        inOrder.verify(visitor).visitConcept(parentConcept1, null);
+        inOrder.verify(visitor).visitConcept(parentConcept2, null);
+        inOrder.verify(visitor).beforeGroup(nestedGroup, null);
+        inOrder.verify(visitor).visitConcept(nestedConcept1, null);
+        inOrder.verify(visitor).visitConcept(nestedConcept2, null);
+        inOrder.verify(visitor).visitConstraint(nestetConstraint, null);
+        inOrder.verify(visitor).afterGroup(nestedGroup);
+        inOrder.verify(visitor).visitConstraint(parentConstraint, null);
+        inOrder.verify(visitor).afterGroup(parentGroup);
+        inOrder.verify(visitor).visitConstraint(rootConstraint, null);
     }
 
     private void verifyConceptDependencies(Boolean optional, boolean status, VerificationMode visitVerification, VerificationMode skipVerification)
