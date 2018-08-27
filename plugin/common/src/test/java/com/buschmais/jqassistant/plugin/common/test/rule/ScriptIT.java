@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor;
+import com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor;
 
 import org.junit.Test;
 
@@ -88,9 +88,9 @@ public class ScriptIT extends AbstractPluginIT {
         Map<String, Object> row = rows.get(0);
         Object value = row.get("test");
         assertThat("Expecting a column test", value, notNullValue());
-        assertThat("Expecting a value of type " + TestDescriptor.class.getName(), value, instanceOf(TestDescriptor.class));
-        TestDescriptor testDescriptor = (TestDescriptor) value;
-        assertThat("Expecting property with value 'test'", testDescriptor.getName(), equalTo("test"));
+        assertThat("Expecting a value of type " + TestLabelDescriptor.class.getName(), value, instanceOf(TestLabelDescriptor.class));
+        TestLabelDescriptor testLabelDescriptor = (TestLabelDescriptor) value;
+        assertThat("Expecting property with value 'test'", testLabelDescriptor.getName(), equalTo("test"));
         store.commitTransaction();
     }
 }

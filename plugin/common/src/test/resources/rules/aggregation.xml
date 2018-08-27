@@ -4,17 +4,17 @@
 
     <concept id="concept:ValidRowCount">
         <description>Test concept.</description>
-        <cypher>create (n:Test) return n</cypher>
+        <cypher>create (n:TestLabel) return n</cypher>
     </concept>
 
     <concept id="concept:InvalidRowCount">
         <description>Test concept.</description>
-        <cypher>match (n:Test) return n</cypher>
+        <cypher>match (n:TestLabel) return n</cypher>
     </concept>
 
     <concept id="concept:ValidExplicitRowCount">
         <description>Test concept.</description>
-        <cypher>create (n:Test) return n</cypher>
+        <cypher>create (n:TestLabel) return n</cypher>
         <verify>
             <rowCount/>
         </verify>
@@ -22,7 +22,7 @@
 
     <concept id="concept:InvalidExplicitRowCount">
         <description>Test concept.</description>
-        <cypher>match (n:Test) return n</cypher>
+        <cypher>match (n:TestLabel) return n</cypher>
         <verify>
             <rowCount/>
         </verify>
@@ -30,17 +30,17 @@
 
     <constraint id="constraint:ValidRowCount">
         <description>Test concept.</description>
-        <cypher>match (n:Test) return n</cypher>
+        <cypher>match (n:TestLabel) return n</cypher>
     </constraint>
 
     <constraint id="constraint:InvalidRowCount">
         <description>Test concept.</description>
-        <cypher>create (n:Test) return n</cypher>
+        <cypher>create (n:TestLabel) return n</cypher>
     </constraint>
 
     <constraint id="constraint:ValidExplicitRowCount">
         <description>Test concept.</description>
-        <cypher>match (n:Test) return n</cypher>
+        <cypher>match (n:TestLabel) return n</cypher>
         <verify>
             <rowCount/>
         </verify>
@@ -48,7 +48,7 @@
 
     <constraint id="constraint:InvalidExplicitRowCount">
         <description>Test concept.</description>
-        <cypher>create (n:Test) return n</cypher>
+        <cypher>create (n:TestLabel) return n</cypher>
         <verify>
             <rowCount/>
         </verify>

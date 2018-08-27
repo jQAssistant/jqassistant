@@ -8,7 +8,7 @@
 [source,javascript,role=concept,severity=major]
 ----
 // create a test descriptor
-var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
 testDescriptor.setName("test");
 // prepare the result
 var columnNames = java.util.Arrays.asList("test");
@@ -25,8 +25,8 @@ new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, c
 [source,javascript,role=constraint,depends="javascript:AsciiDocTestConcept",severity=blocker]
 ----
 var columnNames = java.util.Arrays.asList("test");
-var queryResult = store.executeQuery("match (t:Test) return t");
-var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+var queryResult = store.executeQuery("match (t:TestLabel) return t");
+var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
 var row = new java.util.HashMap();
 row.put("test", testDescriptor);
 var rows = java.util.Arrays.asList(row);
