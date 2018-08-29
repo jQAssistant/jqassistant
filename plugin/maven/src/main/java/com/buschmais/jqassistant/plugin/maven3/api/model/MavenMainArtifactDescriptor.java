@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
 /**
@@ -8,6 +7,5 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * sources located in src/main/java".
  */
 @Label("Main")
-@Abstract
 public interface MavenMainArtifactDescriptor extends MavenArtifactDescriptor {
 }
