@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -37,7 +36,7 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         File file = ProjectResolver.getOutputFile(rootModule, exportFile, EXPORT_FILE);
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
         EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
