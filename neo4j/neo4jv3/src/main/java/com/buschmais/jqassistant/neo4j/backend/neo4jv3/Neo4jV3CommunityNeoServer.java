@@ -90,22 +90,24 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    protected void configure(GraphDatabaseService graphDatabaseService) {
-        Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class);
-        for (Class<?> procedureType : PROCEDURE_TYPES) {
-            try {
-                LOGGER.debug("Registering procedure class " + procedureType.getName());
-                procedures.registerProcedure(procedureType);
-            } catch (KernelException e) {
-                LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
+    protected void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
+        if (apocEnabled) {
+            Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class);
+            for (Class<?> procedureType : PROCEDURE_TYPES) {
+                try {
+                    LOGGER.debug("Registering procedure class " + procedureType.getName());
+                    procedures.registerProcedure(procedureType);
+                } catch (KernelException e) {
+                    LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
+                }
             }
-        }
-        for (Class<?> functionType : FUNCTION_TYPES) {
-            try {
-                LOGGER.debug("Registering function class " + functionType.getName());
-                procedures.registerFunction(functionType);
-            } catch (KernelException e) {
-                LOGGER.warn("Cannot register function class " + functionType.getName(), e);
+            for (Class<?> functionType : FUNCTION_TYPES) {
+                try {
+                    LOGGER.debug("Registering function class " + functionType.getName());
+                    procedures.registerFunction(functionType);
+                } catch (KernelException e) {
+                    LOGGER.warn("Cannot register function class " + functionType.getName(), e);
+                }
             }
         }
     }

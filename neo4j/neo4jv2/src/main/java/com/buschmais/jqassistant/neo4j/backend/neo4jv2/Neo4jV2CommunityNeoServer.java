@@ -28,7 +28,7 @@ public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     private CommunityNeoServer communityNeoServer;
 
     @Override
-    protected void configure(GraphDatabaseService graphDatabaseService) {
+    protected void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface EmbeddedNeo4jServer {
 
     String getVersion();
 
-    void init(GraphDatabaseService graphDatabaseService);
+    void init(GraphDatabaseService graphDatabaseService, boolean apocEnabled);
 
     GraphDatabaseService getGraphDatabaseService();
 

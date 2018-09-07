@@ -10,8 +10,8 @@ public abstract class AbstractEmbeddedNeo4jServer implements EmbeddedNeo4jServer
     protected GraphDatabaseService graphDatabaseService;
 
     @Override
-    public void init(GraphDatabaseService graphDatabaseService) {
-        configure(graphDatabaseService);
+    public void init(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
+        configure(graphDatabaseService, apocEnabled);
         this.graphDatabaseService = graphDatabaseService;
     }
 
@@ -25,7 +25,8 @@ public abstract class AbstractEmbeddedNeo4jServer implements EmbeddedNeo4jServer
      *
      * @param graphDatabaseService
      *            The {@link GraphDatabaseService}.
+     * @param apocEnabled
      */
-    protected abstract void configure(GraphDatabaseService graphDatabaseService);
+    protected abstract void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled);
 
 }
