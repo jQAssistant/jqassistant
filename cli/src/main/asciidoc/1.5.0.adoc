@@ -4,4 +4,4 @@
 ifndef::jqa-in-manual[== Version 1.5.0]
 ifdef::jqa-in-manual[== Commandline Tool 1.5.0]
 
-To be written.
+- Removed deprecated option `severity` from analyze task (replaced by `failOnSeverity` and `warnOnSeverity`)

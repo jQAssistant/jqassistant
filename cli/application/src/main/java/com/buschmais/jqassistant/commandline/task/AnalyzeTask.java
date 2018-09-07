@@ -24,7 +24,6 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
@@ -38,9 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AnalyzeTask extends AbstractAnalyzeTask {
 
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 5)
-    private static final String CMDLINE_OPTION_SEVERITY = "severity";
     private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
     private static final String CMDLINE_OPTION_WARN_ON_SEVERITY = "warnOnSeverity";
     private static final String CMDLINE_OPTION_RULEPARAMETERS = "ruleParameters";
@@ -116,13 +112,14 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     /**
      * Get all configured rule interpreter plugins.
      *
-     * @return The map of rule interpreter plugins grouped by their supported languages.
+     * @return The map of rule interpreter plugins grouped by their supported
+     *         languages.
      * @throws CliExecutionException
      *             If the plugins cannot be loaded or configured.
      */
     private Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws CliExecutionException {
         try {
-            return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap());
+            return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object> emptyMap());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get report plugins.", e);
         }
@@ -163,14 +160,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         outputDirectory = new File(reportDirectoryValue);
         outputDirectory.mkdirs();
-        String severityValue = getOptionValue(options, CMDLINE_OPTION_SEVERITY, null);
-        if (severityValue != null) {
-            failOnSeverity = getSeverity(severityValue);
-            LOGGER.warn("'" + CMDLINE_OPTION_SEVERITY + "' has been deprecated, please use '" + CMDLINE_OPTION_FAIL_ON_SEVERITY + "' instead.");
-        } else {
-            failOnSeverity = getSeverity(
-                    getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
-        }
+        failOnSeverity = getSeverity(
+                getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
         warnOnSeverity = getSeverity(
                 getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConceptSeverity().getValue()));
         executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
@@ -183,9 +174,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 .hasArgs().create(CMDLINE_OPTION_RULEPARAMETERS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
                 .create(CMDLINE_OPTION_REPORTDIR));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SEVERITY)
-                .withDescription("The severity threshold to report a failure. Deprecated: please use " + CMDLINE_OPTION_FAIL_ON_SEVERITY + " instead.")
-                .hasArgs().create(CMDLINE_OPTION_SEVERITY));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
                 .withDescription("The severity threshold to fail on rule violations, i.e. to exit with an error code.").hasArgs()
                 .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
