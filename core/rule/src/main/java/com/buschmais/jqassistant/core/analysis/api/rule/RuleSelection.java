@@ -7,9 +7,17 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
 /**
  * Represents a selection of rules.
  */
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RuleSelection {
 
     private static final String GROUP_DEFAULT = "default";
@@ -20,25 +28,22 @@ public class RuleSelection {
 
     private List<String> groupIds = new ArrayList<>();
 
-    public List<String> getConceptIds() {
-        return conceptIds;
-    }
-
-    public List<String> getConstraintIds() {
-        return constraintIds;
-    }
-
-    public List<String> getGroupIds() {
-        return groupIds;
-    }
-
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
+    private RuleSelection() {
     }
 
     /**
      * A builder for a rule selection.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
     public static class Builder {
 
         private RuleSelection ruleSelection = new RuleSelection();
@@ -102,7 +107,7 @@ public class RuleSelection {
          * @return The builder.
          */
         @Deprecated
-        @ToBeRemovedInVersion(major = 1, minor = 5)
+        @ToBeRemovedInVersion(major = 1, minor = 6)
         public static Builder newInstance() {
             return new Builder();
         }
@@ -138,7 +143,7 @@ public class RuleSelection {
         }
 
         @Deprecated
-        @ToBeRemovedInVersion(major = 1, minor = 5)
+        @ToBeRemovedInVersion(major = 1, minor = 6)
         public RuleSelection get() {
             return build();
         }

@@ -27,4 +27,7 @@ public class StoreConfiguration {
     private String encryptionLevel;
 
     private Properties properties;
+
+    @Builder.Default
+    boolean apocEnabled = true;
 }

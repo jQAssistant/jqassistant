@@ -10,8 +10,6 @@ import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-
 /**
  * Defines the store for {@link Descriptor}s.
  */
@@ -150,6 +148,8 @@ public interface Store {
      * @param <C>
      *            The concrete type.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
     <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
 
     /**
@@ -248,14 +248,5 @@ public interface Store {
      * @return The {@link Result}.
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
-
-    /**
-     * Return the underlying graph database service instance.
-     *
-     * @return The graph data base service.
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 5)
-    GraphDatabaseService getGraphDatabaseService();
 
 }

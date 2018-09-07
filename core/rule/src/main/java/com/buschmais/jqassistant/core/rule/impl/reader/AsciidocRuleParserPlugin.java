@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import org.apache.commons.io.IOUtils;
@@ -175,13 +176,13 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
             Report report = getReport(executableRuleBlock);
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
                 Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConceptSeverity());
-                Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(required)
+                Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConcepts(required)
                         .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
                 Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConstraintSeverity());
                 Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
-                        .requiresConceptIds(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                        .requiresConcepts(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConstraint(constraint);
             }
         }
@@ -241,13 +242,8 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
      *             If the dependencies cannot be evaluated.
      */
     private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Attributes attributes) throws RuleException {
-        Map<String, String> requiresDeclarations = getDependencyDeclarations(attributes, REQUIRES_CONCEPTS);
-        Map<String, String> depends = getDependencyDeclarations(attributes, DEPENDS);
-        if (!depends.isEmpty()) {
-            LOGGER.info("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
-                    ruleSource.getId(), id);
-            requiresDeclarations.putAll(depends);
-        }
+        rejectDepends(id, attributes, ruleSource);
+        Map<String, String> requiresDeclarations = getReferences(attributes, REQUIRES_CONCEPTS);
         Map<String, Boolean> required = new HashMap<>();
         for (Map.Entry<String, String> requiresEntry : requiresDeclarations.entrySet()) {
             String conceptId = requiresEntry.getKey();
@@ -258,21 +254,31 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
         return required;
     }
 
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
+    private void rejectDepends(String id, Attributes attributes, RuleSource ruleSource) throws RuleException {
+        Map<String, String> depends = getReferences(attributes, DEPENDS);
+        if (!depends.isEmpty()) {
+            throw new RuleException("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='" + ruleSource.getId()
+                    + "', id='" + id + "').");
+        }
+    }
+
     private void extractGroup(RuleSource ruleSource, AbstractBlock groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
         Attributes attributes = new Attributes(groupBlock.getAttributes());
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
         Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultGroupSeverity());
-        Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).conceptIds(concepts)
-                .constraintIds(constraints).groupIds(groups).build();
+        Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).concepts(concepts)
+                .constraints(constraints).groups(groups).build();
         ruleSetBuilder.addGroup(group);
     }
 
     private Map<String, Severity> getGroupElements(Attributes attributes, String attributeName) throws RuleException {
-        Map<String, String> dependencyDeclarations = getDependencyDeclarations(attributes, attributeName);
+        Map<String, String> references = getReferences(attributes, attributeName);
         Map<String, Severity> result = new HashMap<>();
-        for (Map.Entry<String, String> entry : dependencyDeclarations.entrySet()) {
+        for (Map.Entry<String, String> entry : references.entrySet()) {
             String id = entry.getKey();
             String dependencyAttribute = entry.getValue();
             Severity severity = dependencyAttribute != null ? Severity.fromValue(dependencyAttribute.toLowerCase()) : null;
@@ -282,28 +288,27 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
     }
 
     /**
-     * Get dependency declarations for an attribute from a map of attributes.
+     * Get reference declarations for an attribute from a map of attributes.
      *
      * @param attributes
      *            The map of attributes.
      * @param attributeName
      *            The name of the attribute.
-     * @return A map containing the ids of the dependencies as keys and their
-     *         severity (optional).
+     * @return A map containing the ids of the references as keys and their associated values (optional).
      */
-    private Map<String, String> getDependencyDeclarations(Attributes attributes, String attributeName) {
+    private Map<String, String> getReferences(Attributes attributes, String attributeName) {
         String attribute = attributes.getString(attributeName);
-        Set<String> dependencies = new HashSet<>();
+        Set<String> references = new HashSet<>();
         if (attribute != null && !attribute.trim().isEmpty()) {
-            dependencies.addAll(asList(attribute.split("\\s*,\\s*")));
+            references.addAll(asList(attribute.split("\\s*,\\s*")));
         }
         Map<String, String> rules = new HashMap<>();
-        for (String dependency : dependencies) {
-            Matcher matcher = DEPENDENCY_PATTERN.matcher(dependency);
+        for (String reference : references) {
+            Matcher matcher = DEPENDENCY_PATTERN.matcher(reference);
             if (matcher.matches()) {
                 String id = matcher.group(1);
-                String dependencyAttribute = matcher.group(3);
-                rules.put(id, dependencyAttribute);
+                String referenceValue = matcher.group(3);
+                rules.put(id, referenceValue);
             }
         }
         return rules;

@@ -96,7 +96,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getStore().beginTransaction();
         reportPlugin.beginConcept(concept);
-        Result<Concept> result = new Result<>(concept, Result.Status.SKIPPED, effectiveSeverity, null, null);
+        Result<Concept> result = Result.<Concept> builder().rule(concept).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
         reportPlugin.setResult(result);
         reportPlugin.endConcept();
         analyzerContext.getStore().commitTransaction();
@@ -122,7 +122,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getStore().beginTransaction();
         reportPlugin.beginConstraint(constraint);
-        Result<Constraint> result = new Result<>(constraint, Result.Status.SKIPPED, effectiveSeverity, null, null);
+        Result<Constraint> result = Result.<Constraint> builder().rule(constraint).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
         reportPlugin.setResult(result);
         reportPlugin.endConstraint();
         analyzerContext.getStore().commitTransaction();

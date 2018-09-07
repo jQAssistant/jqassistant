@@ -6,8 +6,8 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.ToString;
 
@@ -20,6 +20,7 @@ import lombok.ToString;
  * @see Rule
  */
 @Builder
+@AllArgsConstructor
 @ToString
 public class Result<T extends ExecutableRule> {
 
@@ -51,32 +52,6 @@ public class Result<T extends ExecutableRule> {
      * The returned rows.
      */
     private List<Map<String, Object>> rows;
-
-    /**
-     * Constructor.
-     *
-     * @DEPRECATED Use the provided {@link #builder()} method instead.
-     *
-     * @param rule
-     *            The executed rule.
-     * @param status
-     *            The status of the result verification.
-     * @param severity
-     *            The effective severity.
-     * @param columnNames
-     *            The names of the columns per row.
-     * @param rows
-     *            The rows.
-     */
-    @ToBeRemovedInVersion(major = 1, minor = 5)
-    @Deprecated
-    public Result(T rule, Status status, Severity severity, List<String> columnNames, List<Map<String, Object>> rows) {
-        this.rule = rule;
-        this.status = status;
-        this.severity = severity;
-        this.columnNames = columnNames;
-        this.rows = rows;
-    }
 
     public T getRule() {
         return rule;

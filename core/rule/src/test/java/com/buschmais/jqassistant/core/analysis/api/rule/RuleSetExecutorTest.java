@@ -44,8 +44,8 @@ public class RuleSetExecutorTest {
 
     @Test
     public void defaultGroupSeverity() throws RuleException {
-        Group group = Group.builder().id("group").conceptId(defaultConcept.getId()).conceptId(overriddenConcept.getId(), Severity.CRITICAL)
-                .constraintId(defaultConstraint.getId()).constraintId(overriddenConstraint.getId(), Severity.CRITICAL).build();
+        Group group = Group.builder().id("group").concept(defaultConcept.getId(), null).concept(overriddenConcept.getId(), Severity.CRITICAL)
+                .constraint(defaultConstraint.getId(), null).constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder().addGroupId(group.getId()).build();
@@ -62,9 +62,9 @@ public class RuleSetExecutorTest {
 
     @Test
     public void overriddenGroupSeverity() throws RuleException {
-        Group group = Group.builder().id("group").severity(Severity.BLOCKER).conceptId(defaultConcept.getId())
-                .conceptId(overriddenConcept.getId(), Severity.CRITICAL).constraintId(defaultConstraint.getId())
-                .constraintId(overriddenConstraint.getId(), Severity.CRITICAL).build();
+        Group group = Group.builder().id("group").severity(Severity.BLOCKER).concept(defaultConcept.getId(), null)
+                .concept(overriddenConcept.getId(), Severity.CRITICAL).constraint(defaultConstraint.getId(), null)
+                .constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder().addGroupId(group.getId()).build();
@@ -115,13 +115,13 @@ public class RuleSetExecutorTest {
         Concept nestedConcept1 = Concept.builder().id("concept:Nested1").build();
         Concept nestedConcept2 = Concept.builder().id("concept:Nested2").build();
         Constraint nestetConstraint = Constraint.builder().id("constraint:Nested").build();
-        Group nestedGroup = Group.builder().id("group:Nested").conceptId("concept:Nested1").conceptId("concept:Nested2").constraintId("constraint:Nested")
-                .build();
+        Group nestedGroup = Group.builder().id("group:Nested").concept("concept:Nested1", null).concept("concept:Nested2", null)
+                .constraint("constraint:Nested", null).build();
         Concept parentConcept1 = Concept.builder().id("concept:Parent1").build();
         Concept parentConcept2 = Concept.builder().id("concept:Parent2").build();
         Constraint parentConstraint = Constraint.builder().id("constraint:Parent").build();
-        Group parentGroup = Group.builder().id("group:Parent").conceptId("concept:Parent1").conceptId("concept:Parent2").constraintId("constraint:Parent")
-                .groupId("group:Nested").build();
+        Group parentGroup = Group.builder().id("group:Parent").concept("concept:Parent1", null).concept("concept:Parent2", null)
+                .constraint("constraint:Parent", null).group("group:Nested", null).build();
         Concept rootConcept = Concept.builder().id("concept:Root").build();
         Constraint rootConstraint = Constraint.builder().id("constraint:Root").build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(nestedConcept1).addConcept(nestedConcept2).addConstraint(nestetConstraint)
@@ -154,8 +154,8 @@ public class RuleSetExecutorTest {
         Map<String, Boolean> requiresConcepts = new HashMap<>();
         requiresConcepts.put("test:DependencyConcept1", optional);
         requiresConcepts.put("test:DependencyConcept2", optional);
-        Concept concept = Concept.builder().id("test:Concept").requiresConceptIds(requiresConcepts).build();
-        Constraint constraint = Constraint.builder().id("test:Constraint").requiresConceptIds(requiresConcepts).build();
+        Concept concept = Concept.builder().id("test:Concept").requiresConcepts(requiresConcepts).build();
+        Constraint constraint = Constraint.builder().id("test:Constraint").requiresConcepts(requiresConcepts).build();
 
         when(visitor.visitConcept(dependencyConcept1, null)).thenReturn(status);
         when(visitor.visitConcept(dependencyConcept2, null)).thenReturn(status);

@@ -5,9 +5,19 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
 /**
  * Report definition for a rule.
  */
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Report {
 
     private Set<String> selectedTypes = null;
@@ -16,21 +26,13 @@ public class Report {
 
     private Properties properties = new Properties();
 
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
     private Report() {
     }
 
-    public Set<String> getSelectedTypes() {
-        return selectedTypes;
-    }
-
-    public String getPrimaryColumn() {
-        return primaryColumn;
-    }
-
-    public Properties getProperties() {
-        return properties;
-    }
-
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
     public static class Builder {
 
         private Report report = new Report();

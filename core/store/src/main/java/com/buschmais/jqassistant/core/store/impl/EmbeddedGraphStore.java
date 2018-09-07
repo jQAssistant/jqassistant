@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -45,15 +44,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         return server;
     }
 
-    @ToBeRemovedInVersion(major = 1, minor = 5)
-    @Deprecated
-    public GraphDatabaseService getGraphDatabaseService() {
-        LOGGER.warn("Access to the Neo4j GraphDatabaseService is deprecated.");
-        return server.getGraphDatabaseService();
-    }
-
     @Override
-    protected XOManagerFactory configure(XOUnit.XOUnitBuilder builder) {
+    protected XOManagerFactory configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
         EmbeddedNeo4jServerFactory serverFactory = getEmbeddedNeo4jServerFactory();
         builder.provider(EmbeddedNeo4jXOProvider.class);
         serverFactory.configure(builder);
@@ -62,7 +54,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         XOManagerFactory xoManagerFactory = XO.createXOManagerFactory(builder.build());
         try (XOManager xoManager = xoManagerFactory.createXOManager()) {
             GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
-            server.init(graphDatabaseService);
+            server.init(graphDatabaseService, false);
         }
         return xoManagerFactory;
     }

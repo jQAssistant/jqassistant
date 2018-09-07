@@ -117,8 +117,8 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
-        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints)
-                .groupIds(includeGroups).build();
+        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints)
+                .groups(includeGroups).build();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
@@ -133,7 +133,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
         return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
+                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
     }
 
     /**
@@ -173,7 +173,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
         return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).build();
+                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
     }
 
     private Executable<?> createExecutable(ExecutableRuleType executableRuleType) throws RuleException {

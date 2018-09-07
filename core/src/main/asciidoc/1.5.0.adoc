@@ -4,4 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.5.0]
 ifdef::jqa-in-manual[== Core Framework 1.5.0]
 
-No changes.
+- Removed obsoleted constructor `public Result(T rule, Status status, Severity severity, List<String> columnNames, List<Map<String, Object>> rows)` from
+`com.buschmais.jqassistant.core.analysis.api.Result`. Script rules shall use the provided `builder()` method instead.

@@ -45,7 +45,7 @@ public abstract class AbstractGraphStore implements Store {
     public void start(Collection<Class<?>> types) {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
             .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
-        xoManagerFactory = configure(builder);
+        xoManagerFactory = configure(builder, storeConfiguration);
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -207,7 +207,7 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * Configure store specific options.
      */
-    protected abstract XOManagerFactory configure(XOUnit.XOUnitBuilder builder);
+    protected abstract XOManagerFactory configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
 
     protected abstract int getAutocommitThreshold();
 
