@@ -81,7 +81,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.10.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
-        <org.neo4j_3x.version>3.4.6</org.neo4j_3x.version>
+        <org.neo4j_3x.version>3.4.7</org.neo4j_3x.version>
         <!-- use Neo4jv2 for building and testing -->
         <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
         <org.neo4j.procedure_version>3.4.0.2</org.neo4j.procedure_version>
@@ -126,7 +126,7 @@
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0.2</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
-        <lombok.version>1.18.0</lombok.version>
+        <lombok.version>1.18.2</lombok.version>
     </properties>
 
     <build>
