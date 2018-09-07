@@ -22,7 +22,7 @@ new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, c
 
 [[javascript:AsciiDocTestConstraint]]
 .Demonstrates a constraint using JavaScript.
-[source,javascript,role=constraint,depends="javascript:AsciiDocTestConcept",severity=blocker]
+[source,javascript,role=constraint,requiresConcepts="javascript:AsciiDocTestConcept",severity=blocker]
 ----
 var columnNames = java.util.Arrays.asList("test");
 var queryResult = store.executeQuery("match (t:TestLabel) return t");

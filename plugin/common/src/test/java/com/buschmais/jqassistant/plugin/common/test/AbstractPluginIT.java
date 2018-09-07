@@ -22,7 +22,6 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
@@ -35,7 +34,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -155,9 +153,6 @@ public abstract class AbstractPluginIT {
 
     protected ReportContext reportContext;
 
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 5)
-    protected InMemoryReportWriter reportWriter;
     protected InMemoryReportPlugin reportPlugin;
 
     private RulePluginRepository rulePluginRepository;
@@ -197,8 +192,7 @@ public abstract class AbstractPluginIT {
         File outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         this.reportContext = new ReportContextImpl(outputDirectory);
-        reportWriter = new InMemoryReportWriter(new CompositeReportPlugin(Collections.<String, ReportPlugin> emptyMap()));
-        reportPlugin = reportWriter;
+        reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(Collections.emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }

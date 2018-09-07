@@ -36,12 +36,6 @@ public class ScriptIT extends AbstractPluginIT {
     }
 
     @Test
-    public void javaScriptXmlConceptUsingGDS() throws Exception {
-        assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportPlugin.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
-    }
-
-    @Test
     public void javaScriptXmlConstraint() throws Exception {
         assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
         verifyResults(reportPlugin.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
