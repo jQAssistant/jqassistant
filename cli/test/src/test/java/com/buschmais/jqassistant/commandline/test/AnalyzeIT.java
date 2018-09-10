@@ -64,13 +64,6 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @Test
-    public void constraintSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "critical" };
-        assertThat(execute(args).getExitCode(), equalTo(0));
-        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
-    }
-
-    @Test
     public void constraintFailOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
         assertThat(execute(args).getExitCode(), equalTo(2));
