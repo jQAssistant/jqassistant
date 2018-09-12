@@ -92,6 +92,7 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     @Override
     protected void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
         if (apocEnabled) {
+            LOGGER.info("Registering APOC procedures & functions.");
             Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class);
             for (Class<?> procedureType : PROCEDURE_TYPES) {
                 try {
