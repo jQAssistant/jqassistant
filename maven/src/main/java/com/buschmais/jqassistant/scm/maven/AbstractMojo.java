@@ -94,7 +94,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The store configuration.
      */
     @Parameter
-    protected StoreConfiguration store;
+    protected StoreConfiguration store = StoreConfiguration.builder().build();
 
     /**
      * The rule configuration
@@ -430,9 +430,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return The directory.
      */
     private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
-        if (store != null) {
-            return store;
-        } else {
+        StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
+        if (store.getUri() == null) {
             File directory;
             if (this.storeDirectory != null) {
                 directory = this.storeDirectory;
@@ -440,8 +439,18 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 directory = new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY);
             }
             directory.getParentFile().mkdirs();
-            return StoreConfiguration.builder().uri(directory.toURI()).build();
+            builder.uri(directory.toURI());
+        } else {
+            builder.uri(store.getUri());
+            builder.username(store.getUsername());
+            builder.password(store.getPassword());
+            builder.encryptionLevel(store.getEncryptionLevel());
         }
+        builder.properties(store.getProperties());
+        builder.apocEnabled(store.isApocEnabled());
+        StoreConfiguration storeConfiguration = builder.build();
+        getLog().debug("Using store configuration " + storeConfiguration);
+        return storeConfiguration;
     }
 
     /**
