@@ -3,6 +3,7 @@
     <group id="default">
         <includeConcept refId="test:ProjectHasModel"/>
         <includeConcept refId="test:ProjectHasEffectiveModel"/>
+        <includeConcept refId="test:TestArtifactDependsOnMainArtifact"/>
     </group>
 
     <concept id="test:ProjectHasModel" severity="critical">
@@ -22,6 +23,19 @@
             (:Maven:Project)-[:HAS_EFFECTIVE_MODEL]->(pom:Maven:Pom)
             RETURN
             pom
+        </cypher>
+    </concept>
+
+    <concept id="test:TestArtifactDependsOnMainArtifact" severity="critical">
+        <description>Verifies that the :Test artifact depends on the :Main artifact</description>
+        <cypher>
+            MATCH
+              (project:Maven:Project),
+              (project)-[:CREATES]->(main:Main:Artifact),
+              (project)-[:CREATES]->(test:Test:Artifact),
+              (test)-[:DEPENDS_ON]->(main)
+            RETURN
+              main, test
         </cypher>
     </concept>
 
