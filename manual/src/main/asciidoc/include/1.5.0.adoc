@@ -31,5 +31,5 @@ include::{docRoot}/com.buschmais.jqassistant.cli/parent/asciidoc/1.5.0.adoc[leve
 
 include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/1.5.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.core/parent/asciidoc/1.5.0.adoc[leveloffset=2]
-include::{docRoot}//com.buschmais.jqassistant.neo4jserver/parent/asciidoc/1.5.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.neo4jserver/parent/asciidoc/1.5.0.adoc[leveloffset=2]
 
