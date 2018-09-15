@@ -21,6 +21,11 @@ public class UrlRuleSource extends RuleSource {
     }
 
     @Override
+    public URL getURL() {
+        return this.url;
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         return url.openStream();
     }

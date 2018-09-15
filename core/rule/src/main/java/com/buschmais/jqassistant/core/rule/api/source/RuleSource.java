@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.rule.api.source;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Defines a source containing rules.
@@ -11,8 +12,29 @@ import java.io.InputStream;
  */
 public abstract class RuleSource {
 
+    /**
+     * Return a unique identifier of this {@link RuleSource}.
+     * 
+     * @return The identifier.
+     */
     public abstract String getId();
 
+    /**
+     * Return the {@link URL} of the {@link RuleSource}.
+     * 
+     * @return The {@link URL}.
+     * @throws IOException
+     *             If the {@link URL} cannot be determined.
+     */
+    public abstract URL getURL() throws IOException;
+
+    /**
+     * Open an {@link InputStream} providing the content of the {@link RuleSource}.
+     * 
+     * @return The {@link InputStream}.
+     * @throws IOException
+     *             If the {@link InputStream} cannot be opened.
+     */
     public abstract InputStream getInputStream() throws IOException;
 
     @Override

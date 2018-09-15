@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,6 +27,11 @@ public class FileRuleSource extends RuleSource {
     @Override
     public String getId() {
         return file.getAbsolutePath();
+    }
+
+    @Override
+    public URL getURL() throws MalformedURLException  {
+        return this.file.toURI().toURL();
     }
 
     @Override
