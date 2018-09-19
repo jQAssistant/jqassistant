@@ -85,8 +85,8 @@ public class RuleSetExecutor {
         if (matchingConcepts.isEmpty()) {
             LOGGER.warn("Could not find concepts matching to '{}'.", matchingConcepts);
         } else {
-            for (Concept concept : matchingConcepts) {
-                applyConcept(ruleSet, concept, getEffectiveSeverity(concept, parentSeverity, requestedSeverity));
+            for (Concept matchingConcept : matchingConcepts) {
+                applyConcept(ruleSet, matchingConcept, getEffectiveSeverity(matchingConcept, parentSeverity, requestedSeverity));
             }
         }
     }
@@ -151,14 +151,15 @@ public class RuleSetExecutor {
     private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule) throws RuleException {
         boolean requiredConceptsApplied = true;
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
-            String conceptId = entry.getKey();
-            Concept requiredConcept = resolveConcept(ruleSet, conceptId);
-            boolean conceptResult = applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity());
-            Boolean optional = entry.getValue();
-            if (optional == null) {
-                optional = configuration.isRequiredConceptsAreOptionalByDefault();
+            List<Concept> requiredConcepts = ruleSet.getConceptBucket().match(entry.getKey());
+            for (Concept requiredConcept : requiredConcepts) {
+                boolean conceptResult = applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity());
+                Boolean optional = entry.getValue();
+                if (optional == null) {
+                    optional = configuration.isRequiredConceptsAreOptionalByDefault();
+                }
+                requiredConceptsApplied = requiredConceptsApplied && (conceptResult || optional);
             }
-            requiredConceptsApplied = requiredConceptsApplied && (conceptResult || optional);
         }
         return requiredConceptsApplied;
     }
@@ -184,17 +185,4 @@ public class RuleSetExecutor {
         }
         return result;
     }
-
-    private Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws RuleException {
-        return ruleSet.getConceptBucket().getById(requiredConceptId);
-    }
-
-    private Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws RuleException {
-        return ruleSet.getConstraintBucket().getById(constraintId);
-    }
-
-    private Group resolveGroup(RuleSet ruleSet, String groupId) throws RuleException {
-        return ruleSet.getGroupsBucket().getById(groupId);
-    }
-
 }
