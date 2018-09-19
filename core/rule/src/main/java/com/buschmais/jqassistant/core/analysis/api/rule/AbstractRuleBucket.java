@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Container to store {@link Rule Rules}.
@@ -77,6 +76,31 @@ public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoR
         }
 
         return rule;
+    }
+
+    /**
+     * Matches the rules in this bucket against the given pattern that might contain
+     * wildcards, i.e. '*' and '?'.
+     * 
+     * @param pattern
+     *            The pattern.
+     * @return The list of matching rules.
+     * @throws NoRuleException
+     *             If the pattern did not contained any wildcard and the referenced
+     *             rule is not contained in the bucket.
+     */
+    public List<T> match(String pattern) throws NoRuleException {
+        List<T> matches = new ArrayList<>();
+        if (pattern.contains("?") || pattern.contains("*")) {
+            for (Map.Entry<String, T> entry : rules.entrySet()) {
+                if (FilenameUtils.wildcardMatch(entry.getKey(), pattern)) {
+                    matches.add(entry.getValue());
+                }
+            }
+        } else {
+            matches.add(getById(pattern));
+        }
+        return matches;
     }
 
     public <B extends AbstractRuleBucket<T, NRE, DRE>> void add(B bucket) throws DRE {
