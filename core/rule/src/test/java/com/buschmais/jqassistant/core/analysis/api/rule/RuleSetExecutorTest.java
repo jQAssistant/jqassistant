@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import static org.mockito.Mockito.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +14,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
+
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuleSetExecutorTest {
