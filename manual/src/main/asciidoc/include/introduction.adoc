@@ -117,9 +117,11 @@ RETURN
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
 
+TIP: Despite rules are usually referenced by their id it is also possible to use the wildcards `\*` and `?`.
+This is especially useful for defining groups and include all constraints that match a specific pattern, e.g. `my-rules:*`.
 
 ==== Groups
-A group is a set of rules that shall be executed together by including them with the option to overwrite their default severity.
+A group is a set of rules (i.e. concepts, constraints or other groups) that shall be executed together by including them with the option to overwrite their default severity.
 This allows to adjust analysis depth for different types of builds, e.g. a Continuous Integration build (CI) can be configured
 to only execute rules with low costs (i.e. execution times) whereas a report build is allowed to run for a longer time with more
 expensive checks.
