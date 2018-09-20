@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import static org.mockito.Mockito.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +16,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuleSetExecutorTest {
@@ -145,6 +145,44 @@ public class RuleSetExecutorTest {
         inOrder.verify(visitor).visitConstraint(parentConstraint, null);
         inOrder.verify(visitor).afterGroup(parentGroup);
         inOrder.verify(visitor).visitConstraint(rootConstraint, null);
+    }
+
+    @Test
+    public void wildcards() throws RuleException {
+        Concept requiredConcept1 = Concept.builder().id("concept:Required1").build();
+        Concept requiredConcept2 = Concept.builder().id("concept:Required2").build();
+        Map<String, Boolean> requiresConcepts1 = new HashMap<>();
+        requiresConcepts1.put("concept:Req*1", null);
+        Concept dependentConcept = Concept.builder().id("concept:Dependent").requiresConcepts(requiresConcepts1).build();
+        Map<String, Boolean> requiresConcepts2 = new HashMap<>();
+        requiresConcepts2.put("concept:Req*2", null);
+        Constraint dependentConstraint = Constraint.builder().id("constraint:Dependent").requiresConcepts(requiresConcepts2).build();
+        Map<String, Severity> includesConcepts = new HashMap<>();
+        includesConcepts.put("concept:Dependent", null);
+        Map<String, Severity> includesConstraints= new HashMap<>();
+        includesConstraints.put("constraint:Dependent", null);
+        Group nestedGroup = Group.builder().id("group:Nested").concepts(includesConcepts).constraints(includesConstraints).build();
+
+        Group group = Group.builder().id("group").group("*:Nested", null).concept("*:Default", null).constraint("*:Default", null).build();
+        RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConcept(requiredConcept1)
+                .addConcept(requiredConcept2).addConcept(dependentConcept).addConstraint(defaultConstraint).addConstraint(overriddenConstraint)
+                .addConstraint(dependentConstraint).addGroup(group).addGroup(nestedGroup).getRuleSet();
+        RuleSelection ruleSelection = RuleSelection.builder().addGroupId("*").build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).beforeGroup(group, null);
+        verify(visitor).afterGroup(group);
+        verify(visitor).beforeGroup(nestedGroup, null);
+        verify(visitor).afterGroup(nestedGroup);
+        verify(visitor).visitConcept(defaultConcept, Severity.MAJOR);
+        verify(visitor).visitConcept(dependentConcept, null);
+        verify(visitor).visitConcept(requiredConcept1, null);
+        verify(visitor).visitConcept(requiredConcept2, null);
+        verify(visitor).visitConstraint(defaultConstraint, Severity.MAJOR);
+        verify(visitor).visitConstraint(dependentConstraint, null);
+        verify(visitor, never()).visitConcept(overriddenConcept, Severity.MAJOR);
+        verify(visitor, never()).visitConstraint(overriddenConstraint, Severity.MAJOR);
     }
 
     private void verifyConceptDependencies(Boolean optional, boolean status, VerificationMode visitVerification, VerificationMode skipVerification)
