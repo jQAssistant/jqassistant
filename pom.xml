@@ -83,7 +83,7 @@
         <org.neo4j_3x.version>3.4.7</org.neo4j_3x.version>
         <!-- use Neo4jv2 for building and testing -->
         <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
-        <org.neo4j.procedure_version>3.4.0.2</org.neo4j.procedure_version>
+        <org.neo4j.procedure_version>3.4.0.3</org.neo4j.procedure_version>
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.buildhelper.version>3.0.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.0.0</maven.checkstyle.version>
