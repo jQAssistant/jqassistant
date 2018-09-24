@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
@@ -46,7 +47,7 @@ public class ScannerImpl implements Scanner {
      *            The registered scopes.
      */
     public ScannerImpl(ScannerConfiguration configuration, ScannerContext scannerContext, Map<String, ScannerPlugin<?, ?>> scannerPlugins,
-                       Map<String, Scope> scopes) {
+            Map<String, Scope> scopes) {
         this.configuration = configuration;
         this.scannerContext = scannerContext;
         this.scannerPlugins = scannerPlugins;
@@ -61,6 +62,8 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public <I, D extends Descriptor> D scan(I item, D descriptor, String path, Scope scope) {
+        // Each item may be scanned by multiple plugins, therefore track all plugins
+        // that already processed that item in a pipeline
         boolean pipelineCreated;
         Set<ScannerPlugin<?, ?>> pipeline = this.pipelines.get(item);
         if (pipeline == null) {
@@ -70,6 +73,37 @@ public class ScannerImpl implements Scanner {
         } else {
             pipelineCreated = false;
         }
+        Store store = scannerContext.getStore();
+        try {
+            if (!store.hasActiveTransaction()) {
+                // Begin a new transaction if no transaction is active
+                store.beginTransaction();
+                descriptor = scan(item, descriptor, path, scope, pipeline);
+                store.commitTransaction();
+            } else {
+                // Re-use an existing transaction
+                descriptor = scan(item, descriptor, path, scope, pipeline);
+            }
+        } catch (RuntimeException e) {
+            if (store.hasActiveTransaction()) {
+                store.rollbackTransaction();
+            }
+            String message = "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='"
+                    + pipeline + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.isContinueOnError() + ").";
+            if (configuration.isContinueOnError()) {
+                LOGGER.error(message, e);
+                LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
+            } else {
+                throw new IllegalStateException(message, e);
+            }
+        }
+        if (pipelineCreated) {
+            pipelines.remove(item);
+        }
+        return descriptor;
+    }
+
+    private <I, D extends Descriptor> D scan(I item, D descriptor, String path, Scope scope, Set<ScannerPlugin<?, ?>> pipeline) {
         Class<?> itemClass = item.getClass();
         Class<D> type = null;
         for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
@@ -82,27 +116,12 @@ public class ScannerImpl implements Scanner {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
                 } catch (IOException e) {
                     LOGGER.warn("Cannot scan item " + path, e);
-                } catch (RuntimeException e) {
-                    String message = "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope
-                            + "', pipeline='" + pipeline + "'. Please report this error including the full stacktrace (continueOnError="
-                            + configuration.isContinueOnError() + ").";
-                    if (configuration.isContinueOnError()) {
-                        LOGGER.error(message, e);
-                        LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
-                    } else {
-                        throw new IllegalStateException(message, e);
-                    }
                 } finally {
                     popDescriptor(type, descriptor);
                     descriptor = newDescriptor;
                     type = selectedPlugin.getDescriptorType();
                 }
             }
-        }
-        if (pipelineCreated)
-
-        {
-            pipelines.remove(item);
         }
         return descriptor;
     }
