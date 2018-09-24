@@ -51,6 +51,7 @@
         <org.asciidoctorj-pdf.version>1.5.0-alpha.16</org.asciidoctorj-pdf.version>
         <net.sourceforge.plantuml.version>1.2018.9</net.sourceforge.plantuml.version>
         <org.jruby.version>9.1.17.0</org.jruby.version>
+        <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>1.9.5</org.mockito.version>
     </properties>
 
@@ -101,15 +102,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>2.2.8-b01</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jsr173_api</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${org.glassfish.jaxb.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.asciidoctor</groupId>

@@ -115,6 +115,11 @@ public interface Store {
     <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target, Example<R> example);
 
     /**
+     * Flush the store, i.e. commit the current transaction and create a new one.
+     */
+    void flush();
+
+    /**
      * Creates a {@link Descriptor} of the given type with a full qualified name
      *
      * @param type
