@@ -207,10 +207,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
         }
-        MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
-        Set<MavenProject> executedModules = getExecutedModules(rootModule);
-        execute(rootModule, executedModules);
-        executedModules.add(currentProject);
+        if (skip) {
+            getLog().info("Skipping execution.");
+        } else {
+            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+            Set<MavenProject> executedModules = getExecutedModules(rootModule);
+            execute(rootModule, executedModules);
+            executedModules.add(currentProject);
+        }
     }
 
     /**
@@ -328,9 +332,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoFailureException   On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
-        if (skip) {
-            getLog().info("Skipping execution.");
-        } else {
             synchronized (storeFactory) {
                 Store store = getStore(rootModule);
                 if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
@@ -342,7 +343,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                     releaseStore(rootModule, store);
                 }
             }
-        }
     }
 
     /**
