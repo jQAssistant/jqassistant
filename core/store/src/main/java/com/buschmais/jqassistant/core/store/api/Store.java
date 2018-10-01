@@ -202,15 +202,15 @@ public interface Store {
     <T extends Descriptor, N extends Descriptor> N removeDescriptorType(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as);
 
     /**
-     * Finds a {@link Descriptor}.
+     * Finds a {@link Descriptor} by an indexed property..
      *
      * @param type
      *            The type.
-     * @param fullQualifiedName
+     * @param value
      *            The full qualified name.
      * @return The {@link Descriptor}.
      */
-    <T extends Descriptor> T find(Class<T> type, String fullQualifiedName);
+    <T extends Descriptor> T find(Class<T> type, String value);
 
     /**
      * Executes a CYPHER query.

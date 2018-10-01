@@ -14,6 +14,7 @@ import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
+import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
 import org.slf4j.Logger;
@@ -45,7 +46,9 @@ public abstract class AbstractGraphStore implements Store {
     public void start(Collection<Class<?>> types) {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
             .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
-        xoManagerFactory = configure(builder, storeConfiguration);
+        configure(builder, storeConfiguration);
+        xoManagerFactory = XO.createXOManagerFactory(builder.build());
+        initialize(xoManagerFactory);
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -134,8 +137,8 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
-        ResultIterable<T> result = xoManager.find(type, fullQualifiedName);
+    public <T extends Descriptor> T find(Class<T> type, String value) {
+        ResultIterable<T> result = xoManager.find(type, value);
         return result.hasResult() ? result.getSingleResult() : null;
     }
 
@@ -207,7 +210,12 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * Configure store specific options.
      */
-    protected abstract XOManagerFactory configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
+    protected abstract void configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
+
+    /**
+     * Initialize store using configured {@link XOManagerFactory}.
+     */
+    protected abstract void initialize(XOManagerFactory xoManagerFactory);
 
     protected abstract int getAutocommitThreshold();
 

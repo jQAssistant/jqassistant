@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
-import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
@@ -45,18 +44,20 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOManagerFactory configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
+    protected void configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
         EmbeddedNeo4jServerFactory serverFactory = getEmbeddedNeo4jServerFactory();
         builder.provider(EmbeddedNeo4jXOProvider.class);
-        serverFactory.configure(builder);
+        serverFactory.configure(builder, storeConfiguration.getProperties());
         this.server = serverFactory.getServer();
-        LOGGER.info("Using embedded Neo4j server " + server.getVersion());
-        XOManagerFactory xoManagerFactory = XO.createXOManagerFactory(builder.build());
+    }
+
+    @Override
+    protected void initialize(XOManagerFactory xoManagerFactory) {
+        LOGGER.info("Initializing embedded Neo4j server " + server.getVersion());
         try (XOManager xoManager = xoManagerFactory.createXOManager()) {
             GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
             server.init(graphDatabaseService, false);
         }
-        return xoManagerFactory;
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
