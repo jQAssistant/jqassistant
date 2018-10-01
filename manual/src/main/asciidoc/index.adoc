@@ -11,9 +11,9 @@ image::jQA_logo.png[]
 
 
 
-Your Software. Your Structures. Your Rules.
+*Your Software. Your Structures. Your Rules.*
 
-This document describes the concepts of jQAssistant and usage information.
+This document describes the concepts of jQAssistant and usage information. To download jQAssistant, go to https://jqassistant.org/get-started/[*Get Started*].
 
 
 [abstract]
