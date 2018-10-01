@@ -64,12 +64,12 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    public void start(String httpAddress, int httpPort) {
+    public void start(String bindAddress, int httpPort) {
         Map<String, String> opts = new HashMap<>();
         // Neo4j 3.x
         opts.put("dbms.connector.http.type", "HTTP");
         opts.put("dbms.connector.http.enabled", "true");
-        opts.put("dbms.connector.http.listen_address", httpAddress + ":" + httpPort);
+        opts.put("dbms.connector.http.listen_address", bindAddress + ":" + httpPort);
 
         Config defaults = Config.defaults(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);

@@ -16,8 +16,8 @@ public class Neo4jV3ServerFactory extends AbstractEmbeddedNeo4jServerFactory {
     }
 
     @Override
-    protected void setXOUnitProperties(Properties properties) {
-        properties.put(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-        properties.put(PROPERTY_NEO4J_DBMS_SECURITY_PROCEDURES_UNRESTRICTED, "apoc.*");
+    protected void addXOUnitProperties(Properties xoUnitProperties) {
+        xoUnitProperties.putIfAbsent(PROPERTY_NEO4J_DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
+        xoUnitProperties.putIfAbsent(PROPERTY_NEO4J_DBMS_SECURITY_PROCEDURES_UNRESTRICTED, "apoc.*");
     }
 }

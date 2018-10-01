@@ -14,14 +14,20 @@ public abstract class AbstractEmbeddedNeo4jServerFactory implements EmbeddedNeo4
     private static final String PROPERTY_NEO4J_DBMS_ALLOW_FORMAT_MIGRATION = "neo4j.dbms.allow_format_migration";
 
     @Override
-    public final void configure(XOUnit.XOUnitBuilder builder) {
-        Properties properties = new Properties();
-        properties.put(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
-        properties.put(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
-        properties.put(PROPERTY_NEO4J_DBMS_ALLOW_FORMAT_MIGRATION, Boolean.TRUE.toString());
-        setXOUnitProperties(properties);
-        builder.properties(properties);
+    public final void configure(XOUnit.XOUnitBuilder builder, Properties properties) {
+        Properties xoUnitProperties = new Properties(properties);
+        xoUnitProperties.putIfAbsent(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
+        xoUnitProperties.putIfAbsent(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
+        xoUnitProperties.putIfAbsent(PROPERTY_NEO4J_DBMS_ALLOW_FORMAT_MIGRATION, Boolean.TRUE.toString());
+        addXOUnitProperties(xoUnitProperties);
+        builder.properties(xoUnitProperties);
     }
 
-    protected abstract void setXOUnitProperties(Properties properties);
+    /**
+     * Add database specific {@link XOUnit} properties.
+     * 
+     * @param xoUnitProperties
+     *            The database specific properties.
+     */
+    protected abstract void addXOUnitProperties(Properties xoUnitProperties);
 }

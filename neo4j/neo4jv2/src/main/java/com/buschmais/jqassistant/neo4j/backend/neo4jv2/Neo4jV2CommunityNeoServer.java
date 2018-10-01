@@ -37,12 +37,12 @@ public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    public void start(String httpAddress, int httpPort) {
+    public void start(String bindAddress, int httpPort) {
         tempDirectory = createTempDirectory();
         Map<String, String> opts = new HashMap<>();
         // Neo4j 2.x
         opts.put("dbms.security.auth_enabled", Boolean.FALSE.toString());
-        opts.put("org.neo4j.server.webserver.address", httpAddress);
+        opts.put("org.neo4j.server.webserver.address", bindAddress);
         opts.put("org.neo4j.server.webserver.port", Integer.toString(httpPort));
         // Neo4j 2.x/3.x
         String sslDir = tempDirectory.toFile().getAbsolutePath() + "neo4j-home/";

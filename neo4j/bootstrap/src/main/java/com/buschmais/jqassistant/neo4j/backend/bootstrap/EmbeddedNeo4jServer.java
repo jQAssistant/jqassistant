@@ -18,7 +18,7 @@ public interface EmbeddedNeo4jServer {
 
     GraphDatabaseService getGraphDatabaseService();
 
-    void start(String httpAddress, int httpPort);
+    void start(String bindAddress, int httpPort);
 
     void stop();
 
