@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static java.util.Collections.singletonList;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -12,6 +10,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
+
+import static java.util.Collections.singletonList;
 
 public class JavaRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
 
