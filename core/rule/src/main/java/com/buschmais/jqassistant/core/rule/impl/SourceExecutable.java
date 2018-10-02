@@ -19,4 +19,6 @@ public class SourceExecutable<S> implements Executable<S>  {
 
     private S source;
 
+    private Class<S> type;
+
 }

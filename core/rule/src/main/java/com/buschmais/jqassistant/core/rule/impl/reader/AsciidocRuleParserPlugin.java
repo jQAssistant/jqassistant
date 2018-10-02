@@ -206,7 +206,7 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
                 language = (String) block.getAttributes().get(1);
             }
             if (language != null) {
-                return new SourceExecutable<>(language.toLowerCase(), block);
+                return new SourceExecutable<>(language.toLowerCase(), block, AbstractBlock.class);
             } else {
                 LOGGER.warn("Cannot determine language for '" + block + "'.");
             }

@@ -179,7 +179,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
     private Executable<?> createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
         SourceType source = executableRuleType.getSource();
         if (source != null) {
-            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue());
+            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
         }
         // for compatibility
         String cypher = executableRuleType.getCypher();

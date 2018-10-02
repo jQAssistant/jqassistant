@@ -22,4 +22,11 @@ public interface Executable<S> {
      */
     S getSource();
 
+    /**
+     * Return the source type.
+     * 
+     * @return The source type.
+     */
+    Class<S> getType();
+
 }

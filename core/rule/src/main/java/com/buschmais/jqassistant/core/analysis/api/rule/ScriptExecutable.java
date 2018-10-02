@@ -8,6 +8,6 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 public class ScriptExecutable extends SourceExecutable<String> {
 
     public ScriptExecutable(String language, String source) {
-        super(language, source);
+        super(language, source, String.class);
     }
 }
