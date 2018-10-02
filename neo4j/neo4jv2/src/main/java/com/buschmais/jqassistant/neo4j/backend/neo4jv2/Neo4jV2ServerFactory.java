@@ -13,6 +13,6 @@ public class Neo4jV2ServerFactory extends AbstractEmbeddedNeo4jServerFactory {
     }
 
     @Override
-    protected void setXOUnitProperties(Properties properties) {
+    protected void addXOUnitProperties(Properties xoUnitProperties) {
     }
 }
