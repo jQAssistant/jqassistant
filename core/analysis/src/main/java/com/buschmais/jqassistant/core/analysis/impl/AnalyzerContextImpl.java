@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -53,7 +54,7 @@ public class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows)
+    public <T extends ExecutableRule<?>> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows)
             throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
@@ -64,7 +65,7 @@ public class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, Verification verification) throws RuleException {
+    public <T extends ExecutableRule<?>> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows, Verification verification) throws RuleException {
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());
         if (strategy == null) {
             throw new RuleException("Result verification not supported: " + verification.getClass().getName());
@@ -72,4 +73,8 @@ public class AnalyzerContextImpl implements AnalyzerContext {
         return strategy.verify(executable, verification, columnNames, rows);
     }
 
+    @Override
+    public <R extends ExecutableRule<?>> Result.ResultBuilder<R> resultBuilder(R rule, Severity severity) {
+        return Result.<R>builder().rule(rule).severity(severity);
+    };
 }
