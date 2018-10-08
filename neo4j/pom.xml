@@ -12,7 +12,7 @@
     <version>1.5.0-RC-2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>jQAssistant Neo4j Server Parent</name>
+    <name>jQAssistant Embedded Neo4j Server Parent</name>
     <url>http://jqassistant.org/</url>
 
     <description>
