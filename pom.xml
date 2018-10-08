@@ -80,7 +80,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo.version>0.10.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
-        <org.neo4j_3x.version>3.4.7</org.neo4j_3x.version>
+        <org.neo4j_3x.version>3.4.8</org.neo4j_3x.version>
         <!-- use Neo4jv2 for building and testing -->
         <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
         <org.neo4j.procedure_version>3.4.0.3</org.neo4j.procedure_version>
