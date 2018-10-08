@@ -1,0 +1,93 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+
+    <group id="neo4j-backend:Default">
+        <includeConstraint refId="neo4j-backend:*" />
+    </group>
+
+    <constraint id="neo4j-backend:Neo4jServerMustDependOnAllApocProcedures">
+        <requiresConcept refId="neo4j-backend:Neo4jServerDependsOnApocType" />
+        <description>The Neo4j server must register all available APOC procedure types.</description>
+        <cypher><![CDATA[
+            MATCH
+              (procedure:APOC:Procedure)
+            WHERE NOT
+             (:Neo4jServer)-[:DEPENDS_ON]->(:Type)-[:DECLARES]->(procedure)
+            RETURN
+              procedure as UnregisteredProcedure
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="neo4j-backend:Neo4jServerMustDependOnAllApocUserFunctions">
+        <requiresConcept refId="neo4j-backend:Neo4jServerDependsOnApocType" />
+        <description>The Neo4j server must register all available APOC user function types.</description>
+        <cypher><![CDATA[
+            MATCH
+              (userFunction:APOC:UserFunction)
+            WHERE NOT
+             (:Neo4jServer)-[:DEPENDS_ON]->(:Type)-[:DECLARES]->(userFunction)
+            RETURN
+              userFunction as UnregisteredFunction
+        ]]></cypher>
+    </constraint>
+
+    <concept id="neo4j-backend:Neo4jServerDependsOnApocType">
+        <requiresConcept refId="neo4j-backend:ApocUserFunction" />
+        <requiresConcept refId="neo4j-backend:ApocProcedure" />
+        <requiresConcept refId="neo4j-backend:Neo4jServer" />
+        <description>Creates a DEPENDS_ON relation between the Neo4j Server and all types declaring APOC functions or procedures.</description>
+        <cypher><![CDATA[
+            MATCH
+              (server:Neo4jServer:Type)-[:DEPENDS_ON]->(type),
+              (apocType:Type)-[:DECLARES]->(apoc:Method)
+            WHERE
+              type.fqn = apocType.fqn
+            MERGE
+              (server)-[:DEPENDS_ON]->(apocType)
+            RETURN
+              type.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="neo4j-backend:ApocUserFunction">
+        <description>Labels all types annotated with @org.neo4j.procedure.UserFunction with "APOC" and "UserFunction".</description>
+        <cypher><![CDATA[
+            MATCH
+              (userFunction:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotationType:Type)
+            WHERE
+              annotationType.fqn = "org.neo4j.procedure.UserFunction"
+            SET
+              userFunction:APOC:UserFunction
+            RETURN
+              userFunction as ApocUserFunction
+        ]]></cypher>
+    </concept>
+
+    <concept id="neo4j-backend:ApocProcedure">
+        <description>Labels all types annotated with @org.neo4j.procedure.Procedure with "APOC" and "Procedure".</description>
+        <cypher><![CDATA[
+            MATCH
+              (procedure:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotationType:Type)
+            WHERE
+              annotationType.fqn = "org.neo4j.procedure.Procedure"
+            SET
+              procedure:APOC:Procedure
+            RETURN
+              procedure as ApocProcedure
+        ]]></cypher>
+    </concept>
+
+    <concept id="neo4j-backend:Neo4jServer">
+        <description>Labels the type com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jV3CommunityNeoServer with "Neo4jServer".</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(neo4jServer:Type)
+            WHERE
+              neo4jServer.fqn="com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jV3CommunityNeoServer"
+            SET
+              neo4jServer:Neo4jServer
+            RETURN
+              neo4jServer as Neo4jServer
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
