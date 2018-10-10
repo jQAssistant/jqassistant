@@ -19,21 +19,22 @@ import org.slf4j.LoggerFactory;
  */
 public class ServerTask extends AbstractStoreTask {
 
-    public static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
-    public static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
-    public static final String CMDLINE_OPTION_DAEMON = "daemon";
+    private static final String CMDLINE_OPTION_DAEMON = "daemon";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
 
-    private String serverAddress;
-    private int serverPort;
     private Boolean runAsDaemon;
+
+    @Override
+    protected boolean isConnectorRequired() {
+        return true;
+    }
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
-        server.start(serverAddress, serverPort);
+        server.start();
         LOGGER.info("Running server");
         if (runAsDaemon) {
             // let the neo4j daemon do the job
@@ -52,18 +53,12 @@ public class ServerTask extends AbstractStoreTask {
 
     @Override
     public void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
-                .create(CMDLINE_OPTION_SERVERADDRESS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()
-                .create(CMDLINE_OPTION_SERVERPORT));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DAEMON).withDescription("Do not wait for <Enter> on standard input to stop the server.")
                 .create(CMDLINE_OPTION_DAEMON));
     }
 
     @Override
     public void withOptions(CommandLine options) {
-        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, EmbeddedNeo4jServer.DEFAULT_ADDRESS);
-        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(EmbeddedNeo4jServer.DEFAULT_PORT)));
         runAsDaemon = options.hasOption(CMDLINE_OPTION_DAEMON);
     }
 }

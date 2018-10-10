@@ -30,16 +30,23 @@ import org.slf4j.LoggerFactory;
  * @author jn4, Kontext E GmbH, 23.01.14
  */
 public class ScanTask extends AbstractStoreTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanTask.class);
 
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URIS = "u";
     public static final String CMDLINE_OPTION_RESET = "reset";
     public static final String CMDLINE_OPTION_CONTINUEONERROR = "continueOnError";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanTask.class);
+
     private Map<String, String> files = Collections.emptyMap();
     private Map<String, String> urls = Collections.emptyMap();
     private boolean reset = false;
     private boolean continueOnError = true;
+
+    @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
 
     @SuppressWarnings("static-access")
     @Override

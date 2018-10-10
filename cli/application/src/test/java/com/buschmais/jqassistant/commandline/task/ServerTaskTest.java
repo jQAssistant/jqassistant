@@ -42,7 +42,7 @@ public class ServerTaskTest {
     public void daemon() throws CliExecutionException, ParseException {
         startServer("-daemon");
 
-        verify(server).start(EmbeddedNeo4jServer.DEFAULT_ADDRESS, EmbeddedNeo4jServer.DEFAULT_PORT);
+        verify(server).start();
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ServerTaskTest {
 
         }
 
-        verify(server).start(EmbeddedNeo4jServer.DEFAULT_ADDRESS, EmbeddedNeo4jServer.DEFAULT_PORT);
+        verify(server).start();
         verify(server).stop();
     }
 

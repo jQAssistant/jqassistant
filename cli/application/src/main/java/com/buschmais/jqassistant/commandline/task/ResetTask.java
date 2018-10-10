@@ -16,6 +16,11 @@ public class ResetTask extends AbstractStoreTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResetTask.class);
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     protected void addTaskOptions(List<Option> options) {
     }
 

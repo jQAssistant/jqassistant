@@ -9,9 +9,12 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -25,11 +28,21 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_STORE_URI = "storeUri";
     protected static final String CMDLINE_OPTION_STORE_USERNAME = "storeUsername";
     protected static final String CMDLINE_OPTION_STORE_PASSWORD = "storePassword";
+    protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
+    protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
+    protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
+
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
+    protected static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 6)
+    protected static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
+
     @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
     @Deprecated
     protected static final String CMDLINE_OPTION_STORE_DIRECTORY = "storeDirectory";
-
 
     protected StoreConfiguration storeConfiguration;
 
@@ -70,16 +83,32 @@ public abstract class AbstractStoreTask extends AbstractTask {
             builder.username(getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
             builder.password(getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
         } else {
-            File directory;
-            if (storeDirectory != null) {
-                directory = new File(storeDirectory);
-            } else {
-                directory = new File(DEFAULT_STORE_DIRECTORY);
-            }
+            String directoryName = OptionHelper.selectValue(DEFAULT_STORE_DIRECTORY, storeDirectory);
+            File directory = new File(directoryName);
             directory.getParentFile().mkdirs();
             builder.uri(directory.toURI());
         }
+        builder.embedded(getEmbeddedNeo4jConfiguration(options));
         this.storeConfiguration = builder.build();
+    }
+
+    private EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration(CommandLine options) {
+        EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
+        builder.connectorEnabled(isConnectorRequired());
+
+        String serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS);
+        OptionHelper.verifyDeprecatedOption(CMDLINE_OPTION_SERVERADDRESS, serverAddress, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
+        String embeddedListenAddress = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
+        builder.listenAddress(OptionHelper.selectValue(EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS, serverAddress, embeddedListenAddress));
+
+        String serverPort = getOptionValue(options, CMDLINE_OPTION_SERVERPORT);
+        OptionHelper.verifyDeprecatedOption(CMDLINE_OPTION_SERVERPORT, serverPort, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
+        String httpPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
+        builder.httpPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT), serverPort, httpPort)));
+
+        String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
+        builder.boltPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT), boltPort)));
+        return builder.build();
     }
 
     @Override
@@ -95,11 +124,19 @@ public abstract class AbstractStoreTask extends AbstractTask {
                 .create(CMDLINE_OPTION_STORE_USERNAME));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD).withDescription("The password for connecting to Neo4j database.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_PASSWORD));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS).withDescription("The listen address of the embedded server.").hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_HTTP_PORT).withDescription("The HTTP port of the embedded server.").hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bol tport of the embedded server.").hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
+                .create(CMDLINE_OPTION_SERVERADDRESS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()
+                .create(CMDLINE_OPTION_SERVERPORT));
         addTaskOptions(options);
         return options;
     }
-
-    protected abstract void addTaskOptions(List<Option> options);
 
     /**
      * Return the {@link Store} instance.
@@ -110,5 +147,10 @@ public abstract class AbstractStoreTask extends AbstractTask {
         return StoreFactory.getStore(storeConfiguration);
     }
 
+    protected abstract void addTaskOptions(List<Option> options);
+
+    protected abstract boolean isConnectorRequired();
+
     protected abstract void executeTask(final Store store) throws CliExecutionException;
+
 }

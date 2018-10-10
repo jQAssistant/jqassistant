@@ -50,6 +50,11 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     private List<String> constraintIds;
     private List<String> groupIds;
 
+    @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
     protected RuleSet getAvailableRules() throws CliExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         if (rulesUrl != null) {
