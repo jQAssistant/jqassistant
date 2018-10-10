@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.source;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -27,9 +28,13 @@ public class ClasspathRuleSource extends RuleSource {
     }
 
     @Override
-    public InputStream getInputStream() {
+    public InputStream getInputStream() throws IOException {
         ClassLoader currentClassloader = getClassLoader();
-        return currentClassloader.getResourceAsStream(resource);
+        InputStream stream = currentClassloader.getResourceAsStream(resource);
+        if (stream == null) {
+            throw new IOException("Cannot load resource from " + resource);
+        }
+        return stream;
     }
 
     private ClassLoader getClassLoader() {

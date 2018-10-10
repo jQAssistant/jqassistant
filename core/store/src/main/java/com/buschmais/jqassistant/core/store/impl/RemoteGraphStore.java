@@ -20,7 +20,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected void configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
+    protected XOUnit configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
         builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
         String username = this.storeConfiguration.getUsername();
@@ -40,6 +40,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
             properties.putAll(storeConfigurationProperties);
         }
         builder.properties(properties);
+        return builder.build();
     }
 
     @Override
