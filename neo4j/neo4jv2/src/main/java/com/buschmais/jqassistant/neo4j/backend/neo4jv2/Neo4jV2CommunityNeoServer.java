@@ -9,7 +9,6 @@ import java.util.Map;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
 
 import org.apache.commons.io.FileUtils;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.kernel.GraphDatabaseDependencies;
 import org.neo4j.kernel.configuration.Config;
@@ -23,12 +22,16 @@ import org.neo4j.server.database.WrappedDatabase;
 
 public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
+    public static final String DBMS_SECURITY_AUTH_ENABLED = "dbms.security.auth_enabled";
+    public static final String ORG_NEO_4J_SERVER_WEBSERVER_ADDRESS = "org.neo4j.server.webserver.address";
+    public static final String ORG_NEO_4J_SERVER_WEBSERVER_PORT = "org.neo4j.server.webserver.port";
+
     private Path tempDirectory;
 
     private CommunityNeoServer communityNeoServer;
 
     @Override
-    protected void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
+    protected void initialize() {
     }
 
     @Override
@@ -37,13 +40,13 @@ public class Neo4jV2CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    public void start(String bindAddress, int httpPort) {
+    public void start() {
         tempDirectory = createTempDirectory();
         Map<String, String> opts = new HashMap<>();
         // Neo4j 2.x
-        opts.put("dbms.security.auth_enabled", Boolean.FALSE.toString());
-        opts.put("org.neo4j.server.webserver.address", bindAddress);
-        opts.put("org.neo4j.server.webserver.port", Integer.toString(httpPort));
+        opts.put(DBMS_SECURITY_AUTH_ENABLED, Boolean.FALSE.toString());
+        opts.put(ORG_NEO_4J_SERVER_WEBSERVER_ADDRESS, embeddedNeo4jConfiguration.getListenAddress());
+        opts.put(ORG_NEO_4J_SERVER_WEBSERVER_PORT, Integer.toString(embeddedNeo4jConfiguration.getHttpPort()));
         // Neo4j 2.x/3.x
         String sslDir = tempDirectory.toFile().getAbsolutePath() + "neo4j-home/";
         opts.put(ServerSettings.tls_key_file.name(), sslDir + "/ssl/snakeoil.key");

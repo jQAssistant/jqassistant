@@ -8,17 +8,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public interface EmbeddedNeo4jServer {
 
-    String DEFAULT_ADDRESS = "localhost";
-
-    int DEFAULT_PORT = 7474;
-
     String getVersion();
 
-    void init(GraphDatabaseService graphDatabaseService, boolean apocEnabled);
+    void initialize(GraphDatabaseService graphDatabaseService, EmbeddedNeo4jConfiguration configuration);
 
     GraphDatabaseService getGraphDatabaseService();
 
-    void start(String bindAddress, int httpPort);
+    void start();
 
     void stop();
 

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
 
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.internal.kernel.api.exceptions.KernelException;
 import org.neo4j.kernel.GraphDatabaseDependencies;
 import org.neo4j.kernel.configuration.Config;
@@ -25,6 +24,12 @@ import org.slf4j.LoggerFactory;
 import static java.util.Arrays.asList;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
+
+    public static final String DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS = "dbms.connector.http.listen_address";
+    public static final String DBMS_CONNECTOR_HTTP_ENABLED = "dbms.connector.http.enabled";
+    public static final String DBMS_CONNECTOR_HTTP_TYPE = "dbms.connector.http.type";
+
+    public static final String HTTP_TYPE = "HTTP";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV3CommunityNeoServer.class);
 
@@ -65,12 +70,12 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    public void start(String bindAddress, int httpPort) {
+    public void start() {
         Map<String, String> opts = new HashMap<>();
         // Neo4j 3.x
-        opts.put("dbms.connector.http.type", "HTTP");
-        opts.put("dbms.connector.http.enabled", "true");
-        opts.put("dbms.connector.http.listen_address", bindAddress + ":" + httpPort);
+        opts.put(DBMS_CONNECTOR_HTTP_TYPE, HTTP_TYPE);
+        opts.put(DBMS_CONNECTOR_HTTP_ENABLED, Boolean.TRUE.toString());
+        opts.put(DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getHttpPort());
 
         Config defaults = Config.defaults(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
@@ -91,8 +96,8 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    protected void configure(GraphDatabaseService graphDatabaseService, boolean apocEnabled) {
-        if (apocEnabled) {
+    protected void initialize() {
+        if (embeddedNeo4jConfiguration.isApocEnabled()) {
             LOGGER.info("Registering APOC procedures & functions.");
             Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class);
             for (Class<?> procedureType : PROCEDURE_TYPES) {

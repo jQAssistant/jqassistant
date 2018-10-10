@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.neo4j.backend.neo4jv2;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 
 public class Neo4jV2ServerFactory extends AbstractEmbeddedNeo4jServerFactory {
@@ -13,6 +14,8 @@ public class Neo4jV2ServerFactory extends AbstractEmbeddedNeo4jServerFactory {
     }
 
     @Override
-    protected void addXOUnitProperties(Properties xoUnitProperties) {
+    public Properties getProperties(EmbeddedNeo4jConfiguration embedded) {
+        return getCommonProperties();
     }
+
 }
