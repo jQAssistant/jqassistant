@@ -67,6 +67,11 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public XOManager getXOManager() {
+        return xoManager;
+    }
+
+    @Override
     public <T extends Descriptor> T create(Class<T> type) {
         T descriptor = xoManager.create(type);
         autoCommit();
@@ -210,7 +215,7 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * Configure store specific options.
      */
-    protected abstract void configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
+    protected abstract XOUnit configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
 
     /**
      * Initialize store using configured {@link XOManagerFactory}.

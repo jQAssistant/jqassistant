@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescripto
 import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import com.buschmais.xo.api.XOManager;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -34,6 +35,13 @@ public interface Store {
      */
     void stop();
 
+    /**
+     * Return the initialized {@link XOManager} used by this store.
+     * 
+     * @return The {@link XOManager}.
+     */
+    XOManager getXOManager();
+    
     /**
      * Clear the content of the store, i.e. delete all nodes and relationships.
      */
