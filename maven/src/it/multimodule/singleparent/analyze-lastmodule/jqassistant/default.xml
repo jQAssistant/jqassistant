@@ -5,7 +5,7 @@
     </group>
 
     <constraint id="a" severity="major">
-        <description>A constraint with severity major.</description>
+        <description>A constraint that always fails.</description>
         <cypher>
             RETURN 1
         </cypher>
