@@ -30,6 +30,11 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Effective rules for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);

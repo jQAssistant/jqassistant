@@ -27,6 +27,11 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) {
         getLog().info("Available scopes for '" + rootModule.getName() + "'.");
         ScopeHelper scopeHelper = new ScopeHelper(logger);

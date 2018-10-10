@@ -62,6 +62,11 @@ public class ScanMojo extends AbstractModuleMojo {
         return reset;
     }
 
+    @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
     /**
      * Return the plugin properties.
      *

@@ -93,6 +93,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");

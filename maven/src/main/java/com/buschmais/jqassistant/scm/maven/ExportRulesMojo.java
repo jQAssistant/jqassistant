@@ -28,6 +28,11 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
         final RuleSet ruleSet = readRules(rootModule);

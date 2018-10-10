@@ -18,8 +18,10 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
+import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
 
@@ -37,6 +39,12 @@ import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.D
  * Abstract base implementation for analysis mojos.
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
+
+    public static final String PARAMETER_SERVER_ADDRESS = "jqassistant.server.address";
+    public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
+    public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
+    public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
+    public static final String PARAMETER_SERVER_PORT = "jqassistant.server.port";
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
@@ -95,6 +103,38 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter
     protected StoreConfiguration store = StoreConfiguration.builder().build();
+
+    /**
+     * The listen address of the embedded server.
+     */
+    @Parameter(property = PARAMETER_EMBEDDED_LISTEN_ADDRESS)
+    protected String embeddedListenAddress;
+
+    /**
+     * The bolt port of the embedded server.
+     */
+    @Parameter(property = PARAMETER_EMBEDDED_BOLT_PORT)
+    protected Integer embeddedBoltPort;
+
+    /**
+     * The http port of the embedded server.
+     */
+    @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
+    protected Integer embeddedHttpPort;
+
+    /**
+     * The address the server shall bind to.
+     */
+    @Parameter(property = PARAMETER_SERVER_ADDRESS)
+    @Deprecated
+    protected String serverAddress;
+
+    /**
+     * The port the server shall bind to.
+     */
+    @Parameter(property = PARAMETER_SERVER_PORT)
+    @Deprecated
+    protected Integer serverPort;
 
     /**
      * The rule configuration
@@ -233,6 +273,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return `true` if the store shall be reset.
      */
     protected abstract boolean isResetStoreBeforeExecution();
+
+    /**
+     * Determines if the executed MOJO requires enabled connectors.
+     *
+     * @return <code>true</code> If connectors must be enabled.
+     */
+    protected abstract boolean isConnectorRequired();
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -423,7 +470,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
-     * Determines the directory to use for the store.
+     * Creates the {@link StoreConfiguration}. This is a copy of the {@link #store}
+     * enriched by default values and additional command line parameters.
      *
      * @param rootModule
      *            The root module.
@@ -432,12 +480,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         if (store.getUri() == null) {
-            File directory;
-            if (this.storeDirectory != null) {
-                directory = this.storeDirectory;
-            } else {
-                directory = new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY);
-            }
+            File directory = OptionHelper.selectValue(new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY), storeDirectory);
             directory.getParentFile().mkdirs();
             builder.uri(directory.toURI());
         } else {
@@ -447,10 +490,26 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             builder.encryptionLevel(store.getEncryptionLevel());
         }
         builder.properties(store.getProperties());
-        builder.apocEnabled(store.isApocEnabled());
+        builder.embedded(getEmbeddedNeo4jConfiguration());
         StoreConfiguration storeConfiguration = builder.build();
         getLog().debug("Using store configuration " + storeConfiguration);
         return storeConfiguration;
+    }
+
+    /**
+     * Create the configuration for the embedded server.
+     */
+    private EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
+        OptionHelper.verifyDeprecatedOption(PARAMETER_SERVER_ADDRESS, this.serverAddress, PARAMETER_EMBEDDED_LISTEN_ADDRESS);
+        OptionHelper.verifyDeprecatedOption(PARAMETER_SERVER_PORT, this.serverPort, PARAMETER_EMBEDDED_HTTP_PORT);
+        EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
+        EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
+        builder.connectorEnabled(embedded.isConnectorEnabled() || isConnectorRequired());
+        builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), this.serverAddress, embeddedListenAddress));
+        builder.boltPort(OptionHelper.selectValue(embedded.getBoltPort(), embeddedBoltPort));
+        builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), this.serverPort, embeddedHttpPort));
+        builder.apocEnabled(embedded.isApocEnabled());
+        return builder.build();
     }
 
     /**

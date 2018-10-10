@@ -36,6 +36,11 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected boolean isConnectorRequired() {
+        return false;
+    }
+
+    @Override
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         File file = ProjectResolver.getOutputFile(rootModule, exportFile, EXPORT_FILE);
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
