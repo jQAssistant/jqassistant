@@ -41,10 +41,10 @@ import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.D
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
     public static final String PARAMETER_SERVER_ADDRESS = "jqassistant.server.address";
+    public static final String PARAMETER_SERVER_PORT = "jqassistant.server.port";
     public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
     public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
     public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
-    public static final String PARAMETER_SERVER_PORT = "jqassistant.server.port";
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 

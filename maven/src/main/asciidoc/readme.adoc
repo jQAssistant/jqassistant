@@ -147,6 +147,11 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         <uri>file:target/myDatabaseDirectory</uri>
                         <username></username>
                         <password></password>
+                        <embedded>
+                          <listenAddress>localhost</listenAddress>
+                          <httpPort>7474</httpPort>
+                          <boltPort>7474</boltPort>
+                          <apocEnabled>true</apocEnabled>
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rule>
@@ -163,8 +168,6 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     <xmlReportFile>
                         ${project.build.directory}/jqassistant/jqassistant-report.xml
                     </xmlReportFile>
-                    <serverAddress>localhost</serverAddress>
-                    <serverPort>7474</serverPort>
                 </configuration>
                 <dependencies>
                     <!-- additional plugins -->
@@ -292,10 +295,6 @@ Starts the integrated Neo4j web server (default address: http://localhost:7474).
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
 * <<storeLifecycle>>
-* serverAddress <address> (-Djqassistant.server.address=<address>)
-** specifies the binding address for the server (default: localhost)
-* serverPort <port> (-Djqassistant.server.port=<port>)
-** specifies the binding port for the server (default: 7474)
 
 [[analyze]]
 ==== jqassistant:analyze
@@ -401,6 +400,23 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 * password
 ** password ('bolt' connections only)
 * default: use embedded database at 'file:{rootModule}/target/jqassistant/store'
+* <<embedded>>
+
+[[embedded]]
+===== embedded
+* the configuration of the embedded Neo4j store
+* listenAddress (-Djqassistant.embedded.listenAddress)
+** the listen address to use for opening BOLT/HTTP connections
+** default: `localhost`
+* httpPort (-Djqassistant.embedded.httpPort)
+** the HTTP port to be used by the Neo4j server
+** default: `7474`
+* boltPort (-Djqassistant.embedded.boltPort)
+** the BOLT port to be used by the Neo4j server
+** default: `7687`
+* apocEnabled
+** if `true` activate the https://neo4j-contrib.github.io/neo4j-apoc-procedures/[APOC] user functions and procedures
+** default: `true`
 
 [[storeDirectory]]
 ===== storeDirectory (-Djqassistant.store.directory)

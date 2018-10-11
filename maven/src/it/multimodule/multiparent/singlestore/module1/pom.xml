@@ -25,9 +25,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <storeLifecycle>MODULE</storeLifecycle>
-                </configuration>
             </plugin>
         </plugins>
 	</build>
