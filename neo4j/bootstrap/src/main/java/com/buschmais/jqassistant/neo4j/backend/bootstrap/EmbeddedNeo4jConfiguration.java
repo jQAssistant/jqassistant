@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.neo4j.backend.bootstrap;
 
-import lombok.Builder;
+import lombok.*;
 import lombok.Builder.Default;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Describes the configuration to apply to the embedded Neo4j server.
@@ -13,6 +10,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class EmbeddedNeo4jConfiguration {
 
     public static final String DEFAULT_LISTEN_ADDRESS = "localhost";
