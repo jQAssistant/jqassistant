@@ -243,7 +243,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private StoreFactory storeFactory;
 
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
+    public final synchronized void execute() throws MojoExecutionException, MojoFailureException {
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
         }

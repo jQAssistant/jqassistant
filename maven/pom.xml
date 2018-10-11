@@ -132,8 +132,7 @@
         <profile>
             <id>IT</id>
             <properties>
-                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo
-                </maven.invoker.localRepositoryPath>
+                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
             </properties>
             <build>
                 <plugins>
