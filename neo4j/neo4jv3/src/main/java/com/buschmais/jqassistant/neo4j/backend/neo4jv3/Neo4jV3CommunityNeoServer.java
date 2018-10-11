@@ -25,9 +25,12 @@ import static java.util.Arrays.asList;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
-    public static final String DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS = "dbms.connector.http.listen_address";
-    public static final String DBMS_CONNECTOR_HTTP_ENABLED = "dbms.connector.http.enabled";
-    public static final String DBMS_CONNECTOR_HTTP_TYPE = "dbms.connector.http.type";
+    private static final String DBMS_CONNECTOR_BOLT_ENABLED = "dbms.connector.bolt.enabled";
+    private static final String DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS = "dbms.connector.bolt.listen_address";
+    private static final String DBMS_CONNECTOR_HTTP_ENABLED = "dbms.connector.http.enabled";
+    private static final String DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS = "dbms.connector.http.listen_address";
+    private static final String DBMS_CONNECTOR_HTTP_TYPE = "dbms.connector.http.type";
+
 
     public static final String HTTP_TYPE = "HTTP";
 
@@ -76,6 +79,8 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
         opts.put(DBMS_CONNECTOR_HTTP_TYPE, HTTP_TYPE);
         opts.put(DBMS_CONNECTOR_HTTP_ENABLED, Boolean.TRUE.toString());
         opts.put(DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getHttpPort());
+        opts.put(DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
+        opts.put(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getBoltPort());
 
         Config defaults = Config.defaults(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
