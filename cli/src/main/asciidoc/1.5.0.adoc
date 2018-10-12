@@ -7,5 +7,5 @@ ifdef::jqa-in-manual[== Commandline Tool 1.5.0]
 * Removed deprecated option `severity` from analyze task (replaced by `failOnSeverity` and `warnOnSeverity`)
 * Deprecated option `serverAddress`, replaced by `embeddedListenAddress`
 * Deprecated option `serverPort`, replaced by `embeddedHttpPort`
-* Added option `embeddedBoltPort`
+* Added options `embeddedBoltPort` and `embeddedApocEnabled`
 

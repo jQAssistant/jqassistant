@@ -31,6 +31,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
+    protected static final String CMDLINE_OPTION_EMBEDDED_APCO_ENABLED = "embeddedApocEnabled";
 
     @Deprecated
     @ToBeRemovedInVersion(major = 1, minor = 6)
@@ -108,6 +109,9 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
         String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
         builder.boltPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT), boltPort)));
+
+        String apocEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_APCO_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_APOC_ENABLED));
+        builder.apocEnabled(Boolean.valueOf(apocEnabled.toLowerCase()));
         return builder.build();
     }
 
@@ -128,8 +132,10 @@ public abstract class AbstractStoreTask extends AbstractTask {
             .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_HTTP_PORT).withDescription("The HTTP port of the embedded server.").hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bol tport of the embedded server.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bolt tport of the embedded server.").hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_APCO_ENABLED).withDescription("Activate/deactivate registration of APOC user functions and procedures in the embedded server.").hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_APCO_ENABLED));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
                 .create(CMDLINE_OPTION_SERVERADDRESS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()
