@@ -45,6 +45,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
     public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
     public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
+    public static final String PARAMETER_EMBEDDED_APOC_ENABLED = "jqassistant.embedded.apocEnabled";
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
@@ -121,6 +122,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
     protected Integer embeddedHttpPort;
+
+    /**
+     * Activates/deactivates registration of APOC user functions and procedures in the embedded server.
+     */
+    @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
+    protected Boolean apocEnabled;
 
     /**
      * The address the server shall bind to.
@@ -243,7 +250,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private StoreFactory storeFactory;
 
     @Override
-    public final synchronized void execute() throws MojoExecutionException, MojoFailureException {
+    public final void execute() throws MojoExecutionException, MojoFailureException {
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
         }
@@ -508,7 +515,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), this.serverAddress, embeddedListenAddress));
         builder.boltPort(OptionHelper.selectValue(embedded.getBoltPort(), embeddedBoltPort));
         builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), this.serverPort, embeddedHttpPort));
-        builder.apocEnabled(embedded.isApocEnabled());
+        builder.apocEnabled(OptionHelper.selectValue(embedded.isApocEnabled(), this.apocEnabled));
         return builder.build();
     }
 

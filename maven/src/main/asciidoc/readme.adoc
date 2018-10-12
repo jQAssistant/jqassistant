@@ -151,7 +151,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                           <listenAddress>localhost</listenAddress>
                           <httpPort>7474</httpPort>
                           <boltPort>7474</boltPort>
-                          <apocEnabled>true</apocEnabled>
+                          <apocEnabled>false</apocEnabled>
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rule>
@@ -414,9 +414,9 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 * boltPort (-Djqassistant.embedded.boltPort)
 ** the BOLT port to be used by the Neo4j server
 ** default: `7687`
-* apocEnabled
+* apocEnabled (-Djqassistant.embedded.apocEnabled)
 ** if `true` activate the https://neo4j-contrib.github.io/neo4j-apoc-procedures/[APOC] user functions and procedures
-** default: `true`
+** default: `false`
 
 [[storeDirectory]]
 ===== storeDirectory (-Djqassistant.store.directory)
