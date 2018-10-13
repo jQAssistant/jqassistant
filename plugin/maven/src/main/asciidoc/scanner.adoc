@@ -33,6 +33,8 @@ A `pom.xml` file describing a single Maven project.
 === Nodes labled with `:Maven:Artifact`
 Represents an artifact, e.g. a JAR-File.
 
+NOTE: The artifact is further labeled with `:Main` representing the main artifact and `:Test` representing the test artifact.
+
 .Properties of `:Maven:Artifact`
 [options="header"]
 |====
