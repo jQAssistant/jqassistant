@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -22,8 +23,8 @@ import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
-import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
 
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -247,7 +248,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The store repository.
      */
     @Inject
-    private StoreFactory storeFactory;
+    private CachingStoreProvider cachingStoreProvider;
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -386,7 +387,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoFailureException   On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
-            synchronized (storeFactory) {
+            synchronized (cachingStoreProvider) {
                 Store store = getStore(rootModule);
                 if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
                     store.reset();
@@ -394,7 +395,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 try {
                     storeOperation.run(rootModule, store);
                 } finally {
-                    releaseStore(rootModule, store);
+                    releaseStore(store);
                 }
             }
     }
@@ -430,48 +431,33 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException If the store cannot be opened.
      */
     private Store getStore(MavenProject rootModule) throws MojoExecutionException {
-        Store store = null;
-        switch (storeLifecycle) {
-            case MODULE:
-                break;
-            case REACTOR:
-                Object existingStore = rootModule.getContextValue(Store.class.getName());
-                if (existingStore != null) {
-                    if (!Store.class.isAssignableFrom(existingStore.getClass())) {
-                        throw new MojoExecutionException(
-                                "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
-                                        + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
-                    }
-                    store = (Store) existingStore;
-                }
-                break;
+        StoreConfiguration configuration = getStoreConfiguration(rootModule);
+        List<Class<?>> descriptorTypes;
+        try {
+            descriptorTypes = pluginRepositoryProvider.getPluginRepository().getModelPluginRepository().getDescriptorTypes();
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot determine model types.", e);
         }
-        if (store == null) {
-            StoreConfiguration configuration = getStoreConfiguration(rootModule);
-            List<Class<?>> descriptorTypes;
-            try {
-                descriptorTypes = pluginRepositoryProvider.getPluginRepository().getModelPluginRepository().getDescriptorTypes();
-            } catch (PluginRepositoryException e) {
-                throw new MojoExecutionException("Cannot determine model types.", e);
-            }
-            store = storeFactory.createStore(configuration, descriptorTypes);
+        Object existingStore = cachingStoreProvider.getStore(configuration, descriptorTypes);
+        if (!Store.class.isAssignableFrom(existingStore.getClass())) {
+            throw new MojoExecutionException(
+                    "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
+                            + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
         }
-        return store;
+        return (Store) existingStore;
     }
 
     /**
      * Release a store instance.
      *
-     * @param rootModule The root module
      * @param store      The store instance.
      */
-    private void releaseStore(MavenProject rootModule, Store store) {
+    private void releaseStore(Store store) {
         switch (storeLifecycle) {
             case MODULE:
-                storeFactory.closeStore(store);
+                cachingStoreProvider.closeStore(store);
                 break;
             case REACTOR:
-                rootModule.setContextValue(Store.class.getName(), store);
                 break;
         }
     }
@@ -487,9 +473,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         if (store.getUri() == null) {
-            File directory = OptionHelper.selectValue(new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY), storeDirectory);
-            directory.getParentFile().mkdirs();
-            builder.uri(directory.toURI());
+            File storeDirectory = OptionHelper.selectValue(new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY), this.storeDirectory);
+            storeDirectory.getParentFile().mkdirs();
+            URI uri = new File(storeDirectory, "/").toURI();
+            builder.uri(uri);
         } else {
             builder.uri(store.getUri());
             builder.username(store.getUsername());
