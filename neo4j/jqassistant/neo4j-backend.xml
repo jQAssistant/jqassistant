@@ -4,15 +4,15 @@
         <includeConstraint refId="neo4j-backend:*" />
     </group>
 
-    <constraint id="neo4j-backend:Neo4jServerMustDependOnAllApocProcedures">
-        <requiresConcept refId="neo4j-backend:Neo4jServerDependsOnApocType" />
-        <description>The Neo4j server must register all available APOC procedure types.</description>
-        <!-- Verify if a dependency exists between the Neo4j Server and all types declaring APOC procedures -->
+    <constraint id="neo4j-backend:ApocActivatorMustDependOnAllApocProcedures">
+        <requiresConcept refId="neo4j-backend:ApocActivatorDependsOnApocType" />
+        <description>The APOC Activator must register all available APOC procedure types.</description>
+        <!-- Verify if a dependency exists between the APOC Activator and all types declaring APOC procedures -->
         <cypher><![CDATA[
             MATCH
               (apocType:APOC:Type)-[:DECLARES]->(procedure:APOC:Procedure)
             WHERE NOT
-             (:Neo4jServer)-[:DEPENDS_ON]->(apocType)
+             (:APOC:Activator)-[:DEPENDS_ON]->(apocType)
             RETURN
               procedure as UnregisteredProcedure
             ORDER BY
@@ -20,15 +20,15 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="neo4j-backend:Neo4jServerMustDependOnAllApocUserFunctions">
-        <requiresConcept refId="neo4j-backend:Neo4jServerDependsOnApocType" />
-        <description>The Neo4j server must register all available APOC user function types.</description>
-        <!-- Verify if a dependency exists between the Neo4j Server and all types declaring APOC user functions -->
+    <constraint id="neo4j-backend:ApocActivatorMustDependOnAllApocUserFunctions">
+        <requiresConcept refId="neo4j-backend:ApocActivatorDependsOnApocType" />
+        <description>The APOC activator must register all available APOC user function types.</description>
+        <!-- Verify if a dependency exists between the APOC Activator and all types declaring APOC user functions -->
         <cypher><![CDATA[
             MATCH
               (apocType:APOC:Type)-[:DECLARES]->(userFunction:APOC:UserFunction)
             WHERE NOT
-             (:Neo4jServer)-[:DEPENDS_ON]->(apocType)
+             (:APOC:Activator)-[:DEPENDS_ON]->(apocType)
             RETURN
               userFunction as UnregisteredFunction
             ORDER BY
@@ -36,19 +36,19 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="neo4j-backend:Neo4jServerDependsOnApocType">
+    <concept id="neo4j-backend:ApocActivatorDependsOnApocType">
         <requiresConcept refId="neo4j-backend:ApocType" />
-        <requiresConcept refId="neo4j-backend:Neo4jServer" />
-        <description>Creates a DEPENDS_ON relation between the Neo4j Server and all types declaring APOC functions or procedures.</description>
-        <!-- The APOC jar is scanned independently of the project's classes. For that reason match all types required by the Neo4j server to the APOC types and propagate the DEPENDS_ON relations. -->
+        <requiresConcept refId="neo4j-backend:ApocActivator" />
+        <description>Creates a DEPENDS_ON relation between the APOC activator and all types declaring APOC functions or procedures.</description>
+        <!-- The APOC jar is scanned independently of the project's classes. For that reason match all types required by the APOC activator to the APOC types and propagate the DEPENDS_ON relations. -->
         <cypher><![CDATA[
             MATCH
-              (server:Neo4jServer:Type)-[:DEPENDS_ON]->(requiredType),
+              (activator:APOC:Activator:Type)-[:DEPENDS_ON]->(requiredType),
               (apocType:APOC:Type)
             WHERE
               requiredType.fqn = apocType.fqn
             MERGE
-              (server)-[:DEPENDS_ON]->(apocType)
+              (activator)-[:DEPENDS_ON]->(apocType)
             RETURN
               apocType.fqn
         ]]></cypher>
@@ -96,17 +96,17 @@
         ]]></cypher>
     </concept>
 
-    <concept id="neo4j-backend:Neo4jServer">
-        <description>Labels the type "com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jV3CommunityNeoServer" with `Neo4jServer`.</description>
+    <concept id="neo4j-backend:ApocActivator">
+        <description>Labels the type "com.buschmais.jqassistant.neo4j.backend.neo4jv3.APOCActivator with `APOC` and `Activator`.</description>
         <cypher><![CDATA[
             MATCH
-              (:Artifact)-[:CONTAINS]->(neo4jServer:Type)
+              (:Artifact)-[:CONTAINS]->(activator:Type)
             WHERE
-              neo4jServer.fqn="com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jV3CommunityNeoServer"
+              activator.fqn = "com.buschmais.jqassistant.neo4j.backend.neo4jv3.APOCActivator"
             SET
-              neo4jServer:Neo4jServer
+              activator:APOC:Activator
             RETURN
-              neo4jServer as Neo4jServer
+              activator as APOCActivator
         ]]></cypher>
     </concept>
 
