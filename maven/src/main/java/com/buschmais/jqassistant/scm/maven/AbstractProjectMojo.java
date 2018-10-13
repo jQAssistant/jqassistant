@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         Map<MavenProject, List<MavenProject>> projects =
                 ProjectResolver.getProjects(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
         final List<MavenProject> projectModules = projects.get(rootModule);
-        boolean isLastModuleInProject = isLastModuleInProject(projectModules);
+        boolean isLastModuleInProject = isLastModuleInProject(executedModules, projectModules);
         getLog().debug(
                 "Verifying if '" + currentProject + "' is last module for project '" + rootModule + "': " + isLastModuleInProject
                         + (" (project modules='" + projectModules + "')."));
@@ -41,29 +42,33 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @param projectModules  The modules of the project.
      * @return <code>true</code> if the current module is the last of the project.
      */
-    private boolean isLastModuleInProject(List<MavenProject> projectModules) {
-        // The project modules are in execution order; take advantage of that.
-        int currentProjectIndex = projectModules.indexOf(currentProject);
-        int remainingModulesPossiblyExecutingPlugin = 0;
-        for (int i = currentProjectIndex + 1 ; i < projectModules.size() ; ++i) {
-            MavenProject followingModule = projectModules.get(i);
-            if (ProjectResolver.containsBuildPlugin(followingModule, execution.getPlugin())) {
-                remainingModulesPossiblyExecutingPlugin++;
+    private boolean isLastModuleInProject(Set<MavenProject> executedModules, List<MavenProject> projectModules) {
+        Set<MavenProject> remainingModules = new HashSet<>();
+        if (execution.getPlugin().getExecutions().isEmpty()) {
+            getLog().debug("No configured executions found, assuming CLI invocation.");
+            remainingModules.addAll(projectModules);
+        } else {
+            for (MavenProject projectModule : projectModules) {
+                if (ProjectResolver.containsBuildPlugin(projectModule, execution.getPlugin())) {
+                    remainingModules.add(projectModule);
+                }
             }
         }
-        if (remainingModulesPossiblyExecutingPlugin > 0) {
+        remainingModules.removeAll(executedModules);
+        remainingModules.remove(currentProject);
+        if (remainingModules.isEmpty()) {
             getLog().debug(
-                    "Found " + remainingModulesPossiblyExecutingPlugin
+                "Did not find any subsequent module with a plugin configuration."
+                    + " Will consider this module as the last one."
+            );
+            return true;
+        } else {
+            getLog().debug(
+                "Found " + remainingModules.size()
                     + " subsequent modules possibly executing this plugin."
                     + " Will NOT consider this module as the last one."
             );
             return false;
-        } else {
-            getLog().debug(
-                    "Did not find any subsequent module with a plugin configuration."
-                    + " Will consider this module as the last one."
-            );
-            return true;
         }
     }
 
