@@ -147,6 +147,8 @@ public interface Store {
     /**
      * Migrates the descriptor instance to the given sub-type.
      *
+     * Replaced by {@link #addDescriptorType(Descriptor, Class)} and {@link #addDescriptorType(Descriptor, Class, Class)}.
+     *
      * @param descriptor
      *            The descriptor.
      * @param concreteType
@@ -155,6 +157,7 @@ public interface Store {
      *            The descriptor type.
      * @param <C>
      *            The concrete type.
+     *
      */
     @Deprecated
     @ToBeRemovedInVersion(major = 1, minor = 6)
