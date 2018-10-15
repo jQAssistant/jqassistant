@@ -2,6 +2,39 @@
 
 === Changes to the Plugins
 
+==== Change of the Version Information of the Plugins
+
+Starting with this release all plugins of jQAssistant will have
+the same three digit version number as the jQAssistant Commandline
+Distribution and the jQAssistant Plugin for Maven.
+
+===== Example
+
+According to our old version schema the Maven artifact coordinates would
+have been:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.buschmais.jqassistant.plugin</groupId>
+    <artifactId>java</artifactId>
+    <version>1.5</version>
+</dependency>
+----
+
+With our new version schema for jQAssistant's plugins the
+Maven artifact coordinates will be:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.buschmais.jqassistant.plugin</groupId>
+    <artifactId>java</artifactId>
+    <version>1.5.0</version>
+</dependency>
+----
+
+
 include::{docRoot}/com.buschmais.jqassistant.plugin/cdi/asciidoc/1.5.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/ejb3/asciidoc/1.5.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/graphml/asciidoc/1.5.adoc[leveloffset=2]
