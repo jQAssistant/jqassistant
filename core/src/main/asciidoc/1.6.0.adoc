@@ -1,0 +1,7 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.6.0]
+ifdef::jqa-in-manual[== Core Framework 1.6.0]
+
+TBW
