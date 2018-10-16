@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant.plugin.plugin-parent</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Plugin Parent POM</name>
@@ -42,10 +42,10 @@
 
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.5.0</jqa-asciidoctor-utilities.version>
-        <jqa-core-framework.version>1.5.0</jqa-core-framework.version>
-        <jqa-neo4jbackend.version>1.5.0</jqa-neo4jbackend.version>
-        <jqa-own-constraints.version>1.5.0</jqa-own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.6.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-core-framework.version>1.6.0-SNAPSHOT</jqa-core-framework.version>
+        <jqa-neo4jbackend.version>1.6.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>1.7.27</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
