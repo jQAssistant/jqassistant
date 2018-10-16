@@ -1,0 +1,4 @@
+ifndef::jqa-in-manual[== Version 1.6.0]
+ifdef::jqa-in-manual[== Java Plugin 1.6.0]
+
+TBW.
