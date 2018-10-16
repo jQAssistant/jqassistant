@@ -1,5 +1,5 @@
-ifndef::jqa-in-manual[== Version 1.5]
-ifdef::jqa-in-manual[== XML Plugin 1.5]
+ifndef::jqa-in-manual[== Version 1.5.0]
+ifdef::jqa-in-manual[== XML Plugin 1.5.0]
 
 - Added property `lineNumber` to `:Xml:Document`, `:Xml:Element`,
   `:Xml:CData` and `:Xml:Text`.
