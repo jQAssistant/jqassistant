@@ -3,13 +3,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant.cli</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.0</version>
+    <version>1.6.0-SNAPSHOT</version>
 
     <name>jQAssistant Commandline Parent</name>
     <url>http://jqassistant.org/</url>
@@ -42,9 +42,9 @@
         <checkstyle.version>8.7</checkstyle.version>
         <jqa-core.version>1.5.0-SNAPSHOT</jqa-core.version>
         <jqa-asciidoc-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoc-utilities.version>
-        <jqa-distribution-spec.version>1.5.0</jqa-distribution-spec.version>
-        <jqa-neo4jbackend.version>1.5.0</jqa-neo4jbackend.version>
-        <jqa-own-constraints.version>1.5.0</jqa-own-constraints.version>
+        <jqa-distribution-spec.version>1.6.0-SNAPSHOT</jqa-distribution-spec.version>
+        <jqa-neo4jbackend.version>1.6.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
