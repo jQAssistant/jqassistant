@@ -143,7 +143,7 @@ public final class ReportHelper {
         loggingStrategy.log(header);
         loggingStrategy.log(type + ": " + rule.getId());
         loggingStrategy.log("Severity: " + severityInfo);
-        loggingStrategy.log("Number of violations: " + resultRows.size());
+        loggingStrategy.log("Number of rows: " + resultRows.size());
         logDescription(loggingStrategy, rule);
         // we need lambdas...
         for (String row : resultRows) {
