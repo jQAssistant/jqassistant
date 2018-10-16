@@ -1,4 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.5]
-ifdef::jqa-in-manual[== Java Plugin 1.5]
-
-No Changes.
