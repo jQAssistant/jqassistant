@@ -1,31 +1,13 @@
 package com.buschmais.jqassistant.commandline;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -33,6 +15,10 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+
+import org.apache.commons.cli.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main class, i.e. the entry point for the CLI.
@@ -45,6 +31,8 @@ public class Main {
 
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
+
+    private static final String OPTION_HELP = "-help";
 
     private final TaskFactory taskFactory;
 
@@ -189,7 +177,7 @@ public class Main {
      *             If an error occurs.
      */
     private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
-        if(options.hasOption("-help")) {
+        if(commandLine.hasOption(OPTION_HELP)) {
             printUsage(options, null);
             System.exit(1);
         }
