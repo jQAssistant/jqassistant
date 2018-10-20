@@ -54,7 +54,7 @@
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
                     <configuration>
-                        <severity>minor</severity>
+                        <failOnSeverity>minor</failOnSeverity>
                         <scanIncludes>
                             <scanInclude>
                                 <path>${project.basedir}</path>
