@@ -47,14 +47,16 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         ArtifactResolver artifactResolver = new MavenArtifactResolver();
         context.push(ArtifactResolver.class, artifactResolver);
         try {
-            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class,
-                                                                               context);
+            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
             // resolve dependencies
             Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
             Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
             for (Artifact dependency : project.getDependencyArtifacts()) {
-                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false),
-                                                                                         artifactResolver, MavenArtifactDescriptor.class, scanner);
+                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false), artifactResolver,
+                        MavenArtifactDescriptor.class, scanner);
+//                if (dependencyDescriptor.getFileName() == null) {
+//                    dependencyDescriptor = scanArtifact(projectDescriptor, dependencyDescriptor, dependency.getFile(), dependency.getFile().getAbsolutePath(), scanner);
+//                }
                 if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                     mainArtifactDependencies.put(dependencyDescriptor, dependency);
                 }
@@ -116,7 +118,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *            The scanner.
      * @return The artifact descriptor.
      */
-    private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(ArtifactCoordinates artifact, ArtifactResolver artifactResolver, Class<T> type, Scanner scanner) {
+    private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(ArtifactCoordinates artifact, ArtifactResolver artifactResolver, Class<T> type,
+            Scanner scanner) {
         MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(artifact, scanner.getContext());
         return scanner.getContext().getStore().addDescriptorType(mavenArtifactDescriptor, type);
     }
@@ -267,21 +270,41 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
-            JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext().getStore().addDescriptorType(artifactDescriptor,
-                    JavaClassesDirectoryDescriptor.class);
-            ScannerContext context = scanner.getContext();
-            context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
-            try {
-                scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
-            } finally {
-                context.pop(JavaArtifactFileDescriptor.class);
-            }
+            scanArtifact(projectDescriptor, artifactDescriptor, directory, directoryName, scanner);
         }
     }
 
     /**
-     * Scan a given path.
+     * Scan a {@link File} that represents a Java artifact.
      * 
+     * @param projectDescriptor
+     *            The maven project descriptor.
+     * @param artifactDescriptor
+     *            The resolved {@link MavenArtifactDescriptor}.
+     * @param file
+     *            The {@link File}.
+     * @param path
+     *            The path of the file.
+     * @param scanner
+     *            The {@link Scanner}.
+     */
+    private JavaArtifactFileDescriptor scanArtifact(MavenProjectDirectoryDescriptor projectDescriptor, ArtifactFileDescriptor artifactDescriptor, File file, String path,
+            Scanner scanner) {
+        JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext().getStore().addDescriptorType(artifactDescriptor,
+                JavaClassesDirectoryDescriptor.class);
+        ScannerContext context = scanner.getContext();
+        context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
+        try {
+            return scanFile(projectDescriptor, file, path, CLASSPATH, scanner);
+        } finally {
+            context.pop(JavaArtifactFileDescriptor.class);
+        }
+    }
+
+    /**
+     * Scan a given path and add it to
+     * {@link MavenProjectDirectoryDescriptor#getContains()}.
+     *
      * @param projectDescriptor
      *            The maven project descriptor.
      * @param path
@@ -291,43 +314,40 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *            The scanner.
      */
-    private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
+    private <F extends FileDescriptor> void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
         File file = new File(path);
-        if (file.exists()) {
-            return scanPath(projectDescriptor, file, path, scope, scanner);
+        if (!file.exists()) {
+            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
+        } else {
+            F fileDescriptor = scanFile(projectDescriptor, file, path, scope, scanner);
+            if (fileDescriptor != null) {
+                projectDescriptor.getContains().add(fileDescriptor);
+            }
         }
-        LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
-        return null;
     }
 
     /**
      * Scan a given file.
+     * 
      * <p>
      * The current project is pushed to the context.
      * </p>
      * 
      * @param projectDescriptor
      *            The maven project descriptor.
-     * @param directory
+     * @param file
      *            The file.
      * @param path
      *            The path.
-     * 
      * @param scope
      *            The scope.
-     * 
      * @param scanner
      *            The scanner.
      */
-    private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, File directory, String path, Scope scope,
-            Scanner scanner) {
+    private <F extends FileDescriptor> F scanFile(MavenProjectDirectoryDescriptor projectDescriptor, File file, String path, Scope scope, Scanner scanner) {
         scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
         try {
-            F fileDescriptor = scanner.scan(directory, path, scope);
-            if (fileDescriptor != null) {
-                projectDescriptor.getContains().add(fileDescriptor);
-            }
-            return fileDescriptor;
+            return scanner.scan(file, path, scope);
         } finally {
             scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
         }
