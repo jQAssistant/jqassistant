@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescripto
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -126,4 +127,20 @@ public interface MavenPomDescriptor
      * @param scmDescriptor
      */
     void setScm(MavenScmDescriptor scmDescriptor);
+
+    /**
+     * Returns the URL of the project home.
+     *
+     * @return the URL of the project home or `null` if this information
+     *         is present.
+     */
+    @Property("url")
+    String getUrl();
+
+    /**
+     * Sets the URL of the project home.
+     *
+     * @param url the URL of the project home.
+     */
+    void setUrl(String url);
 }

@@ -10,3 +10,6 @@ ifdef::jqa-in-manual[== Maven 3 Plugin 1.6.0]
 * The information of the SCM (Source Control Management) section of a POM
   is now also part of the graph model. The node for the SCM information
   can be queried with a query like `MATCH (p:Maven:Pom)-[:HAS_SCM]\->(s:Maven:Scm) RETURN s`.
+* The URL of the project home is now available as property of the node for the Maven POM
+  and can be retrieved via the property `url`. A query to access the project home
+  could be written as `MATCH (p:Maven:Pom) RETURN p.url`.

@@ -90,6 +90,7 @@ A POM describing a Maven project.
 | name       | The artifact id
 | type       | The type, e.g. `jar`
 | classifier | The classifier (optional)
+| url        | The URL of the project home
 | version    | The version
 |====
 

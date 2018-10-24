@@ -107,6 +107,24 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void urlOfTheProjectHomeIsAvailableAsProperty() throws IOException {
+        scanClassPathResource(DefaultScope.NONE, "/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenPomDescriptor> pomDescriptors = query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
+
+        assertThat(pomDescriptors, hasSize(1));
+
+        MavenPomDescriptor pomDescriptor = pomDescriptors.get(0);
+
+        assertThat(pomDescriptor.getUrl(), equalTo("https://github.com/buschmais/jqassistant"));
+
+        store.commitTransaction();
+    }
+
+
     /**
      * Verifies that dependencies between two artifacts defined by pom.xml files
      * are resolved to one node.
