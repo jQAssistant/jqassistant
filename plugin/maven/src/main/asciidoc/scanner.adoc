@@ -299,10 +299,11 @@ through the outgoing `IS_ARTIFACT` relation.
 .Relations of `:Maven:Plugin`
 [options="header"]
 |====
-| Name              | Target label(s)            | Cardinality | Description
-| HAS_EXECUTION     | <<:Maven:PluginExecution>> | 0..n        | References a PluginExecution
-| HAS_CONFIGURATION | <<:Maven:Configuration>>   | 0..1        | References the configuration for the plugin
-| IS_ARTIFACT       | <<:Maven:Artifact>>        | 1           | References Maven artifact representing the Maven plugin
+| Name                | Target label(s)            | Cardinality | Description
+| DECLARES_DEPENDENCY | <<:Maven:Artifact>>        | 0..n        | References the dependencies of the plugin
+| HAS_EXECUTION       | <<:Maven:PluginExecution>> | 0..n        | References a PluginExecution
+| HAS_CONFIGURATION   | <<:Maven:Configuration>>   | 0..1        | References the configuration for the plugin
+| IS_ARTIFACT         | <<:Maven:Artifact>>        | 1           | References Maven artifact representing the Maven plugin
 |====
 
 [[:Maven:License]]

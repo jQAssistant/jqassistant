@@ -4,4 +4,6 @@
 ifndef::jqa-in-manual[== Version 1.6.0]
 ifdef::jqa-in-manual[== Maven 3 Plugin 1.6.0]
 
-TBW
+* Added to the documentation that the declared dependencies of a Maven plugin
+  can be queried by using the outgoing `DECLARES_DEPENDENCY` relation of
+  the node for a Maven plugin.

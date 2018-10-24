@@ -131,28 +131,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    /**
-     * Checks if a Maven plugin has also the label Maven.
-     */
-    @Test
-    public void pluginCanBeFoundWithLabelsMavenAndPlugin() throws Exception {
-        scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
-
-        store.beginTransaction();
-
-        // Precondition that parent POM can be found
-        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
-        assertThat(mavenPomDescriptors, hasSize(1));
-
-        // Now let us see if we can find a plugin with given labels Plugin and
-        // Maven
-        List<Plugin> plugins = query("MATCH (plug:Maven:Plugin) RETURN plug AS p").getColumn("p");
-
-        assertThat(plugins, hasSize(20));
-
-        store.commitTransaction();
-    }
-
     @Test
     public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName()
             throws PluginRepositoryException, IOException {
