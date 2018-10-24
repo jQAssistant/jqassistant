@@ -286,17 +286,13 @@ A Maven module
 [[:Maven:Plugin]]
 === Nodes labled with `:Maven:Plugin`
 
-A Maven plugin
+A Maven plugin. The Maven artifact of the plugin can be found
+through the outgoing `IS_ARTIFACT` relation.
 
 .Properties of `:Maven:Plugin`
 [options="header"]
 |====
 | Name       | Description
-| group      | The group id
-| name       | The artifact id
-| type       | The type, e.g. `jar`
-| classifier | The classifiert
-| version    | The version
 | inherited  | Whether any configuration should be propagated to child POMs
 |====
 
