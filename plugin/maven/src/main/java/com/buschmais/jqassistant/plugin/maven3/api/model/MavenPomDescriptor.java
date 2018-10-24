@@ -118,4 +118,12 @@ public interface MavenPomDescriptor
      */
     void setOrganization(MavenOrganizationDescriptor organization);
 
+    @Relation("HAS_SCM")
+    MavenScmDescriptor getScm();
+
+    /**
+     *
+     * @param scmDescriptor
+     */
+    void setScm(MavenScmDescriptor scmDescriptor);
 }

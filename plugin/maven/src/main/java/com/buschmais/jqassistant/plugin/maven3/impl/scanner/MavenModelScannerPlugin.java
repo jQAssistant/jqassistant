@@ -39,6 +39,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationD
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.PluginDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.PomDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
@@ -70,9 +71,11 @@ import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.RepositoryPolicy;
+import org.apache.maven.model.Scm;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
+import static java.util.Optional.*;
 
 /**
  * Scans Maven model instances.
@@ -125,8 +128,22 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addContributors(pomDescriptor, model, store);
         addOrganization(pomDescriptor, model, store);
         addRepository(of(pomDescriptor), model.getRepositories(), store);
+        addScmInformation(pomDescriptor, model.getScm(), store);
 
         return pomDescriptor;
+    }
+
+    private void addScmInformation(MavenPomDescriptor pomDescriptor, Scm scmInformation, Store store) {
+        ofNullable(scmInformation).ifPresent(scm -> {
+            MavenScmDescriptor scmDescriptor = store.create(MavenScmDescriptor.class);
+
+            ofNullable(scm.getConnection()).ifPresent(scmDescriptor::setConnection);
+            ofNullable(scm.getDeveloperConnection()).ifPresent(scmDescriptor::setDeveloperConnection);
+            ofNullable(scm.getTag()).ifPresent(scmDescriptor::setTag);
+            ofNullable(scm.getUrl()).ifPresent(scmDescriptor::setUrl);
+
+            pomDescriptor.setScm(scmDescriptor);
+        });
     }
 
     private void addOrganization(MavenPomDescriptor pomDescriptor, Model model, Store store) {

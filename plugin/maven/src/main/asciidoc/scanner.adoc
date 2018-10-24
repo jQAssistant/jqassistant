@@ -66,6 +66,18 @@ NOTE: The artifact is further labeled with `:Main` representing the main artifac
 == Scanner for Maven POMs
 Imports information from Maven POMs (e.g. `pom.xml`) files.
 
+[[:Maven:Scm]]
+=== Nodes labled with `:Maven:Scm`
+
+.Properties of `:Maven:Scm`
+|====
+| Name                | Description
+| connection          | The read-only URL to access the repository.
+| developerConnection | The URL to access the repository for reading and writing.
+| tag                 | The tag that this project lives under.
+| url                 | The publicly browsable URL of the repository
+|====
+
 [[:Maven:Pom]]
 === Nodes labled with `:Maven:Pom`
 A POM describing a Maven project.
@@ -85,6 +97,7 @@ A POM describing a Maven project.
 [options="header"]
 |====
 | Name                | Target label(s)         | Cardinality | Description
+| HAS_SCM             | <<:Maven:Scm>>          | 0..1        | References the Source Control Management information of the POM
 | HAS_PARENT          | <<:Maven:Pom>>          | 0..1        | References a parent artifact
 | HAS_PROPERTY        | :Value:Property         | 0..n        | References a property
 | HAS_PROFILE         | <<:Maven:Profile>>      | 0..n        | References defined profiles
