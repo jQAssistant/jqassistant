@@ -7,6 +7,8 @@ import com.buschmais.jqassistant.core.plugin.api.*;
  */
 public class PluginRepositoryImpl implements PluginRepository {
 
+    private PluginConfigurationReader pluginConfigurationReader;
+
     private ModelPluginRepository modelPluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
@@ -23,15 +25,40 @@ public class PluginRepositoryImpl implements PluginRepository {
      * @param pluginConfigurationReader
      *            The plugin configuration reader.
      */
-    public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
+        this.pluginConfigurationReader = pluginConfigurationReader;
+    }
+
+    @Override
+    public void initialize() throws PluginRepositoryException {
         this.modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
+        this.scannerPluginRepository.initialize();
         this.scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         this.ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
+        this.ruleInterpreterPluginRepository.initialize();
         this.ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
+        this.ruleParserPluginRepository.initialize();
         this.reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
-        classLoader = pluginConfigurationReader.getClassLoader();
+        this.reportPluginRepository.initialize();
+        this.classLoader = pluginConfigurationReader.getClassLoader();
+    }
+
+    @Override
+    public void destroy() throws PluginRepositoryException {
+        if (scannerPluginRepository != null) {
+            this.scannerPluginRepository.destroy();
+        }
+        if (ruleInterpreterPluginRepository != null) {
+            this.ruleInterpreterPluginRepository.destroy();
+        }
+        if (ruleParserPluginRepository != null) {
+            this.ruleParserPluginRepository.destroy();
+        }
+        if (reportPluginRepository != null) {
+            this.reportPluginRepository.destroy();
+        }
     }
 
     @Override
@@ -73,4 +100,5 @@ public class PluginRepositoryImpl implements PluginRepository {
     public ClassLoader getClassLoader() {
         return classLoader;
     }
+
 }

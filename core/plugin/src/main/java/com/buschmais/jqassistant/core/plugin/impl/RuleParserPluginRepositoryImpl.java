@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -14,11 +15,10 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 
 public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository implements RuleParserPluginRepository {
 
-    private Collection<RuleParserPlugin> ruleParserPlugins;
+    private Collection<RuleParserPlugin> ruleParserPlugins = new LinkedList<>();
 
     public RuleParserPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        ruleParserPlugins = getRuleParserPlugins();
     }
 
     @Override
@@ -29,19 +29,33 @@ public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository imp
         return ruleParserPlugins;
     }
 
-    private Collection<RuleParserPlugin> getRuleParserPlugins() throws PluginRepositoryException {
-        List<RuleParserPlugin> ruleParserPlugins = new LinkedList<>();
+    @Override
+    public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
             RuleParserType ruleParser = plugin.getRuleParser();
             if (ruleParser != null) {
                 for (IdClassType pluginType : ruleParser.getClazz()) {
                     RuleParserPlugin ruleParserPlugin = createInstance(pluginType.getValue());
-                    ruleParserPlugin.initialize();
+                    try {
+                        ruleParserPlugin.initialize();
+                    } catch (RuleException e) {
+                        throw new PluginRepositoryException("Cannot initialize plugin " + ruleParserPlugin, e);
+                    }
                     ruleParserPlugins.add(ruleParserPlugin);
                 }
             }
         }
-        return ruleParserPlugins;
+    }
+
+    @Override
+    public void destroy() throws PluginRepositoryException {
+        for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
+            try {
+                ruleParserPlugin.destroy();
+            } catch (RuleException e) {
+                throw new PluginRepositoryException("Cannot destroy plugin " + ruleParserPlugin);
+            }
+        }
     }
 
 }

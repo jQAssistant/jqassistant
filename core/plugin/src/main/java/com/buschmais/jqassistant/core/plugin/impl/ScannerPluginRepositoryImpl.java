@@ -18,14 +18,23 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
  */
 public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implements ScannerPluginRepository {
 
-    private final Map<String, ScannerPlugin<?, ?>> scannerPlugins;
+    private Map<String, ScannerPlugin<?, ?>> scannerPlugins = new HashMap<>();
 
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.scannerPlugins = getScannerPlugins(plugins);
+    }
+
+    @Override
+    public void initialize() throws PluginRepositoryException {
+        getScannerPlugins(plugins);
+    }
+
+    @Override
+    public void destroy() {
+        scannerPlugins.values().forEach(scannerPlugin -> scannerPlugin.destroy());
     }
 
     @Override
@@ -36,14 +45,12 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         return scannerPlugins;
     }
 
-    private <T extends ScannerPlugin> Map<String, T> getScannerPlugins(List<JqassistantPlugin> plugins)
-            throws PluginRepositoryException {
-        Map<String, T> scannerPlugins = new HashMap<>();
+    private void getScannerPlugins(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
                 for (IdClassType classType : scannerType.getClazz()) {
-                    T scannerPlugin = createInstance(classType.getValue());
+                    ScannerPlugin<?, ?> scannerPlugin = createInstance(classType.getValue());
                     if (scannerPlugin != null) {
                         scannerPlugin.initialize();
                         String id = classType.getId();
@@ -55,6 +62,5 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
                 }
             }
         }
-        return scannerPlugins;
     }
 }

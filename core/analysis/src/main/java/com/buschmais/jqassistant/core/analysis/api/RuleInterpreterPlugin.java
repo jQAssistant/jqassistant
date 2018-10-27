@@ -6,12 +6,13 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.shared.lifecycle.ConfigurableLifecycleAware;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Plugin interface for rule interpreters.
  */
-public interface RuleInterpreterPlugin {
+public interface RuleInterpreterPlugin extends ConfigurableLifecycleAware<Map<String, Object>> {
 
     /**
      * Initialize the plugin.
@@ -19,7 +20,9 @@ public interface RuleInterpreterPlugin {
      * Life cycle callback for a plugin to do static initialization. Will be exactly
      * invoked once after the plugin has been instantiated.
      */
-    void initialize();
+    @Override
+    default void initialize() {
+    }
 
     /**
      * Configure the plugin.
@@ -31,7 +34,13 @@ public interface RuleInterpreterPlugin {
      * @param properties
      *            The plugin properties.
      */
-    void configure(Map<String, Object> properties);
+    @Override
+    default void configure(Map<String, Object> properties) {
+    }
+
+    @Override
+    default void destroy() {
+    }
 
     /**
      * Return the languages supported by this plugin.

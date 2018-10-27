@@ -4,11 +4,12 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 
 /**
  * Defines the interface for the scanner plugin repository.
  */
-public interface ScannerPluginRepository {
+public interface ScannerPluginRepository extends LifecycleAware {
 
     /**
      * Return the instances of the configured scanner plugins.
@@ -21,4 +22,9 @@ public interface ScannerPluginRepository {
     Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties)
         throws PluginRepositoryException;
 
+    @Override
+    void initialize() throws PluginRepositoryException;
+
+    @Override
+    void destroy() throws PluginRepositoryException;
 }

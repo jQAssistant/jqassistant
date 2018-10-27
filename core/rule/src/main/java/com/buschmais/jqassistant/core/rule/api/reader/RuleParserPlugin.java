@@ -6,16 +6,19 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+import com.buschmais.jqassistant.core.shared.lifecycle.ConfigurableLifecycleAware;
 
 /**
  * Defines the interface of the rule parser.
  */
-public interface RuleParserPlugin {
+public interface RuleParserPlugin extends ConfigurableLifecycleAware<RuleConfiguration> {
 
     /**
      * Initialize the parser.
      */
-    void initialize();
+    @Override
+    default void initialize() throws RuleException {
+    }
 
     /**
      * Configure the parser.
@@ -23,7 +26,13 @@ public interface RuleParserPlugin {
      * @param ruleConfiguration
      *            The {@link RuleConfiguration} to use.
      */
-    void configure(RuleConfiguration ruleConfiguration) throws RuleException;
+    @Override
+    default void configure(RuleConfiguration ruleConfiguration) throws RuleException {
+    }
+
+    @Override
+    default void destroy() throws RuleException {
+    }
 
     /**
      * Determine if the reader accepts the {@link RuleSource}.

@@ -1,18 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import java.util.Map;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 1, minor = 7)
 public abstract class AbstractRuleInterpreterPlugin implements RuleInterpreterPlugin {
-
-    @Override
-    public void initialize() {
-    }
-
-    @Override
-    public void configure(Map<String, Object> properties) {
-    }
-
 }

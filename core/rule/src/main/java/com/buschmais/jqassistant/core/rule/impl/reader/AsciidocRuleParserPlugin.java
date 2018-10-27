@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
@@ -82,8 +83,27 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
 
     private Treeprocessor treeprocessor;
 
+    private File tempDir;
+
     @Override
-    public void initialize() {
+    public void initialize() throws RuleException {
+        try {
+            tempDir = Files.createTempDirectory("jQA").toFile();
+        } catch (IOException e) {
+            throw new RuleException("Cannot create temporary directory.");
+        }
+    }
+
+    @Override
+    public void destroy() throws RuleException {
+        if (asciidoctor != null) {
+            asciidoctor.shutdown();
+        }
+        try {
+            FileUtils.deleteDirectory(tempDir);
+        } catch (IOException e) {
+            throw new RuleException("Cannot delete temporary directory: " + tempDir);
+        }
     }
 
     @Override
@@ -98,10 +118,8 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
 
     @Override
     public void parse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
-        File tempDir;
         String content;
-        try (InputStream stream = source.getInputStream();) {
-            tempDir = Files.createTempDirectory("jQA").toFile();
+        try (InputStream stream = source.getInputStream()) {
             content = IOUtils.toString(stream);
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
@@ -294,7 +312,8 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
      *            The map of attributes.
      * @param attributeName
      *            The name of the attribute.
-     * @return A map containing the ids of the references as keys and their associated values (optional).
+     * @return A map containing the ids of the references as keys and their
+     *         associated values (optional).
      */
     private Map<String, String> getReferences(Attributes attributes, String attributeName) {
         String attribute = attributes.getString(attributeName);

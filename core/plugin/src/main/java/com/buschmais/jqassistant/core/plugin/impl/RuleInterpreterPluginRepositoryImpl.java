@@ -12,11 +12,10 @@ import com.buschmais.jqassistant.core.plugin.schema.v1.RuleInterpreterType;
 
 public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepository implements RuleInterpreterPluginRepository {
 
-    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     public RuleInterpreterPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
-        ruleInterpreterPlugins = initialize();
     }
 
     @Override
@@ -29,8 +28,8 @@ public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepositor
         return ruleInterpreterPlugins;
     };
 
-    private Map<String, Collection<RuleInterpreterPlugin>> initialize() throws PluginRepositoryException {
-        Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
+    @Override
+    public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
             RuleInterpreterType ruleInterpreter = plugin.getRuleInterpreter();
             if (ruleInterpreter != null) {
@@ -48,7 +47,10 @@ public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepositor
                 }
             }
         }
-        return ruleInterpreterPlugins;
     }
 
+    @Override
+    public void destroy() {
+        ruleInterpreterPlugins.values().stream().flatMap(plugins -> plugins.stream()).forEach(plugin -> plugin.destroy());
+    }
 }

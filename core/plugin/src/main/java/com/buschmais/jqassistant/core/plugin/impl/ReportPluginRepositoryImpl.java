@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -14,19 +13,23 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Report plugin repository implementation.
  */
 public class ReportPluginRepositoryImpl extends AbstractPluginRepository implements ReportPluginRepository {
 
-    private final Map<String, ReportPlugin> reportPlugins;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportPluginRepositoryImpl.class);
+
+    private final Map<String, ReportPlugin> reportPlugins = new HashMap<>();
 
     /**
      * Constructor.
      */
-    public ReportPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public ReportPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.reportPlugins = getReportPlugins(plugins);
     }
 
     @Override
@@ -41,8 +44,8 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
         return reportPlugins;
     }
 
-    private Map<String, ReportPlugin> getReportPlugins(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
-        Map<String, ReportPlugin> reportPlugins = new HashMap<>();
+    @Override
+    public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
             ReportType reportType = plugin.getReport();
             if (reportType != null) {
@@ -63,7 +66,16 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
                 }
             }
         }
-        return reportPlugins;
     }
 
+    @Override
+    public void destroy() {
+        reportPlugins.values().forEach(plugin -> {
+            try {
+                plugin.destroy();
+            } catch (ReportException e) {
+                LOGGER.warn("Cannot destroy plugin " + plugin, e);
+            }
+        });
+    }
 }

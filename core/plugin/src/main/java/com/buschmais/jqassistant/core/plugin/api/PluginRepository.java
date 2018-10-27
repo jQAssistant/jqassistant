@@ -1,9 +1,17 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
+import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
+
 /**
  * Defines the interface for the plugin repository.
  */
-public interface PluginRepository {
+public interface PluginRepository extends LifecycleAware {
+
+    @Override
+    void initialize() throws PluginRepositoryException;
+
+    @Override
+    void destroy () throws PluginRepositoryException;
 
     ModelPluginRepository getModelPluginRepository();
 
