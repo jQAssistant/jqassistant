@@ -18,12 +18,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     private ScannerContext scannerContext;
 
-    /**
-     * Initialize the plugin.
-     */
-    public void initialize() {
-    }
-
     @Override
     public final void configure(ScannerContext scannerContext, Map<String, Object> properties) {
         this.scannerContext = scannerContext;

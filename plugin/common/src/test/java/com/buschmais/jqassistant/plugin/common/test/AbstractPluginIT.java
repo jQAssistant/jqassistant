@@ -142,6 +142,8 @@ public abstract class AbstractPluginIT {
         }
     }
 
+    private PluginRepositoryImpl pluginRepository;
+
     protected RuleSet ruleSet;
 
     /**
@@ -155,24 +157,11 @@ public abstract class AbstractPluginIT {
 
     protected InMemoryReportPlugin reportPlugin;
 
-    private RulePluginRepository rulePluginRepository;
-    private ModelPluginRepository modelPluginRepository;
-    private ScannerPluginRepository scannerPluginRepository;
-    private ScopePluginRepository scopePluginRepository;
-    private ReportPluginRepository reportPluginRepository;
-    private RuleParserPluginRepository ruleParserPluginRepository;
-    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
-
     @Before
     public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
-        modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
-        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
-        scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
-        rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
-        ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
-        ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository.initialize();
 
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
         // read rules from rules directory
@@ -181,8 +170,8 @@ public abstract class AbstractPluginIT {
             sources.addAll(FileRuleSource.getRuleSources(selectedDirectory));
         }
         // read rules from plugins
-        sources.addAll(rulePluginRepository.getRuleSources());
-        Collection<RuleParserPlugin> ruleParserPlugins = ruleParserPluginRepository.getRuleParserPlugins(RuleConfiguration.DEFAULT);
+        sources.addAll(pluginRepository.getRulePluginRepository().getRuleSources());
+        Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(RuleConfiguration.DEFAULT);
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
     }
@@ -198,7 +187,7 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws PluginRepositoryException {
-        return ruleInterpreterPluginRepository.getRuleInterpreterPlugins(Collections.emptyMap());
+        return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.emptyMap());
     }
 
     /**
@@ -277,7 +266,7 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
-        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, scopePluginRepository.getScopes());
+        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
     }
 
     /**
@@ -441,7 +430,7 @@ public abstract class AbstractPluginIT {
 
     private List<Class<?>> getDescriptorTypes() {
         try {
-            return modelPluginRepository.getDescriptorTypes();
+            return pluginRepository.getModelPluginRepository().getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get descriptor types.", e);
         }
@@ -449,7 +438,7 @@ public abstract class AbstractPluginIT {
 
     private Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
         try {
-            return scannerPluginRepository.getScannerPlugins(scannerContext, properties);
+            return pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
@@ -461,17 +450,10 @@ public abstract class AbstractPluginIT {
 
     protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
         try {
-            return reportPluginRepository.getReportPlugins(reportContext, properties);
+            return pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get report plugins.", e);
         }
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository() {
-        return scannerPluginRepository;
-    }
-
-    protected RulePluginRepository getRulePluginRepository() {
-        return rulePluginRepository;
-    }
 }
