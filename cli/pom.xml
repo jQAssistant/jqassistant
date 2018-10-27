@@ -4,6 +4,7 @@
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
         <version>1.6.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.cli</groupId>
@@ -40,8 +41,7 @@
 
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-core.version>1.5.0-SNAPSHOT</jqa-core.version>
-        <jqa-asciidoctor-utilities.version>1.5.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-asciidoctor-utilities.version>1.6.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-distribution-spec.version>1.6.0-SNAPSHOT</jqa-distribution-spec.version>
         <jqa-neo4jbackend.version>1.6.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
