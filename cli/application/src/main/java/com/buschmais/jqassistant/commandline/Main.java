@@ -107,11 +107,7 @@ public class Main {
      */
     private PluginRepository getPluginRepository() throws CliExecutionException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
-        try {
-            return new PluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot create plugin repository.", e);
-        }
+        return new PluginRepositoryImpl(pluginConfigurationReader);
     }
 
     /**
@@ -187,15 +183,32 @@ public class Main {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
             System.exit(1);
         }
-        PluginRepository pluginRepository = getPluginRepository();
-        Map<String, Object> properties = readProperties(commandLine);
+        List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
             if (task == null) {
                 printUsage(options, "Unknown task " + taskName);
-                System.exit(1);
             }
-            executeTask(task, options, commandLine, pluginRepository, properties);
+            tasks.add(task);
+        }
+        Map<String, Object> properties = readProperties(commandLine);
+        PluginRepository pluginRepository = getPluginRepository();
+        try {
+            executeTasks(tasks, options, commandLine, pluginRepository, properties);
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Unexpected plugin repository problem while executing tasks.", e);
+        }
+    }
+
+    private void executeTasks(List<Task> tasks, Options options, CommandLine commandLine, PluginRepository pluginRepository, Map<String, Object> properties)
+            throws PluginRepositoryException, CliExecutionException {
+        try {
+            pluginRepository.initialize();
+            for (Task task : tasks) {
+                executeTask(task, options, commandLine, pluginRepository, properties);
+            }
+        } finally {
+            pluginRepository.destroy();
         }
     }
 
