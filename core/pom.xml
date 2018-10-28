@@ -181,7 +181,7 @@
                             </group>
                         </groups>
 
-                        <source>1.7</source>
+                        <source>1.8</source>
                         <doclet>org.asciidoctor.Asciidoclet</doclet>
                         <docletArtifact>
                             <groupId>org.asciidoctor</groupId>
