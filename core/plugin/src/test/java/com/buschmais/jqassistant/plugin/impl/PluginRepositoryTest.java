@@ -15,7 +15,6 @@ import com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin;
 import com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
