@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin;
 import com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -38,16 +39,19 @@ public class PluginRepositoryTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put("testKey", "testValue");
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository.initialize();
         // scanner plugins
         verifyProperties(getScannerPluginProperties(pluginRepository, properties));
         // report plugins
         verifyProperties(getReportPluginProperties(pluginRepository, properties));
+        pluginRepository.destroy();
     }
 
     @Test
     public void repositories() throws PluginRepositoryException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryTest.class.getClassLoader());
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository.initialize();
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext,
@@ -61,6 +65,7 @@ public class PluginRepositoryTest {
         assertThat(reportPlugins.size(), equalTo(3));
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName()), notNullValue());
         assertThat(reportPlugins.get("testReport"), notNullValue());
+        pluginRepository.destroy();
     }
 
     private void verifyProperties(Map<String, Object> pluginProperties) {
