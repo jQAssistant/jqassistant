@@ -73,11 +73,15 @@
                                 <path>${project.basedir}</path>
                             </scanInclude>
                         </scanIncludes>
+                        <scanProperties>
+                            <xml.file.include>/META-INF/jqassistant-plugin.xml</xml.file.include>
+                        </scanProperties>
                         <groups>
                             <group>jqa-legal</group>
                             <group>jqa-maven-constraints</group>
                             <group>jqa-maven-dependency-constraints</group>
                             <group>jqa-project-layout</group>
+                            <group>jqa-plugin:Default</group>
                         </groups>
                     </configuration>
                     <dependencies>
@@ -94,6 +98,11 @@
                         <dependency>
                             <groupId>com.buschmais.jqassistant</groupId>
                             <artifactId>project-layout-constraints</artifactId>
+                            <version>${jqa-own-constraints.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>plugin-rules</artifactId>
                             <version>${jqa-own-constraints.version}</version>
                         </dependency>
                     </dependencies>
