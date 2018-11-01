@@ -41,7 +41,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *            The visitor helper.
      */
     public ClassVisitor(FileDescriptor fileDescriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM6);
+        super(Opcodes.ASM7);
         this.fileDescriptor = fileDescriptor;
         this.visitorHelper = visitorHelper;
     }
