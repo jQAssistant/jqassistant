@@ -201,7 +201,7 @@ public abstract class AbstractPluginIT {
         URI uri;
         switch (type) {
         case FILE:
-            String fileName = "target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName();
+            String fileName = "target/jqassistant/test-store";
             uri = new File(fileName).toURI();
             break;
         case MEMORY:
