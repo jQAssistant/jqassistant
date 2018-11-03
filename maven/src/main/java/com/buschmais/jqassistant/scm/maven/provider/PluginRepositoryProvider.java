@@ -21,22 +21,27 @@ public class PluginRepositoryProvider implements Initializable, Disposable {
 
     private PluginRepository pluginRepository;
 
-    public void initialize() {
-        try {
-            PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
-            pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-            this.pluginRepository.initialize();
-        } catch (PluginRepositoryException e) {
-            LOGGER.warn("Cannot initialize plugin repository.", e);
+    @Override
+    public synchronized void initialize() {
+        if (pluginRepository == null) {
+            try {
+                PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+                pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+                this.pluginRepository.initialize();
+            } catch (PluginRepositoryException e) {
+                LOGGER.warn("Cannot initialize plugin repository.", e);
+            }
         }
     }
 
     @Override
-    public void dispose() {
-        try {
-            this.pluginRepository.destroy();
-        } catch (PluginRepositoryException e) {
-            LOGGER.warn("Cannot destroy plugin repository.", e);
+    public synchronized void dispose() {
+        if (this.pluginRepository != null) {
+            try {
+                this.pluginRepository.destroy();
+            } catch (PluginRepositoryException e) {
+                LOGGER.warn("Cannot destroy plugin repository.", e);
+            }
         }
     }
 
