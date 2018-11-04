@@ -50,7 +50,7 @@
         <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
         <org.asciidoctorj-diagram.version>1.5.10</org.asciidoctorj-diagram.version>
         <org.asciidoctorj-pdf.version>1.5.0-alpha.16</org.asciidoctorj-pdf.version>
-        <net.sourceforge.plantuml.version>1.2018.11</net.sourceforge.plantuml.version>
+        <net.sourceforge.plantuml.version>1.2018.12</net.sourceforge.plantuml.version>
         <org.jruby.version>9.1.17.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>1.9.5</org.mockito.version>
@@ -71,7 +71,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
