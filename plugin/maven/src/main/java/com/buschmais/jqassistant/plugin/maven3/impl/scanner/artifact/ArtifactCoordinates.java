@@ -12,10 +12,6 @@ public class ArtifactCoordinates implements Coordinates {
     private org.apache.maven.artifact.Artifact artifact;
     private boolean testJar;
 
-    public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact) {
-        this(artifact, false);
-    }
-
     public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact, boolean testJar) {
         this.artifact = artifact;
         this.testJar = testJar;

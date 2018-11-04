@@ -19,10 +19,18 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
@@ -35,10 +43,20 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MavenProjectScannerPluginTest {
 
+    @Mock
+    private Store store;
+
+    @Mock
+    private MavenSession mavenSession;
+
+    @Mock
+    private DependencyGraphBuilder dependencyGraphBuilder;
+
     @Test
-    public void projectScannerPlugin() {
+    public void projectScannerPlugin() throws DependencyGraphBuilderException {
         MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin();
 
         // Mock parent project
@@ -54,7 +72,10 @@ public class MavenProjectScannerPluginTest {
         File pomXml = new File("pom.xml");
         when(project.getFile()).thenReturn(pomXml);
         when(project.getName()).thenReturn("project");
+        File artifactFile = mock(File.class);
+        doReturn("/artifact").when(artifactFile).getAbsolutePath();
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
+        artifact.setFile(artifactFile);
         when(project.getGroupId()).thenReturn("group");
         when(project.getArtifactId()).thenReturn("artifact");
         when(project.getVersion()).thenReturn("1.0.0");
@@ -63,7 +84,10 @@ public class MavenProjectScannerPluginTest {
         when(project.getParent()).thenReturn(parentProject);
 
         Set<Artifact> dependencies = new HashSet<>();
+        File dependencyFile = mock(File.class);
+        doReturn("/dependency.jar").when(dependencyFile).getAbsolutePath();
         Artifact dependency = new DefaultArtifact("group", "dependency", VersionRange.createFromVersion("2.0.0"), "compile", "jar", "main", null);
+        dependency.setFile(dependencyFile);
         dependencies.add(dependency);
         when(project.getDependencyArtifacts()).thenReturn(dependencies);
 
@@ -73,7 +97,6 @@ public class MavenProjectScannerPluginTest {
         when(project.getBuild()).thenReturn(build);
         Map<String, Object> properties = new HashMap<>();
         properties.put(MavenProject.class.getName(), project);
-        Store store = mock(Store.class);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactFileDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
@@ -127,14 +150,27 @@ public class MavenProjectScannerPluginTest {
         DependsOnDescriptor mainDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
         when(store.create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
 
-        DependsOnDescriptor testDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(testArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
+        // DependsOnDescriptor testDependsOnDependencyDescriptor =
+        // mock(DependsOnDescriptor.class);
+        // when(store.create(testArtifactDescriptor, DependsOnDescriptor.class,
+        // dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
 
         MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
         when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
 
+        // Dependency Graph
+        ProjectBuildingRequest projectBuildingRequest = mock(ProjectBuildingRequest.class);
+        doReturn(projectBuildingRequest).when(mavenSession).getProjectBuildingRequest();
+        DefaultDependencyNode rootNode = new DefaultDependencyNode(null, artifact, null, null, null);
+        DefaultDependencyNode dependencyNode = new DefaultDependencyNode(rootNode, dependency, null, null, null);
+        rootNode.setChildren(Collections.singletonList(dependencyNode));
+        dependencyNode.setChildren(Collections.emptyList());
+        doReturn(rootNode).when(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
+
         ScannerContext scannerContext = mock(ScannerContext.class);
+        when(scannerContext.peek(MavenSession.class)).thenReturn(mavenSession);
+        when(scannerContext.peek(DependencyGraphBuilder.class)).thenReturn(dependencyGraphBuilder);
         when(scannerContext.getStore()).thenReturn(store);
         when(scanner.getContext()).thenReturn(scannerContext);
 
@@ -178,7 +214,6 @@ public class MavenProjectScannerPluginTest {
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
         verify(store).create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
-        verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
 
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectory);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
