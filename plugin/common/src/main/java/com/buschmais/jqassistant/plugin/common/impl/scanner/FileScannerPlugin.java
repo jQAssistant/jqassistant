@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
@@ -28,7 +29,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        String normalizedPath = slashify(path);
+        String normalizedPath = FileNameNormalizer.normalize(path);
         LOGGER.debug("Scanning '{}'.", normalizedPath);
         try (FileResource fileResource = new RealFileResource(file);) {
             return scanner.scan(fileResource, normalizedPath, scope);

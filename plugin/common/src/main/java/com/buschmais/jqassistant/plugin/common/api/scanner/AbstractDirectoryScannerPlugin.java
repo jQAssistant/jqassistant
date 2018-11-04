@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
@@ -71,7 +72,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
 
     @Override
     protected String getContainerPath(File container, String path) {
-        return slashify(path);
+        return FileNameNormalizer.normalize(path);
     }
 
     @Override

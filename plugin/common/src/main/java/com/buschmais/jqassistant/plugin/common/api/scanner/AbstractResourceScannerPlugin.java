@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
@@ -24,13 +26,10 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
         return getTypeParameter(AbstractResourceScannerPlugin.class, 1);
     }
 
-    /**
-     * @param path
-     *            The path.
-     * @return The slashified path.
-     */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 7)
     protected String slashify(String path) {
-        return path.replace('\\', '/');
+        return FileNameNormalizer.normalize(path);
     }
 
 }

@@ -21,49 +21,49 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
      * @return the group
      */
     @Property("group")
-    public String getGroup();
+    String getGroup();
 
     /**
      * @param group
      *            the group to set
      */
-    public void setGroup(String group);
+    void setGroup(String group);
 
     /**
      * @return the name
      */
     @Override
     @Property("name")
-    public String getName();
+    String getName();
 
     /**
      * @param name
      *            the name to set
      */
     @Override
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * @return the version
      */
     @Property("version")
-    public String getVersion();
+    String getVersion();
 
     /**
      * @param version
      *            the version to set
      */
-    public void setVersion(String version);
+    void setVersion(String version);
 
     @Property("classifier")
-    public String getClassifier();
+    String getClassifier();
 
-    public void setClassifier(String classifier);
+    void setClassifier(String classifier);
 
     @Property("type")
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
     @Outgoing
     List<DependsOnDescriptor> getDependencies();
