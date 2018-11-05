@@ -93,18 +93,10 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void continueOnError() throws IOException {
+    public void failOnError() throws IOException {
         Scanner scanner = new ScannerImpl(configuration, context, plugins, emptyMap());
         when(scannerPlugin.scan("test", "test", scope, scanner)).thenThrow(new IllegalStateException("Exception in plugin"));
 
-        configuration.setContinueOnError(true);
-        scanner.scan("test", "test", scope);
-
-        verify(store).beginTransaction();
-        verify(store).rollbackTransaction();
-        verify(store, never()).commitTransaction();
-
-        configuration.setContinueOnError(false);
         try {
             scanner.scan("test", "test", scope);
             fail("Expecting an " + IllegalStateException.class.getName());
@@ -112,6 +104,23 @@ public class ScannerImplTest {
             String message = e.getMessage();
             assertThat(message, containsString("test"));
         }
+
+        verify(store).beginTransaction();
+        verify(store).rollbackTransaction();
+        verify(store, never()).commitTransaction();
+    }
+
+    @Test
+    public void continueOnError() throws IOException {
+        Scanner scanner = new ScannerImpl(configuration, context, plugins, emptyMap());
+        when(scannerPlugin.scan("test", "test", scope, scanner)).thenThrow(new IllegalStateException("Exception in plugin"));
+        configuration.setContinueOnError(true);
+
+        scanner.scan("test", "test", scope);
+
+        verify(store).beginTransaction();
+        verify(store).rollbackTransaction();
+        verify(store, never()).commitTransaction();
     }
 
     @Test
