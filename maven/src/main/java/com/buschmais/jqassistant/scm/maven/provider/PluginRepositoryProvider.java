@@ -1,20 +1,19 @@
 
 package com.buschmais.jqassistant.scm.maven.provider;
 
-import javax.inject.Singleton;
-
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Singleton
+@Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
 public class PluginRepositoryProvider implements Initializable, Disposable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginRepositoryProvider.class);

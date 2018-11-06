@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -40,7 +38,7 @@ public class ExportRulesMojo extends AbstractProjectMojo {
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {
-            writer = new FileWriter(exportedRules);
+            writer = new OutputStreamWriter(new FileOutputStream(exportedRules), "UTF-8");
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot create writer for rule export.", e);
         }
