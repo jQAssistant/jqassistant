@@ -9,27 +9,23 @@ import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
-public class PluginRepositoryProvider implements Initializable, Disposable {
+public class PluginRepositoryProvider implements Disposable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginRepositoryProvider.class);
 
     private PluginRepository pluginRepository;
 
-    @Override
-    public synchronized void initialize() {
-        if (pluginRepository == null) {
-            try {
-                PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
-                pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-                this.pluginRepository.initialize();
-            } catch (PluginRepositoryException e) {
-                LOGGER.warn("Cannot initialize plugin repository.", e);
-            }
+    public PluginRepositoryProvider() {
+        try {
+            PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+            pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+            this.pluginRepository.initialize();
+        } catch (PluginRepositoryException e) {
+            LOGGER.warn("Cannot initialize plugin repository.", e);
         }
     }
 
