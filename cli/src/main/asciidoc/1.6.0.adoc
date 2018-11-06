@@ -4,4 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.6.0]
 ifdef::jqa-in-manual[== Commandline Tool 1.6.0]
 
-TBW
+* Use a child-first classloading strategy for plugins, i.e. prefer classes that are provided by plugins over classes from the framework
+
