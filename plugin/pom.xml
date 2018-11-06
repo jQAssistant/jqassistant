@@ -431,6 +431,12 @@
                 <version>${org.slf4j.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${org.slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>com.google.guava</groupId>
