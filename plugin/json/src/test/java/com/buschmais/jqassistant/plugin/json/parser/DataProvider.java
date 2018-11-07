@@ -40,14 +40,14 @@ public class DataProvider {
             "i_structure_UTF-8_BOM_empty_object.json"
         );
 
-        URL resource = ConfiguredJSONParsingTestSuiteValidIT.class.getResource("/json_parsing_test_suite");
+        URL resource = JQAssistantJSONParserForValidJSONFilesOfTestSuiteIT.class.getResource("/json_parsing_test_suite");
         File directory = new File(resource.toURI());
 
         File[] jsons = directory.listFiles(f -> f.isFile() && f.getName().endsWith(".json"));
 
         return Stream.of(jsons)
             .filter(f -> !filesToIgnoreTemporarily.contains(f.getName()))
-            .map(T::new)
+            .map(JSONSuiteFile::new)
             .peek(t -> {
                 boolean isAcceptable = t.isAcceptable();
                 boolean shouldBeAccepted = filesWeAccept.contains(t.getFile().getName());
@@ -88,38 +88,38 @@ public class DataProvider {
         });
     }
 
-    public static Collection<Object[]> invalidFilesOfJsonParsingTestSuite() throws URISyntaxException {
+    public static Collection<Object[]> invalidFilesOfJSONParsingTestSuite() throws URISyntaxException {
         Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
 
-        List<Object[]> invalidFiles = basis.stream().map(element -> (T) element[0])
-                                           .filter(T::isNotAcceptable)
-                                           .map(T::getFile)
+        List<Object[]> invalidFiles = basis.stream().map(element -> (JSONSuiteFile) element[0])
+                                           .filter(JSONSuiteFile::isNotAcceptable)
+                                           .map(JSONSuiteFile::getFile)
                                            .map(filePath -> new Object[]{filePath})
                                            .collect(Collectors.toList());
 
         return invalidFiles;
     }
 
-    public static Collection<Object[]> validFilesOfJsonParsingTestSuite() throws URISyntaxException {
+    public static Collection<Object[]> validFilesOfJSONParsingTestSuite() throws URISyntaxException {
         Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
 
-        List<Object[]> invalidFiles = basis.stream().map(element -> (T) element[0])
-                                           .filter(T::isAcceptable)
-                                           .map(T::getFile)
+        List<Object[]> invalidFiles = basis.stream().map(element -> (JSONSuiteFile) element[0])
+                                           .filter(JSONSuiteFile::isAcceptable)
+                                           .map(JSONSuiteFile::getFile)
                                            .map(filePath -> new Object[]{filePath})
                                            .collect(Collectors.toList());
 
         return invalidFiles;
     }
 
-    static class T {
+    static class JSONSuiteFile {
 
         private boolean acceptable;
         private File file;
 
-        public T(File f) {
-            file = f;
-            acceptable = f.getName().startsWith("y_") || f.getName().startsWith("i_");
+        public JSONSuiteFile(File f) {
+            setFile(f);
+            acceptable = getFile().getName().startsWith("y_") || getFile().getName().startsWith("i_");
         }
 
         public void setAcceptable(boolean isAcceptable) {
@@ -132,6 +132,10 @@ public class DataProvider {
 
         public boolean isNotAcceptable() {
             return !isAcceptable();
+        }
+
+        public void setFile(File file) {
+            this.file = file;
         }
 
         public File getFile() {

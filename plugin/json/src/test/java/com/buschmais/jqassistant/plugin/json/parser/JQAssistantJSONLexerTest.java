@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONLexer;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 
 @RunWith(Parameterized.class)
-public class ConfiguredJSONLexerTest {
+public class JQAssistantJSONLexerTest {
 
     @Parameter(0)
     public String input;
@@ -43,8 +43,8 @@ public class ConfiguredJSONLexerTest {
     }
 
     @Test
-    public void lexerOutput() throws Exception {
-        JSONLexer lexer = new ConfiguredJSONLexer(CharStreams.fromString(input), "/not/given");
+    public void lexerOutput() {
+        JSONLexer lexer = new JQAssistantJSONLexer(CharStreams.fromString(input), "/not/given");
 
         List<? extends Token> foundTokens = lexer.getAllTokens();
 

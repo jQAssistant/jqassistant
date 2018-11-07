@@ -5,9 +5,9 @@ import java.util.Collection;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.IsNPECausedByANTLRIssue746Predicate;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONParser;
 import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class ConfiguredJSONParserWithInvalidFilesIT {
+public class JQAssistantJSONParserHandlingOfInvalidJSONFilesIT {
 
     private String pathToJSONFile;
 
@@ -31,20 +31,20 @@ public class ConfiguredJSONParserWithInvalidFilesIT {
         return DataProvider.invalidOwnExamples();
     }
 
-    public ConfiguredJSONParserWithInvalidFilesIT(String path) {
+    public JQAssistantJSONParserHandlingOfInvalidJSONFilesIT(String path) {
         pathToJSONFile = path;
     }
 
     @Test
-    public void parserRecognizesAInvalidJSONFile() throws Exception {
+    public void parserRecognizesAInvalidJSONFile() {
         IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
         ThrowableAssert.ThrowingCallable shouldRaiseThrowable = new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
                 try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
 
-                    JSONLexer l = new ConfiguredJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
-                    JSONParser p = new ConfiguredJSONParser(new CommonTokenStream(l), pathToJSONFile);
+                    JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
+                    JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), pathToJSONFile);
 
                     p.document();
                 }

@@ -11,8 +11,8 @@ import org.antlr.v4.runtime.TokenStream;
  * Parser for JSON documents based on the generated JSON parser by
  * ANTLR with configured listeners.
  */
-public class ConfiguredJSONParser extends JSONParser {
-    public ConfiguredJSONParser(TokenStream input, String pathOfInput) {
+public class JQAssistantJSONParser extends JSONParser {
+    public JQAssistantJSONParser(TokenStream input, String pathOfInput) {
         super(input);
 
         removeErrorListeners();

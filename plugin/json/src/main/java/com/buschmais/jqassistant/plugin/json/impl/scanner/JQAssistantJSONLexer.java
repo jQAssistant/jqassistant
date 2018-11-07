@@ -8,8 +8,8 @@ import org.antlr.v4.runtime.CharStream;
  * Lexer for JSON documents based on the generated JSON lexer by
  * ANTLR with configured listeners.
  */
-public class ConfiguredJSONLexer extends JSONLexer {
-    public ConfiguredJSONLexer(CharStream input, String pathOfInput) {
+public class JQAssistantJSONLexer extends JSONLexer {
+    public JQAssistantJSONLexer(CharStream input, String pathOfInput) {
         super(input);
 
         removeErrorListeners();

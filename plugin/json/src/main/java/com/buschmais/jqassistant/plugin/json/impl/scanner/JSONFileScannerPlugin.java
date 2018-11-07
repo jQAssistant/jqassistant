@@ -86,11 +86,11 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         jsonFileDescriptor.setValid(false);
 
         try {
-            JSONLexer lexer = new ConfiguredJSONLexer(CharStreams.fromStream(item.createStream()),
-                                                      path);
+            JSONLexer lexer = new JQAssistantJSONLexer(CharStreams.fromStream(item.createStream()),
+                                                       path);
 
-            JSONParser parser = new ConfiguredJSONParser(new CommonTokenStream(lexer),
-                                                         path);
+            JSONParser parser = new JQAssistantJSONParser(new CommonTokenStream(lexer),
+                                                          path);
 
             JSONParser.DocumentContext jsonDocumentContext = parser.document();
 
@@ -161,7 +161,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         }
     }
 
-    public  static class RecoverableParsingException extends RuntimeException {
+    public static class RecoverableParsingException extends RuntimeException {
         RecoverableParsingException(String message) {
             super(message);
         }

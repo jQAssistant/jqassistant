@@ -5,8 +5,8 @@ import java.util.Collection;
 
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.ConfiguredJSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONParser;
 
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class ConfiguredJSONParserWithValidFilesIT {
+public class JQAssistantJSONParserHandlingOfValidJSONFilesIT {
 
     private String pathToJSONFile;
 
@@ -23,15 +23,15 @@ public class ConfiguredJSONParserWithValidFilesIT {
         return DataProvider.validOwnExamples();
     }
 
-    public ConfiguredJSONParserWithValidFilesIT(String path) {
+    public JQAssistantJSONParserHandlingOfValidJSONFilesIT(String path) {
         pathToJSONFile = path;
     }
 
     @Test
     public void canParseValidJSONFile() throws Exception {
         try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
-            JSONLexer l = new ConfiguredJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
-            JSONParser p = new ConfiguredJSONParser(new CommonTokenStream(l), pathToJSONFile);
+            JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
+            JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), pathToJSONFile);
             p.document();
         }
     }
