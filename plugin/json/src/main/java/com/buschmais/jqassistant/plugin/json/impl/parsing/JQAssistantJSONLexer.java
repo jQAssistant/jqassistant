@@ -1,6 +1,7 @@
-package com.buschmais.jqassistant.plugin.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin.MyErrorListener;
 
 import org.antlr.v4.runtime.CharStream;
 
@@ -13,6 +14,6 @@ public class JQAssistantJSONLexer extends JSONLexer {
         super(input);
 
         removeErrorListeners();
-        addErrorListener(new JSONFileScannerPlugin.MyErrorListener(pathOfInput));
+        addErrorListener(new MyErrorListener(pathOfInput));
     }
 }

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import org.junit.Test;
 

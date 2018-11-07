@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.json.parser;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import java.io.File;
 import java.net.URISyntaxException;

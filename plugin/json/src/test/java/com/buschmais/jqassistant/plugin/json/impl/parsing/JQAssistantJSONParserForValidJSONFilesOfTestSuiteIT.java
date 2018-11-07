@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.json.parser;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import java.io.File;
 import java.io.InputStream;
@@ -6,11 +6,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.IsNPECausedByANTLRIssue746Predicate;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

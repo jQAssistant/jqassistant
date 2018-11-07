@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import java.util.Stack;
 
@@ -12,8 +12,8 @@ import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONBaseListener;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONBaseListener;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 

@@ -12,8 +12,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.IsNPECausedByANTLRIssue746Predicate;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.JQAssistantJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.JQAssistantJSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.JSONTreeWalker;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;

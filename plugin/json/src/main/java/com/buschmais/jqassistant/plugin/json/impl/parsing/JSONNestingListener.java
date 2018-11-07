@@ -1,7 +1,7 @@
-package com.buschmais.jqassistant.plugin.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONBaseListener;
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONBaseListener;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
 public class JSONNestingListener extends JSONBaseListener {
     private NestingLevelCounter nestingCounter = new NestingLevelCounter(1_000);

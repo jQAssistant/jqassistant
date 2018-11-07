@@ -1,11 +1,10 @@
-package com.buschmais.jqassistant.plugin.json.parser;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer;
-import com.buschmais.jqassistant.plugin.json.impl.scanner.JQAssistantJSONLexer;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -16,8 +15,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__4;
-import static com.buschmais.jqassistant.plugin.json.impl.parser.JSONLexer.T__5;
+import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.STRING;
+import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__4;
+import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -38,7 +38,7 @@ public class JQAssistantJSONLexerTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
              {"[]", new String[]{"[", "]"}, new Integer[] {T__4, T__5}},
-             {"[\"VALUE\"]", new String[]{"[", "VALUE", "]"}, new Integer[]{T__4, JSONLexer.STRING, T__5}}
+             {"[\"VALUE\"]", new String[]{"[", "VALUE", "]"}, new Integer[]{T__4, STRING, T__5}}
         });
     }
 

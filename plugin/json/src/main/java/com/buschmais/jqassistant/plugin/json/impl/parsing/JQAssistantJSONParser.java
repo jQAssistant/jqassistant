@@ -1,6 +1,7 @@
-package com.buschmais.jqassistant.plugin.json.impl.scanner;
+package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
-import com.buschmais.jqassistant.plugin.json.impl.parser.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
+import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin.MyErrorListener;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Parser;
@@ -17,7 +18,7 @@ public class JQAssistantJSONParser extends JSONParser {
 
         removeErrorListeners();
         removeParseListeners();
-        addErrorListener(new JSONFileScannerPlugin.MyErrorListener(pathOfInput));
+        addErrorListener(new MyErrorListener(pathOfInput));
         addParseListener(new JSONNestingListener());
 
         setErrorHandler(new DefaultErrorStrategy() {
