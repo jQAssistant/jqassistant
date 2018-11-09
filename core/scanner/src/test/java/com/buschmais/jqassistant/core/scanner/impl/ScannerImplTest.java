@@ -13,12 +13,15 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.containsString;
