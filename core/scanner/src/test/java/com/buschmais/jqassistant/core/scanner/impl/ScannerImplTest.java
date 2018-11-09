@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +22,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScannerImplTest {
@@ -48,6 +64,10 @@ public class ScannerImplTest {
         // Plugin
         doReturn(String.class).when(scannerPlugin).getType();
         when(scannerPlugin.accepts(anyString(), anyString(), eq(scope))).thenReturn(true);
+        doAnswer(invocation -> {
+            assertThat(transaction, equalTo(true));
+            return mock(Descriptor.class);
+        }).when(scannerPlugin).scan(anyString(), anyString(), any(Scope.class), any(Scanner.class));
         plugins.put("testPlugin", scannerPlugin);
         // Store
         doReturn(store).when(context).getStore();
@@ -95,8 +115,7 @@ public class ScannerImplTest {
     @Test
     public void failOnError() throws IOException {
         Scanner scanner = new ScannerImpl(configuration, context, plugins, emptyMap());
-        when(scannerPlugin.scan("test", "test", scope, scanner)).thenThrow(new IllegalStateException("Exception in plugin"));
-
+        stubExceptionDuringScan(scanner);
         try {
             scanner.scan("test", "test", scope);
             fail("Expecting an " + IllegalStateException.class.getName());
@@ -108,19 +127,28 @@ public class ScannerImplTest {
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
         verify(store, never()).commitTransaction();
+        assertThat(transaction, equalTo(false));
     }
 
     @Test
     public void continueOnError() throws IOException {
         Scanner scanner = new ScannerImpl(configuration, context, plugins, emptyMap());
-        when(scannerPlugin.scan("test", "test", scope, scanner)).thenThrow(new IllegalStateException("Exception in plugin"));
+        stubExceptionDuringScan(scanner);
         configuration.setContinueOnError(true);
 
         scanner.scan("test", "test", scope);
+        scanner.scan("test", "test", scope);
 
-        verify(store).beginTransaction();
-        verify(store).rollbackTransaction();
+        verify(store, times(2)).beginTransaction();
+        verify(store, times(2)).rollbackTransaction();
         verify(store, never()).commitTransaction();
+    }
+
+    private void stubExceptionDuringScan(Scanner scanner) throws IOException {
+        doAnswer(invocation -> {
+            assertThat(transaction, equalTo(true));
+            throw new IllegalStateException("Exception in plugin");
+        }).when(scannerPlugin).scan("test", "test", scope, scanner);
     }
 
     @Test
