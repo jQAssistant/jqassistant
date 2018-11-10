@@ -131,7 +131,7 @@ compliant JSON files.
 [options="header"]
 |===
 | Name     | Description
-| value    | The value itself.
+| value    | The value itself. The JSON spezification allows to have null values. Therefore the might be no value.
 |===
 
 .Relations of `:Json:Scalar`

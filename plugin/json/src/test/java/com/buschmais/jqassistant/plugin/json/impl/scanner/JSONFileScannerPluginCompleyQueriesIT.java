@@ -28,7 +28,9 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @After
     public void commitTransaction() {
-        store.commitTransaction();
+        if (store.hasActiveTransaction()) {
+            store.commitTransaction();
+        }
     }
 
     @Test
@@ -113,15 +115,11 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         List<JSONKeyDescriptor> results = query("MATCH (f:Json:File) " +
                                                 "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                                 "WHERE " +
-                                                "NOT(k-[:HAS_VALUE]->()) " +
+                                                "NOT (k-[:HAS_VALUE]->()) " +
                                                 "RETURN k"
         ).getColumn("k");
 
-        assertThat(results, hasSize(1));
-
-        JSONKeyDescriptor keyDescriptor = results.get(0);
-
-        assertThat(keyDescriptor.getName(), equalTo("C"));
+        assertThat(results, Matchers.nullValue());
     }
 
 

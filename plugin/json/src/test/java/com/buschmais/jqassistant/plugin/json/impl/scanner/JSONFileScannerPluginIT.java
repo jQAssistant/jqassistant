@@ -39,7 +39,9 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @After
     public void commitTransaction() {
-        store.commitTransaction();
+        if (store.hasActiveTransaction()) {
+            store.commitTransaction();
+        }
     }
 
 
@@ -147,7 +149,8 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyDescriptorB.getScalarValue().getValue(), Matchers.<Object>equalTo(Boolean.FALSE));
 
         assertThat(keyDescriptorC.getName(), CoreMatchers.equalTo("C"));
-        assertThat(keyDescriptorC.getScalarValue(), Matchers.nullValue());
+        assertThat(keyDescriptorC.getScalarValue(), Matchers.notNullValue());
+        assertThat(keyDescriptorC.getScalarValue().getValue(), Matchers.nullValue());
     }
 
     @Test
@@ -434,6 +437,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
                                    .map(v -> (String) v.getValue())
                                    .collect(toList());
 
+        assertThat(values, hasSize(2));
         assertThat(values, contains("B", "C"));
     }
 

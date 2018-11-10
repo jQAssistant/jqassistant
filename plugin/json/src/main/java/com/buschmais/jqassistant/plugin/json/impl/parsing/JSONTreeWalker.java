@@ -104,7 +104,7 @@ public class JSONTreeWalker extends JSONBaseListener {
         if (stringNode != null) {
             valueDescriptor.setValue(stringNode.getText());
         } else if (nullNode != null) {
-            ((JSONKeyDescriptor) stack().peek()).setScalarValue(null);
+            valueDescriptor.setValue(null);
         } else if (boolNode != null) {
             String textValue = boolNode.getText();
             Boolean boolValue = Boolean.parseBoolean(textValue);
