@@ -37,7 +37,7 @@
 
     <properties>
         <jqassistant.skip>true</jqassistant.skip>
-        <assertj.version>3.8.0</assertj.version>
+        <assertj.version>3.11.1</assertj.version>
         <org.antlr.version>4.7.1</org.antlr.version>
         <jqa-plugin-common.version>1.6.0-SNAPSHOT</jqa-plugin-common.version>
         <jqa-java-plugin.version>1.6.0-SNAPSHOT</jqa-java-plugin.version>
