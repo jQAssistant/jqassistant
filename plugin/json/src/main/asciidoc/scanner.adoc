@@ -8,6 +8,17 @@
 Scanner to scan https://www.rfc-editor.org/info/rfc7159[RFC 7159^]
 compliant JSON files.
 
+NOTE: The tests of our JSON plugin use the JSON files provided by
+      the https://github.com/nst/JSONTestSuite[_JSON Parsing Test Suite_^]
+      by https://github.com/nst[Nicolas Serot^]. The suite hase been
+      created as an appendix to the article
+      http://seriot.ch/parsing_json.php[Parsing JSON is a Minefield^].
+
+==== Limitations
+
+The JSON scanner is able to process the majority of valid and invalid
+JSON documents. However it can have problems with invalid JSON documents
+with invalid Unicode characters.
 
 === Configuration
 
