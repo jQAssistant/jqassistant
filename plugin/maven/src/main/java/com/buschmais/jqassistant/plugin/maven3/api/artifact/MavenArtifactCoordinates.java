@@ -1,18 +1,18 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
+package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+import org.apache.maven.artifact.Artifact;
 
-public class ArtifactCoordinates implements Coordinates {
+public class MavenArtifactCoordinates implements Coordinates {
 
     /**
      * The artifact type for test jars.
      */
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
-    private org.apache.maven.artifact.Artifact artifact;
+    private Artifact artifact;
     private boolean testJar;
 
-    public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact, boolean testJar) {
+    public MavenArtifactCoordinates(Artifact artifact, boolean testJar) {
         this.artifact = artifact;
         this.testJar = testJar;
     }

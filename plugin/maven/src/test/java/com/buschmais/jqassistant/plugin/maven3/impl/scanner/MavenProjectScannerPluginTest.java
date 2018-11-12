@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.test.scanner;
+package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.File;
 import java.util.*;
@@ -12,7 +12,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescripto
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 

@@ -1,6 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
-
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
 import org.apache.maven.model.Dependency;
 

@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.xo.api.Query;
 
@@ -50,7 +51,7 @@ public class MavenArtifactResolverTest {
             return artifactDescriptor;
         }).when(store).create(any(), anyString());
 
-        MavenArtifactDescriptor artifactDescriptor = resolver.resolve(new ArtifactCoordinates(artifact, false), scannerContext);
+        MavenArtifactDescriptor artifactDescriptor = resolver.resolve(new MavenArtifactCoordinates(artifact, false), scannerContext);
 
         verify(store).create(MavenArtifactDescriptor.class, "group:artifact:jar:classifier:1.0.0");
         verify(artifactDescriptor).setFullQualifiedName("group:artifact:jar:classifier:1.0.0");
@@ -74,7 +75,7 @@ public class MavenArtifactResolverTest {
         doReturn(result).when(store).executeQuery(anyString(), anyMap());
 
         for (int i = 0; i < 2; i++) {
-            MavenArtifactDescriptor resultDescriptor = resolver.resolve(new ArtifactCoordinates(artifact, false), scannerContext);
+            MavenArtifactDescriptor resultDescriptor = resolver.resolve(new MavenArtifactCoordinates(artifact, false), scannerContext);
 
             assertThat(resultDescriptor, is(artifactDescriptor));
             verify(store, never()).create(MavenArtifactDescriptor.class, "group:artifact:jar:classifier:1.0.0");
