@@ -27,6 +27,7 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
+import org.eclipse.aether.RepositorySystemSession;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -150,17 +151,14 @@ public class MavenProjectScannerPluginTest {
         DependsOnDescriptor mainDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
         when(store.create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
 
-        // DependsOnDescriptor testDependsOnDependencyDescriptor =
-        // mock(DependsOnDescriptor.class);
-        // when(store.create(testArtifactDescriptor, DependsOnDescriptor.class,
-        // dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
-
         MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
         when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
 
         // Dependency Graph
         ProjectBuildingRequest projectBuildingRequest = mock(ProjectBuildingRequest.class);
+        RepositorySystemSession repositorySystemSession = mock(RepositorySystemSession.class);
+        doReturn(repositorySystemSession).when(projectBuildingRequest).getRepositorySession();
         doReturn(projectBuildingRequest).when(mavenSession).getProjectBuildingRequest();
         DefaultDependencyNode rootNode = new DefaultDependencyNode(null, artifact, null, null, null);
         DefaultDependencyNode dependencyNode = new DefaultDependencyNode(rootNode, dependency, null, null, null);

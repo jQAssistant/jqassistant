@@ -32,11 +32,14 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
+import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_PROP_VERBOSE;
 
 /**
  * A scanner plugin for maven projects.
@@ -155,8 +158,9 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             ArtifactResolver artifactResolver, ScannerContext context) {
         MavenSession session = context.peek(MavenSession.class);
         DependencyGraphBuilder dependencyGraphBuilder = context.peek(DependencyGraphBuilder.class);
-        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-        buildingRequest.setProject(project);
+        ProjectBuildingRequest projectBuildingRequest = session.getProjectBuildingRequest();
+        DefaultRepositorySystemSession repositorySystemSession = getVerboseRepositorySystemSession(projectBuildingRequest);
+        ProjectBuildingRequest buildingRequest = getProjectBuildingRequest(project, projectBuildingRequest, repositorySystemSession);
         DependencyNode rootNode = null;
         try {
             rootNode = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null);
@@ -167,6 +171,20 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             DependencyNodeVisitor visitor = new DependencyTreeResolver(project, mainDescriptor, testDescriptor, artifactResolver, context);
             rootNode.accept(visitor);
         }
+    }
+
+    private DefaultRepositorySystemSession getVerboseRepositorySystemSession(ProjectBuildingRequest projectBuildingRequest) {
+        RepositorySystemSession repositorySession = projectBuildingRequest.getRepositorySession();
+        DefaultRepositorySystemSession repositorySystemSession = new DefaultRepositorySystemSession(repositorySession);
+        repositorySystemSession.setConfigProperty(CONFIG_PROP_VERBOSE, "true");
+        return repositorySystemSession;
+    }
+
+    private ProjectBuildingRequest getProjectBuildingRequest(MavenProject project, ProjectBuildingRequest projectBuildingRequest, DefaultRepositorySystemSession repositorySystemSession) {
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(projectBuildingRequest);
+        buildingRequest.setRepositorySession(repositorySystemSession);
+        buildingRequest.setProject(project);
+        return buildingRequest;
     }
 
     /**
