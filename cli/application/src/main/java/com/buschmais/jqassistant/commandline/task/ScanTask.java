@@ -41,7 +41,7 @@ public class ScanTask extends AbstractStoreTask {
     private Map<String, String> files = Collections.emptyMap();
     private Map<String, String> urls = Collections.emptyMap();
     private boolean reset = false;
-    private boolean continueOnError = true;
+    private boolean continueOnError = false;
 
     @Override
     protected boolean isConnectorRequired() {
@@ -124,7 +124,7 @@ public class ScanTask extends AbstractStoreTask {
         return resources;
     }
 
-    private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, Map<String, ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
+    private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, Map<String, ScannerPlugin<?, ?>> scannerPlugins) {
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
         Store store = scannerContext.getStore();
@@ -146,5 +146,6 @@ public class ScanTask extends AbstractStoreTask {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
         reset = options.hasOption(CMDLINE_OPTION_RESET);
+        continueOnError = options.hasOption(CMDLINE_OPTION_CONTINUEONERROR);
     }
 }
