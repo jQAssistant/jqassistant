@@ -5,5 +5,8 @@ jdk:
   - oraclejdk8
   - openjdk8
 
-script: mvn --version
+script:
+  - mvn --version
+  - mvn clean install
+  - mvn -P IT clean install
 
