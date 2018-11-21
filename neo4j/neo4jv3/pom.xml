@@ -72,11 +72,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.neo4j.client</groupId>
-            <artifactId>neo4j-browser</artifactId>
-            <version>${org.neo4j.client_version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.neo4j.procedure</groupId>
             <artifactId>apoc</artifactId>
             <version>${org.neo4j.procedure_version}</version>
