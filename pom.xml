@@ -78,11 +78,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <com.buschmais.xo.version>0.11.0-SNAPSHOT</com.buschmais.xo.version>
+        <com.buschmais.xo.version>0.11.0</com.buschmais.xo.version>
         <org.neo4j_2x.version>2.3.12</org.neo4j_2x.version>
-        <org.neo4j_3x.version>3.4.9</org.neo4j_3x.version>
-        <!-- embedded Neo4j browser -->
-        <org.neo4j.client_version>3.2.10</org.neo4j.client_version>
+        <org.neo4j_3x.version>3.4.10</org.neo4j_3x.version>
         <!-- use Neo4jv2 for building and testing -->
         <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
         <org.neo4j.procedure_version>3.4.0.3</org.neo4j.procedure_version>
