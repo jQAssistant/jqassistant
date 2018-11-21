@@ -127,7 +127,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Activates/deactivates registration of APOC user functions and procedures in the embedded server.
      */
-    @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
+    @Parameter(property = PARAMETER_EMBEDDED_APOC_ENABLED)
     protected Boolean apocEnabled;
 
     /**
