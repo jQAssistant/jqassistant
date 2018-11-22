@@ -118,8 +118,8 @@ public class ScannerImplTest {
         stubExceptionDuringScan(scanner);
         try {
             scanner.scan("test", "test", scope);
-            fail("Expecting an " + IllegalStateException.class.getName());
-        } catch (IllegalStateException e) {
+            fail("Expecting an " + UnrecoverableScannerException.class.getName());
+        } catch (UnrecoverableScannerException e) {
             String message = e.getMessage();
             assertThat(message, containsString("test"));
         }
