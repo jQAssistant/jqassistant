@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 
 /**
  * Provides common functionality for working with scopes.
- *
- * @deprecated Please use {@link com.buschmais.jqassistant.core.splittingsupport.impl.ScopeHelper}
- *             instead.
  */
 public class ScopeHelper {
 
