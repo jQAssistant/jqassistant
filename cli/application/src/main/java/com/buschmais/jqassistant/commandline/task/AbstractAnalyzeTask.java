@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
@@ -87,8 +84,8 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
      *            The rule set.
      * @return The selection of rules.
      */
-    protected RuleSelection getRuleSelection(RuleSet ruleSet) throws CliExecutionException {
-        return RuleSelection.Builder.select(ruleSet, groupIds, constraintIds, conceptIds);
+    protected RuleSelection getRuleSelection(RuleSet ruleSet) {
+        return RuleSelection.select(ruleSet, groupIds,constraintIds, conceptIds);
     }
 
     private List<RuleSource> readRulesDirectory(File rulesDirectory) throws CliExecutionException {

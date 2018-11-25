@@ -9,7 +9,6 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -31,14 +30,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
-    protected static final String CMDLINE_OPTION_EMBEDDED_APCO_ENABLED = "embeddedApocEnabled";
-
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 6)
-    protected static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 6)
-    protected static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
+    protected static final String CMDLINE_OPTION_EMBEDDED_APOC_ENABLED = "embeddedApocEnabled";
 
     @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
@@ -97,20 +89,16 @@ public abstract class AbstractStoreTask extends AbstractTask {
         EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
         builder.connectorEnabled(isConnectorRequired());
 
-        String serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS);
-        OptionHelper.verifyDeprecatedOption(CMDLINE_OPTION_SERVERADDRESS, serverAddress, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
         String embeddedListenAddress = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
-        builder.listenAddress(OptionHelper.selectValue(EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS, serverAddress, embeddedListenAddress));
+        builder.listenAddress(OptionHelper.selectValue(EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS, embeddedListenAddress));
 
-        String serverPort = getOptionValue(options, CMDLINE_OPTION_SERVERPORT);
-        OptionHelper.verifyDeprecatedOption(CMDLINE_OPTION_SERVERPORT, serverPort, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
         String httpPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
-        builder.httpPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT), serverPort, httpPort)));
+        builder.httpPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT), httpPort)));
 
         String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
         builder.boltPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT), boltPort)));
 
-        String apocEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_APCO_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_APOC_ENABLED));
+        String apocEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_APOC_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_APOC_ENABLED));
         builder.apocEnabled(Boolean.valueOf(apocEnabled.toLowerCase()));
         return builder.build();
     }
@@ -134,12 +122,8 @@ public abstract class AbstractStoreTask extends AbstractTask {
             .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bolt tport of the embedded server.").hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_APCO_ENABLED).withDescription("Activate/deactivate registration of APOC user functions and procedures in the embedded server.").hasArgs()
-            .create(CMDLINE_OPTION_EMBEDDED_APCO_ENABLED));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
-                .create(CMDLINE_OPTION_SERVERADDRESS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()
-                .create(CMDLINE_OPTION_SERVERPORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED).withDescription("Activate/deactivate registration of APOC user functions and procedures in the embedded server.").hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED));
         addTaskOptions(options);
         return options;
     }
