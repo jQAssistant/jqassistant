@@ -149,7 +149,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             projectDescriptor.setPackaging(project.getPackaging());
             projectDescriptor.setFullQualifiedName(id);
         } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
-            projectDescriptor = store.migrate(projectDescriptor, expectedType);
+            projectDescriptor = store.addDescriptorType(projectDescriptor, expectedType);
         }
         return expectedType.cast(projectDescriptor);
     }
