@@ -27,7 +27,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     @Override
     public <T extends ClassFileDescriptor> CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
                                                                 ScannerContext context) {
-        T typeDescriptor = context.getStore().migrate(fileDescriptor, descriptorType);
+        T typeDescriptor = context.getStore().addDescriptorType(fileDescriptor, descriptorType);
         setTypeProperties(typeDescriptor, fullQualifiedName);
         removeRequiredType(fullQualifiedName, typeDescriptor);
         addContainedType(fullQualifiedName, typeDescriptor);
