@@ -19,22 +19,23 @@ public class ReportTest {
 
     @Test
     public void reportBuilder() {
-        Report emptyReport = Report.Builder.newInstance().get();
+        Report emptyReport = Report.builder().build();
         assertThat(emptyReport.getPrimaryColumn(), nullValue());
         assertThat(emptyReport.getSelectedTypes(), nullValue());
         assertThat(emptyReport.getProperties().size(), equalTo(0));
-        Report reportWithSelection = Report.Builder.newInstance().selectTypes("a, b").get();
+        Report reportWithSelection = Report.builder().selectedTypes(Report.selectTypes("a, b")).build();
         Set<String> selectedTypes = reportWithSelection.getSelectedTypes();
         assertThat(selectedTypes.size(), equalTo(2));
         assertThat(selectedTypes, hasItems("a", "b"));
         Properties properties = new Properties();
         properties.setProperty("key1", "value1");
-        Report reportWithProperties = Report.Builder.newInstance().properties(properties).property("key2", "value2").get();
+        properties.setProperty("key2", "value2");
+        Report reportWithProperties = Report.builder().properties(properties).build();
         Properties reportProperties = reportWithProperties.getProperties();
         assertThat(reportProperties.size(), equalTo(2));
         assertThat(reportProperties.getProperty("key1"), equalTo("value1"));
         assertThat(reportProperties.getProperty("key2"), equalTo("value2"));
-        Report reportWithPrimaryColumn = Report.Builder.newInstance().primaryColumn("p").get();
+        Report reportWithPrimaryColumn = Report.builder().primaryColumn("p").build();
         assertThat(reportWithPrimaryColumn.getPrimaryColumn(), equalTo("p"));
     }
 

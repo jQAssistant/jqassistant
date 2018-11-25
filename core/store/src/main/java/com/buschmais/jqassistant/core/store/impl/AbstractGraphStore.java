@@ -122,11 +122,6 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types) {
-        return xoManager.migrate(descriptor, concreteType, types).as(concreteType);
-    }
-
-    @Override
     public <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<?> newDescriptorType, Class<N> as) {
         return xoManager.migrate(descriptor).add(newDescriptorType).as(as);
     }

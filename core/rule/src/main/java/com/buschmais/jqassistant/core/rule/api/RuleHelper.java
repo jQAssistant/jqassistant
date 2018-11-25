@@ -34,7 +34,10 @@ public class RuleHelper {
      *            The rule set.
      */
     public void printRuleSet(RuleSet ruleSet) throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.Builder.allOf(ruleSet);
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .conceptIds(ruleSet.getConceptBucket().getIds())
+            .constraintIds(ruleSet.getConstraintBucket().getIds())
+            .groupIds(ruleSet.getGroupsBucket().getIds()).build();
         printRuleSet(ruleSet, ruleSelection);
     }
 

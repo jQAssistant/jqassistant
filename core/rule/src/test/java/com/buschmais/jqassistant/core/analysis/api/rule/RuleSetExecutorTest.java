@@ -48,7 +48,7 @@ public class RuleSetExecutorTest {
                 .constraint(defaultConstraint.getId(), null).constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().addGroupId(group.getId()).build();
+        RuleSelection ruleSelection = RuleSelection.builder().groupId(group.getId()).build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
@@ -67,7 +67,7 @@ public class RuleSetExecutorTest {
                 .constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().addGroupId(group.getId()).build();
+        RuleSelection ruleSelection = RuleSelection.builder().groupId(group.getId()).build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
@@ -127,7 +127,7 @@ public class RuleSetExecutorTest {
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(nestedConcept1).addConcept(nestedConcept2).addConstraint(nestetConstraint)
                 .addGroup(nestedGroup).addConcept(parentConcept1).addConcept(parentConcept2).addConstraint(parentConstraint).addGroup(parentGroup)
                 .addConcept(rootConcept).addConstraint(rootConstraint).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().addConceptId("concept:Root").addConstraintId("constraint:Root").addGroupId("group:Parent")
+        RuleSelection ruleSelection = RuleSelection.builder().conceptId("concept:Root").constraintId("constraint:Root").groupId("group:Parent")
                 .build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
@@ -167,7 +167,7 @@ public class RuleSetExecutorTest {
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConcept(requiredConcept1)
                 .addConcept(requiredConcept2).addConcept(dependentConcept).addConstraint(defaultConstraint).addConstraint(overriddenConstraint)
                 .addConstraint(dependentConstraint).addGroup(group).addGroup(nestedGroup).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().addGroupId("*").build();
+        RuleSelection ruleSelection = RuleSelection.builder().groupId("*").build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
@@ -200,7 +200,7 @@ public class RuleSetExecutorTest {
 
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(dependencyConcept1).addConcept(dependencyConcept2).addConcept(concept)
                 .addConstraint(constraint).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().addConceptId(concept.getId()).addConstraintId(constraint.getId()).build();
+        RuleSelection ruleSelection = RuleSelection.builder().conceptId(concept.getId()).constraintId(constraint.getId()).build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 

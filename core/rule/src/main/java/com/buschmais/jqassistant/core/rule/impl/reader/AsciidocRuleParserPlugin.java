@@ -15,7 +15,6 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import org.apache.commons.io.FileUtils;
@@ -260,7 +259,6 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
      *             If the dependencies cannot be evaluated.
      */
     private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Attributes attributes) throws RuleException {
-        rejectDepends(id, attributes, ruleSource);
         Map<String, String> requiresDeclarations = getReferences(attributes, REQUIRES_CONCEPTS);
         Map<String, Boolean> required = new HashMap<>();
         for (Map.Entry<String, String> requiresEntry : requiresDeclarations.entrySet()) {
@@ -270,16 +268,6 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
             required.put(conceptId, optional);
         }
         return required;
-    }
-
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 6)
-    private void rejectDepends(String id, Attributes attributes, RuleSource ruleSource) throws RuleException {
-        Map<String, String> depends = getReferences(attributes, DEPENDS);
-        if (!depends.isEmpty()) {
-            throw new RuleException("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='" + ruleSource.getId()
-                    + "', id='" + id + "').");
-        }
     }
 
     private void extractGroup(RuleSource ruleSource, AbstractBlock groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
@@ -376,14 +364,14 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
         Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
         Object reportType = part.getAttributes().get(REPORT_TYPE);
         Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
-        Report.Builder reportBuilder = Report.Builder.newInstance();
+        Report.ReportBuilder reportBuilder = Report.builder();
         if (reportType != null) {
-            reportBuilder.selectTypes(reportType.toString());
+            reportBuilder.selectedTypes(Report.selectTypes(reportType.toString()));
         }
         if (primaryReportColum != null) {
             reportBuilder.primaryColumn(primaryReportColum.toString());
         }
-        return reportBuilder.properties(reportProperties).get();
+        return reportBuilder.properties(reportProperties).build();
     }
 
     /**

@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.store.api;
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.Example;
@@ -143,25 +142,6 @@ public interface Store {
      *            The descriptor type.
      */
     <T extends Descriptor> void delete(T descriptor);
-
-    /**
-     * Migrates the descriptor instance to the given sub-type.
-     *
-     * Replaced by {@link #addDescriptorType(Descriptor, Class)} and {@link #addDescriptorType(Descriptor, Class, Class)}.
-     *
-     * @param descriptor
-     *            The descriptor.
-     * @param concreteType
-     *            The concrete type.
-     * @param <T>
-     *            The descriptor type.
-     * @param <C>
-     *            The concrete type.
-     *
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 6)
-    <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
 
     /**
      * Add a descriptor type to an existing descriptor.

@@ -154,11 +154,11 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
-        Report.Builder reportBuilder = Report.Builder.newInstance().primaryColumn(primaryColumn).properties(properties);
+        Report.ReportBuilder reportBuilder = Report.builder().primaryColumn(primaryColumn).properties(properties);
         if (type != null) {
-            reportBuilder.selectTypes(type);
+            reportBuilder.selectedTypes(Report.selectTypes(type));
         }
-        return reportBuilder.get();
+        return reportBuilder.build();
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {
