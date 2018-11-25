@@ -84,7 +84,11 @@ public class ScannerImpl implements Scanner {
                 // Re-use an existing transaction
                 descriptor = scan(item, descriptor, path, scope, pipeline);
             }
+        } catch (UnrecoverableScannerException e) {
+            // The exception is thrown by a nested scanner invocation, just pass it through
+            throw e;
         } catch (RuntimeException e) {
+            // An unexpected problem occurred, try to handle it gracefully according to the setting of continueOnError
             if (store.hasActiveTransaction()) {
                 store.rollbackTransaction();
             }
@@ -94,11 +98,12 @@ public class ScannerImpl implements Scanner {
                 LOGGER.error(message, e);
                 LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
             } else {
-                throw new IllegalStateException(message, e);
+                throw new UnrecoverableScannerException(message, e);
             }
-        }
-        if (pipelineCreated) {
-            pipelines.remove(item);
+        } finally {
+            if (pipelineCreated) {
+                pipelines.remove(item);
+            }
         }
         return descriptor;
     }
