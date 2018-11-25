@@ -104,7 +104,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
 
         RuleSet ruleSet = readRules(rootModule);
-        RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = getFailOnSeverity();
         Map<String, Object> properties = getReportProperties();

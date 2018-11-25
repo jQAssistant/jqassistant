@@ -38,7 +38,7 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Effective rules for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);
-        RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection);
