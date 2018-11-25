@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.DataProvider;
@@ -51,7 +52,7 @@ public class JSONFileScannerPluginScansAllInvalidJSONFilesOfTestSuiteIT extends 
         assertThat(file).describedAs("Scanner must be able to return a descriptor.")
                         .isNotNull();
         assertThat(file.getFileName()).isNotNull();
-        assertThat(file.getFileName()).endsWith(pathToJSONFile.getPath());
+        assertThat(file.getFileName()).endsWith(FileNameNormalizer.normalize(pathToJSONFile));
         assertThat(file.isValid()).isFalse();
     }
 }
