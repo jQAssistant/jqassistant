@@ -50,46 +50,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
-    /**
-     * A marker for an already executed goal of a project.
-     */
-    private static class ExecutionKey {
-
-        private String goal;
-
-        private String execution;
-
-        /**
-         * Constructor.
-         *
-         * @param mojoExecution The mojo execution as provided by Maven.
-         */
-        private ExecutionKey(MojoExecution mojoExecution) {
-            this.goal = mojoExecution.getGoal();
-            this.execution = mojoExecution.getExecutionId();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-
-            if (!(o instanceof ExecutionKey)) {
-                return false;
-            }
-
-            ExecutionKey that = (ExecutionKey) o;
-
-            return execution.equals(that.execution) && goal.equals(that.goal);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = goal.hashCode();
-            result = 31 * result + execution.hashCode();
-            return result;
-        }
+    private static String createExecutionKey(MojoExecution mojoExecution) {
+        // Do NOT use a custom class for execution keys, as different modules may use different classloaders
+        return mojoExecution.getGoal() + "@" + mojoExecution.getExecutionId();
     }
 
     public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
@@ -407,18 +370,18 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return The set of already executed modules belonging to the root module.
      */
     protected Set<MavenProject> getExecutedModules(MavenProject rootModule) {
-        ExecutionKey key = new ExecutionKey(execution);
+        String executionKey = createExecutionKey( execution );
         String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
-        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey =
-                (Map<ExecutionKey, Set<MavenProject>>) rootModule.getContextValue(executedModulesContextKey);
+        Map<String, Set<MavenProject>> executedProjectsPerExecutionKey =
+                (Map<String, Set<MavenProject>>) rootModule.getContextValue(executedModulesContextKey);
         if (executedProjectsPerExecutionKey == null) {
             executedProjectsPerExecutionKey = new HashMap<>();
             rootModule.setContextValue(executedModulesContextKey, executedProjectsPerExecutionKey);
         }
-        Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(key);
+        Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(executionKey);
         if (executedProjects == null) {
             executedProjects = new HashSet<>();
-            executedProjectsPerExecutionKey.put(key, executedProjects);
+            executedProjectsPerExecutionKey.put(executionKey, executedProjects);
         }
         return executedProjects;
     }
