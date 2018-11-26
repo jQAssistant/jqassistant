@@ -30,7 +30,7 @@ public class CustomScannerPlugin extends AbstractScannerPlugin<FileResource, Cus
         ClassFileDescriptor descriptor = scanner.getContext().peek(ClassFileDescriptor.class);
         String value = (String) getProperties().get(PROPERTY_VALUE);
         LOGGER.info("Using custom plugin to scan " + path + ", setting value to " + value);
-        CustomDescriptor customDescriptor = scanner.getContext().getStore().migrate(descriptor, CustomDescriptor.class);
+        CustomDescriptor customDescriptor = scanner.getContext().getStore().addDescriptorType(descriptor, CustomDescriptor.class);
         customDescriptor.setValue(value);
         return customDescriptor;
     }
