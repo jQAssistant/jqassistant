@@ -46,7 +46,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
     public void write(RuleSet ruleSet, Writer writer) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.builder().groupIds(ruleSet.getGroupsBucket().getIds())
-                .groupIds(ruleSet.getConstraintBucket().getIds()).groupIds(ruleSet.getConceptBucket().getIds()).build();
+                .constraintIds(ruleSet.getConstraintBucket().getIds()).conceptIds(ruleSet.getConceptBucket().getIds()).build();
         new RuleSetExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
