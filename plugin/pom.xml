@@ -519,6 +519,7 @@
             <type>xsl</type>
             <classifier>plugin2asciidoc</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
@@ -526,6 +527,7 @@
             <type>xsl</type>
             <classifier>rules2asciidoc-v2</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Test -->
         <dependency>
