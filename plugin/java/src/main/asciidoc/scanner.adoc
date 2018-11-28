@@ -186,6 +186,7 @@ A method declared in a Java type.
 | name                 | The method name, e.g. `getId`
 | signature            | The raw signature of the method, e.g. `int getId()`, `java.lang.String concat(java.lang.String,java.lang.String)`
 | visibility           | optional, The visibility of the method, can be either `public`, `protected`, `default` or `private`
+| abstract             | optional, `true` indicates that the method is abstract, e.g. `public abstract void ...`
 | static               | optional, `true` indicates that the method has the static modifier, e.g. `static int getId();`
 | final                | optional, `true` indicates that the method is final, e.g. `final int getId();`
 | native               | optional, `true` indicates that the method is native, e.g. `native int getId();`
