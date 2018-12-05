@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqa-distribution-specification</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0-SNAPSHOT</version>
 
     <name>jQAssistant Distribution Specification</name>
     <url>http://jqassistant.org/</url>
@@ -49,41 +49,41 @@
          ! It is used only to include the correct version of
          ! the documentation of the commandline tool in the user manual.
          !-->
-        <jqa-commandline-tool.version>1.6.0</jqa-commandline-tool.version>
+        <jqa-commandline-tool.version>1.7.0-SNAPSHOT</jqa-commandline-tool.version>
 
         <!--
          ! Version of the Plugin of Apache Maven.
          ! It is used only to include the correct version of
          ! the documentation of the commandline tool in the user manual.
          !-->
-        <jqa-maven-plugin.version>1.6.0</jqa-maven-plugin.version>
+        <jqa-maven-plugin.version>1.7.0-SNAPSHOT</jqa-maven-plugin.version>
 
         <!--
          ! Versions of the plugins to be include an a release.
          !-->
-        <jqa-cdi-plugin.version>1.6.0</jqa-cdi-plugin.version>
-        <jqa-core-framework.version>1.6.0</jqa-core-framework.version>
-        <jqa-graphml-plugin.version>1.6.0</jqa-graphml-plugin.version>
-        <jqa-ejb3-plugin.version>1.6.0</jqa-ejb3-plugin.version>
-        <jqa-java8-plugin.version>1.6.0</jqa-java8-plugin.version>
-        <jqa-javaee6-plugin.version>1.6.0</jqa-javaee6-plugin.version>
-        <jqa-java-plugin.version>1.6.0</jqa-java-plugin.version>
-        <jqa-jaxrs-plugin.version>1.6.0</jqa-jaxrs-plugin.version>
-        <jqa-jpa2-plugin.version>1.6.0</jqa-jpa2-plugin.version>
-        <jqa-json-plugin.version>1.6.0</jqa-json-plugin.version>
-        <jqa-junit-plugin.version>1.6.0</jqa-junit-plugin.version>
-        <jqa-osgi-plugin.version>1.6.0</jqa-osgi-plugin.version>
-        <jqa-own-constraints.version>1.6.0</jqa-own-constraints.version>
-        <jqa-m2repo-plugin.version>1.6.0</jqa-m2repo-plugin.version>
-        <jqa-maven3-plugin.version>1.6.0</jqa-maven3-plugin.version>
-        <jqa-neo4jbackend.version>1.6.0</jqa-neo4jbackend.version>
-        <jqa-plugin-common.version>1.6.0</jqa-plugin-common.version>
-        <jqa-rdbms-plugin.version>1.6.0</jqa-rdbms-plugin.version>
-        <jqa-spring-plugin.version>1.6.0</jqa-spring-plugin.version>
-        <jqa-yaml-plugin.version>1.6.0</jqa-yaml-plugin.version>
-        <jqa-testng-plugin.version>1.6.0</jqa-testng-plugin.version>
-        <jqa-tycho-plugin.version>1.6.0</jqa-tycho-plugin.version>
-        <jqa-xml-plugin.version>1.6.0</jqa-xml-plugin.version>
+        <jqa-cdi-plugin.version>1.7.0-SNAPSHOT</jqa-cdi-plugin.version>
+        <jqa-core-framework.version>1.7.0-SNAPSHOT</jqa-core-framework.version>
+        <jqa-graphml-plugin.version>1.7.0-SNAPSHOT</jqa-graphml-plugin.version>
+        <jqa-ejb3-plugin.version>1.7.0-SNAPSHOT</jqa-ejb3-plugin.version>
+        <jqa-java8-plugin.version>1.7.0-SNAPSHOT</jqa-java8-plugin.version>
+        <jqa-javaee6-plugin.version>1.7.0-SNAPSHOT</jqa-javaee6-plugin.version>
+        <jqa-java-plugin.version>1.7.0-SNAPSHOT</jqa-java-plugin.version>
+        <jqa-jaxrs-plugin.version>1.7.0-SNAPSHOT</jqa-jaxrs-plugin.version>
+        <jqa-jpa2-plugin.version>1.7.0-SNAPSHOT</jqa-jpa2-plugin.version>
+        <jqa-json-plugin.version>1.7.0-SNAPSHOT</jqa-json-plugin.version>
+        <jqa-junit-plugin.version>1.7.0-SNAPSHOT</jqa-junit-plugin.version>
+        <jqa-osgi-plugin.version>1.7.0-SNAPSHOT</jqa-osgi-plugin.version>
+        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-m2repo-plugin.version>1.7.0-SNAPSHOT</jqa-m2repo-plugin.version>
+        <jqa-maven3-plugin.version>1.7.0-SNAPSHOT</jqa-maven3-plugin.version>
+        <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-plugin-common.version>1.7.0-SNAPSHOT</jqa-plugin-common.version>
+        <jqa-rdbms-plugin.version>1.7.0-SNAPSHOT</jqa-rdbms-plugin.version>
+        <jqa-spring-plugin.version>1.7.0-SNAPSHOT</jqa-spring-plugin.version>
+        <jqa-yaml-plugin.version>1.7.0-SNAPSHOT</jqa-yaml-plugin.version>
+        <jqa-testng-plugin.version>1.7.0-SNAPSHOT</jqa-testng-plugin.version>
+        <jqa-tycho-plugin.version>1.7.0-SNAPSHOT</jqa-tycho-plugin.version>
+        <jqa-xml-plugin.version>1.7.0-SNAPSHOT</jqa-xml-plugin.version>
     </properties>
 
     <build>
