@@ -3,13 +3,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.core</groupId>
     <artifactId>parent</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Core Framework</name>
@@ -41,9 +41,9 @@
 
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.6.0</jqa-asciidoctor-utilities.version>
-        <jqa-own-constraints.version>1.6.0</jqa-own-constraints.version>
-        <jqa-neo4jbackend.version>1.6.0</jqa-neo4jbackend.version>
+        <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <junit.version>4.12</junit.version>
         <org.asciidoctor.version>1.5.7</org.asciidoctor.version>
