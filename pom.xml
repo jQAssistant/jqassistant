@@ -92,7 +92,7 @@
         <maven.dependency.version>2.10</maven.dependency.version>
         <maven.deploy.version>2.8.2</maven.deploy.version>
         <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
-        <maven.failsafe.version>2.22.0</maven.failsafe.version>
+        <maven.failsafe.version>3.0.0-M2</maven.failsafe.version>
         <maven.install.version>2.5.2</maven.install.version>
         <maven.jar.version>2.6</maven.jar.version>
         <maven.javadoc.version>3.0.0</maven.javadoc.version>
@@ -178,45 +178,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven.failsafe.version}</version>
-                    <dependencies>
-                        <!-- We need the manual specification of the JUnit provider
-                             since there is a single TestNG test class for the TestNG
-                             scanner plugin. Oliver B. Fischer, 2015-09-20
-                             See:
-                             https://github.com/buschmais/jqassistant/issues/252
-                             https://github.com/buschmais/jqassistant/issues/246
-                             https://github.com/buschmais/jqassistant/issues/249 -->
-                        <dependency>
-                            <groupId>org.apache.maven.surefire</groupId>
-                            <artifactId>surefire-junit47</artifactId>
-                            <version>${maven.failsafe.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.version}</version>
-                    <configuration>
-                        <includes>
-                            <include>**/*Test.java</include>
-                        </includes>
-                    </configuration>
-                    <dependencies>
-                        <!-- We need the manual specification of the JUnit provider
-                             since there is a single TestNG test class for the TestNG
-                             scanner plugin. Oliver B. Fischer, 2015-09-20
-                             See:
-                             https://github.com/buschmais/jqassistant/issues/252
-                             https://github.com/buschmais/jqassistant/issues/246
-                             https://github.com/buschmais/jqassistant/issues/249 -->
-                        <dependency>
-                            <groupId>org.apache.maven.surefire</groupId>
-                            <artifactId>surefire-junit47</artifactId>
-                            <version>${maven.surefire.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
