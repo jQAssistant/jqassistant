@@ -51,7 +51,7 @@
         <org.jruby.version>1.7.27</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>5.3.2</junit.version>
         <guava.version>27.0.1-jre</guava.version>
     </properties>
 
@@ -439,10 +439,11 @@
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
