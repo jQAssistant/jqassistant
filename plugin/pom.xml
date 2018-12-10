@@ -52,6 +52,7 @@
         <org.mockito.version>1.9.5</org.mockito.version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
         <junit.version>4.12</junit.version>
+        <guava.version>27.0.1-jre</guava.version>
     </properties>
 
     <build>
@@ -432,7 +433,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>20.0</version>
+                <version>${guava.version}</version>
             </dependency>
 
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
