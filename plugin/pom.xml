@@ -334,15 +334,6 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!--
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>common</artifactId>
-                <version>${jqa.core-framework.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            -->
-
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
