@@ -27,10 +27,12 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.eclipse.aether.RepositorySystemSession;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
@@ -43,7 +45,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+
+/* todo This test uses lenient stubbing. Test is to complex to simply change the stubbing. Must be refactored. */
+
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockitoExtension.class)
 public class MavenProjectScannerPluginTest {
 
     @Mock
@@ -73,7 +79,7 @@ public class MavenProjectScannerPluginTest {
         when(project.getFile()).thenReturn(pomXml);
         when(project.getName()).thenReturn("project");
         File artifactFile = mock(File.class);
-        doReturn("/artifact").when(artifactFile).getAbsolutePath();
+        lenient().doReturn("/artifact").when(artifactFile).getAbsolutePath();
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
         artifact.setFile(artifactFile);
         when(project.getGroupId()).thenReturn("group");
