@@ -7,18 +7,17 @@ import java.nio.file.Files;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JavaClassesDirectoryScannerPluginTest {
 
     @Mock
@@ -41,14 +40,14 @@ public class JavaClassesDirectoryScannerPluginTest {
 
     private File directory;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         directory = Files.createTempDirectory("directory").toFile();
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         if (directory != null) {
             directory.delete();
@@ -65,7 +64,6 @@ public class JavaClassesDirectoryScannerPluginTest {
     @Test
     public void createArtifact() throws IOException {
         JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
-        when(context.peek(FileResolver.class)).thenReturn(mock(FileResolver.class));
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(null);
         when(store.create(JavaClassesDirectoryDescriptor.class)).thenReturn(artifact);
@@ -89,10 +87,8 @@ public class JavaClassesDirectoryScannerPluginTest {
     public void useArtifactFromContext() throws IOException {
         JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
         File directory = Files.createTempDirectory("directory").toFile();
-        when(context.peek(FileResolver.class)).thenReturn(mock(FileResolver.class));
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(artifact);
-        when(store.addDescriptorType(artifact, JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
 
         JavaClassesDirectoryDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
 
