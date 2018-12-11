@@ -42,6 +42,7 @@
     </description>
 
     <properties>
+        <assertj-core.version>3.9.1</assertj-core.version>
         <checkstyle.version>8.7</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-core-framework.version>1.7.0-SNAPSHOT</jqa-core-framework.version>
@@ -266,7 +267,7 @@
                 <configuration>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <logViolationsToConsole>true</logViolationsToConsole>
-                    <configLocation>checkstyle/jqa-code-style.xml</configLocation>
+                    <configLocation>/checkstyle/jqa-code-style.xml</configLocation>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -437,7 +438,12 @@
             </dependency>
 
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
