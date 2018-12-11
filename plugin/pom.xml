@@ -49,7 +49,7 @@
         <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>1.7.27</org.jruby.version>
-        <org.mockito.version>1.9.5</org.mockito.version>
+        <org.mockito.version>2.23.4</org.mockito.version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
         <junit.version>5.3.2</junit.version>
         <guava.version>27.0.1-jre</guava.version>
