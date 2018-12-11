@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.common.test;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Manual test to start a server.

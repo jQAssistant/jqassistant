@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.rule.JavaRule;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static java.util.Collections.singletonList;

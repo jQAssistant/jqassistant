@@ -16,9 +16,9 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Testsuite;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
@@ -29,7 +29,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private static final String EXPECTED_CONTENT = "c = foo\n" + "---\n" + "c = bar\n";

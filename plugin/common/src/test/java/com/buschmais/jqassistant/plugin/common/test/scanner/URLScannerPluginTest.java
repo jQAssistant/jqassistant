@@ -14,19 +14,18 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 public class URLScannerPluginTest {
 
     private UrlScannerPlugin plugin = new UrlScannerPlugin();
@@ -34,7 +33,7 @@ public class URLScannerPluginTest {
     @Mock
     private Scanner scanner;
 
-    @BeforeClass
+    @BeforeAll
     public static void registerURLHandler() {
         URL.setURLStreamHandlerFactory(new TestURLStreamHandlerFactory());
     }

@@ -14,11 +14,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.plugin.common.api.rule.JavaRule;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class YamlRuleInterpreterPluginTest {
 
     @Mock
@@ -35,7 +35,7 @@ public class YamlRuleInterpreterPluginTest {
 
     private YamlRuleInterpreterPlugin plugin = new YamlRuleInterpreterPlugin();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doAnswer(invocation -> {
             ExecutableRule<?> rule = (ExecutableRule<?>) invocation.getArguments()[0];

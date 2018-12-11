@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.common.test.rule;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;

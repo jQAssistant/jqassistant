@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Abstract base class for {@link ReportPlugin} unit tests.
@@ -26,7 +26,7 @@ public abstract class AbstractReportPluginTest {
         this.plugin = plugin;
     }
 
-    @Before
+    @BeforeEach
     public final void setUp() throws ReportException {
         plugin.initialize();
         File outputDirectory = new File("target/test");

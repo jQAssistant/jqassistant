@@ -20,25 +20,22 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FileContainerScannerPluginTest {
 
     @Mock
@@ -50,30 +47,23 @@ public class FileContainerScannerPluginTest {
     @Mock
     private Store store;
 
-    @Before
+    @BeforeEach
     public void stub() {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         when(store.create(FileDescriptor.class)).thenReturn(mock(FileDescriptor.class));
-        when(store.addDescriptorType(Mockito.any(FileDescriptor.class), Mockito.eq(FileDescriptor.class))).thenReturn(mock(FileDescriptor.class));
-        final Deque<FileResolver> fileResolvers = new LinkedList<>();
-        Mockito.doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                FileResolver resolver = (FileResolver) invocation.getArguments()[1];
-                fileResolvers.push(resolver);
-                return null;
-            }
+        Deque<FileResolver> fileResolvers = new LinkedList<>();
+
+        Mockito.doAnswer(invocation -> {
+            FileResolver resolver = (FileResolver) invocation.getArguments()[1];
+            fileResolvers.push(resolver);
+            return null;
         }).when(context).push(eq(FileResolver.class), any(FileResolver.class));
-        when(context.peek(FileResolver.class)).then(new Answer<FileResolver>() {
-            @Override
-            public FileResolver answer(InvocationOnMock invocation) throws Throwable {
-                return fileResolvers.peek();
-            }
-        });
-        when(scanner.scan(Mockito.anyString(), Mockito.anyString(), Mockito.eq(DefaultScope.NONE))).thenAnswer(new Answer<FileDescriptor>() {
-            @Override
-            public FileDescriptor answer(InvocationOnMock invocation) throws Throwable {
+
+        when(context.peek(FileResolver.class)).then(invocation -> fileResolvers.peek());
+
+        when(scanner.scan(any(FileResource.class), anyString(), eq(DefaultScope.NONE))).thenAnswer(
+            invocation -> {
                 String path = (String) invocation.getArguments()[1];
                 if ("/reject".equals(path)) {
                     return null;
@@ -81,8 +71,7 @@ public class FileContainerScannerPluginTest {
                 FileResolver fileResolver = context.peek(FileResolver.class);
                 fileResolver.require("/D", FileDescriptor.class, context);
                 return fileResolver.match(path, FileDescriptor.class, context);
-            }
-        });
+            });
     }
 
     @Test
@@ -113,7 +102,8 @@ public class FileContainerScannerPluginTest {
     @Test
     public void requires() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
-        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/", DefaultScope.NONE, scanner);
+        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/",
+                                                                     DefaultScope.NONE, scanner);
         assertThat(directoryDescriptor, notNullValue());
 
         verify(directoryDescriptor).setFileName("/");
@@ -131,7 +121,8 @@ public class FileContainerScannerPluginTest {
         assertThat(requires, equalTo(directoryDescriptor.getRequires()));
     }
 
-    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
+    private static class TestContainerScannerPlugin
+        extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
 
         private List<FileDescriptor> contains = new ArrayList<>();
 

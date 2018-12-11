@@ -24,5 +24,6 @@ enum FileResourceStrategy {
         }
     };
 
+    // Waiting for http://openjdk.java.net/jeps/301 ;-(
     abstract <T> T get(File file) throws Exception;
 }
