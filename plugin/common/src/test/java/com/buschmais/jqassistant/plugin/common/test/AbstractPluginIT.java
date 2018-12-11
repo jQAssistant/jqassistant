@@ -41,17 +41,12 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Abstract base class for analysis tests.
@@ -71,43 +66,9 @@ public abstract class AbstractPluginIT {
         enum Type {
             FILE, MEMORY, REMOTE;
         }
-
-    }
-
-    /**
-     * A rule implementation
-     */
-    private class TestContextRule extends TestWatcher {
-
-        private Method testMethod;
-
-        @Override
-        protected void starting(Description description) {
-            Class<?> testClass = description.getTestClass();
-            try {
-                String methodName = description.getMethodName();
-
-                // Handles method names of parameterized JUnit tests
-                // They end with an index as "[0]"
-                if (methodName.matches(".*\\[\\d+\\]$")) {
-                    methodName = methodName.replaceAll("\\[\\d+\\]", "");
-                }
-
-                testMethod = testClass.getDeclaredMethod(methodName);
-            } catch (NoSuchMethodException e) {
-                Assert.fail(e.getMessage());
-            }
-        }
-
-        Method getTestMethod() {
-            return testMethod;
-        }
     }
 
     protected static final String ARTIFACT_ID = "artifact";
-
-    @Rule
-    public TestContextRule testContextRule = new TestContextRule();
 
     /**
      * Represents a test result which allows fetching values by row or columns.
@@ -157,7 +118,13 @@ public abstract class AbstractPluginIT {
 
     protected InMemoryReportPlugin reportPlugin;
 
-    @Before
+    @BeforeEach
+    public void beforeEach(TestInfo testInfo) throws Exception {
+        configurePlugins();
+        startStore(testInfo);
+        initializeAnalyzer();
+    }
+
     public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
@@ -176,7 +143,6 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    @Before
     public void initializeAnalyzer() throws PluginRepositoryException {
         File outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
@@ -193,9 +159,12 @@ public abstract class AbstractPluginIT {
     /**
      * Initializes and resets the store.
      */
-    @Before
-    public void startStore() throws URISyntaxException {
-        TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
+    public void startStore(TestInfo testInfo) throws URISyntaxException {
+        Method method = testInfo.getTestMethod()
+                                .orElseThrow(() -> new AssertionError(
+                                    "Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));
+
+        TestStore testStore = method.getAnnotation(TestStore.class);
         TestStore.Type type = getTestStoreType(testStore);
         Properties properties = new Properties();
         URI uri;
@@ -240,7 +209,7 @@ public abstract class AbstractPluginIT {
     /**
      * Stops the store.
      */
-    @After
+    @AfterEach
     public void stopStore() {
         if (store != null) {
             store.stop();
@@ -287,7 +256,7 @@ public abstract class AbstractPluginIT {
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         File directory = ClasspathResource.getFile(rootClass, "/");
-        assertTrue("Expected a directory.", directory.isDirectory());
+        Assertions.assertThat(directory.isDirectory()).describedAs("Expected a directory").isTrue();
         return directory;
     }
 
@@ -369,7 +338,8 @@ public abstract class AbstractPluginIT {
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
-        assertNotNull("The requested concept cannot be found: " + id, concept);
+        Assertions.assertThat(concept).describedAs("The requested concept cannot be found: " + id)
+                  .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConceptResults().get(id);
     }
@@ -398,7 +368,8 @@ public abstract class AbstractPluginIT {
             throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
-        assertNotNull("The requested constraint cannot be found: " + id, constraint);
+        Assertions.assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
+                  .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConstraintResults().get(id);
     }
@@ -424,7 +395,8 @@ public abstract class AbstractPluginIT {
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().groupId(id).build();
         Group group = ruleSet.getGroupsBucket().getById(id);
-        assertNotNull("The request group cannot be found: " + id, group);
+        Assertions.assertThat(group).describedAs("The request group cannot be found: " + id)
+                  .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
     }
 

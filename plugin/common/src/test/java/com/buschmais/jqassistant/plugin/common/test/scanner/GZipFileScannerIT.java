@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;

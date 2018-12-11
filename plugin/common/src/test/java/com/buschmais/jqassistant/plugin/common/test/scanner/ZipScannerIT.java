@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
 import static org.hamcrest.CoreMatchers.equalTo;
