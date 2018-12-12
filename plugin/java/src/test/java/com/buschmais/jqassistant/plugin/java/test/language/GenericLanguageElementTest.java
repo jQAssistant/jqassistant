@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Field;
 import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Method;

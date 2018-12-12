@@ -8,8 +8,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.innerclass.AnonymousInnerClass;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
@@ -30,7 +30,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    @Ignore("Scanning only the outer class without their inner classes is currently not supported.")
+    @Disabled("Scanning only the outer class without their inner classes is currently not supported.")
     public void outerClass() throws IOException, NoSuchMethodException {
         scanClasses(AnonymousInnerClass.class);
         assertOuterClassContainsInnerClass();

@@ -13,8 +13,8 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLeve
 import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelRuntimeException;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelThrowable;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
@@ -29,10 +29,11 @@ import static org.junit.Assert.assertThat;
  */
 public class ThrowableIT extends AbstractJavaPluginIT {
 
-    @Before
+    @BeforeEach
     public void scan() throws IOException {
-        scanClasses(FirstLevelThrowable.class, SecondLevelThrowable.class, FirstLevelError.class, SecondLevelError.class, FirstLevelException.class,
-                SecondLevelException.class, FirstLevelRuntimeException.class, SecondLevelRuntimeException.class);
+        scanClasses(FirstLevelThrowable.class, SecondLevelThrowable.class, FirstLevelError.class,
+                    SecondLevelError.class, FirstLevelException.class, SecondLevelException.class,
+                    FirstLevelRuntimeException.class, SecondLevelRuntimeException.class);
     }
 
     /**

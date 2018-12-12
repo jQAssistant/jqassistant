@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.metric.CyclomaticComplexityType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.lang.Integer.valueOf;
 import static org.hamcrest.CoreMatchers.equalTo;

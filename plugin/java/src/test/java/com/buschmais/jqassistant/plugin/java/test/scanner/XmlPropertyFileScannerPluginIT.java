@@ -9,8 +9,8 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyDescriptorMatcher.propertyDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.containsProperties;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 public class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
 
-    @After
+    @AfterEach
     public void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();

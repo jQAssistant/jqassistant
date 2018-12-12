@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.ImplicitDefaultConstructor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.OverloadedConstructor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;

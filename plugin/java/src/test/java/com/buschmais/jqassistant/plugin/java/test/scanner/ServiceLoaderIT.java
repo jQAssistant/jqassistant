@@ -17,8 +17,8 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Oute
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Service;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.ServiceImpl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.util.Collections.singletonList;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ServiceLoaderIT extends AbstractJavaPluginIT {
 
-    @Before
+    @BeforeEach
     public void verifyServiceLoader() {
         ServiceLoader<Service> services = ServiceLoader.load(Service.class);
         assertThat(services, hasItem(any(ServiceImpl.class)));

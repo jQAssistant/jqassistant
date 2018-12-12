@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotat
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.AnnotationValueDescriptorMatcher.annotationValueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;

@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InvokeClient;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatche
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.enumeration.EnumerationType;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;

@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.fieldvalue.FieldValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,7 +25,7 @@ public class FieldValueIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void fieldValues() throws IOException, NoSuchFieldException {
+    public void fieldValues() throws IOException {
         scanClasses(FieldValue.class);
         store.beginTransaction();
         verifyValue("stringValue", "StringValue");
