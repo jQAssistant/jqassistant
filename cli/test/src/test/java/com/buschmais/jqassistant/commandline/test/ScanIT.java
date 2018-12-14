@@ -13,7 +13,8 @@ import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,15 +24,12 @@ import static org.junit.Assert.assertThat;
 /**
  * Verifies command line scanning.
  */
+@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 public class ScanIT extends AbstractCLIIT {
 
     private static final String CLASSPATH_SCOPE_SUFFIX = "java:classpath::";
 
-    public ScanIT(String neo4jVersion) {
-        super(neo4jVersion);
-    }
-
-    @Test
+    @TestTemplate
     public void classFromDirectory() throws IOException, InterruptedException {
         String directory = ScanIT.class.getResource("/").getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
@@ -39,7 +37,7 @@ public class ScanIT extends AbstractCLIIT {
         withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
     }
 
-    @Test
+    @TestTemplate
     public void files() throws IOException, InterruptedException {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
@@ -52,10 +50,10 @@ public class ScanIT extends AbstractCLIIT {
         String query = "match (f:File:Directory) where f.fileName={fileName} return count(f) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         store.stop();
-        assertThat(count, equalTo(1l));
+        assertThat(count, equalTo(1L));
     }
 
-    @Test
+    @TestTemplate
     public void pluginClassLoader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
@@ -67,7 +65,7 @@ public class ScanIT extends AbstractCLIIT {
         store.stop();
     }
 
-    @Test
+    @TestTemplate
     public void reset() throws IOException, InterruptedException {
         URL file = getResource(AnalyzeIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-reset" };
@@ -80,7 +78,7 @@ public class ScanIT extends AbstractCLIIT {
         });
     }
 
-    @Test
+    @TestTemplate
     public void storeDirectory() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);
@@ -90,7 +88,7 @@ public class ScanIT extends AbstractCLIIT {
         withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
-    @Test
+    @TestTemplate
     public void storeUri() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store2");
         FileUtils.deleteDirectory(directory);
@@ -108,7 +106,7 @@ public class ScanIT extends AbstractCLIIT {
      * @throws InterruptedException
      *             If execution is interrupted.
      */
-    @Test
+    @TestTemplate
     public void storeUriAndDirectory() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);

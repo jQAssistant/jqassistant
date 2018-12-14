@@ -25,30 +25,12 @@
                     <execution>
                         <id>unpack-test-distribution</id>
                         <goals>
-                            <goal>unpack</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.cli</groupId>
-                                    <artifactId>jqassistant-commandline-neo4jv2</artifactId>
-                                    <classifier>distribution</classifier>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${test.distribution}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.cli</groupId>
-                                    <artifactId>jqassistant-commandline-neo4jv3</artifactId>
-                                    <classifier>distribution</classifier>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${test.distribution}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/distribution</outputDirectory>
+                            <includeGroupIds>com.buschmais.jqassistant.cli</includeGroupIds>
                         </configuration>
                     </execution>
                 </executions>
