@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescr
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;

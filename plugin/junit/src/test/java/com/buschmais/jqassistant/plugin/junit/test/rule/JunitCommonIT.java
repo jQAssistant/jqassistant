@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;

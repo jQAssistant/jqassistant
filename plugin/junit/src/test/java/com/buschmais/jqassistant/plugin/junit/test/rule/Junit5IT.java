@@ -26,9 +26,9 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJun
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -45,7 +45,7 @@ import static org.junit.Assert.assertThat;
 
 public class Junit5IT extends AbstractJunitIT {
 
-    @After
+    @AfterEach
     public void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
