@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.json.impl.parsing;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
@@ -15,26 +15,19 @@ import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.NoViableAltException;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteIT {
+public class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteTest {
     private IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
-    private File jsonFile;
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<File> data() throws Exception {
         return DataProvider.invalidFilesOfJSONParsingTestSuite();
     }
 
-    public JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteIT(File file) {
-        jsonFile = file;
-    }
-
-    @Test
-    public void failsOnParsingAnInvalidJSONFileOfTheTestSuite() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void failsOnParsingAnInvalidJSONFileOfTheTestSuite(File jsonFile) {
         class ANTLRRecognisedErrorNotFailedToReportItProperly extends Exception {
         }
 

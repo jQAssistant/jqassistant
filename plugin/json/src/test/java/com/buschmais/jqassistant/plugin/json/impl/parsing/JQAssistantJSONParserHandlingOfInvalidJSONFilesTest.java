@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
 import java.io.InputStream;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
@@ -12,28 +12,20 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
-public class JQAssistantJSONParserHandlingOfInvalidJSONFilesIT {
+public class JQAssistantJSONParserHandlingOfInvalidJSONFilesTest {
 
-    private String pathToJSONFile;
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
+    public static Stream<String> data() {
         return DataProvider.invalidOwnExamples();
     }
 
-    public JQAssistantJSONParserHandlingOfInvalidJSONFilesIT(String path) {
-        pathToJSONFile = path;
-    }
-
-    @Test
-    public void parserRecognizesAInvalidJSONFile() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void parserRecognizesAInvalidJSONFile(String pathToJSONFile) {
         IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
         ThrowableAssert.ThrowingCallable shouldRaiseThrowable = new ThrowableAssert.ThrowingCallable() {
             @Override

@@ -17,9 +17,9 @@ import com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -32,12 +32,12 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
-    @Before
+    @BeforeEach
     public void startTransaction() {
         store.beginTransaction();
     }
 
-    @After
+    @AfterEach
     public void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();

@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
@@ -10,42 +10,34 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.DataProvider;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class JSONFileScannerPluginScansAllInvalidJSONFilesOfTestSuiteIT extends AbstractPluginIT {
 
-    private final File pathToJSONFile;
-
-    @Before
+    @BeforeEach
     public void startTransaction() {
         store.beginTransaction();
     }
 
-    @After
+    @AfterEach
     public void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() throws URISyntaxException {
+    public static Stream<File> data() throws URISyntaxException {
         return DataProvider.invalidFilesOfJSONParsingTestSuite();
     }
 
-    public JSONFileScannerPluginScansAllInvalidJSONFilesOfTestSuiteIT(File path) {
-        pathToJSONFile = path;
-    }
-
-    @Test
-    public void scannerScansAValidFileOfTheTestSuite() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void scannerScansAValidFileOfTheTestSuite(File pathToJSONFile) {
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(pathToJSONFile, pathToJSONFile.getAbsolutePath(), null);
 

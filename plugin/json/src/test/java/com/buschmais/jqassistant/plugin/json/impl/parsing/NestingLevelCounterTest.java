@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,11 +32,12 @@ public class NestingLevelCounterTest {
         assertThat(c.level(), equalTo(0));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void counterThrowsExceptionIfLevelHasBeenReached() {
         NestingLevelCounter c = new NestingLevelCounter(1);
 
-        c.enter().check();
+        Assertions.assertThatThrownBy(() -> c.enter().check())
+                  .isInstanceOf(IllegalStateException.class);
     }
 
 }

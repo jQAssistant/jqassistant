@@ -4,33 +4,25 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class JQAssistantJSONParserForValidJSONFilesOfTestSuiteIT {
+public class JQAssistantJSONParserForValidJSONFilesOfTestSuiteTest {
 
-    private File jsonFile;
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() throws URISyntaxException {
+    public static Stream<File> data() throws URISyntaxException {
         return DataProvider.validFilesOfJSONParsingTestSuite();
     }
 
-    public JQAssistantJSONParserForValidJSONFilesOfTestSuiteIT(File file) {
-        jsonFile = file;
-    }
-
-    @Test
-    public void canParseAValidJSONFileOfTheTestSuite() throws Exception {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void canParseAValidJSONFileOfTheTestSuite(File jsonFile) throws Exception {
         try (InputStream inputStream = Files.newInputStream(jsonFile.toPath())) {
             JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), "/not/given");
             JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), "/not/given");

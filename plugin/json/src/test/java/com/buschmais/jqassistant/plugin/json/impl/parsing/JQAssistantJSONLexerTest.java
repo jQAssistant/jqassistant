@@ -1,49 +1,33 @@
 package com.buschmais.jqassistant.plugin.json.impl.parsing;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.STRING;
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__4;
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-
-@RunWith(Parameterized.class)
 public class JQAssistantJSONLexerTest {
-
-    @Parameter(0)
-    public String input;
-
-    @Parameter(1)
-    public String[] expectedTokens;
-
-    @Parameter(2)
-    public Integer[] exptectedTypeIds;
-
-    @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-             {"[]", new String[]{"[", "]"}, new Integer[] {T__4, T__5}},
-             {"[\"VALUE\"]", new String[]{"[", "VALUE", "]"}, new Integer[]{T__4, STRING, T__5}}
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(arguments("[]", new String[]{"[", "]"}, new Integer[] {T__4, T__5}),
+                         arguments("[\"VALUE\"]", new String[]{"[", "VALUE", "]"}, new Integer[]{T__4, STRING, T__5}));
     }
 
-    @Test
-    public void lexerOutput() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void lexerOutput(String input, String[] expectedTokens, Integer[] exptectedTypeIds) {
         JSONLexer lexer = new JQAssistantJSONLexer(CharStreams.fromString(input), "/not/given");
 
         List<? extends Token> foundTokens = lexer.getAllTokens();

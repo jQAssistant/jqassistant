@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.json.impl.parsing;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ import static java.util.Arrays.asList;
  * input for parameterized tests with JUnit.
  */
 public class DataProvider {
-    public static Collection<Object[]> jsonParsingTestSuiteWithMetaData() throws URISyntaxException {
+    public static Collection<JSONSuiteFile> jsonParsingTestSuiteWithMetaData() throws URISyntaxException {
 
         /*
          * List of files we accept even if this file should not be accepted according
@@ -40,76 +39,68 @@ public class DataProvider {
             "i_structure_UTF-8_BOM_empty_object.json"
         );
 
-        URL resource = JQAssistantJSONParserForValidJSONFilesOfTestSuiteIT.class.getResource("/json_parsing_test_suite");
+        URL resource = JQAssistantJSONParserForValidJSONFilesOfTestSuiteTest.class.getResource("/json_parsing_test_suite");
         File directory = new File(resource.toURI());
 
         File[] jsons = directory.listFiles(f -> f.isFile() && f.getName().endsWith(".json"));
 
         return Stream.of(jsons)
-            .filter(f -> !filesToIgnoreTemporarily.contains(f.getName()))
-            .map(JSONSuiteFile::new)
-            .peek(t -> {
-                boolean isAcceptable = t.isAcceptable();
-                boolean shouldBeAccepted = filesWeAccept.contains(t.getFile().getName());
-                t.setAcceptable(isAcceptable || shouldBeAccepted);
-            })
-            .map(t -> new Object[]{t})
-            .collect(Collectors.toList());
+                     .filter(f -> !filesToIgnoreTemporarily.contains(f.getName()))
+                     .map(JSONSuiteFile::new)
+                     .peek(t -> {
+                         boolean isAcceptable = t.isAcceptable();
+                         boolean shouldBeAccepted = filesWeAccept.contains(t.getFile().getName());
+                         t.setAcceptable(isAcceptable || shouldBeAccepted);
+                     }).collect(Collectors.toList());
     }
 
 
-    public static Collection<Object[]> invalidOwnExamples() {
-        return Arrays.asList(new Object[][]{
-            {"/probes/invalid/empty-file.json"},
-            {"/probes/invalid/json-file-as-template.json"}
-        });
+    public static Stream<String> invalidOwnExamples() {
+        return Stream.of("/probes/invalid/empty-file.json",
+                         "/probes/invalid/json-file-as-template.json");
     }
 
-    public static Collection<Object[]> validOwnExamples() {
-        return Arrays.asList(new String[][]{
-            {"/probes/valid/array-empty.json"},
-            {"/probes/valid/array-one-value.json"},
-            {"/probes/valid/array-of-arrays.json"},
-            {"/probes/valid/line-comment-before-object.json"},
-            {"/probes/valid/line-comment-in-object.json"},
-            {"/probes/valid/line-comment-after-object.json"},
-            {"/probes/valid/block-comment-in-object.json"},
-            {"/probes/valid/true-false-null.json"},
-            {"/probes/valid/object-with-objects.json"},
-            {"/probes/valid/object-one-key-value-pair.json"},
-            {"/probes/valid/object-two-key-value-pairs.json"},
-            {"/probes/valid/single-int.json"},
-            {"/probes/valid/string-value-with-quote-mark.json"},
-            {"/probes/valid/string-value-with-unicode-signs.json"},
-            {"/probes/valid/object-with-array-empty.json"},
-            {"/probes/valid/object-with-array.json"},
-            {"/probes/valid/object-with-array-two-elements.json"},
-            {"/probes/valid/object-with-number.json"}
-        });
+    public static Stream<String> validOwnExamples() {
+        return Stream.of("/probes/valid/array-empty.json",
+                         "/probes/valid/array-one-value.json",
+                         "/probes/valid/array-of-arrays.json",
+                         "/probes/valid/line-comment-before-object.json",
+                         "/probes/valid/line-comment-in-object.json",
+                         "/probes/valid/line-comment-after-object.json",
+                         "/probes/valid/block-comment-in-object.json",
+                         "/probes/valid/true-false-null.json",
+                         "/probes/valid/object-with-objects.json",
+                         "/probes/valid/object-one-key-value-pair.json",
+                         "/probes/valid/object-two-key-value-pairs.json",
+                         "/probes/valid/single-int.json",
+                         "/probes/valid/string-value-with-quote-mark.json",
+                         "/probes/valid/string-value-with-unicode-signs.json",
+                         "/probes/valid/object-with-array-empty.json",
+                         "/probes/valid/object-with-array.json",
+                         "/probes/valid/object-with-array-two-elements.json",
+                         "/probes/valid/object-with-number.json");
     }
 
-    public static Collection<Object[]> invalidFilesOfJSONParsingTestSuite() throws URISyntaxException {
-        Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
+    public static Stream<File> invalidFilesOfJSONParsingTestSuite() throws URISyntaxException {
+        Collection<JSONSuiteFile> basis = jsonParsingTestSuiteWithMetaData();
 
-        List<Object[]> invalidFiles = basis.stream().map(element -> (JSONSuiteFile) element[0])
-                                           .filter(JSONSuiteFile::isNotAcceptable)
-                                           .map(JSONSuiteFile::getFile)
-                                           .map(filePath -> new Object[]{filePath})
-                                           .collect(Collectors.toList());
+        List<File> invalidFiles = basis.stream()
+                                       .filter(JSONSuiteFile::isNotAcceptable)
+                                       .map(JSONSuiteFile::getFile)
+                                       .collect(Collectors.toList());
 
-        return invalidFiles;
+        return invalidFiles.stream();
     }
 
-    public static Collection<Object[]> validFilesOfJSONParsingTestSuite() throws URISyntaxException {
-        Collection<Object[]> basis = jsonParsingTestSuiteWithMetaData();
+    public static Stream<File> validFilesOfJSONParsingTestSuite() throws URISyntaxException {
+        Collection<JSONSuiteFile> basis = jsonParsingTestSuiteWithMetaData();
 
-        List<Object[]> invalidFiles = basis.stream().map(element -> (JSONSuiteFile) element[0])
-                                           .filter(JSONSuiteFile::isAcceptable)
-                                           .map(JSONSuiteFile::getFile)
-                                           .map(filePath -> new Object[]{filePath})
-                                           .collect(Collectors.toList());
+        List<File> invalidFiles = basis.stream()
+                                       .filter(JSONSuiteFile::isAcceptable)
+                                       .map(JSONSuiteFile::getFile)
+                                       .collect(Collectors.toList());
 
-        return invalidFiles;
+        return invalidFiles.stream();
     }
 
     static class JSONSuiteFile {
