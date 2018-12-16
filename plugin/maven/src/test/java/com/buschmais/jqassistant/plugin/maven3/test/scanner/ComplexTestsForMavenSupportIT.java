@@ -9,24 +9,24 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
 public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
-    @After
+    @AfterEach
     public void commitTransaction() {
         // @todo Check if there is an open TX. There is some support on the current master for this.
         // Oliver B. Fischer, 2016-03-01
         store.commitTransaction();
     }
 
-    @Before
+    @BeforeEach
     public void scanDirectoryWithTestData() throws Exception {
         File rootDir = getClassesDirectory(ComplexTestsForMavenSupportIT.class);
         File scanRoot = new File(rootDir, "project-with-idea-config");
@@ -34,7 +34,7 @@ public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
         scanClassPathDirectory(scanRoot);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldFind8Files() throws Exception {
         store.beginTransaction();

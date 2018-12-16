@@ -46,7 +46,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescrip
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static java.util.stream.Collectors.toList;

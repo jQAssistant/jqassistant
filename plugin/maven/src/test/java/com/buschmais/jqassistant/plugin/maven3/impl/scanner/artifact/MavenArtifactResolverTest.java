@@ -9,11 +9,11 @@ import com.buschmais.xo.api.Query;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -23,7 +23,7 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MavenArtifactResolverTest {
 
     @Mock
@@ -34,7 +34,7 @@ public class MavenArtifactResolverTest {
 
     private MavenArtifactResolver resolver = new MavenArtifactResolver();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(store).when(scannerContext).getStore();
     }
