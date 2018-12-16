@@ -34,10 +34,10 @@ import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.lang.Boolean.FALSE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -220,7 +220,6 @@ public class Junit5IT extends AbstractJunitIT {
 
         assertThat(methods, hasItems(methodDescriptor(TagTestClass.B.class, "activeTest"),
                                      methodDescriptor(TagTestClass.C.class, "activeTest")));
-        ;
     }
 
     @Test
@@ -236,9 +235,8 @@ public class Junit5IT extends AbstractJunitIT {
         List<MethodDescriptor> methods =
             query("match (m:Test:Method:Junit5) where (\"bm\" in m.tags) return m").getColumn("m");
 
-        assertThat(methods, notNullValue());
-        assertThat(methods, Matchers.not(Matchers.empty()));
-
+        assertThat(methods).isNotNull();
+        assertThat(methods).isNotEmpty();
         assertThat(methods, hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
     }
 
@@ -259,8 +257,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> classes = query("match (c:Tag:Type:Junit5) return c").getColumn("c");
 
-        assertThat(classes, notNullValue());
-        assertThat(classes, Matchers.not(Matchers.empty()));
+        assertThat(classes).isNotNull();
+        assertThat(classes).isNotEmpty();
         assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.A.class),
                                                typeDescriptor(TagTestClass.B.class),
                                                typeDescriptor(TagTestClass.XY.class)));
@@ -285,8 +283,8 @@ public class Junit5IT extends AbstractJunitIT {
                                              "(\"b\" in c.tags) or " +
                                              "(\"x\" in c.tags) return c").getColumn("c");
 
-        assertThat(classes, notNullValue());
-        assertThat(classes, Matchers.not(Matchers.empty()));
+        assertThat(classes).isNotNull();
+        assertThat(classes).isNotEmpty();
         assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.B.class),
                                                typeDescriptor(TagTestClass.XY.class)));
     }
@@ -302,8 +300,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> classes = query("match (c:Test:Class:Junit5) return c").getColumn("c");
 
-        assertThat(classes, notNullValue());
-        assertThat(classes, Matchers.not(Matchers.empty()));
+        assertThat(classes).isNotNull();
+        assertThat(classes).isNotEmpty();
         assertThat(classes, containsInAnyOrder(typeDescriptor(DisabledTestClass.class),
                                                typeDescriptor(RepeatedTestClass.class),
                                                typeDescriptor(TestTemplateClass.class),
@@ -370,8 +368,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
-        assertThat(tests, Matchers.notNullValue());
-        assertThat(tests, Matchers.hasSize(1));
+        assertThat(tests).isNotNull();
+        assertThat(tests).hasSize(1);
         assertThat(tests, hasItem(methodDescriptor(SingleTagAnnotationTest.class, "getInt")));
     }
 
@@ -388,8 +386,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
-        assertThat(tests, Matchers.notNullValue());
-        assertThat(tests, Matchers.hasSize(1));
+        assertThat(tests).isNotNull();
+        assertThat(tests).hasSize(1);
         assertThat(tests, hasItem(methodDescriptor(MultipleTagAnnotationTest.class, "getLong")));
     }
 
@@ -424,8 +422,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (c:Type:Tag:Junit5) return c").getColumn("c");
 
-        assertThat(tests, Matchers.notNullValue());
-        assertThat(tests, Matchers.hasSize(1));
+        assertThat(tests).isNotNull();
+        assertThat(tests).hasSize(1);
         assertThat(tests, hasItem(typeDescriptor(SingleTagAnnotationClass.class)));
     }
 
@@ -439,12 +437,12 @@ public class Junit5IT extends AbstractJunitIT {
      */
     @Test
     public void assertMethod() throws Exception {
-        scanClasses(Assertions4Junit5.class, Assertions.class);
+        scanClasses(Assertions4Junit5.class, org.junit.jupiter.api.Assertions.class);
         assertThat(applyConcept("junit5:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
 
-        assertThat(methods, hasSize(106));
+        assertThat(methods).hasSize(109);
         assertThat(methods, hasItems(methodDescriptor(Assertions.class, "assertTrue", boolean.class),
                                      methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class)));
         store.commitTransaction();
