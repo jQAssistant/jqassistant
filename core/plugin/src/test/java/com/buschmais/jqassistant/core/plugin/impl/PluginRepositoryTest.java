@@ -1,18 +1,16 @@
-package com.buschmais.jqassistant.plugin.impl;
+package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.plugin.TestReportPlugin;
+import com.buschmais.jqassistant.core.plugin.impl.plugin.TestScannerPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin;
-import com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -54,7 +52,7 @@ public class PluginRepositoryTest {
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext,
-                Collections.<String, Object> emptyMap());
+                Collections.emptyMap());
         assertThat(scannerPlugins.size(), equalTo(2));
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName()), notNullValue());
         assertThat(scannerPlugins.get("testScanner"), notNullValue());
@@ -69,7 +67,7 @@ public class PluginRepositoryTest {
 
     private void verifyProperties(Map<String, Object> pluginProperties) {
         assertThat(pluginProperties, notNullValue());
-        assertThat(pluginProperties.get("testKey"), CoreMatchers.<Object> equalTo("testValue"));
+        assertThat(pluginProperties.get("testKey"), CoreMatchers.equalTo("testValue"));
     }
 
     private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {

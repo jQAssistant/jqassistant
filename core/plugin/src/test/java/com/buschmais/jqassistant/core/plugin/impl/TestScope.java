@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.impl;
+package com.buschmais.jqassistant.core.plugin.impl;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
