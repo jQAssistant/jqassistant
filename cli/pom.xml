@@ -49,6 +49,8 @@
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
+        <assertj-core.version>3.9.1</assertj-core.version>
+        <mockito.version>2.23.4</mockito.version>
     </properties>
 
     <build>
@@ -239,6 +241,22 @@
                 <version>${jqa-distribution-spec.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>

@@ -11,11 +11,11 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 /**
  * Verifies functionality of the main class.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MainTest {
 
     @Mock

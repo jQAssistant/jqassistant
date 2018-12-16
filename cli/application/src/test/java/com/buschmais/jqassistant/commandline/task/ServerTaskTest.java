@@ -10,16 +10,16 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 
 import org.apache.commons.cli.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ServerTaskTest {
 
     @Mock
@@ -31,7 +31,7 @@ public class ServerTaskTest {
     @Mock
     private EmbeddedNeo4jServer server;
 
-    @Before
+    @BeforeEach
     public final void setUp() {
         doReturn(server).when(store).getServer();
     }
