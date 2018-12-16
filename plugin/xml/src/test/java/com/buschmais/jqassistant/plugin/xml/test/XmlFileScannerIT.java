@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;

@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.hamcrest.MatcherAssert.assertThat;

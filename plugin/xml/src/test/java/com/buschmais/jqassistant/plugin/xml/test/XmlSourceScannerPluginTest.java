@@ -16,11 +16,13 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor;
 import com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlSourceScannerPlugin;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -28,7 +30,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockitoExtension.class)
 public class XmlSourceScannerPluginTest {
 
     @Mock
@@ -48,7 +51,7 @@ public class XmlSourceScannerPluginTest {
      */
     private Map<XmlElementDescriptor, XmlElementDescriptor> parents = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(scannerContext).when(scanner).getContext();
         doReturn(documentDescriptor).when(scannerContext).peek(XmlDocumentDescriptor.class);
