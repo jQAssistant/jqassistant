@@ -21,7 +21,7 @@ public class APOCActivator {
      * WHERE a.name in ["UserFunction","Procedure"] WITH a.name as annotation, t
      * ORDER BY t.fqn RETURN annotation, collect(distinct t.fqn + ".class")
      */
-    private final List<Class<?>> PROCEDURE_TYPES = asList(apoc.algo.Centrality.class, apoc.algo.Cliques.class, apoc.algo.Cover.class,
+    private final List<Class<?>> PROCEDURE_TYPES = asList(apoc.algo.Cliques.class, apoc.algo.Cover.class,
             apoc.algo.LabelPropagation.class, apoc.algo.PageRank.class, apoc.algo.PathFinding.class, apoc.algo.WeaklyConnectedComponents.class,
             apoc.atomic.Atomic.class, apoc.bolt.Bolt.class, apoc.cache.Static.class, apoc.cluster.Cluster.class, apoc.coll.Coll.class, apoc.config.Config.class,
             apoc.convert.Json.class, apoc.couchbase.Couchbase.class, apoc.create.Create.class, apoc.custom.CypherProcedures.class, apoc.cypher.Cypher.class,

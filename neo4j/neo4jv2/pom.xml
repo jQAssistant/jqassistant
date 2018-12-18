@@ -41,6 +41,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--Dependencies for In-Memory DB -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <type>test-jar</type>
+            <version>${org.neo4j_2x.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-io</artifactId>
+            <type>test-jar</type>
+            <version>${org.neo4j_2x.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.neo4j.app</groupId>
             <artifactId>neo4j-server</artifactId>
@@ -58,5 +71,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
 </project>
