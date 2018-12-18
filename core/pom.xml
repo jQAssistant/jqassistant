@@ -3,13 +3,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.core</groupId>
     <artifactId>parent</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Core Framework</name>
@@ -41,11 +41,11 @@
 
     <properties>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.6.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
-        <jqa-neo4jbackend.version>1.6.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>5.3.2</junit.version>
         <org.asciidoctor.version>1.5.7</org.asciidoctor.version>
         <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
         <org.asciidoctorj-diagram.version>1.5.10</org.asciidoctorj-diagram.version>
@@ -79,10 +79,11 @@
                 <version>2.4</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

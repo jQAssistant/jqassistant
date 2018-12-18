@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.impl.plugin;
+package com.buschmais.jqassistant.core.plugin.impl.plugin;
 
 import java.io.File;
 import java.io.IOException;
