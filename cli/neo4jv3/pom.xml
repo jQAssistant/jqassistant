@@ -82,18 +82,10 @@
             <version>${org.neo4j_3x.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <type>test-jar</type>
+            <groupId>org.neo4j.community</groupId>
+            <artifactId>it-test-support</artifactId>
             <version>${org.neo4j_3x.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-io</artifactId>
-            <type>test-jar</type>
-            <version>${org.neo4j_3x.version}</version>
-        </dependency>
-
 
         <!-- Console Appender -->
 

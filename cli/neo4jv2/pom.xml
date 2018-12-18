@@ -84,20 +84,7 @@
             <artifactId>neo4j</artifactId>
             <version>${org.neo4j_2x.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <type>test-jar</type>
-            <version>${org.neo4j_2x.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-io</artifactId>
-            <type>test-jar</type>
-            <version>${org.neo4j_2x.version}</version>
-        </dependency>
         <!-- Console Appender -->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
