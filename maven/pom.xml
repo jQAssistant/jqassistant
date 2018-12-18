@@ -77,26 +77,6 @@
                         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                         <artifactId>neo4jv2</artifactId>
                     </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${org.neo4j_2x.version}</version>
-                        <scope>compile</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-kernel</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_2x.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-io</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_2x.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
                 </dependencies>
         </profile>
         <profile>
@@ -114,20 +94,6 @@
                         <artifactId>neo4j</artifactId>
                         <version>${org.neo4j_3x.version}</version>
                         <scope>compile</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-kernel</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_3x.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j-io</artifactId>
-                        <type>test-jar</type>
-                        <version>${org.neo4j_3x.version}</version>
-                        <scope>runtime</scope>
                     </dependency>
                 </dependencies>
         </profile>
