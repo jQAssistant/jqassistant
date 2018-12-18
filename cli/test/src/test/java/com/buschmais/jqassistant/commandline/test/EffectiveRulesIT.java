@@ -3,7 +3,8 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
@@ -14,13 +15,10 @@ import static org.junit.Assert.assertThat;
 /**
  * Verifies command line listing of effective rules.
  */
+@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 public class EffectiveRulesIT extends AbstractCLIIT {
 
-    public EffectiveRulesIT(String neo4jVersion) {
-        super(neo4jVersion);
-    }
-
-    @Test
+    @TestTemplate
     public void defaultGroup() throws IOException, InterruptedException {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory };
@@ -33,7 +31,7 @@ public class EffectiveRulesIT extends AbstractCLIIT {
         assertThat(console, not(hasItem(containsString("junit4:TestMethod"))));
     }
 
-    @Test
+    @TestTemplate
     public void customGroup() throws IOException, InterruptedException {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-groups", CUSTOM_GROUP };
@@ -46,7 +44,7 @@ public class EffectiveRulesIT extends AbstractCLIIT {
         assertThat(console, not(hasItem(containsString("junit4:TestMethod"))));
     }
 
-    @Test
+    @TestTemplate
     public void concept() throws IOException, InterruptedException {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-concepts", "junit4:TestMethod" };

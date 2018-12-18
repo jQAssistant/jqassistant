@@ -10,18 +10,20 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
 import org.apache.commons.cli.CommandLine;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockitoExtension.class)
 public class AnalyzeTaskTest {
 
     @Mock
@@ -42,7 +44,7 @@ public class AnalyzeTaskTest {
     @Mock
     private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
 
-    @Before
+    @BeforeEach
     public void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getModelPluginRepository()).thenReturn(modelPluginRepository);
@@ -67,7 +69,7 @@ public class AnalyzeTaskTest {
 
         ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);
         verify(reportPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
-        Assert.assertThat(propertiesCaptor.getValue(), is(pluginProperties));
+        assertThat(propertiesCaptor.getValue()).isSameAs(pluginProperties);
         verify(rulePluginRepository).getRuleSources();
         verify(modelPluginRepository).getDescriptorTypes();
         verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));

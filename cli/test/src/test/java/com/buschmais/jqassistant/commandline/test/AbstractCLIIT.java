@@ -11,10 +11,7 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assume.assumeTrue;
@@ -22,15 +19,22 @@ import static org.junit.Assume.assumeTrue;
 /**
  * Abstract base implementation for CLI tests.
  */
-@RunWith(Parameterized.class)
 public abstract class AbstractCLIIT {
 
-    public static final String NEO4JV2 = "neo4jv2";
-    public static final String NEO4JV3 = "neo4jv3";
+    public enum NeoVersion {
+        NEO4JV2("neo4jv2"),
+        NEO4JV3("neo4jv3");
 
-    @Parameters
-    public static final Collection<Object> data() {
-        return asList(NEO4JV2, NEO4JV3);
+        private final String version;
+
+        NeoVersion(String neo4jVersion) {
+            version = neo4jVersion;
+        }
+
+        @Override
+        public String toString() {
+            return version;
+        }
     }
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
@@ -45,7 +49,7 @@ public abstract class AbstractCLIIT {
 
     private Properties properties = new Properties();
 
-    protected final String neo4jVersion;
+    private NeoVersion neo4jVersion;
 
     /**
      * Represents the result of a CLI execution containing exit code and console
@@ -87,26 +91,12 @@ public abstract class AbstractCLIIT {
     }
 
     /**
-     * Constructor.
-     *
-     * @param neo4jVersion
-     *            The Neo4j version to test (used for determining the distribution
-     *            directory).
-     */
-    protected AbstractCLIIT(String neo4jVersion) {
-        this.neo4jVersion = neo4jVersion;
-        try {
-            properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot read cli-test.properties.", e);
-        }
-    }
-
-    /**
      * Reset the default store.
      */
-    @Before
-    public void before() throws IOException {
+    @BeforeEach
+    public void before(NeoVersion neoVersion) throws IOException {
+        neo4jVersion = neoVersion;
+        properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
     }
@@ -122,7 +112,8 @@ public abstract class AbstractCLIIT {
      *             If an error occurs.
      */
     protected ExecutionResult execute(String... args) throws IOException, InterruptedException {
-        assumeTrue("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX);
+        assumeTrue("Test cannot be executed on this operating system.",
+                   SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
         String jqaHomeProperty = properties.getProperty("jqassistant.home");
         String projectVersionProperty = properties.getProperty("project.version");
         String jqaHhome = new File(jqaHomeProperty + "jqassistant-commandline-" + neo4jVersion + "-" + projectVersionProperty).getAbsolutePath();
@@ -131,11 +122,10 @@ public abstract class AbstractCLIIT {
             command.add("cmd.exe");
             command.add("/C");
             command.add(jqaHhome + "\\bin\\jqassistant.cmd");
-        } else if (SystemUtils.IS_OS_LINUX) {
+        } else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
             command.add(jqaHhome + "/bin/jqassistant.sh");
         }
         command.addAll(asList(args));
-
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHhome);
@@ -145,7 +135,7 @@ public abstract class AbstractCLIIT {
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
 
-        final Process process = builder.start();
+        Process process = builder.start();
 
         ConsoleReader standardConsole = new ConsoleReader(process.getInputStream(), System.out);
         ConsoleReader errorConsole = new ConsoleReader(process.getErrorStream(), System.err);
@@ -199,7 +189,7 @@ public abstract class AbstractCLIIT {
 
     protected void withStore(File directory, StoreOperation storeOperation) {
         Store store = getStore(directory);
-        store.start(Collections.<Class<?>> emptyList());
+        store.start(Collections.emptyList());
         try {
             storeOperation.run(store);
         } finally {
@@ -250,7 +240,7 @@ public abstract class AbstractCLIIT {
             }
         }
 
-        public List<String> getOutput() {
+        List<String> getOutput() {
             return output;
         }
     }

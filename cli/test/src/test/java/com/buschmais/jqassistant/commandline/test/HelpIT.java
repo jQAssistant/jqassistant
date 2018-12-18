@@ -3,7 +3,8 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,18 +14,15 @@ import static org.junit.Assert.assertThat;
 /**
  * Verifies command line listing of available rules.
  */
+@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 public class HelpIT extends AbstractCLIIT {
 
-    public HelpIT(String neo4jVersion) {
-        super(neo4jVersion);
-    }
-
-    @Test
+    @TestTemplate
     public void runWithoutTask() throws IOException, InterruptedException {
         verify(new String[0]);
     }
 
-    @Test
+    @TestTemplate
     public void helpOption() throws IOException, InterruptedException {
         verify(new String[] { "-help}" });
     }
