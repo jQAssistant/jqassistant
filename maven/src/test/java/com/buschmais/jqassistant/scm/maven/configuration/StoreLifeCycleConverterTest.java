@@ -2,9 +2,10 @@ package com.buschmais.jqassistant.scm.maven.configuration;
 
 import com.buschmais.jqassistant.scm.maven.StoreLifecycle;
 
+import org.assertj.core.api.Assertions;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,9 +43,10 @@ public class StoreLifeCycleConverterTest {
         assertThat(result, equalTo(StoreLifecycle.MODULE));
     }
 
-    @Test(expected = ComponentConfigurationException.class)
+    @Test
     public void fromStringFailsForIllegalValue() throws ComponentConfigurationException {
-        converter.fromString("OLIVER");
+        Assertions.assertThatThrownBy(() ->converter.fromString("OLIVER"))
+                  .isInstanceOf(ComponentConfigurationException.class);
     }
 
 }

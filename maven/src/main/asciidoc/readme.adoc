@@ -266,6 +266,7 @@ gathered information in database.
 ** allows passing properties to scanner plugins
 * continueOnError
 ** continue scanning even if a plugin fails with an unrecoverable error
+** default: `false`
 
 WARNING: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
 

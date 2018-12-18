@@ -2,9 +2,10 @@ package com.buschmais.jqassistant.scm.maven.configuration;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
+import org.assertj.core.api.Assertions;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,8 +44,9 @@ public class SeverityConfigurationConverterTest {
         assertThat(result, equalTo(Severity.BLOCKER));
     }
 
-    @Test(expected = ComponentConfigurationException.class)
-    public void fromStringFailsForIllegalValue() throws ComponentConfigurationException {
-        converter.fromString("OLIVER");
+    @Test
+    public void fromStringFailsForIllegalValue() {
+        Assertions.assertThatThrownBy(() -> converter.fromString("OLIVER"))
+                  .isInstanceOf(ComponentConfigurationException.class);
     }
 }
