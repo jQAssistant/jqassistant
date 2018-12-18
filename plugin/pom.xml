@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant.plugin.plugin-parent</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Plugin Parent POM</name>
@@ -42,16 +42,18 @@
     </description>
 
     <properties>
+        <assertj-core.version>3.9.1</assertj-core.version>
         <checkstyle.version>8.7</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.6.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-core-framework.version>1.6.0-SNAPSHOT</jqa-core-framework.version>
-        <jqa-neo4jbackend.version>1.6.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-core-framework.version>1.7.0-SNAPSHOT</jqa-core-framework.version>
+        <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>1.7.27</org.jruby.version>
-        <org.mockito.version>1.9.5</org.mockito.version>
+        <mockito.version>2.23.4</mockito.version>
         <org.slf4j.version>1.7.13</org.slf4j.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>5.3.2</junit.version>
+        <guava.version>27.0.1-jre</guava.version>
     </properties>
 
     <build>
@@ -265,7 +267,7 @@
                 <configuration>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <logViolationsToConsole>true</logViolationsToConsole>
-                    <configLocation>checkstyle/jqa-code-style.xml</configLocation>
+                    <configLocation>/checkstyle/jqa-code-style.xml</configLocation>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -333,15 +335,6 @@
                 <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
-
-            <!--
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>common</artifactId>
-                <version>${jqa.core-framework.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            -->
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
@@ -441,16 +434,22 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>20.0</version>
+                <version>${guava.version}</version>
             </dependency>
 
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -471,7 +470,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>${org.mockito.version}</version>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -479,6 +478,12 @@
                         <artifactId>hamcrest-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
 
             <dependency>
