@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
     <artifactId>parent</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Embedded Neo4j Server Parent</name>
@@ -21,8 +21,9 @@
     </description>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>1.6.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-own-constraints.version>1.6.0-SNAPSHOT</jqa-own-constraints.version>
+        <checkstyle.version>8.7</checkstyle.version>
+        <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
     </properties>
 
     <organization>
@@ -133,15 +134,18 @@
                 <configuration>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <logViolationsToConsole>true</logViolationsToConsole>
-                    <configLocation>checkstyle/jqa-code-style.xml</configLocation>
-                    <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
-                    <excludes>**/generated-sources/**/*</excludes>
+                    <configLocation>/checkstyle/jqa-code-style.xml</configLocation>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>checkstyle-config</artifactId>
                         <version>${project.parent.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

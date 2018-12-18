@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
         <artifactId>parent</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>neo4jv3</artifactId>
