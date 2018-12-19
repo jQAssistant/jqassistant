@@ -59,7 +59,7 @@ public class ScanIT extends AbstractCLIIT {
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
         Store store = getStore(getDefaultStoreDirectory());
-        store.start(Collections.<Class<?>> emptyList());
+        store.start(Collections.emptyList());
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
         assertThat("Expecting one beans.xml descriptor.", count, equalTo(1l));
         store.stop();

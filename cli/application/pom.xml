@@ -23,7 +23,9 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptor>src/main/assembly/bin.xml</descriptor>
+                            <descriptors>
+                                <descriptor>src/main/assembly/bin.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
@@ -99,9 +101,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
-
         <!-- Test frameworks -->
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
