@@ -55,6 +55,7 @@
         <org.jruby.version>9.1.17.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>2.23.4</org.mockito.version>
+        <snakeyaml-engine.version>1.0</snakeyaml-engine.version>
     </properties>
 
     <dependencyManagement>
@@ -152,6 +153,11 @@
                         <artifactId>jruby-complete</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.snakeyaml</groupId>
+                <artifactId>snakeyaml-engine</artifactId>
+                <version>${snakeyaml-engine.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.plantuml</groupId>

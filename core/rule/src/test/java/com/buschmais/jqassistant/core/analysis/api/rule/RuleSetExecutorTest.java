@@ -66,9 +66,12 @@ public class RuleSetExecutorTest {
 
     @Test
     public void overriddenGroupSeverity() throws RuleException {
-        Group group = Group.builder().id("group").severity(Severity.BLOCKER).concept(defaultConcept.getId(), null)
-                .concept(overriddenConcept.getId(), Severity.CRITICAL).constraint(defaultConstraint.getId(), null)
-                .constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
+        Group group = Group.builder().id("group").severity(Severity.BLOCKER)
+                           .concept(defaultConcept.getId(), null)
+                           .concept(overriddenConcept.getId(), Severity.CRITICAL)
+                           .constraint(defaultConstraint.getId(), null)
+                           .constraint(overriddenConstraint.getId(), Severity.CRITICAL)
+                           .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder().groupId(group.getId()).build();

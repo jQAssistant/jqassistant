@@ -1,0 +1,20 @@
+---
+concepts:
+  - id: java:Throwable
+    description: Labels types deriving from java.lang.Throwable as "Throwable".
+    requiresParameters:
+      - name: fqcn
+        unsupported: not allowed here
+        defaultValue: foobar
+        type: String
+
+    source: |
+      match
+        (throwable)-[:EXTENDS*]->(t:Type)
+      where
+        t.fqn = 'java.lang.Throwable'
+      SET
+        throwable:Throwable
+      return
+        count(throwable) AS Throwables
+

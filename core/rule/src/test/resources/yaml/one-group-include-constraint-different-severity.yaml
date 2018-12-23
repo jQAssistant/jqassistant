@@ -1,0 +1,5 @@
+groups:
+  - id: first_group
+    includesConstraints:
+      - refId: referenced_constraint
+        severity: info

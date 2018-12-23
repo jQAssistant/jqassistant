@@ -1,0 +1,5 @@
+groups:
+  - id: g
+    includesConcepts:
+    includesConstraints:
+      - refId: ic

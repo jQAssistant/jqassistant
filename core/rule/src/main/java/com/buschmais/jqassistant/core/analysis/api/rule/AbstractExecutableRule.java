@@ -4,13 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Singular;
-import lombok.experimental.SuperBuilder;
 
 /**
  * Defines an abstract rule which is has an unique identifier and references a
  * query.
  */
-@SuperBuilder
 public abstract class AbstractExecutableRule extends AbstractSeverityRule implements ExecutableRule {
 
     /**
@@ -65,40 +63,40 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
         return report;
     }
 
-    protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractExecutableRule> extends AbstractSeverityRule.Builder<B, R> {
+    public abstract static class Builder<B extends Builder<B, R>, R extends AbstractExecutableRule> extends AbstractSeverityRule.Builder<B, R> {
 
         protected Builder(R rule) {
             super(rule);
         }
 
-        public B requiresConceptIds(Map<String, Boolean> requiresConcepts) {
+        public B requiresConcepts(Map<String, Boolean> requiresConcepts) {
             AbstractExecutableRule r = build();
             r.requiresConcepts.putAll(requiresConcepts);
-            return builder();
+            return getThis();
         }
 
         public B executable(Executable executable) {
             AbstractExecutableRule r = build();
             r.executable = executable;
-            return builder();
+            return getThis();
         }
 
         public B parameters(Map<String, Parameter> parameters) {
             AbstractExecutableRule r = build();
             r.parameters.putAll(parameters);
-            return builder();
+            return getThis();
         }
 
         public B verification(Verification verification) {
             AbstractExecutableRule r = build();
             r.verification = verification;
-            return builder();
+            return getThis();
         }
 
         public B report(Report report) {
             AbstractExecutableRule r = build();
             r.report = report;
-            return builder();
+            return getThis();
         }
     }
 }

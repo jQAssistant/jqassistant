@@ -1,0 +1,5 @@
+---
+groups:
+  - id: ttt
+    includesConstraints:
+      - refId: uuu

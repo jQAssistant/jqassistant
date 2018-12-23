@@ -66,7 +66,7 @@ public enum Severity {
                 return severity;
             }
         }
-        throw new RuleException("Unknown severity '" + value + "'.");
+        throw new RuleException("Unknown severity '" + value + "'");
     }
 
     /**

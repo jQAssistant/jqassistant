@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
+import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
 
 import org.hamcrest.Matchers;
 
@@ -42,7 +43,8 @@ public final class RuleSetTestHelper {
     }
 
     public static List<RuleParserPlugin> getDefaultRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException {
-        List<RuleParserPlugin> ruleParserPlugins = asList(new XmlRuleParserPlugin(), new AsciidocRuleParserPlugin());
+        List<RuleParserPlugin> ruleParserPlugins = asList(new AsciidocRuleParserPlugin(), new XmlRuleParserPlugin(),
+                                                          new YamlRuleParserPlugin());
         for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
             ruleParserPlugin.initialize();
             ruleParserPlugin.configure(ruleConfiguration);

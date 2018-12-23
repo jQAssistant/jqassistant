@@ -1,0 +1,8 @@
+---
+groups:
+  - id: snafu
+    includesConcepts:
+      - refId: other
+        severity: info
+        foo: bar # Unsupported keyword foo
+...

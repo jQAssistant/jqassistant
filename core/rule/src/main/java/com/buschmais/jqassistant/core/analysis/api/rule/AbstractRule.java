@@ -2,12 +2,9 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * Abstract base class for rules.
  */
-@SuperBuilder
 public abstract class AbstractRule implements Rule {
 
     /**
@@ -35,20 +32,39 @@ public abstract class AbstractRule implements Rule {
         return id;
     }
 
+    void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String getDescription() {
         return description;
     }
+
+    void setDescription(String description) {
+        this.description = description;
+    }
+
 
     @Override
     public RuleSource getSource() {
         return ruleSource;
     }
 
+    void setSource(RuleSource ruleSource) {
+        this.ruleSource = ruleSource;
+    }
+
+
     @Override
     public String getDeprecation() {
         return deprecation;
     }
+
+    void setDeprecation(String deprecation) {
+        this.deprecation = deprecation;
+    }
+
 
     @Override
     public final boolean equals(Object o) {
@@ -77,38 +93,36 @@ public abstract class AbstractRule implements Rule {
 
     protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractRule> {
 
-        protected AbstractRule rule;
+        protected R rule;
+
+        protected abstract B getThis();
 
         protected Builder(R rule) {
             this.rule = rule;
         }
 
         public R build() {
-            return (R) rule;
-        }
-
-        protected B builder() {
-            return (B) this;
+            return rule;
         }
 
         public B id(String id) {
-            rule.id = id;
-            return builder();
+            rule.setId(id);
+            return getThis();
         }
 
         public B description(String description) {
-            rule.description = description;
-            return builder();
+            rule.setDescription(description);
+            return getThis();
         }
 
         public B ruleSource(RuleSource ruleSource) {
-            rule.ruleSource = ruleSource;
-            return builder();
+            rule.setSource(ruleSource);
+            return getThis();
         }
 
         public B deprecation(String deprecation) {
-            rule.deprecation = deprecation;
-            return builder();
+            rule.setDeprecation(deprecation);
+            return getThis();
         }
     }
 }

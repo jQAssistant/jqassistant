@@ -103,7 +103,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="executableRuleType" abstract="true">
+
+  <xs:complexType name="executableRuleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:severityRuleType">
                 <xs:sequence>

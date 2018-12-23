@@ -1,11 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * Abstract base class for rules with a severity.
  */
-@SuperBuilder
 public abstract class AbstractSeverityRule extends AbstractRule implements SeverityRule {
     /**
      * The severity of the rule.
@@ -26,7 +23,7 @@ public abstract class AbstractSeverityRule extends AbstractRule implements Sever
         public B severity(Severity severity) {
             AbstractSeverityRule r = build();
             r.severity = severity;
-            return builder();
+            return getThis();
         }
     }
 }

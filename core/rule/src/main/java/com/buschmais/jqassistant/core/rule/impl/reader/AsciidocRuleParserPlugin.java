@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
@@ -40,7 +38,7 @@ import static org.asciidoctor.OptionsBuilder.options;
  * @author mh
  * @since 12.10.14
  */
-public class AsciidocRuleParserPlugin implements RuleParserPlugin {
+public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidocRuleParserPlugin.class);
 
@@ -75,8 +73,6 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
     private static final String CYPHER = "cypher";
     private static final String OPTIONAL = "optional";
 
-    private RuleConfiguration ruleConfiguration;
-
     private Asciidoctor asciidoctor = null;
 
     private Treeprocessor treeprocessor;
@@ -105,17 +101,12 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
     }
 
     @Override
-    public void configure(RuleConfiguration ruleConfiguration) {
-        this.ruleConfiguration = ruleConfiguration;
-    }
-
-    @Override
     public boolean accepts(RuleSource ruleSource) {
         return ruleSource.getId().toLowerCase().endsWith(".adoc");
     }
 
     @Override
-    public void parse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
+    protected void doParse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
         String content;
         try (InputStream stream = source.getInputStream()) {
             content = IOUtils.toString(stream);
@@ -191,12 +182,12 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
             Verification verification = getVerification(attributes);
             Report report = getReport(executableRuleBlock);
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
-                Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConceptSeverity());
+                Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConceptSeverity());
                 Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConcepts(required)
                         .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
-                Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultConstraintSeverity());
+                Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConstraintSeverity());
                 Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
                         .requiresConcepts(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConstraint(constraint);
@@ -274,7 +265,7 @@ public class AsciidocRuleParserPlugin implements RuleParserPlugin {
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
-        Severity severity = getSeverity(attributes, ruleConfiguration.getDefaultGroupSeverity());
+        Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultGroupSeverity());
         Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).concepts(concepts)
                 .constraints(constraints).groups(groups).build();
         ruleSetBuilder.addGroup(group);

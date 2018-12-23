@@ -22,7 +22,7 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
+    public RuleSetBuilder addConstraint(Constraint constraint) throws RuleHandlingException {
         ruleSet.constraintBucket.add(constraint);
 
         return this;

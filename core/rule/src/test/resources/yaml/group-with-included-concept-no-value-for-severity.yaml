@@ -1,0 +1,6 @@
+groups:
+  - id: myGroup
+    includesConcepts:
+      - refId: concept_a
+        severity:
+...

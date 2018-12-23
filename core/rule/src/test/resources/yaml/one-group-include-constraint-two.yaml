@@ -1,0 +1,6 @@
+---
+groups:
+  - id: abc
+    includesConstraints:
+      - refId: x
+      - refId: y

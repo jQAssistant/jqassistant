@@ -9,7 +9,6 @@ import javax.xml.validation.Schema;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link RuleParserPlugin} implementation.
  */
-public class XmlRuleParserPlugin implements RuleParserPlugin {
+public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
     private static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
@@ -34,8 +33,6 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleParserPlugin.class);
-
-    private RuleConfiguration ruleConfiguration;
 
     private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
 
@@ -50,17 +47,12 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
     }
 
     @Override
-    public void configure(RuleConfiguration ruleConfiguration) {
-        this.ruleConfiguration = ruleConfiguration;
-    }
-
-    @Override
     public boolean accepts(RuleSource ruleSource) {
         return ruleSource.getId().toLowerCase().endsWith(".xml");
     }
 
     @Override
-    public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
+    public void doParse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
         List<JqassistantRules> rules = readXmlSource(ruleSource);
         convert(rules, ruleSource, ruleSetBuilder);
     }
@@ -75,7 +67,6 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
         List<JqassistantRules> rules = new ArrayList<>();
         try (InputStream inputStream = ruleSource.getInputStream()) {
-            LOGGER.debug("Reading rules from '{}'.", ruleSource.getId());
             JqassistantRules jqassistantRules = jaxbUnmarshaller.unmarshal(inputStream);
             rules.add(jqassistantRules);
         } catch (IOException e) {
@@ -113,7 +104,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultGroupSeverity());
+        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultGroupSeverity());
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
@@ -126,7 +117,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
         Executable executable = createExecutable(referenceableType);
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultConceptSeverity());
+        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConceptSeverity());
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
@@ -166,7 +157,7 @@ public class XmlRuleParserPlugin implements RuleParserPlugin {
         String description = referenceableType.getDescription();
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, ruleConfiguration.getDefaultConstraintSeverity());
+        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConstraintSeverity());
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();

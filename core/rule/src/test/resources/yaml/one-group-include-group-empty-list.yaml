@@ -1,0 +1,7 @@
+groups:
+  - id: group
+    includesGroups:
+    includesConstraints:
+      - refId: constraint
+    includesConcepts:
+      - refId: concept
