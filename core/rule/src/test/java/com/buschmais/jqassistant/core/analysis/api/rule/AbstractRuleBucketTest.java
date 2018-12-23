@@ -2,13 +2,14 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Set;
 
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
@@ -17,12 +18,7 @@ import static org.mockito.Mockito.when;
 
 public class AbstractRuleBucketTest {
 
-    private TestBucket bucket;
-
-    @Before
-    public void setUp() {
-        bucket = new TestBucket();
-    }
+    private TestBucket bucket = new TestBucket();
 
     // --- All tests for getRules()
 
@@ -68,18 +64,19 @@ public class AbstractRuleBucketTest {
         assertThat(bucket.getIds(), containsInAnyOrder("a", "b", "c"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void getConceptIdsReturnsUnmodifiableSet() {
         Set<String> conceptIds = bucket.getIds();
 
-        conceptIds.add("a");
+        Assertions.assertThatThrownBy(() -> conceptIds.add("a"))
+                  .isInstanceOf(UnsupportedOperationException.class);
     }
 
     // --- All tests for size()
 
     @Test
     public void sizeOfBucketIsZeroIfThereAreNotConcepts() {
-        assertThat(bucket.size(), equalTo(0));
+        assertThat(bucket.size()).isEqualTo(0);
     }
 
     @Test
@@ -113,9 +110,10 @@ public class AbstractRuleBucketTest {
         assertThat(b, Matchers.sameInstance(a));
     }
 
-    @Test(expected = NoConceptException.class)
+    @Test
     public void getConceptThrowsExceptionIfConceptNotFoundInBucket() throws NoConceptException {
-        bucket.getById("foobar");
+        Assertions.assertThatThrownBy(() -> bucket.getById("foobar"))
+                  .isInstanceOf(NoConceptException.class);
     }
 
     // --- All tests for addConcepts
@@ -165,7 +163,7 @@ public class AbstractRuleBucketTest {
         assertThat(newBucket.getIds(), containsInAnyOrder("a", "b", "c"));
     }
 
-    @Test(expected = DuplicateConceptException.class)
+    @Test
     public void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws DuplicateConceptException {
         Concept first = mock(Concept.class);
         Concept a = mock(Concept.class);
@@ -186,7 +184,8 @@ public class AbstractRuleBucketTest {
         TestBucket newBucket = new TestBucket();
 
         newBucket.add(first);
-        newBucket.add(existingBucket);
+        Assertions.assertThatThrownBy(() -> newBucket.add(existingBucket))
+                  .isInstanceOf(DuplicateConceptException.class);
     }
 
     @Test

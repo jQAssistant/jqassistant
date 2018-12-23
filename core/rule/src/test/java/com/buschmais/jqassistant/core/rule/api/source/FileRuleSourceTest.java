@@ -7,7 +7,7 @@ import java.util.List;
 import com.buschmais.jqassistant.core.shared.mockito.MethodNotMockedAnswer;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.rule.api.matcher.RuleSourceMatcher.matchesById;
 import static org.hamcrest.MatcherAssert.assertThat;

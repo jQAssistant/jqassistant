@@ -1,18 +1,21 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConceptBucketTest implements AbstractRuleBucketSpec {
 
     @Override
-    @Test(expected = NoConceptException.class)
+    @Test
     public void callingNewNoRuleExceptionThrowsCorrectException() throws Exception {
-        throw new ConceptBucket().newNoRuleException("x");
+        Assertions.assertThatThrownBy(()-> { throw new ConceptBucket().newNoRuleException("x"); })
+                  .isInstanceOf(NoRuleException.class);
     }
 
     @Override
-    @Test(expected = DuplicateConceptException.class)
+    @Test
     public void callingNewDuplicateRuleExceptionThrowsCorrectException() throws Exception {
-        throw new ConceptBucket().newDuplicateRuleException("x");
+        Assertions.assertThatThrownBy(() -> { throw new ConceptBucket().newDuplicateRuleException("x"); })
+                  .isInstanceOf(DuplicateRuleException.class);
     }
 }

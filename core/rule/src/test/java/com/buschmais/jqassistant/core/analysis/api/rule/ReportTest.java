@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;

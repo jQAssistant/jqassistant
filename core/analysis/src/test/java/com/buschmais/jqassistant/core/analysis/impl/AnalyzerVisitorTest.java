@@ -16,13 +16,15 @@ import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -35,7 +37,8 @@ import static org.mockito.Mockito.*;
 /**
  * Verifies the functionality of the analyzer visitor.
  */
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockitoExtension.class)
 public class AnalyzerVisitorTest {
 
     private static final String RULESOURCE = "test.xml";
@@ -69,7 +72,7 @@ public class AnalyzerVisitorTest {
 
     private Map<String, String> ruleParameters;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         statement = "match (n) return n";
         concept = createConcept(statement);

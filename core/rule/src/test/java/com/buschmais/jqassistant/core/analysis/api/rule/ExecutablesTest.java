@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 import net.sourceforge.plantuml.png.MetadataTag;
 import org.asciidoctor.ast.AbstractBlock;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper.readRuleSet;
 import static org.hamcrest.CoreMatchers.*;

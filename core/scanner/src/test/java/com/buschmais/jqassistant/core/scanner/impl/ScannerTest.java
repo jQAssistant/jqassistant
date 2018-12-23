@@ -9,7 +9,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -29,6 +30,7 @@ public class ScannerTest {
         assertThat(scanner.resolveScope(null), CoreMatchers.<Scope>equalTo(DefaultScope.NONE));
     }
 
+    @Disabled("See https://github.com/buschmais/jqa-core-framework/issues/24")
     @Test
     public void pluginPipeline() {
         ScannerContext scannerContext = mock(ScannerContext.class);

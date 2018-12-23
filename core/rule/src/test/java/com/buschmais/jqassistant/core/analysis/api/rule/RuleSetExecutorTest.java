@@ -7,17 +7,21 @@ import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RuleSetExecutorTest {
 
     @Mock
@@ -32,7 +36,7 @@ public class RuleSetExecutorTest {
     private Constraint defaultConstraint;
     private Constraint overriddenConstraint;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new RuleSetExecutorConfiguration();
         ruleExecutor = new RuleSetExecutor(visitor, configuration);
@@ -195,8 +199,8 @@ public class RuleSetExecutorTest {
         Concept concept = Concept.builder().id("test:Concept").requiresConcepts(requiresConcepts).build();
         Constraint constraint = Constraint.builder().id("test:Constraint").requiresConcepts(requiresConcepts).build();
 
-        when(visitor.visitConcept(dependencyConcept1, null)).thenReturn(status);
-        when(visitor.visitConcept(dependencyConcept2, null)).thenReturn(status);
+        lenient().when(visitor.visitConcept(dependencyConcept1, null)).thenReturn(status);
+        lenient().when(visitor.visitConcept(dependencyConcept2, null)).thenReturn(status);
 
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(dependencyConcept1).addConcept(dependencyConcept2).addConcept(concept)
                 .addConstraint(constraint).getRuleSet();

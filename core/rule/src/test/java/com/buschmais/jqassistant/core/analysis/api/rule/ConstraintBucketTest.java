@@ -1,17 +1,20 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConstraintBucketTest implements AbstractRuleBucketSpec {
     @Override
-    @Test(expected = NoConstraintException.class)
+    @Test
     public void callingNewNoRuleExceptionThrowsCorrectException() throws NoConstraintException {
-        throw new ConstraintBucket().newNoRuleException("x");
+        Assertions.assertThatThrownBy(() -> { throw new ConstraintBucket().newNoRuleException("x"); })
+                  .isInstanceOf(NoConstraintException.class);
     }
 
     @Override
-    @Test(expected = DuplicateConstraintException.class)
+    @Test
     public void callingNewDuplicateRuleExceptionThrowsCorrectException() throws DuplicateConstraintException {
-        throw new ConstraintBucket().newDuplicateRuleException("x");
+        Assertions.assertThatThrownBy(() -> { throw new ConstraintBucket().newDuplicateRuleException("x"); })
+                  .isInstanceOf(DuplicateConstraintException.class);
     }
 }

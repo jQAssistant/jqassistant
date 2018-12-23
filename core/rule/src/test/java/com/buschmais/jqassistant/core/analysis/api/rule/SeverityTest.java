@@ -4,8 +4,9 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -21,9 +22,9 @@ public class SeverityTest {
         }
     }
 
-    @Test(expected = RuleException.class)
+    @Test
     public void unknownSeverity() throws RuleException {
-        Severity.fromValue("foo");
+        assertThatThrownBy(() -> Severity.fromValue("foo")).isInstanceOf(RuleException.class);
     }
 
     @Test

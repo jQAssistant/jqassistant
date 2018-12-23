@@ -2,10 +2,11 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -14,7 +15,7 @@ import static org.junit.Assert.fail;
 /**
  * Verifies the functionality of {@link ScannerContextImpl}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ScannerContextImplTest {
 
     @Mock
@@ -23,12 +24,9 @@ public class ScannerContextImplTest {
     @Test
     public void peekNonExistingValue() {
         ScannerContextImpl scannerContext = new ScannerContextImpl(store);
-        try {
-            scannerContext.peek(String.class);
-            fail("Expecting an " + IllegalStateException.class.getName());
-        } catch (IllegalStateException e) {
-            return;
-        }
+
+        Assertions.assertThatThrownBy(() -> scannerContext.peek(String.class))
+                  .isInstanceOf(IllegalStateException.class);
     }
 
     @Test

@@ -5,8 +5,8 @@ import java.io.File;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies functionality of the rule set builder.
@@ -22,29 +22,22 @@ public class RuleSetBuilderTest {
         Concept concept2 = Concept.builder().id("test").ruleSource(ruleSource).build();
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         builder.addConcept(concept1);
-        try {
-            builder.addConcept(concept2);
-            Assert.fail("Expecting an exception");
-        } catch (RuleException e) {
-        }
+        Assertions.assertThatThrownBy(() -> builder.addConcept(concept2))
+                  .isInstanceOf(RuleException.class);
+
         // Constraints
         Constraint constraint1 = Constraint.builder().id("test").ruleSource(ruleSource).build();
         Constraint constraint2 = Constraint.builder().id("test").ruleSource(ruleSource).build();
         builder.addConstraint(constraint1);
-        try {
-            builder.addConstraint(constraint2);
-            Assert.fail("Expecting an exception");
-        } catch (RuleException e) {
-        }
+        Assertions.assertThatThrownBy(() -> builder.addConstraint(constraint2))
+                  .isInstanceOf(RuleException.class);
+
         // Groups
         Group group1 = Group.builder().id("test").ruleSource(ruleSource).build();
         Group group2 = Group.builder().id("test").ruleSource(ruleSource).build();
         builder.addGroup(group1);
-        try {
-            builder.addGroup(group2);
-            Assert.fail("Expecting an exception");
-        } catch (RuleException e) {
-        }
+        Assertions.assertThatThrownBy(() -> builder.addGroup(group2))
+                  .isInstanceOf(RuleException.class);
     }
 
 }

@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.report.model.DerivedTestDescriptorWithLang
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 import com.buschmais.jqassistant.core.report.model.TestLanguage.TestLanguageElement;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.equalTo;

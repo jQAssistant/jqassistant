@@ -13,8 +13,9 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -53,7 +54,7 @@ public class PluginRepositoryTest {
         ScannerContext scannerContext = mock(ScannerContext.class);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext,
                 Collections.emptyMap());
-        assertThat(scannerPlugins.size(), equalTo(2));
+        assertThat(scannerPlugins).hasSize(2);
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName()), notNullValue());
         assertThat(scannerPlugins.get("testScanner"), notNullValue());
         // Report plugins
@@ -86,7 +87,7 @@ public class PluginRepositoryTest {
     private Map<String, Object> getReportPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
         ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository();
         Map<String, ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(mock(ReportContext.class), properties);
-        assertThat(reportPlugins.size(), greaterThan(0));
+        assertThat(reportPlugins.size()).isGreaterThan(0);
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             if (reportPlugin instanceof TestReportPlugin) {
                 return ((TestReportPlugin) reportPlugin).getProperties();
