@@ -49,7 +49,7 @@
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
-        <assertj-core.version>3.9.1</assertj-core.version>
+        <assertj-core.version>3.11.1</assertj-core.version>
         <mockito.version>2.23.4</mockito.version>
     </properties>
 
