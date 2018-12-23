@@ -18,8 +18,7 @@ import com.buschmais.jqassistant.core.report.schema.v1.*;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class XmlReportTest {
 
@@ -27,40 +26,40 @@ public class XmlReportTest {
     public void writeAndReadReport() throws JAXBException, SAXException, ReportException, IOException {
         File xmlReport = XmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
-        assertThat(report, notNullValue());
-        assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        assertThat(report).isNotNull();
+        assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
         GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
-        assertThat(groupType.getDate(), notNullValue());
-        assertThat(groupType.getId(), equalTo("default"));
-        assertThat(groupType.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        assertThat(groupType.getDate()).isNotNull();
+        assertThat(groupType.getId()).isEqualTo("default");
+        assertThat(groupType.getGroupOrConceptOrConstraint()).hasSize(1);
         ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint().get(0);
-        assertThat(ruleType.getStatus(), equalTo(StatusEnumType.SUCCESS));
-        assertThat(ruleType, instanceOf(ConceptType.class));
-        assertThat(ruleType.getId(), equalTo("my:concept"));
-        assertThat(ruleType.getDescription(), equalTo("My concept description"));
-        assertThat(ruleType.getResult(), notNullValue());
+        assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+        assertThat(ruleType).isInstanceOf(ConceptType.class);
+        assertThat(ruleType.getId()).isEqualTo("my:concept");
+        assertThat(ruleType.getDescription()).isEqualTo("My concept description");
+        assertThat(ruleType.getResult()).isNotNull();
         ResultType result = ruleType.getResult();
-        assertThat(result.getColumns().getCount(), equalTo(2));
+        assertThat(result.getColumns().getCount()).isEqualTo(2);
         List<ColumnHeaderType> columnHeaders = result.getColumns().getColumn();
-        assertThat(columnHeaders.size(), equalTo(2));
+        assertThat(columnHeaders).hasSize(2);
         verifyColumnHeader(columnHeaders.get(0), "c1", false);
         verifyColumnHeader(columnHeaders.get(1), "c2", true);
-        assertThat(result.getRows().getCount(), equalTo(1));
+        assertThat(result.getRows().getCount()).isEqualTo(1);
         List<RowType> rows = result.getRows().getRow();
-        assertThat(rows.size(), equalTo(1));
+        assertThat(rows).hasSize(1);
         RowType rowType = rows.get(0);
-        assertThat(rowType.getColumn().size(), equalTo(2));
+        assertThat(rowType.getColumn().size()).isEqualTo(2);
         for (ColumnType column : rowType.getColumn()) {
-            assertThat(column.getName(), anyOf(equalTo("c1"), equalTo("c2")));
+            assertThat(column.getName()).isIn("c1", "c2");
             if ("c1".equals(column.getName())) {
-                assertThat(column.getValue(), equalTo("simpleValue"));
+                assertThat(column.getValue()).isEqualTo("simpleValue");
             } else if ("c2".equals(column.getName())) {
-                assertThat(column.getElement().getLanguage(), equalTo("TestLanguage"));
-                assertThat(column.getElement().getValue(), equalTo("TestElement"));
-                assertThat(column.getValue(), equalTo("descriptorValue"));
+                assertThat(column.getElement().getLanguage()).isEqualTo("TestLanguage");
+                assertThat(column.getElement().getValue()).isEqualTo("TestElement");
+                assertThat(column.getValue()).isEqualTo("descriptorValue");
                 SourceType source = column.getSource();
-                assertThat(source.getName(), equalTo("Test.java"));
-                assertThat(source.getLine(), equalTo(1));
+                assertThat(source.getName()).isEqualTo("Test.java");
+                assertThat(source.getLine()).isEqualTo(1);
             }
         }
     }
@@ -69,19 +68,17 @@ public class XmlReportTest {
     public void testReportWithConstraint() throws JAXBException, SAXException, ReportException, IOException {
         File xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
         JqassistantReport report = readReport(xmlReport);
-        assertThat(report, notNullValue());
-        assertThat(report.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
         GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
-        assertThat(groupType.getDate(), notNullValue());
-        assertThat(groupType.getId(), equalTo("default"));
-        assertThat(groupType.getGroupOrConceptOrConstraint().size(), equalTo(1));
+        assertThat(groupType.getId()).isEqualTo("default");
+        assertThat(groupType.getGroupOrConceptOrConstraint()).hasSize(1);
         ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint().get(0);
-        assertThat(ruleType, instanceOf(ConstraintType.class));
-        assertThat(ruleType.getId(), equalTo("my:Constraint"));
-        assertThat(ruleType.getSeverity().getValue(), equalTo("critical"));
-        assertThat(ruleType.getStatus(), equalTo(StatusEnumType.FAILURE));
+        assertThat(ruleType).isInstanceOf(ConstraintType.class);
+        assertThat(ruleType.getId()).isEqualTo("my:Constraint");
+        assertThat(ruleType.getSeverity().getValue()).isEqualTo("critical");
+        assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.FAILURE);
         ResultType result = ruleType.getResult();
-        assertThat(result, notNullValue());
+        assertThat(result).isNotNull();
         ColumnsHeaderType columnsHeader = result.getColumns();
         List<ColumnHeaderType> columnHeaders = columnsHeader.getColumn();
         verifyColumnHeader(columnHeaders.get(0), "c1", true);
@@ -94,16 +91,16 @@ public class XmlReportTest {
         File xmlReport = XmlReportTestHelper.createXmlWithUmlauts(description);
         JqassistantReport jqassistantReport = readReport(xmlReport);
         List<ReferencableRuleType> groups = jqassistantReport.getGroupOrConceptOrConstraint();
-        assertThat(groups.size(), equalTo(1));
+        assertThat(groups).hasSize(1);
         ReferencableRuleType groupType = groups.get(0);
-        assertThat(groupType, instanceOf(GroupType.class));
+        assertThat(groupType).isInstanceOf(GroupType.class);
         GroupType defaultGrroup = (GroupType) groupType;
         List<ReferencableRuleType> concepts = defaultGrroup.getGroupOrConceptOrConstraint();
-        assertThat(concepts.size(), equalTo(1));
+        assertThat(concepts).hasSize(1);
         ReferencableRuleType conceptType = concepts.get(0);
-        assertThat(conceptType, instanceOf(ConceptType.class));
+        assertThat(conceptType).isInstanceOf(ConceptType.class);
         ConceptType meinKonzept = (ConceptType) conceptType;
-        assertThat(meinKonzept.getDescription(), equalTo(description));
+        assertThat(meinKonzept.getDescription()).isEqualTo(description);
     }
 
     private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
@@ -117,8 +114,8 @@ public class XmlReportTest {
     }
 
     private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
-        assertThat(columnHeaderC1.getValue(), equalTo(expectedName));
-        assertThat(columnHeaderC1.isPrimary(), equalTo(isPrimary));
+        assertThat(columnHeaderC1.getValue()).isEqualTo(expectedName);
+        assertThat(columnHeaderC1.isPrimary()).isEqualTo(isPrimary);
     }
 
 }
