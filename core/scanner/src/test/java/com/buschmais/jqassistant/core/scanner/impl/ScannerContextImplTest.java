@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -25,7 +25,7 @@ public class ScannerContextImplTest {
     public void peekNonExistingValue() {
         ScannerContextImpl scannerContext = new ScannerContextImpl(store);
 
-        Assertions.assertThatThrownBy(() -> scannerContext.peek(String.class))
+        assertThatThrownBy(() -> scannerContext.peek(String.class))
                   .isInstanceOf(IllegalStateException.class);
     }
 

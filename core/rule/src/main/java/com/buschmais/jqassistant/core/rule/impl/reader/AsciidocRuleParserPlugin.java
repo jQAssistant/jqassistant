@@ -42,22 +42,21 @@ import static org.asciidoctor.OptionsBuilder.options;
  */
 public class AsciidocRuleParserPlugin implements RuleParserPlugin {
 
-    private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList("concept", "constraint"));
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidocRuleParserPlugin.class);
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
 
-    public static final String CONCEPT = "concept";
-    public static final String CONSTRAINT = "constraint";
-    public static final String GROUP = "group";
+    private static final String CONCEPT = "concept";
+    private static final String CONSTRAINT = "constraint";
+    private static final String GROUP = "group";
+
+    private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList(CONCEPT, CONSTRAINT));
 
     private static final String INCLUDES_GROUPS = "includesGroups";
     private static final String INCLUDES_CONCEPTS = "includesConcepts";
     private static final String INCLUDES_CONSTRAINTS = "includesConstraints";
 
     private static final String SEVERITY = "severity";
-    private static final String DEPENDS = "depends";
     private static final String REQUIRES_CONCEPTS = "requiresConcepts";
     private static final String REQUIRES_PARAMETERS = "requiresParameters";
     private static final String REPORT_TYPE = "reportType";

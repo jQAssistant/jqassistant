@@ -1,18 +1,16 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,11 +19,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.mockito.stubbing.Answer;
 
 import static java.util.Collections.emptyMap;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.any;
@@ -45,9 +42,6 @@ import static org.mockito.Mockito.when;
 public class ScannerImplTest {
 
     @Mock
-    private ScannerContext context;
-
-    @Mock
     private Store store;
 
     @Mock
@@ -55,6 +49,8 @@ public class ScannerImplTest {
 
     @Mock
     private Scope scope;
+
+    private ScannerContext context;
 
     private Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
 
@@ -73,7 +69,6 @@ public class ScannerImplTest {
         }).when(scannerPlugin).scan(anyString(), anyString(), any(Scope.class), any(Scanner.class));
         plugins.put("testPlugin", scannerPlugin);
         // Store
-        doReturn(store).when(context).getStore();
         doAnswer(invocation -> transaction).when(store).hasActiveTransaction();
         doAnswer(invocation -> {
             transaction = true;
@@ -87,6 +82,16 @@ public class ScannerImplTest {
             transaction = false;
             return null;
         }).when(store).rollbackTransaction();
+        context = new ScannerContextImpl(store);
+    }
+
+    @Test
+    public void resolveScope() {
+        ScannerContext scannerContext = mock(ScannerContext.class);
+        Scanner scanner = new ScannerImpl(new ScannerConfiguration(), scannerContext, emptyMap(), emptyMap());
+        Assert.assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
+        Assert.assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
+        Assert.assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
     }
 
     @Test
@@ -166,5 +171,45 @@ public class ScannerImplTest {
         verify(store, times(2)).beginTransaction();
         verify(store, times(2)).commitTransaction();
         verify(store, times(2)).rollbackTransaction();
+    }
+
+    /**
+     * Verifies correct execution of the pipeline for dependent and nested scanner
+     * plugins:
+     * 
+     * <ul>
+     * <li>A {@link TestItem} is scanned initially by
+     * {@link TestItemScannerPlugin}.</li>
+     * <li>The created {@link TestItemDescriptor} is then passed to the
+     * {@link DependentTestItemScannerPlugin}.</li>
+     * <li>The {@link DependentTestItemScannerPlugin} triggers a separate scan using
+     * the {@link TestScope} which activates the
+     * {@link NestedTestItemScannerPlugin}.</li>
+     * </ul>
+     */
+    @Test
+    public void pluginPipeline() {
+        Store store = mock(Store.class);
+        ScannerContext scannerContext = new ScannerContextImpl(store);
+        when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
+            Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];
+            return mock(descriptorType);
+        });
+        when(store.addDescriptorType(any(Descriptor.class), any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
+            Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[1];
+            return mock(descriptorType);
+        });
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = new HashMap<>();
+        scannerPlugins.put("TestScanner", new TestItemScannerPlugin());
+        scannerPlugins.put("DependentTestScanner", new DependentTestItemScannerPlugin());
+        scannerPlugins.put("NestedTestScanner", new NestedTestItemScannerPlugin());
+        Scanner scanner = new ScannerImpl(new ScannerConfiguration(), scannerContext, scannerPlugins, Collections.<String, Scope> emptyMap());
+
+        Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
+
+        assertThat(descriptor, instanceOf(DependentTestItemDescriptor.class));
+        verify(store).create(eq(TestItemDescriptor.class));
+        verify(store).addDescriptorType(any(TestItemDescriptor.class), eq(NestedTestItemDescriptor.class));
+        verify(store).addDescriptorType(any(NestedTestItemDescriptor.class), eq(DependentTestItemDescriptor.class));
     }
 }

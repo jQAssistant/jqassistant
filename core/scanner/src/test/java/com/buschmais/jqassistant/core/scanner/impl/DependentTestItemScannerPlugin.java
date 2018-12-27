@@ -13,8 +13,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  * Test plugin: delegates scanning of the item using a custom scope before
  * migrating the returned descriptor to TestDescriptor2.
  */
-@Requires(TestDescriptor1.class)
-public class TestScannerPlugin2 implements ScannerPlugin<TestItem, TestDescriptor2> {
+@Requires(TestItemDescriptor.class)
+public class DependentTestItemScannerPlugin implements ScannerPlugin<TestItem, DependentTestItemDescriptor> {
 
     @Override
     public void initialize() {
@@ -30,8 +30,8 @@ public class TestScannerPlugin2 implements ScannerPlugin<TestItem, TestDescripto
     }
 
     @Override
-    public Class<TestDescriptor2> getDescriptorType() {
-        return TestDescriptor2.class;
+    public Class<DependentTestItemDescriptor> getDescriptorType() {
+        return DependentTestItemDescriptor.class;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class TestScannerPlugin2 implements ScannerPlugin<TestItem, TestDescripto
     }
 
     @Override
-    public TestDescriptor2 scan(TestItem item, String path, Scope scope, Scanner scanner) throws IOException {
-        TestDescriptor2A testDescriptor2A = scanner.scan(item, path, TestScope.TEST);
-        return scanner.getContext().getStore().addDescriptorType(testDescriptor2A, TestDescriptor2.class);
+    public DependentTestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) {
+        NestedTestItemDescriptor nestedTestItemDescriptor = scanner.scan(item, path, TestScope.TEST);
+        return scanner.getContext().getStore().addDescriptorType(nestedTestItemDescriptor, DependentTestItemDescriptor.class);
     }
 
     @Override
     public String getName() {
-        return TestScannerPlugin2.class.getSimpleName();
+        return DependentTestItemScannerPlugin.class.getSimpleName();
     }
 }

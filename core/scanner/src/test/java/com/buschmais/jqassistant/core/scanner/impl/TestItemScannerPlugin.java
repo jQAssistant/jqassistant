@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 /**
  * Test plugin: creates a TestDescriptor1.
  */
-public class TestScannerPlugin1 implements ScannerPlugin<TestItem, TestDescriptor1> {
+public class TestItemScannerPlugin implements ScannerPlugin<TestItem, TestItemDescriptor> {
 
     @Override
     public void initialize() {
@@ -27,8 +27,8 @@ public class TestScannerPlugin1 implements ScannerPlugin<TestItem, TestDescripto
     }
 
     @Override
-    public Class<TestDescriptor1> getDescriptorType() {
-        return TestDescriptor1.class;
+    public Class<TestItemDescriptor> getDescriptorType() {
+        return TestItemDescriptor.class;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class TestScannerPlugin1 implements ScannerPlugin<TestItem, TestDescripto
     }
 
     @Override
-    public TestDescriptor1 scan(TestItem item, String path, Scope scope, Scanner scanner) throws IOException {
-        return scanner.getContext().getStore().create(TestDescriptor1.class);
+    public TestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) throws IOException {
+        return scanner.getContext().getStore().create(TestItemDescriptor.class);
     }
 
     @Override
     public String getName() {
-        return TestScannerPlugin1.class.getSimpleName();
+        return TestItemScannerPlugin.class.getSimpleName();
     }
 }
