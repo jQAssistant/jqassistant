@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Contains artifact related functionality.
