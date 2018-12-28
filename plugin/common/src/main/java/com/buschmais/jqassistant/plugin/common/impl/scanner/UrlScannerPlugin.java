@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScann
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Scanner plugin which handles URLs as input.
@@ -53,7 +53,7 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
         String ref = item.getRef();
         StringBuilder result = new StringBuilder();
         result.append(protocol).append(":");
-        if (isNotEmpty(host)) {
+        if (StringUtils.isNotEmpty(host)) {
             result.append("//").append(host);
         }
         if (port != -1) {

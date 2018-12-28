@@ -40,6 +40,7 @@
 
     <properties>
         <commons-compress.version>1.18</commons-compress.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
     </properties>
 
     <build>
@@ -110,6 +111,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
