@@ -537,7 +537,7 @@
         <!-- Test -->
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-            <artifactId>neo4jv2</artifactId>
+            <artifactId>neo4jv3</artifactId>
             <version>${jqa-neo4jbackend.version}</version>
             <scope>test</scope>
         </dependency>
