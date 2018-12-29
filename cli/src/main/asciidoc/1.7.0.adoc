@@ -1,0 +1,8 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.7.0]
+ifdef::jqa-in-manual[== Commandline Tool 1.7.0]
+
+* Removed Neo4j V2 distribution
+

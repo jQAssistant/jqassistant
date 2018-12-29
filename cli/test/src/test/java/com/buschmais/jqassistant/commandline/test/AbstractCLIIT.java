@@ -22,7 +22,6 @@ import static org.junit.Assume.assumeTrue;
 public abstract class AbstractCLIIT {
 
     public enum NeoVersion {
-        NEO4JV2("neo4jv2"),
         NEO4JV3("neo4jv3");
 
         private final String version;

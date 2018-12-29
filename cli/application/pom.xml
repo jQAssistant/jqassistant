@@ -106,7 +106,7 @@
         <!-- Test frameworks -->
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-            <artifactId>neo4jv2</artifactId>
+            <artifactId>neo4jv3</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

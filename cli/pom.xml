@@ -273,7 +273,6 @@
     <modules>
         <module>application</module>
         <module>plugins</module>
-        <module>neo4jv2</module>
         <module>neo4jv3</module>
         <module>test</module>
     </modules>
