@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
-            <version>${org.neo4j_2x.version}</version>
+            <version>${org.neo4j_3x.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
