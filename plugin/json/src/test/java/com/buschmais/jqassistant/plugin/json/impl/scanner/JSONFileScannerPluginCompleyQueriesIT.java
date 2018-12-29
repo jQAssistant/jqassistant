@@ -115,7 +115,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         List<JSONKeyDescriptor> results = query("MATCH (f:Json:File) " +
                                                 "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
                                                 "WHERE " +
-                                                "NOT (k-[:HAS_VALUE]->()) " +
+                                                "NOT ((k)-[:HAS_VALUE]->()) " +
                                                 "RETURN k"
         ).getColumn("k");
 
