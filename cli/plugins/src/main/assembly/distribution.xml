@@ -16,7 +16,7 @@
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <outputFileNameMapping>
-                ${artifact.groupId}-${artifact.artifactId}-${artifact.version}.${artifact.extension}
+                ${artifact.groupId}-${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
     </dependencySets>
