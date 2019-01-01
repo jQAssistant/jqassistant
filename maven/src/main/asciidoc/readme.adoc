@@ -7,9 +7,9 @@ process or manual execution from a command line.
 [[ProjectScope]]
 ==== Project Scope
 
-Software projects often consist of several modules which are assembled to executable or deployable artifacts. In a Maven project these modules
+Software projects often consist of several modules which are assembled to executable or deployable artifacts. In a Maven project, these modules
 are usually organized hierarchically with a common parent module which is referenced directly or indirectly by all sub-modules. For each
-project jQAssistant uses a separate database with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant
+project, jQAssistant uses a separate database with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant
 first determines the project scope, i.e. the root module, by searching within the tree starting from the current module following the
 parent relation until either a module is found where a directory "jqassistant/" exists or no parent is defined. The determined root module
 defines the location of
@@ -66,7 +66,7 @@ root
 ----
 
 NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with
-consistent parent relations. For other setups it is possible to enforce using the module where the mvn goal is invoked
+consistent parent relations. For other setups, it is possible to enforce using the module where the mvn goal is invoked
 as root module by setting the configuration option <<useExecutionRootAsProjectRoot>>.
 
 ==== Plugin Configuration
@@ -122,7 +122,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <concept>junit4:TestClass</concept>
                             </concepts>
                             <constraints>
-                                <constraint>junit4:TestMethodWithoutAssertion</constraints>
+                                <constraint>junit4:TestMethodWithoutAssertion</constraint>
                             </constraints>
                             <groups>
                                 <group>default</group>
@@ -152,6 +152,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                           <httpPort>7474</httpPort>
                           <boltPort>7474</boltPort>
                           <apocEnabled>false</apocEnabled>
+                        </embedded>
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rule>
@@ -249,7 +250,7 @@ mvn jqassistant:available-rules
 ==== jqassistant:scan
 ===== Description
 Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
-gathered information in database.
+gathered information in the database.
 
 ===== Configuration
 * <<skip>>
@@ -322,7 +323,7 @@ Executes an analysis.
 ** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
 ** default: 'MAJOR'
 * severity
-** determines if jQAssistant shall break the build if a at least one rule with an equal or higher severity level is
+** determines if jQAssistant shall break the build if at least one rule with an equal or higher severity level is
    violated and _failOnViolations_ is set to _true_
 ** default: 'MINOR'
 ** Deprecated: use `failOnSeverity` instead
@@ -476,5 +477,5 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 
 [[xmlReportFile]]
 ===== xmlReportFile (-Djqassistant.report.xml)
-* specifes the target file for writing the XML report
+* specifies the target file for writing the XML report
 * default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
