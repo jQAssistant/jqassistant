@@ -67,21 +67,6 @@
 
     <profiles>
         <profile>
-            <id>neo4jv2</id>
-            <activation>
-                <jdk>[,1.8)</jdk>
-            </activation>
-            <properties>
-                <org.neo4j.version>${org.neo4j_2x.version}</org.neo4j.version>
-            </properties>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-                        <artifactId>neo4jv2</artifactId>
-                    </dependency>
-                </dependencies>
-        </profile>
-        <profile>
             <id>neo4jv3</id>
             <activation>
                 <jdk>[1.8,)</jdk>
