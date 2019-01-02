@@ -46,7 +46,7 @@
         <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-plugin-common.version>1.7.0-SNAPSHOT</jqa-plugin-common.version>
         <jqa-tycho-plugin.version>1.7.0-SNAPSHOT</jqa-tycho-plugin.version>
-        <org.apache.maven.version>3.2.5</org.apache.maven.version>
+        <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
         <junit.version>5.3.2</junit.version>
