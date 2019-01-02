@@ -215,8 +215,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
-        if (!runtimeInformation.isMavenVersion("[3.2,)")) {
-            throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
+        if (!runtimeInformation.isMavenVersion("[3.5,)")) {
+            throw new MojoExecutionException("jQAssistant requires Maven 3.5.x or above.");
         }
         MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
         Set<MavenProject> executedModules = getExecutedModules(rootModule);
