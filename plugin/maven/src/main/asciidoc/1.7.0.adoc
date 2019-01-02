@@ -4,5 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Maven 3 Plugin 1.7.0]
 
-* Upgraded Maven core and plugin dependencies to 3.5.0. Note that older versions of Maven therefore might still work but no longer be officially supported.
+* Upgraded Maven core and plugin dependencies to Maven 3.5.0
 
