@@ -1,3 +1,5 @@
 name: jQAssistant
 pygments: false
 baseurl: /jqassistant
+plugins:
+  - jekyll-redirect-from
