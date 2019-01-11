@@ -5,3 +5,6 @@ ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Neo4j Backend Version 1.7.0]
 
 - Upgraded to Neo4j 3.5.1 and APOC 3.5.0.1
+- Reduced size of database directory by limiting retention of Neo4j transaction logs
+- Removed Neo4j v2 backend
+

@@ -204,7 +204,6 @@
 
     <modules>
         <module>bootstrap</module>
-        <module>neo4jv2</module>
         <module>neo4jv3</module>
     </modules>
 </project>
