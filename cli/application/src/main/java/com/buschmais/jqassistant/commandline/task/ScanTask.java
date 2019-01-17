@@ -57,8 +57,8 @@ public class ScanTask extends AbstractStoreTask {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URIS).withLongOpt("uris")
                 .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
                 .create(CMDLINE_OPTION_URIS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
-                .create(CMDLINE_OPTION_RESET));
+        options.add(
+                OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).").create(CMDLINE_OPTION_RESET));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUEONERROR).withDescription("Continue scanning if an error is encountered. (default=false).")
                 .create(CMDLINE_OPTION_CONTINUEONERROR));
     }
@@ -101,10 +101,11 @@ public class ScanTask extends AbstractStoreTask {
      * Parses the given list of option values into a map of resources and their
      * associated (optional) scopes.
      *
-     * Example: `maven:repository::http://my-host/repo` will be an entry with
-     * key `maven:repository` and value `http://my-host/repo`.
+     * Example: `maven:repository::http://my-host/repo` will be an entry with key
+     * `maven:repository` and value `http://my-host/repo`.
      *
-     * @param optionValues The value.
+     * @param optionValues
+     *            The value.
      * @return The map of resources and scopes.
      */
     private Map<String, String> parseResources(List<String> optionValues) {
@@ -127,21 +128,15 @@ public class ScanTask extends AbstractStoreTask {
     private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, Map<String, ScannerPlugin<?, ?>> scannerPlugins) {
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
-        Store store = scannerContext.getStore();
-        store.beginTransaction();
         Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
         Scope scope = scanner.resolveScope(scopeName);
-        try {
-            scanner.scan(element, path, scope);
-        } finally {
-            store.commitTransaction();
-        }
+        scanner.scan(element, path, scope);
     }
 
     @Override
     public void withOptions(final CommandLine options) throws CliConfigurationException {
-        files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String>emptyList()));
-        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URIS, Collections.<String>emptyList()));
+        files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList()));
+        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URIS, Collections.<String> emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
