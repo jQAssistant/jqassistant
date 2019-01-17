@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.neo4j.api.annotation.*;
 
@@ -97,7 +98,7 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
 
     @ResultOf
     @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
-    MavenPomXmlDescriptor findModel(@ResultOf.Parameter("coordinates") String coordinates);
+    Query.Result<MavenPomXmlDescriptor> findModel(@ResultOf.Parameter("coordinates") String coordinates);
 
     @ResultOf
     @Cypher("MATCH (file:File) WHERE file.fileName={fileName} RETURN file")
