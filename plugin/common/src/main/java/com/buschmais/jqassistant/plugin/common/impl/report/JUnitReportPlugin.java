@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
  * Each group is rendered as a test suite to a separate file.
  */
 @Default
-public class JUnitReportPlugin extends AbstractReportPlugin {
+public class JUnitReportPlugin implements ReportPlugin {
 
     // Properties
     public static final String JUNIT_REPORT_DIRECTORY = "junit.report.directory";

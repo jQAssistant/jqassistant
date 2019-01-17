@@ -18,7 +18,7 @@ import com.opencsv.CSVWriter;
 /**
  * A {@link ReportPlugin} that writes a rule result as CSV file.
  */
-public class CSVReportPlugin extends AbstractReportPlugin {
+public class CSVReportPlugin implements ReportPlugin {
 
     public static final String REPORT_TYPE = "csv";
 

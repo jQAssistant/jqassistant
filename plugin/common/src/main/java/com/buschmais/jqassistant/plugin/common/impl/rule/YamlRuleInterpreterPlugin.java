@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.plugin.common.impl.rule;
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AbstractRuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -26,7 +26,7 @@ import static java.util.Collections.singletonList;
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin}
  * the takes a YAML file containing a class as argument.
  */
-public class YamlRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
+public class YamlRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     @Data
     public static class YamlRuleSource {

@@ -125,7 +125,7 @@ public abstract class AbstractPluginIT {
         initializeAnalyzer();
     }
 
-    public void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
+    private void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
@@ -143,7 +143,7 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    public void initializeAnalyzer() throws PluginRepositoryException {
+    private void initializeAnalyzer() throws PluginRepositoryException {
         File outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         this.reportContext = new ReportContextImpl(outputDirectory);
@@ -159,7 +159,7 @@ public abstract class AbstractPluginIT {
     /**
      * Initializes and resets the store.
      */
-    public void startStore(TestInfo testInfo) throws URISyntaxException {
+    private void startStore(TestInfo testInfo) throws URISyntaxException {
         Method method = testInfo.getTestMethod()
                                 .orElseThrow(() -> new AssertionError(
                                     "Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));

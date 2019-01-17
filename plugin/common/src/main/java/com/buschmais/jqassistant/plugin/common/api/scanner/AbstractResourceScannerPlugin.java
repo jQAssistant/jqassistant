@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
-import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
@@ -13,8 +11,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  * @param <D>
  *            The descriptor type representing the item type.
  */
-public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
-        extends AbstractScannerPlugin<I, D> {
+public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> extends AbstractScannerPlugin<I, D> {
 
     @Override
     public Class<? extends I> getType() {
@@ -24,12 +21,6 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
     @Override
     public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractResourceScannerPlugin.class, 1);
-    }
-
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 7)
-    protected String slashify(String path) {
-        return FileNameNormalizer.normalize(path);
     }
 
 }
