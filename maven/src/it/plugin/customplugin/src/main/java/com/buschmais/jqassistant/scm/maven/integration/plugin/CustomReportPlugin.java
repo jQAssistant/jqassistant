@@ -12,11 +12,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 
-public class CustomReportPlugin extends AbstractReportPlugin {
+public class CustomReportPlugin implements ReportPlugin {
     private static final String PROPERTY_FILENAME = "customReport.fileName";
 
     private String fileName;
