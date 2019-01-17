@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -14,7 +13,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
  * implementation collection the concept results and constraint violations
  * in-memory.
  */
-public class InMemoryReportPlugin extends AbstractReportPlugin {
+public class InMemoryReportPlugin implements ReportPlugin {
 
     private ReportPlugin delegate;
 

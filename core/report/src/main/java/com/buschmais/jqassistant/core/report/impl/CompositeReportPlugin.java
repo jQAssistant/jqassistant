@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * A rule (i.e. concept or concept) may explicitly select one or more reports by
  * their id to delegate to.
  */
-public class CompositeReportPlugin extends AbstractReportPlugin {
+public class CompositeReportPlugin implements ReportPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompositeReportPlugin.class);
 

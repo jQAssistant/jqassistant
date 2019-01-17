@@ -1,0 +1,8 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.7.0]
+ifdef::jqa-in-manual[== Core Framework 1.7.0]
+
+* Removed deprecated class `com.buschmais.jqassistant.core.report.api.AbstractReportPlugin`, report plugins must be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
+

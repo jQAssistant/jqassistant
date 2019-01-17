@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.core.plugin.impl.plugin;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.report.api.AbstractReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
-public class TestReportPlugin extends AbstractReportPlugin {
+public class TestReportPlugin implements ReportPlugin {
 
     private Map<String, Object> properties;
 

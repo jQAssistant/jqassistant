@@ -27,7 +27,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * analysis to an XML file.
  */
 @Default
-public class XmlReportPlugin extends AbstractReportPlugin {
+public class XmlReportPlugin implements ReportPlugin {
 
     // Properties
     public static final String XML_REPORT_FILE = "xml.report.file";

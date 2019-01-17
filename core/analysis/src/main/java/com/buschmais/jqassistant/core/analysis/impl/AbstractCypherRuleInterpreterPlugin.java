@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AbstractRuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -19,7 +18,7 @@ import static com.buschmais.jqassistant.core.analysis.api.Result.Status;
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher queries.
  */
-public abstract class AbstractCypherRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
+public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     protected <T extends ExecutableRule<?>> Result<T> execute(String cypher, T executableRule, Map<String, Object> parameters, Severity severity,
             AnalyzerContext context) throws RuleException {

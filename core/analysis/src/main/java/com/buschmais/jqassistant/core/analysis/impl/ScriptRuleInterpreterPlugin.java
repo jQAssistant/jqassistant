@@ -7,9 +7,9 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.buschmais.jqassistant.core.analysis.api.AbstractRuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ScriptRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
+public class ScriptRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptRuleInterpreterPlugin.class);
 
@@ -28,7 +28,8 @@ public class ScriptRuleInterpreterPlugin extends AbstractRuleInterpreterPlugin {
      */
     private enum ScriptVariable {
 
-        @Deprecated STORE, CONTEXT, RULE, SEVERITY;
+        @Deprecated
+        STORE, CONTEXT, RULE, SEVERITY;
 
         String getVariableName() {
             return name().toLowerCase();
