@@ -3,18 +3,16 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalCause;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 
 /**
  * Cache for resolved types.
@@ -28,15 +26,15 @@ public class TypeCache {
      * Constructor.
      */
     TypeCache() {
-        this.lruCache = CacheBuilder.newBuilder().maximumSize(8192).removalListener(new RemovalListener<String, CachedType>() {
+        this.lruCache = Caffeine.newBuilder().maximumSize(8192).removalListener(new RemovalListener<String, CachedType>() {
             @Override
-            public void onRemoval(RemovalNotification<String, CachedType> notification) {
-                if (RemovalCause.SIZE.equals(notification.getCause())) {
-                    softCache.put(notification.getKey(), notification.getValue());
+            public void onRemoval(@Nullable String key, @Nullable CachedType value, @Nonnull RemovalCause cause) {
+                if (RemovalCause.SIZE.equals(cause)) {
+                    softCache.put(key, value);
                 }
             }
         }).build();
-        this.softCache = CacheBuilder.newBuilder().softValues().build();
+        this.softCache = Caffeine.newBuilder().softValues().build();
     }
 
     /**
