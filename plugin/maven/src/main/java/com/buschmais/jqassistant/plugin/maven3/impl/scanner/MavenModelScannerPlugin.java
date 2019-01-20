@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -55,13 +54,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     @Override
-    public boolean accepts(Model item, String path, Scope scope) throws IOException {
+    public boolean accepts(Model item, String path, Scope scope) {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomDescriptor scan(Model model, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenPomDescriptor scan(Model model, String path, Scope scope, Scanner scanner) {
         MavenPomDescriptor pomDescriptor = createMavenPomDescriptor(model, scanner);
         ScannerContext scannerContext = scanner.getContext();
         Store store = scannerContext.getStore();
@@ -79,7 +78,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addOrganization(pomDescriptor, model, store);
         addRepository(of(pomDescriptor), model.getRepositories(), store);
         addScmInformation(pomDescriptor, model.getScm(), store);
-
         return pomDescriptor;
     }
 
@@ -164,12 +162,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         pomDescriptor.setUrl(model.getUrl());
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(artifactCoordinates, context);
-        // if the pom describes itself as artifact then the returned artifact
-        // descriptor must be used as pom descriptor (the old instance is
-        // invalidated due to adding labels)
-        if (MavenPomDescriptor.class.isAssignableFrom(artifact.getClass())) {
-            pomDescriptor = MavenPomDescriptor.class.cast(artifact);
-        }
         pomDescriptor.getDescribes().add(artifact);
         return pomDescriptor;
     }
@@ -177,7 +169,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     /**
      * Create the fully qualified name of the model (using packaging type
      * "pom").
-     * 
+     *
      * @param model
      *            The model.
      * @return The fully qualified name.
