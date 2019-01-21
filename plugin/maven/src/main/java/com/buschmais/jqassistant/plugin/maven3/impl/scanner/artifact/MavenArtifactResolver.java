@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
@@ -12,29 +11,25 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 public class MavenArtifactResolver implements ArtifactResolver {
 
-    private Cache<String, MavenArtifactDescriptor> cache = CacheBuilder.newBuilder().maximumSize(256).build();
+    private Cache<String, MavenArtifactDescriptor> cache = Caffeine.newBuilder().maximumSize(256).build();
 
     @Override
     public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
-        try {
-            MavenArtifactDescriptor artifactDescriptor1 = cache.get(fqn, () -> {
-                MavenArtifactDescriptor artifactDescriptor = find(fqn, scannerContext);
-                if (artifactDescriptor == null) {
-                    artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, fqn);
-                    MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
-                }
-                return artifactDescriptor;
-            });
-            return artifactDescriptor1;
-        } catch (ExecutionException e) {
-            throw new IllegalStateException("Unexpected problem while resolving artifact with coordinates " + coordinates, e);
-        }
+        MavenArtifactDescriptor artifactDescriptor1 = cache.get(fqn, key -> {
+            MavenArtifactDescriptor artifactDescriptor = find(key, scannerContext);
+            if (artifactDescriptor == null) {
+                artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, key);
+                MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
+            }
+            return artifactDescriptor;
+        });
+        return artifactDescriptor1;
     }
 
     private MavenArtifactDescriptor find(String fqn, ScannerContext scannerContext) {

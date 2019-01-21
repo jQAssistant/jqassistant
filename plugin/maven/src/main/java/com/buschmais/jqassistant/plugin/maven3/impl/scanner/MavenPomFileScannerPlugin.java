@@ -36,15 +36,14 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        boolean isMavenPOM = false;
         boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
         boolean isPomXML = path.toLowerCase().endsWith("pom.xml");
         boolean hasPomExtension = path.toLowerCase().endsWith(".pom");
         boolean identifiedByExtension = isPomXML || hasPomExtension;
 
+        boolean isMavenPOM;
         if (!identifiedByExtension && hasXMLExtension) {
-            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project",
-                                                          "http://maven.apache.org/POM/4.0.0");
+            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project", "http://maven.apache.org/POM/4.0.0");
         } else {
             isMavenPOM = identifiedByExtension;
         }
@@ -54,8 +53,7 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor,
-                                      String path, Scope scope, Scanner scanner)
+    public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner)
             throws IOException {
         Model model = getModel(item, scanner);
         if (model != null) {
@@ -93,8 +91,7 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
         try (InputStream stream = item.createStream()) {
             model = mavenXpp3Reader.read(stream);
         } catch (XmlPullParserException e) {
-            String msg = "Cannot read POM descriptor from " +
-                         item.getFile().getAbsolutePath() + ".";
+            String msg = "Cannot read POM descriptor from " + item.getFile().getAbsolutePath() + ".";
 
             LOGGER.warn(msg, e);
         }
