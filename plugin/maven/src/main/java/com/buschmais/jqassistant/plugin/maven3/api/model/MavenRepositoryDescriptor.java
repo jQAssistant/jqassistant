@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.*;
 
 /**
@@ -97,10 +98,13 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
 
     @ResultOf
     @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
-    MavenPomXmlDescriptor findModel(@ResultOf.Parameter("coordinates") String coordinates);
+    MavenPomXmlDescriptor findModel(@Parameter("coordinates") String coordinates);
 
     @ResultOf
     @Cypher("MATCH (file:File) WHERE file.fileName={fileName} RETURN file")
-    FileDescriptor findFile(@ResultOf.Parameter("fileName") String fileName);
+    FileDescriptor findFile(@Parameter("fileName") String fileName);
 
+    @ResultOf
+    @Cypher("MATCH (repository)-[:CONTAINS_ARTIFACT]->(pom:Maven:Pom:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
+    MavenArtifactDescriptor findArtifact(@Parameter("coordinates") String artifactCoordinates);
 }

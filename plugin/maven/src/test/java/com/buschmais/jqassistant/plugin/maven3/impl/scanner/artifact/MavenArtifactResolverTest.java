@@ -45,11 +45,7 @@ public class MavenArtifactResolverTest {
         Query.Result result = mock(Query.Result.class);
         doReturn(false).when(result).hasResult();
         doReturn(result).when(store).executeQuery(anyString(), anyMap());
-        doAnswer((Answer<MavenArtifactDescriptor>) invocation -> {
-            MavenArtifactDescriptor artifactDescriptor = mock(MavenArtifactDescriptor.class);
-            artifactDescriptor.setFullQualifiedName((String) invocation.getArguments()[1]);
-            return artifactDescriptor;
-        }).when(store).create(any(), anyString());
+        doAnswer((Answer<MavenArtifactDescriptor>) invocation -> mock(MavenArtifactDescriptor.class)).when(store).create(any(), anyString());
 
         MavenArtifactDescriptor artifactDescriptor = resolver.resolve(new MavenArtifactCoordinates(artifact, false), scannerContext);
 

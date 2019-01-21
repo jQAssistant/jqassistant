@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 /**
@@ -11,6 +12,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  * @author ronald.kunzmann@buschmais.com
  */
 public interface MavenArtifactDescriptor extends MavenDescriptor, ArtifactFileDescriptor {
+
+    @Incoming
+    @Relation("DESCRIBES")
+    MavenPomDescriptor getDescribedBy();
+    void setDescribedBy(MavenPomDescriptor mavenPomDescriptor);
 
     @Incoming
     List<PomDependsOnDescriptor> getPomDependents();
