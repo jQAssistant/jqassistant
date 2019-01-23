@@ -74,6 +74,13 @@ public interface Store {
     boolean hasActiveTransaction();
 
     /**
+     * Flush all pending data.
+     *
+     * This commits the current transaction and creates a new one.
+     */
+    void flush();
+
+    /**
      * Creates a {@link Descriptor} of the given type.
      *
      * @param type

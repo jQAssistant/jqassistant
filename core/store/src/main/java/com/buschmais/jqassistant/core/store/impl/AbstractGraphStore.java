@@ -104,9 +104,14 @@ public abstract class AbstractGraphStore implements Store {
     private void autoCommit() {
         created++;
         if (created == getAutocommitThreshold()) {
-            commitTransaction();
-            beginTransaction();
+            flush();
         }
+    }
+
+    @Override
+    public void flush() {
+        commitTransaction();
+        beginTransaction();
     }
 
     @Override
