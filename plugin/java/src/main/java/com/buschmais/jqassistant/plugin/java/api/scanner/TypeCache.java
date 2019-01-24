@@ -3,9 +3,6 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 
@@ -26,12 +23,9 @@ public class TypeCache {
      * Constructor.
      */
     TypeCache() {
-        this.lruCache = Caffeine.newBuilder().maximumSize(8192).removalListener(new RemovalListener<String, CachedType>() {
-            @Override
-            public void onRemoval(@Nullable String key, @Nullable CachedType value, @Nonnull RemovalCause cause) {
-                if (RemovalCause.SIZE.equals(cause)) {
-                    softCache.put(key, value);
-                }
+        this.lruCache = Caffeine.newBuilder().maximumSize(8192).removalListener((RemovalListener<String, CachedType>) (key, value, cause) -> {
+            if (RemovalCause.SIZE.equals(cause)) {
+                softCache.put(key, value);
             }
         }).build();
         this.softCache = Caffeine.newBuilder().softValues().build();
