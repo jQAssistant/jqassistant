@@ -20,7 +20,7 @@
         <description>Return all POM models</description>
         <cypher>
             MATCH
-            (:Maven:Project)-[:HAS_EFFECTIVE_MODEL]->(pom:Maven:Pom)
+            (:Maven:Project)-[:HAS_EFFECTIVE_MODEL]->(pom:Maven:Pom:Effective)
             RETURN
             pom
         </cypher>
