@@ -22,6 +22,7 @@
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</class>
         <!-- Relations -->
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomDependsOnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor</class>

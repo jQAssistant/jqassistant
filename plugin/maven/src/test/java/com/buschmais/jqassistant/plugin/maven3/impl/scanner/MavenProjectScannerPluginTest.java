@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
@@ -29,6 +30,8 @@ import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.eclipse.aether.RepositorySystemSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -36,6 +39,7 @@ import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -60,6 +64,9 @@ public class MavenProjectScannerPluginTest {
 
     @Mock
     private DependencyGraphBuilder dependencyGraphBuilder;
+
+    @Captor
+    ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
 
     @Test
     public void projectScannerPlugin() throws DependencyGraphBuilderException {
@@ -196,7 +203,8 @@ public class MavenProjectScannerPluginTest {
         // Effective model
         verify(store).create(MavenPomDescriptor.class);
         verify(scannerContext).push(MavenPomDescriptor.class, effectiveModelDescriptor);
-        verify(scanner).scan(effectiveModel, pomXml.getAbsolutePath(), MavenScope.PROJECT);
+        verify(scanner, atLeastOnce()).scan(effectiveModelCaptor.capture(), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
+        assertThat(effectiveModelCaptor.getValue().getDelegate(), is(effectiveModel));
         verify(scannerContext).pop(MavenPomDescriptor.class);
         verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
         verify(store).create(MavenArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");

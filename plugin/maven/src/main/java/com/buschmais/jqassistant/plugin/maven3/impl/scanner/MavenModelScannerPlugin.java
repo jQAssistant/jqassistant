@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenRepositoryResolver;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
@@ -152,13 +153,15 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     protected MavenPomDescriptor createMavenPomDescriptor(Model model, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenPomDescriptor pomDescriptor = context.peek(MavenPomDescriptor.class);
+        if (model instanceof EffectiveModel) {
+            context.getStore().addDescriptorType(pomDescriptor, EffectiveDescriptor.class);
+        }
         pomDescriptor.setName(model.getName());
         pomDescriptor.setGroupId(model.getGroupId());
         pomDescriptor.setArtifactId(model.getArtifactId());
         pomDescriptor.setPackaging(model.getPackaging());
         pomDescriptor.setVersion(model.getVersion());
-        String pomFqn = getFullyQualifiedName(model);
-        pomDescriptor.setFullQualifiedName(pomFqn);
+        pomDescriptor.setFullQualifiedName(getFullyQualifiedName(model));
         pomDescriptor.setUrl(model.getUrl());
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(artifactCoordinates, context);

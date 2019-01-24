@@ -19,6 +19,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
@@ -218,7 +219,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         projectDescriptor.setModel(mavenPomXmlDescriptor);
         // Effective model
         MavenPomDescriptor effectiveModelDescriptor = scanner.getContext().getStore().create(MavenPomDescriptor.class);
-        Model model = project.getModel();
+        Model model = new EffectiveModel(project.getModel());
         scanner.getContext().push(MavenPomDescriptor.class, effectiveModelDescriptor);
         scanner.scan(model, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         scanner.getContext().pop(MavenPomDescriptor.class);

@@ -114,6 +114,8 @@ A POM describing a Maven project.
 | HAS_REPOSITORY      | <<:Maven:Repository>>   | 0..1        | References a repository declared for this project.
 |====
 
+NOTE: A <<:Maven:Pom>> node may be further qualified by a label `Effective` indication that it represents the effective (i.e. interpolated) model of a Maven project or artifact.
+
 [[:Maven:Contributor]]
 === :Maven:Contributor
 
