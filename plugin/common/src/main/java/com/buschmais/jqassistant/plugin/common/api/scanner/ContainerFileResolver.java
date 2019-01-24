@@ -13,9 +13,9 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
  */
 public class ContainerFileResolver extends AbstractFileResolver {
 
-    private Map<String, FileDescriptor> requiredFiles = new HashMap<>();
+    private Map<String, FileDescriptor> requiredFiles;
 
-    private Map<String, FileDescriptor> containedFiles = new HashMap<>();
+    private Map<String, FileDescriptor> containedFiles;
 
     private FileContainerDescriptor fileContainerDescriptor;
 
