@@ -124,6 +124,7 @@
         <maven.xml.version>1.0.2</maven.xml.version>
         <org.asciidoctor-plugin.version>1.5.6</org.asciidoctor-plugin.version>
         <lombok.version>1.18.4</lombok.version>
+        <slf4j.version>1.8.0-beta2</slf4j.version>
     </properties>
 
     <build>
@@ -554,18 +555,18 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.21</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.21</version>
+                <version>${slf4j.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>1.7.21</version>
+                <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
