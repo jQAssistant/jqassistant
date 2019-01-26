@@ -8,15 +8,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
@@ -68,22 +64,17 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     /**
      * Scans and tests pom.xml files.
      *
-     * @throws IOException
-     *             error during scan
      */
     @Test
-    public void artifactResolver() throws IOException {
+    public void artifactResolver() {
         final File directory = getClassesDirectory(MavenPomXmlFileScannerIT.class);
         final ArtifactResolver artifactResolverSpy = Mockito.spy(new MavenArtifactResolver());
-        execute(ARTIFACT_ID, new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                ScannerContext context = scanner.getContext();
-                context.push(ArtifactResolver.class, artifactResolverSpy);
-                scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
-                context.pop(ArtifactResolver.class);
-                return Collections.emptyList();
-            }
+        execute(ARTIFACT_ID, (artifact, scanner) -> {
+            ScannerContext context = scanner.getContext();
+            context.push(ArtifactResolver.class, artifactResolverSpy);
+            scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
+            context.pop(ArtifactResolver.class);
+            return Collections.emptyList();
         });
         verify(artifactResolverSpy, atLeastOnce()).resolve(Mockito.any(Coordinates.class), Mockito.any(ScannerContext.class));
         store.beginTransaction();
@@ -110,17 +101,11 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     @Test
     public void urlOfTheProjectHomeIsAvailableAsProperty() throws IOException {
         scanClassPathResource(DefaultScope.NONE, "/pom.xml");
-
         store.beginTransaction();
-
         List<MavenPomDescriptor> pomDescriptors = query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
-
         assertThat(pomDescriptors, hasSize(1));
-
         MavenPomDescriptor pomDescriptor = pomDescriptors.get(0);
-
         assertThat(pomDescriptor.getUrl(), equalTo("https://github.com/buschmais/jqassistant"));
-
         store.commitTransaction();
     }
 
@@ -137,9 +122,9 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
         scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
         store.beginTransaction();
-        MavenPomDescriptor test1 = store.find(MavenPomDescriptor.class, "com.buschmais.jqassistant:test1:pom:1.0.0-SNAPSHOT");
+        MavenPomDescriptor test1 = store.executeQuery("MATCH (pom:Maven:Pom:Xml:File) WHERE pom.artifactId='test1' RETURN pom").getSingleResult().get("pom", MavenPomXmlDescriptor.class);
         assertThat(test1, notNullValue());
-        MavenPomDescriptor test2 = store.find(MavenPomDescriptor.class, "com.buschmais.jqassistant:test2:pom:1.0.0-SNAPSHOT");
+        MavenPomDescriptor test2 = store.executeQuery("MATCH (pom:Maven:Pom:Xml:File) WHERE pom.artifactId='test2' RETURN pom").getSingleResult().get("pom", MavenPomXmlDescriptor.class);
         assertThat(test2, notNullValue());
         List<PomDependsOnDescriptor> dependencies = test2.getDependencies();
         assertThat(dependencies.size(), equalTo(1));
@@ -150,8 +135,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName()
-            throws PluginRepositoryException, IOException {
+    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName() throws IOException {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
 
         store.beginTransaction();

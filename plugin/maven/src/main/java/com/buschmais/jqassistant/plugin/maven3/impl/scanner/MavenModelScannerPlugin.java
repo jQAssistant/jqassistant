@@ -161,7 +161,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         pomDescriptor.setArtifactId(model.getArtifactId());
         pomDescriptor.setPackaging(model.getPackaging());
         pomDescriptor.setVersion(model.getVersion());
-        pomDescriptor.setFullQualifiedName(getFullyQualifiedName(model));
         pomDescriptor.setUrl(model.getUrl());
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(artifactCoordinates, context);

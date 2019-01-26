@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import java.util.List;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
@@ -19,10 +18,8 @@ import org.apache.maven.model.Model;
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
-@Label(value = "Pom", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface MavenPomDescriptor
-        extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor,
-                MavenDependentDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
+@Label(value = "Pom")
+public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor, NamedDescriptor {
 
     /**
      * Get the artifacts which are described by this POM.
@@ -92,12 +89,11 @@ public interface MavenPomDescriptor
     List<PomDependsOnDescriptor> getDependencies();
 
     /**
-     * Get default dependency information for projects that inherit from this
-     * one. The dependencies in this section are not immediately resolved.
-     * Instead, when a POM derived from this one declares a dependency described
-     * by a matching groupId and artifactId, the version and other values from
-     * this section are used for that dependency if they were not already
-     * specified.
+     * Get default dependency information for projects that inherit from this one.
+     * The dependencies in this section are not immediately resolved. Instead, when
+     * a POM derived from this one declares a dependency described by a matching
+     * groupId and artifactId, the version and other values from this section are
+     * used for that dependency if they were not already specified.
      * 
      * @return The managed dependencies.
      */
@@ -115,7 +111,8 @@ public interface MavenPomDescriptor
     /**
      * Sets the organization behind the project.
      *
-     * @param organization The organisation behind the project.
+     * @param organization
+     *            The organisation behind the project.
      */
     void setOrganization(MavenOrganizationDescriptor organization);
 
@@ -131,8 +128,7 @@ public interface MavenPomDescriptor
     /**
      * Returns the URL of the project home.
      *
-     * @return the URL of the project home or `null` if this information
-     *         is present.
+     * @return the URL of the project home or `null` if this information is present.
      */
     @Property("url")
     String getUrl();
@@ -140,7 +136,8 @@ public interface MavenPomDescriptor
     /**
      * Sets the URL of the project home.
      *
-     * @param url the URL of the project home.
+     * @param url
+     *            the URL of the project home.
      */
     void setUrl(String url);
 }
