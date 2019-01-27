@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
+import java.util.regex.Pattern;
+
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 
 import org.apache.commons.lang3.StringUtils;
@@ -7,7 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Contains artifact related functionality.
  */
-public class MavenArtifactHelper {
+public final class MavenArtifactHelper {
+
+    private static final String SNAPSHOT = "SNAPSHOT";
+    private static final Pattern SNAPSHOT_TIMESTAMP = Pattern.compile("^(.*-)?([0-9]{8}\\.[0-9]{6}-[0-9]+)$");
+
+    private MavenArtifactHelper() {
+    }
 
     /**
      * Apply the given coordinates to an artifact descriptor.
@@ -36,6 +44,7 @@ public class MavenArtifactHelper {
     public static void setId(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
         artifactDescriptor.setFullQualifiedName(MavenArtifactHelper.getId(coordinates));
     }
+
     /**
      * Creates the id of an coordinates descriptor by the given items.
      *
@@ -63,5 +72,17 @@ public class MavenArtifactHelper {
             id.append(version);
         }
         return id.toString();
+    }
+
+    /**
+     * Determines if the given {@link Coordinates} represent a snapshot.
+     * 
+     * @param coordinates
+     *            The coordinates.
+     * @return <code>true</code> if the {@link Coordinates} represent a snapshot.
+     */
+    public static boolean isSnapshot(Coordinates coordinates) {
+        String version = coordinates.getVersion();
+        return version.endsWith(SNAPSHOT) || SNAPSHOT_TIMESTAMP.matcher(version).matches();
     }
 }
