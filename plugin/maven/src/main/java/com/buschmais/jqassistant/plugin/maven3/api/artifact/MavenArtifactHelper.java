@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
@@ -84,5 +85,30 @@ public final class MavenArtifactHelper {
     public static boolean isSnapshot(Coordinates coordinates) {
         String version = coordinates.getVersion();
         return version.endsWith(SNAPSHOT) || SNAPSHOT_TIMESTAMP.matcher(version).matches();
+    }
+
+    /**
+     * Determine the base version of given {@link Coordinates}.
+     * 
+     * For releases the base version is the given version. If a snapshot version
+     * contains a repository timestamp suffix then it will be replaced by
+     * {@link #SNAPSHOT}.
+     * 
+     * @param coordinates
+     *            The coordinates.
+     * @return The base version.
+     */
+    public static String getBaseVersion(Coordinates coordinates) {
+        String version = coordinates.getVersion();
+        Matcher m = SNAPSHOT_TIMESTAMP.matcher(version);
+        if (m.matches()) {
+            if (m.group(1) != null) {
+                return m.group(1) + SNAPSHOT;
+            } else {
+                return SNAPSHOT;
+            }
+        }
+        return version;
+
     }
 }
