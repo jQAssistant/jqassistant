@@ -26,38 +26,44 @@ public abstract class AbstractFileResolver implements FileResolver {
     /**
      * Takes an optional descriptor and transforms it to file descriptor.
      *
-     * @param descriptor The descriptor, if <code>null</code> a new descriptor is
-     *                   created.
-     * @param type       The required type.
-     * @param path       The path (to set as file name).
-     * @param context    The scanner context.
-     * @param <D>        The required type.
+     * @param descriptor
+     *            The descriptor, if <code>null</code> a new descriptor is created.
+     * @param type
+     *            The required type.
+     * @param path
+     *            The path (to set as file name).
+     * @param context
+     *            The scanner context.
+     * @param <D>
+     *            The required type.
      * @return The file descriptor.
-     * @deprecated migrate to {@link #getOrCreateAs(String, Class, Function, ScannerContext)}.
+     * @deprecated migrate to
+     *             {@link #getOrCreateAs(String, Class, Function, ScannerContext)}.
      */
     @Deprecated
     protected <D extends FileDescriptor> D toFileDescriptor(Descriptor descriptor, Class<D> type, String path, ScannerContext context) {
-        D result;
         if (descriptor == null) {
-            result = context.getStore().create(type);
+            D result = context.getStore().create(type);
             result.setFileName(path);
-        } else if (type.isAssignableFrom(descriptor.getClass())) {
-            result = type.cast(descriptor);
-        } else {
-            result = context.getStore().addDescriptorType(descriptor, type);
-            result.setFileName(path);
+            return result;
         }
-        return result;
+        return migrateOrCast(descriptor, type, context);
     }
 
     /**
-     * Get an existing {@link FileDescriptor} or create a new one. If an existing {@link FileDescriptor} exists it will be migrated on demand.
+     * Get an existing {@link FileDescriptor} or create a new one. If an existing
+     * {@link FileDescriptor} exists it will be migrated on demand.
      *
-     * @param path     The path.
-     * @param type     The requested type.
-     * @param existing A {@link Function} to resolve an existing {@link FileDescriptor}.
-     * @param context  The {@link ScannerContext}.
-     * @param <D>      The requested type.
+     * @param path
+     *            The path.
+     * @param type
+     *            The requested type.
+     * @param existing
+     *            A {@link Function} to resolve an existing {@link FileDescriptor}.
+     * @param context
+     *            The {@link ScannerContext}.
+     * @param <D>
+     *            The requested type.
      * @return The {@link FileDescriptor}.
      */
     protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> existing, ScannerContext context) {
@@ -70,10 +76,25 @@ public abstract class AbstractFileResolver implements FileResolver {
             fileDescriptor.setFileName(path);
             return fileDescriptor;
         });
-        if (type.isAssignableFrom(descriptor.getClass())) {
-            return type.cast(descriptor);
-        } else {
-            return context.getStore().addDescriptorType(descriptor, type);
-        }
+        return migrateOrCast(descriptor, type, context);
     }
+
+    /**
+     * Ensures if the given {@link FileDescriptor} implements the requested type by
+     * migrating or just casting it.
+     * 
+     * @param descriptor
+     *            The {@link FileDescriptor}.
+     * @param type
+     *            The requested type.
+     * @param context
+     *            The {@link ScannerContext}.
+     * @param <D>
+     *            The requested type.
+     * @return The {@link FileDescriptor} that implements the requested type.
+     */
+    private <D extends FileDescriptor> D migrateOrCast(Descriptor descriptor, Class<D> type, ScannerContext context) {
+        return type.isAssignableFrom(descriptor.getClass()) ? type.cast(descriptor) : context.getStore().addDescriptorType(descriptor, type);
+    }
+
 }
