@@ -27,14 +27,13 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     @Override
     public <D extends FileDescriptor> D require(String requiredPath, String containedPath, Class<D> type, ScannerContext context) {
-        FileDescriptor fileDescriptor = containedFiles.get(containedPath);
+        final FileDescriptor fileDescriptor = containedFiles.get(containedPath);
         D result;
         if (fileDescriptor != null) {
-            result = toFileDescriptor(fileDescriptor, type, requiredPath, context);
+            result = getOrCreateAs(containedPath, type, path -> fileDescriptor, context);
             containedFiles.put(containedPath, result);
         } else {
-            fileDescriptor = requiredFiles.get(containedPath);
-            result = toFileDescriptor(fileDescriptor, type, requiredPath, context);
+            result = getOrCreateAs(containedPath, type, path -> requiredFiles.get(containedPath), context);
             requiredFiles.put(containedPath, result);
         }
         return result;
@@ -43,7 +42,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
     @Override
     public <D extends FileDescriptor> D match(String containedPath, Class<D> type, ScannerContext context) {
         FileDescriptor fileDescriptor = requiredFiles.remove(containedPath);
-        return toFileDescriptor(fileDescriptor, type, containedPath, context);
+        return getOrCreateAs(containedPath, type, path -> fileDescriptor, context);
     }
 
     /**
@@ -57,11 +56,9 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     /**
      * Sync the given target collection with the new state from the cache map.
-     * 
-     * @param target
-     *            The target collection.
-     * @param after
-     *            The new state to sync to.
+     *
+     * @param target The target collection.
+     * @param after  The new state to sync to.
      */
     private void sync(Collection<FileDescriptor> target, Map<String, FileDescriptor> after) {
         Map<String, FileDescriptor> before = getCache(target);
@@ -83,9 +80,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     /**
      * Creates cache map from the given collection of file descriptors.
-     * 
-     * @param fileDescriptors
-     *            The collection of file descriptors.
+     *
+     * @param fileDescriptors The collection of file descriptors.
      * @return The cache map.
      */
     private Map<String, FileDescriptor> getCache(Iterable<FileDescriptor> fileDescriptors) {
@@ -117,11 +113,9 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     /**
      * Adds a file to the container.
-     * 
-     * @param path
-     *            The path of the file.
-     * @param fileDescriptor
-     *            The file descriptor.
+     *
+     * @param path           The path of the file.
+     * @param fileDescriptor The file descriptor.
      */
     public void put(String path, FileDescriptor fileDescriptor) {
         containedFiles.put(path, fileDescriptor);
@@ -129,7 +123,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     /**
      * Returns the size of the container.
-     * 
+     *
      * @return The size of the container.
      */
     public int size() {
