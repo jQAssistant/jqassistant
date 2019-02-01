@@ -31,6 +31,8 @@ public class JUnitReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_JUNIT_REPORT_DIRECTORY = "junit";
 
+    private static final String TESTSUITE_PREFIX = "jqassistant.Group";
+
     private JAXBContext jaxbContext;
 
     private File reportDirectory;
@@ -199,9 +201,9 @@ public class JUnitReportPlugin implements ReportPlugin {
     }
 
     private String getTestSuiteId(Group group) {
-        StringBuilder testSuiteIdBuilder = new StringBuilder("jQAssistant");
+        StringBuilder testSuiteIdBuilder = new StringBuilder(TESTSUITE_PREFIX);
         if (group != null) {
-            testSuiteIdBuilder.append('-').append(ReportHelper.escapeRuleId(group));
+            testSuiteIdBuilder.append('_').append(ReportHelper.escapeRuleId(group));
         }
         return testSuiteIdBuilder.toString();
     }

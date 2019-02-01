@@ -75,23 +75,23 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
         File junitReportDirectory = reportContext.getReportDirectory("junit");
         assertThat(junitReportDirectory.exists(), equalTo(true));
 
-        Testsuite rootTestSuite = getTestsuite(junitReportDirectory, "TEST-jQAssistant.xml");
+        Testsuite rootTestSuite = getTestsuite(junitReportDirectory, "TEST-jqassistant.Group.xml");
         verifyTestSuite(rootTestSuite, 2, 0, 0);
         Map<String, Testcase> rootTestCases = getTestCases(rootTestSuite);
-        verifyTestCaseSuccess(rootTestCases.get("Concept_test_Concept"), "jQAssistant");
-        verifyTestCaseSuccess(rootTestCases.get("Constraint_test_Constraint"), "jQAssistant");
+        verifyTestCaseSuccess(rootTestCases.get("Concept_test_Concept"), "jqassistant.Group");
+        verifyTestCaseSuccess(rootTestCases.get("Constraint_test_Constraint"), "jqassistant.Group");
 
-        Testsuite groupTestSuite = getTestsuite(junitReportDirectory, "TEST-jQAssistant-test_Group.xml");
+        Testsuite groupTestSuite = getTestsuite(junitReportDirectory, "TEST-jqassistant.Group_test_Group.xml");
         verifyTestSuite(groupTestSuite, 6, 2, 2);
         Map<String, Testcase> groupTestCases = getTestCases(groupTestSuite);
 
-        verifyTestCaseSuccess(groupTestCases.get("Concept_test_MajorConcept"), "jQAssistant-test_Group");
-        verifyTestCaseFailure(groupTestCases.get("Concept_test_BlockerConcept"), "jQAssistant-test_Group", "testBlockerConcept");
-        verifyTestCaseError(groupTestCases.get("Concept_test_CriticalConcept"), "jQAssistant-test_Group", "testCriticalConcept");
+        verifyTestCaseSuccess(groupTestCases.get("Concept_test_MajorConcept"), "jqassistant.Group_test_Group");
+        verifyTestCaseFailure(groupTestCases.get("Concept_test_BlockerConcept"), "jqassistant.Group_test_Group", "testBlockerConcept");
+        verifyTestCaseError(groupTestCases.get("Concept_test_CriticalConcept"), "jqassistant.Group_test_Group", "testCriticalConcept");
 
-        verifyTestCaseSuccess(groupTestCases.get("Constraint_test_MajorConstraint"), "jQAssistant-test_Group");
-        verifyTestCaseFailure(groupTestCases.get("Constraint_test_BlockerConstraint"), "jQAssistant-test_Group", "testBlockerConstraint");
-        verifyTestCaseError(groupTestCases.get("Constraint_test_CriticalConstraint"), "jQAssistant-test_Group", "testCriticalConstraint");
+        verifyTestCaseSuccess(groupTestCases.get("Constraint_test_MajorConstraint"), "jqassistant.Group_test_Group");
+        verifyTestCaseFailure(groupTestCases.get("Constraint_test_BlockerConstraint"), "jqassistant.Group_test_Group", "testBlockerConstraint");
+        verifyTestCaseError(groupTestCases.get("Constraint_test_CriticalConstraint"), "jqassistant.Group_test_Group", "testCriticalConstraint");
     }
 
     private Map<String, Testcase> getTestCases(Testsuite rootTestSuite) {
