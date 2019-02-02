@@ -38,21 +38,23 @@ public abstract class AbstractPluginRepository {
     }
 
     /**
-     * Create and return an instance of the given type name.
+     * Get the class for the given type name.
      *
      * @param typeName
      *            The type name.
      * @param <T>
-     *            The type.
-     * @return The instance.
-     * @throws com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException
-     *             If the instance cannot be created.
+     *            The type name.
+     * @return The class.
+     * @throws PluginRepositoryException
+     *             If the type could not be loaded.
      */
     protected <T> Class<T> getType(String typeName) throws PluginRepositoryException {
         try {
             return (Class<T>) classLoader.loadClass(typeName.trim());
-        } catch (ClassNotFoundException e) {
-            throw new PluginRepositoryException("Cannot find class " + typeName, e);
+        } catch (ClassNotFoundException | LinkageError e) {
+            // Catching class loader related errors for logging a message which plugin class
+            // actually caused the problem.
+            throw new PluginRepositoryException("Cannot find or load class " + typeName, e);
         }
     }
 
@@ -63,8 +65,9 @@ public abstract class AbstractPluginRepository {
      *            The type name.
      * @param <T>
      *            The type.
-     * @return The scanner plugin instance.
-     * @throws com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException
+     * @return The plugin instance.
+     * @throws PluginRepositoryException
+     *             If the requested instance could not be created.
      */
     protected <T> T createInstance(String typeName) throws PluginRepositoryException {
         Class<T> type = getType(typeName.trim());
