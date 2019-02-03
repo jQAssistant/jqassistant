@@ -1,0 +1,4 @@
+ifndef::jqa-in-manual[== Version 1.7.0]
+ifdef::jqa-in-manual[== Java Plugin 1.7.0]
+
+To be written.
