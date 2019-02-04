@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Label("ArtifactId")
+@Label(value = "ArtifactId", usingIndexedPropertyOf = com.buschmais.jqassistant.core.store.api.model.NamedDescriptor.class)
 public interface MavenArtifactIdDescriptor extends MavenDescriptor, NamedDescriptor {
 
     @Relation("CONTAINS")
