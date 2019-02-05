@@ -1,17 +1,14 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.AbstractDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.BaseDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
@@ -69,8 +66,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addProfiles(pomDescriptor, model, scannerContext);
         addProperties(pomDescriptor, model.getProperties(), store);
         addModules(pomDescriptor, model.getModules(), store);
-        addManagedDependencies(pomDescriptor, model.getDependencyManagement(), scannerContext, PomManagesDependencyDescriptor.class);
-        addDependencies(pomDescriptor, model.getDependencies(), PomDependsOnDescriptor.class, scannerContext);
+        addDependencies(pomDescriptor, PomDeclaresDependencyDescriptor.class, PomManagesDependencyDescriptor.class, model, scannerContext);
         addManagedPlugins(pomDescriptor, model.getBuild(), scannerContext);
         addPlugins(pomDescriptor, model.getBuild(), scannerContext);
         addLicenses(pomDescriptor, model, store);
@@ -119,8 +115,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         }
     }
 
-    private void addCommonParticipantAttributes(MavenProjectParticipantDescriptor participant,
-                                                Contributor contributor, Store store) {
+    private void addCommonParticipantAttributes(MavenProjectParticipantDescriptor participant, Contributor contributor, Store store) {
         participant.setName(contributor.getName());
 
         participant.setEmail(contributor.getEmail());
@@ -137,9 +132,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             }
         }
 
-
     }
-
 
     /**
      * Create the descriptor and set base information.
@@ -169,8 +162,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     /**
-     * Create the fully qualified name of the model (using packaging type
-     * "pom").
+     * Create the fully qualified name of the model (using packaging type "pom").
      *
      * @param model
      *            The model.
@@ -255,23 +247,62 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     /**
+     * Adds declared and managed dependencies to the given
+     * {@link MavenDependentDescriptor}.
+     * 
+     * @param dependentDescriptor
+     *            The {@link MavenDependentDescriptor}.
+     * @param model
+     *            The {@link ModelBase} providing the dependencies.
+     * @param scannerContext
+     *            The scanner context.
+     */
+    private void addDependencies(MavenDependentDescriptor dependentDescriptor, Class<? extends AbstractDependencyDescriptor> declaresDependencyType,
+            Class<? extends AbstractDependencyDescriptor> managesDependencyType, ModelBase model, ScannerContext scannerContext) {
+        dependentDescriptor.getDeclaresDependencies()
+                .addAll(getDependencies(dependentDescriptor, model.getDependencies(), declaresDependencyType, scannerContext));
+        dependentDescriptor.getManagesDependencies()
+            .addAll(addManagedDependencies(dependentDescriptor, model.getDependencyManagement(), scannerContext, managesDependencyType));
+    }
+
+    /**
      * Adds information about artifact dependencies.
      * 
      * @param dependent
      *            The dependent to add artifacts as dependencies
      * @param dependencies
      *            The dependencies information.
+     * @param dependsOnType
+     *            The type for creating the
+     *            {@link com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor}.
      * @param scannerContext
      *            The scanner context
+     * @return The list of {@link MavenDependencyDescriptor}s.
      */
-    private <P extends MavenDependentDescriptor, D extends BaseDependencyDescriptor> void addDependencies(P dependent, List<Dependency> dependencies,
-            Class<D> dependencyType, ScannerContext scannerContext) {
+    private <P extends MavenDependentDescriptor, D extends AbstractDependencyDescriptor> List<MavenDependencyDescriptor> getDependencies(P dependent,
+            List<Dependency> dependencies, Class<D> dependsOnType, ScannerContext scannerContext) {
+        Store store = scannerContext.getStore();
+        List<MavenDependencyDescriptor> dependencyDescriptors = new ArrayList<>(dependencies.size());
         for (Dependency dependency : dependencies) {
             MavenArtifactDescriptor dependencyArtifactDescriptor = getMavenArtifactDescriptor(dependency, scannerContext);
-            D dependencyDescriptor = scannerContext.getStore().create(dependent, dependencyType, dependencyArtifactDescriptor);
+            // Deprecated graph structure
+            D dependsOnDescriptor = store.create(dependent, dependsOnType, dependencyArtifactDescriptor);
+            dependsOnDescriptor.setOptional(dependency.isOptional());
+            dependsOnDescriptor.setScope(dependency.getScope());
+            // New graph structure supporting exclusions
+            MavenDependencyDescriptor dependencyDescriptor = store.create(MavenDependencyDescriptor.class);
+            dependencyDescriptor.setToArtifact(dependencyArtifactDescriptor);
             dependencyDescriptor.setOptional(dependency.isOptional());
             dependencyDescriptor.setScope(dependency.getScope());
+            for (Exclusion exclusion : dependency.getExclusions()) {
+                MavenExcludesDescriptor mavenExcludesDescriptor = store.create(MavenExcludesDescriptor.class);
+                mavenExcludesDescriptor.setGroupId(exclusion.getGroupId());
+                mavenExcludesDescriptor.setArtifactId(exclusion.getArtifactId());
+                dependencyDescriptor.getExclusions().add(mavenExcludesDescriptor);
+            }
+            dependencyDescriptors.add(dependencyDescriptor);
         }
+        return dependencyDescriptors;
     }
 
     /**
@@ -284,8 +315,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param store
      *            The database.
      */
-    private void addExecutionGoals(MavenPluginExecutionDescriptor executionDescriptor,
-                                   PluginExecution pluginExecution, Store store) {
+    private void addExecutionGoals(MavenPluginExecutionDescriptor executionDescriptor, PluginExecution pluginExecution, Store store) {
         List<String> goals = pluginExecution.getGoals();
         for (String goal : goals) {
             MavenExecutionGoalDescriptor goalDescriptor = store.create(MavenExecutionGoalDescriptor.class);
@@ -348,17 +378,14 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param dependencyManagement
      *            The dependency management information.
      * @param scannerContext
-     *            The scanner context.
      */
-    private void addManagedDependencies(MavenDependentDescriptor pomDescriptor,
-                                        DependencyManagement dependencyManagement,
-                                        ScannerContext scannerContext,
-            Class<? extends BaseDependencyDescriptor> relationClass) {
-        if (null == dependencyManagement) {
-            return;
+    private List<MavenDependencyDescriptor> addManagedDependencies(MavenDependentDescriptor pomDescriptor, DependencyManagement dependencyManagement,
+            ScannerContext scannerContext, Class<? extends AbstractDependencyDescriptor> relationClass) {
+        if (dependencyManagement == null) {
+            return Collections.emptyList();
         }
         List<Dependency> dependencies = dependencyManagement.getDependencies();
-        addDependencies(pomDescriptor, dependencies, relationClass, scannerContext);
+        return getDependencies(pomDescriptor, dependencies, relationClass, scannerContext);
     }
 
     /**
@@ -400,7 +427,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             MavenArtifactDescriptor artifactDescriptor = getArtifactResolver(context).resolve(new PluginCoordinates(plugin), context);
             mavenPluginDescriptor.setArtifact(artifactDescriptor);
             mavenPluginDescriptor.setInherited(plugin.isInherited());
-            addDependencies(mavenPluginDescriptor, plugin.getDependencies(), PluginDependsOnDescriptor.class, context);
+            mavenPluginDescriptor.getDeclaresDependencies()
+                    .addAll(getDependencies(mavenPluginDescriptor, plugin.getDependencies(), PluginDependsOnDescriptor.class, context));
             addPluginExecutions(mavenPluginDescriptor, plugin, store);
             addConfiguration(mavenPluginDescriptor, (Xpp3Dom) plugin.getConfiguration(), store);
             pluginDescriptors.add(mavenPluginDescriptor);
@@ -414,8 +442,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param context
      *            The scanner context.
      * 
-     * @return The artifact resolver from the context or the default one if none
-     *         is available.
+     * @return The artifact resolver from the context or the default one if none is
+     *         available.
      */
     private ArtifactResolver getArtifactResolver(ScannerContext context) {
         return context.peekOrDefault(ArtifactResolver.class, defaultArtifactResolver);
@@ -512,14 +540,12 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param scannerContext
      *            The scanner context.
      */
-    private void addProfileDependencies(MavenProfileDescriptor profileDescriptor, List<Dependency> dependencies,
-                                        ScannerContext scannerContext) {
+    private void _addProfileDependencies(MavenProfileDescriptor profileDescriptor, List<Dependency> dependencies, ScannerContext scannerContext) {
         for (Dependency dependency : dependencies) {
             MavenArtifactDescriptor dependencyArtifactDescriptor = getMavenArtifactDescriptor(dependency, scannerContext);
             Store store = scannerContext.getStore();
-            ProfileDependsOnDescriptor profileDependsOnDescriptor = store.create(profileDescriptor,
-                                                                                 ProfileDependsOnDescriptor.class,
-                                                                                 dependencyArtifactDescriptor);
+            ProfileDeclaresDependencyDescriptor profileDependsOnDescriptor = store.create(profileDescriptor, ProfileDeclaresDependencyDescriptor.class,
+                    dependencyArtifactDescriptor);
             profileDependsOnDescriptor.setOptional(dependency.isOptional());
             profileDependsOnDescriptor.setScope(dependency.getScope());
         }
@@ -546,8 +572,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             addModules(mavenProfileDescriptor, profile.getModules(), store);
             addPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
             addManagedPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
-            addManagedDependencies(mavenProfileDescriptor, profile.getDependencyManagement(), scannerContext, ProfileManagesDependencyDescriptor.class);
-            addProfileDependencies(mavenProfileDescriptor, profile.getDependencies(), scannerContext);
+            addDependencies(mavenProfileDescriptor, ProfileDeclaresDependencyDescriptor.class, ProfileManagesDependencyDescriptor.class, profile, scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
             addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
         }
@@ -575,7 +600,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             holder.getRepositories().add(repoDescriptor);
         }
     }
-
 
     /**
      * Adds information about defined properties.
@@ -693,6 +717,5 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             return result;
         }
     }
-
 
 }

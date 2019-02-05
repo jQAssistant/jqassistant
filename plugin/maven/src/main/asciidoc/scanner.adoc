@@ -103,8 +103,8 @@ A POM describing a Maven project.
 | HAS_PROPERTY        | :Value:Property         | 0..n        | References a property
 | HAS_PROFILE         | <<:Maven:Profile>>      | 0..n        | References defined profiles
 | USES_LICENSE        | <<:Maven:License>>      | 0..n        | References used licenses
-| MANAGES_DEPENDENCY  | <<:Maven:Artifact>>     | 0..n        | References an artifact which is a managed dependency
-| DECLARES_DEPENDENCY | <<:Maven:Artifact>>     | 0..n        | References an artifact which is a declared dependency
+| MANAGES_DEPENDENCY  | <<:Maven:Dependency>>   | 0..n        | References a managed dependency
+| DECLARES_DEPENDENCY | <<:Maven:Dependency>>   | 0..n        | References a declared dependency
 | HAS_MODULE          | <<:Maven:Module>>       | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>       | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
@@ -115,6 +115,43 @@ A POM describing a Maven project.
 |====
 
 NOTE: A <<:Maven:Pom>> node may be further qualified by a label `Effective` indication that it represents the effective (i.e. interpolated) model of a Maven project or artifact.
+
+
+[[:Maven:Dependency]]
+===  Nodes labled with `:Maven:Dependency`
+
+A declared or managed dependency of <<:Maven:Pom>>.
+
+.Properties of :Maven:Dependency
+[options="header"]
+|====
+| Name            | Description
+| scope           | The scope of the dependency, e.g. `provided`.
+| optional        | Indicates the dependency as optional if set to `true`.
+|====
+
+.Relations of :Maven:Dependency
+[options="header"]
+|====
+| Name        | Target label(s)      | Cardinality | Description
+| TO_ARTIFACT | <<:Maven:Artifact>>  | 1           | References the artifact used for the dependency.
+| EXCLUDES    | <<:Maven:Exclusion>> | 0..n        | The exclusions to apply for the dependency.
+|====
+
+
+[[:Maven:Exclusion]]
+===  Nodes labled with `:Maven:Exclusion`
+
+Describes an exclusion pattern for <<:Maven:Dependency>>.
+
+.Properties of :Maven:Dependency
+[options="header"]
+|====
+| Name       | Description
+| groupId    | The groupdId pattern
+| artifactId | The artifactId pattern
+|====
+
 
 [[:Maven:Contributor]]
 === :Maven:Contributor
@@ -232,7 +269,7 @@ A maven profile
 | Name                | Target label(s)              | Cardinality | Description
 | HAS_PROPERTY        | :Value:Property              | 0..n        | References a property
 | MANAGES_DEPENDENCY  | <<:Maven:Artifact>>          | 0..n        | References an artifact which is a managed dependency
-| DECLARES_DEPENDENCY | <<:Maven:Artifact>>          | 0..n        | References an artifact which is a declared dependency
+| DECLARES_DEPENDENCY | <<:Maven:Dependency>>        | 0..n        | References a declared plugin dependency
 | HAS_MODULE          | <<:Maven:Module>>            | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>            | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>            | 0..n        | References a plugin that is used during maven lifecycle

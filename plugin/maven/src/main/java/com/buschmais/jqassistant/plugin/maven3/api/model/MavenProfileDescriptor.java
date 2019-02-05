@@ -34,7 +34,7 @@ public interface MavenProfileDescriptor extends MavenDescriptor, MavenDependentD
     List<ProfileManagesDependencyDescriptor> getManagedDependencies();
 
     @Outgoing
-    List<ProfileDependsOnDescriptor> getDependencies();
+    List<ProfileDeclaresDependencyDescriptor> getDependencies();
 
     /**
      * Returns all declared repositories for this profile.
@@ -53,5 +53,4 @@ public interface MavenProfileDescriptor extends MavenDescriptor, MavenDependentD
     MavenProfileActivationDescriptor getActivation();
 
     void setActivation(MavenProfileActivationDescriptor activation);
-
 }

@@ -4,7 +4,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Relation("DECLARES_DEPENDENCY")
-public interface ProfileDependsOnDescriptor extends MavenDependencyDescriptor {
+public interface ProfileDeclaresDependencyDescriptor extends MavenDependsOnDescriptor {
 
     @Outgoing
     MavenProfileDescriptor getDependent();

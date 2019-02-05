@@ -5,6 +5,8 @@
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</class>
@@ -27,10 +29,10 @@
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</class>
         <!-- Relations -->
-        <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomDependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomDeclaresDependencyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.PluginDependsOnDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDeclaresDependencyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.ProfileManagesDependencyDescriptor</class>
     </model>
     <scope>

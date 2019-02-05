@@ -4,5 +4,13 @@
 ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Maven 3 Plugin 1.7.0]
 
-* Upgraded Maven core and plugin dependencies to Maven 3.5.0
 * Added a label `Effective` for `:Maven:Pom` nodes represent the effective model of a project or artifact
+* Improved graph model to support for exclusions on declared or managed dependencies:
+
+  (:Pom)-[:DECLARES]->(dependency:Maven:Dependency)-[:TO_ARTIFACT]->(:Maven:Artifact),
+  (dependency)-[:EXCLUDES]->(:Maven:Exclusion)
+
+NOTE: The previously used graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)` is still supported but deprecated.
+ It will be removed in upcoming releases:
+
+* Upgraded Maven core and plugin dependencies to Maven 3.5.0

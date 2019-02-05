@@ -14,7 +14,7 @@ import org.apache.maven.model.DependencyManagement;
  * @author ronald.kunzmann@buschmais.com
  */
 @Relation("MANAGES_DEPENDENCY")
-public interface ProfileManagesDependencyDescriptor extends MavenDependencyDescriptor {
+public interface ProfileManagesDependencyDescriptor extends MavenDependsOnDescriptor {
 
     /**
      * Get the dependent POM.

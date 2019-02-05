@@ -86,7 +86,7 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
     List<MavenProfileDescriptor> getProfiles();
 
     @Outgoing
-    List<PomDependsOnDescriptor> getDependencies();
+    List<PomDeclaresDependencyDescriptor> getDependencies();
 
     /**
      * Get default dependency information for projects that inherit from this one.

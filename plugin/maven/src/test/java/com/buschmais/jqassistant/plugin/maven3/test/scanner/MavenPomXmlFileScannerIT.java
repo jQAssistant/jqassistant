@@ -1,12 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -17,28 +12,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.PomDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 import org.junit.Assert;
@@ -47,7 +21,6 @@ import org.mockito.Mockito;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -85,12 +58,10 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Scans and tests pom.xml files.
-     * 
-     * @throws IOException
-     *             error during scan
+     *
      */
     @Test
-    public void pomModel() throws IOException {
+    public void pomModel() {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
         store.beginTransaction();
         validateParentPom();
@@ -99,7 +70,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void urlOfTheProjectHomeIsAvailableAsProperty() throws IOException {
+    public void urlOfTheProjectHomeIsAvailableAsProperty() {
         scanClassPathResource(DefaultScope.NONE, "/pom.xml");
         store.beginTransaction();
         List<MavenPomDescriptor> pomDescriptors = query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
@@ -113,29 +84,49 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     /**
      * Verifies that dependencies between two artifacts defined by pom.xml files
      * are resolved to one node.
-     * 
-     * @throws IOException
-     *             If the test fails.
+     *
      */
     @Test
-    public void pomDependencies() throws IOException {
+    public void pomDependencies() {
         scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
         scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
         store.beginTransaction();
-        MavenPomDescriptor test1 = store.executeQuery("MATCH (pom:Maven:Pom:Xml:File) WHERE pom.artifactId='test1' RETURN pom").getSingleResult().get("pom", MavenPomXmlDescriptor.class);
-        assertThat(test1, notNullValue());
-        MavenPomDescriptor test2 = store.executeQuery("MATCH (pom:Maven:Pom:Xml:File) WHERE pom.artifactId='test2' RETURN pom").getSingleResult().get("pom", MavenPomXmlDescriptor.class);
-        assertThat(test2, notNullValue());
-        List<PomDependsOnDescriptor> dependencies = test2.getDependencies();
-        assertThat(dependencies.size(), equalTo(1));
-        PomDependsOnDescriptor dependsOnDescriptor = dependencies.get(0);
-        ArtifactDescriptor test1Artifact = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
-        assertThat(dependsOnDescriptor.getDependency(), is(test1Artifact));
+        PomDeclaresDependencyDescriptor dependsOnDescriptor = store
+                .executeQuery("MATCH (:Maven:Pom:Xml:File{artifactId:'test2'})-[d:DECLARES_DEPENDENCY]->(:Maven:Artifact{name:'test1'}) RETURN d")
+                .getSingleResult().get("d", PomDeclaresDependencyDescriptor.class);
+        assertThat(dependsOnDescriptor, notNullValue());
+        assertThat(dependsOnDescriptor.isOptional(), equalTo(true));
+        assertThat(dependsOnDescriptor.getScope(), equalTo("runtime"));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies that a dependency declared by a pom is resolved to a
+     * {@link MavenDependencyDescriptor} providing {@link MavenExcludesDescriptor}.
+     */
+    @Test
+    public void pomDependenciesWithExclusion() {
+        scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
+        scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
+        store.beginTransaction();
+        MavenDependencyDescriptor dependencyDescriptor = store
+            .executeQuery("MATCH (:Maven:Pom:Xml:File{artifactId:'test2'})-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) RETURN d")
+            .getSingleResult().get("d", MavenDependencyDescriptor.class);
+        assertThat(dependencyDescriptor, notNullValue());
+        MavenArtifactDescriptor toArtifact = dependencyDescriptor.getToArtifact();
+        assertThat(toArtifact.getFullQualifiedName(), equalTo("com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT"));
+        assertThat(dependencyDescriptor.isOptional(), equalTo(true));
+        assertThat(dependencyDescriptor.getScope(), equalTo("runtime"));
+        List<MavenExcludesDescriptor> exclusions = dependencyDescriptor.getExclusions();
+        assertThat(exclusions.size(), equalTo(1));
+        MavenExcludesDescriptor excludesDescriptor = exclusions.get(0);
+        assertThat(excludesDescriptor.getGroupId(), equalTo("org.apache.commons"));
+        assertThat(excludesDescriptor.getArtifactId(), equalTo("commons-lang3"));
         store.commitTransaction();
     }
 
     @Test
-    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName() throws IOException {
+    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName() {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
 
         store.beginTransaction();
@@ -149,11 +140,9 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     /**
      * Scans an invalid pom.xml file.
      *
-     * @throws IOException
-     *             error during scan
      */
     @Test
-    public void invalidPomFile() throws Exception {
+    public void invalidPomFile() {
         scanClassPathResource(JavaScope.CLASSPATH,"/invalid/pom.xml");
         store.beginTransaction();
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
@@ -163,7 +152,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void organizationInPomFile() throws Exception {
+    public void organizationInPomFile() {
         scanClassPathResource(JavaScope.CLASSPATH,"/with-organization/pom.xml");
         store.beginTransaction();
         List<MavenOrganizationDescriptor> organisationDescriptors = query("MATCH (o:Organization:Maven) RETURN o").getColumn("o");
@@ -179,7 +168,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void relationBetweenPOMAndOrganisationWorks() throws Exception {
+    public void relationBetweenPOMAndOrganisationWorks() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-organization/pom.xml");
         store.beginTransaction();
         List<MavenOrganizationDescriptor> organisationDescriptors =
@@ -196,7 +185,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void minimalRepositoryInPOM() throws Exception {
+    public void minimalRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/1/pom.xml");
 
         store.beginTransaction();
@@ -226,7 +215,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void disabledReleasesForRepositoryInPOM() throws Exception {
+    public void disabledReleasesForRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/2/pom.xml");
 
         store.beginTransaction();
@@ -256,7 +245,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void disabledSnapshotsForRepositoryInPOM() throws Exception {
+    public void disabledSnapshotsForRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/3/pom.xml");
 
         store.beginTransaction();
@@ -286,7 +275,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void minimalRepositoryInProfile() throws Exception {
+    public void minimalRepositoryInProfile() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/4/pom.xml");
 
         store.beginTransaction();
@@ -322,7 +311,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * added to the model.
      */
     @Test
-    public void allDevelopersAreFound() throws Exception {
+    public void allDevelopersAreFound() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
 
         store.beginTransaction();
@@ -368,7 +357,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * added to the model.
      */
     @Test
-    public void allContributorsAreFound() throws Exception {
+    public void allContributorsAreFound() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
 
         store.beginTransaction();
@@ -426,12 +415,16 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(parentDescriptor.getVersion(), equalTo("1.0.0-RC-SNAPSHOT"));
 
         // validate dependencies
-        List<PomDependsOnDescriptor> dependencyDescriptors = pomDescriptor.getDependencies();
+        Map<String, Object> params = new HashMap<>();
+        params.put("pom", pomDescriptor);
+        List<MavenDependencyDescriptor> dependencyDescriptors = query(
+                "MATCH (pom:Pom)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)={pom} RETURN d", params).getColumn("d");
+
         assertThat(dependencyDescriptors, hasSize(4));
 
         List<Dependency> dependencyList = createChildDependencies();
         for (Dependency dependency : dependencyList) {
-            checkDependency(dependencyDescriptors, dependency);
+            verifyDependency(dependencyDescriptors, dependency);
         }
 
         assertThat(pomDescriptor.getProperties(), empty());
@@ -450,39 +443,15 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * @param dependency
      *            expected dependency informations.
      */
-    private void checkDependency(List<? extends MavenDependencyDescriptor> dependencyDescriptors, Dependency dependency) {
-        for (MavenDependencyDescriptor dependsOnDescriptor : dependencyDescriptors) {
-            ArtifactDescriptor dependencyDescriptor = dependsOnDescriptor.getDependency();
+    private void verifyDependency(List<MavenDependencyDescriptor> dependencyDescriptors, Dependency dependency) {
+        for (MavenDependencyDescriptor mavenDependencyDescriptor : dependencyDescriptors) {
+            MavenArtifactDescriptor dependencyDescriptor = mavenDependencyDescriptor.getToArtifact();
             if (Objects.equals(dependencyDescriptor.getGroup(), dependency.group) && //
                     Objects.equals(dependencyDescriptor.getName(), dependency.name) && //
                     Objects.equals(dependencyDescriptor.getClassifier(), dependency.classifier) && //
                     Objects.equals(dependencyDescriptor.getType(), dependency.type) && //
                     Objects.equals(dependencyDescriptor.getVersion(), dependency.version) && //
-                    Objects.equals(dependsOnDescriptor.getScope(), dependency.scope)) {
-                return;
-            }
-        }
-        Assert.fail("Dependency not found: " + dependency.toString());
-    }
-
-    /**
-     * Validates dependency existence. Fails if no dependency containing all
-     * given fields exists.
-     * 
-     * @param dependencyDescriptors
-     *            Descriptors containing all dependencies.
-     * @param dependency
-     *            expected dependency informations.
-     */
-    private void checkManagedDependency(List<PomManagesDependencyDescriptor> dependencyDescriptors, Dependency dependency) {
-        for (PomManagesDependencyDescriptor dependencyRelationDescriptor : dependencyDescriptors) {
-            MavenArtifactDescriptor dependencyDescriptor = dependencyRelationDescriptor.getDependency();
-            if (Objects.equals(dependencyDescriptor.getGroup(), dependency.group) && //
-                    Objects.equals(dependencyDescriptor.getName(), dependency.name) && //
-                    Objects.equals(dependencyDescriptor.getClassifier(), dependency.classifier) && //
-                    Objects.equals(dependencyDescriptor.getType(), dependency.type) && //
-                    Objects.equals(dependencyDescriptor.getVersion(), dependency.version) && //
-                    Objects.equals(dependencyRelationDescriptor.getScope(), dependency.scope)) {
+                    Objects.equals(mavenDependencyDescriptor.getScope(), dependency.scope)) {
                 return;
             }
         }
@@ -511,12 +480,15 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(licenseDescriptor.getUrl(), equalTo("http://www.gnu.org/licenses/gpl-3.0.html"));
 
         // dependency management
-        List<PomManagesDependencyDescriptor> managedDependencyDescriptors = pomDescriptor.getManagedDependencies();
-        List<Dependency> managedDependencies = createManagedParentDependencies();
-        assertThat(managedDependencies, hasSize(managedDependencyDescriptors.size()));
+        Map<String,Object> params = new HashMap<>();
+        params.put("pom", pomDescriptor);
+        List<MavenDependencyDescriptor> managedDependencyDescriptors = query(
+                "MATCH (pom)-[:MANAGES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)={pom} RETURN d", params).getColumn("d");
+        List<Dependency> managedDependencies = getExpectedManagedParentDependencies();
+        assertThat(managedDependencyDescriptors, hasSize(managedDependencies.size()));
 
         for (Dependency dependency : managedDependencies) {
-            checkManagedDependency(managedDependencyDescriptors, dependency);
+            verifyDependency(managedDependencyDescriptors, dependency);
         }
 
         assertThat(pomDescriptor.getDependencies(), empty());
@@ -573,37 +545,17 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         }
     }
 
-    /**
-     * Validates dependency existence. Fails if no dependency containing all
-     * given fields exists.
-     * 
-     * @param dependencyDescriptors
-     *            Descriptors containing all dependencies.
-     * @param dependency
-     *            expected dependency informations.
-     */
-    private void checkProfileDependency(List<ProfileDependsOnDescriptor> dependencyDescriptors, Dependency dependency) {
-        for (ProfileDependsOnDescriptor dependsOnDescriptor : dependencyDescriptors) {
-            ArtifactDescriptor dependencyDescriptor = dependsOnDescriptor.getDependency();
-            if (Objects.equals(dependencyDescriptor.getGroup(), dependency.group) && //
-                    Objects.equals(dependencyDescriptor.getName(), dependency.name) && //
-                    Objects.equals(dependencyDescriptor.getClassifier(), dependency.classifier) && //
-                    Objects.equals(dependencyDescriptor.getType(), dependency.type) && //
-                    Objects.equals(dependencyDescriptor.getVersion(), dependency.version) && //
-                    Objects.equals(dependsOnDescriptor.getScope(), dependency.scope)) {
-                return;
-            }
-        }
-        Assert.fail("Dependency not found: " + dependency.toString());
-    }
-
     private void checkProfile(List<MavenProfileDescriptor> profileDescriptors, Profile profile) {
         for (MavenProfileDescriptor mavenProfileDescriptor : profileDescriptors) {
             if (mavenProfileDescriptor.getId().equals(profile.id)) {
                 // dependencies
                 List<Dependency> dependencies = profile.dependencies;
+                Map<String, Object> params = new HashMap<>();
+                params.put("profile", mavenProfileDescriptor);
+                List<MavenDependencyDescriptor> profileDeps = query(
+                        "MATCH (p:Maven:Profile)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(p)={profile} RETURN d", params).getColumn("d");
                 for (Dependency dependency : dependencies) {
-                    checkProfileDependency(mavenProfileDescriptor.getDependencies(), dependency);
+                    verifyDependency(profileDeps, dependency);
                 }
 
                 // modules
@@ -753,7 +705,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         return dependencyList;
     }
 
-    private List<Dependency> createManagedParentDependencies() {
+    private List<Dependency> getExpectedManagedParentDependencies() {
         List<Dependency> dependencyList = new ArrayList<>();
         dependencyList.add(createDependency("com.buschmais.jqassistant.core", "jqassistant.core.store", "jar", "${project.version}", null, null));
         dependencyList.add(createDependency("junit", "junit", "jar", "4.11", null, "test"));

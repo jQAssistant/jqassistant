@@ -11,6 +11,14 @@
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>test1</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
