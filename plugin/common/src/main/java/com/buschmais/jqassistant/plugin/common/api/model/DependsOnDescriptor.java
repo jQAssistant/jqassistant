@@ -5,7 +5,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Relation("DEPENDS_ON")
-public interface DependsOnDescriptor extends BaseDependencyDescriptor {
+public interface DependsOnDescriptor extends AbstractDependencyDescriptor {
 
     @Outgoing
     ArtifactDescriptor getDependent();

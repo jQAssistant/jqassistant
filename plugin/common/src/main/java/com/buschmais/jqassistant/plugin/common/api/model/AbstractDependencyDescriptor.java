@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.api.annotation.Abstract;
 
-public interface BaseDependencyDescriptor extends Descriptor {
+@Abstract
+public interface AbstractDependencyDescriptor extends Descriptor {
 
     /**
      * Get the scope of the dependency - `compile`,
