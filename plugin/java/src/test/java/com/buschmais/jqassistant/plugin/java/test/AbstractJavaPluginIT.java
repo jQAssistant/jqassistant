@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,10 +46,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * 
      * @param classes
      *            The classes.
-     * @throws java.io.IOException
-     *             If scanning fails.
      */
-    protected void scanClasses(Class<?>... classes) throws IOException {
+    protected void scanClasses(Class<?>... classes) {
         this.scanClasses(ARTIFACT_ID, classes);
     }
 
@@ -61,10 +58,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *            The outer classes.
      * @param innerClassName
      *            The outer classes.
-     * @throws java.io.IOException
-     *             If scanning fails.
      */
-    protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws IOException, ClassNotFoundException {
+    protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
         Class<?> innerClass = getInnerClass(outerClass, innerClassName);
         scanClasses(innerClass);
     }
@@ -92,40 +87,32 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *            The id of the containing artifact.
      * @param classes
      *            The classes.
-     * @throws IOException
-     *             If scanning fails.
      */
-    protected void scanClasses(String artifactId, final Class<?>... classes) throws IOException {
-        execute(artifactId, new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                List<FileDescriptor> result = new ArrayList<>();
-                for (Class<?> item : classes) {
-                    FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
-                    result.add(fileDescriptor);
-                }
-                return result;
+    protected void scanClasses(String artifactId, final Class<?>... classes) {
+        execute(artifactId, (artifact, scanner) -> {
+            List<FileDescriptor> result = new ArrayList<>();
+            for (Class<?> item : classes) {
+                FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
+                result.add(fileDescriptor);
             }
+            return result;
         });
     }
 
-    protected void scanClassPathResource(Scope scope, String resource) throws IOException {
+    protected void scanClassPathResource(Scope scope, String resource) {
         scanClassPathResources(scope, ARTIFACT_ID, resource);
     }
 
-    protected void scanClassPathResources(final Scope scope, String artifactId, final String... resources) throws IOException {
+    protected void scanClassPathResources(final Scope scope, String artifactId, final String... resources) {
         final File directory = getClassesDirectory(this.getClass());
-        execute(artifactId, new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                List<FileDescriptor> result = new ArrayList<>();
-                for (String resource : resources) {
-                    File file = new File(directory, resource);
-                    FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
-                    result.add(fileDescriptor);
-                }
-                return result;
+        execute(artifactId, (artifact, scanner) -> {
+            List<FileDescriptor> result = new ArrayList<>();
+            for (String resource : resources) {
+                File file = new File(directory, resource);
+                FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
+                result.add(fileDescriptor);
             }
+            return result;
         });
     }
 
@@ -134,10 +121,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *
      * @param directory
      *            The directory.
-     * @throws java.io.IOException
-     *             If scanning fails.
      */
-    protected void scanClassPathDirectory(File directory) throws IOException {
+    protected void scanClassPathDirectory(File directory) {
         scanClassPathDirectory(ARTIFACT_ID, directory);
     }
 
@@ -148,20 +133,14 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *            The artifact to use.
      * @param directory
      *            The directory.
-     * @throws java.io.IOException
-     *             If scanning fails.
      */
-    protected void scanClassPathDirectory(String artifactId, final File directory) throws IOException {
-        Scanner scanner = getScanner();
+    protected void scanClassPathDirectory(String artifactId, final File directory) {
         store.beginTransaction();
         JavaClassesDirectoryDescriptor artifactDescriptor = getArtifactDescriptor(artifactId);
-        execute(artifactDescriptor, new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
-                return Collections.emptyList();
-            }
-        }, scanner);
+        execute(artifactDescriptor, (artifact, scanner) -> {
+            scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
+            return Collections.emptyList();
+        }, getScanner());
         store.commitTransaction();
     }
 
