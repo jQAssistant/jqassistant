@@ -8,7 +8,7 @@ concepts:
         defaultValue: foobar
         type: String
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

@@ -7,7 +7,7 @@ concepts:
         name: fqcn
         defaultValue: foobar
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

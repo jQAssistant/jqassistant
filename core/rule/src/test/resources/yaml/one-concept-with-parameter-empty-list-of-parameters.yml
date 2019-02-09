@@ -4,7 +4,7 @@ concepts:
     description: Labels types deriving from java.lang.Throwable as "Throwable".
     requiresParameters:
       # empty list of parameters
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

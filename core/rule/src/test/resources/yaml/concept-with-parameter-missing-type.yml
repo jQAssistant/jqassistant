@@ -6,7 +6,7 @@ concepts:
       - type:
         name: fqcn
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

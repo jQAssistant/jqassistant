@@ -13,7 +13,7 @@ concepts:
           - n
           - g
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where
