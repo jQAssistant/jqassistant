@@ -125,9 +125,22 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
      * @return The {@link MavenVersionDescriptor}.
      */
     @ResultOf
-    @Cypher("MATCH (repository) WHERE id(repository)={this} " + "MERGE (repository)-[:CONTAINS]->(g:Maven:GroupId{name:{groupId}}) " + "WITH g "
-            + "MERGE (g)-[:CONTAINS]->(a:Maven:ArtifactId{name:{artifactId}}) " + "WITH a " + "MERGE (a)-[:CONTAINS]->(v:Maven:Version{name:{version}})"
-            + "RETURN v")
+    @Cypher("MATCH" + //
+            "  (repository) " + //
+            "WHERE" + //
+            "  id(repository)={this} " + //
+            "MERGE" + //
+            "  (repository)-[:CONTAINS]->(g:Maven:GroupId{name:{groupId}}) " + //
+            "WITH" + //
+            "  g " + //
+            "MERGE" + //
+            "  (g)-[:CONTAINS]->(a:Maven:ArtifactId{name:{artifactId},fqn:{groupId} + ':' + {artifactId}}) " + //
+            "WITH" + //
+            "  a " + //
+            "MERGE" + //
+            "  (a)-[:CONTAINS]->(v:Maven:Version{name:{version},fqn:{groupId} + ':' + {artifactId} + ':' + {version}}) " + //
+            "RETURN" + //
+            "  v")
     MavenVersionDescriptor resolveVersion(@Parameter("groupId") String groupId, @Parameter("artifactId") String artifactId,
             @Parameter("version") String version);
 }
