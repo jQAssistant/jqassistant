@@ -292,16 +292,22 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         Severity defaultConceptSeverity = DEFAULT.getDefaultConceptSeverity();
         Severity defaultConstraintSeverity = DEFAULT.getDefaultConstraintSeverity();
         Severity defaultGroupSeverity = DEFAULT.getDefaultGroupSeverity();
+
         if (rule != null) {
             defaultConceptSeverity = rule.getDefaultConceptSeverity();
             defaultConstraintSeverity = rule.getDefaultConstraintSeverity();
             defaultGroupSeverity = rule.getDefaultGroupSeverity();
         }
+
+        Severity effectiveConceptSeverity = defaultConceptSeverity != null ? defaultConceptSeverity : DEFAULT.getDefaultConceptSeverity();
+        Severity effectiveConstraintSeverity = defaultConstraintSeverity != null ? defaultConstraintSeverity : DEFAULT.getDefaultConstraintSeverity();
+        Severity effectiveGroupSeverity = defaultGroupSeverity != null ? defaultGroupSeverity : DEFAULT.getDefaultGroupSeverity();
+
         return RuleConfiguration.builder()
-                .defaultConceptSeverity(defaultConceptSeverity != null ? defaultConceptSeverity : DEFAULT.getDefaultConceptSeverity())
-                .defaultConstraintSeverity(
-                        defaultConstraintSeverity != null ? defaultConstraintSeverity : DEFAULT.getDefaultConstraintSeverity())
-                .defaultGroupSeverity(defaultGroupSeverity != null ? defaultGroupSeverity : DEFAULT.getDefaultGroupSeverity()).build();
+                                .defaultConceptSeverity(effectiveConceptSeverity)
+                                .defaultConstraintSeverity(effectiveConstraintSeverity)
+                                .defaultGroupSeverity(effectiveGroupSeverity)
+                                .build();
     }
 
     /**

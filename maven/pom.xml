@@ -135,6 +135,7 @@
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>tycho/*/pom.xml</include>
                                 <include>plugin/pom.xml</include>
+                                <include>yaml/*/pom.xml</include>
                             </pomIncludes>
                         </configuration>
                         <executions>
