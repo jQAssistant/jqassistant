@@ -5,7 +5,7 @@ concepts:
     requiresConcepts:
       - refId: concept:other
         optional: false
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

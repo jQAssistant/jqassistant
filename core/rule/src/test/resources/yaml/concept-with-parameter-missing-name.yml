@@ -7,7 +7,7 @@ concepts:
         defaultValue:
         type: String
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

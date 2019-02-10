@@ -285,7 +285,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         String id = (String) map.get(ID);
         String description = (String) map.get("description");
-        String cypher = (String) map.get("source");
+        String cypher = (String) map.get("cypher");
         String serverityV = (String) map.get("severity");
         String language = CYPHER; // todo? So richtig?
 

@@ -6,7 +6,7 @@ concepts:
       - type: String
         defaultValue: foobar
 
-    source: |
+    cypher: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where
