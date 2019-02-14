@@ -4,6 +4,7 @@ target
 *.ipr
 *~
 *.log
+*.ignore.sh
 .DS_Store
 pom.xml.versionsBackup
 
