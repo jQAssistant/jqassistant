@@ -1,11 +1,16 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.*;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Descriptor for a repository configured for a project.
@@ -15,6 +20,12 @@ import com.buschmais.xo.neo4j.api.annotation.*;
  */
 @Label("Repository")
 public interface MavenRepositoryDescriptor extends MavenDescriptor {
+
+    @Relation("CONTAINS_GROUP_ID")
+    @Retention(RUNTIME)
+    @Target(METHOD)
+    @interface ContainsGroupId {
+    }
 
     /**
      * The contained POMs.
@@ -115,7 +126,7 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
     /**
      * Resolve the GAV structure and return the {@link MavenVersionDescriptor}, i.e.
      * the leaf of the tree.
-     * 
+     *
      * @param groupId
      *            The groupId.
      * @param artifactId
