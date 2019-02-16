@@ -28,9 +28,10 @@ public class AsciidoctorFactory {
      * @return The {@link Asciidoctor} instance.
      */
     public static Asciidoctor getAsciidoctor() {
-        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create(contextClassLoader);
         asciidoctor.requireLibrary(ASCIIDOCTOR_DIAGRAM);
-        LOGGER.debug("Loaded Asciidoctor " + asciidoctor.asciidoctorVersion());
+        LOGGER.debug("Loaded Asciidoctor {} (using classloader {}).", asciidoctor.asciidoctorVersion(), contextClassLoader);
         return asciidoctor;
     }
 
