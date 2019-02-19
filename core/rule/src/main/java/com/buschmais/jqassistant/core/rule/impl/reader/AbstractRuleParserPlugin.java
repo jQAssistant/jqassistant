@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
@@ -12,18 +9,16 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Arrays.asList;
-
 /**
  * Baseclass with common fuctionality which could by used for every implementation
  * of {@link RuleParserPlugin}.
  */
 public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
+
+
     private RuleConfiguration ruleConfiguration;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRuleParserPlugin.class);
-
-    public static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList("concept", "constraint"));
 
     protected static final String ROW_COUNT_MIN = "rowCountMin";
     protected static final String ROW_COUNT_MAX = "rowCountMax";

@@ -28,7 +28,6 @@ public class ScriptRuleInterpreterPlugin implements RuleInterpreterPlugin {
      */
     private enum ScriptVariable {
 
-        @Deprecated
         STORE, CONTEXT, RULE, SEVERITY;
 
         String getVariableName() {
@@ -72,6 +71,7 @@ public class ScriptRuleInterpreterPlugin implements RuleInterpreterPlugin {
             }
             throw new RuleException("Cannot resolve scripting engine for '" + language + "', available languages are " + availableLanguages);
         }
+
         // Set default variables
         scriptEngine.put(ScriptVariable.STORE.getVariableName(), context.getStore());
         scriptEngine.put(ScriptVariable.CONTEXT.getVariableName(), context);
