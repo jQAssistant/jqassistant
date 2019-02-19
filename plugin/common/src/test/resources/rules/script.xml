@@ -4,8 +4,7 @@
         <description>JavaScript test concept.</description>
        <script language="JavaScript">
            // create a test descriptor
-           var testDescriptor =
-           store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
+           var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
            testDescriptor.setName("test");
            // prepare the result
            var columnNames = java.util.Arrays.asList("test");
@@ -72,7 +71,7 @@
         <description>Ruby test concept.</description>
         <script language="ruby">
             # create a test descriptor
-            testDescriptor = $store.create com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.java_class
+            testDescriptor = store.create com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.java_class
             testDescriptor.setName "test"
             # prepare the result
             columnNames = java.util.Arrays.asList "test"
@@ -81,7 +80,7 @@
             rows = java.util.Arrays.asList row
             # return the result
             status = com.buschmais.jqassistant.core.analysis.api.Result::Status::SUCCESS
-            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,status,$severity,columnNames,rows
+            com.buschmais.jqassistant.core.analysis.api.Result.new rule,status,severity,columnNames,rows
         </script>
     </concept>
 
@@ -90,13 +89,13 @@
         <description>Ruby test constraint.</description>
         <script language="ruby">
             columnNames = java.util.Arrays.asList "test"
-            queryResult = $store.executeQuery "match (t:TestLabel) return t"
+            queryResult = store.executeQuery "match (t:TestLabel) return t"
             testDescriptor = queryResult.getSingleResult.get("t",com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.java_class)
             row = java.util.HashMap.new
             row.put "test",testDescriptor
             rows = java.util.Arrays.asList row
             status = com.buschmais.jqassistant.core.analysis.api.Result::Status::FAILURE
-            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,status,$severity,columnNames,rows
+            com.buschmais.jqassistant.core.analysis.api.Result.new rule,status,severity,columnNames,rows
         </script>
     </constraint>
 

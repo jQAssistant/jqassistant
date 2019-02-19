@@ -13,6 +13,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -53,80 +54,39 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractPluginIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    protected @interface TestStore {
-
-        boolean reset() default true;
-
-        Type type() default Type.FILE;
-
-        enum Type {
-            FILE, MEMORY, REMOTE;
-        }
-    }
-
     protected static final String ARTIFACT_ID = "artifact";
-
-    /**
-     * Represents a test result which allows fetching values by row or columns.
-     */
-    protected class TestResult {
-        private List<Map<String, Object>> rows;
-        private Map<String, List<Object>> columns;
-
-        TestResult(List<Map<String, Object>> rows, Map<String, List<Object>> columns) {
-            this.rows = rows;
-            this.columns = columns;
-        }
-
-        /**
-         * Return all rows.
-         *
-         * @return All rows.
-         */
-        public List<Map<String, Object>> getRows() {
-            return rows;
-        }
-
-        /**
-         * Return a column identified by its name.
-         *
-         * @param <T>
-         *            The expected type.
-         * @return All columns.
-         */
-        public <T> List<T> getColumn(String name) {
-            return (List<T>) columns.get(name);
-        }
-    }
-
-    private PluginRepositoryImpl pluginRepository;
-
-    protected RuleSet ruleSet;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
     /**
      * The store.
      */
     protected Store store;
-
     protected Analyzer analyzer;
-
     protected ReportContext reportContext;
-
     protected InMemoryReportPlugin reportPlugin;
+    protected RuleSet ruleSet;
+
+    private PluginRepositoryImpl pluginRepository;
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
-        configurePlugins();
+        ClassLoader pluginClassLoader = AbstractPluginIT.class.getClassLoader();
+        configurePlugins(pluginClassLoader);
         startStore(testInfo);
         initializeAnalyzer();
     }
 
-    private void configurePlugins() throws PluginRepositoryException, com.buschmais.jqassistant.core.analysis.api.rule.RuleException, IOException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
+    /**
+     * Stops the store.
+     */
+    @AfterEach
+    public void stopStore() {
+        if (store != null) {
+            store.stop();
+        }
+    }
+
+    private void configurePlugins(ClassLoader pluginClassLoader) throws PluginRepositoryException, RuleException, IOException {
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
 
@@ -147,7 +107,7 @@ public abstract class AbstractPluginIT {
         File outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         this.reportContext = new ReportContextImpl(outputDirectory);
-        reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(Collections.emptyMap()));
+        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(Collections.emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
@@ -202,18 +162,8 @@ public abstract class AbstractPluginIT {
      *            The {@link TestStore} annotation (if present).
      * @return The {@link TestStore.Type}.
      */
-    protected TestStore.Type getTestStoreType(TestStore testStore) {
+    private TestStore.Type getTestStoreType(TestStore testStore) {
         return testStore != null ? testStore.type() : TestStore.Type.FILE;
-    }
-
-    /**
-     * Stops the store.
-     */
-    @AfterEach
-    public void stopStore() {
-        if (store != null) {
-            store.stop();
-        }
     }
 
     /**
@@ -322,7 +272,7 @@ public abstract class AbstractPluginIT {
      *            The id.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws RuleException {
+    protected Result<Concept> applyConcept(String id) throws RuleException {
         return applyConcept(id, Collections.<String, String> emptyMap());
     }
 
@@ -335,7 +285,7 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
+    protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
         Assertions.assertThat(concept).describedAs("The requested concept cannot be found: " + id)
@@ -351,7 +301,7 @@ public abstract class AbstractPluginIT {
      *            The id.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws RuleException {
+    protected Result<Constraint> validateConstraint(String id) throws RuleException {
         return validateConstraint(id, Collections.<String, String> emptyMap());
     }
 
@@ -364,7 +314,7 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id, Map<String, String> parameters)
+    protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters)
             throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
@@ -425,6 +375,52 @@ public abstract class AbstractPluginIT {
             return pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get report plugins.", e);
+        }
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected @interface TestStore {
+
+        boolean reset() default true;
+
+        Type type() default Type.FILE;
+
+        enum Type {
+            FILE, MEMORY, REMOTE;
+        }
+    }
+
+    /**
+     * Represents a test result which allows fetching values by row or columns.
+     */
+    protected class TestResult {
+        private List<Map<String, Object>> rows;
+        private Map<String, List<Object>> columns;
+
+        TestResult(List<Map<String, Object>> rows, Map<String, List<Object>> columns) {
+            this.rows = rows;
+            this.columns = columns;
+        }
+
+        /**
+         * Return all rows.
+         *
+         * @return All rows.
+         */
+        public List<Map<String, Object>> getRows() {
+            return rows;
+        }
+
+        /**
+         * Return a column identified by its name.
+         *
+         * @param <T>
+         *            The expected type.
+         * @return All columns.
+         */
+        public <T> List<T> getColumn(String name) {
+            return (List<T>) columns.get(name);
         }
     }
 
