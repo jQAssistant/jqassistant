@@ -8,5 +8,5 @@ ifdef::jqa-in-manual[== Core Framework 1.7.0]
   be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
 * A warning will now be logged if there is no rule source parser who is able to
   read and parse the rule source.
-
+* Fixed an issue where plugins could not register Asciidoctor extensions when used within the CLI
 

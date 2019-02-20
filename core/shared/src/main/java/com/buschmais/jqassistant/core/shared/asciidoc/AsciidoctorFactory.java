@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.shared.asciidoc;
 
+import com.buschmais.jqassistant.core.shared.asciidoc.delegate.AsciidoctorDelegate;
 import org.asciidoctor.Asciidoctor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +29,13 @@ public class AsciidoctorFactory {
      * @return The {@link Asciidoctor} instance.
      */
     public static Asciidoctor getAsciidoctor() {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Asciidoctor asciidoctor = Asciidoctor.Factory.create(contextClassLoader);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.requireLibrary(ASCIIDOCTOR_DIAGRAM);
-        LOGGER.debug("Loaded Asciidoctor {} (using classloader {}).", asciidoctor.asciidoctorVersion(), contextClassLoader);
-        return asciidoctor;
+        LOGGER.debug("Loaded Asciidoctor {}");
+        // The delegate is used to fix classloading issues if the CLI plugin classloader
+        // is used for adding extensions. Simply passing the required CL to
+        // Asciidoctor.Factory#create(ClassLoader) prevents IncludeProcessor to work.
+        // Any better solution highly welcome...
+        return new AsciidoctorDelegate(asciidoctor);
     }
-
 }
