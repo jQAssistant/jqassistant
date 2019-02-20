@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.shared.asciidoc.delegate;
 
+import java.util.Map;
+
 import org.asciidoctor.ast.DocumentRuby;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.PreprocessorReader;
-
-import java.util.Map;
 
 class IncludeProcessorDelegate extends IncludeProcessor {
 

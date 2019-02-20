@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.shared.asciidoc;
 
 import com.buschmais.jqassistant.core.shared.asciidoc.delegate.AsciidoctorDelegate;
+
 import org.asciidoctor.Asciidoctor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
