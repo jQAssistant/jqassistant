@@ -442,7 +442,10 @@ public class Junit5IT extends AbstractJunitIT {
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
 
-        assertThat(methods).hasSize(109);
+        // Actual we don't know the exact number of methods here as the number of methods
+        // depends on the effective dependencies and might change from version to version
+        // Oliver B. Fischer, 2019-02-20
+        assertThat(methods.size()).isGreaterThanOrEqualTo(109);
         assertThat(methods, hasItems(methodDescriptor(Assertions.class, "assertTrue", boolean.class),
                                      methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class)));
         store.commitTransaction();
