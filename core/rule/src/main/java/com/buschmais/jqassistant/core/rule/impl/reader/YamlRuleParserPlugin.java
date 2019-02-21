@@ -29,6 +29,8 @@ import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v1.api.Load;
 import org.snakeyaml.engine.v1.api.LoadSettings;
 import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
@@ -293,7 +295,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Boolean> required = extractRequiredConcepts(map, id);
         Map<String, Parameter> parameters = extractParameters(map, id, context);
         Verification verification = extractVerifycation(map, id);
-        Report report = null;
+
+        // todo Add support for report section
+        // Example: report.xml
+        Report report = Report.builder().build();
 
 
         Severity severity = toSeverity(serverityV, context);
