@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import java.util.List;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
@@ -19,6 +19,6 @@ public interface MavenVersionDescriptor extends MavenDescriptor, FullQualifiedNa
     void setArtifactId(MavenArtifactIdDescriptor artifactId);
 
     @Relation("CONTAINS_ARTIFACT")
-    List<MavenArtifactDescriptor> getArtifacts();
+    Set<MavenArtifactDescriptor> getArtifacts();
 
 }

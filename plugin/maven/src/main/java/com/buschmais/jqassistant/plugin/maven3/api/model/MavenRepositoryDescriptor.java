@@ -123,35 +123,4 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
     @Cypher("MATCH (repository)-[:CONTAINS_ARTIFACT]->(artifact:Artifact) WHERE id(repository)={this} and artifact.fqn={coordinates} RETURN artifact")
     MavenArtifactDescriptor findArtifact(@Parameter("coordinates") String coordinates);
 
-    /**
-     * Resolve the GAV structure and return the {@link MavenVersionDescriptor}, i.e.
-     * the leaf of the tree.
-     *
-     * @param groupId
-     *            The groupId.
-     * @param artifactId
-     *            The artifactId
-     * @param version
-     *            The version.
-     * @return The {@link MavenVersionDescriptor}.
-     */
-    @ResultOf
-    @Cypher("MATCH" + //
-            "  (repository) " + //
-            "WHERE" + //
-            "  id(repository)={this} " + //
-            "MERGE" + //
-            "  (repository)-[:CONTAINS]->(g:Maven:GroupId{name:{groupId}}) " + //
-            "WITH" + //
-            "  g " + //
-            "MERGE" + //
-            "  (g)-[:CONTAINS]->(a:Maven:ArtifactId{name:{artifactId},fqn:{groupId} + ':' + {artifactId}}) " + //
-            "WITH" + //
-            "  a " + //
-            "MERGE" + //
-            "  (a)-[:CONTAINS]->(v:Maven:Version{name:{version},fqn:{groupId} + ':' + {artifactId} + ':' + {version}}) " + //
-            "RETURN" + //
-            "  v")
-    MavenVersionDescriptor resolveVersion(@Parameter("groupId") String groupId, @Parameter("artifactId") String artifactId,
-            @Parameter("version") String version);
 }
