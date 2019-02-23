@@ -138,7 +138,7 @@ class YamlRuleParserPluginTest {
             assertThat(concept.getParameters()).isEmpty();
             assertThat(concept.getRequiresConcepts()).isEmpty();
             assertThat(concept.getSeverity()).isEqualTo(RuleConfiguration.DEFAULT.getDefaultConceptSeverity());
-            assertThat(concept.getReport()).isNull();
+            assertThat(concept.getReport()).isNotNull();
             assertThat(concept.getExecutable()).isNotNull().isInstanceOf(CypherExecutable.class);
 
             CypherExecutable executable = (CypherExecutable) concept.getExecutable();
