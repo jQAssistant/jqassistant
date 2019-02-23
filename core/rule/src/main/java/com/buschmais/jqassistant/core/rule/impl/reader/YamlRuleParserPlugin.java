@@ -29,8 +29,6 @@ import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v1.api.Load;
 import org.snakeyaml.engine.v1.api.LoadSettings;
 import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
