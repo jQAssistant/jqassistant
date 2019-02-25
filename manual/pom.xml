@@ -94,13 +94,24 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>index</id>
+                        <id>manual</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
+                            <sourceDirectory>src/main/asciidoc/manual</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/manual</outputDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/asciidoc</directory>
+                                    <targetPath>${project.build.directory}/generated-docs/manual</targetPath>
+                                    <includes>
+                                        <include>**/*.png</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                     <execution>
@@ -110,7 +121,18 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
+                            <sourceDirectory>src/main/asciidoc/releasenotes-overview</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/releasenotes-overview</outputDirectory>
                             <sourceDocumentName>release-notes.adoc</sourceDocumentName>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/asciidoc</directory>
+                                    <targetPath>${project.build.directory}/generated-docs/releasenotes-overview</targetPath>
+                                    <excludes>
+                                        <exclude>**/*</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -121,7 +143,7 @@
                         <toc>auto</toc>
                         <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
-                        <stylesheet>jqassistant.css</stylesheet>
+                        <stylesheet>../jqassistant.css</stylesheet>
                         <docRoot>/${asciidoc.directory}</docRoot>
                         <projectGroupId>${project.groupId}</projectGroupId>
                         <projectArtifactId>${project.artifactId}</projectArtifactId>

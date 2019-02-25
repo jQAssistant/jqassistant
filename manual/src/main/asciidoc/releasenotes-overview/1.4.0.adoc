@@ -1,0 +1,37 @@
+== jQAssistant 1.4.0
+
+* Added a plugin providing rules for the Spring Framework.
+
+=== Changes to the Plugins
+
+include::{docRoot}/com.buschmais.jqassistant.plugin/cdi/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/ejb3/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/graphml/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/java/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/java8/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/jpa2/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/junit/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/jaxrs/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/javaee6/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/json/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/m2repo/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/maven3/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/osgi/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/rdbms/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/spring/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/testng/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/tycho/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/xml/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/yaml/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+
+=== Changes to the Commandline Tool and Plugin for Maven
+
+include::{docRoot}/com.buschmais.jqassistant/jqassistant-maven-plugin/asciidoc/releasenotes/1.4.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.cli/parent/asciidoc/releasenotes/1.4.0.adoc[leveloffset=2]
+
+=== Changes to Common Modules
+
+include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/releasenotes/1.4.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.core/parent/asciidoc/releasenotes/1.4.0.adoc[leveloffset=2]
+include::{docRoot}//com.buschmais.jqassistant.neo4jserver/parent/asciidoc/releasenotes/1.4.0.adoc[leveloffset=2]
+
