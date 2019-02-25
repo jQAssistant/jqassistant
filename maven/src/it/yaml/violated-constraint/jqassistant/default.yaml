@@ -1,0 +1,13 @@
+groups:
+  - id: default
+    includesConstraints:
+      - refId: violatedConcept
+
+constraints:
+  - id: violatedConcept
+    severity: MAJOR
+    description: foobar
+    cypher: |
+      MATCH   (c:Type:Class), (i:Type:Interface {name: 'AnInterface'})
+      WHERE   NOT (c)-[:IMPLEMENTS]->(i)
+      RETURN  c

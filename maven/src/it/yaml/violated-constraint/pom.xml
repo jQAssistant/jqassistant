@@ -8,7 +8,7 @@
         <version>@project.version@</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>@project.artifactId@.integration.yaml.oneconcept</artifactId>
+    <artifactId>@project.artifactId@.integration.yaml.violatedconstraint</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <build>
