@@ -279,6 +279,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         if (!containsOnlyKnownKeys) {
             givenKeys.removeAll(CONCEPT_KEYS);
 
+            // todo: The given message is wrong if we process a constraint
+            // todo: use better the phrase "with one or more unknown or misplaced keys"
             throw new RuleException("Rule source '" + context.getSource().getId() + "' contains a concept with " +
                                         "one or more unknown keys: " + String.join(", ", givenKeys));
         }
