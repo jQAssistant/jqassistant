@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.cli</groupId>
         <artifactId>parent</artifactId>
-        <version>1.7.0-MS3</version>
+        <version>1.7.0-SNAPSHOT</version>
     </parent>
     <groupId>com.buschmais.jqassistant.cli</groupId>
     <artifactId>test</artifactId>
