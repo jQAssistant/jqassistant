@@ -120,7 +120,15 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
     MavenPomXmlDescriptor findSnapshotModel(@Parameter("coordinates") String coordinates);
 
     @ResultOf
+    @Cypher("MATCH (repository), (pom:Maven:Pom:Xml) WHERE id(repository)={this} and id(pom)={pom} CREATE (repository)-[:CONTAINS_POM]->(pom)")
+    void addModel(@Parameter("pom") MavenPomXmlDescriptor modelDescriptor);
+
+    @ResultOf
     @Cypher("MATCH (repository)-[:CONTAINS_ARTIFACT]->(artifact:Artifact) WHERE id(repository)={this} and artifact.fqn={coordinates} RETURN artifact")
     MavenArtifactDescriptor findArtifact(@Parameter("coordinates") String coordinates);
+
+    @ResultOf
+    @Cypher("MATCH (repository), (artifact:Maven:Artifact) WHERE id(repository)={this} and id(artifact)={artifact} CREATE (repository)-[:CONTAINS_ARTIFACT]->(artifact)")
+    void addArtifact(@Parameter("artifact") MavenArtifactDescriptor artifactDescriptor);
 
 }
