@@ -16,7 +16,7 @@ concepts:
         count(throwable) AS Throwables
     verify:
       aggregation:
-        aggregationColumn: T
+        aggregationColumn: Throwables
         aggregationMin: 10
         aggregationMax: 20
 
