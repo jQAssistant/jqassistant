@@ -3,13 +3,9 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
@@ -41,6 +37,10 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
+
+/* todo check if the naming is consistent (*Block for YAML structures)
+ *
+ */
 public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private static final String YAML_EXTENSION_LONG = ".yaml";
     private static final String YAML_EXTENSION_SHORT = ".yml";
@@ -56,7 +56,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final Collection<String> CONCEPT_KEYS =
         unmodifiableCollection(asList(AGGREGATION, DESCRIPTION, ID, CYPHER, REQUIRES_CONCEPTS,
-                                      REQUIRES_PARAMETERS, SEVERITY, SOURCE, VERIFY));
+                                      REPORT, REQUIRES_PARAMETERS, SEVERITY, SOURCE, VERIFY));
 
     private Collection<String> CONCEPT_KEYS_REQUIRED = unmodifiableCollection(asList(ID, CYPHER));
 
@@ -64,6 +64,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         unmodifiableCollection(asList(PARAMETER_NAME, PARAMETER_TYPE, PARAMETER_DEFAULT_VALUE));
 
     private Collection<String> PARAMETER_KEYS_REQUIRED = unmodifiableCollection(asList(PARAMETER_NAME, PARAMETER_TYPE));
+
+    private Collection<String> REPORT_KEYS =
+        unmodifiableCollection(asList(PRIMARY_COLUMN, REPORT_TYPE, REPORT_PROPERTIES));
 
     private Collection<String> RULE_REFERENCE_KEYS = unmodifiableCollection(asList(REF_ID, SEVERITY));
 
@@ -296,9 +299,73 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Parameter> parameters = extractParameters(map, id, context);
         Verification verification = extractVerifycation(map, id);
 
+        /**
+         *
+         * Aus dem Asciidoctor code
+         Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
+         Object reportType = part.getAttributes().get(REPORT_TYPE);
+         Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
+         Report.ReportBuilder reportBuilder = Report.builder();
+         if (reportType != null) {
+         reportBuilder.selectedTypes(Report.selectTypes(reportType.toString()));
+         }
+         if (primaryReportColum != null) {
+         reportBuilder.primaryColumn(primaryReportColum.toString());
+         }
+         return reportBuilder.properties(reportProperties).build();
+
+         **/
+
         // todo Add support for report section
         // Example: report.xml
-        Report report = Report.builder().build();
+        Report.ReportBuilder reportBuilder = Report.builder();
+
+        // todo only known keys present?
+        // todo all required keys present?
+        Optional<Map<String, Object>> reportBlockOpt = ofNullable((Map<String, Object>)map.get(REPORT));
+
+        if (reportBlockOpt.isPresent()) {
+            Map<String, Object> reportBlock = reportBlockOpt.get();
+            Collection<String> reportBlockGivenKeys = reportBlockOpt.get().keySet();
+            boolean containsOnlyKnownReportSectionKeys = REPORT_KEYS.containsAll(reportBlockGivenKeys);
+
+            if (!containsOnlyKnownReportSectionKeys) {
+                reportBlockGivenKeys.removeAll(REPORT_KEYS);
+
+                // todo: The given message is wrong if we process a constraint
+                // todo: use better the phrase "with one or more unknown or misplaced keys"
+                throw new RuleException("Rule source '" + context.getSource().getId() + "' contains a concept with " +
+                    "one or more unknown keys in the report block: " + String.join(", ", reportBlockGivenKeys));
+            }
+
+
+            if (reportBlock.containsKey(REPORT_TYPE)) {
+                String reportType = (String) reportBlock.get(REPORT_TYPE);
+                reportBuilder.selectedTypes(Report.selectTypes(reportType));
+            }
+
+            if (reportBlock.containsKey(PRIMARY_COLUMN)) {
+                String primaryColumn = (String) reportBlock.get(PRIMARY_COLUMN);
+                reportBuilder.primaryColumn(primaryColumn);
+            }
+
+            if (reportBlock.containsKey(REPORT_PROPERTIES)) {
+                Map<String, String> propertiesMap = (Map<String, String>) reportBlock.get(REPORT_PROPERTIES);
+
+                Properties reportProperties = new Properties();
+
+                Consumer<String> propertyConsumer = key -> {
+                    Object val = propertiesMap.get(key);
+                    reportProperties.put(key, val);
+                };
+                
+                propertiesMap.keySet().forEach(propertyConsumer);
+
+                reportBuilder.properties(reportProperties);
+            }
+        }
+
+        Report report = reportBuilder.build();
 
 
         Severity severity = toSeverity(serverityV, context);

@@ -46,9 +46,10 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String DEPENDS = "depends";
     protected static final String REQUIRES_CONCEPTS = "requiresConcepts";
     protected static final String REQUIRES_PARAMETERS = "requiresParameters";
+    protected static final String REPORT = "report";
     protected static final String REPORT_TYPE = "reportType";
-    protected static final String PRIMARY_REPORT_COLUM = "primaryReportColumn";
-    protected static final String REPORT_PROPERTIES = "reportProperties";
+    protected static final String PRIMARY_COLUMN = "primaryColumn";
+    protected static final String REPORT_PROPERTIES = "properties";
     protected static final String VERIFY = "verify";
     protected static final String AGGREGATION = "aggregation";
     protected static final String TITLE = "title";

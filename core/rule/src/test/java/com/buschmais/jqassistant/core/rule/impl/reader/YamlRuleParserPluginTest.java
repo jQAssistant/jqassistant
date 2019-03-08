@@ -1,19 +1,12 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.GroupsBucket;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.Parameter.Type;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetTestHelper;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
@@ -24,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 // todo haben wir einen Test für ein Concept / Constraint mit dem Keyword severity, aber ohne wert?
+// todo Check if the error messages differentiate between concept and constraint
 
 class YamlRuleParserPluginTest {
     /*
@@ -43,7 +38,7 @@ class YamlRuleParserPluginTest {
      */
 
     @Nested
-    class ConceptRealated {
+    class ConceptRelated {
         @Test
         void oneConcept() throws Exception {
             RuleSet ruleSet = readRuleSet("one-concept.yaml");
@@ -107,7 +102,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(aggregationVerification.getMax()).isEqualTo(20);
             assertThat(aggregationVerification.getMin()).isEqualTo(10);
-            assertThat(aggregationVerification.getColumn()).isEqualTo("T");
+            assertThat(aggregationVerification.getColumn()).isEqualTo("Throwables");
         }
 
         @Test
@@ -587,6 +582,133 @@ class YamlRuleParserPluginTest {
         }
     }
 
+
+    @Nested
+    class ReportRelated {
+        @Test
+        void onlyReportKeywordIsGiven() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-without-any-key.yaml");
+
+            assertThat(ruleSet.getConstraintBucket().getAll()).hasSize(1);
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getProperties()).isEmpty();
+            assertThat(report.getPrimaryColumn()).isNull();
+            assertThat(report.getSelectedTypes()).isNullOrEmpty();
+        }
+
+        @Test
+        void reportBlockWithNoProperties() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-no-properties.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getProperties()).isEmpty();
+        }
+
+        @Test
+        void reportBlockWithManyProperties() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-many-properties.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getProperties()).isNotNull();
+            assertThat(report.getProperties()).hasSize(3);
+            assertThat(report.getProperties()).contains(makeEntry("asciidoc.foobar", "A"), makeEntry("b", "B"),
+                                                        makeEntry("c", "C"));
+        }
+
+        @Test
+        void reportBlockWithPrimaryColumn() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-no-properties.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getPrimaryColumn()).isEqualTo("c");
+        }
+
+        @Test
+        void reportBlockWithReportType() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-with-report-type.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getSelectedTypes()).hasSize(1);
+            assertThat(report.getSelectedTypes()).contains("csv");
+        }
+
+        @Test
+        void reportBlockWithReportTypeMultipleCommaSeparatedValues() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-with-report-type-multiple.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getSelectedTypes()).contains("csv", "json", "xml");
+            assertThat(report.getSelectedTypes()).hasSize(3);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"constraint-with-report-with-invalid-block-structure-01.yaml",
+                                "constraint-with-report-with-invalid-block-structure-02.yaml"})
+        void reportSectionWithInvalidBlockStructure(String yamlFilename) throws RuleException {
+            assertThatThrownBy(() -> readRuleSet(yamlFilename))
+                .hasNoCause()
+                .isInstanceOf(RuleException.class)
+                .hasMessageMatching("^Cannot process rules from '[^']+' " +
+                                    "because of an invalid YAML datastructure");
+        }
+
+        @Test
+        void reportSectionWithAllPossibleKeys() throws RuleException {
+            RuleSet ruleSet = readRuleSet("constraint-with-report-all-possible-keys.yaml");
+
+            Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
+
+            assertThat(constraint.getReport()).isNotNull();
+
+            Report report = constraint.getReport();
+
+            assertThat(report.getSelectedTypes()).hasSize(1);
+            assertThat(report.getSelectedTypes()).contains("snafu");
+            assertThat(report.getPrimaryColumn()).isEqualTo("lamp");
+            assertThat(report.getProperties()).hasSize(3);
+        }
+
+        @Test
+        void reportSectionWithUnknownKeyword() throws RuleException {
+            assertThatThrownBy(() -> readRuleSet("constraint-with-report-and-with-unknown-keyword.yml"))
+                .hasNoCause()
+                .isInstanceOf(RuleException.class)
+                .hasMessageMatching("^Rule source '[^']+' " +
+                    "contains a concept with one or more unknown keys in the report block: wtf, snafu, foobar");
+        }
+    }
+
     RuleSet readRuleSet(String resource) throws RuleException {
         return RuleSetTestHelper.readRuleSet("/yaml/" + resource, RuleConfiguration.DEFAULT);
     }
@@ -627,5 +749,8 @@ class YamlRuleParserPluginTest {
                          "https://host.domain/rules.ADOC");
     }
 
+    static private Map.Entry<String, String> makeEntry(String key, String value) {
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
+    }
 
 }

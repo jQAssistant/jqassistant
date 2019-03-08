@@ -1,0 +1,17 @@
+---
+constraints:
+  - id: id
+    cypher: |
+      match
+        (throwable)-[:EXTENDS*]->(t:Type)
+      where
+        t.fqn = 'java.lang.Throwable'
+      SET
+        throwable:Throwable
+      return
+        count(throwable) AS c
+    report:
+      primaryColumn:
+        a: A
+        b: B
+
