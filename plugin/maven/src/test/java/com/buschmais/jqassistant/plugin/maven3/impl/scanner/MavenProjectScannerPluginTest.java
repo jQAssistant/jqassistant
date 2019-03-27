@@ -224,7 +224,6 @@ public class MavenProjectScannerPluginTest {
         verify(testArtifactDescriptor).setVersion("1.0.0");
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
-        verify(store).create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
 
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectory);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
