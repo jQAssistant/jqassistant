@@ -1,0 +1,63 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <group id="default">
+        <includeConstraint refId="test:*"/>
+    </group>
+
+    <concept id="test:DefinedDependency">
+        <description>Defines the expected artifact dependencies</description>
+        <cypher>
+            <![CDATA[
+            MATCH
+              (:Maven:Project)-[:CREATES]->(module1:Main:Artifact),
+              (:Maven:Project)-[:CREATES]->(module2:Main:Artifact),
+              (:Maven:Project)-[:CREATES]->(module3:Main:Artifact)
+            WHERE
+              module1.name ends with "module1"
+              and module2.name ends with "module2"
+              and module3.name ends with "module3"
+            MERGE
+              (module2)-[:DEFINES_DEPENDENCY]->(module1)
+            MERGE
+              (module3)-[:DEFINES_DEPENDENCY]->(module1)
+            MERGE
+              (module3)-[:DEFINES_DEPENDENCY]->(module2)
+            RETURN
+              *
+        ]]></cypher>
+    </concept>
+
+    <constraint id="test:UndefinedDependency">
+        <requiresConcept refId="test:DefinedDependency" />
+        <description>Verifies unexpected artifact dependencies</description>
+        <cypher>
+            <![CDATA[
+            MATCH
+              (:Maven:Project)-[:CREATES]->(module1:Main:Artifact),
+              (:Maven:Project)-[:CREATES]->(module2:Main:Artifact),
+              (module1)-[:DEPENDS_ON]->(module2)
+            WHERE
+              not (module1)-[:DEFINES_DEPENDENCY]->(module2)
+            RETURN
+              module1 as Artifact, module2 as UndefinedDependency
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:RedundantDependency">
+        <description>Verifies unexpected artifact dependencies</description>
+        <cypher>
+        <![CDATA[
+            MATCH
+              (:Maven:Project)-[:CREATES]->(module1:Main:Artifact),
+              (:Maven:Project)-[:CREATES]->(module2:Main:Artifact),
+              (module1)-[d:DEPENDS_ON]->(module2)
+            WITH
+              module1, module2, count(d) as dependencies
+            WHERE
+              dependencies > 1
+            RETURN
+              module1, module2, dependencies
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
