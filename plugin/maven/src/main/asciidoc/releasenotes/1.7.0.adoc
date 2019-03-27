@@ -5,6 +5,7 @@ ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Maven 3 Plugin 1.7.0]
 
 * Added a label `Effective` for `:Maven:Pom` nodes represent the effective model of a project or artifact
+* Fixed a problem where in a multi module Maven project resolved dependencies between artifacts have been created multipe times
 * Improved graph model to support for exclusions on declared or managed dependencies:
 
   (:Pom)-[:DECLARES]->(dependency:Maven:Dependency)-[:TO_ARTIFACT]->(:Maven:Artifact),

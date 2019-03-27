@@ -4,7 +4,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
@@ -46,13 +45,18 @@ class DependencyGraphResolver implements DependencyNodeVisitor {
         MavenArtifactDescriptor dependentDescriptor = dependencies.peek();
         if (dependentDescriptor != null) {
             // Attach test scoped dependencies of the main artifact directly to the test artifact
-            if (Artifact.SCOPE_TEST.equals(dependencyNode.getArtifact().getScope()) && dependentDescriptor.equals(mainDescriptor)) {
+            Artifact dependencyArtifact = dependencyNode.getArtifact();
+            if (Artifact.SCOPE_TEST.equals(dependencyArtifact.getScope()) && dependentDescriptor.equals(mainDescriptor)) {
                 dependentDescriptor = testDescriptor;
             }
             MavenArtifactDescriptor artifactDescriptor = getMavenArtifactDescriptor(dependencyNode);
-            DependsOnDescriptor dependsOnDescriptor = context.getStore().create(dependentDescriptor, DependsOnDescriptor.class, artifactDescriptor);
-            dependsOnDescriptor.setScope(dependencyNode.getArtifact().getScope());
-            dependsOnDescriptor.setOptional(dependencyNode.getArtifact().isOptional());
+            // Merge the dependency to avoid duplicates as in multi-module projects the same
+            // dependency may be reported multiple times, e.g. for
+            // module2 -> module1
+            // module3 -> module1
+            // module3 -> module2
+            // the dependency of module2 -> module1 will be reported for module2 & module3
+            dependentDescriptor.addDependency(artifactDescriptor, dependencyArtifact.getScope(), dependencyArtifact.isOptional());
         }
         return true;
     }

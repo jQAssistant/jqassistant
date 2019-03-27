@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
@@ -23,8 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,14 +32,10 @@ public class DependencyGraphResolverTest {
     @Mock
     private ScannerContext context;
 
-    @Mock
-    private Store store;
-
     private Map<String, MavenArtifactDescriptor> resolvedArtifacts = new HashMap<>();
 
     @BeforeEach
     public void setUp() {
-        doReturn(store).when(context).getStore();
         doAnswer(i -> {
             Coordinates coordinates = (Coordinates) i.getArguments()[0];
             String fqn = MavenArtifactHelper.getId(coordinates);
@@ -53,7 +45,6 @@ public class DependencyGraphResolverTest {
                 return mavenArtifactDescriptor;
             });
         }).when(artifactResolver).resolve(any(Coordinates.class), eq(context));
-        doAnswer(i -> mock(DependsOnDescriptor.class)).when(store).create(any(MavenArtifactDescriptor.class), any(), any(MavenArtifactDescriptor.class));
     }
 
     @Test
@@ -84,19 +75,19 @@ public class DependencyGraphResolverTest {
         MavenArtifactDescriptor testDependency = resolve(testDependencyNode, false);
 
         // Main artifact only depends directly on direct dependency
-        verify(store).create(mainArtifact, DependsOnDescriptor.class, directDependency);
-        verify(store, never()).create(mainArtifact, DependsOnDescriptor.class, transitiveDependency);
-        verify(store, never()).create(mainArtifact, DependsOnDescriptor.class, testDependency);
+        verify(mainArtifact).addDependency(directDependency, Artifact.SCOPE_COMPILE, false);
+        verify(mainArtifact, never()).addDependency(eq(transitiveDependency), anyString(), anyBoolean());
+        verify(mainArtifact, never()).addDependency(eq(testDependency), anyString(), anyBoolean());
         // Test artifact only depends directly on test dependency
-        verify(store).create(testArtifact, DependsOnDescriptor.class, testDependency);
-        verify(store, never()).create(testArtifact, DependsOnDescriptor.class, directDependency);
-        verify(store, never()).create(testArtifact, DependsOnDescriptor.class, transitiveDependency);
+        verify(testArtifact).addDependency(testDependency, Artifact.SCOPE_TEST, false);
+        verify(testArtifact, never()).addDependency(eq(directDependency), anyString(), anyBoolean());
+        verify(testArtifact, never()).addDependency(eq(transitiveDependency), anyString(), anyBoolean());
         // Direct dependency only depends directly on transitive dependency
-        verify(store).create(directDependency, DependsOnDescriptor.class, transitiveDependency);
-        verify(store, never()).create(directDependency, DependsOnDescriptor.class, mainArtifact);
-        verify(store, never()).create(directDependency, DependsOnDescriptor.class, testDependency);
+        verify(directDependency).addDependency(transitiveDependency, Artifact.SCOPE_COMPILE, false);
+        verify(directDependency, never()).addDependency(eq(mainArtifact), anyString(), anyBoolean());
+        verify(directDependency, never()).addDependency(eq(testDependency), anyString(), anyBoolean());
         // Transitive dependency does not depend on anything else
-        verify(store, never()).create(eq(transitiveDependency), eq(DependsOnDescriptor.class), any(MavenArtifactDescriptor.class));
+        verify(transitiveDependency, never()).addDependency(any(MavenArtifactDescriptor.class), anyString(), anyBoolean());
     }
 
     private MavenArtifactDescriptor resolve(DependencyNode node, boolean testJar) {
