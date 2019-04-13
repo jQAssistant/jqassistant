@@ -21,7 +21,7 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     @Override
     protected void configure() {
         getScannerContext().push(FileResolver.class, new DefaultFileResolver());
-        filePatternMatcher = FilePatternMatcher.Builder.newInstance().include(getStringProperty(PROPERTY_INCLUDE, null))
+        filePatternMatcher = FilePatternMatcher.builder().include(getStringProperty(PROPERTY_INCLUDE, null))
                 .exclude(getStringProperty(PROPERTY_EXCLUDE, null)).build();
     }
 

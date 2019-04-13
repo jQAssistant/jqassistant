@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,13 @@ public class FilePatternMatcher {
     }
 
     /**
+     * Return a {@link Builder}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Builder for the file pattern matcher.
      */
     public static class Builder {
@@ -65,6 +73,8 @@ public class FilePatternMatcher {
          * 
          * @return The builder.
          */
+        @Deprecated
+        @ToBeRemovedInVersion(major = 1, minor = 8)
         public static Builder newInstance() {
             return new Builder();
         }

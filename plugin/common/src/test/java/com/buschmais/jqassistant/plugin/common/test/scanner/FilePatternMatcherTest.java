@@ -84,6 +84,6 @@ public class FilePatternMatcherTest {
     }
 
     private void configure(String includes, String excludes) {
-        filePatternMatcher = FilePatternMatcher.Builder.newInstance().include(includes).exclude(excludes).build();
+        filePatternMatcher = FilePatternMatcher.builder().include(includes).exclude(excludes).build();
     }
 }
