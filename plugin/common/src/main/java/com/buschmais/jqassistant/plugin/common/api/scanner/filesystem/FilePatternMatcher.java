@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.lang3.StringUtils;
