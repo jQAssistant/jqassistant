@@ -19,11 +19,7 @@ import com.buschmais.jqassistant.plugin.json.impl.parsing.JSONTreeWalker;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONParser;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +54,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         String exclusionPattern = getStringProperty(PROPERTY_EXCLUDE, null);
 
         if (null != inclusionPattern || null != exclusionPattern) {
-            filePatternMatcher = FilePatternMatcher.Builder.newInstance()
-                                                           .include(inclusionPattern)
-                                                           .exclude(exclusionPattern).build();
+            filePatternMatcher = FilePatternMatcher.builder().include(inclusionPattern).exclude(exclusionPattern).build();
         }
     }
 
