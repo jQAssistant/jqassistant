@@ -1,9 +1,13 @@
 package com.buschmais.jqassistant.neo4j.backend.neo4jv3;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.APOCActivator;
+import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.GraphAlgorithmsActivator;
 
 import org.neo4j.graphdb.facade.GraphDatabaseDependencies;
 import org.neo4j.kernel.configuration.Config;
@@ -13,8 +17,13 @@ import org.neo4j.logging.FormattedLogProvider;
 import org.neo4j.logging.Level;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.database.GraphFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
+
+
+    public static final String HTTP_TYPE = "HTTP";
 
     private static final String DBMS_CONNECTOR_BOLT_ENABLED = "dbms.connector.bolt.enabled";
     private static final String DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS = "dbms.connector.bolt.listen_address";
@@ -22,7 +31,7 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     private static final String DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS = "dbms.connector.http.listen_address";
     private static final String DBMS_CONNECTOR_HTTP_TYPE = "dbms.connector.http.type";
 
-    public static final String HTTP_TYPE = "HTTP";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV3CommunityNeoServer.class);
 
     private CommunityNeoServer communityNeoServer;
 
@@ -56,8 +65,17 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
     @Override
     protected void initialize() {
+        List<Neo4jLibraryActivator> activators = new LinkedList<>();
         if (embeddedNeo4jConfiguration.isApocEnabled()) {
-            new APOCActivator((GraphDatabaseAPI) graphDatabaseService).register();
+            activators.add(new APOCActivator());
         }
+        if (embeddedNeo4jConfiguration.isGraphAlgorithmsEnabled()) {
+            activators.add(new GraphAlgorithmsActivator());
+        }
+        activators.forEach(activator -> {
+            LOGGER.info("Registering procedures & functions library {}.", activator.getName());
+            activator.register((GraphDatabaseAPI) graphDatabaseService);
+        });
+
     }
 }

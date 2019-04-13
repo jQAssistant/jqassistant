@@ -1,112 +1,121 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
 
     <group id="neo4j-backend:Default">
-        <includeConstraint refId="neo4j-backend:*" />
+        <includeConstraint refId="neo4j-backend:*"/>
     </group>
 
-    <constraint id="neo4j-backend:ApocActivatorMustDependOnAllApocProcedures">
-        <requiresConcept refId="neo4j-backend:ApocActivatorDependsOnApocType" />
-        <description>The APOC Activator must register all available APOC procedure types.</description>
-        <!-- Verify if a dependency exists between the APOC Activator and all types declaring APOC procedures -->
+    <constraint id="neo4j-backend:LibraryActivatorMustDependOnAllProcedures">
+        <requiresConcept refId="neo4j-backend:LibraryActivatorDependsOnLibraryType"/>
+        <description>The library activators must register all available procedure types.</description>
+        <!-- Verify if a dependency exists between library activators and all types declaring procedures -->
         <cypher><![CDATA[
             MATCH
-              (apocType:APOC:Type)-[:DECLARES]->(procedure:APOC:Procedure)
+              (artifact:Artifact)-[:CONTAINS]->(libraryType:Neo4j:Library:Type)-[:DECLARES]->(:Neo4j:Procedure)
             WHERE NOT
-             (:APOC:Activator)-[:DEPENDS_ON]->(apocType)
+             (:Neo4j:LibraryActivator)-[:DEPENDS_ON]->(libraryType)
             RETURN
-              procedure as UnregisteredProcedure
+              artifact.fileName as Artifact, collect(distinct libraryType)
             ORDER BY
-              apocType.fqn
+              Artifact
         ]]></cypher>
     </constraint>
 
-    <constraint id="neo4j-backend:ApocActivatorMustDependOnAllApocUserFunctions">
-        <requiresConcept refId="neo4j-backend:ApocActivatorDependsOnApocType" />
-        <description>The APOC activator must register all available APOC user function types.</description>
-        <!-- Verify if a dependency exists between the APOC Activator and all types declaring APOC user functions -->
+    <constraint id="neo4j-backend:LibraryActivatorMustDependOnAllUserFunctions">
+        <requiresConcept refId="neo4j-backend:LibraryActivatorDependsOnLibraryType"/>
+        <description>The library activators must register all available user function types.</description>
+        <!-- Verify if a dependency exists between library activators and all types declaring library user functions -->
         <cypher><![CDATA[
             MATCH
-              (apocType:APOC:Type)-[:DECLARES]->(userFunction:APOC:UserFunction)
+              (artifact:Artifact)-[:CONTAINS]->(libraryType:Neo4j:Library:Type)-[:DECLARES]->(:Neo4j:UserFunction)
             WHERE NOT
-             (:APOC:Activator)-[:DEPENDS_ON]->(apocType)
+             (:Neo4j:LibraryActivator)-[:DEPENDS_ON]->(libraryType)
             RETURN
-              userFunction as UnregisteredFunction
+              artifact.fileName as Artifact, collect(distinct libraryType)
             ORDER BY
-              apocType.fqn
+              Artifact
         ]]></cypher>
     </constraint>
 
-    <concept id="neo4j-backend:ApocActivatorDependsOnApocType">
-        <requiresConcept refId="neo4j-backend:ApocType" />
-        <requiresConcept refId="neo4j-backend:ApocActivator" />
-        <description>Creates a DEPENDS_ON relation between the APOC activator and all types declaring APOC functions or procedures.</description>
-        <!-- The APOC jar is scanned independently of the project's classes. For that reason match all types required by the APOC activator to the APOC types and propagate the DEPENDS_ON relations. -->
+    <concept id="neo4j-backend:LibraryActivatorDependsOnLibraryType">
+        <requiresConcept refId="neo4j-backend:LibraryType"/>
+        <requiresConcept refId="neo4j-backend:LibraryActivator"/>
+        <description>Creates a DEPENDS_ON relation between the Library activators and all types declaring library functions or
+            procedures.
+        </description>
+        <!-- The library jars arescanned independently of the project's classes. For that reason match all types required by the activator to the library types and propagate the DEPENDS_ON relations. -->
         <cypher><![CDATA[
             MATCH
-              (activator:APOC:Activator:Type)-[:DEPENDS_ON]->(requiredType),
-              (apocType:APOC:Type)
+              (activator:Neo4j:LibraryActivator:Type)-[:DEPENDS_ON]->(requiredType),
+              (libraryType:Neo4j:Library:Type)
             WHERE
-              requiredType.fqn = apocType.fqn
+              requiredType.fqn = libraryType.fqn
             MERGE
-              (activator)-[:DEPENDS_ON]->(apocType)
+              (activator)-[:DEPENDS_ON]->(libraryType)
             RETURN
-              apocType.fqn
+              libraryType.fqn
         ]]></cypher>
     </concept>
 
-    <concept id="neo4j-backend:ApocType">
-        <requiresConcept refId="neo4j-backend:ApocUserFunction" />
-        <requiresConcept refId="neo4j-backend:ApocProcedure" />
-        <description>Labels all types declaring APOC functions or procedures with `APOC`.</description>
+    <concept id="neo4j-backend:LibraryType">
+        <requiresConcept refId="neo4j-backend:UserFunction"/>
+        <requiresConcept refId="neo4j-backend:Procedure"/>
+        <description>Labels all types declaring Neo4j functions or procedures with `Neo4j` and `Library`.</description>
         <cypher><![CDATA[
             MATCH
-              (apocType:Type)-[:DECLARES]->(:APOC:Method)
+              (libraryType:Type)-[:DECLARES]->(method:Neo4j:Method)
+            WHERE
+              method:Procedure or method:Function
             SET
-              apocType:APOC
+              libraryType:Neo4j:Library
             RETURN
-              apocType
+              libraryType
         ]]></cypher>
     </concept>
 
-    <concept id="neo4j-backend:ApocUserFunction">
-        <description>Labels all types annotated with "@org.neo4j.procedure.UserFunction" with `APOC` and `UserFunction`.</description>
+    <concept id="neo4j-backend:UserFunction">
+        <description>Labels all types annotated with "@org.neo4j.procedure.UserFunction" with `Neo4j` and
+            `UserFunction`.
+        </description>
         <cypher><![CDATA[
             MATCH
               (userFunction:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotationType:Type)
             WHERE
               annotationType.fqn = "org.neo4j.procedure.UserFunction"
             SET
-              userFunction:APOC:UserFunction
+              userFunction:Neo4j:UserFunction
             RETURN
-              userFunction as ApocUserFunction
+              userFunction as UserFunction
         ]]></cypher>
     </concept>
 
-    <concept id="neo4j-backend:ApocProcedure">
-        <description>Labels all types annotated with "@org.neo4j.procedure.Procedure" with `APOC` and `Procedure`.</description>
+    <concept id="neo4j-backend:Procedure">
+        <description>Labels all types annotated with "@org.neo4j.procedure.Procedure" with `Neo4j` and `Procedure`.
+        </description>
         <cypher><![CDATA[
             MATCH
               (procedure:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotationType:Type)
             WHERE
               annotationType.fqn = "org.neo4j.procedure.Procedure"
             SET
-              procedure:APOC:Procedure
+              procedure:Neo4j:Procedure
             RETURN
-              procedure as ApocProcedure
+              procedure as Procedure
         ]]></cypher>
     </concept>
 
-    <concept id="neo4j-backend:ApocActivator">
-        <description>Labels the type "com.buschmais.jqassistant.neo4j.backend.neo4jv3.APOCActivator with `APOC` and `Activator`.</description>
+    <concept id="neo4j-backend:LibraryActivator">
+        <description>Labels all types implementing "com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jLibraryActivator" with `Neo4j` and `LibraryActivator`
+            `Activator`.
+        </description>
         <cypher><![CDATA[
             MATCH
-              (:Artifact)-[:CONTAINS]->(activator:Type)
-            WHERE
-              activator.fqn = "com.buschmais.jqassistant.neo4j.backend.neo4jv3.APOCActivator"
+              (:Artifact)-[:CONTAINS]->(activator:Java:Class)-[:EXTENDS|IMPLEMENTS*]->(:Type{fqn:"com.buschmais.jqassistant.neo4j.backend.neo4jv3.Neo4jLibraryActivator"})
+            WHERE NOT
+              exists(activator.abstract)
             SET
-              activator:APOC:Activator
+              activator:Neo4j:LibraryActivator
             RETURN
-              activator as APOCActivator
+              activator as Neo4jLibraryActivator
         ]]></cypher>
     </concept>
 

@@ -1,26 +1,11 @@
-package com.buschmais.jqassistant.neo4j.backend.neo4jv3;
+package com.buschmais.jqassistant.neo4j.backend.neo4jv3.library;
 
 import java.util.List;
 
-import org.neo4j.internal.kernel.api.exceptions.KernelException;
-import org.neo4j.kernel.impl.proc.Procedures;
-import org.neo4j.kernel.internal.GraphDatabaseAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static java.util.Arrays.asList;
 
-public class APOCActivator {
+public class APOCActivator extends AbstractNeo4jLibraryActivator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(APOCActivator.class);
-
-    /*
-     * User function and procedure types can be determined after scanning the APOC
-     * JAR using the following cypher query: MATCH
-     * (t:Type)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
-     * WHERE a.name in ["UserFunction","Procedure"] WITH a.name as annotation, t
-     * ORDER BY t.fqn RETURN annotation, collect(distinct t.fqn + ".class")
-     */
     private final List<Class<?>> PROCEDURE_TYPES = asList(apoc.algo.Cliques.class, apoc.algo.Cover.class, apoc.algo.LabelPropagation.class,
             apoc.algo.PageRank.class, apoc.algo.PathFinding.class, apoc.algo.WeaklyConnectedComponents.class, apoc.atomic.Atomic.class, apoc.bolt.Bolt.class,
             apoc.cache.Static.class, apoc.cluster.Cluster.class, apoc.coll.Coll.class, apoc.config.Config.class, apoc.convert.Json.class,
@@ -44,30 +29,19 @@ public class APOCActivator {
             apoc.number.Numbers.class, apoc.number.exact.Exact.class, apoc.path.Paths.class, apoc.schema.Schemas.class, apoc.scoring.Scoring.class,
             apoc.text.Strings.class, apoc.temporal.TemporalProcedures.class, apoc.trigger.Trigger.class, apoc.util.Utils.class, apoc.version.Version.class);
 
-    private GraphDatabaseAPI graphDatabaseAPI;
-
-    APOCActivator(GraphDatabaseAPI graphDatabaseAPI) {
-        this.graphDatabaseAPI = graphDatabaseAPI;
+    @Override
+    public String getName() {
+        return "APOC";
     }
 
-    void register() {
-        LOGGER.info("Registering APOC procedures & functions.");
-        Procedures procedures = graphDatabaseAPI.getDependencyResolver().resolveDependency(Procedures.class);
-        for (Class<?> procedureType : PROCEDURE_TYPES) {
-            try {
-                LOGGER.debug("Registering procedure class " + procedureType.getName());
-                procedures.registerProcedure(procedureType);
-            } catch (KernelException e) {
-                LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
-            }
-        }
-        for (Class<?> functionType : FUNCTION_TYPES) {
-            try {
-                LOGGER.debug("Registering function class " + functionType.getName());
-                procedures.registerFunction(functionType);
-            } catch (KernelException e) {
-                LOGGER.warn("Cannot register function class " + functionType.getName(), e);
-            }
-        }
+    @Override
+    protected Iterable<Class<?>> getProcedureTypes() {
+        return PROCEDURE_TYPES;
     }
+
+    @Override
+    protected Iterable<Class<?>> getFunctionTypes() {
+        return FUNCTION_TYPES;
+    }
+
 }

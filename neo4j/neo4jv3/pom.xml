@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -39,6 +40,12 @@
                             <type>jar</type>
                             <destFileName>apoc.jar</destFileName>
                         </artifactItem>
+                        <artifactItem>
+                            <groupId>org.neo4j</groupId>
+                            <artifactId>graph-algorithms-algo</artifactId>
+                            <version>${org.neo4j.graph-algorithms_version}</version>
+                            <destFileName>graph-algorithms-algo.jar</destFileName>
+                        </artifactItem>
                     </artifactItems>
                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
                 </configuration>
@@ -71,6 +78,11 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>graph-algorithms-algo</artifactId>
+            <version>${org.neo4j.graph-algorithms_version}</version>
         </dependency>
         <dependency>
             <groupId>org.neo4j.procedure</groupId>
