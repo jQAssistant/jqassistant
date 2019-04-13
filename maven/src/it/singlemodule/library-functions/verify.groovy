@@ -3,6 +3,7 @@ assert reportFile.exists()
 def report = new XmlSlurper().parse(reportFile)
 
 verifyConcept(report, "test:APOC")
+verifyConcept(report, "test:GraphAlgorithms")
 
 def verifyConcept(report, conceptId) {
     def conceptResult = report.group.concept.find { it.@id == conceptId }

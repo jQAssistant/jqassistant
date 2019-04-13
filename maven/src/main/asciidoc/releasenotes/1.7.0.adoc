@@ -4,4 +4,4 @@
 ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Plugin for Maven 1.7.0]
 
-To be written.
+* Added configuration `graphAlgorithmsEnabled` for embedded server and system property `jqassistant.embedded.graphAlgorithmsEnabled`

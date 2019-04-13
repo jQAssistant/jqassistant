@@ -7,7 +7,7 @@
         <version>@project.version@</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>@project.artifactId@.integration.singlemodule.apoc</artifactId>
+    <artifactId>@project.artifactId@.integration.singlemodule.library-functions</artifactId>
 
     <build>
         <plugins>
@@ -18,6 +18,7 @@
                     <store>
                         <embedded>
                             <apocEnabled>true</apocEnabled>
+                            <graphAlgorithmsEnabled>true</graphAlgorithmsEnabled>
                         </embedded>
                     </store>
                 </configuration>

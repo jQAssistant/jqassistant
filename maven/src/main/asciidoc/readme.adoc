@@ -152,6 +152,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                           <httpPort>7474</httpPort>
                           <boltPort>7474</boltPort>
                           <apocEnabled>false</apocEnabled>
+                          <graphAlgorithmsEnabled>false</graphAlgorithmsEnabled>
                         </embedded>
                     </store>
                     <storeLifecycle>REACTOR</storeLifecycle>
@@ -415,6 +416,9 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 ** default: `7687`
 * apocEnabled (-Djqassistant.embedded.apocEnabled)
 ** if `true` activate the https://neo4j-contrib.github.io/neo4j-apoc-procedures/[APOC] user functions and procedures
+** default: `false`
+* graphAlgorithmsEnabled (-Djqassistant.embedded.graphAlgorithmsEnabled)
+** if `true` activate the https://github.com/neo4j-contrib/neo4j-graph-algorithms[Neo4j Graph Algorithms]
 ** default: `false`
 
 [[storeDirectory]]
