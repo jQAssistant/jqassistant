@@ -31,6 +31,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_APOC_ENABLED = "embeddedApocEnabled";
+    protected static final String CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED = "embeddedGraphAlgorithmsEnabled";
 
     @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
@@ -100,6 +101,10 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
         String apocEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_APOC_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_APOC_ENABLED));
         builder.apocEnabled(Boolean.valueOf(apocEnabled.toLowerCase()));
+
+        String graphAlgorithmsEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_GRAPH_ALGORITHMS_ENABLED));
+        builder.graphAlgorithmsEnabled(Boolean.valueOf(graphAlgorithmsEnabled.toLowerCase()));
+
         return builder.build();
     }
 
@@ -124,6 +129,9 @@ public abstract class AbstractStoreTask extends AbstractTask {
             .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED).withDescription("Activate/deactivate registration of APOC user functions and procedures in the embedded server.").hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED)
+                .withDescription("Activate/deactivate registration of graph algorithm procedures in the embedded server.").hasArgs()
+                .create(CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED));
         addTaskOptions(options);
         return options;
     }

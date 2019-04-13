@@ -156,6 +156,8 @@ Starts the integrated Neo4j web server.
 ** specifies the BOLT binding port for the server (default: 7687)
 * -embeddedApocEnabled <true|false>
 ** activates/deactivates registration of APOC user functions and procedures for the server (default: false)
+* -embeddedGraphAlgorithmsEnabled <true|false>
+** activates/deactivates registration of graph algorithms for the server (default: false)
 * -daemon
 ** terminate the server using <Ctrl-C> instead of waiting for standard input (allows to run the server on a machine as a background process / service)
 
