@@ -82,6 +82,7 @@
         <com.buschmais.xo.version>0.13.0-SNAPSHOT</com.buschmais.xo.version>
         <org.neo4j_3x.version>3.5.4</org.neo4j_3x.version>
         <org.neo4j.procedure_version>3.5.0.2</org.neo4j.procedure_version>
+        <org.neo4j.graph-algorithms_version>3.5.4.0</org.neo4j.graph-algorithms_version>
         <guava.version>27.0.1-jre</guava.version>
         <caffeine.version>2.3.3</caffeine.version>
         <maven.assembly.version>3.1.0</maven.assembly.version>
