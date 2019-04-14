@@ -40,24 +40,9 @@ public final class ReportHelper {
      *            The logger to use for logging messages.
      */
     public ReportHelper(final Logger log) {
-        this.errorLogger = new LoggingStrategy() {
-            @Override
-            public void log(String message) {
-                log.error(message);
-            }
-        };
-        this.warnLogger = new LoggingStrategy() {
-            @Override
-            public void log(String message) {
-                log.warn(message);
-            }
-        };
-        this.debugLogger = new LoggingStrategy() {
-            @Override
-            public void log(String message) {
-                log.debug(message);
-            }
-        };
+        this.errorLogger = message -> log.error(message);
+        this.warnLogger = message -> log.warn(message);
+        this.debugLogger = message -> log.debug(message);
     }
 
     /**
