@@ -33,7 +33,7 @@ public abstract class AbstractTypeSignatureVisitor extends SignatureVisitor {
      *            The {@link VisitorHelper}.
      */
     protected AbstractTypeSignatureVisitor(TypeCache.CachedType containingType, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
         this.containingType = containingType;
         this.visitorHelper = visitorHelper;
     }

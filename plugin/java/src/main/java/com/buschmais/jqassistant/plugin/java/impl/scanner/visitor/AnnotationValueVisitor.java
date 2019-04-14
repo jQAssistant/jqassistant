@@ -5,13 +5,10 @@ import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
- * An annotation visitor.
- *
- * Adds a dependency from the annotated types to the types of the annotation
- * values.
- *
+ * An annotation visitor that adds a {@link ValueDescriptor} to the current
+ * {@link AnnotationValueDescriptor}.
  */
-public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValueDescriptor> {
+public class AnnotationValueVisitor extends AbstractAnnotationVisitor<AnnotationValueDescriptor> {
 
     /**
      * Constructor.
@@ -21,7 +18,7 @@ public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValue
      *            {@link com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper}
      *            .
      */
-    protected AnnotationVisitor(TypeCache.CachedType containingType, AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
+    protected AnnotationValueVisitor(TypeCache.CachedType containingType, AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
         super(containingType, descriptor, visitorHelper);
     }
 

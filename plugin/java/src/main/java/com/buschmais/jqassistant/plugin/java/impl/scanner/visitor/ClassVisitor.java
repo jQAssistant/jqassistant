@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor;
@@ -17,6 +16,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.VisibilityModifier;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
@@ -207,8 +207,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(cachedType, cachedType.getTypeDescriptor(), SignatureHelper.getType(desc));
-        return new AnnotationVisitor(cachedType, annotationDescriptor, visitorHelper);
+        return visitorHelper.addAnnotation(cachedType, cachedType.getTypeDescriptor(), SignatureHelper.getType(desc));
     }
 
     @Override

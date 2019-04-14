@@ -5,22 +5,13 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
+
+import org.objectweb.asm.AnnotationVisitor;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -53,11 +44,10 @@ public class VisitorHelper {
     }
 
     /*
-         * Return the type descriptor for the given type name.
-         *
-         * @param typeName The full qualified name of the type (e.g.
-         * java.lang.Object).
-         */
+     * Return the type descriptor for the given type name.
+     *
+     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
+     */
     TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
         TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
@@ -69,8 +59,7 @@ public class VisitorHelper {
     /*
      * Return the type descriptor for the given type name.
      *
-     * @param typeName The full qualified name of the type (e.g.
-     * java.lang.Object).
+     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
      *
      * @param type The expected type.
      */
@@ -81,8 +70,8 @@ public class VisitorHelper {
     /**
      * Return the type resolver.
      * <p>
-     * Looks up an instance in the scanner context. If none can be found the
-     * default resolver is used.
+     * Looks up an instance in the scanner context. If none can be found the default
+     * resolver is used.
      * </p>
      *
      * @return The type resolver.
@@ -237,15 +226,19 @@ public class VisitorHelper {
      *            The type name of the annotation.
      * @return The annotation descriptor.
      */
-    AnnotationValueDescriptor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
-        if (typeName != null) {
-            TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
-            AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
-            annotationDescriptor.setType(type);
-            annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
-            return annotationDescriptor;
+    AnnotationVisitor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
+        if (typeName == null) {
+            return null;
         }
-        return null;
+        if (jQASuppress.class.getName().equals(typeName)) {
+            JavaSuppressDescriptor javaSuppressDescriptor = scannerContext.getStore().addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
+            return new SuppressAnnotationVisitor(javaSuppressDescriptor);
+        }
+        TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
+        AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
+        annotationDescriptor.setType(type);
+        annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
+        return new AnnotationValueVisitor(containingDescriptor, annotationDescriptor, this);
     }
 
     public void storeDependencies(TypeCache.CachedType<?> cachedType) {
@@ -260,4 +253,5 @@ public class VisitorHelper {
             }
         }
     }
+
 }

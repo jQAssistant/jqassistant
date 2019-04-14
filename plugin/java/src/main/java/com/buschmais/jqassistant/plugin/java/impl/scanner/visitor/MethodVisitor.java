@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
@@ -12,6 +11,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -43,7 +43,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
             DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
@@ -51,7 +51,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
+    public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
         String annotationType = SignatureHelper.getType(desc);
         if (JAVA_LANG_SYNTHETIC.equals(annotationType)) {
             // Ignore synthetic parameters add the start of the signature, i.e.
@@ -65,8 +65,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
                     + containingType.getTypeDescriptor().getFullQualifiedName() + "#" + methodDescriptor.getSignature());
             return null;
         }
-        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
-        return new AnnotationVisitor(containingType, annotationDescriptor, visitorHelper);
+        return visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override
@@ -142,7 +141,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public org.objectweb.asm.AnnotationVisitor visitAnnotationDefault() {
+    public AnnotationVisitor visitAnnotationDefault() {
         return new AnnotationDefaultVisitor(containingType, this.methodDescriptor, visitorHelper);
     }
 
@@ -156,8 +155,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(containingType, methodDescriptor, SignatureHelper.getType(desc));
-        return new AnnotationVisitor(containingType, annotationDescriptor, visitorHelper);
+        return visitorHelper.addAnnotation(containingType, methodDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override

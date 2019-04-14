@@ -14,10 +14,11 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.AnnotationVisitor {
+public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     private VisitorHelper visitorHelper;
 
@@ -34,7 +35,7 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
      *            The {@link VisitorHelper}.
      */
     protected AbstractAnnotationVisitor(TypeCache.CachedType containingType, D descriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
         this.containingType = containingType;
         this.descriptor = descriptor;
         this.visitorHelper = visitorHelper;
@@ -67,15 +68,15 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(final String name, final String desc) {
+    public AnnotationValueVisitor visitAnnotation(final String name, final String desc) {
         AnnotationValueDescriptor valueDescriptor = createValue(AnnotationValueDescriptor.class, name);
         valueDescriptor.setType(visitorHelper.resolveType(SignatureHelper.getType(desc), containingType).getTypeDescriptor());
         addValue(name, valueDescriptor);
-        return new AnnotationVisitor(containingType, valueDescriptor, visitorHelper);
+        return new AnnotationValueVisitor(containingType, valueDescriptor, visitorHelper);
     }
 
     @Override
-    public org.objectweb.asm.AnnotationVisitor visitArray(final String name) {
+    public AnnotationVisitor visitArray(final String name) {
         this.arrayValueDescriptor = createValue(ArrayValueDescriptor.class, name);
         setValue(descriptor, arrayValueDescriptor);
         return this;

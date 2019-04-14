@@ -16,7 +16,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
     private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
 
     protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
         this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;
         this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;

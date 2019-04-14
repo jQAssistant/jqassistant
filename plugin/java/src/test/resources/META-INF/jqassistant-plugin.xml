@@ -3,5 +3,6 @@
     <description>Provides concepts related to the JavaRuntime Test</description>
     <rules>
         <resource>javaruntime.xml</resource>
+        <resource>suppress.xml</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>
