@@ -14,7 +14,7 @@
         <description>Return all suppressed classes.</description>
         <cypher><![CDATA[
         MATCH
-          (class:jQAssistant:Java:Suppress:Class)
+          (class:Java:jQASuppress:Class)
         RETURN
           class
         ]]></cypher>
@@ -34,7 +34,7 @@
         <description>Return all suppressed fields.</description>
         <cypher><![CDATA[
         MATCH
-          (field:jQAssistant:Java:Suppress:Field)
+          (field:Java:jQASuppress:Field)
         RETURN
           field
         ]]></cypher>
@@ -54,7 +54,7 @@
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
-          (method:jQAssistant:Java:Suppress:Method)
+          (method:Java:jQASuppress:Method)
         RETURN
           method
         ]]></cypher>
