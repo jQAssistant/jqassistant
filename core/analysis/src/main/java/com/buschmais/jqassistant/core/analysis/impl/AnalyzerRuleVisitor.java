@@ -9,23 +9,26 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Parameter;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.xo.api.XOException;
-
-import org.slf4j.Logger;
 
 /**
  * Implementation of a rule visitor for analysis execution.
  */
-public class AnalyzerVisitor extends AbstractRuleVisitor {
+public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     private AnalyzerConfiguration configuration;
+    private AnalyzerContext analyzerContext;
     private Map<String, String> ruleParameters;
     private ReportPlugin reportPlugin;
-    private AnalyzerContext analyzerContext;
     private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
 
     /**
@@ -35,112 +38,87 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      *            The configuration
      * @param ruleParameters
      *            The rule parameter.s
-     * @param store
-     *            The context.getStore().
      * @param ruleInterpreterPlugins
      *            The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
      *            The report writer.
-     * @param log
-     *            The {@link Logger}.
      */
-    AnalyzerVisitor(AnalyzerConfiguration configuration, Map<String, String> ruleParameters, Store store,
-                    Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins, ReportPlugin reportPlugin, Logger log) {
+    AnalyzerRuleVisitor(AnalyzerConfiguration configuration, AnalyzerContext analyzerContext, Map<String, String> ruleParameters,
+            Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins, ReportPlugin reportPlugin) {
         this.configuration = configuration;
+        this.analyzerContext = analyzerContext;
         this.ruleParameters = ruleParameters;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
-        this.analyzerContext = new AnalyzerContextImpl(store, log, initVerificationStrategies());
     }
 
-    private Map<Class<? extends Verification>, VerificationStrategy> initVerificationStrategies() {
-        Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies = new HashMap<>();
-        RowCountVerificationStrategy rowCountVerificationStrategy = new RowCountVerificationStrategy();
-        verificationStrategies.put(rowCountVerificationStrategy.getVerificationType(), rowCountVerificationStrategy);
-        AggregationVerificationStrategy aggregationVerificationStrategy = new AggregationVerificationStrategy();
-        verificationStrategies.put(aggregationVerificationStrategy.getVerificationType(), aggregationVerificationStrategy);
-        return verificationStrategies;
+    @Override
+    public void beforeRules() throws RuleException {
+        reportPlugin.begin();
+    }
+
+    @Override
+    public void afterRules() throws RuleException {
+        reportPlugin.end();
     }
 
     @Override
     public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        try {
-            analyzerContext.getStore().beginTransaction();
-            ConceptDescriptor conceptDescriptor = analyzerContext.getStore().find(ConceptDescriptor.class, concept.getId());
-            Result.Status status;
-            if (conceptDescriptor == null || configuration.isExecuteAppliedConcepts()) {
-                analyzerContext.getLogger()
-                        .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity) + "'.");
-                reportPlugin.beginConcept(concept);
-                Result<Concept> result = execute(concept, effectiveSeverity);
-                reportPlugin.setResult(result);
-                status = result.getStatus();
-                if (conceptDescriptor == null) {
-                    conceptDescriptor = analyzerContext.getStore().create(ConceptDescriptor.class);
-                    conceptDescriptor.setId(concept.getId());
-                    conceptDescriptor.setStatus(status);
-                }
-                reportPlugin.endConcept();
-            } else {
-                status = conceptDescriptor.getStatus();
+        ConceptDescriptor conceptDescriptor = analyzerContext.getStore().find(ConceptDescriptor.class, concept.getId());
+        Result.Status status;
+        if (conceptDescriptor == null || configuration.isExecuteAppliedConcepts()) {
+            analyzerContext.getLogger()
+                    .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity) + "'" + ".");
+            reportPlugin.beginConcept(concept);
+            Result<Concept> result = execute(concept, effectiveSeverity);
+            reportPlugin.setResult(result);
+            status = result.getStatus();
+            if (conceptDescriptor == null) {
+                conceptDescriptor = analyzerContext.getStore().create(ConceptDescriptor.class);
+                conceptDescriptor.setId(concept.getId());
+                conceptDescriptor.setStatus(status);
             }
-            analyzerContext.getStore().commitTransaction();
-            return Result.Status.SUCCESS.equals(status);
-        } catch (XOException e) {
-            analyzerContext.getStore().rollbackTransaction();
-            throw new RuleException("Cannot apply concept " + concept.getId(), e);
+            reportPlugin.endConcept();
+        } else {
+            status = conceptDescriptor.getStatus();
         }
+        return Result.Status.SUCCESS.equals(status);
     }
 
     @Override
     public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        analyzerContext.getStore().beginTransaction();
         reportPlugin.beginConcept(concept);
         Result<Concept> result = Result.<Concept> builder().rule(concept).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
         reportPlugin.setResult(result);
         reportPlugin.endConcept();
-        analyzerContext.getStore().commitTransaction();
     }
 
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getLogger()
                 .info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity().getInfo(effectiveSeverity) + "'.");
-        try {
-            analyzerContext.getStore().beginTransaction();
-            reportPlugin.beginConstraint(constraint);
-            reportPlugin.setResult(execute(constraint, effectiveSeverity));
-            reportPlugin.endConstraint();
-            analyzerContext.getStore().commitTransaction();
-        } catch (XOException e) {
-            analyzerContext.getStore().rollbackTransaction();
-            throw new RuleException("Cannot validate constraint " + constraint.getId(), e);
-        }
+        reportPlugin.beginConstraint(constraint);
+        reportPlugin.setResult(execute(constraint, effectiveSeverity));
+        reportPlugin.endConstraint();
     }
 
     @Override
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
-        analyzerContext.getStore().beginTransaction();
         reportPlugin.beginConstraint(constraint);
         Result<Constraint> result = Result.<Constraint> builder().rule(constraint).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
         reportPlugin.setResult(result);
         reportPlugin.endConstraint();
-        analyzerContext.getStore().commitTransaction();
     }
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getLogger().info("Executing group '" + group.getId() + "'");
-        analyzerContext.getStore().beginTransaction();
         reportPlugin.beginGroup(group);
-        analyzerContext.getStore().commitTransaction();
     }
 
     @Override
     public void afterGroup(Group group) throws RuleException {
-        analyzerContext.getStore().beginTransaction();
         reportPlugin.endGroup();
-        analyzerContext.getStore().commitTransaction();
     }
 
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {

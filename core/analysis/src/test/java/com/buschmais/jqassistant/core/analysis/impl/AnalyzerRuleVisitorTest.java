@@ -1,13 +1,27 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Parameter;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -15,13 +29,11 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -31,15 +43,21 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Verifies the functionality of the analyzer visitor.
  */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class AnalyzerVisitorTest {
+public class AnalyzerRuleVisitorTest {
 
     private static final String RULESOURCE = "test.xml";
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
@@ -50,7 +68,7 @@ public class AnalyzerVisitorTest {
     private Store store;
 
     @Mock
-    private Logger console;
+    private Logger logger;
 
     @Mock
     private ReportPlugin reportWriter;
@@ -58,9 +76,12 @@ public class AnalyzerVisitorTest {
     @Mock
     private AnalyzerConfiguration configuration;
 
+    @Mock
+    private AnalyzerContext analyzerContext;
+
     private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
-    private AnalyzerVisitor analyzerVisitor;
+    private AnalyzerRuleVisitor analyzerRuleVisitor;
 
     private String statement;
 
@@ -82,29 +103,32 @@ public class AnalyzerVisitorTest {
         ruleParameters.put(PARAMETER_WITHOUT_DEFAULT, "value");
 
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
-        when(store.executeQuery(Mockito.eq(statement), anyMap())).thenReturn(result);
+        when(store.executeQuery(eq(statement), anyMap())).thenReturn(result);
+
+        doReturn(store).when(analyzerContext).getStore();
+        doReturn(logger).when(analyzerContext).getLogger();
 
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
-        analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleInterpreterPlugins, reportWriter, console);
+
+        analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleParameters, ruleInterpreterPlugins, reportWriter);
     }
 
     /**
-     * Verifies that columns of a query a reported in the order given by the
-     * query.
+     * Verifies that columns of a query a reported in the order given by the query.
      *
-     * @throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException
+     * @throws RuleException
      *             If the test fails.
      */
     @Test
-    public void columnOrder() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
-        analyzerVisitor.visitConcept(concept, Severity.MINOR);
+    public void columnOrder() throws RuleException {
+        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result capturedResult = resultCaptor.getValue();
-        assertThat("The reported column names must match the given column names.", capturedResult.getColumnNames(), CoreMatchers.<List> equalTo(columnNames));
+        assertThat("The reported column names must match the given column names.", capturedResult.getColumnNames(), equalTo(columnNames));
         List<Map<String, Object>> capturedRows = capturedResult.getRows();
         assertThat("Expecting one row.", capturedRows.size(), equalTo(1));
         Map<String, Object> capturedRow = capturedRows.get(0);
@@ -112,15 +136,18 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
-        boolean visitConcept = analyzerVisitor.visitConcept(concept, Severity.MAJOR);
+    public void executeConcept() throws RuleException {
+        doReturn(Result.Status.SUCCESS).when(analyzerContext).verify(eq(concept), anyList(), anyList());
+
+        boolean visitConcept = analyzerRuleVisitor.visitConcept(concept, Severity.MAJOR);
+
         assertThat(visitConcept, equalTo(true));
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(store).executeQuery(Mockito.eq(statement), argumentCaptor.capture());
+        verify(store).executeQuery(eq(statement), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object> equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object> equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
 
         verify(reportWriter).beginConcept(concept);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -133,10 +160,10 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
-        analyzerVisitor.skipConcept(concept, Severity.MAJOR);
+    public void skipConcept() throws RuleException {
+        analyzerRuleVisitor.skipConcept(concept, Severity.MAJOR);
 
-        verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
+        verify(store, never()).executeQuery(eq(statement), anyMap());
 
         verify(reportWriter).beginConcept(concept);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -149,14 +176,16 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void executeConstraint() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
-        analyzerVisitor.visitConstraint(constraint, Severity.BLOCKER);
+    public void executeConstraint() throws RuleException {
+        doReturn(Result.Status.FAILURE).when(analyzerContext).verify(eq(constraint), anyList(), anyList());
+
+        analyzerRuleVisitor.visitConstraint(constraint, Severity.BLOCKER);
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(store).executeQuery(Mockito.eq(statement), argumentCaptor.capture());
+        verify(store).executeQuery(eq(statement), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), CoreMatchers.<Object> equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), CoreMatchers.<Object> equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
 
         verify(reportWriter).beginConstraint(constraint);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -168,10 +197,10 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipConstraint() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
-        analyzerVisitor.skipConstraint(constraint, Severity.BLOCKER);
+    public void skipConstraint() throws RuleException {
+        analyzerRuleVisitor.skipConstraint(constraint, Severity.BLOCKER);
 
-        verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
+        verify(store, never()).executeQuery(eq(statement), anyMap());
 
         verify(reportWriter).beginConstraint(constraint);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -183,23 +212,23 @@ public class AnalyzerVisitorTest {
     }
 
     @Test
-    public void skipAppliedConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    public void skipAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
-        analyzerVisitor.visitConcept(concept, Severity.MINOR);
+        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
         verify(store, never()).create(ConceptDescriptor.class);
-        verify(store, never()).executeQuery(Mockito.eq(statement), anyMap());
+        verify(store, never()).executeQuery(eq(statement), anyMap());
     }
 
     @Test
-    public void executeAppliedConcept() throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    public void executeAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
-        analyzerVisitor.visitConcept(concept, Severity.MINOR);
+        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);
@@ -211,8 +240,9 @@ public class AnalyzerVisitorTest {
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, Collections.<String, String> emptyMap(), store, ruleInterpreterPlugins, reportWriter, console);
-            analyzerVisitor.visitConcept(concept, Severity.MINOR);
+            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, Collections.emptyMap(), ruleInterpreterPlugins,
+                    reportWriter);
+            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
@@ -225,11 +255,12 @@ public class AnalyzerVisitorTest {
     public void ruleSourceInErrorMessage() {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
-        when(store.executeQuery(Mockito.eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
+        when(store.executeQuery(eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(configuration, ruleParameters, store, ruleInterpreterPlugins, reportWriter, console);
-            analyzerVisitor.visitConcept(concept, Severity.MINOR);
+            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleParameters, ruleInterpreterPlugins,
+                    reportWriter);
+            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
@@ -245,8 +276,8 @@ public class AnalyzerVisitorTest {
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Report report = Report.builder().primaryColumn("primaryColumn").build();
-        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE)))
-                .severity(Severity.MINOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
+        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE))).severity(Severity.MINOR)
+                .executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
     }
 
     private Constraint createConstraint(String statement) {

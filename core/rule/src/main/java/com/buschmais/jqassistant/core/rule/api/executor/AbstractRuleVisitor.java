@@ -8,6 +8,14 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 public abstract class AbstractRuleVisitor implements RuleVisitor {
 
     @Override
+    public void beforeRules() throws RuleException {
+    }
+
+    @Override
+    public void afterRules() throws RuleException {
+    }
+
+    @Override
     public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         return true;
     }

@@ -41,14 +41,19 @@ public class RuleSetExecutor {
     }
 
     public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
-        for (String conceptPattern : ruleSelection.getConceptIds()) {
-            applyConcepts(ruleSet, conceptPattern, null, null);
-        }
-        for (String groupPattern : ruleSelection.getGroupIds()) {
-            executeGroups(ruleSet, groupPattern, null, null);
-        }
-        for (String constraintPattern : ruleSelection.getConstraintIds()) {
-            validateConstraints(ruleSet, constraintPattern, null, null);
+        this.ruleVisitor.beforeRules();
+        try {
+            for (String conceptPattern : ruleSelection.getConceptIds()) {
+                applyConcepts(ruleSet, conceptPattern, null, null);
+            }
+            for (String groupPattern : ruleSelection.getGroupIds()) {
+                executeGroups(ruleSet, groupPattern, null, null);
+            }
+            for (String constraintPattern : ruleSelection.getConstraintIds()) {
+                validateConstraints(ruleSet, constraintPattern, null, null);
+            }
+        } finally {
+            this.ruleVisitor.afterRules();
         }
     }
 

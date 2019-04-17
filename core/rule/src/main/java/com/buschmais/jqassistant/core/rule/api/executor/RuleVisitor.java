@@ -1,11 +1,25 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 /**
  * Defines the visitor interface for executing rules.
  */
 public interface RuleVisitor {
+
+    /**
+     * Start processing groups, concepts and constraints.
+     */
+    void beforeRules() throws RuleException;
+
+    /**
+     * Finished processing groups, concepts and constraints.
+     */
+    void afterRules() throws RuleException;
 
     /**
      * Visit a concept with the given severity.
