@@ -8,7 +8,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>@project.artifactId@.integration.singlemodule.defaultseverity</artifactId>
+    <artifactId>@project.artifactId@.integration.singlemodule.failonseverity</artifactId>
 
     <properties>
         <prop.failOnSeverity>INVALID_VALUE</prop.failOnSeverity>

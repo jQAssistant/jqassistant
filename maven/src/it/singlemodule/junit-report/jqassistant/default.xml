@@ -5,8 +5,19 @@
     </group>
 
     <group id="nestedGroup">
+        <includeConstraint refId="test:MemberByType" />
         <includeConstraint refId="dependency:PackageCycles"/>
         <includeConstraint refId="dependency:ArtifactCycles" />
     </group>
+
+    <constraint id="test:MemberByType" severity="minor">
+        <description>Test constraint.</description>
+        <cypher>
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Member)
+            RETURN
+              t, collect(m)
+        </cypher>
+    </constraint>
 
 </jqa:jqassistant-rules>
