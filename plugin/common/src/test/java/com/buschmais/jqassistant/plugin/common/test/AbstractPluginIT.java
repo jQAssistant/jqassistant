@@ -42,12 +42,13 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Abstract base class for analysis tests.
@@ -206,7 +207,7 @@ public abstract class AbstractPluginIT {
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         File directory = ClasspathResource.getFile(rootClass, "/");
-        Assertions.assertThat(directory.isDirectory()).describedAs("Expected a directory").isTrue();
+        assertThat(directory.isDirectory()).describedAs("Expected a directory").isTrue();
         return directory;
     }
 
@@ -288,7 +289,7 @@ public abstract class AbstractPluginIT {
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
-        Assertions.assertThat(concept).describedAs("The requested concept cannot be found: " + id)
+        assertThat(concept).describedAs("The requested concept cannot be found: " + id)
                   .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConceptResults().get(id);
@@ -318,7 +319,7 @@ public abstract class AbstractPluginIT {
             throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
-        Assertions.assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
+        assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
                   .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConstraintResults().get(id);
@@ -345,7 +346,7 @@ public abstract class AbstractPluginIT {
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().groupId(id).build();
         Group group = ruleSet.getGroupsBucket().getById(id);
-        Assertions.assertThat(group).describedAs("The request group cannot be found: " + id)
+        assertThat(group).describedAs("The request group cannot be found: " + id)
                   .isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
     }
