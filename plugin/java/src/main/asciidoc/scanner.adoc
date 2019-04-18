@@ -431,3 +431,39 @@ A file containing the implementation class names for a service interface
 | OF_TYPE  | <<:Java:Type>> | 1    | The type representing the service interface
 | CONTAINS | <<:Java:Type>> | 0..n | References a type which implements the service interface
 |====
+
+== @jQASuppress
+
+The annotation `com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress` may be used for suppressing results of specific rules.
+It works in a similar way like `java.lang.SuppressWarnings` provided by Java.
+
+For using it the jQAssistant Java plugin must be declared as compile-time dependency for your project, e.g. in case of Maven:
+
+[source,xml]
+.pom.xml
+----
+<dependency>
+  <groupId>{projectGroupId}</groupId>
+  <artifactId>{projectArtifactId}</artifactId>
+  <version>{projectVersion}</version>
+  <scope>provided</scope>
+</dependency>
+----
+
+The annotation can now be used to suppress annotated elements like classes, fields or methods from rule results.
+
+In the following example the class will not be reported by the constraint with the id `my-rules:MyConstraint`:
+
+[source,java]
+.ClassViolatingMyConstraint
+----
+@jQASuppress("my-rules:MyConstraint")
+public class ClassViolatingMyConstraint {
+
+  //...
+
+}
+----
+
+NOTE: Suppression only applies to the primary column of a rule result.
+If not explicitly specified this is the first column specified in the return clause of concept or constraint.
