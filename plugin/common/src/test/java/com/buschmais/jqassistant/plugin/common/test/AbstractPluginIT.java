@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import static lombok.AccessLevel.PRIVATE;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
@@ -56,6 +53,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Abstract base class for analysis tests.
