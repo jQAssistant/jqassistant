@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
+import static lombok.AccessLevel.PRIVATE;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
@@ -17,8 +20,10 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
@@ -39,16 +44,18 @@ import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Abstract base class for analysis tests.
@@ -122,24 +129,27 @@ public abstract class AbstractPluginIT {
      */
     private void startStore(TestInfo testInfo) throws URISyntaxException {
         Method method = testInfo.getTestMethod()
-                                .orElseThrow(() -> new AssertionError(
-                                    "Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));
+                .orElseThrow(() -> new AssertionError("Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));
 
         TestStore testStore = method.getAnnotation(TestStore.class);
-        TestStore.Type type = getTestStoreType(testStore);
-        Properties properties = new Properties();
-        URI uri;
+        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.FILE;
+        StoreConfiguration.StoreConfigurationBuilder storeConfigurationBuilder = StoreConfiguration.builder();
         switch (type) {
         case FILE:
             String fileName = "target/jqassistant/test-store";
-            uri = new File(fileName).toURI();
+            storeConfigurationBuilder.uri(new File(fileName).toURI());
+            storeConfigurationBuilder.embedded(getEmbeddedNeo4jConfiguration());
             break;
         case MEMORY:
-            uri = new URI("memory:///");
+            storeConfigurationBuilder.uri(new URI("memory:///"));
+            storeConfigurationBuilder.embedded(getEmbeddedNeo4jConfiguration());
             break;
         case REMOTE:
-            uri = new URI("bolt://localhost:7687");
+            storeConfigurationBuilder.uri(new URI("bolt://localhost:7687"));
+            storeConfigurationBuilder.username("neo4j").password("admin");
+            Properties properties = new Properties();
             properties.put("neo4j.remote.statement.log.level", "info");
+            storeConfigurationBuilder.properties(properties);
             break;
         default:
             throw new AssertionError("Test store type not supported: " + type);
@@ -148,7 +158,7 @@ public abstract class AbstractPluginIT {
          * You might break IT of depending jQAssistant plugins if you change the
          * location of the used database. Oliver B. Fischer, 2017-06-10
          */
-        StoreConfiguration configuration = StoreConfiguration.builder().uri(uri).username("neo4j").password("admin").properties(properties).build();
+        StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration);
         store.start(getDescriptorTypes());
         if (testStore == null || testStore.reset()) {
@@ -157,14 +167,12 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Determines the type of the test store to use.
-     *
-     * @param testStore
-     *            The {@link TestStore} annotation (if present).
-     * @return The {@link TestStore.Type}.
+     * Provide an {@link EmbeddedNeo4jConfiguration} for the file or memory store.
+     * 
+     * @return The {@link EmbeddedNeo4jConfiguration}.
      */
-    private TestStore.Type getTestStoreType(TestStore testStore) {
-        return testStore != null ? testStore.type() : TestStore.Type.FILE;
+    protected EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
+        return EmbeddedNeo4jConfiguration.builder().build();
     }
 
     /**
@@ -289,8 +297,7 @@ public abstract class AbstractPluginIT {
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
-        assertThat(concept).describedAs("The requested concept cannot be found: " + id)
-                  .isNotNull();
+        assertThat(concept).describedAs("The requested concept cannot be found: " + id).isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConceptResults().get(id);
     }
@@ -315,12 +322,10 @@ public abstract class AbstractPluginIT {
      *            The rule parameters.
      * @return The result.
      */
-    protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters)
-            throws RuleException {
+    protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
-        assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
-                  .isNotNull();
+        assertThat(constraint).describedAs("The requested constraint cannot be found: " + id).isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
         return reportPlugin.getConstraintResults().get(id);
     }
@@ -346,8 +351,7 @@ public abstract class AbstractPluginIT {
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder().groupId(id).build();
         Group group = ruleSet.getGroupsBucket().getById(id);
-        assertThat(group).describedAs("The request group cannot be found: " + id)
-                  .isNotNull();
+        assertThat(group).describedAs("The request group cannot be found: " + id).isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
     }
 
@@ -395,23 +399,13 @@ public abstract class AbstractPluginIT {
     /**
      * Represents a test result which allows fetching values by row or columns.
      */
+    @Getter
+    @AllArgsConstructor(access = PRIVATE)
+    @ToString
     protected class TestResult {
+
         private List<Map<String, Object>> rows;
         private Map<String, List<Object>> columns;
-
-        TestResult(List<Map<String, Object>> rows, Map<String, List<Object>> columns) {
-            this.rows = rows;
-            this.columns = columns;
-        }
-
-        /**
-         * Return all rows.
-         *
-         * @return All rows.
-         */
-        public List<Map<String, Object>> getRows() {
-            return rows;
-        }
 
         /**
          * Return a column identified by its name.
