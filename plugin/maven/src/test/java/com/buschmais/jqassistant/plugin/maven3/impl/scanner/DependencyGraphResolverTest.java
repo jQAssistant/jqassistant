@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,22 +55,15 @@ public class DependencyGraphResolverTest {
         DependencyNode directDependencyNode = getDependencyNode(mainNode, "direct-dependency", Artifact.SCOPE_COMPILE);
         DependencyNode transitiveDependencyNode = getDependencyNode(directDependencyNode, "transitive-dependency", Artifact.SCOPE_COMPILE);
         DependencyNode testDependencyNode = getDependencyNode(mainNode, "test-dependency", Artifact.SCOPE_TEST);
+
+        mainNode.getChildren().addAll(asList(directDependencyNode, testDependencyNode));
+        directDependencyNode.getChildren().add(transitiveDependencyNode);
+
         MavenArtifactDescriptor mainArtifact = resolve(mainNode, false);
         MavenArtifactDescriptor testArtifact = resolve(mainNode, true);
-        DependencyGraphResolver resolver = new DependencyGraphResolver(mainArtifact, testArtifact, artifactResolver, context);
+        DependencyGraphResolver resolver = new DependencyGraphResolver(artifactResolver, context);
 
-        // Simulate the following dependency graph:
-        // mainNode -(compile)-> directDependencyNode -(compile)->
-        // transitiveDependencyNode
-        // -(test)-> testDependencyNode
-        resolver.visit(mainNode);
-        resolver.visit(directDependencyNode);
-        resolver.visit(transitiveDependencyNode);
-        resolver.endVisit(transitiveDependencyNode);
-        resolver.endVisit(directDependencyNode);
-        resolver.visit(testDependencyNode);
-        resolver.endVisit(testDependencyNode);
-        resolver.endVisit(mainNode);
+        resolver.resolve(mainNode, mainArtifact, testArtifact);
 
         MavenArtifactDescriptor directDependency = resolve(directDependencyNode, false);
         MavenArtifactDescriptor transitiveDependency = resolve(transitiveDependencyNode, false);
@@ -96,6 +91,9 @@ public class DependencyGraphResolverTest {
 
     private DependencyNode getDependencyNode(DependencyNode parent, String artifactId, String scope) {
         DefaultArtifact artifact = new DefaultArtifact("com.acme", artifactId, "1.0.0", scope, "jar", null, mock(ArtifactHandler.class));
-        return new DefaultDependencyNode(parent, artifact, null, null, null);
+        DefaultDependencyNode dependencyNode = new DefaultDependencyNode(parent, artifact, null, null, null);
+        dependencyNode.setChildren(new LinkedList<>());
+        return dependencyNode;
+
     }
 }

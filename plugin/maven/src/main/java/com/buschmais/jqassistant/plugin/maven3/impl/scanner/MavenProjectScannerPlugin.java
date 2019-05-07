@@ -119,7 +119,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @return The artifact descriptor.
      */
     private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(Coordinates coordinates, ArtifactResolver artifactResolver, Class<T> type,
-                                                                             Scanner scanner) {
+            Scanner scanner) {
         MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(coordinates, scanner.getContext());
         return scanner.getContext().getStore().addDescriptorType(mavenArtifactDescriptor, type);
     }
@@ -169,8 +169,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             LOGGER.warn("Cannot resolve dependency graph for " + project, e);
         }
         if (rootNode != null) {
-            DependencyGraphResolver dependencyGraphResolver = new DependencyGraphResolver(mainDescriptor, testDescriptor, artifactResolver, context);
-            rootNode.accept(dependencyGraphResolver);
+            DependencyGraphResolver dependencyGraphResolver = new DependencyGraphResolver(artifactResolver, context);
+            dependencyGraphResolver.resolve(rootNode, mainDescriptor, testDescriptor);
         }
     }
 
@@ -181,7 +181,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         return repositorySystemSession;
     }
 
-    private ProjectBuildingRequest getProjectBuildingRequest(MavenProject project, ProjectBuildingRequest projectBuildingRequest, DefaultRepositorySystemSession repositorySystemSession) {
+    private ProjectBuildingRequest getProjectBuildingRequest(MavenProject project, ProjectBuildingRequest projectBuildingRequest,
+            DefaultRepositorySystemSession repositorySystemSession) {
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(projectBuildingRequest);
         buildingRequest.setRepositorySession(repositorySystemSession);
         buildingRequest.setProject(project);
