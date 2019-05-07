@@ -7,5 +7,5 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * sources located in src/main/java".
  */
 @Label("Main")
-public interface MavenMainArtifactDescriptor extends MavenArtifactDescriptor {
+public interface MavenMainArtifactDescriptor extends MavenArtifactFileDescriptor {
 }

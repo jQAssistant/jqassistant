@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
@@ -18,7 +18,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
      * @return The artifacts.
      */
     @Relation("CREATES")
-    List<ArtifactFileDescriptor> getCreatesArtifacts();
+    List<ArtifactDescriptor> getCreatesArtifacts();
 
     /**
      * Return the parent of this project.

@@ -6,7 +6,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
@@ -48,7 +48,6 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-
 
 /* todo This test uses lenient stubbing. Test is to complex to simply change the stubbing. Must be refactored. */
 
@@ -111,7 +110,7 @@ public class MavenProjectScannerPluginTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MavenProject.class.getName(), project);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
-        List<ArtifactFileDescriptor> createsArtifacts = new LinkedList<>();
+        List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
         when(store.find(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
         when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
