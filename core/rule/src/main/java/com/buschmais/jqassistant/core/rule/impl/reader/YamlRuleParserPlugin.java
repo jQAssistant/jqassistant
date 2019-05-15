@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -30,12 +29,12 @@ import org.snakeyaml.engine.v1.api.LoadSettings;
 import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
 import org.snakeyaml.engine.v1.api.YamlUnicodeReader;
 
+import static java.lang.String.format;
+import static java.lang.String.join;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 
 /* todo check if the naming is consistent (*Block for YAML structures)
@@ -45,32 +44,38 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private static final String YAML_EXTENSION_LONG = ".yaml";
     private static final String YAML_EXTENSION_SHORT = ".yml";
 
-    private static final Collection<String> TOPLEVEL_KEYS =
-        unmodifiableCollection(asList(CONCEPTS, CONSTRAINTS, GROUPS));
+    private static final KeySet TOPLEVEL_KEYS = new KeySet(CONCEPTS, CONSTRAINTS, GROUPS);
 
-    private static final Collection<String> GROUP_KEYS =
-        unmodifiableCollection(asList(ID, INCLUDES_CONCEPTS, INCLUDES_CONSTRAINTS,
-                                      INCLUDES_GROUPS, SEVERITY));
+    private static final KeySet GROUP_KEYS = new KeySet(ID, INCLUDES_CONCEPTS, INCLUDES_CONSTRAINTS,
+                                                        INCLUDES_GROUPS, SEVERITY);
 
-    private static final Collection<String> GROUP_KEYS_REQUIRED = unmodifiableCollection(singletonList(ID));
 
-    private static final Collection<String> CONCEPT_KEYS =
-        unmodifiableCollection(asList(AGGREGATION, DESCRIPTION, ID, CYPHER, REQUIRES_CONCEPTS,
-                                      REPORT, REQUIRES_PARAMETERS, SEVERITY, SOURCE, VERIFY));
+    private static final KeySet GROUP_KEYS_REQUIRED = new KeySet(ID);
 
-    private Collection<String> CONCEPT_KEYS_REQUIRED = unmodifiableCollection(asList(ID, CYPHER));
+    private static final KeySet CONCEPT_KEYS = new KeySet(AGGREGATION, DESCRIPTION, ID, CYPHER,
+                                                          REQUIRES_CONCEPTS, REPORT, REQUIRES_PARAMETERS,
+                                                          SEVERITY, SOURCE, VERIFY);
 
-    private Collection<String> PARAMETER_KEYS =
-        unmodifiableCollection(asList(PARAMETER_NAME, PARAMETER_TYPE, PARAMETER_DEFAULT_VALUE));
+    private static final KeySet CONCEPT_KEYS_REQUIRED = new KeySet(ID, CYPHER);
 
-    private Collection<String> PARAMETER_KEYS_REQUIRED = unmodifiableCollection(asList(PARAMETER_NAME, PARAMETER_TYPE));
+    private static final KeySet PARAMETER_KEYS = new KeySet(PARAMETER_NAME, PARAMETER_TYPE, PARAMETER_DEFAULT_VALUE);
 
-    private Collection<String> REPORT_KEYS =
-        unmodifiableCollection(asList(PRIMARY_COLUMN, REPORT_TYPE, REPORT_PROPERTIES));
+    private static final KeySet PARAMETER_KEYS_REQUIRED = new KeySet(PARAMETER_NAME, PARAMETER_TYPE);
 
-    private Collection<String> RULE_REFERENCE_KEYS = unmodifiableCollection(asList(REF_ID, SEVERITY));
+    private static final KeySet REPORT_KEYS = new KeySet(PRIMARY_COLUMN, REPORT_TYPE, REPORT_PROPERTIES);
 
-    private Collection<String> RULE_REFERENCE_KEYS_REQUIRED = unmodifiableCollection(singletonList(REF_ID));
+    private static final KeySet REPORT_KEYS_REQUIRED = new KeySet();
+
+    private static final KeySet RULE_REFERENCE_KEYS = new KeySet(REF_ID, SEVERITY);
+
+    private static final KeySet RULE_REFERENCE_KEYS_REQUIRED = new KeySet(REF_ID);
+
+    private KeySet REQUIRES_CONCEPTS_KEYS_REQUIRED = new KeySet(REF_ID);
+    private KeySet REQUIRES_CONCEPTS_KEYS = new KeySet(OPTIONAL, REF_ID);
+
+    private static final KeySet VERIFY_KEYS = new KeySet(AGGREGATION, ROW_COUNT);
+    private static final KeySet VERIFY_KEYS_REQUIRED = new KeySet();
+
 
     @Override
     public boolean accepts(RuleSource ruleSource) throws RuleException {
@@ -79,7 +84,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                                  ruleSource.getURL().toExternalForm().toLowerCase().endsWith(YAML_EXTENSION_SHORT);
             return acceptable;
         } catch (IOException e) {
-            throw new RuleException("Unable to get the URL of the rule source.", e);
+            String message = "Unable to get the URL of the rule source.";
+            throw new RuleException(message, e);
         }
     }
 
@@ -105,80 +111,93 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 }
             }
         } catch (IOException e) {
-            throw new RuleException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
+            String message = format("Cannot read rules from '%s'.", ruleSource.getId());
+            throw new RuleException(message, e);
         } catch (ClassCastException e) {
-            throw new RuleException("Cannot process rules from '" + ruleSource.getId() + "' " +
-                                    "because of an invalid YAML datastructure");
+            String message = format("Cannot process rules from '%s' because of an invalid YAML datastructure",
+                                    ruleSource.getId());
+            throw new RuleException(message);
         }
     }
 
     private void processDocument(Map<String, Object> documentMap, RuleContext context) throws RuleException {
-        Set<String> givenKeys = documentMap.keySet();
-        boolean onlyKnownKeys = TOPLEVEL_KEYS.containsAll(givenKeys);
+        KeySet foundKeys = new KeySet(documentMap.keySet());
+        boolean hasUnsupportedKeys = !TOPLEVEL_KEYS.containsKeyset(foundKeys);
 
-        if (!onlyKnownKeys) {
-            givenKeys.removeAll(TOPLEVEL_KEYS);
-
-            throw new RuleException("Rule source '" + context.getSource().getId() + "' contains the " +
-                                    "following unsupported keys: " + String.join(", ", givenKeys));
+        if (hasUnsupportedKeys) {
+            KeySet unsupportedKeys = TOPLEVEL_KEYS.getDifference(foundKeys);
+            String message = format("Rule source '%s' contains the following unsupported keys: %s",
+                                    context.getSource().getId(), String.join(", ", unsupportedKeys));
+            throw new RuleException(message);
         }
 
-        if (documentMap.containsKey(CONCEPTS)) {
-            List<Map<String, Object>> concepts =
-                // todo computeIfAbsend ersetzen
-                (List<Map<String, Object>>) documentMap.computeIfAbsent(CONCEPTS, key -> emptyList());
-            for (Map<String, Object> conceptSpec : concepts) {
-                this.processConceptOrConstraint(conceptSpec, context,
-                                                concept -> context.getBuilder().addConcept(concept),
-                                                Concept.builder());
+        /*
+         * There is no check for missing keys on the top level of an document as an
+         * empty YAML document is a valid rule document.
+         */
+
+        boolean containsConcepts = documentMap.containsKey(CONCEPTS);
+        boolean containsConstraints = documentMap.containsKey(CONSTRAINTS);
+        boolean containsGroups = documentMap.containsKey(GROUPS);
+
+        if (containsConcepts) {
+            context.setRuleType(CONCEPT);
+
+            RuleConsumer<Concept> conceptRuleConsumer = concept -> context.getBuilder().addConcept(concept);
+            List<Map<String, Object>> executableRules =
+                (List<Map<String, Object>>) ofNullable(documentMap.get(CONCEPTS)).orElse(emptyList());
+
+            for (Map<String, Object> executableRule : executableRules) {
+                this.processExecutableRule(executableRule, context, conceptRuleConsumer, Concept.builder());
             }
         }
 
-        if (documentMap.containsKey(CONSTRAINTS)) {
-            List<Map<String, Object>> constraints =
-                // todo computeIfAbsend ersetzen
-                (List<Map<String, Object>>) documentMap.computeIfAbsent(CONSTRAINTS,
-                                                                        key -> emptyList());
-            for (Map<String, Object> constraintSpec : constraints) {
-                this.processConceptOrConstraint(constraintSpec, context,
-                                                constraint -> context.getBuilder().addConstraint(constraint),
-                                                Constraint.builder());
+        if (containsConstraints) {
+            context.setRuleType(CONSTRAINT);
+            RuleConsumer<Constraint> ruleConsumer = constraint -> context.getBuilder().addConstraint(constraint);
+            List<Map<String, Object>> executableRules =
+                (List<Map<String, Object>>) ofNullable(documentMap.get(CONSTRAINTS)).orElse(emptyList());
+
+            for (Map<String, Object> executableRule : executableRules) {
+                this.processExecutableRule(executableRule, context, ruleConsumer, Constraint.builder());
             }
         }
 
-        if (documentMap.containsKey(GROUPS)) {
-            List<Map<String, Object>> groups =
-                // todo computeIfAbsend ersetzen
-                (List<Map<String, Object>>) documentMap.computeIfAbsent(GROUPS, key -> emptyList());
-            for (Map<String, Object> group : groups) {
-                processGroup(group, context);
+        if (containsGroups) {
+            context.setRuleType(GROUP);
+
+            List<Map<String, Object>> groupRules =
+                (List<Map<String, Object>>) ofNullable(documentMap.get(GROUPS)).orElse(emptyList());
+
+            for (Map<String, Object> groupRule : groupRules) {
+                processGroup(groupRule, context);
             }
         }
+
+        context.clearRuleType();
     }
 
     private void processGroup(Map<String, Object> map, RuleContext context)
         throws RuleException {
-        Set<String> givenKeys = map.keySet();
-        boolean containsOnlyKnownKeys = GROUP_KEYS.containsAll(givenKeys);
+        KeySet foundKeys = new KeySet(map.keySet());
+        boolean hasRequiredKey = foundKeys.containsKeyset(GROUP_KEYS_REQUIRED);
+        boolean hasUnsupportedKeys = !GROUP_KEYS.containsKeyset(foundKeys);
 
-        boolean requiredKeysPresent = givenKeys.containsAll(GROUP_KEYS_REQUIRED);
+        if (!hasRequiredKey) {
+            KeySet missingKeys = foundKeys.getDifference(GROUP_KEYS_REQUIRED);
 
-        if (!requiredKeysPresent) {
-            List<String> missing = GROUP_KEYS_REQUIRED.stream()
-                                                      .filter(key -> !givenKeys.contains(key))
-                                                      .collect(toList());
-
-            throw new RuleException("Rule source with id '" + context.getSource().getId() + "' " +
-                                    "contains a group with the following missing keys: " +
-                                    String.join(", ", missing));
+            String message = format("Rule source with id '%s' contains a group with the following missing keys: %s",
+                                    context.getSource().getId(), join(", ", missingKeys));
+            throw new RuleException(message);
         }
 
-        if (!containsOnlyKnownKeys) {
-            givenKeys.removeAll(GROUP_KEYS);
+        if (hasUnsupportedKeys) {
+            KeySet unsupportedKeys = GROUP_KEYS.getDifference(foundKeys);
 
-            throw new RuleException("Rule source with id '" + context.getSource().getId() + "' contains " +
-                                    "a group containing the following unsupported keys: " +
-                                    String.join(", ", givenKeys));
+            String message = format("Rule source with id '%s' contains a group containing the following " +
+                                    "unsupported keys: %s",
+                                    context.getSource().getId(), join(", ", unsupportedKeys));
+            throw new RuleException(message);
         }
 
         String id = (String)map.get(ID);
@@ -189,29 +208,33 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         List<Map<String, String>> constraints = (List<Map<String, String>>) map.computeIfAbsent(INCLUDES_CONSTRAINTS,
                                                                                                 key -> emptyList());
         // todo computeIfAbsend ersetzen
+        //List<Map<String, String>> groups = getMapByKey(map, INCLUDES_GROUPS);
+
+
         List<Map<String, String>> groups = (List<Map<String, String>>) map.computeIfAbsent(INCLUDES_GROUPS,
                                                                                            key -> emptyList());
 
-        Map<String, Severity> includedGroups = new HashMap<>();
-        Map<String, Severity> includedConstraints = new HashMap<>();
-        Map<String, Severity> includedConcepts = new HashMap<>();
+
+        SeverityMap includedGroups = new SeverityMap();
+        SeverityMap includedConstraints = new SeverityMap();
+        SeverityMap includedConcepts = new SeverityMap();
 
         for (Map<String, String> refSpec : concepts) {
-            Entry<String, Severity> entry = extractRuleReferencesFrom(id, refSpec, CONCEPT, context);
-            includedConcepts.put(entry.getKey(), entry.getValue());
+            RuleSeverityAssociation reference = extractRuleReferencesFrom(id, refSpec, CONCEPT, context);
+            includedConcepts.add(reference);
         }
 
         for (Map<String, String> refSpec : constraints) {
-            Entry<String, Severity> entry = extractRuleReferencesFrom(id, refSpec, CONSTRAINT, context);
-            includedConstraints.put(entry.getKey(), entry.getValue());
+            RuleSeverityAssociation references = extractRuleReferencesFrom(id, refSpec, CONSTRAINT, context);
+            includedConstraints.add(references);
         }
 
         for (Map<String, String> refSpec : groups) {
-            Entry<String, Severity> entry = extractRuleReferencesFrom(id, refSpec, GROUP, context);
-            includedGroups.put(entry.getKey(), entry.getValue());
+            RuleSeverityAssociation reference = extractRuleReferencesFrom(id, refSpec, GROUP, context);
+            includedGroups.add(reference);
         }
         
-        Group group = Group.builder().id(id).severity(null /* todo */)
+        Group group = Group.builder().id(id).severity(null /* todo Was ist hier der Defaultwert?*/)
                            .ruleSource(context.getSource())
                            .concepts(includedConcepts).constraints(includedConstraints)
                            .groups(includedGroups)
@@ -220,45 +243,39 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         context.getBuilder().addGroup(group);
     }
 
-    private Map.Entry<String, Severity> extractRuleReferencesFrom(String containingRuleId, Map<String, String> refSpec,
+    private RuleSeverityAssociation extractRuleReferencesFrom(String containingRuleId, Map<String, String> refSpec,
                                                                   String role, RuleContext context)
         throws RuleException {
+        KeySet foundKeys = new KeySet(refSpec.keySet());
+        boolean hasRequiredKeys = foundKeys.containsKeyset(RULE_REFERENCE_KEYS_REQUIRED);
+        boolean hasUnsupportedKeys = !RULE_REFERENCE_KEYS.containsKeyset(foundKeys);
 
-        Set<String> givenKeys = refSpec.keySet();
+        if (!hasRequiredKeys) {
+            KeySet missingKeys = foundKeys.getDifference(RULE_REFERENCE_KEYS_REQUIRED);
 
-        boolean requiredKeysPresent = givenKeys.containsAll(RULE_REFERENCE_KEYS_REQUIRED);
-        boolean unsupportedKeysGiven = givenKeys.stream().anyMatch(key -> !RULE_REFERENCE_KEYS.contains(key));
-
-        if (!requiredKeysPresent) {
-            List<String> missingKeys = new ArrayList<>(RULE_REFERENCE_KEYS_REQUIRED);
-            missingKeys.removeAll(givenKeys);
-
-            throw new RuleException("Rule source '" + context.getSource().getId() +
-                                    "' contains the group '" + containingRuleId + "' with an " +
-                                    "included " + role + " without the following required " +
-                                    "keys: " + String.join(", ", missingKeys));
+            String message = format("Rule source '%s' contains the group '%s' with an included %s without " +
+                                    "the following required keys: %s",
+                                    context.getSource().getId(), containingRuleId, role, join(", ", missingKeys));
+            throw new RuleException(message);
         }
 
-        if (unsupportedKeysGiven) {
-            List<String> unsupportedKeys = givenKeys.stream()
-                                                    .filter(key -> !RULE_REFERENCE_KEYS.contains(key))
-                                                    .collect(toList());
+        if (hasUnsupportedKeys) {
+            KeySet unsupportedKeys = RULE_REFERENCE_KEYS.getDifference(foundKeys);
 
-            throw new RuleException("Rule source '" + context.getSource().getId() +
-                                        "' contains the group '" + containingRuleId +
-                                        "' with an included " + role +
-                                        " with the following unsupported keys: " +
-                                        String.join(", ", unsupportedKeys));
+            String message = format("Rule source '%s' contains the group '%s' with an included %s with the " +
+                                    "following unsupported keys: %s",
+                                    context.getSource().getId(), containingRuleId, role, join(", ", unsupportedKeys));
+            throw new RuleException(message);
         }
 
         String refId = refSpec.get(REF_ID);
         String severityVal = refSpec.get(SEVERITY);
 
         if (refSpec.containsKey(SEVERITY) && severityVal == null) {
-            throw new RuleException("Rule source '" + context.getSource().getId() +
-                                        "' contains the group '" + containingRuleId + "' with an " +
-                                        "included " + role + " without specified value for its " +
-                                        "severity");
+            String message = format("Rule source '%s' contains the group '%s' with an included %s without " +
+                                    "specified value for its severity",
+                                    context.getSource().getId(), containingRuleId, role);
+            throw new RuleException(message);
         }
 
         // todo Wie ist hier das erwartete Verhalten?
@@ -267,38 +284,58 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                                                 : toSeverity(severityVal, context);
 
 
-        return new HashMap.SimpleEntry<>(refId, severity);
+        return new RuleSeverityAssociation(refId, severity);
     }
 
-    private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> void processConceptOrConstraint(Map<String, Object> map,
-                                                                                                                               RuleContext context,
-                                                                                                                               RuleConsumer<T> consumer,
-                                                                                                                               B builder)
+    private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> void processExecutableRule(Map<String, Object> map,
+                                                                                                                          RuleContext context,
+                                                                                                                          RuleConsumer<T> consumer,
+                                                                                                                          B builder)
         throws RuleException {
-        Set<String> givenKeys = map.keySet();
-        boolean containsOnlyKnownKeys = CONCEPT_KEYS.containsAll(givenKeys);
-        boolean requiredKeysPresent = givenKeys.containsAll(CONCEPT_KEYS_REQUIRED);
+        KeySet foundKeys = new KeySet(map.keySet());
+        boolean hasRequiredKeys = foundKeys.containsKeyset(CONCEPT_KEYS_REQUIRED);
+        boolean hasUnsupportedKeys = !CONCEPT_KEYS.containsKeyset(foundKeys);
 
-        if (!containsOnlyKnownKeys) {
-            givenKeys.removeAll(CONCEPT_KEYS);
+        if (!hasRequiredKeys) {
+            KeySet missingKeys = foundKeys.getDifference(CONCEPT_KEYS_REQUIRED);
 
-            // todo: The given message is wrong if we process a constraint
-            // todo: use better the phrase "with one or more unknown or misplaced keys"
-            throw new RuleException("Rule source '" + context.getSource().getId() + "' contains a concept with " +
-                                        "one or more unknown keys: " + String.join(", ", givenKeys));
+            String message = format("A %s in rule source '%s' has missing required keys. The following keys " +
+                                    "are missing: %s",
+                                    context.getRuleType(), context.getSource().getId(), join(", ", missingKeys));
+            throw new RuleException(message);
+        } else if (hasUnsupportedKeys) {
+            String message = format("Rule source '%s' contains a concept with one or more unknown keys: %s",
+                                    context.getSource().getId(), join(", ", foundKeys));
+            throw new RuleException(message);
         }
 
         String id = (String) map.get(ID);
-        String description = (String) map.get("description");
-        String cypher = (String) map.get("cypher");
-        String serverityV = (String) map.get("severity");
+        String description = (String) map.get(DESCRIPTION);
+        String cypher = (String) map.get(CYPHER);
+        String serverityV = (String) map.get(SEVERITY);
         String language = CYPHER; // todo? So richtig?
 
         CypherExecutable executable = new CypherExecutable(cypher);
-        Map<String, Boolean> required = extractRequiredConcepts(map, id);
+        Map<String, Boolean> required = extractRequiredConcepts(map, id, context);
         Map<String, Parameter> parameters = extractParameters(map, id, context);
-        Verification verification = extractVerifycation(map, id);
+        Verification verification = extractVerifycation(map, id, context);
+        Report report = extractReportConfiguration(map, context);
+        Severity severity = toSeverity(serverityV, context);
 
+        T rule = builder.id(id)
+                        .description(description)
+                        .severity(severity)
+                        .executable(executable)
+                        .requiresConcepts(required)
+                        .parameters(parameters)
+                        .verification(verification)
+                        .report(report)
+                        .ruleSource(context.getSource()).build();
+
+        consumer.consume(rule);
+    }
+
+    protected Report extractReportConfiguration(Map<String, Object> map, RuleContext context) throws RuleException {
         /**
          *
          * Aus dem Asciidoctor code
@@ -326,16 +363,25 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         if (reportBlockOpt.isPresent()) {
             Map<String, Object> reportBlock = reportBlockOpt.get();
-            Collection<String> reportBlockGivenKeys = reportBlockOpt.get().keySet();
-            boolean containsOnlyKnownReportSectionKeys = REPORT_KEYS.containsAll(reportBlockGivenKeys);
+            KeySet foundKeys = new KeySet(reportBlock.keySet());
 
-            if (!containsOnlyKnownReportSectionKeys) {
-                reportBlockGivenKeys.removeAll(REPORT_KEYS);
+            boolean hasUnsupportedKeys = !REPORT_KEYS.containsKeyset(foundKeys);
+            boolean hasRequiredKeys = foundKeys.containsKeyset(REPORT_KEYS_REQUIRED);
+
+            if (!hasRequiredKeys)  {
+                /* todo Klären mit Dirk, ob es überhaupt Pflichtkeys für die Reportsection gibt.
+                 */
+                // KeySet missingKeys = foundKeys.getDifference(REPORT_KEYS_REQUIRED);
+            } else if (hasUnsupportedKeys) {
+                KeySet unsupportedKeys = REPORT_KEYS.getDifference(foundKeys);
 
                 // todo: The given message is wrong if we process a constraint
                 // todo: use better the phrase "with one or more unknown or misplaced keys"
-                throw new RuleException("Rule source '" + context.getSource().getId() + "' contains a concept with " +
-                    "one or more unknown keys in the report block: " + String.join(", ", reportBlockGivenKeys));
+                String message = format("Rule source '%s' contains a %s with " +
+                                        "one or more unknown keys in the report block: %s",
+                                        context.getSource().getId(), context.getRuleType(),
+                                        join(", ", unsupportedKeys));
+                throw new RuleException(message);
             }
 
 
@@ -358,7 +404,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                     Object val = propertiesMap.get(key);
                     reportProperties.put(key, val);
                 };
-                
+
                 propertiesMap.keySet().forEach(propertyConsumer);
 
                 reportBuilder.properties(reportProperties);
@@ -367,29 +413,45 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         Report report = reportBuilder.build();
 
-
-        Severity severity = toSeverity(serverityV, context);
-
-        T rule = builder.id(id)
-                        .description(description)
-                        .severity(severity)
-                        .executable(executable)
-                        .requiresConcepts(required)
-                        .parameters(parameters)
-                        .verification(verification)
-                        .report(report)
-                        .ruleSource(context.getSource()).build();
-
-        consumer.consume(rule);
+        return report;
     }
 
-    private Verification extractVerifycation(Map<String, Object> map, String conceptId) {
+    private Verification extractVerifycation(Map<String, Object> map, String ruleId, RuleContext context) throws RuleException {
+        /*
+         * NOTES ON THE IMPLEMENTATION
+         *
+         * - It is totally fine if there is only the verify keyword given but no
+         *   specific verification method. We do not want to restrict the user to much.
+         */
         Verification verification = null;
+
+        /* todo Gibt welche Keys sind für eine Rowcount Verification notwendig? */
+        /* todo Gibt welche Keys sind für eine Aggration Verification notwendig? */
 
         if (map.containsKey(VERIFY)) {
             Map<String, Map<String, Object>> verify = (Map<String, Map<String, Object>>) map.get(VERIFY);
+            KeySet foundKeys = new KeySet(verify.keySet());
 
-            if (verify.containsKey(AGGREGATION)) {
+            boolean hasUnsupportedKeys = !VERIFY_KEYS.containsKeyset(foundKeys);
+
+            if (hasUnsupportedKeys) {
+                KeySet unsupportedKeys = VERIFY_KEYS.getDifference(foundKeys);
+                String message = format("Rule '%s' in rule source with id '%s' contains unsupported keywords for " +
+                                        "a verification. The following keys are not supported: %s",
+                                        ruleId, context.getSource().getId(), String.join(", ", unsupportedKeys));
+                throw new RuleException(message);
+            }
+
+            boolean hasAggregation = verify.containsKey(AGGREGATION);
+            boolean hasRowCount = verify.containsKey(ROW_COUNT);
+
+            if (hasAggregation && hasRowCount) {
+                String message = format("Rule '%s' in rule source with id '%s' contains a %s with a verification " +
+                                        "via row count and aggregation. Only one verification method can be used.",
+                                        ruleId, context.getSource().getId(), context.getRuleType());
+
+                throw new RuleException(message);
+            } else if (hasAggregation) {
                 Map<String, Object> config = verify.get(AGGREGATION);
 
                 String columnName = (String) config.get(AGGREGATION_COLUMN);
@@ -402,7 +464,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                                                       .max(max)
                                                       .build();
             } else {
-                Map<String, Object> config = verify.get("rowCount"); // todo Konstante
+                Map<String, Object> config = verify.get(ROW_COUNT);
 
                 Integer min = (Integer) config.get(ROW_COUNT_MIN);
                 Integer max = (Integer) config.get(ROW_COUNT_MAX);
@@ -417,19 +479,41 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         return verification;
     }
 
-    private Map<String, Boolean> extractRequiredConcepts(Map<String, Object> map, String conceptId) {
-        Map<String, Boolean> requiredConcepts = emptyMap();
+    private Map<String, Boolean> extractRequiredConcepts(Map<String, Object> map, String ruleId,
+                                                         RuleContext context) throws RuleException {
+        Map<String, Boolean> requiredConcepts = new HashMap<>();
 
-        // todo Prüfung, ob nur die richtigen Keys da sind
         boolean hasRequiresSection = map.containsKey(REQUIRES_CONCEPTS);
 
         if (hasRequiresSection) {
-            requiredConcepts = new HashMap<>();
-
             List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(REQUIRES_CONCEPTS);
 
             for (Map<String, Object> required : list) {
-                String refIdVal = (String) required.get("refId");
+                KeySet foundKeys = new KeySet(required.keySet());
+
+                boolean hasRequiredKeys = foundKeys.containsKeyset(REQUIRES_CONCEPTS_KEYS_REQUIRED);
+                boolean hasUnsupportedKeys = !REQUIRES_CONCEPTS_KEYS.containsKeyset(foundKeys);
+
+                if (!hasRequiredKeys) {
+                    KeySet missingKeys = foundKeys.getDifference(REQUIRES_CONCEPTS_KEYS_REQUIRED);
+
+                    String message = format("The %s '%s' in rule source '%s' requires one or more concepts, " +
+                                            "but a concept reference misses one or more required keys. " +
+                                            "The following keys are missing: %s",
+                                            context.getRuleType(), ruleId, context.getSource().getId(),
+                                            join(", ", missingKeys));
+                    throw new RuleException(message);
+                } else if (hasUnsupportedKeys) {
+                    KeySet unsupportedKeys = REQUIRES_CONCEPTS_KEYS.getDifference(foundKeys);
+                    String message = format("The %s '%s' in rule source '%s' requires one or more concepts, " +
+                                            "but a concept reference has one or more unsupported keys. " +
+                                            "The following keys are unsupported: %s",
+                                            context.getRuleType(), ruleId, context.getSource().getId(),
+                                            join(", ", unsupportedKeys));
+                    throw new RuleException(message);
+                }
+
+                String refIdVal = (String) required.get(REF_ID);
                 Boolean optionalVal = (Boolean) required.get(OPTIONAL);
 
                 Boolean aBoolean = ofNullable(optionalVal).orElse(Boolean.FALSE);
@@ -438,10 +522,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             }
         }
 
-        return requiredConcepts;
+        return Collections.unmodifiableMap(requiredConcepts);
     }
 
-    private Map<String, Parameter> extractParameters(Map<String, Object> map, String conceptId,
+    private Map<String, Parameter> extractParameters(Map<String, Object> map, String ruleId,
                                                      RuleContext context) throws RuleException {
         Map<String, Parameter> parameters = emptyMap();
 
@@ -454,23 +538,24 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             parameters = new HashMap<>();
 
             for (Map<String, Object> parameterSpec : list) {
-                Set<String> givenKeys = parameterSpec.keySet();
-                boolean mandatoryKeysGiven = givenKeys.containsAll(PARAMETER_KEYS_REQUIRED);
-                boolean unsupportedKeysGiven = givenKeys.stream().anyMatch(key -> !PARAMETER_KEYS.contains(key));
+                KeySet foundKeys = new KeySet(parameterSpec.keySet());
+                boolean hasRequiredKeys = foundKeys.containsKeyset(PARAMETER_KEYS_REQUIRED);
+                boolean hasUnsupportedKeys = !PARAMETER_KEYS.containsKeyset(foundKeys);
 
-                if (!mandatoryKeysGiven) {
-                    Collection<String> missing = new ArrayList<>(PARAMETER_KEYS_REQUIRED);
-                    missing.removeAll(givenKeys);
+                if (!hasRequiredKeys) {
+                    KeySet missingKeys = foundKeys.getDifference(PARAMETER_KEYS_REQUIRED);
 
-                    throw new RuleException("The concept '" + conceptId + "' in rule source '" +
-                                            context.getSource().getId() + "' has an invalid parameter. The " +
-                                            "following keys are missing: " + String.join(", ", missing));
-                } else if (unsupportedKeysGiven) {
-                    throw new RuleException("The concept '" + conceptId + "' in rule source '" +
-                                            context.getSource().getId() + "' has an invalid parameter. The " +
-                                            "following keys are not supported: " +
-                                            givenKeys.stream().filter(key -> !PARAMETER_KEYS.contains(key))
-                                                     .collect(Collectors.joining(", ")));
+                    String message = format("The %s '%s' in rule source '%s' has an invalid parameter. " +
+                                            "The following keys are missing: %s",
+                                            context.getRuleType(), ruleId, context.getSource().getId(), join(", ", missingKeys));
+                    throw new RuleException(message);
+                } else if (hasUnsupportedKeys) {
+                    KeySet unsupportedKeys = PARAMETER_KEYS.getDifference(foundKeys);
+                    String message = format("The %s '%s' in rule source '%s' has an invalid parameter. The " +
+                                            "following keys are not supported: %s",
+                                            context.getRuleType(), ruleId, context.getSource().getId(),
+                                            join(", ", unsupportedKeys));
+                    throw new RuleException(message);
                 }
 
                 String nameVal = (String) parameterSpec.get(PARAMETER_NAME);
@@ -478,17 +563,19 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 String typeVal = (String) parameterSpec.get(PARAMETER_TYPE);
 
                 if (nameVal == null || nameVal.isEmpty()) {
-                    throw new RuleException("A parameter of concept '" + conceptId + "' " +
-                                            "in rule source '" + context.getSource().getId() + "' has " +
-                                            "no name");
+                    String message = format("A parameter of %s '%s' in rule source '%s' has no name",
+                                            context.getRuleType(), ruleId, context.getSource().getId());
+                    throw new RuleException(message);
                 } else if (typeVal == null || typeVal.isEmpty()) {
-                    throw new RuleException("The parameter '" + nameVal + "' of concept '" + conceptId + "' " +
-                                            "in rule source '" + context.getSource().getId() + "' has no " +
-                                            "parameter type specified");
+                    String message = format("The parameter '%s' of %s '%s' in rule source '%s' has no " +
+                                            "parameter type specified",
+                                            nameVal, context.getRuleType(), ruleId, context.getSource().getId());
+                    throw new RuleException(message);
                 } else if (defaultVal == null && parameterSpec.containsKey(PARAMETER_DEFAULT_VALUE)) {
-                    throw new RuleException("The parameter '" + nameVal + "' of concept '" + conceptId + "' " +
-                                            "in rule source '" + context.getSource().getId() + "' has " +
-                                            "no default value");
+                    String message = format("The parameter '%s' of %s '%s' in rule source '%s' " +
+                                                   "has no default value",
+                                                   nameVal, context.getRuleType(), ruleId, context.getSource().getId());
+                    throw new RuleException(message);
                 }
 
                 Parameter.Type type = toType(typeVal, context);
@@ -504,7 +591,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         try {
             return Type.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new RuleException("'" + value + "' is not a supported type for a parameter");
+            String message = format("'%s' is not a supported type for a parameter", value);
+            throw new RuleException(message);
         }
     }
 
@@ -517,9 +605,24 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         return severity != null ? severity : getRuleConfiguration().getDefaultConceptSeverity();
     }
 
+    /**
+     * Returns a map associated with a given key from another map.
+     *
+     * @    param parentMap The map which might contain a map for the given key
+     * @    param key The key to lookup in the given map.
+     *
+     * @return The map associated with the key or a newly created empty map
+     *
+    private <T> T getMapByKey(Map<String, Object> parentMap, String key) {
+        T result = (T) ofNullable(parentMap.get(key)).orElse(emptyMap());
+        return result;
+    }
+    */
+
     private static class RuleContext {
         private RuleSource source;
         private RuleSetBuilder builder;
+        private String ruleType;
 
         public RuleContext(RuleSource source, RuleSetBuilder builder) {
             this.source = source;
@@ -533,9 +636,105 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         public RuleSetBuilder getBuilder() {
             return builder;
         }
+
+        public String getRuleType() {
+            return Optional.ofNullable(ruleType).orElseThrow(() -> new IllegalStateException("No rule type set!"));
+        }
+
+        public void setRuleType(String ruleType) {
+            this.ruleType = ruleType;
+        }
+
+        public void clearRuleType() {
+            ruleType = null;
+        }
     }
 
     private interface RuleConsumer<T> {
         void consume(T t) throws RuleHandlingException;
     }
+
+    static class SeverityMap extends HashMap<String, Severity> {
+        public void add(RuleSeverityAssociation reference) {
+            put(reference.getRuleName(), reference.getSeverity());
+        }
+    }
+
+    static class RuleSeverityAssociation {
+        private String ruleName;
+        private Severity severity;
+
+        public RuleSeverityAssociation(String ruleName, Severity severity) {
+            this.ruleName = ruleName;
+            this.severity = severity;
+        }
+
+        public String getRuleName() {
+            return ruleName;
+        }
+
+        public Severity getSeverity() {
+            return severity;
+        }
+
+    }
+
+    static class KeySet implements Iterable<String> {
+
+        private final Set<String> keySet;
+
+        /**
+         * Creates an empty set of keys.
+         */
+        public KeySet() {
+            keySet = emptySet();
+        }
+
+        KeySet(String... keys) {
+            keySet = new TreeSet<>(asList(keys));
+        }
+
+        KeySet(Set<String> keys) {
+            keySet = new TreeSet<>(keys);
+        }
+
+        boolean containsKeyset(KeySet other) {
+            boolean containsAll = keySet.containsAll(other.keySet);
+            return containsAll;
+        }
+
+        KeySet getDifference(KeySet other) {
+            HashSet<String> workingCopy = new HashSet<>(other.keySet);
+
+            workingCopy.removeAll(keySet);
+
+            return new KeySet(workingCopy);
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return keySet.iterator();
+        }
+
+        @Override
+        public void forEach(Consumer<? super String> action) {
+            keySet.forEach(action);
+        }
+
+        @Override
+        public Spliterator<String> spliterator() {
+            return keySet.spliterator();
+        }
+
+        public Stream<String> stream() {
+            return keySet.stream();
+        }
+
+        @Override
+        public String toString() {
+            return keySet.toString();
+        }
+    }
+
+
 }
