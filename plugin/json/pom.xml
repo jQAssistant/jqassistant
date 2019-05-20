@@ -36,8 +36,8 @@
     </licenses>
 
     <properties>
-        <assertj.version>3.11.1</assertj.version>
-        <org.antlr.version>4.7.1</org.antlr.version>
+        <assertj.version>3.12.2</assertj.version>
+        <org.antlr.version>4.7.2</org.antlr.version>
         <jqa-plugin-common.version>1.7.0-SNAPSHOT</jqa-plugin-common.version>
         <jqa-java-plugin.version>1.7.0-SNAPSHOT</jqa-java-plugin.version>
 
