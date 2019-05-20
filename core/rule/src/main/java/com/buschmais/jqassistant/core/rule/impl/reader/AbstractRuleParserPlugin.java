@@ -20,9 +20,11 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRuleParserPlugin.class);
 
+    protected static final String ROW_COUNT = "rowCount";
     protected static final String ROW_COUNT_MIN = "rowCountMin";
     protected static final String ROW_COUNT_MAX = "rowCountMax";
 
+    protected static final String AGGREGATION = "aggregation";
     protected static final String AGGREGATION_COLUMN = "aggregationColumn";
     protected static final String AGGREGATION_MIN = "aggregationMin";
     protected static final String AGGREGATION_MAX = "aggregationMax";
@@ -51,7 +53,6 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String PRIMARY_COLUMN = "primaryColumn";
     protected static final String REPORT_PROPERTIES = "properties";
     protected static final String VERIFY = "verify";
-    protected static final String AGGREGATION = "aggregation";
     protected static final String TITLE = "title";
     protected static final String SOURCE = "source";
     protected static final String LANGUAGE = "language";

@@ -1,0 +1,18 @@
+---
+concepts:
+  - id: java:Throwable
+    description: Labels types deriving from java.lang.Throwable as "Throwable".
+    requiresConcepts:
+      - refId: concept:other
+        optional: false
+        thisKeyIsNotSupported: yes
+    cypher: |
+      match
+        (throwable)-[:EXTENDS*]->(t:Type)
+      where
+        t.fqn = 'java.lang.Throwable'
+      SET
+        throwable:Throwable
+      return
+        count(throwable) AS Throwables
+
