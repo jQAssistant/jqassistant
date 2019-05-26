@@ -1,0 +1,4 @@
+[#yaml]
+=== YAML
+
+include::../../shared/to-be-written.adoc[]

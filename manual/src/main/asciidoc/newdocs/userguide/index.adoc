@@ -1,6 +1,6 @@
 = jQAssistant User Guide
-:toc: left
 
+:sectnums:
 
 include::introduction/00-introduction.adoc[]
 include::usecases/00-usecases.adoc[]

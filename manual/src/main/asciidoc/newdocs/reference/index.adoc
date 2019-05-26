@@ -1,0 +1,6 @@
+= jQAssistant Reference
+
+:sectnums:
+
+include::formats/00-formats.adoc[]
+

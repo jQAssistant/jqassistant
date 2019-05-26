@@ -1,0 +1,10 @@
+
+== Supported Documat Formats
+
+include::../../shared/to-be-written.adoc[]
+
+include::10-yaml.adoc[]
+include::20-xml.adoc[]
+include::30-asciidoctor.adoc[]
+
+
