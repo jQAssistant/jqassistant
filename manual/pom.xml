@@ -94,6 +94,39 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>userguide</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/asciidoc/newdocs/userguide</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/userguide</outputDirectory>
+                            <backend>xhtml5</backend>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <attributes>
+                                <toc>left</toc>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>reference</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/asciidoc/newdocs/userguide</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/userguide</outputDirectory>
+                            <backend>xhtml5</backend>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <attributes>
+                                <toc>left</toc>
+                            </attributes>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>manual</id>
                         <phase>process-resources</phase>
                         <goals>
