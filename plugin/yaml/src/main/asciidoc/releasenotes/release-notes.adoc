@@ -1,0 +1,6 @@
+
+= jQAssistant YAML 2 Plugin Release Notes
+
+include::1.7.0.adoc[]
+
+
