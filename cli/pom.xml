@@ -45,7 +45,7 @@
         <jqa-distribution-spec.version>1.7.0-SNAPSHOT</jqa-distribution-spec.version>
         <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
-        <junit.version>5.3.2</junit.version>
+        <junit.version>5.5.0-M1</junit.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
