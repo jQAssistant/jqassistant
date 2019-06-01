@@ -127,6 +127,7 @@
         <org.asciidoctor-plugin.version>2.0.0-RC.1</org.asciidoctor-plugin.version>
         <lombok.version>1.18.4</lombok.version>
         <slf4j.version>1.8.0-beta2</slf4j.version>
+        <junit.version>5.5.0-M1</junit.version>
     </properties>
 
     <build>
