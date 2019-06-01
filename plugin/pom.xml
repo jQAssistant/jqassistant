@@ -52,7 +52,6 @@
         <org.jruby.version>1.7.27</org.jruby.version>
         <mockito.version>2.24.0</mockito.version>
         <org.slf4j.version>1.8.0-beta2</org.slf4j.version>
-        <junit.version>5.4.0</junit.version>
     </properties>
 
     <build>
