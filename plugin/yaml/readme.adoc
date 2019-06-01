@@ -1,6 +1,7 @@
+
 = jQAssistant YAML 2 Plugin
 
 This is the new http://yaml.org/[YAML^] Plugin of https://www.jqassistant.org[jQAssistant^].
-It enables jQAssistant to scan and to analyze YAML documents.
+It enables jQAssistant to scan and to analyze YAML 1.2 documents.
 
 For more information on jQAssistant see https://www.jqassistant.org[^].
