@@ -39,7 +39,7 @@
 
     <properties>
         <jqa-plugin-common.version>1.7.0-SNAPSHOT</jqa-plugin-common.version>
-        <snakeyaml.version>1.19</snakeyaml.version>
+        <snakeyaml.version>1.0</snakeyaml.version>
     </properties>
 
     <build>
@@ -142,8 +142,8 @@
             <artifactId>slf4j-simple</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
             <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
