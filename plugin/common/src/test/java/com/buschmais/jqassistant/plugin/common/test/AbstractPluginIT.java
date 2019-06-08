@@ -215,7 +215,8 @@ public abstract class AbstractPluginIT {
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         File directory = ClasspathResource.getFile(rootClass, "/");
-        assertThat(directory.isDirectory()).describedAs("Expected a directory").isTrue();
+        assertThat(directory.isDirectory()).describedAs("Expected %s to be a directory", directory.toString())
+                                           .isTrue();
         return directory;
     }
 
