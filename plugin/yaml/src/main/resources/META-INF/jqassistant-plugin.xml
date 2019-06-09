@@ -2,9 +2,12 @@
                                name="YAML">
     <description>Provides yet another a scanner for YAML files</description>
     <model>
-        <!-- <class/> -->
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2Descriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2DocumentDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2SequenceDescriptor</class>
     </model>
     <scanner>
-        <!-- <class/> -->
+        <class>com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YAML2FileScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>
