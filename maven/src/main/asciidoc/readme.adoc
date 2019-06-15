@@ -1,3 +1,4 @@
+
 == Maven Plugin
 
 jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build
@@ -92,8 +93,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
+                            <resetStore>true</resetStore>
                             <scanIncludes>
-                                <resetStore>true</resetStore>
                                 <scanInclude>
                                     <path>config</path>
                                 </scanInclude>
