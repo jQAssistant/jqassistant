@@ -74,7 +74,7 @@ as root module by setting the configuration option <<useExecutionRootAsProjectRo
 
 The jQAssistant Maven plugin must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
 
-.Setup of the jQAssistant Maven plugin
+.Setup of the jQAssistant Maven plugin including supported configuration options.
 [source,xml]
 ----
 <project ...>
@@ -87,13 +87,36 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                 <version>@{project.version}</version>
                 <executions>
                     <execution>
-                        <id>scan</id>
+                        <!-- The id "cli-default" is used to allow execution of the goals with the given configuration from the command line -->
+                        <id>cli-default</id>
                         <goals>
                             <goal>scan</goal>
+                            <goal>analyze</goal>
                         </goals>
                         <!--
+                        <extensions>false</extensions>
+                        -->
                         <configuration>
+                        <!-- Store/Database -->
+                            <!--
+                            <store>
+                                <uri>file:target/jqassistant/store</uri>
+                                <username></username>
+                                <password></password>
+                                <embedded>
+                                  <listenAddress>localhost</listenAddress>
+                                  <httpPort>7474</httpPort>
+                                  <boltPort>7474</boltPort>
+                                  <apocEnabled>false</apocEnabled>
+                                  <graphAlgorithmsEnabled>false</graphAlgorithmsEnabled>
+                                </embedded>
+                            </store>
+                            <storeLifecycle>REACTOR</storeLifecycle>
                             <resetStore>true</resetStore>
+                             -->
+
+                        <!-- Scan -->
+                            <!--
                             <scanIncludes>
                                 <scanInclude>
                                     <path>config</path>
@@ -107,16 +130,10 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <customScanner.property>value</customScanner.property>
                             </scanProperties>
                             <continueOnError>false</continueOnError>
-                        </configuration>
-                        -->
-                    </execution>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>analyze</goal>
-                        </goals>
-                        <!--
-                        <configuration>
+                            -->
+
+                        <!-- Analysis configuration -->
+                            <!--
                             <warnOnSeverity>MINOR</warnOnSeverity>
                             <failOnSeverity>MAJOR</failOnSeverity>
                             <concepts>
@@ -131,49 +148,38 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <ruleParameter>
                                 <myRuleParameter>com.buschmais</myRuleParameter>
                             </ruleParameters>
+                            <rule>
+                                <defaultConceptSeverity>MINOR</defaultConceptSeverity>
+                                <defaultConstraintSeverity>MAJOR</defaultConstraintSeverity>
+                                <defaultGroupSeverity></defaultGroupSeverity>
+                            </rule>
+                            <rulesDirectory>jqassistant</rulesDirectory>
+                            <rulesDirectories>
+                                <rulesDirectory>${project.build.directory}/generated-rules</rulesDirectory>
+                            </rulesDirectories>
+                            -->
+
+                        <!-- Report -->
+                            <!--
                             <reportProperties>
                                 <customReport.fileName>
                                     ${project.build.directory}/customReport.txt
                                 </customReport.fileName>
                             </reportProperties>
-                        </configuration>
-                        -->
+                            <xmlReportFile>${project.build.directory}/jqassistant/jqassistant-report.xml</xmlReportFile>
+                            -->
+
+                        <!-- Misc -->
+                            <!--
+                            <skip>false</skip>
+                            <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
+                            -->
+                         </configuration>
                     </execution>
                 </executions>
+                <!-- Plugins are declared as dependencies of the Maven plugin -->
                 <!--
-                <configuration>
-                    <skip>false</skip>
-                    <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
-                    <store>
-                        <uri>file:target/myDatabaseDirectory</uri>
-                        <username></username>
-                        <password></password>
-                        <embedded>
-                          <listenAddress>localhost</listenAddress>
-                          <httpPort>7474</httpPort>
-                          <boltPort>7474</boltPort>
-                          <apocEnabled>false</apocEnabled>
-                          <graphAlgorithmsEnabled>false</graphAlgorithmsEnabled>
-                        </embedded>
-                    </store>
-                    <storeLifecycle>REACTOR</storeLifecycle>
-                    <rule>
-                        <defaultConceptSeverity>MINOR</defaultConceptSeverity>
-                        <defaultConstraintSeverity>MAJOR</defaultConstraintSeverity>
-                        <defaultGroupSeverity></defaultGroupSeverity>
-                    </rule>
-                    <rulesDirectory>jqassistant</rulesDirectory>
-                    <rulesDirectories>
-                        <rulesDirectory>
-                            ${project.build.directory}/generated-rules
-                        </rulesDirectory>
-                    </rulesDirectories>
-                    <xmlReportFile>
-                        ${project.build.directory}/jqassistant/jqassistant-report.xml
-                    </xmlReportFile>
-                </configuration>
                 <dependencies>
-                    <!-- additional plugins -->
                     <dependency>
                         <groupId>org.jqassistant.contrib.plugin</groupId>
                         <artifactId>jqassistant-test-impact-analysis-plugin</artifactId>
