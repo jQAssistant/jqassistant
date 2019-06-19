@@ -2,7 +2,7 @@
 
 include::../../shared/to-be-written.adoc[]
 
-=== Intuitive and Expansible Graph Model
+=== Intuitive and Extensible Graph Model
 
 include::../../shared/to-be-written.adoc[]
 
@@ -14,7 +14,7 @@ include::../../shared/to-be-written.adoc[]
 
 include::../../shared/to-be-written.adoc[]
 
-=== Various Severties
+=== Various Severities
 
 include::../../shared/to-be-written.adoc[]
 

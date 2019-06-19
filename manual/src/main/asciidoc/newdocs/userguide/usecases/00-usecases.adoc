@@ -1,4 +1,4 @@
-== Use Cases for jQAssistant
+== Use Cases
 
 include::../../shared/to-be-written.adoc[]
 
