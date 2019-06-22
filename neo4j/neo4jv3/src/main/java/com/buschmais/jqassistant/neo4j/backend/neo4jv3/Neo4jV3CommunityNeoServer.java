@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.backend.neo4jv3.extension.StaticContentResource;
 import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.APOCActivator;
 import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.GraphAlgorithmsActivator;
 
@@ -22,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
-
     public static final String HTTP_TYPE = "HTTP";
 
     private static final String DBMS_CONNECTOR_BOLT_ENABLED = "dbms.connector.bolt.enabled";
@@ -30,6 +30,9 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     private static final String DBMS_CONNECTOR_HTTP_ENABLED = "dbms.connector.http.enabled";
     private static final String DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS = "dbms.connector.http.listen_address";
     private static final String DBMS_CONNECTOR_HTTP_TYPE = "dbms.connector.http.type";
+    private static final String DBMS_UNMANAGED_EXTENSION_CLASSES = "dbms.unmanaged_extension_classes";
+
+    private static final String STATIC_CONTENT_ROOT = "/jqassistant/";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV3CommunityNeoServer.class);
 
@@ -49,6 +52,7 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
         opts.put(DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getHttpPort());
         opts.put(DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
         opts.put(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getBoltPort());
+        opts.put(DBMS_UNMANAGED_EXTENSION_CLASSES, StaticContentResource.class.getPackage().getName() + "=" + STATIC_CONTENT_ROOT);
 
         Config defaults = Config.defaults(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
