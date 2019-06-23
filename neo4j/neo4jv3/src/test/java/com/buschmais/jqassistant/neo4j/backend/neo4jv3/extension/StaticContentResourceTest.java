@@ -39,6 +39,17 @@ public class StaticContentResourceTest {
     public void htmlResource() throws IOException {
         Response response = staticContentResource.file("/test/index.html");
 
+        verifyIndexResponse(response);
+    }
+
+    @Test
+    public void indexFromFolderWithTrailingSlash() throws IOException {
+        Response response = staticContentResource.file("/test/");
+
+        verifyIndexResponse(response);
+    }
+
+    private void verifyIndexResponse(Response response) throws IOException {
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         MultivaluedMap<String, Object> metadata = response.getMetadata();
         MediaType mediaType = (MediaType) metadata.getFirst("Content-Type");
@@ -50,7 +61,7 @@ public class StaticContentResourceTest {
     }
 
     @Test
-    public void nonExistingResource() {
+    public void nonExistingResource() throws IOException {
         Response response = staticContentResource.file("/nonExistingResource.png");
 
         assertThat(response.getStatus(), equalTo(Response.Status.NOT_FOUND.getStatusCode()));
