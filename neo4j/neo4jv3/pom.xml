@@ -84,10 +84,18 @@
             <artifactId>graph-algorithms-algo</artifactId>
             <version>${org.neo4j.graph-algorithms_version}</version>
         </dependency>
+
+        <!-- APOC -->
         <dependency>
             <groupId>org.neo4j.procedure</groupId>
             <artifactId>apoc</artifactId>
             <version>${org.neo4j.procedure_version}</version>
+        </dependency>
+        <!-- Fix a problem with ASM shaded in a dependency, see https://github.com/neo4j-contrib/neo4j-apoc-procedures/pull/1259 -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.4.0</version>
         </dependency>
         <dependency>
             <!-- Required by ExtractEmail -->
@@ -104,13 +112,14 @@
         </dependency>
         <!-- for determining mime types -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>1.18</version>
+        </dependency>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>
