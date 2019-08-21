@@ -48,7 +48,7 @@ public class StaticContentResource {
     @GET
     @Path("{file:(?i).+}")
     public Response file(@PathParam("file") String file) throws IOException {
-        Optional<StaticResource> cacheResult = RESOURCE_CACHE.get(file, f -> resolveStaticResource(f));
+        Optional<StaticResource> cacheResult = RESOURCE_CACHE.get(file, f -> resolveFileOrDirectoryResource(f));
         if (cacheResult.isPresent()) {
             StaticResource staticResource = cacheResult.get();
             URL resource = staticResource.getResource();
@@ -62,26 +62,39 @@ public class StaticContentResource {
 
     /**
      * Resolves the given path to a {@link StaticResource}.
-     * 
+     *
      * @param path
      *            The path.
      * @return An {@link Optional} of a {@link StaticResource}.
      */
-    private Optional<StaticResource> resolveStaticResource(String path) {
-        String file = path.endsWith("/") ? path + INDEX_HTML : path;
+    private Optional<StaticResource> resolveFileOrDirectoryResource(String path) {
+        if (path.endsWith("/")) {
+            // Requested path represents a folder, try to resolve index document.
+            return resolve(path + INDEX_HTML);
+        } else {
+            // Verify if requested path represents a folder and contains an index document.
+            Optional<StaticResource> resource = resolve(path + "/" + INDEX_HTML);
+            if (resource.isPresent()) {
+                return resource;
+            }
+        }
+        return resolve(path);
+    }
+
+    private Optional<StaticResource> resolve(String resource) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        LOGGER.debug("Resolving resource file {} using context class loader {}.", file, contextClassLoader);
-        URL resource = contextClassLoader.getResource(CONTENT_PATH + file);
-        if (resource == null) {
-            LOGGER.debug("No resource found for file {}.", path);
+        LOGGER.debug("Resolving resource {} using context class loader {}.", resource, contextClassLoader);
+        URL url = contextClassLoader.getResource(CONTENT_PATH + resource);
+        if (url == null) {
+            LOGGER.debug("No classpath resource found for '{}'.", resource);
             return Optional.empty();
         }
         try {
-            String mimeType = TIKA.detect(resource);
-            LOGGER.debug("Resource {} with mime type {} found for path {}.", resource, mimeType, path);
-            return Optional.of(StaticResource.builder().resource(resource).mimeType(mimeType).build());
+            String mimeType = TIKA.detect(url);
+            LOGGER.debug("Resource {} with mime type {} found for path {}.", url, mimeType, resource);
+            return Optional.of(StaticResource.builder().resource(url).mimeType(mimeType).build());
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot determine mime type for " + resource, e);
+            throw new IllegalStateException("Cannot determine mime type for " + url, e);
         }
     }
 

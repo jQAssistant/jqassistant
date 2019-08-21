@@ -16,11 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.neo4j.kernel.configuration.Config;
 import org.neo4j.server.web.WebServer;
 
+import static javax.ws.rs.core.MediaType.TEXT_HTML_TYPE;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class StaticContentResourceTest {
+
+    private static final MediaType TEXT_CSS_TYPE = new MediaType("text", "css");
 
     @Mock
     private Config configuration;
@@ -37,27 +40,41 @@ public class StaticContentResourceTest {
 
     @Test
     public void htmlResource() throws IOException {
-        Response response = staticContentResource.file("/test/index.html");
+        Response response = staticContentResource.file("/test/other.html");
 
-        verifyIndexResponse(response);
+        verifyIndexResponse(response, "<h1>Other</h1>\n", TEXT_HTML_TYPE);
+    }
+
+    @Test
+    public void cssResource() throws IOException {
+        Response response = staticContentResource.file("/test/styles.css");
+
+        verifyIndexResponse(response, "/* Styles */\n", TEXT_CSS_TYPE);
     }
 
     @Test
     public void indexFromFolderWithTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test/");
 
-        verifyIndexResponse(response);
+        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
     }
 
-    private void verifyIndexResponse(Response response) throws IOException {
+    @Test
+    public void indexFromFolderWithoutTrailingSlash() throws IOException {
+        Response response = staticContentResource.file("/test");
+
+        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
+    }
+
+    private void verifyIndexResponse(Response response, String expectedContent, MediaType expectedMimeType) throws IOException {
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         MultivaluedMap<String, Object> metadata = response.getMetadata();
         MediaType mediaType = (MediaType) metadata.getFirst("Content-Type");
-        assertThat(mediaType, is(MediaType.TEXT_HTML_TYPE));
+        assertThat(mediaType, is(expectedMimeType));
         Object entity = response.getEntity();
         assertThat(entity, instanceOf(InputStream.class));
         String content = IOUtils.toString((InputStream) entity, "UTF-8");
-        assertThat(content, equalTo("<h1>Test</h1>\n"));
+        assertThat(content, equalTo(expectedContent));
     }
 
     @Test
