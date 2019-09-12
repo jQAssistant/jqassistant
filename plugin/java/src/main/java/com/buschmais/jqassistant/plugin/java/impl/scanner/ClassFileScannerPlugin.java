@@ -62,12 +62,9 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
         ClassFileDescriptor classFileDescriptor;
         try (InputStream stream = file.createStream()) {
-            classFileDescriptor = MD5DigestDelegate.getInstance().digest(stream, new MD5DigestDelegate.DigestOperation<ClassFileDescriptor>() {
-                @Override
-                public ClassFileDescriptor execute(InputStream inputStream) throws IOException {
-                    new ClassReader(inputStream).accept(visitor, 0);
-                    return visitor.getTypeDescriptor();
-                }
+            classFileDescriptor = MD5DigestDelegate.getInstance().digest(stream, inputStream -> {
+                new ClassReader(inputStream).accept(visitor, 0);
+                return visitor.getTypeDescriptor();
             });
             classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {

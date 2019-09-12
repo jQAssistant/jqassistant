@@ -43,7 +43,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
             DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
-        super(Opcodes.ASM7);
+        super(VisitorHelper.OPCODE);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;

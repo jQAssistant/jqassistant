@@ -4,7 +4,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
@@ -33,7 +32,7 @@ public abstract class AbstractTypeSignatureVisitor extends SignatureVisitor {
      *            The {@link VisitorHelper}.
      */
     protected AbstractTypeSignatureVisitor(TypeCache.CachedType containingType, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM7);
+        super(VisitorHelper.OPCODE);
         this.containingType = containingType;
         this.visitorHelper = visitorHelper;
     }

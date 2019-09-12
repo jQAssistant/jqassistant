@@ -22,7 +22,7 @@ public @interface Java {
 
     JavaLanguageElement value();
 
-    public enum JavaLanguageElement implements LanguageElement {
+    enum JavaLanguageElement implements LanguageElement {
         Package {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
@@ -223,17 +223,5 @@ public @interface Java {
             }
         }
 
-        /**
-         * Returns the file name of the given descriptor if it extends
-         * {@link com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor}
-         * .
-         *
-         * @param descriptor
-         *            The descriptor.
-         * @return The
-         */
-        private static String getFileName(Descriptor descriptor) {
-            return descriptor instanceof FileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
-        }
     }
 }
