@@ -177,6 +177,8 @@
             SET
               type.javaVersion=
               CASE type.byteCodeVersion
+                WHEN 57 THEN "Java 13"
+                WHEN 56 THEN "Java 12"
                 WHEN 55 THEN "Java 11"
                 WHEN 54 THEN "Java 10"
                 WHEN 53 THEN "Java 9"
