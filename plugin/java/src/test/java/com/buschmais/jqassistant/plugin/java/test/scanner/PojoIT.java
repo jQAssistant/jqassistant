@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 public class PojoIT extends AbstractJavaPluginIT {
 
     @Test
-    public void attributes() throws IOException {
+    public void attributes() {
         scanClasses(Pojo.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
