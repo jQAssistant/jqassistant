@@ -5,17 +5,11 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
@@ -30,12 +24,12 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     /**
      * Constructor.
-     * 
+     *
      * @param visitorHelper
      *            The {@link VisitorHelper}.
      */
     protected AbstractAnnotationVisitor(TypeCache.CachedType containingType, D descriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM7);
+        super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.descriptor = descriptor;
         this.visitorHelper = visitorHelper;
@@ -86,7 +80,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     /**
      * Create a value descriptor of given type and name and initializes it.
-     * 
+     *
      * @param type
      *            The class type.
      * @param name
@@ -112,7 +106,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     /**
      * Add the descriptor as value to the current annotation or array value.
-     * 
+     *
      * @param name
      *            The name.
      * @param value
@@ -128,7 +122,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     /**
      * Get the array of referenced values.
-     * 
+     *
      * @return The array of referenced values.
      */
     private List<ValueDescriptor<?>> getArrayValue() {

@@ -12,11 +12,14 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Opcodes;
 
 /**
  * Class containing helper methods for ASM visitors.
  */
 public class VisitorHelper {
+
+    public static final int ASM_OPCODES= Opcodes.ASM7;
 
     /**
      * The name of constructor methods.

@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * {@link AnnotationVisitor} for processing jQASuppress annotations.
@@ -20,7 +19,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     private List<String> suppressIds = new ArrayList<>();
 
     public SuppressAnnotationVisitor(JavaSuppressDescriptor suppressDescriptor) {
-        super(Opcodes.ASM7);
+        super(VisitorHelper.ASM_OPCODES);
         this.suppressDescriptor = suppressDescriptor;
     }
 
