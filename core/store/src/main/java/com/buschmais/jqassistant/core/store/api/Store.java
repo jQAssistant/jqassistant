@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.api;
 import java.util.Collection;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.Example;
@@ -36,11 +37,11 @@ public interface Store {
 
     /**
      * Return the initialized {@link XOManager} used by this store.
-     * 
+     *
      * @return The {@link XOManager}.
      */
     XOManager getXOManager();
-    
+
     /**
      * Clear the content of the store, i.e. delete all nodes and relationships.
      */
@@ -208,6 +209,8 @@ public interface Store {
      *            The full qualified name.
      * @return The {@link Descriptor}.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 8)
     <T extends Descriptor> T find(Class<T> type, String value);
 
     /**
