@@ -19,7 +19,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     private List<String> suppressIds = new ArrayList<>();
 
     public SuppressAnnotationVisitor(JavaSuppressDescriptor suppressDescriptor) {
-        super(VisitorHelper.OPCODE);
+        super(VisitorHelper.ASM_OPCODES);
         this.suppressDescriptor = suppressDescriptor;
     }
 

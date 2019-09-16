@@ -19,6 +19,8 @@ import org.objectweb.asm.Opcodes;
  */
 public class VisitorHelper {
 
+    public static final int ASM_OPCODES= Opcodes.ASM7;
+
     /**
      * Defines the ASM opcode to use for visitors.
      */

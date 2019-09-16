@@ -1,18 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.VisibilityModifier;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
@@ -41,7 +30,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *            The visitor helper.
      */
     public ClassVisitor(FileDescriptor fileDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.OPCODE);
+        super(VisitorHelper.ASM_OPCODES);
         this.fileDescriptor = fileDescriptor;
         this.visitorHelper = visitorHelper;
     }

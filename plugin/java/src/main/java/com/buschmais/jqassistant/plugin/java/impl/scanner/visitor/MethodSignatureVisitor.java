@@ -20,7 +20,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     MethodSignatureVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
                            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
-        super(VisitorHelper.OPCODE);
+        super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;

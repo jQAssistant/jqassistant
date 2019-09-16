@@ -13,7 +13,7 @@ public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
     private final VisitorHelper visitorHelper;
 
     protected FieldVisitor(TypeCache.CachedType containingType, FieldDescriptor fieldDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.OPCODE);
+        super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.fieldDescriptor = fieldDescriptor;
         this.visitorHelper = visitorHelper;
