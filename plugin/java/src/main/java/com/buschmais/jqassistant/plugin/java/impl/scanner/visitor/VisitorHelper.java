@@ -22,11 +22,6 @@ public class VisitorHelper {
     public static final int ASM_OPCODES= Opcodes.ASM7;
 
     /**
-     * Defines the ASM opcode to use for visitors.
-     */
-    public static final int OPCODE = Opcodes.ASM7;
-
-    /**
      * The name of constructor methods.
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
