@@ -7,6 +7,13 @@ then we had before.
 WARNING: Do not raise any new issues for this repository. 
          Raise new issues only in the affected repository.
 
+Want to get started? Here are some links to help you:
+
+* https://jqassistant.org/get-started/[Get Started]
+* https://101.jqassistant.org/[101 Tutorials]
+* https://buschmais.github.io/jqassistant/doc/[The jQAssistant Manual]
+
+
 If you have questions related to jQAssistant please get in touch
 with us via the https://groups.google.com/forum/#!forum/jqassistant[jQAssistant forum] or https://stackoverflow.com/questions/tagged/jqassistant[Stackoverflow].
 
