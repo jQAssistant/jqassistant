@@ -41,9 +41,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-neo4j-backend.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-neo4j-backend</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-neo4j-backend.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-neo4j-backend.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-neo4j-backend</url>
         <tag>HEAD</tag>
     </scm>
 
