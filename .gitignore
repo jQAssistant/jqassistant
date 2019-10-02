@@ -1,3 +1,5 @@
 _site
 Gemfile
 Gemfile.lock
+*.iml
+./.idea
