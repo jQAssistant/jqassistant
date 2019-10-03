@@ -33,9 +33,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-core-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-core-framework.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-core-framework</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-core-framework</url>
       <tag>HEAD</tag>
     </scm>
 
