@@ -1,5 +1,6 @@
 = jQAssistant Core Framework Release Notes
 
+include::1.8.0.adoc[]
 include::1.7.0.adoc[]
 include::1.6.0.adoc[]
 include::1.5.0.adoc[]
