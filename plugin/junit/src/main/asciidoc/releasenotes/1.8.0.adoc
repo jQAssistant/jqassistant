@@ -1,0 +1,4 @@
+ifndef::jqa-in-manual[== Version 1.8.0]
+ifdef::jqa-in-manual[== JUnit Plugin 1.8.0]
+
+To be written.
