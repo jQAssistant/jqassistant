@@ -30,9 +30,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-plugin-parent</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-plugin-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-plugin-parent.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-plugin-parent</url>
       <tag>HEAD</tag>
   </scm>
 
