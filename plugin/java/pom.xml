@@ -32,9 +32,9 @@
     </description>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-java-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-java-plugin.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-java-plugin</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-java-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-java-plugin.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-java-plugin</url>
       <tag>HEAD</tag>
   </scm>
 
