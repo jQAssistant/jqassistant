@@ -16,9 +16,9 @@
     <url>http://jqassistant.org/</url>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-json-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-json-plugin.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-json-plugin</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-json-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-json-plugin.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-json-plugin</url>
       <tag>HEAD</tag>
   </scm>
 
