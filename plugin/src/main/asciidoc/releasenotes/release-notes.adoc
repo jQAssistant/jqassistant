@@ -1,6 +1,7 @@
 
 = jQAssistant Javamkdir src/main/asciidoc/releasenotes && git mv src/main/asciidoc/[0-9]*.adoc src/main/asciidoc/r*.adoc src/main/asciidoc/releasenotes/ 8 Plugin Release Notes
 
+include::1.8.0.adoc[]
 include::1.7.0.adoc[]
 include::1.6.0.adoc[]
 include::1.5.0.adoc[]
