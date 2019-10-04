@@ -30,9 +30,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-maven-plugin.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-maven-plugin</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-maven-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
