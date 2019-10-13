@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,11 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RuleSetExecutorTest {
@@ -66,12 +63,9 @@ public class RuleSetExecutorTest {
 
     @Test
     public void overriddenGroupSeverity() throws RuleException {
-        Group group = Group.builder().id("group").severity(Severity.BLOCKER)
-                           .concept(defaultConcept.getId(), null)
-                           .concept(overriddenConcept.getId(), Severity.CRITICAL)
-                           .constraint(defaultConstraint.getId(), null)
-                           .constraint(overriddenConstraint.getId(), Severity.CRITICAL)
-                           .build();
+        Group group = Group.builder().id("group").severity(Severity.BLOCKER).concept(defaultConcept.getId(), null)
+                .concept(overriddenConcept.getId(), Severity.CRITICAL).constraint(defaultConstraint.getId(), null)
+                .constraint(overriddenConstraint.getId(), Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
                 .addConstraint(overriddenConstraint).addGroup(group).getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder().groupId(group.getId()).build();
@@ -134,8 +128,7 @@ public class RuleSetExecutorTest {
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(nestedConcept1).addConcept(nestedConcept2).addConstraint(nestetConstraint)
                 .addGroup(nestedGroup).addConcept(parentConcept1).addConcept(parentConcept2).addConstraint(parentConstraint).addGroup(parentGroup)
                 .addConcept(rootConcept).addConstraint(rootConstraint).getRuleSet();
-        RuleSelection ruleSelection = RuleSelection.builder().conceptId("concept:Root").constraintId("constraint:Root").groupId("group:Parent")
-                .build();
+        RuleSelection ruleSelection = RuleSelection.builder().conceptId("concept:Root").constraintId("constraint:Root").groupId("group:Parent").build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
@@ -166,7 +159,7 @@ public class RuleSetExecutorTest {
         Constraint dependentConstraint = Constraint.builder().id("constraint:Dependent").requiresConcepts(requiresConcepts2).build();
         Map<String, Severity> includesConcepts = new HashMap<>();
         includesConcepts.put("concept:Dependent", null);
-        Map<String, Severity> includesConstraints= new HashMap<>();
+        Map<String, Severity> includesConstraints = new HashMap<>();
         includesConstraints.put("constraint:Dependent", null);
         Group nestedGroup = Group.builder().id("group:Nested").concepts(includesConcepts).constraints(includesConstraints).build();
 
@@ -190,6 +183,21 @@ public class RuleSetExecutorTest {
         verify(visitor).visitConstraint(dependentConstraint, null);
         verify(visitor, never()).visitConcept(overriddenConcept, Severity.MAJOR);
         verify(visitor, never()).visitConstraint(overriddenConstraint, Severity.MAJOR);
+    }
+
+    @Test
+    public void conceptRequiresItselfByWildcard() throws RuleException {
+        Concept requiredConcept = Concept.builder().id("concept:RequiredConcept").requiresConcepts(Collections.emptyMap()).build();
+        Map<String, Boolean> requiredConcepts = new HashMap<>();
+        requiredConcepts.put("concept:*", null); // matches both DependentConcept and RequiredConcept
+        Concept dependentConcept = Concept.builder().id("concept:DependentConcept").requiresConcepts(requiredConcepts).build();
+        RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(requiredConcept).addConcept(dependentConcept).getRuleSet();
+        RuleSelection ruleSelection = RuleSelection.builder().conceptId("concept:DependentConcept").build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConcept(requiredConcept, null);
+        verify(visitor).visitConcept(dependentConcept, null);
     }
 
     private void verifyConceptDependencies(Boolean optional, boolean status, VerificationMode visitVerification, VerificationMode skipVerification)

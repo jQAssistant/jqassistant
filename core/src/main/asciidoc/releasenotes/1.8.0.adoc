@@ -4,4 +4,4 @@
 ifndef::jqa-in-manual[== Version 1.8.0]
 ifdef::jqa-in-manual[== Core Framework 1.8.0]
 
-To be written.
+* Fixed a StackOverflowError if a concepts requires itself using wildcards (see https://github.com/jQAssistant/jqa-core-framework/issues/29[issue])
