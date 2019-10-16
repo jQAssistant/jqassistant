@@ -3,13 +3,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.8.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.core</groupId>
     <artifactId>parent</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Core Framework</name>
@@ -33,18 +33,18 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-core-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-core-framework.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-core-framework</url>
+        <connection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-core-framework</url>
       <tag>HEAD</tag>
     </scm>
 
     <properties>
         <assertj.version>3.9.1</assertj.version>
         <checkstyle.version>8.18</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.7.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-own-constraints.version>1.7.0-SNAPSHOT</jqa-own-constraints.version>
-        <jqa-neo4jbackend.version>1.7.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-asciidoctor-utilities.version>1.8.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-own-constraints.version>1.8.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-neo4jbackend.version>1.8.0-SNAPSHOT</jqa-neo4jbackend.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <org.asciidoctor.version>1.5.8.1</org.asciidoctor.version>
         <org.asciidoctor-plugin.version>1.5.8</org.asciidoctor-plugin.version>
