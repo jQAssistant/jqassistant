@@ -7,3 +7,4 @@ target
 *.eml
 *.log
 /src/main/asciidoc/scanner.html
+.java-version
