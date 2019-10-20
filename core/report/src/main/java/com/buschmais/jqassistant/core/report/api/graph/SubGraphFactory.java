@@ -16,7 +16,7 @@ import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jNode;
 import com.buschmais.xo.neo4j.api.model.Neo4jRelationship;
 
-public final class SubGraphFactory {
+public class SubGraphFactory {
 
     private static final String ROLE = "role";
     private static final String NODE = "node";
@@ -40,6 +40,15 @@ public final class SubGraphFactory {
     private long relationshipId = -1;
     private long subgraphId = -1;
 
+    /**
+     * Create a {@link SubGraph} from the given {@link Result}.
+     *
+     * @param result
+     *            The result
+     * @return The {@link SubGraph}.
+     * @throws ReportException
+     *             If the result contains an unsupported structure.
+     */
     public SubGraph createSubGraph(Result<? extends ExecutableRule> result) throws ReportException {
         SubGraph graph = new SubGraph();
         graph.setId(subgraphId--);
@@ -66,7 +75,19 @@ public final class SubGraphFactory {
         return identifiable;
     }
 
-    private <I extends Identifiable> I convert(Object value) throws ReportException {
+    /**
+     * Convert a given value to an {@link Identifiable} element of a
+     * {@link SubGraph}.
+     *
+     * @param value
+     *            The value.
+     * @param <I>
+     *            The {@link Identifiable} type.
+     * @return The {@link Identifiable}.
+     * @throws ReportException
+     *             If value that cannot be converted to an {@link Identifiable}.
+     */
+    public <I extends Identifiable> I convert(Object value) throws ReportException {
         if (value == null) {
             return null;
         } else if (value instanceof Map) {
@@ -101,7 +122,7 @@ public final class SubGraphFactory {
                 case GRAPH:
                     SubGraph subgraph = new SubGraph();
                     subgraph.setId(subgraphId--);
-                    subgraph.setParent((Node) convert(subgraph, virtualObject.get(PARENT)));
+                    subgraph.setParent(convert(subgraph, virtualObject.get(PARENT)));
                     addSubGraphChildren(subgraph, virtualObject, NODES, subgraph.getNodes());
                     addSubGraphChildren(subgraph, virtualObject, RELATIONSHIPS, subgraph.getRelationships());
                     return (I) subgraph;
@@ -122,12 +143,12 @@ public final class SubGraphFactory {
             node.getProperties().putAll(neo4jNode.getProperties());
             return (I) node;
         } else if (value instanceof Neo4jRelationship) {
-            Neo4jRelationship<?, ?, ? ,? ,?> neo4jRelationship = (Neo4jRelationship) value;
+            Neo4jRelationship<?, ?, ?, ?, ?> neo4jRelationship = (Neo4jRelationship) value;
             Relationship relationship = new Relationship();
             relationship.setId(neo4jRelationship.getId());
             relationship.setType(neo4jRelationship.getType().getName());
-            relationship.setStartNode((Node) convert(neo4jRelationship.getStartNode()));
-            relationship.setEndNode((Node) convert(neo4jRelationship.getEndNode()));
+            relationship.setStartNode(convert(neo4jRelationship.getStartNode()));
+            relationship.setEndNode(convert(neo4jRelationship.getEndNode()));
             relationship.getProperties().putAll(neo4jRelationship.getProperties());
             return (I) relationship;
         }
