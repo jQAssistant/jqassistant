@@ -39,7 +39,7 @@
 
     <properties>
         <jqa-plugin-common.version>1.8.0-SNAPSHOT</jqa-plugin-common.version>
-        <snakeyaml.version>1.0</snakeyaml.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
     </properties>
 
     <build>

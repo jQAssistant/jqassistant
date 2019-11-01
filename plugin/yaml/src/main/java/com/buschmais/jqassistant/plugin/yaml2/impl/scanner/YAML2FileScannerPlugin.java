@@ -15,10 +15,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor;
 
-import org.snakeyaml.engine.v1.api.LoadSettings;
-import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
-import org.snakeyaml.engine.v1.api.lowlevel.Parse;
-import org.snakeyaml.engine.v1.events.Event;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.api.lowlevel.Parse;
+import org.snakeyaml.engine.v2.events.Event;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -48,7 +47,7 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
         // todo Do we have any advantage in using this method?
         // .setLabel(string)
-        LoadSettings settings = new LoadSettingsBuilder().build();
+        LoadSettings settings = LoadSettings.builder().build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         YAML2FileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAML2FileDescriptor.class);
 
