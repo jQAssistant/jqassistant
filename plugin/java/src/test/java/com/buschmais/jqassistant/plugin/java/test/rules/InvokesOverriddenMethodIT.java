@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.test.rules;
 import java.io.IOException;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
@@ -24,6 +25,8 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests for the concept java:InvokeOverriddenMethod.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 1, minor = 9)
 public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
 
     /**

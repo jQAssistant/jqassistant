@@ -1,5 +1,6 @@
 ifndef::jqa-in-manual[== Version 1.8.0]
 ifdef::jqa-in-manual[== Java Plugin 1.8.0]
 
-To be written.
+* Added concept `java:VirtualInvokes` providing `VIRTUAL_INVOKES` relations representing virtual invocations
+* Deprecated concept `java:InvokesOverriddenMethod` as it creates`INVOKES` relations that may be ambiguous
 
