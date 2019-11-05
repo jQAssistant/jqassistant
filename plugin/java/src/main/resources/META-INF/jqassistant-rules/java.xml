@@ -1,4 +1,4 @@
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
 
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
@@ -66,10 +66,29 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:VirtualInvokes">
+        <requiresConcept refId="java:MethodOverrides"/>
+        <description>Propagates INVOKES relationships as VIRTUAL_INVOKES to methods which implement or override the invoked method.</description>
+        <deprecated></deprecated>
+        <cypher><![CDATA[
+            MATCH
+              (method:Method)-[invokes:INVOKES]->(invokedMethod:Method),
+              (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
+            MERGE
+              (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:invokes.lineNumber}]->(overridingMethod)
+            RETURN
+              count(virtualInvokes) AS VirtualInvokes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
     <concept id="java:InvokesOverriddenMethod">
         <requiresConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:TypeAssignableFrom"/>
         <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
+        <deprecated>To avoid ambiguities between INVOKES relations this concept has been replaced by "java:VirtualInvokes".</deprecated>
         <cypher><![CDATA[
             MATCH
               (method:Method)-[invocation:INVOKES]->(invokedMethod:Method),
@@ -78,12 +97,14 @@
               (method)-[r:INVOKES{lineNumber:invocation.lineNumber}]->(overridingMethod)
             RETURN count(r) AS OverridingInvocations
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:MethodOverloads">
         <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
-            methods
-            have the same name but not the same signature).
+            methods have the same name but not the same signature).
         </description>
         <cypher><![CDATA[
             MATCH
