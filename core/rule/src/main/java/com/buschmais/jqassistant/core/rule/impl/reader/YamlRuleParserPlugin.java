@@ -24,10 +24,9 @@ import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import org.snakeyaml.engine.v1.api.Load;
-import org.snakeyaml.engine.v1.api.LoadSettings;
-import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
-import org.snakeyaml.engine.v1.api.YamlUnicodeReader;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
@@ -94,7 +93,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         try (InputStream inputStream = ruleSource.getInputStream();
             Reader reader = new YamlUnicodeReader(inputStream)) {
-            LoadSettings settings = new LoadSettingsBuilder().build();
+            LoadSettings settings = LoadSettings.builder().build();
             Load load = new Load(settings);
             Iterable<Object> objects = load.loadAllFromReader(reader);
 
@@ -233,7 +232,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(id, refSpec, GROUP, context);
             includedGroups.add(reference);
         }
-        
+
         Group group = Group.builder().id(id).severity(null /* todo Was ist hier der Defaultwert?*/)
                            .ruleSource(context.getSource())
                            .concepts(includedConcepts).constraints(includedConstraints)

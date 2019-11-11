@@ -54,7 +54,7 @@
         <org.jruby.version>9.2.5.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>2.23.4</org.mockito.version>
-        <snakeyaml-engine.version>1.0</snakeyaml-engine.version>
+        <snakeyaml-engine.version>2.0</snakeyaml-engine.version>
     </properties>
 
     <dependencyManagement>
