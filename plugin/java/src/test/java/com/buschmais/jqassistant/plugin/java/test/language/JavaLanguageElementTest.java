@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GenericLanguageElementTest {
+public class JavaLanguageElementTest {
 
     // ReadField WriteField Constructor
 
@@ -52,56 +52,44 @@ public class GenericLanguageElementTest {
 
     @Test
     public void fieldName() {
-        TypeDescriptor type = mock(TypeDescriptor.class);
         FieldDescriptor descriptor = mock(FieldDescriptor.class);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
-        when(descriptor.getDeclaringType()).thenReturn(type);
         when(descriptor.getSignature()).thenReturn("int value");
         SourceProvider<FieldDescriptor> sourceProvider = Field.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
-        assertThat(name, equalTo("com.buschmais.Type#int value"));
+        assertThat(name, equalTo("int value"));
     }
 
     @Test
     public void readFieldName() {
-        TypeDescriptor type = mock(TypeDescriptor.class);
         MethodDescriptor method = mock(MethodDescriptor.class);
         ReadsDescriptor descriptor = mock(ReadsDescriptor.class);
         when(descriptor.getMethod()).thenReturn(method);
-        when(method.getDeclaringType()).thenReturn(type);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
         SourceProvider<ReadsDescriptor> sourceProvider = ReadField.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
-        assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
+        assertThat(name, equalTo("void doSomething(), line 42"));
     }
 
     @Test
     public void writeFieldName() {
-        TypeDescriptor type = mock(TypeDescriptor.class);
         MethodDescriptor method = mock(MethodDescriptor.class);
         WritesDescriptor descriptor = mock(WritesDescriptor.class);
         when(descriptor.getMethod()).thenReturn(method);
-        when(method.getDeclaringType()).thenReturn(type);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
         SourceProvider<WritesDescriptor> sourceProvider = WriteField.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
-        assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
+        assertThat(name, equalTo("void doSomething(), line 42"));
     }
 
     @Test
     public void methodName() {
-        TypeDescriptor type = mock(TypeDescriptor.class);
         MethodDescriptor descriptor = mock(MethodDescriptor.class);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
-        when(descriptor.getDeclaringType()).thenReturn(type);
         when(descriptor.getSignature()).thenReturn("int getValue()");
         SourceProvider<MethodDescriptor> sourceProvider = Method.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
-        assertThat(name, equalTo("com.buschmais.Type#int getValue()"));
+        assertThat(name, equalTo("int getValue()"));
     }
 
     @Test
@@ -110,7 +98,6 @@ public class GenericLanguageElementTest {
         MethodDescriptor method = mock(MethodDescriptor.class);
         VariableDescriptor variable = mock(VariableDescriptor.class);
         when(method.getDeclaringType()).thenReturn(type);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(type.getFileName()).thenReturn("/com/buschmais/Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(method.getFirstLineNumber()).thenReturn(10);
@@ -119,24 +106,21 @@ public class GenericLanguageElementTest {
         when(variable.getName()).thenReturn("i");
         when(variable.getSignature()).thenReturn("int i");
         SourceProvider<VariableDescriptor> sourceProvider = Variable.getSourceProvider();
-        assertThat(sourceProvider.getName(variable), equalTo("com.buschmais.Type#void doSomething()#int i"));
+        assertThat(sourceProvider.getName(variable), equalTo("void doSomething()#int i"));
         assertThat(sourceProvider.getLineNumber(variable), equalTo(10));
         assertThat(sourceProvider.getSourceFile(variable), equalTo("/com/buschmais/Type"));
     }
 
     @Test
     public void methodInvocationName() {
-        TypeDescriptor type = mock(TypeDescriptor.class);
         MethodDescriptor method = mock(MethodDescriptor.class);
         InvokesDescriptor descriptor = mock(InvokesDescriptor.class);
         when(descriptor.getInvokingMethod()).thenReturn(method);
-        when(method.getDeclaringType()).thenReturn(type);
-        when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
         SourceProvider<InvokesDescriptor> sourceProvider = MethodInvocation.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
-        assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
+        assertThat(name, equalTo("void doSomething(), line 42"));
     }
 
     @Test
