@@ -163,6 +163,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>rule</artifactId>
+                <version>${jqa-core-framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>shared</artifactId>
                 <version>${jqa-core-framework.version}</version>
             </dependency>
