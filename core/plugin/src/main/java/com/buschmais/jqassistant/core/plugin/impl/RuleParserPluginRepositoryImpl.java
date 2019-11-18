@@ -7,9 +7,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RuleParserPluginRepository;
+import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.RuleParserType;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 
@@ -32,9 +32,9 @@ public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository imp
     @Override
     public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
-            RuleParserType ruleParser = plugin.getRuleParser();
-            if (ruleParser != null) {
-                for (IdClassType pluginType : ruleParser.getClazz()) {
+            IdClassListType ruleParsers = plugin.getRuleParser();
+            if (ruleParsers != null) {
+                for (IdClassType pluginType : ruleParsers.getClazz()) {
                     RuleParserPlugin ruleParserPlugin = createInstance(pluginType.getValue());
                     try {
                         ruleParserPlugin.initialize();

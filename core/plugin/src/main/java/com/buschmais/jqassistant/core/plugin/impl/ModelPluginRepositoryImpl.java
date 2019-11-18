@@ -6,8 +6,8 @@ import java.util.List;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.ModelType;
 
 /**
  * Scanner plugin repository implementation.
@@ -32,9 +32,9 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
     private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
         List<Class<?>> types = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
-            ModelType modelType = plugin.getModel();
-            if (modelType != null) {
-                for (String typeName : modelType.getClazz()) {
+            ClassListType modelTypes = plugin.getModel();
+            if (modelTypes != null) {
+                for (String typeName : modelTypes.getClazz()) {
                     types.add(getType(typeName));
                 }
             }

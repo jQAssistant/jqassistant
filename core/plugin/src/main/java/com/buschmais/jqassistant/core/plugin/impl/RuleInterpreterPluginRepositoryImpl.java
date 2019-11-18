@@ -6,9 +6,9 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RuleInterpreterPluginRepository;
+import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.RuleInterpreterType;
 
 public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepository implements RuleInterpreterPluginRepository {
 
@@ -31,9 +31,9 @@ public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepositor
     @Override
     public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
-            RuleInterpreterType ruleInterpreter = plugin.getRuleInterpreter();
-            if (ruleInterpreter != null) {
-                for (IdClassType pluginType : ruleInterpreter.getClazz()) {
+            IdClassListType ruleInterpreters = plugin.getRuleInterpreter();
+            if (ruleInterpreters != null) {
+                for (IdClassType pluginType : ruleInterpreters.getClazz()) {
                     RuleInterpreterPlugin ruleInterpreterPlugin = createInstance(pluginType.getValue());
                     ruleInterpreterPlugin.initialize();
                     for (String language : ruleInterpreterPlugin.getLanguages()) {
