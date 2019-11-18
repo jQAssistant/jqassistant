@@ -78,8 +78,7 @@ public @interface Java {
 
                     @Override
                     public String getName(VariableDescriptor descriptor) {
-                        return descriptor.getMethod().getDeclaringType().getFullQualifiedName() + "#" + descriptor.getMethod().getSignature() + "#"
-                                + descriptor.getSignature();
+                        return descriptor.getMethod().getSignature() + "#" + descriptor.getSignature();
                     }
 
                     @Override
@@ -208,7 +207,7 @@ public @interface Java {
         private static class MemberSourceProvider implements SourceProvider<MemberDescriptor> {
             @Override
             public String getName(MemberDescriptor descriptor) {
-                return descriptor.getDeclaringType().getFullQualifiedName() + "#" + descriptor.getSignature();
+                return descriptor.getSignature();
             }
 
             @Override
@@ -223,5 +222,16 @@ public @interface Java {
             }
         }
 
+        /**
+         * Returns the file name of the given descriptor if it extends
+         * {@link com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor} .
+         *
+         * @param descriptor
+         *            The descriptor.
+         * @return The
+         */
+        private static String getFileName(Descriptor descriptor) {
+            return descriptor instanceof FileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
+        }
     }
 }
