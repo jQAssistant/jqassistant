@@ -6,9 +6,9 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.ReportType;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -47,9 +47,9 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
     @Override
     public void initialize() throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
-            ReportType reportType = plugin.getReport();
-            if (reportType != null) {
-                for (IdClassType classType : reportType.getClazz()) {
+            IdClassListType reportTypes = plugin.getReport();
+            if (reportTypes != null) {
+                for (IdClassType classType : reportTypes.getClazz()) {
                     ReportPlugin reportPlugin = createInstance(classType.getValue());
                     if (reportPlugin != null) {
                         try {

@@ -7,9 +7,9 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.ScannerType;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 
@@ -47,9 +47,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
 
     private void getScannerPlugins(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
         for (JqassistantPlugin plugin : plugins) {
-            ScannerType scannerType = plugin.getScanner();
-            if (scannerType != null) {
-                for (IdClassType classType : scannerType.getClazz()) {
+            IdClassListType scannerTypes = plugin.getScanner();
+            if (scannerTypes != null) {
+                for (IdClassType classType : scannerTypes.getClazz()) {
                     ScannerPlugin<?, ?> scannerPlugin = createInstance(classType.getValue());
                     if (scannerPlugin != null) {
                         scannerPlugin.initialize();
