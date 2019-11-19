@@ -16,42 +16,6 @@
         Provides the adapter for the embedded Neo4j 3.x Community Server.
     </description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>org.neo4j.procedure</groupId>
-                            <artifactId>apoc</artifactId>
-                            <version>${org.neo4j.procedure_version}</version>
-                            <type>jar</type>
-                            <destFileName>apoc.jar</destFileName>
-                        </artifactItem>
-                        <artifactItem>
-                            <groupId>org.neo4j</groupId>
-                            <artifactId>graph-algorithms-algo</artifactId>
-                            <version>${org.neo4j.graph-algorithms_version}</version>
-                            <destFileName>graph-algorithms-algo.jar</destFileName>
-                        </artifactItem>
-                    </artifactItems>
-                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
@@ -78,37 +42,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>graph-algorithms-algo</artifactId>
-            <version>${org.neo4j.graph-algorithms_version}</version>
-        </dependency>
-
-        <!-- APOC -->
-        <dependency>
-            <groupId>org.neo4j.procedure</groupId>
-            <artifactId>apoc</artifactId>
-            <version>${org.neo4j.procedure_version}</version>
-        </dependency>
-        <!-- Fix a problem with ASM shaded in a dependency, see https://github.com/neo4j-contrib/neo4j-apoc-procedures/pull/1259 -->
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-        <dependency>
-            <!-- Required by ExtractEmail -->
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-            <version>1.6.1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
-            <scope>runtime</scope>
-        </dependency>
         <!-- for determining mime types -->
         <dependency>
             <groupId>org.apache.tika</groupId>
@@ -119,6 +52,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>

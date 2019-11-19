@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.neo4j.backend.bootstrap;
 
+import java.util.Collection;
+
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -10,7 +12,8 @@ public interface EmbeddedNeo4jServer {
 
     String getVersion();
 
-    void initialize(GraphDatabaseService graphDatabaseService, EmbeddedNeo4jConfiguration configuration);
+    void initialize(GraphDatabaseService graphDatabaseService, EmbeddedNeo4jConfiguration configuration, Collection<Class<?>> procedureTypes,
+            Collection<Class<?>> functionTypes);
 
     GraphDatabaseService getGraphDatabaseService();
 

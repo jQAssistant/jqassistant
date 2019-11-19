@@ -1,18 +1,17 @@
 package com.buschmais.jqassistant.neo4j.backend.neo4jv3;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.AbstractEmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.backend.neo4jv3.extension.StaticContentResource;
-import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.APOCActivator;
-import com.buschmais.jqassistant.neo4j.backend.neo4jv3.library.GraphAlgorithmsActivator;
 
 import org.neo4j.graphdb.facade.GraphDatabaseDependencies;
+import org.neo4j.internal.kernel.api.exceptions.KernelException;
 import org.neo4j.kernel.configuration.Config;
 import org.neo4j.kernel.impl.factory.GraphDatabaseFacade;
+import org.neo4j.kernel.impl.proc.Procedures;
 import org.neo4j.kernel.internal.GraphDatabaseAPI;
 import org.neo4j.logging.FormattedLogProvider;
 import org.neo4j.logging.Level;
@@ -20,6 +19,8 @@ import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.database.GraphFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.neo4j.graphdb.DependencyResolver.SelectionStrategy.ONLY;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
@@ -68,18 +69,23 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
     }
 
     @Override
-    protected void initialize() {
-        List<Neo4jLibraryActivator> activators = new LinkedList<>();
-        if (embeddedNeo4jConfiguration.isApocEnabled()) {
-            activators.add(new APOCActivator());
+    protected void initialize(Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
+        Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class, ONLY);
+        for (Class<?> procedureType : procedureTypes) {
+            try {
+                LOGGER.debug("Registering procedure class " + procedureType.getName());
+                procedures.registerProcedure(procedureType);
+            } catch (KernelException e) {
+                LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
+            }
         }
-        if (embeddedNeo4jConfiguration.isGraphAlgorithmsEnabled()) {
-            activators.add(new GraphAlgorithmsActivator());
+        for (Class<?> functionType : functionTypes) {
+            try {
+                LOGGER.debug("Registering function class " + functionType.getName());
+                procedures.registerFunction(functionType);
+            } catch (KernelException e) {
+                LOGGER.warn("Cannot register function class " + functionType.getName(), e);
+            }
         }
-        activators.forEach(activator -> {
-            LOGGER.info("Registering procedures & functions library {}.", activator.getName());
-            activator.register((GraphDatabaseAPI) graphDatabaseService);
-        });
-
     }
 }
