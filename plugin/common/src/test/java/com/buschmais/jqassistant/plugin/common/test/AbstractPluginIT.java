@@ -18,7 +18,6 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -93,7 +92,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    private void configurePlugins(ClassLoader pluginClassLoader) throws PluginRepositoryException, RuleException, IOException {
+    private void configurePlugins(ClassLoader pluginClassLoader) throws RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
@@ -111,7 +110,7 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    private void initializeAnalyzer() throws PluginRepositoryException {
+    private void initializeAnalyzer() {
         File outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         this.reportContext = new ReportContextImpl(outputDirectory);
@@ -120,7 +119,7 @@ public abstract class AbstractPluginIT {
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
-    protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws PluginRepositoryException {
+    protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
         return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.emptyMap());
     }
 
@@ -160,7 +159,7 @@ public abstract class AbstractPluginIT {
          */
         StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration);
-        store.start(getDescriptorTypes());
+        store.start(pluginRepository.getModelPluginRepository().getDescriptorTypes(), pluginRepository.getModelPluginRepository().getProcedureTypes(),  pluginRepository.getModelPluginRepository().getFunctionTypes());
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
@@ -168,7 +167,7 @@ public abstract class AbstractPluginIT {
 
     /**
      * Provide an {@link EmbeddedNeo4jConfiguration} for the file or memory store.
-     * 
+     *
      * @return The {@link EmbeddedNeo4jConfiguration}.
      */
     protected EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
@@ -193,7 +192,7 @@ public abstract class AbstractPluginIT {
      */
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, properties);
         return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
     }
 
@@ -356,32 +355,12 @@ public abstract class AbstractPluginIT {
         analyzer.execute(ruleSet, ruleSelection, parameters);
     }
 
-    private List<Class<?>> getDescriptorTypes() {
-        try {
-            return pluginRepository.getModelPluginRepository().getDescriptorTypes();
-        } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get descriptor types.", e);
-        }
-    }
-
-    private Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
-        try {
-            return pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, properties);
-        } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get scanner plugins.", e);
-        }
-    }
-
     protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
         return getReportPlugins(reportContext, properties);
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
-        try {
             return pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, properties);
-        } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get report plugins.", e);
-        }
     }
 
     @Retention(RetentionPolicy.RUNTIME)
