@@ -19,13 +19,11 @@ public interface ReportPluginRepository extends LifecycleAware {
      * @param properties
      *            The report properties.
      * @return The instances of the configured report plugins.
-     * @throws PluginRepositoryException
-     *             If the instances cannot be created.
      */
-    Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws PluginRepositoryException;
+    Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) ;
 
     @Override
-    void initialize() throws PluginRepositoryException;
+    void initialize();
 
-    void destroy() throws PluginRepositoryException;
+    void destroy();
 }

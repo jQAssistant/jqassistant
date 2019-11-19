@@ -17,7 +17,7 @@ public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository imp
 
     private Collection<RuleParserPlugin> ruleParserPlugins = new LinkedList<>();
 
-    public RuleParserPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public RuleParserPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
     }
 
@@ -30,7 +30,7 @@ public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository imp
     }
 
     @Override
-    public void initialize() throws PluginRepositoryException {
+    public void initialize() {
         for (JqassistantPlugin plugin : plugins) {
             IdClassListType ruleParsers = plugin.getRuleParser();
             if (ruleParsers != null) {
@@ -48,7 +48,7 @@ public class RuleParserPluginRepositoryImpl extends AbstractPluginRepository imp
     }
 
     @Override
-    public void destroy() throws PluginRepositoryException {
+    public void destroy() {
         for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
             try {
                 ruleParserPlugin.destroy();

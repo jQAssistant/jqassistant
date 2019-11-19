@@ -33,7 +33,7 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
     }
 
     @Override
-    public Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws PluginRepositoryException {
+    public Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties)  {
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             try {
                 reportPlugin.configure(reportContext, properties);
@@ -45,7 +45,7 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
     }
 
     @Override
-    public void initialize() throws PluginRepositoryException {
+    public void initialize() {
         for (JqassistantPlugin plugin : plugins) {
             IdClassListType reportTypes = plugin.getReport();
             if (reportTypes != null) {

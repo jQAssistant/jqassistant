@@ -1,10 +1,12 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RuleInterpreterPluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
@@ -14,7 +16,7 @@ public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepositor
 
     private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
-    public RuleInterpreterPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public RuleInterpreterPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
     }
 
@@ -29,7 +31,7 @@ public class RuleInterpreterPluginRepositoryImpl extends AbstractPluginRepositor
     };
 
     @Override
-    public void initialize() throws PluginRepositoryException {
+    public void initialize() {
         for (JqassistantPlugin plugin : plugins) {
             IdClassListType ruleInterpreters = plugin.getRuleInterpreter();
             if (ruleInterpreters != null) {

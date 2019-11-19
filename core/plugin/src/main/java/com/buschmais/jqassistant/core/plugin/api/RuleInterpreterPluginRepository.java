@@ -18,11 +18,11 @@ public interface RuleInterpreterPluginRepository extends LifecycleAware {
      *            The configuration properties.
      * @return The {@link RuleInterpreterPlugin}s.
      */
-    Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins(Map<String, Object> properties) throws PluginRepositoryException;
+    Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins(Map<String, Object> properties);
 
     @Override
-    void initialize() throws PluginRepositoryException;
+    void initialize();
 
     @Override
-    void destroy() throws PluginRepositoryException;
+    void destroy();
 }

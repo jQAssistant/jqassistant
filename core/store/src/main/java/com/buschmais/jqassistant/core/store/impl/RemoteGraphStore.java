@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -44,6 +45,6 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected void initialize(XOManagerFactory xoManagerFactory) {
+    protected void initialize(XOManagerFactory xoManagerFactory, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
     }
 }

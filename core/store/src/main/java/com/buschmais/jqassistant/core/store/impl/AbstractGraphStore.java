@@ -8,12 +8,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.Example;
+import com.buschmais.xo.api.*;
 import com.buschmais.xo.api.Query.Result;
-import com.buschmais.xo.api.ResultIterable;
-import com.buschmais.xo.api.ValidationMode;
-import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
@@ -43,12 +39,12 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public void start(Collection<Class<?>> types) {
+    public void start(Collection<Class<?>> types, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
-            .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
         configure(builder, storeConfiguration);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
-        initialize(xoManagerFactory);
+        initialize(xoManagerFactory, procedureTypes, functionTypes);
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -98,8 +94,8 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     /**
-     * Verifies if the auto commit threshold has been reached. If yes the
-     * current transaction is committed and a new one started.
+     * Verifies if the auto commit threshold has been reached. If yes the current
+     * transaction is committed and a new one started.
      */
     private void autoCommit() {
         created++;
@@ -218,9 +214,9 @@ public abstract class AbstractGraphStore implements Store {
     protected abstract XOUnit configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
 
     /**
-     * Initialize store using configured {@link XOManagerFactory}.
+     * Initialize the store.
      */
-    protected abstract void initialize(XOManagerFactory xoManagerFactory);
+    protected abstract void initialize(XOManagerFactory xoManagerFactory, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes);
 
     protected abstract int getAutocommitThreshold();
 

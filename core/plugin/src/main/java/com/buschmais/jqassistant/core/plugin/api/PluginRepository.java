@@ -8,10 +8,10 @@ import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 public interface PluginRepository extends LifecycleAware {
 
     @Override
-    void initialize() throws PluginRepositoryException;
+    void initialize();
 
     @Override
-    void destroy () throws PluginRepositoryException;
+    void destroy ();
 
     ModelPluginRepository getModelPluginRepository();
 
