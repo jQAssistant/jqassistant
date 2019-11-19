@@ -15,12 +15,7 @@ public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
     public final void execute(MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
-        StoreOperation storeOperation = new StoreOperation() {
-            @Override
-            public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                execute(currentProject, store);
-            }
-        };
+        StoreOperation storeOperation = (module, store) -> execute(currentProject, store);
         execute(storeOperation, rootModule, executedModules);
     }
 
