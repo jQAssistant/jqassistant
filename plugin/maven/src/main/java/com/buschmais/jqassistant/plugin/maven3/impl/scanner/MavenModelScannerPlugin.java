@@ -26,10 +26,10 @@ import static java.util.Optional.ofNullable;
 
 /**
  * Scans Maven model instances.
- * 
+ *
  * This plugin requires an instance of {@link MavenPomDescriptor} in the scanner
  * context which will be enriched.
- * 
+ *
  * @author ronald.kunzmann@buschmais.com
  */
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
@@ -136,7 +136,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Create the descriptor and set base information.
-     * 
+     *
      * @param model
      *            The model.
      * @param scanner
@@ -180,7 +180,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds activation information for the given profile.
-     * 
+     *
      * @param mavenProfileDescriptor
      *            The profile descriptor.
      * @param activation
@@ -225,7 +225,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds configuration information.
-     * 
+     *
      * @param configurableDescriptor
      *            The descriptor for the configured element (Plugin,
      *            PluginExecution).
@@ -249,7 +249,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     /**
      * Adds declared and managed dependencies to the given
      * {@link MavenDependentDescriptor}.
-     * 
+     *
      * @param dependentDescriptor
      *            The {@link MavenDependentDescriptor}.
      * @param model
@@ -267,7 +267,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about artifact dependencies.
-     * 
+     *
      * @param dependent
      *            The dependent to add artifacts as dependencies
      * @param dependencies
@@ -307,7 +307,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about execution goals.
-     * 
+     *
      * @param executionDescriptor
      *            The descriptor for the execution.
      * @param pluginExecution
@@ -327,7 +327,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about references licenses.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param model
@@ -372,7 +372,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds dependency management information.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param dependencyManagement
@@ -390,7 +390,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about managed plugins.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param build
@@ -412,7 +412,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Create plugin descriptors for the given plugins.
-     * 
+     *
      * @param plugins
      *            The plugins.
      * @param context
@@ -438,10 +438,10 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Acquires the artifact resolver from the scanner context.
-     * 
+     *
      * @param context
      *            The scanner context.
-     * 
+     *
      * @return The artifact resolver from the context or the default one if none is
      *         available.
      */
@@ -451,7 +451,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about referenced modules.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param modules
@@ -470,7 +470,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about parent POM.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param model
@@ -489,7 +489,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about plugin executions.
-     * 
+     *
      * @param mavenPluginDescriptor
      *            The descriptor for the plugin.
      * @param plugin
@@ -513,7 +513,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about plugins.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param build
@@ -531,29 +531,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     /**
-     * Adds information about profile dependencies.
-     * 
-     * @param profileDescriptor
-     *            The descriptor for the current profile.
-     * @param dependencies
-     *            The dependencies information.
-     * @param scannerContext
-     *            The scanner context.
-     */
-    private void _addProfileDependencies(MavenProfileDescriptor profileDescriptor, List<Dependency> dependencies, ScannerContext scannerContext) {
-        for (Dependency dependency : dependencies) {
-            MavenArtifactDescriptor dependencyArtifactDescriptor = getMavenArtifactDescriptor(dependency, scannerContext);
-            Store store = scannerContext.getStore();
-            ProfileDeclaresDependencyDescriptor profileDependsOnDescriptor = store.create(profileDescriptor, ProfileDeclaresDependencyDescriptor.class,
-                    dependencyArtifactDescriptor);
-            profileDependsOnDescriptor.setOptional(dependency.isOptional());
-            profileDependsOnDescriptor.setScope(dependency.getScope());
-        }
-    }
-
-    /**
      * Adds information about defined profile.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param model
@@ -603,7 +582,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Adds information about defined properties.
-     * 
+     *
      * @param pomDescriptor
      *            The descriptor for the current POM.
      * @param properties
@@ -625,7 +604,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     /**
      * Creates a MavenArtifactDescriptor and fills it with all information from
      * given dependency.
-     * 
+     *
      * @param dependency
      *            Dependency.
      * @param context
@@ -639,7 +618,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /**
      * Returns information about child config entries.
-     * 
+     *
      * @param node
      *            Current config node.
      * @param store
