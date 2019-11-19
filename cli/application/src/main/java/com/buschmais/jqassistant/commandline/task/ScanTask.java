@@ -10,7 +10,6 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
@@ -64,12 +63,7 @@ public class ScanTask extends AbstractStoreTask {
     @Override
     protected void executeTask(Store store) throws CliExecutionException {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins;
-        try {
-            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, pluginProperties);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot get scanner plugins.", e);
-        }
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, pluginProperties);
         if (reset) {
             store.reset();
         }

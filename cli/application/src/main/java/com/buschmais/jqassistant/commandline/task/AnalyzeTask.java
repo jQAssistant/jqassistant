@@ -10,12 +10,10 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -63,7 +61,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -110,39 +108,17 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     /**
-     * Get all configured rule interpreter plugins.
-     *
-     * @return The map of rule interpreter plugins grouped by their supported
-     *         languages.
-     * @throws CliExecutionException
-     *             If the plugins cannot be loaded or configured.
-     */
-    private Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws CliExecutionException {
-        try {
-            return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object> emptyMap());
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot get report plugins.", e);
-        }
-    }
-
-    /**
      * Get all configured report plugins.
      *
      * @param reportContext
      *            The ReportContext.
      * @return The list of report plugins.
-     * @throws CliExecutionException
-     *             If the plugins cannot be loaded or configured.
      * @param reportContext
      */
-    private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext) throws CliExecutionException {
+    private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext) {
         ReportPluginRepository reportPluginRepository;
-        try {
-            reportPluginRepository = pluginRepository.getReportPluginRepository();
-            return reportPluginRepository.getReportPlugins(reportContext, pluginProperties);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot get report plugins.", e);
-        }
+        reportPluginRepository = pluginRepository.getReportPluginRepository();
+        return reportPluginRepository.getReportPlugins(reportContext, pluginProperties);
     }
 
     @Override

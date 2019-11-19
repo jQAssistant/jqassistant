@@ -12,7 +12,6 @@ import java.util.*;
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
@@ -193,15 +192,11 @@ public class Main {
         }
         Map<String, Object> properties = readProperties(commandLine);
         PluginRepository pluginRepository = getPluginRepository();
-        try {
-            executeTasks(tasks, options, commandLine, pluginRepository, properties);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Unexpected plugin repository problem while executing tasks.", e);
-        }
+        executeTasks(tasks, options, commandLine, pluginRepository, properties);
     }
 
     private void executeTasks(List<Task> tasks, Options options, CommandLine commandLine, PluginRepository pluginRepository, Map<String, Object> properties)
-            throws PluginRepositoryException, CliExecutionException {
+            throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {

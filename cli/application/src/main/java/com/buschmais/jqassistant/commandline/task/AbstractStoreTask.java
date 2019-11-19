@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -30,8 +29,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
-    protected static final String CMDLINE_OPTION_EMBEDDED_APOC_ENABLED = "embeddedApocEnabled";
-    protected static final String CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED = "embeddedGraphAlgorithmsEnabled";
 
     @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
@@ -42,17 +39,13 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     @Override
     public void run() throws CliExecutionException {
-        List<Class<?>> descriptorTypes;
+        List<Class<?>> descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
         final Store store = getStore();
-        try {
-            descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot get model.", e);
-        }
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
-            store.start(descriptorTypes);
+            store.start(descriptorTypes, pluginRepository.getModelPluginRepository().getProcedureTypes(),
+                    pluginRepository.getModelPluginRepository().getFunctionTypes());
             executeTask(store);
         } finally {
             store.stop();
@@ -99,12 +92,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
         String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
         builder.boltPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT), boltPort)));
 
-        String apocEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_APOC_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_APOC_ENABLED));
-        builder.apocEnabled(Boolean.valueOf(apocEnabled.toLowerCase()));
-
-        String graphAlgorithmsEnabled = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED, Boolean.toString(EmbeddedNeo4jConfiguration.DEFAULT_GRAPH_ALGORITHMS_ENABLED));
-        builder.graphAlgorithmsEnabled(Boolean.valueOf(graphAlgorithmsEnabled.toLowerCase()));
-
         return builder.build();
     }
 
@@ -127,11 +114,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
             .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bolt tport of the embedded server.").hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED).withDescription("Activate/deactivate registration of APOC user functions and procedures in the embedded server.").hasArgs()
-            .create(CMDLINE_OPTION_EMBEDDED_APOC_ENABLED));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED)
-                .withDescription("Activate/deactivate registration of graph algorithm procedures in the embedded server.").hasArgs()
-                .create(CMDLINE_OPTION_EMBEDDED_GRAPH_ALGORITHMS_ENABLED));
         addTaskOptions(options);
         return options;
     }

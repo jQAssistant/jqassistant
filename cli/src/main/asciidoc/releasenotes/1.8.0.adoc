@@ -4,8 +4,9 @@
 ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Commandline Tool 1.7.0]
 
-* Removed Neo4j V2 distribution
-* Renamed long option of `-u` for scanning URLs from `--uris` to `--urls`
-* Added option `embeddedGraphAlgorithmsEnabled`
+* Removed commandline options `embeddedApocEnabled` `embeddedGraphAlgorithmsEnabled`.
+  These are now available as separate plugins,
+  see https://github.com/jqassistant-contrib/jqassistant-apoc-plugin[APOC plugin] and https://github.com/jqassistant-contrib/jqassistant-graph-algorithms-plugin[Graph Algorithms plugin]
+
 
 

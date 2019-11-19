@@ -14,6 +14,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -188,7 +189,7 @@ public abstract class AbstractCLIIT {
 
     protected void withStore(File directory, StoreOperation storeOperation) {
         Store store = getStore(directory);
-        store.start(Collections.emptyList());
+        store.start(emptyList(), emptyList(), emptyList());
         try {
             storeOperation.run(store);
         } finally {

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -44,7 +45,7 @@ public class ScanIT extends AbstractCLIIT {
         assertThat(execute(args).getExitCode(), equalTo(0));
 
         Store store = getStore(getDefaultStoreDirectory());
-        store.start(Collections.emptyList());
+        store.start(emptyList(), emptyList(), emptyList());
         Map<String, Object> params = new HashMap<>();
         params.put("fileName", "/META-INF");
         String query = "match (f:File:Directory) where f.fileName={fileName} return count(f) as count";
@@ -59,7 +60,7 @@ public class ScanIT extends AbstractCLIIT {
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
         Store store = getStore(getDefaultStoreDirectory());
-        store.start(Collections.emptyList());
+        store.start(emptyList(), emptyList(), emptyList());
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
         assertThat("Expecting one beans.xml descriptor.", count, equalTo(1l));
         store.stop();

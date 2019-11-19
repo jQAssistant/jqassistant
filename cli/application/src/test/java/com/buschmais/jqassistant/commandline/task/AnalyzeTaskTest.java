@@ -55,7 +55,7 @@ public class AnalyzeTaskTest {
     }
 
     @Test
-    public void loadPlugins() throws CliExecutionException, PluginRepositoryException, RuleException {
+    public void loadPlugins() throws CliExecutionException, RuleException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
         Map<String, Object> pluginProperties = new HashMap<>();
         analyzeTask.initialize(pluginRepository, pluginProperties);
@@ -74,6 +74,8 @@ public class AnalyzeTaskTest {
         verify(modelPluginRepository).getDescriptorTypes();
         verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
         verify(ruleInterpreterPluginRepository).getRuleInterpreterPlugins(anyMap());
+        verify(modelPluginRepository).getProcedureTypes();
+        verify(modelPluginRepository).getFunctionTypes();
     }
 
     private void stubOption(CommandLine standardOptions, String option, String value) {
