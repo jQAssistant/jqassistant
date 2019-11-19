@@ -169,7 +169,6 @@
                         <group>jqa-maven-constraints</group>
                         <group>jqa-maven-dependency-constraints</group>
                         <group>jqa-project-layout</group>
-                        <group>neo4j-backend:Default</group>
                     </groups>
                 </configuration>
                 <dependencies>
