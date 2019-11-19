@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.maven.provider;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
@@ -20,23 +19,15 @@ public class PluginRepositoryProvider implements Disposable {
     private PluginRepository pluginRepository;
 
     public PluginRepositoryProvider() {
-        try {
-            PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
-            pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-            this.pluginRepository.initialize();
-        } catch (PluginRepositoryException e) {
-            LOGGER.warn("Cannot initialize plugin repository.", e);
-        }
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        this.pluginRepository.initialize();
     }
 
     @Override
     public synchronized void dispose() {
         if (this.pluginRepository != null) {
-            try {
-                this.pluginRepository.destroy();
-            } catch (PluginRepositoryException e) {
-                LOGGER.warn("Cannot destroy plugin repository.", e);
-            }
+            this.pluginRepository.destroy();
         }
     }
 

@@ -6,6 +6,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
@@ -46,16 +47,21 @@ public class CachingStoreProvider implements Disposable {
     /**
      * Create/open store in the given directory.
      *
-     * @param storeConfiguration The store configuration.
-     * @param types              The types to register.
+     * @param storeConfiguration
+     *            The store configuration.
+     * @param pluginRepository
+     *            The pluginRepository.
      * @return The store.
      */
-    public Store getStore(StoreConfiguration storeConfiguration, List<Class<?>> types) {
+    public Store getStore(StoreConfiguration storeConfiguration, PluginRepository pluginRepository) {
         StoreKey key = StoreKey.builder().uri(storeConfiguration.getUri().normalize()).username(storeConfiguration.getUsername()).build();
         Store store = storesByKey.get(key);
         if (store == null) {
             store = StoreFactory.getStore(storeConfiguration);
-            store.start(types);
+            List<Class<?>> descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
+            List<Class<?>> procedureTypes = pluginRepository.getModelPluginRepository().getProcedureTypes();
+            List<Class<?>> functionTypes = pluginRepository.getModelPluginRepository().getFunctionTypes();
+            store.start(descriptorTypes, procedureTypes, functionTypes);
             storesByKey.put(key, store);
             keysByStore.put(store, key);
         }
@@ -65,7 +71,8 @@ public class CachingStoreProvider implements Disposable {
     /**
      * Close the given store.
      *
-     * @param store The store.
+     * @param store
+     *            The store.
      */
     public void closeStore(Store store) {
         close(store);
@@ -85,7 +92,8 @@ public class CachingStoreProvider implements Disposable {
     /**
      * Close the given store.
      *
-     * @param store The store.
+     * @param store
+     *            The store.
      */
     private void close(Store store) {
         StoreKey key = keysByStore.get(store);

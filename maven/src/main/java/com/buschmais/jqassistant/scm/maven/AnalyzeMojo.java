@@ -4,13 +4,11 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -108,13 +106,14 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = getFailOnSeverity();
         Map<String, Object> properties = getReportProperties();
-        Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext, properties);
+        Map<String, ReportPlugin> reportPlugins1 = pluginRepositoryProvider.getPluginRepository().getReportPluginRepository().getReportPlugins(reportContext, properties);
+        Map<String, ReportPlugin> reportPlugins = reportPlugins1;
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), inMemoryReportPlugin, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
@@ -146,30 +145,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         return effectiveFailOnSeverity;
     }
 
-    private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) throws MojoExecutionException {
-        Map<String, ReportPlugin> reportPlugins;
-        try {
-            reportPlugins = pluginRepositoryProvider.getPluginRepository().getReportPluginRepository().getReportPlugins(reportContext, properties);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get report plugins.", e);
-        }
-        return reportPlugins;
-    }
-
     private Map<String, Object> getReportProperties() {
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
         return properties;
-    }
-
-    private Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() throws MojoExecutionException {
-        try {
-            return pluginRepositoryProvider.getPluginRepository().getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap());
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get rule interpreter plugins.", e);
-        }
     }
 
     private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -96,23 +95,14 @@ public class ScanMojo extends AbstractModuleMojo {
         scannerContext.push(MavenSession.class, session);
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = getStringScannerPlugins(pluginRepository, scannerContext);
+        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        Map<String, ScannerPlugin<?, ?>>
+            scannerPlugins1 = scannerPluginRepository.getScannerPlugins(scannerContext, getPluginProperties());
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPlugins1;
         ScopePluginRepository scopePluginRepository = pluginRepository.getScopePluginRepository();
         Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, scopePluginRepository.getScopes());
         scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
         scannerContext.pop(DependencyGraphBuilder.class);
         scannerContext.pop(MavenSession.class);
-    }
-
-    private Map<String, ScannerPlugin<?, ?>> getStringScannerPlugins(PluginRepository pluginRepository, ScannerContext scannerContext)
-            throws MojoExecutionException {
-        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins;
-        try {
-            scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, getPluginProperties());
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot determine scanner plugins.", e);
-        }
-        return scannerPlugins;
     }
 }

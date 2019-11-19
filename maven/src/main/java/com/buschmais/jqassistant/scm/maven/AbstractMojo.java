@@ -12,7 +12,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -46,8 +45,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
     public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
     public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
-    public static final String PARAMETER_EMBEDDED_APOC_ENABLED = "jqassistant.embedded.apocEnabled";
-    public static final String PARAMETER_EMBEDDED_GRAPH_ALGORITHMS_ENABLED = "jqassistant.embedded.graphAlgorithmsEnabled";
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
@@ -87,18 +84,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
     protected Integer embeddedHttpPort;
-
-    /**
-     * Activates/deactivates registration of APOC user functions and procedures in the embedded server.
-     */
-    @Parameter(property = PARAMETER_EMBEDDED_APOC_ENABLED)
-    protected Boolean apocEnabled;
-
-    /**
-     * Activates/deactivates registration of graph algo procedures in the embedded server.
-     */
-    @Parameter(property = PARAMETER_EMBEDDED_GRAPH_ALGORITHMS_ENABLED)
-    private Boolean graphAlgorithmsEnabled;
 
     /**
      * The address the server shall bind to.
@@ -408,13 +393,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private Store getStore(MavenProject rootModule) throws MojoExecutionException {
         StoreConfiguration configuration = getStoreConfiguration(rootModule);
-        List<Class<?>> descriptorTypes;
-        try {
-            descriptorTypes = pluginRepositoryProvider.getPluginRepository().getModelPluginRepository().getDescriptorTypes();
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot determine model types.", e);
-        }
-        Object existingStore = cachingStoreProvider.getStore(configuration, descriptorTypes);
+        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
+        Object existingStore = cachingStoreProvider.getStore(configuration, pluginRepository);
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                     "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
@@ -478,8 +458,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), this.serverAddress, embeddedListenAddress));
         builder.boltPort(OptionHelper.selectValue(embedded.getBoltPort(), embeddedBoltPort));
         builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), this.serverPort, embeddedHttpPort));
-        builder.apocEnabled(OptionHelper.selectValue(embedded.isApocEnabled(), this.apocEnabled));
-        builder.graphAlgorithmsEnabled(OptionHelper.selectValue(embedded.isGraphAlgorithmsEnabled(), this.graphAlgorithmsEnabled));
         return builder.build();
     }
 
