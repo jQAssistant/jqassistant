@@ -19,19 +19,23 @@ public interface Store {
     /**
      * Start the store.
      *
-     * This method must be called before any other method of this interface can
-     * be used.
+     * This method must be called before any other method of this interface can be
+     * used.
      *
-     * @param types
-     *            The types to use.
+     * @param modelTypes
+     *            The model types to use.
+     * @param procedureTypes
+     *            The procedure types to register.
+     * @param functionTypes
+     *            The function types to register.
      */
-    void start(Collection<Class<?>> types);
+    void start(Collection<Class<?>> modelTypes, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes);
 
     /**
      * Stop the store.
      *
-     * After calling this method no other method defined within this interface
-     * can be called.
+     * After calling this method no other method defined within this interface can
+     * be called.
      */
     void stop();
 
@@ -57,8 +61,8 @@ public interface Store {
     /**
      * Commit a transaction.
      *
-     * This method must be called to permanently store the changes of executed
-     * write operations.
+     * This method must be called to permanently store the changes of executed write
+     * operations.
      */
     void commitTransaction();
 

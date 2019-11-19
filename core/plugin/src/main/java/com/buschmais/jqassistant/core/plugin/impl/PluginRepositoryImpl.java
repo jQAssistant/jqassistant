@@ -30,7 +30,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public void initialize() throws PluginRepositoryException {
+    public void initialize() {
         this.modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository.initialize();
@@ -46,7 +46,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public void destroy() throws PluginRepositoryException {
+    public void destroy() {
         if (scannerPluginRepository != null) {
             this.scannerPluginRepository.destroy();
         }

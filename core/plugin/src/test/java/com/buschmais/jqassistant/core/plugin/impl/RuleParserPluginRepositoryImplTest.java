@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
@@ -20,7 +19,7 @@ class RuleParserPluginRepositoryImplTest {
     RuleParserPluginRepositoryImpl ruleParserPluginRepository;
 
     @BeforeEach
-    void setupPluginConfigurationReader() throws PluginRepositoryException {
+    void setupPluginConfigurationReader() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
         ruleParserPluginRepository.initialize();

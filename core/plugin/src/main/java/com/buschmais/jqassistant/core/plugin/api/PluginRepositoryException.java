@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.plugin.api;
 /**
  * Exception thrown by the {@link PluginConfigurationReader}.
  */
-public class PluginRepositoryException extends Exception {
+public class PluginRepositoryException extends RuntimeException {
 
     /**
      * The serial version UID.
@@ -12,7 +12,7 @@ public class PluginRepositoryException extends Exception {
 
     /**
      * Constructor.
-     * 
+     *
      * @param message
      *            The message.
      * @param cause
@@ -24,7 +24,7 @@ public class PluginRepositoryException extends Exception {
 
     /**
      * Constructor.
-     * 
+     *
      * @param message
      *            The message.
      */

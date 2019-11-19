@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 
@@ -16,12 +16,18 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
 
     private final List<Class<?>> descriptorTypes;
 
+    private final List<Class<?>> procedureTypes;
+
+    private final List<Class<?>> functionTypes;
+
     /**
      * Constructor.
      */
-    public ModelPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public ModelPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.descriptorTypes = getDescriptorTypes(plugins);
+        this.descriptorTypes = getTypes(plugins,plugin -> plugin.getModel());
+        this.procedureTypes = getTypes(plugins, plugin -> plugin.getProcedure());
+        this.functionTypes = getTypes(plugins, plugin -> plugin.getFunction());
     }
 
     @Override
@@ -29,7 +35,31 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
         return descriptorTypes;
     }
 
-    private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
+
+    @Override
+    public List<Class<?>> getProcedureTypes() {
+        return procedureTypes;
+    }
+
+    @Override
+    public List<Class<?>> getFunctionTypes() {
+        return functionTypes;
+    }
+
+    private List<Class<?>> getTypes(List<JqassistantPlugin> plugins, Function<JqassistantPlugin, ClassListType> classListSupplier) {
+        List<Class<?>> types = new ArrayList<>();
+        for (JqassistantPlugin plugin : plugins) {
+            ClassListType type = classListSupplier.apply(plugin);
+            if (type != null) {
+                for (String typeName : type.getClazz()) {
+                    types.add(getType(typeName));
+                }
+            }
+        }
+        return types;
+    }
+
+    private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) {
         List<Class<?>> types = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             ClassListType modelTypes = plugin.getModel();

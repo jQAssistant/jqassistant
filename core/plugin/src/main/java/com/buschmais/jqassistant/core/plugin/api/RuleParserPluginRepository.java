@@ -20,8 +20,8 @@ public interface RuleParserPluginRepository extends LifecycleAware {
     Collection<RuleParserPlugin> getRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException;
 
     @Override
-    void initialize() throws PluginRepositoryException;
+    void initialize();
 
     @Override
-    void destroy() throws PluginRepositoryException;
+    void destroy();
 }

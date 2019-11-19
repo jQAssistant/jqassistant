@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.RulesType;
@@ -28,7 +27,7 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
     /**
      * Constructor.
      */
-    public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         this.classLoader = pluginConfigurationReader.getClassLoader();
         this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
     }

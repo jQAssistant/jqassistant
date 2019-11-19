@@ -17,14 +17,12 @@ public interface ScannerPluginRepository extends LifecycleAware {
      * @param scannerContext The scannerContext.
      * @param properties     The configuration properties.
      * @return The instances of the configured scanner plugins.
-     * @throws PluginRepositoryException If the instances cannot be created.
      */
-    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties)
-        throws PluginRepositoryException;
+    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties);
 
     @Override
-    void initialize() throws PluginRepositoryException;
+    void initialize();
 
     @Override
-    void destroy() throws PluginRepositoryException;
+    void destroy();
 }

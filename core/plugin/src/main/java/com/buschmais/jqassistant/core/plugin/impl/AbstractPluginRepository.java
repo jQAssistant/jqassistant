@@ -27,9 +27,7 @@ public abstract class AbstractPluginRepository {
      * Constructor.
      *
      * @param pluginConfigurationReader
-     *            The
-     *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
-     *            .
+     *            The {@link PluginConfigurationReader} .
      */
     protected AbstractPluginRepository(PluginConfigurationReader pluginConfigurationReader) {
         this.plugins = pluginConfigurationReader.getPlugins();
@@ -45,10 +43,8 @@ public abstract class AbstractPluginRepository {
      * @param <T>
      *            The type name.
      * @return The class.
-     * @throws PluginRepositoryException
-     *             If the type could not be loaded.
      */
-    protected <T> Class<T> getType(String typeName) throws PluginRepositoryException {
+    protected <T> Class<T> getType(String typeName) {
         try {
             return (Class<T>) classLoader.loadClass(typeName.trim());
         } catch (ClassNotFoundException | LinkageError e) {
@@ -66,19 +62,13 @@ public abstract class AbstractPluginRepository {
      * @param <T>
      *            The type.
      * @return The plugin instance.
-     * @throws PluginRepositoryException
-     *             If the requested instance could not be created.
      */
-    protected <T> T createInstance(String typeName) throws PluginRepositoryException {
+    protected <T> T createInstance(String typeName) {
         Class<T> type = getType(typeName.trim());
         try {
             return type.newInstance();
-        } catch (InstantiationException e) {
-            throw new PluginRepositoryException("Cannot create instance of class " + type.getName(), e);
-        } catch (IllegalAccessException e) {
-            throw new PluginRepositoryException("Cannot access class " + typeName, e);
-        } catch (LinkageError e) {
-            throw new PluginRepositoryException("Cannot load plugin class " + typeName, e);
+        } catch (ReflectiveOperationException e) {
+            throw new PluginRepositoryException("Cannot load or create instance of class " + type.getName(), e);
         }
     }
 

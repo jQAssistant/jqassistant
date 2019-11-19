@@ -27,12 +27,9 @@ public class PluginRepositoryTest {
 
     /**
      * Verifies that properties are loaded and passed to plugins.
-     *
-     * @throws PluginRepositoryException
-     *             If the test fails.
      */
     @Test
-    public void pluginProperties() throws PluginRepositoryException {
+    public void pluginProperties() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryTest.class.getClassLoader());
         Map<String, Object> properties = new HashMap<>();
         properties.put("testKey", "testValue");
@@ -46,7 +43,7 @@ public class PluginRepositoryTest {
     }
 
     @Test
-    public void repositories() throws PluginRepositoryException {
+    public void repositories() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryTest.class.getClassLoader());
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
@@ -71,7 +68,7 @@ public class PluginRepositoryTest {
         assertThat(pluginProperties.get("testKey"), CoreMatchers.equalTo("testValue"));
     }
 
-    private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
+    private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) {
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         ScannerContext scannerContext = mock(ScannerContext.class);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, properties);
@@ -84,7 +81,7 @@ public class PluginRepositoryTest {
         return null;
     }
 
-    private Map<String, Object> getReportPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
+    private Map<String, Object> getReportPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) {
         ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository();
         Map<String, ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(mock(ReportContext.class), properties);
         assertThat(reportPlugins.size()).isGreaterThan(0);

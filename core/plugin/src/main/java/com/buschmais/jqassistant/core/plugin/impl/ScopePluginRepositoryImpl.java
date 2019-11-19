@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
@@ -22,12 +21,12 @@ public class ScopePluginRepositoryImpl extends AbstractPluginRepository implemen
     /**
      * Constructor.
      */
-    public ScopePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+    public ScopePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
         this.scopes = Collections.unmodifiableMap(this.getScopes(plugins));
     }
 
-    private Map<String, Scope> getScopes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
+    private Map<String, Scope> getScopes(List<JqassistantPlugin> plugins) {
         Map<String, Scope> scopes = new HashMap<>();
         for (JqassistantPlugin plugin : plugins) {
             ClassListType scopeTypes = plugin.getScope();
