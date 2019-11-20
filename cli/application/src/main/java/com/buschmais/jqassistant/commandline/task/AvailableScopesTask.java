@@ -16,6 +16,6 @@ public class AvailableScopesTask extends AbstractAnalyzeTask {
     @Override
     protected void executeTask(Store store) {
         ScopeHelper scopeHelper = new ScopeHelper(LOGGER);
-        scopeHelper.printScopes(pluginRepository.getScopePluginRepository().getScopes());
+        scopeHelper.printScopes(pluginRepository.getScannerPluginRepository().getScopes());
     }
 }

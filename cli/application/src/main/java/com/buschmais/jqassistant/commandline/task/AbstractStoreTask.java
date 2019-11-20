@@ -39,13 +39,13 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     @Override
     public void run() throws CliExecutionException {
-        List<Class<?>> descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
+        List<Class<?>> descriptorTypes = pluginRepository.getStorePluginRepository().getDescriptorTypes();
         final Store store = getStore();
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
-            store.start(descriptorTypes, pluginRepository.getModelPluginRepository().getProcedureTypes(),
-                    pluginRepository.getModelPluginRepository().getFunctionTypes());
+            store.start(descriptorTypes, pluginRepository.getStorePluginRepository().getProcedureTypes(),
+                    pluginRepository.getStorePluginRepository().getFunctionTypes());
             executeTask(store);
         } finally {
             store.stop();

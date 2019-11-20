@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ public class AnalyzeTaskTest {
     private PluginRepository pluginRepository;
 
     @Mock
-    private ModelPluginRepository modelPluginRepository;
+    private StorePluginRepository storePluginRepository;
 
     @Mock
     private ReportPluginRepository reportPluginRepository;
@@ -47,7 +48,7 @@ public class AnalyzeTaskTest {
     @BeforeEach
     public void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
-        when(pluginRepository.getModelPluginRepository()).thenReturn(modelPluginRepository);
+        when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getReportPluginRepository()).thenReturn(reportPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
         when(pluginRepository.getRuleParserPluginRepository()).thenReturn(ruleParserPluginRepository);
@@ -71,11 +72,11 @@ public class AnalyzeTaskTest {
         verify(reportPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
         assertThat(propertiesCaptor.getValue()).isSameAs(pluginProperties);
         verify(rulePluginRepository).getRuleSources();
-        verify(modelPluginRepository).getDescriptorTypes();
+        verify(storePluginRepository).getDescriptorTypes();
         verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
         verify(ruleInterpreterPluginRepository).getRuleInterpreterPlugins(anyMap());
-        verify(modelPluginRepository).getProcedureTypes();
-        verify(modelPluginRepository).getFunctionTypes();
+        verify(storePluginRepository).getProcedureTypes();
+        verify(storePluginRepository).getFunctionTypes();
     }
 
     private void stubOption(CommandLine standardOptions, String option, String value) {

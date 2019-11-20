@@ -120,7 +120,7 @@ public class ScanTask extends AbstractStoreTask {
     private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, Map<String, ScannerPlugin<?, ?>> scannerPlugins) {
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
-        Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+        Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, pluginRepository.getScannerPluginRepository().getScopes());
         Scope scope = scanner.resolveScope(scopeName);
         scanner.scan(element, path, scope);
     }
