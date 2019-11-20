@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
@@ -26,32 +27,30 @@ public class ScannerImpl implements Scanner {
 
     private final ScannerContext scannerContext;
 
+    private final ScannerPluginRepository scannerPluginRepository;
+
     private final Map<String, ScannerPlugin<?, ?>> scannerPlugins;
 
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
-
-    private final Map<String, Scope> scopes;
 
     private final Map<Object, Set<ScannerPlugin<?, ?>>> pipelines = new IdentityHashMap<>();
 
     /**
      * Constructor.
-     *
-     * @param configuration
+     *  @param configuration
      *            The configuration.
+     * @param pluginProperties
      * @param scannerContext
      *            The scanner context.
-     * @param scannerPlugins
-     *            The registered plugins.
-     * @param scopes
-     *            The registered scopes.
+     * @param scannerPluginRepository
+ *            The {@link ScannerPluginRepository}.
      */
-    public ScannerImpl(ScannerConfiguration configuration, ScannerContext scannerContext, Map<String, ScannerPlugin<?, ?>> scannerPlugins,
-            Map<String, Scope> scopes) {
+    public ScannerImpl(ScannerConfiguration configuration, Map<String, Object> pluginProperties, ScannerContext scannerContext,
+            ScannerPluginRepository scannerPluginRepository) {
         this.configuration = configuration;
         this.scannerContext = scannerContext;
-        this.scannerPlugins = scannerPlugins;
-        this.scopes = scopes;
+        this.scannerPluginRepository = scannerPluginRepository;
+        this.scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, pluginProperties);
         this.scannerContext.push(Scope.class, null);
     }
 
@@ -133,7 +132,7 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Verifies if the selected plugin requires a descriptor.
-     * 
+     *
      * @param selectedPlugin
      *            The selected plugin.
      * @param descriptor
@@ -216,7 +215,7 @@ public class ScannerImpl implements Scanner {
             return DefaultScope.NONE;
         }
 
-        Scope scope = scopes.get(name);
+        Scope scope = scannerPluginRepository.getScopes().get(name);
         if (scope == null) {
             LOGGER.warn("No scope found for name '" + name + "'.");
             scope = DefaultScope.NONE;
@@ -237,7 +236,7 @@ public class ScannerImpl implements Scanner {
             // The list of all scanner plugins which accept the given type
             final List<ScannerPlugin<?, ?>> candidates = new LinkedList<>();
             // The map of scanner plugins which produce a descriptor type
-            final Map<Class<? extends Descriptor>, Set<ScannerPlugin<?, ?>>> pluginsByDescriptor = new HashMap<>();
+            Map<Class<? extends Descriptor>, Set<ScannerPlugin<?, ?>>> pluginsByDescriptor = new HashMap<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
