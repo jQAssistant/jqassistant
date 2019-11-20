@@ -121,7 +121,7 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
-        return pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.emptyMap());
+        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.emptyMap());
     }
 
     /**
@@ -362,7 +362,7 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
-            return pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, properties);
+            return pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
     }
 
     @Retention(RetentionPolicy.RUNTIME)
