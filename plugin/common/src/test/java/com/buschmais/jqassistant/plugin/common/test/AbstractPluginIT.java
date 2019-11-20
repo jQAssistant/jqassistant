@@ -33,7 +33,6 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
@@ -195,8 +194,7 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, properties);
-        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, scannerPluginRepository.getScopes());
+        return new ScannerImpl(getScannerConfiguration(), properties, scannerContext, scannerPluginRepository);
     }
 
     /**
