@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -61,7 +61,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -116,9 +116,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
      * @param reportContext
      */
     private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext) {
-        ReportPluginRepository reportPluginRepository;
-        reportPluginRepository = pluginRepository.getReportPluginRepository();
-        return reportPluginRepository.getReportPlugins(reportContext, pluginProperties);
+        AnalyzerPluginRepository analyzerPluginRepository;
+        analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
+        return analyzerPluginRepository.getReportPlugins(reportContext, pluginProperties);
     }
 
     @Override

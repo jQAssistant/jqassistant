@@ -7,9 +7,10 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
-
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class AnalyzeTaskTest {
     private StorePluginRepository storePluginRepository;
 
     @Mock
-    private ReportPluginRepository reportPluginRepository;
+    private AnalyzerPluginRepository analyzerPluginRepository;
 
     @Mock
     private RulePluginRepository rulePluginRepository;
@@ -42,17 +43,13 @@ public class AnalyzeTaskTest {
     @Mock
     private RuleParserPluginRepository ruleParserPluginRepository;
 
-    @Mock
-    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
-
     @BeforeEach
     public void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
-        when(pluginRepository.getReportPluginRepository()).thenReturn(reportPluginRepository);
+        when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
         when(pluginRepository.getRuleParserPluginRepository()).thenReturn(ruleParserPluginRepository);
-        when(pluginRepository.getRuleInterpreterPluginRepository()).thenReturn(ruleInterpreterPluginRepository);
     }
 
     @Test
@@ -69,12 +66,12 @@ public class AnalyzeTaskTest {
         analyzeTask.run();
 
         ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(reportPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
+        verify(analyzerPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
         assertThat(propertiesCaptor.getValue()).isSameAs(pluginProperties);
         verify(rulePluginRepository).getRuleSources();
         verify(storePluginRepository).getDescriptorTypes();
         verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
-        verify(ruleInterpreterPluginRepository).getRuleInterpreterPlugins(anyMap());
+        verify(analyzerPluginRepository).getRuleInterpreterPlugins(anyMap());
         verify(storePluginRepository).getProcedureTypes();
         verify(storePluginRepository).getFunctionTypes();
     }
