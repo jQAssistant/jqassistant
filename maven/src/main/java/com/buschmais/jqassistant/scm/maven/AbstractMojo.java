@@ -269,7 +269,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(getRuleConfiguration());
+            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(getRuleConfiguration());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);        }
         try {
