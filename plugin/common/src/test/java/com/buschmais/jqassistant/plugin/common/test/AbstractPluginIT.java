@@ -106,7 +106,7 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository().getRuleSources());
-        Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(RuleConfiguration.DEFAULT);
+        Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(RuleConfiguration.DEFAULT);
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
     }
@@ -160,7 +160,8 @@ public abstract class AbstractPluginIT {
          */
         StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration);
-        store.start(pluginRepository.getStorePluginRepository().getDescriptorTypes(), pluginRepository.getStorePluginRepository().getProcedureTypes(),  pluginRepository.getStorePluginRepository().getFunctionTypes());
+        store.start(pluginRepository.getStorePluginRepository().getDescriptorTypes(), pluginRepository.getStorePluginRepository().getProcedureTypes(),
+                pluginRepository.getStorePluginRepository().getFunctionTypes());
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
@@ -216,8 +217,7 @@ public abstract class AbstractPluginIT {
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         File directory = ClasspathResource.getFile(rootClass, "/");
-        assertThat(directory.isDirectory()).describedAs("Expected %s to be a directory", directory.toString())
-                                           .isTrue();
+        assertThat(directory.isDirectory()).describedAs("Expected %s to be a directory", directory.toString()).isTrue();
         return directory;
     }
 
@@ -362,7 +362,7 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
-            return pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
+        return pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
     }
 
     @Retention(RetentionPolicy.RUNTIME)
