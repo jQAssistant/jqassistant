@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
 /**
  * Scanner plugin repository implementation.
  */
-public class ModelPluginRepositoryImpl extends AbstractPluginRepository implements ModelPluginRepository {
+public class StorePluginRepositoryImpl extends AbstractPluginRepository implements StorePluginRepository {
 
     private final List<Class<?>> descriptorTypes;
 
@@ -23,7 +23,7 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
     /**
      * Constructor.
      */
-    public ModelPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
+    public StorePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
         this.descriptorTypes = getTypes(plugins,plugin -> plugin.getModel());
         this.procedureTypes = getTypes(plugins, plugin -> plugin.getProcedure());

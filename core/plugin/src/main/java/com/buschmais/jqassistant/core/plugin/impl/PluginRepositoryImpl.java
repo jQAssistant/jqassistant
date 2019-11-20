@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
 import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
 /**
  * The plugin repository.
@@ -9,9 +11,8 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     private PluginConfigurationReader pluginConfigurationReader;
 
-    private ModelPluginRepository modelPluginRepository;
+    private StorePluginRepository storePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
-    private ScopePluginRepository scopePluginRepository;
     private RulePluginRepository rulePluginRepository;
     private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
     private RuleParserPluginRepository ruleParserPluginRepository;
@@ -31,10 +32,9 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     @Override
     public void initialize() {
-        this.modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
+        this.storePluginRepository = new StorePluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository.initialize();
-        this.scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         this.ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
         this.ruleInterpreterPluginRepository.initialize();
@@ -62,18 +62,13 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public ModelPluginRepository getModelPluginRepository() {
-        return modelPluginRepository;
+    public StorePluginRepository getStorePluginRepository() {
+        return storePluginRepository;
     }
 
     @Override
     public ScannerPluginRepository getScannerPluginRepository() {
         return scannerPluginRepository;
-    }
-
-    @Override
-    public ScopePluginRepository getScopePluginRepository() {
-        return scopePluginRepository;
     }
 
     @Override

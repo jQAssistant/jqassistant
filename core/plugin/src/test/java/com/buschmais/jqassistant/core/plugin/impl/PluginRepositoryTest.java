@@ -4,13 +4,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.plugin.TestReportPlugin;
 import com.buschmais.jqassistant.core.plugin.impl.plugin.TestScannerPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;

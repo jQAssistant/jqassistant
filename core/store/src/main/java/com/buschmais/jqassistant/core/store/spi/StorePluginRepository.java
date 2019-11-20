@@ -1,11 +1,11 @@
-package com.buschmais.jqassistant.core.plugin.api;
+package com.buschmais.jqassistant.core.store.spi;
 
 import java.util.List;
 
 /**
  * Defines the interface for the scanner plugin repository.
  */
-public interface ModelPluginRepository {
+public interface StorePluginRepository {
 
     /**
      * Return the instances of the configured descriptor mappers.
