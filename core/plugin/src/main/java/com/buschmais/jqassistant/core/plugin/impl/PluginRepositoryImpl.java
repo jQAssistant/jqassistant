@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
 import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
@@ -14,9 +15,8 @@ public class PluginRepositoryImpl implements PluginRepository {
     private StorePluginRepository storePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
     private RulePluginRepository rulePluginRepository;
-    private RuleInterpreterPluginRepository ruleInterpreterPluginRepository;
     private RuleParserPluginRepository ruleParserPluginRepository;
-    private ReportPluginRepository reportPluginRepository;
+    private AnalyzerPluginRepository analyzerPluginRepository;
 
     private ClassLoader classLoader;
 
@@ -36,12 +36,10 @@ public class PluginRepositoryImpl implements PluginRepository {
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository.initialize();
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleInterpreterPluginRepository = new RuleInterpreterPluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleInterpreterPluginRepository.initialize();
         this.ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
         this.ruleParserPluginRepository.initialize();
-        this.reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
-        this.reportPluginRepository.initialize();
+        this.analyzerPluginRepository = new AnalyzerPluginRepositoryImpl(pluginConfigurationReader);
+        this.analyzerPluginRepository.initialize();
         this.classLoader = pluginConfigurationReader.getClassLoader();
     }
 
@@ -50,14 +48,11 @@ public class PluginRepositoryImpl implements PluginRepository {
         if (scannerPluginRepository != null) {
             this.scannerPluginRepository.destroy();
         }
-        if (ruleInterpreterPluginRepository != null) {
-            this.ruleInterpreterPluginRepository.destroy();
-        }
         if (ruleParserPluginRepository != null) {
             this.ruleParserPluginRepository.destroy();
         }
-        if (reportPluginRepository != null) {
-            this.reportPluginRepository.destroy();
+        if (analyzerPluginRepository != null) {
+            this.analyzerPluginRepository.destroy();
         }
     }
 
@@ -77,18 +72,13 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public RuleInterpreterPluginRepository getRuleInterpreterPluginRepository() {
-        return ruleInterpreterPluginRepository;
-    }
-
-    @Override
     public RuleParserPluginRepository getRuleParserPluginRepository() {
         return ruleParserPluginRepository;
     }
 
     @Override
-    public ReportPluginRepository getReportPluginRepository() {
-        return reportPluginRepository;
+    public AnalyzerPluginRepository getAnalyzerPluginRepository() {
+        return analyzerPluginRepository;
     }
 
     @Override

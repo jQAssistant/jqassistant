@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.plugin.TestReportPlugin;
 import com.buschmais.jqassistant.core.plugin.impl.plugin.TestScannerPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -59,7 +59,7 @@ public class PluginRepositoryTest {
         assertThat(scannerPlugins.get("testScanner"), notNullValue());
         // Report plugins
         ReportContext reportContext = mock(ReportContext.class);
-        Map<String, ReportPlugin> reportPlugins = pluginRepository.getReportPluginRepository().getReportPlugins(reportContext, Collections.emptyMap());
+        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, Collections.emptyMap());
         assertThat(reportPlugins.size(), equalTo(3));
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName()), notNullValue());
         assertThat(reportPlugins.get("testReport"), notNullValue());
@@ -85,8 +85,8 @@ public class PluginRepositoryTest {
     }
 
     private Map<String, Object> getReportPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) {
-        ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository();
-        Map<String, ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(mock(ReportContext.class), properties);
+        AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
+        Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(mock(ReportContext.class), properties);
         assertThat(reportPlugins.size()).isGreaterThan(0);
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             if (reportPlugin instanceof TestReportPlugin) {
