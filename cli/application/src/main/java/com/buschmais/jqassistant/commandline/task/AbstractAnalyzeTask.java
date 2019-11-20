@@ -65,7 +65,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = pluginRepository.getRuleParserPluginRepository().getRuleParserPlugins(ruleConfiguration);
+            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(ruleConfiguration);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot get rule source reader plugins.", e);
         }

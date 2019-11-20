@@ -5,10 +5,11 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
 import org.apache.commons.cli.CommandLine;
@@ -40,16 +41,12 @@ public class AnalyzeTaskTest {
     @Mock
     private RulePluginRepository rulePluginRepository;
 
-    @Mock
-    private RuleParserPluginRepository ruleParserPluginRepository;
-
     @BeforeEach
     public void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
         when(pluginRepository.getRulePluginRepository()).thenReturn(rulePluginRepository);
-        when(pluginRepository.getRuleParserPluginRepository()).thenReturn(ruleParserPluginRepository);
     }
 
     @Test
@@ -68,12 +65,12 @@ public class AnalyzeTaskTest {
         ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);
         verify(analyzerPluginRepository).getReportPlugins(any(ReportContext.class), propertiesCaptor.capture());
         assertThat(propertiesCaptor.getValue()).isSameAs(pluginProperties);
-        verify(rulePluginRepository).getRuleSources();
         verify(storePluginRepository).getDescriptorTypes();
-        verify(ruleParserPluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
-        verify(analyzerPluginRepository).getRuleInterpreterPlugins(anyMap());
         verify(storePluginRepository).getProcedureTypes();
         verify(storePluginRepository).getFunctionTypes();
+        verify(rulePluginRepository).getRuleSources();
+        verify(rulePluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
+        verify(analyzerPluginRepository).getRuleInterpreterPlugins(anyMap());
     }
 
     private void stubOption(CommandLine standardOptions, String option, String value) {
@@ -81,4 +78,3 @@ public class AnalyzeTaskTest {
         when(standardOptions.getOptionValue(option)).thenReturn(value);
     }
 }
-
