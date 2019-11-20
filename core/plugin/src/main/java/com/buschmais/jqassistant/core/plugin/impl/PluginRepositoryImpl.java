@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
@@ -15,7 +17,6 @@ public class PluginRepositoryImpl implements PluginRepository {
     private StorePluginRepository storePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
     private RulePluginRepository rulePluginRepository;
-    private RuleParserPluginRepository ruleParserPluginRepository;
     private AnalyzerPluginRepository analyzerPluginRepository;
 
     private ClassLoader classLoader;
@@ -36,8 +37,7 @@ public class PluginRepositoryImpl implements PluginRepository {
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository.initialize();
         this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
-        this.ruleParserPluginRepository.initialize();
+        this.rulePluginRepository.initialize();
         this.analyzerPluginRepository = new AnalyzerPluginRepositoryImpl(pluginConfigurationReader);
         this.analyzerPluginRepository.initialize();
         this.classLoader = pluginConfigurationReader.getClassLoader();
@@ -48,8 +48,8 @@ public class PluginRepositoryImpl implements PluginRepository {
         if (scannerPluginRepository != null) {
             this.scannerPluginRepository.destroy();
         }
-        if (ruleParserPluginRepository != null) {
-            this.ruleParserPluginRepository.destroy();
+        if (rulePluginRepository != null) {
+            this.rulePluginRepository.destroy();
         }
         if (analyzerPluginRepository != null) {
             this.analyzerPluginRepository.destroy();
@@ -69,11 +69,6 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public RulePluginRepository getRulePluginRepository() {
         return rulePluginRepository;
-    }
-
-    @Override
-    public RuleParserPluginRepository getRuleParserPluginRepository() {
-        return ruleParserPluginRepository;
     }
 
     @Override

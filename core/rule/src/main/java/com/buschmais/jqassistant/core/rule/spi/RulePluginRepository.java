@@ -1,16 +1,31 @@
-package com.buschmais.jqassistant.core.plugin.api;
+package com.buschmais.jqassistant.core.rule.spi;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 
 /**
- * Defines the plugin repository for {@link RuleParserPlugin}s.
+ * Defines the interface for the scanner plugin repository.
  */
-public interface RuleParserPluginRepository extends LifecycleAware {
+public interface RulePluginRepository extends LifecycleAware {
+
+    @Override
+    void initialize();
+
+    @Override
+    void destroy();
+
+    /**
+     * Get a list of sources providing rules.
+     *
+     * @return The list of sources providing rules.
+     */
+    List<RuleSource> getRuleSources();
 
     /**
      * Return the {@link RuleParserPlugin}s.
@@ -19,9 +34,4 @@ public interface RuleParserPluginRepository extends LifecycleAware {
      */
     Collection<RuleParserPlugin> getRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException;
 
-    @Override
-    void initialize();
-
-    @Override
-    void destroy();
 }

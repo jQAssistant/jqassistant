@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
+import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
@@ -21,8 +22,6 @@ public interface PluginRepository extends LifecycleAware {
     ScannerPluginRepository getScannerPluginRepository();
 
     RulePluginRepository getRulePluginRepository();
-
-    RuleParserPluginRepository getRuleParserPluginRepository();
 
     AnalyzerPluginRepository getAnalyzerPluginRepository();
 

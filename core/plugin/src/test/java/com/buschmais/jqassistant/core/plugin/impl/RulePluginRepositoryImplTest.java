@@ -8,20 +8,22 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
+import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.*;
+import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RuleParserPluginRepositoryImplTest {
-    RuleParserPluginRepositoryImpl ruleParserPluginRepository;
+class RulePluginRepositoryImplTest {
+
+    RulePluginRepository ruleParserPluginRepository;
 
     @BeforeEach
     void setupPluginConfigurationReader() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
-        ruleParserPluginRepository = new RuleParserPluginRepositoryImpl(pluginConfigurationReader);
+        ruleParserPluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         ruleParserPluginRepository.initialize();
     }
 
