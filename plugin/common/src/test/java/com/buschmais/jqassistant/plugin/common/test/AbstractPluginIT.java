@@ -36,6 +36,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
+import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -159,7 +160,7 @@ public abstract class AbstractPluginIT {
          */
         StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration);
-        store.start(pluginRepository.getModelPluginRepository().getDescriptorTypes(), pluginRepository.getModelPluginRepository().getProcedureTypes(),  pluginRepository.getModelPluginRepository().getFunctionTypes());
+        store.start(pluginRepository.getStorePluginRepository().getDescriptorTypes(), pluginRepository.getStorePluginRepository().getProcedureTypes(),  pluginRepository.getStorePluginRepository().getFunctionTypes());
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
@@ -192,8 +193,9 @@ public abstract class AbstractPluginIT {
      */
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, properties);
-        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, properties);
+        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, scannerPluginRepository.getScopes());
     }
 
     /**
