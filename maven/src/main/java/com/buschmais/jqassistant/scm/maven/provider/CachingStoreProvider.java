@@ -58,9 +58,9 @@ public class CachingStoreProvider implements Disposable {
         Store store = storesByKey.get(key);
         if (store == null) {
             store = StoreFactory.getStore(storeConfiguration);
-            List<Class<?>> descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
-            List<Class<?>> procedureTypes = pluginRepository.getModelPluginRepository().getProcedureTypes();
-            List<Class<?>> functionTypes = pluginRepository.getModelPluginRepository().getFunctionTypes();
+            List<Class<?>> descriptorTypes = pluginRepository.getStorePluginRepository().getDescriptorTypes();
+            List<Class<?>> procedureTypes = pluginRepository.getStorePluginRepository().getProcedureTypes();
+            List<Class<?>> functionTypes = pluginRepository.getStorePluginRepository().getFunctionTypes();
             store.start(descriptorTypes, procedureTypes, functionTypes);
             storesByKey.put(key, store);
             keysByStore.put(store, key);
