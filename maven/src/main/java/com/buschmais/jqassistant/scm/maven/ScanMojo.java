@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
@@ -18,10 +17,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 
@@ -95,8 +91,7 @@ public class ScanMojo extends AbstractModuleMojo {
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, getPluginProperties());
-        Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, scannerPluginRepository.getScopes());
+        Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
         scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
         scannerContext.pop(DependencyGraphBuilder.class);
         scannerContext.pop(MavenSession.class);
