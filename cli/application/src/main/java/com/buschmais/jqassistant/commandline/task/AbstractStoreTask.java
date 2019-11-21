@@ -44,8 +44,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
-            store.start(descriptorTypes, pluginRepository.getStorePluginRepository().getProcedureTypes(),
-                    pluginRepository.getStorePluginRepository().getFunctionTypes());
+            store.start();
             executeTask(store);
         } finally {
             store.stop();
@@ -124,7 +123,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
      * @return The store.
      */
     protected Store getStore() {
-        return StoreFactory.getStore(storeConfiguration);
+        return StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
     }
 
     protected abstract void addTaskOptions(List<Option> options);

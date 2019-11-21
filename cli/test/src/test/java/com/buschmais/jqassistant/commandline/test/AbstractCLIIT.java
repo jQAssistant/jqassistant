@@ -5,16 +5,19 @@ import java.util.*;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -46,6 +49,8 @@ public abstract class AbstractCLIIT {
     public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";
 
     public static final String CUSTOM_GROUP = "customGroup";
+
+    private PluginRepository pluginRepository;
 
     private Properties properties = new Properties();
 
@@ -99,6 +104,15 @@ public abstract class AbstractCLIIT {
         properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
+        pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl());
+        pluginRepository.initialize();
+    }
+
+    @AfterEach
+    public void after() {
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
     }
 
     /**
@@ -170,7 +184,7 @@ public abstract class AbstractCLIIT {
      *
      * @return The default report directory.
      */
-    protected File getDefaultReportDirectory() throws IOException {
+    protected File getDefaultReportDirectory() {
         return new File(getWorkingDirectory(), Task.DEFAULT_REPORT_DIRECTORY);
     }
 
@@ -183,13 +197,13 @@ public abstract class AbstractCLIIT {
      */
     protected Store getStore(File directory) {
         StoreConfiguration storeConfiguration = StoreConfiguration.builder().uri(directory.toURI()).build();
-        return StoreFactory.getStore(storeConfiguration);
+        return StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
     }
 
 
     protected void withStore(File directory, StoreOperation storeOperation) {
         Store store = getStore(directory);
-        store.start(emptyList(), emptyList(), emptyList());
+        store.start();
         try {
             storeOperation.run(store);
         } finally {
