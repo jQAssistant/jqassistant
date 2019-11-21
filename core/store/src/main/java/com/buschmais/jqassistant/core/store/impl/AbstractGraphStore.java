@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +7,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.xo.api.*;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.bootstrap.XO;
@@ -28,23 +28,26 @@ public abstract class AbstractGraphStore implements Store {
 
     private static final int BATCH_LIMIT = 8192;
 
-    protected StoreConfiguration storeConfiguration;
+    protected final StoreConfiguration storeConfiguration;
+
+    protected final StorePluginRepository storePluginRepository;
 
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
     private int created;
 
-    protected AbstractGraphStore(StoreConfiguration configuration) {
+    protected AbstractGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
         this.storeConfiguration = configuration;
+        this.storePluginRepository = storePluginRepository;
     }
 
     @Override
-    public void start(Collection<Class<?>> types, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
-        XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(types).validationMode(ValidationMode.NONE)
-                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+    public void start() {
+        XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(storePluginRepository.getDescriptorTypes())
+                .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
         configure(builder, storeConfiguration);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
-        initialize(xoManagerFactory, procedureTypes, functionTypes);
+        initialize(xoManagerFactory);
         xoManager = xoManagerFactory.createXOManager();
     }
 
@@ -216,7 +219,7 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * Initialize the store.
      */
-    protected abstract void initialize(XOManagerFactory xoManagerFactory, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes);
+    protected abstract void initialize(XOManagerFactory xoManagerFactory);
 
     protected abstract int getAutocommitThreshold();
 

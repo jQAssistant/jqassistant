@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.util.Collection;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider;
@@ -11,8 +11,8 @@ import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider.Property;
 
 public class RemoteGraphStore extends AbstractGraphStore {
 
-    public RemoteGraphStore(StoreConfiguration configuration) {
-        super(configuration);
+    public RemoteGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
+        super(configuration, storePluginRepository);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected void initialize(XOManagerFactory xoManagerFactory, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
+    protected void initialize(XOManagerFactory xoManagerFactory) {
     }
 }

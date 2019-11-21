@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.store.api;
 
-
 import java.net.URI;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class StoreFactory {
     private StoreFactory() {
     }
 
-    public static Store getStore(StoreConfiguration configuration) {
+    public static Store getStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
         LOGGER.info("Connecting to store at '" + configuration.getUri() + "'"
                 + (configuration.getUsername() != null ? " (username=" + configuration.getUsername() + ")" : ""));
         URI uri = configuration.getUri().normalize();
@@ -30,9 +30,9 @@ public class StoreFactory {
         switch (scheme.toLowerCase()) {
         case "file":
         case "memory":
-            return new EmbeddedGraphStore(configuration);
+            return new EmbeddedGraphStore(configuration, storePluginRepository);
         case "bolt":
-            return new RemoteGraphStore(configuration);
+            return new RemoteGraphStore(configuration, storePluginRepository);
         default:
             throw new IllegalArgumentException("Cannot determine store type from URI '" + uri + "'.");
         }

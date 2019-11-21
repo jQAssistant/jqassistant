@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
+import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
@@ -41,8 +41,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
      *
      * @param configuration The configuration.
      */
-    public EmbeddedGraphStore(StoreConfiguration configuration) {
-        super(configuration);
+    public EmbeddedGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
+        super(configuration, storePluginRepository);
         this.serverFactory = getEmbeddedNeo4jServerFactory();
     }
 
@@ -63,12 +63,13 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected void initialize(XOManagerFactory xoManagerFactory, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
+    protected void initialize(XOManagerFactory xoManagerFactory) {
         this.server = serverFactory.getServer();
         LOGGER.info("Initializing embedded Neo4j server " + server.getVersion());
         try (XOManager xoManager = xoManagerFactory.createXOManager()) {
             GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
-            server.initialize(graphDatabaseService, embeddedNeo4jConfiguration, procedureTypes, functionTypes);
+            server.initialize(graphDatabaseService, embeddedNeo4jConfiguration, storePluginRepository.getProcedureTypes(),
+                    storePluginRepository.getFunctionTypes());
         }
     }
 

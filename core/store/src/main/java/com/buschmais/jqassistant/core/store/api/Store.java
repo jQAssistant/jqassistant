@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
@@ -21,15 +20,8 @@ public interface Store {
      *
      * This method must be called before any other method of this interface can be
      * used.
-     *
-     * @param modelTypes
-     *            The model types to use.
-     * @param procedureTypes
-     *            The procedure types to register.
-     * @param functionTypes
-     *            The function types to register.
      */
-    void start(Collection<Class<?>> modelTypes, Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes);
+    void start();
 
     /**
      * Stop the store.
