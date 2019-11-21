@@ -39,7 +39,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     @Override
     public void run() throws CliExecutionException {
-        List<Class<?>> descriptorTypes = pluginRepository.getStorePluginRepository().getDescriptorTypes();
         final Store store = getStore();
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
