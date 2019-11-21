@@ -158,9 +158,8 @@ public abstract class AbstractPluginIT {
          * location of the used database. Oliver B. Fischer, 2017-06-10
          */
         StoreConfiguration configuration = storeConfigurationBuilder.build();
-        store = StoreFactory.getStore(configuration);
-        store.start(pluginRepository.getStorePluginRepository().getDescriptorTypes(), pluginRepository.getStorePluginRepository().getProcedureTypes(),
-                pluginRepository.getStorePluginRepository().getFunctionTypes());
+        store = StoreFactory.getStore(configuration, pluginRepository.getStorePluginRepository());
+        store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
