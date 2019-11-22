@@ -77,7 +77,10 @@ public abstract class AbstractPluginIT {
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
         ClassLoader pluginClassLoader = AbstractPluginIT.class.getClassLoader();
-        configurePlugins(pluginClassLoader);
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository.initialize();
+        initializeRuleSet();
         startStore(testInfo);
         initializeAnalyzer();
     }
@@ -90,13 +93,12 @@ public abstract class AbstractPluginIT {
         if (store != null) {
             store.stop();
         }
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
     }
 
-    private void configurePlugins(ClassLoader pluginClassLoader) throws RuleException, IOException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-        pluginRepository.initialize();
-
+    private void initializeRuleSet() throws RuleException, IOException {
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
         // read rules from rules directory
         List<RuleSource> sources = new LinkedList<>();
