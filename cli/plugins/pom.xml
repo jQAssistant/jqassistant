@@ -38,7 +38,10 @@
         <!-- List here all plugins of jQAssistant which should be
          !   a part of the command line distribution
          !-->
-
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>asciidoc-report</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>yaml</artifactId>
