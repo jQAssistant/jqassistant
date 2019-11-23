@@ -83,6 +83,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     @Override
     public List<JqassistantPlugin> getPlugins() {
         if (this.plugins == null) {
+            LOGGER.info("Scanning for jQAssistant plugins...");
             final Enumeration<URL> resources;
             try {
                 resources = pluginClassLoader.getResources(PLUGIN_RESOURCE);
@@ -99,7 +100,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
             for (JqassistantPlugin plugin : plugins) {
                 pluginNames.add(plugin.getName());
             }
-            LOGGER.info("Loaded jQAssistant plugins {}.", pluginNames);
+            LOGGER.info("{}.", pluginNames);
         }
         return this.plugins;
     }
