@@ -13,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Label(value = "GroupId", usingIndexedPropertyOf = com.buschmais.jqassistant.core.store.api.model.NamedDescriptor.class)
+@Label(value = "GroupId", usingIndexedPropertyOf = NamedDescriptor.class)
 public interface MavenGroupIdDescriptor extends MavenDescriptor, NamedDescriptor {
 
     @Relation("CONTAINS_ARTIFACT_ID")
