@@ -40,8 +40,6 @@ import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.D
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
-    public static final String PARAMETER_SERVER_ADDRESS = "jqassistant.server.address";
-    public static final String PARAMETER_SERVER_PORT = "jqassistant.server.port";
     public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
     public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
     public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
@@ -84,20 +82,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
     protected Integer embeddedHttpPort;
-
-    /**
-     * The address the server shall bind to.
-     */
-    @Parameter(property = PARAMETER_SERVER_ADDRESS)
-    @Deprecated
-    protected String serverAddress;
-
-    /**
-     * The port the server shall bind to.
-     */
-    @Parameter(property = PARAMETER_SERVER_PORT)
-    @Deprecated
-    protected Integer serverPort;
 
     /**
      * The rule configuration
@@ -450,14 +434,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Create the configuration for the embedded server.
      */
     private EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
-        OptionHelper.verifyDeprecatedOption(PARAMETER_SERVER_ADDRESS, this.serverAddress, PARAMETER_EMBEDDED_LISTEN_ADDRESS);
-        OptionHelper.verifyDeprecatedOption(PARAMETER_SERVER_PORT, this.serverPort, PARAMETER_EMBEDDED_HTTP_PORT);
         EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
         EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
         builder.connectorEnabled(embedded.isConnectorEnabled() || isConnectorRequired());
-        builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), this.serverAddress, embeddedListenAddress));
+        builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), embeddedListenAddress));
         builder.boltPort(OptionHelper.selectValue(embedded.getBoltPort(), embeddedBoltPort));
-        builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), this.serverPort, embeddedHttpPort));
+        builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), embeddedHttpPort));
         return builder.build();
     }
 
