@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.lang3.StringUtils;
@@ -70,19 +68,8 @@ public class FilePatternMatcher {
         private FilePatternMatcher instance = new FilePatternMatcher();
 
         /**
-         * Creates a new instance.
-         * 
-         * @return The builder.
-         */
-        @Deprecated
-        @ToBeRemovedInVersion(major = 1, minor = 8)
-        public static Builder newInstance() {
-            return new Builder();
-        }
-
-        /**
          * Configures a list of file name patterns to include.
-         * 
+         *
          * @param patternList
          *            The comma separated list of file name patterns to include.
          * @return The builder.
@@ -106,7 +93,7 @@ public class FilePatternMatcher {
 
         /**
          * Returns the configured matcher instance.
-         * 
+         *
          * @return The matcher instance.
          */
         public FilePatternMatcher build() {
