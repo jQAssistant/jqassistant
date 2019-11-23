@@ -47,9 +47,7 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +61,8 @@ public abstract class AbstractPluginIT {
 
     protected static final String ARTIFACT_ID = "artifact";
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
+
+    private static PluginRepositoryImpl pluginRepository;
     /**
      * The store.
      */
@@ -72,14 +72,24 @@ public abstract class AbstractPluginIT {
     protected InMemoryReportPlugin reportPlugin;
     protected RuleSet ruleSet;
 
-    private PluginRepositoryImpl pluginRepository;
 
-    @BeforeEach
-    public void beforeEach(TestInfo testInfo) throws Exception {
+    @BeforeAll
+    public static void initPluginRepository() {
         ClassLoader pluginClassLoader = AbstractPluginIT.class.getClassLoader();
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
+    }
+
+    @AfterAll
+    public static void destroyPluginRepository() {
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
+    }
+
+    @BeforeEach
+    public void beforeEach(TestInfo testInfo) throws Exception {
         initializeRuleSet();
         startStore(testInfo);
         initializeAnalyzer();
@@ -92,9 +102,6 @@ public abstract class AbstractPluginIT {
     public void stopStore() {
         if (store != null) {
             store.stop();
-        }
-        if (pluginRepository != null) {
-            pluginRepository.destroy();
         }
     }
 
