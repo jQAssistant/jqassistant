@@ -61,6 +61,7 @@
         <!--
          ! Versions of the plugins to be include an a release.
          !-->
+        <jqa-asciidoc-report-plugin.version>1.8.0-SNAPSHOT</jqa-asciidoc-report-plugin.version>
         <jqa-cdi-plugin.version>1.8.0-SNAPSHOT</jqa-cdi-plugin.version>
         <jqa-core-framework.version>1.8.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-graphml-plugin.version>1.8.0-SNAPSHOT</jqa-graphml-plugin.version>
@@ -210,6 +211,25 @@
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>yaml</artifactId>
                 <version>${jqa-yaml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>asciidoc-report</artifactId>
+                <version>${jqa-asciidoc-report-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>asciidoc-report</artifactId>
+                <version>${jqa-asciidoc-report-plugin.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
