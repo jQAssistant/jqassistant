@@ -43,25 +43,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     protected Map<String, String> ruleParameters;
 
     /**
-     * Indicates if the plugin shall fail if a constraint violation is detected.
-     */
-    @Deprecated
-    @Parameter(property = "jqassistant.failOnViolations")
-    protected Boolean failOnViolations = null;
-
-    /**
      * If set also execute concepts which have already been applied.
      */
     @Parameter(property = "jqassistant.executeAppliedConcepts")
     protected boolean executeAppliedConcepts = false;
-
-    /**
-     * Severity level for constraint violation failure check. Default value is
-     * {@code Severity.INFO}
-     */
-    @Deprecated
-    @Parameter(property = "jqassistant.severity")
-    protected String severity;
 
     /**
      * The severity threshold to warn on rule violations.
@@ -104,7 +89,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
-        Severity effectiveFailOnSeverity = getFailOnSeverity();
+        Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, Object> properties = getReportProperties();
         Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
@@ -126,26 +111,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private Severity getFailOnSeverity() throws MojoExecutionException {
-        Severity effectiveFailOnSeverity;
-        if (failOnViolations != null) {
-            getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
-        }
-        if (severity != null) {
-            getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
-            try {
-                effectiveFailOnSeverity = Severity.fromValue(severity);
-            } catch (RuleException e) {
-                throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
-            }
-        } else {
-            effectiveFailOnSeverity = failOnSeverity;
-        }
-        return effectiveFailOnSeverity;
-    }
-
     private Map<String, Object> getReportProperties() {
-        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
+        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }

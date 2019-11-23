@@ -5,7 +5,6 @@ import org.codehaus.plexus.component.configurator.BasicComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.converters.ConfigurationConverter;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 
 /**
  * Custom component configurator which allows us to register our own
@@ -17,7 +16,7 @@ public class CustomComponentConfigurator
     implements Initializable {
 
     @Override
-    public void initialize() throws InitializationException {
+    public void initialize() {
         this.converterLookup.registerConverter(new SeverityConfigurationConverter());
         this.converterLookup.registerConverter(new StoreLifeCycleConverter());
     }

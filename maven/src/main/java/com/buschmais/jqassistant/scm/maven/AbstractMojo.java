@@ -6,8 +6,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
-import javax.inject.Inject;
-
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -174,7 +172,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "mojoExecution")
     protected MojoExecution execution;
 
-    @Inject
+    @Component
     protected PluginRepositoryProvider pluginRepositoryProvider;
 
     /**
@@ -186,7 +184,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The store repository.
      */
-    @Inject
+    @Component
     private CachingStoreProvider cachingStoreProvider;
 
     @Override
