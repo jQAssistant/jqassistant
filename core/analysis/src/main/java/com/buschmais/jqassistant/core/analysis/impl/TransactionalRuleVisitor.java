@@ -1,11 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOException;
 
@@ -71,7 +67,7 @@ public class TransactionalRuleVisitor implements RuleVisitor {
 
     /**
      * Executes a {@link TransactionalSupplier} within a transaction.
-     * 
+     *
      * @param txSupplier
      *            The {@link TransactionalSupplier}.
      * @param <T>

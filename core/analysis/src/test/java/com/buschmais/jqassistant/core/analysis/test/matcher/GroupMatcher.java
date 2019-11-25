@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.rule.api.model.Group;
 
 import org.hamcrest.Matcher;
 
@@ -11,7 +11,7 @@ public class GroupMatcher extends AbstractRuleMatcher<Group> {
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            The expected group id.
      */
@@ -21,7 +21,7 @@ public class GroupMatcher extends AbstractRuleMatcher<Group> {
 
     /**
      * Return a {@link GroupMatcher}.
-     * 
+     *
      * @param id
      *            The group id.
      * @return The {@link GroupMatcher}.

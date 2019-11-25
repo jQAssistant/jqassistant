@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
 public class RowCountVerificationStrategy extends AbstractMinMaxVerificationStrategy implements VerificationStrategy<RowCountVerification> {

@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
 
 import org.hamcrest.Matcher;
 
@@ -11,7 +11,7 @@ public class ConceptMatcher extends AbstractRuleMatcher<Concept> {
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            The expected concept id.
      */
@@ -21,7 +21,7 @@ public class ConceptMatcher extends AbstractRuleMatcher<Concept> {
 
     /**
      * Return a {@link ConceptMatcher}.
-     * 
+     *
      * @param id
      *            The concept id.
      * @return The {@link ConceptMatcher}.

@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 /**
  * Defines the interface for the report context.

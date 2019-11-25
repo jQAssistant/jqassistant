@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 
 import org.hamcrest.Matcher;
 
@@ -11,7 +11,7 @@ public class ConstraintMatcher extends AbstractRuleMatcher<Constraint> {
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            The expected constraint id.
      */
@@ -21,7 +21,7 @@ public class ConstraintMatcher extends AbstractRuleMatcher<Constraint> {
 
     /**
      * Return a {@link ConstraintMatcher}.
-     * 
+     *
      * @param id
      *            The concept id.
      * @return The {@link ConstraintMatcher}.

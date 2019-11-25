@@ -11,10 +11,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
@@ -43,7 +43,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
     }
 
     @Override
-    public void write(RuleSet ruleSet, Writer writer) throws com.buschmais.jqassistant.core.analysis.api.rule.RuleException {
+    public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.builder().groupIds(ruleSet.getGroupsBucket().getIds())
                 .constraintIds(ruleSet.getConstraintBucket().getIds()).conceptIds(ruleSet.getConceptBucket().getIds()).build();

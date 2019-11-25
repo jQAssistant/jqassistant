@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.core.report.api;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 
 import org.slf4j.Logger;
@@ -99,7 +99,7 @@ public final class ReportHelper {
      * @return The number of detected violations.
      */
     private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnOnSeverity, Severity failOnSeverity, String type,
-            String header, boolean logResult) {
+                                  String header, boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {

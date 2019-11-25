@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.rule.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.rule.api.model.Executable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.ToString;
 
 /**
  * The implementation of
- * {@link com.buschmais.jqassistant.core.analysis.api.rule.Executable}.
+ * {@link Executable}.
  */
 @Getter
 @ToString

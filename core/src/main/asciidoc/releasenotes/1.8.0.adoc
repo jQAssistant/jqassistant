@@ -5,3 +5,5 @@ ifndef::jqa-in-manual[== Version 1.8.0]
 ifdef::jqa-in-manual[== Core Framework 1.8.0]
 
 * Fixed a StackOverflowError if a concepts requires itself using wildcards (see https://github.com/jQAssistant/jqa-core-framework/issues/29[issue])
+* Moved package `com.buschmais.jqassistant.core.analysis.api.rule` to `com.buschmais.jqassistant.rule.api.model`, plugins using classes from this package need to adopt their imports.
+

@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.RulesType;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.ClasspathRuleSource;

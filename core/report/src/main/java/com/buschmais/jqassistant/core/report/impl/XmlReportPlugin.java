@@ -15,9 +15,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;

@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

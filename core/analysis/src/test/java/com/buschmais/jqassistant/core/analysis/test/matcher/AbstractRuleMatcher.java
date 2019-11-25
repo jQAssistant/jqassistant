@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -16,7 +16,7 @@ public class AbstractRuleMatcher<T extends Rule> extends TypeSafeMatcher<T> {
 
     /**
      * Constructor.
-     * 
+     *
      * @param type
      *            The rules type.
      * @param id

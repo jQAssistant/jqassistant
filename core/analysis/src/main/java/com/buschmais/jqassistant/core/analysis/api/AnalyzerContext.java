@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public interface AnalyzerContext {
     /**
      * Return a Result.ResultBuilder based on a {@link ExecutableRule} and
      * {@link Severity}.
-     * 
+     *
      * @param rule
      *            The rule.
      * @param severity

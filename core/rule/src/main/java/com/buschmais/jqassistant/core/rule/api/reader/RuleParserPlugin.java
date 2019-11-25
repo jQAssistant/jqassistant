@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.core.rule.api.reader;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.shared.lifecycle.ConfigurableLifecycleAware;
 

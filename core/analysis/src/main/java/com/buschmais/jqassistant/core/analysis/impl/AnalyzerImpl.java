@@ -8,13 +8,13 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.slf4j.Logger;

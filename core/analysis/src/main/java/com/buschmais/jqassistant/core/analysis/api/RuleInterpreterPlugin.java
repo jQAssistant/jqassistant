@@ -3,9 +3,10 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.lifecycle.ConfigurableLifecycleAware;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -77,7 +78,7 @@ public interface RuleInterpreterPlugin extends ConfigurableLifecycleAware<Map<St
      * @return The {@link Result}.
      * @throws RuleException
      *             If execution fails due to an invalid
-     *             {@link com.buschmais.jqassistant.core.analysis.api.rule.Rule}.
+     *             {@link Rule}.
      */
     <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> ruleParameters, Severity severity, AnalyzerContext context)
             throws RuleException;

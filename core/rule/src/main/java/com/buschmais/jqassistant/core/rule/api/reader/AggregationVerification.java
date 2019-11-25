@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.reader;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.rule.api.model.Verification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

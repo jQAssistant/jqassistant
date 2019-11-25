@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 /**
  * A {@link ReportPlugin}

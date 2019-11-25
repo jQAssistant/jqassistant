@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
 /**
  * Defines the interface for the analyzer.

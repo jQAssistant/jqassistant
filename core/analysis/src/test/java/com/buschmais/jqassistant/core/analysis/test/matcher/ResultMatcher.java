@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.core.analysis.test.matcher;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.AbstractExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -20,7 +20,7 @@ public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMat
 
     /**
      * Constructor.
-     * 
+     *
      * @param executableMatcher
      *            The expected executable type.
      */
@@ -31,7 +31,7 @@ public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMat
 
     /**
      * Constructor.
-     * 
+     *
      * @param executableMatcher
      *            The expected executable type.
      */
@@ -70,7 +70,7 @@ public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMat
 
     /**
      * Return a {@link ResultMatcher}.
-     * 
+     *
      * @param constraintMatcher
      *            The matcher for the expected constraint.
      * @return The {@link ResultMatcher}.
@@ -81,7 +81,7 @@ public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMat
 
     /**
      * Return a {@link ResultMatcher}.
-     * 
+     *
      * @param constraintMatcher
      *            The matcher for the expected constraint.
      * @return The {@link ResultMatcher}.

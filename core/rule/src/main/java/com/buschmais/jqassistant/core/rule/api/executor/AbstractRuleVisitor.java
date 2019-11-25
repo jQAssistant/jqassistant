@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 /**
  * Abstract base implementation of a {@link RuleVisitor}.

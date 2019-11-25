@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 public class CollectRulesVisitor extends AbstractRuleVisitor {
 

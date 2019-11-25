@@ -5,8 +5,8 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.Parameter.Type;
+import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Parameter.Type;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;

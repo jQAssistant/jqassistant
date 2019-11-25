@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.core.rule.api;
 
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.slf4j.Logger;
 
