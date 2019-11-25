@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 public class AvailableRulesTask extends AbstractAnalyzeTask {

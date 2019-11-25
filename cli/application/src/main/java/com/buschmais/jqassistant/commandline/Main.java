@@ -306,6 +306,7 @@ public class Main {
             System.out.println("Error: " + errorMessage);
         }
         final HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(120);
         formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
         System.out.println("Tasks are: " + gatherTaskNames(taskFactory));
         System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");

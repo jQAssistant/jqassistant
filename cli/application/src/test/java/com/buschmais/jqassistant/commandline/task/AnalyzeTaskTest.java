@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
