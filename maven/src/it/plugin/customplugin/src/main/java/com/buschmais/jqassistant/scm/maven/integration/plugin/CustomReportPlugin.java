@@ -3,18 +3,14 @@ package com.buschmais.jqassistant.scm.maven.integration.plugin;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Map;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 public class CustomReportPlugin implements ReportPlugin {
     private static final String PROPERTY_FILENAME = "customReport.fileName";
