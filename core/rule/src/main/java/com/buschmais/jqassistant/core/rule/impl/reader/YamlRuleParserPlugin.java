@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.core.rule.api.model.Parameter;
 import com.buschmais.jqassistant.core.rule.api.model.Parameter.Type;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.RuleHandlingException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSetBuilder;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.api.model.Verification;
@@ -650,7 +649,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private interface RuleConsumer<T> {
-        void consume(T t) throws RuleHandlingException;
+        void consume(T t) throws RuleException;
     }
 
     static class SeverityMap extends HashMap<String, Severity> {

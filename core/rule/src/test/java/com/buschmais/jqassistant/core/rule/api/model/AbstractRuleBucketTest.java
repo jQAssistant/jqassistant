@@ -7,12 +7,10 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +21,7 @@ public class AbstractRuleBucketTest {
     // --- All tests for getRules()
 
     @Test
-    public void getRulesReturnsAllRules() throws DuplicateConceptException {
+    public void getRulesReturnsAllRules() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -47,7 +45,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void getConceptIdsReturnsAllIdsOfAllConceptsInBucket() throws DuplicateConceptException {
+    public void getConceptIdsReturnsAllIdsOfAllConceptsInBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -80,7 +78,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void sizeOfBucketIsEqualNumberOfConceptsInBucket() throws DuplicateConceptException {
+    public void sizeOfBucketIsEqualNumberOfConceptsInBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -99,7 +97,7 @@ public class AbstractRuleBucketTest {
     // --- All tests for getConcept()
 
     @Test
-    public void getConceptReturnsExistingConceptInBucket() throws NoConceptException, DuplicateConceptException {
+    public void getConceptReturnsExistingConceptInBucket() throws RuleException {
         Concept a = mock(Concept.class);
 
         when(a.getId()).thenReturn("a");
@@ -111,15 +109,15 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void getConceptThrowsExceptionIfConceptNotFoundInBucket() throws NoConceptException {
+    public void getConceptThrowsExceptionIfConceptNotFoundInBucket() throws RuleException {
         Assertions.assertThatThrownBy(() -> bucket.getById("foobar"))
-                  .isInstanceOf(NoConceptException.class);
+                  .isInstanceOf(RuleException.class);
     }
 
     // --- All tests for addConcepts
 
     @Test()
-    public void addConceptsAddsAllConcepts() throws DuplicateConceptException {
+    public void addConceptsAddsAllConcepts() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -143,7 +141,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void addConceptsCopesWithEmptyBucket() throws DuplicateConceptException {
+    public void addConceptsCopesWithEmptyBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -164,7 +162,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws DuplicateConceptException {
+    public void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws RuleException {
         Concept first = mock(Concept.class);
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
@@ -185,11 +183,11 @@ public class AbstractRuleBucketTest {
 
         newBucket.add(first);
         Assertions.assertThatThrownBy(() -> newBucket.add(existingBucket))
-                  .isInstanceOf(DuplicateConceptException.class);
+                  .isInstanceOf(RuleException.class);
     }
 
     @Test
-    public void match() throws DuplicateConceptException, NoRuleException {
+    public void match() throws RuleException {
         Concept c1 = mock(Concept.class);
         Concept c2 = mock(Concept.class);
         Concept c3 = mock(Concept.class);
@@ -208,29 +206,15 @@ public class AbstractRuleBucketTest {
         assertThat(bucket.match("concept?"), equalTo(asList(c1, c2, c3)));
         assertThat(bucket.match("c*ncept1"), equalTo(singletonList(c1)));
         assertThat(bucket.match("concept*"), equalTo(asList(c1, c2, c3)));
-        try {
-            assertThat(bucket.match("custom-concept"), equalTo(emptyList()));
-            fail("Expecting a " + NoConceptException.class.getName());
-        } catch (NoConceptException e) {
-            assertThat(e.getMessage(), containsString("custom-concept"));
-        }
     }
 
     // --- Helper Classes
-    private static class TestBucket extends AbstractRuleBucket<Concept, NoConceptException, DuplicateConceptException> {
+    private static class TestBucket extends AbstractRuleBucket<Concept> {
+
         @Override
         protected String getRuleTypeName() {
             return "example";
         }
 
-        @Override
-        protected DuplicateConceptException newDuplicateRuleException(String message) {
-            return new DuplicateConceptException(message);
-        }
-
-        @Override
-        protected NoConceptException newNoRuleException(String message) {
-            return new NoConceptException(message);
-        }
     }
 }

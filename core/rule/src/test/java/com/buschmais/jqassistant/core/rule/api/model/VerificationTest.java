@@ -25,20 +25,20 @@ public class VerificationTest {
         verifyRuleSet(ruleSet);
     }
 
-    private void verifyRuleSet(RuleSet ruleSet) throws NoConceptException {
+    private void verifyRuleSet(RuleSet ruleSet) throws RuleException {
         verifyDefault(ruleSet);
         verifyCustomizedDefault(ruleSet);
         verifyAggregation(ruleSet);
         verifyRowCount(ruleSet);
     }
 
-    private void verifyDefault(RuleSet ruleSet) throws NoConceptException {
+    private void verifyDefault(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:DefaultVerification");
         Verification verification = concept.getVerification();
         assertThat(verification, nullValue());
     }
 
-    private void verifyCustomizedDefault(RuleSet ruleSet) throws NoConceptException {
+    private void verifyCustomizedDefault(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:CustomizedDefaultVerification");
         Verification verification = concept.getVerification();
         assertThat(verification, instanceOf(RowCountVerification.class));
@@ -47,7 +47,7 @@ public class VerificationTest {
         assertThat(rowCountVerification.getMax(), equalTo(2));
     }
 
-    private void verifyAggregation(RuleSet ruleSet) throws NoConceptException {
+    private void verifyAggregation(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:AggregationVerification");
         Verification verification = concept.getVerification();
         assertThat(verification, instanceOf(AggregationVerification.class));
@@ -56,7 +56,7 @@ public class VerificationTest {
         assertThat(aggregationVerification.getMax(), equalTo(2));
     }
 
-    private void verifyRowCount(RuleSet ruleSet) throws NoConceptException {
+    private void verifyRowCount(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:RowCountVerification");
         Verification verification = concept.getVerification();
         assertThat(verification, instanceOf(RowCountVerification.class));

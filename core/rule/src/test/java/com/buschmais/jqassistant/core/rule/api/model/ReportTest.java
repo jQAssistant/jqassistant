@@ -51,7 +51,7 @@ public class ReportTest {
         verifyReport(ruleSet);
     }
 
-    private void verifyReport(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
+    private void verifyReport(RuleSet ruleSet) throws RuleException {
         verifyRule(ruleSet.getConceptBucket().getById("test:Concept"));
         verifyRule(ruleSet.getConstraintBucket().getById("test:Constraint"));
     }

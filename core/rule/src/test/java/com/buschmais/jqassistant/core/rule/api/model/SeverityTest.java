@@ -60,7 +60,7 @@ public class SeverityTest {
     }
 
     private void verifySeverities(RuleSet ruleSet, String groupId, Severity expectedGroupSeverity, String conceptId, Severity expectedConceptSeverity,
-            String constraintId, Severity expectedConstraintSeverity) throws NoGroupException {
+            String constraintId, Severity expectedConstraintSeverity) throws RuleException {
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems(conceptId));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems(constraintId));
         GroupsBucket groups = ruleSet.getGroupsBucket();
@@ -92,7 +92,7 @@ public class SeverityTest {
         verifyDefaultSeverities(ruleSet, Severity.CRITICAL);
     }
 
-    private void verifyDefaultSeverities(RuleSet ruleSet, Severity defaultSeverity) throws NoGroupException, NoConceptException, NoConstraintException {
+    private void verifyDefaultSeverities(RuleSet ruleSet, Severity defaultSeverity) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
         assertThat(groupWithoutSeverity.getSeverity(), equalTo(defaultSeverity));
         Group groupWithSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithSeverity");
@@ -117,7 +117,7 @@ public class SeverityTest {
         verifyRuleDefaultSeverity(ruleSet);
     }
 
-    private void verifyRuleDefaultSeverity(RuleSet ruleSet) throws NoGroupException, NoConceptException, NoConstraintException {
+    private void verifyRuleDefaultSeverity(RuleSet ruleSet) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
         assertThat(groupWithoutSeverity.getSeverity(), equalTo(null));
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");

@@ -25,7 +25,7 @@ public class RuleDependencyReaderTest {
         verifyRules(ruleSet);
     }
 
-    private void verifyRules(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
+    private void verifyRules(RuleSet ruleSet) throws RuleException {
         // Concepts
         Concept conceptWithOptionalDependency = ruleSet.getConceptBucket().getById("test:ConceptWithOptionalDependency");
         assertThat(conceptWithOptionalDependency, notNullValue());

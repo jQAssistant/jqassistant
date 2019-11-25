@@ -11,7 +11,10 @@ import org.asciidoctor.ast.AbstractBlock;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExecutablesTest {
@@ -40,13 +43,13 @@ public class ExecutablesTest {
         String fileName = (String) abstractBlock.getAttr("target");
         assertThat(fileName, notNullValue());
         File diagramFile = new File(imagesOutDir, fileName);
-        assertThat("Expected file "+ diagramFile + " does not exist.", diagramFile.exists(), equalTo(true));
+        assertThat("Expected file " + diagramFile + " does not exist.", diagramFile.exists(), equalTo(true));
         String diagramMetadata = new MetadataTag(diagramFile, "plantuml").getData();
         assertThat(diagramMetadata, containsString("@startuml"));
         assertThat(diagramMetadata, containsString("@enduml"));
     }
 
-    private void verifyRuleset(RuleSet ruleSet) throws NoConceptException, NoConstraintException {
+    private void verifyRuleset(RuleSet ruleSet) throws RuleException {
         verifyConceptExecutable(ruleSet, "test:CypherConcept", CypherExecutable.class, String.class, "cypher");
         verifyConceptExecutable(ruleSet, "test:ScriptConcept", ScriptExecutable.class, String.class, "javascript");
         verifyConceptExecutable(ruleSet, "test:SourceConcept", SourceExecutable.class, String.class, "cypher");
@@ -58,20 +61,20 @@ public class ExecutablesTest {
     }
 
     private Concept verifyConceptExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type, Class<?> expectedSourceType, String expectedLanguage)
-            throws NoConceptException {
+        throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertThat(concept, notNullValue());
         Executable<?> executable = concept.getExecutable();
-        assertThat(concept.getId(), executable, CoreMatchers.<Executable> instanceOf(type));
+        assertThat(concept.getId(), executable, CoreMatchers.<Executable>instanceOf(type));
         assertThat(concept.getId(), executable.getSource(), instanceOf(expectedSourceType));
         assertThat(concept.getId(), executable.getLanguage(), equalTo(expectedLanguage));
         return concept;
     }
 
-    private Constraint verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws NoConstraintException {
+    private Constraint verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws RuleException {
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertThat(constraint, notNullValue());
-        assertThat(constraint.getExecutable(), CoreMatchers.<Executable> instanceOf(type));
+        assertThat(constraint.getExecutable(), CoreMatchers.<Executable>instanceOf(type));
         return constraint;
     }
 

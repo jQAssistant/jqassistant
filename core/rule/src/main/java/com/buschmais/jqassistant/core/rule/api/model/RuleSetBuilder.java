@@ -17,12 +17,12 @@ public class RuleSetBuilder {
         return new RuleSetBuilder();
     }
 
-    public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
+    public RuleSetBuilder addConcept(Concept concept) throws RuleException {
         ruleSet.conceptBucket.add(concept);
         return this;
     }
 
-    public RuleSetBuilder addConstraint(Constraint constraint) throws RuleHandlingException {
+    public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
         ruleSet.constraintBucket.add(constraint);
 
         return this;

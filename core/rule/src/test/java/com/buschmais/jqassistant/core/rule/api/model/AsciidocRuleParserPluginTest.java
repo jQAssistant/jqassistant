@@ -111,7 +111,7 @@ public class AsciidocRuleParserPluginTest {
         try {
             concepts.getById("test:MissingCodeFragment");
             fail("Concept has no code fragment, should have failed!");
-        } catch (NoConceptException e) {
+        } catch (RuleException e) {
             // expected
         }
     }
