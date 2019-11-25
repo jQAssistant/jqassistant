@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.maven.provider;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
@@ -57,11 +56,8 @@ public class CachingStoreProvider implements Disposable {
         StoreKey key = StoreKey.builder().uri(storeConfiguration.getUri().normalize()).username(storeConfiguration.getUsername()).build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            store = StoreFactory.getStore(storeConfiguration);
-            List<Class<?>> descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
-            List<Class<?>> procedureTypes = pluginRepository.getModelPluginRepository().getProcedureTypes();
-            List<Class<?>> functionTypes = pluginRepository.getModelPluginRepository().getFunctionTypes();
-            store.start(descriptorTypes, procedureTypes, functionTypes);
+            store = StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
+            store.start();
             storesByKey.put(key, store);
             keysByStore.put(store, key);
         }

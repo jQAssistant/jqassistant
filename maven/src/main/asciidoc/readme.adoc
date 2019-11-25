@@ -325,15 +325,6 @@ Executes an analysis.
 * failOnSeverity (-Djqassistant.failOnSeverity)
 ** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
 ** default: 'MAJOR'
-* severity
-** determines if jQAssistant shall break the build if at least one rule with an equal or higher severity level is
-   violated and _failOnViolations_ is set to _true_
-** default: 'MINOR'
-** Deprecated: use `failOnSeverity` instead
-* failOnViolations (-Djqassistant.failOnViolations)
-** determines if jQAssistant shall break the build if violations are detected (see also `severity`)
-** default: 'false'
-** Deprecated: use `failOnSeverity` instead
 * executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.

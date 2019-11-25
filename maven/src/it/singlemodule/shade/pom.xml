@@ -15,8 +15,7 @@
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
                 <configuration>
-                    <failOnViolations>true</failOnViolations>
-                    <severity>minor</severity>
+                    <failOnSeverity>minor</failOnSeverity>
                     <rulesDirectory>${project.basedir}/jqassistant</rulesDirectory>
                     <storeDirectory>${project.build.directory}/jqassistant/store</storeDirectory>
                 </configuration>

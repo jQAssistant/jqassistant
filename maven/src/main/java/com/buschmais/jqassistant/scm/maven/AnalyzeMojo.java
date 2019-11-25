@@ -4,10 +4,6 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -16,6 +12,10 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -43,25 +43,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     protected Map<String, String> ruleParameters;
 
     /**
-     * Indicates if the plugin shall fail if a constraint violation is detected.
-     */
-    @Deprecated
-    @Parameter(property = "jqassistant.failOnViolations")
-    protected Boolean failOnViolations = null;
-
-    /**
      * If set also execute concepts which have already been applied.
      */
     @Parameter(property = "jqassistant.executeAppliedConcepts")
     protected boolean executeAppliedConcepts = false;
-
-    /**
-     * Severity level for constraint violation failure check. Default value is
-     * {@code Severity.INFO}
-     */
-    @Deprecated
-    @Parameter(property = "jqassistant.severity")
-    protected String severity;
 
     /**
      * The severity threshold to warn on rule violations.
@@ -104,16 +89,15 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
-        Severity effectiveFailOnSeverity = getFailOnSeverity();
+        Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, Object> properties = getReportProperties();
-        Map<String, ReportPlugin> reportPlugins1 = pluginRepositoryProvider.getPluginRepository().getReportPluginRepository().getReportPlugins(reportContext, properties);
-        Map<String, ReportPlugin> reportPlugins = reportPlugins1;
+        Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getRuleInterpreterPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
@@ -127,26 +111,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private Severity getFailOnSeverity() throws MojoExecutionException {
-        Severity effectiveFailOnSeverity;
-        if (failOnViolations != null) {
-            getLog().warn("The parameter 'failOnViolations' is deprecated, please use 'failOnSeverity' instead.");
-        }
-        if (severity != null) {
-            getLog().warn("The parameter 'severity' is deprecated, please use 'failOnSeverity' instead.");
-            try {
-                effectiveFailOnSeverity = Severity.fromValue(severity);
-            } catch (RuleException e) {
-                throw new MojoExecutionException("Cannot evaluate parameter severity with value " + severity);
-            }
-        } else {
-            effectiveFailOnSeverity = failOnSeverity;
-        }
-        return effectiveFailOnSeverity;
-    }
-
     private Map<String, Object> getReportProperties() {
-        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<String, Object>();
+        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
