@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.maven.configuration;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
 import org.assertj.core.api.Assertions;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
