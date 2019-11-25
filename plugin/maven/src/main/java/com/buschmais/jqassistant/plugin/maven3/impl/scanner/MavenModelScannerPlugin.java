@@ -37,7 +37,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     private ArtifactResolver defaultArtifactResolver;
 
     @Override
-    public void initialize() {
+    protected void configure() {
         defaultArtifactResolver = new MavenArtifactResolver();
     }
 
