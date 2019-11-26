@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.Suppress;
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;

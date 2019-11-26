@@ -5,12 +5,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.buschmais.jqassistant.core.report.api.Language;
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.core.report.api.model.Language;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
 
 /**
  * Defines the language elements for "Java".
