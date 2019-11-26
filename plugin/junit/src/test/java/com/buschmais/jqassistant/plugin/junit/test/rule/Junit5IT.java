@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.junit.test.rule;
 import java.io.IOException;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.lang.Boolean.FALSE;
