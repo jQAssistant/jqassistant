@@ -1,19 +1,24 @@
 package com.buschmais.jqassistant.core.report.api;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
+import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Provides utility functionality for creating reports.
  */
 public final class ReportHelper {
-
 
     private interface LoggingStrategy {
 
@@ -46,7 +51,24 @@ public final class ReportHelper {
     }
 
     /**
-     * Verifies the concept results returned by the {@link InMemoryReportPlugin}
+     * Verifies the concept results returned by the {@link InMemoryReportPlugin} .
+     *
+     * @param warnOnSeverity
+     *            The severity threshold to warn.
+     * @param failOnSeverity
+     *            The severity threshold to fail.
+     * @param inMemoryReportWriter
+     *            The {@link InMemoryReportPlugin}
+     * @return The number of failed concepts, i.e. for breaking the build if higher
+     *         than 0.
+     */
+    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
+        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
+        return verifyRuleResults(conceptResults, warnOnSeverity, failOnSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
+    }
+
+    /**
+     * Verifies the constraint results returned by the {@link InMemoryReportPlugin}
      * .
      *
      * @param warnOnSeverity
@@ -55,26 +77,8 @@ public final class ReportHelper {
      *            The severity threshold to fail.
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportPlugin}
-     * @return The number of failed concepts, i.e. for breaking the build if
-     *         higher than 0.
-     */
-    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
-        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        return verifyRuleResults(conceptResults, warnOnSeverity, failOnSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
-    }
-
-    /**
-     * Verifies the constraint results returned by the
-     * {@link InMemoryReportPlugin} .
-     *
-     * @param warnOnSeverity
-     *            The severity threshold to warn.
-     * @param failOnSeverity
-     *            The severity threshold to fail.
-     * @param inMemoryReportWriter
-     *            The {@link InMemoryReportPlugin}
-     * @return The number of failed concepts, i.e. for breaking the build if
-     *         higher than 0.
+     * @return The number of failed concepts, i.e. for breaking the build if higher
+     *         than 0.
      */
     public int verifyConstraintResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
@@ -99,7 +103,7 @@ public final class ReportHelper {
      * @return The number of detected violations.
      */
     private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnOnSeverity, Severity failOnSeverity, String type,
-                                  String header, boolean logResult) {
+            String header, boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
@@ -205,30 +209,25 @@ public final class ReportHelper {
             if (value instanceof CompositeObject) {
                 CompositeObject descriptor = (CompositeObject) value;
                 String label = getLanguageLabel(descriptor);
-                return label != null ? label : descriptor.toString();
+                if (label != null) {
+                    return label;
+                }
+                Object delegate = descriptor.getDelegate();
+                if (delegate instanceof Neo4jPropertyContainer) {
+                    Neo4jPropertyContainer neo4jPropertyContainer = (Neo4jPropertyContainer) delegate;
+                    return "(" + getLabel(neo4jPropertyContainer.getProperties()) + ")";
+                }
             } else if (value.getClass().isArray()) {
                 Object[] objects = (Object[]) value;
-                return getLabel(Arrays.asList(objects));
+                return getLabel(asList(objects));
             } else if (value instanceof Iterable) {
-                StringBuilder sb = new StringBuilder();
-                for (Object o : ((Iterable) value)) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(getLabel(o));
-                }
-                return "[" + sb.toString() + "]";
+                Spliterator<?> spliterator = ((Iterable<?>) value).spliterator();
+                List<String> elements = StreamSupport.stream(spliterator, false).map(element -> getLabel(element)).collect(toList());
+                return StringUtils.join(elements, ", ");
             } else if (value instanceof Map) {
-                StringBuilder sb = new StringBuilder();
-                for (Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(entry.getKey());
-                    sb.append(":");
-                    sb.append(getLabel(entry.getValue()));
-                }
-                return "{" + sb.toString() + "}";
+                List<String> entries = ((Map<?, ?>) value).entrySet().stream().map(entry -> getLabel(entry.getKey() + ":" + getLabel(entry.getValue())))
+                        .collect(toList());
+                return getLabel(entries);
             }
             return value.toString();
         }
