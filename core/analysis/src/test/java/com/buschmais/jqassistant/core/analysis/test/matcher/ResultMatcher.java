@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.analysis.test.matcher;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 

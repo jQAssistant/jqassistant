@@ -3,7 +3,8 @@ package com.buschmais.jqassistant.core.report.api;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;

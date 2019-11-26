@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.buschmais.jqassistant.core.report.api.model.Language;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
@@ -18,7 +20,7 @@ public final class LanguageHelper {
      * Return the {@link LanguageElement} associated with a {@link CompositeObject}.
      *
      * The method uses a breadth-first-search to identify a descriptor type annotated with {@link LanguageElement}.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @return The resolved {@link LanguageElement}
@@ -42,7 +44,7 @@ public final class LanguageHelper {
 
     /**
      * Return a value from an annotation.
-     * 
+     *
      * @param annotation
      *            The annotation.
      * @param value

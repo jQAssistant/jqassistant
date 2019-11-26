@@ -5,9 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.buschmais.jqassistant.core.report.api.Language;
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.core.report.api.model.Language;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.xo.api.CompositeObject;
 
 /**

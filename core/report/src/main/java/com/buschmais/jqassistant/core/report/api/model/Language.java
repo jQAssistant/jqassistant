@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.report.api;
+package com.buschmais.jqassistant.core.report.api.model;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

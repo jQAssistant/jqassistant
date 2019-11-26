@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.analysis.api;
+package com.buschmais.jqassistant.core.report.api.model;
 
 import java.util.List;
 import java.util.Map;

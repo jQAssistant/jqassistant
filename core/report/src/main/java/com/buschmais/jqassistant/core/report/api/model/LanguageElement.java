@@ -1,5 +1,6 @@
-package com.buschmais.jqassistant.core.report.api;
+package com.buschmais.jqassistant.core.report.api.model;
 
+import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.xo.api.CompositeObject;
 
 /**
@@ -12,7 +13,7 @@ public interface LanguageElement {
 
     /**
      * The name of the language element.
-     * 
+     *
      * @return The name of the language element.
      */
     String name();

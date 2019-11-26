@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.report;
 
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.model.DerivedTestDescriptor;
 import com.buschmais.jqassistant.core.report.model.DerivedTestDescriptorWithLanguageElement;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;

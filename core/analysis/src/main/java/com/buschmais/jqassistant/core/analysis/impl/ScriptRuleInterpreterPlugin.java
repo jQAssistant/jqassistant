@@ -1,6 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -8,8 +13,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
-import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Executable;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -22,22 +27,8 @@ import org.slf4j.LoggerFactory;
 public class ScriptRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptRuleInterpreterPlugin.class);
-
-    /**
-     * Defines the available variables for scripts.
-     */
-    private enum ScriptVariable {
-
-        STORE, CONTEXT, RULE, SEVERITY;
-
-        String getVariableName() {
-            return name().toLowerCase();
-        }
-    }
-
     private ScriptEngineManager scriptEngineManager;
     private Set<String> languages = new TreeSet<>();
-
     public ScriptRuleInterpreterPlugin() {
         this.scriptEngineManager = new ScriptEngineManager();
         for (ScriptEngineFactory factory : scriptEngineManager.getEngineFactories()) {
@@ -91,6 +82,18 @@ public class ScriptRuleInterpreterPlugin implements RuleInterpreterPlugin {
             throw new RuleException("Script returned an invalid result type, expected " + Result.class.getName() + " but got " + scriptResult);
         }
         return Result.class.cast(scriptResult);
+    }
+
+    /**
+     * Defines the available variables for scripts.
+     */
+    private enum ScriptVariable {
+
+        STORE, CONTEXT, RULE, SEVERITY;
+
+        String getVariableName() {
+            return name().toLowerCase();
+        }
     }
 
 }

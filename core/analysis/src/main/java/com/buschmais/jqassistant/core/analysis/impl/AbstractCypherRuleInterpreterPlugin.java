@@ -1,21 +1,20 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
-import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Suppress;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.Query;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status;
 import static java.util.Collections.unmodifiableList;
 
 /**

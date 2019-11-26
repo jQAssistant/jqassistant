@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.Collection;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -77,8 +78,7 @@ public interface RuleInterpreterPlugin extends ConfigurableLifecycleAware<Map<St
      *            The {@link ExecutableRule} type.
      * @return The {@link Result}.
      * @throws RuleException
-     *             If execution fails due to an invalid
-     *             {@link Rule}.
+     *             If execution fails due to an invalid {@link Rule}.
      */
     <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> ruleParameters, Severity severity, AnalyzerContext context)
             throws RuleException;
