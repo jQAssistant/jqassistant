@@ -5,13 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A file resolver strategy for file containers.
  */
 public class ContainerFileResolver extends AbstractFileResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerFileResolver.class);
 
     private Map<String, FileDescriptor> requiredFiles;
 
@@ -57,8 +63,10 @@ public class ContainerFileResolver extends AbstractFileResolver {
     /**
      * Sync the given target collection with the new state from the cache map.
      *
-     * @param target The target collection.
-     * @param after  The new state to sync to.
+     * @param target
+     *            The target collection.
+     * @param after
+     *            The new state to sync to.
      */
     private void sync(Collection<FileDescriptor> target, Map<String, FileDescriptor> after) {
         Map<String, FileDescriptor> before = getCache(target);
@@ -81,13 +89,19 @@ public class ContainerFileResolver extends AbstractFileResolver {
     /**
      * Creates cache map from the given collection of file descriptors.
      *
-     * @param fileDescriptors The collection of file descriptors.
+     * @param fileDescriptors
+     *            The collection of file descriptors.
      * @return The cache map.
      */
     private Map<String, FileDescriptor> getCache(Iterable<FileDescriptor> fileDescriptors) {
         Map<String, FileDescriptor> cache = new HashMap<>();
-        for (FileDescriptor fileDescriptor : fileDescriptors) {
-            cache.put(fileDescriptor.getFileName(), fileDescriptor);
+        for (Descriptor descriptor : fileDescriptors) {
+            if (descriptor instanceof FileDescriptor) {
+                FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
+                cache.put(fileDescriptor.getFileName(), fileDescriptor);
+            } else {
+                LOGGER.warn("{} is not a file descriptor, container={}", descriptor, fileContainerDescriptor);
+            }
         }
         return cache;
     }
@@ -114,8 +128,10 @@ public class ContainerFileResolver extends AbstractFileResolver {
     /**
      * Adds a file to the container.
      *
-     * @param path           The path of the file.
-     * @param fileDescriptor The file descriptor.
+     * @param path
+     *            The path of the file.
+     * @param fileDescriptor
+     *            The file descriptor.
      */
     public void put(String path, FileDescriptor fileDescriptor) {
         containedFiles.put(path, fileDescriptor);
