@@ -47,15 +47,13 @@
     </concept>
 
     <concept id="java:MethodOverrides">
-        <requiresConcept refId="java:TypeAssignableFrom"/>
-        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods
-            have the same signature).
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods have the same signature).
         </description>
         <cypher><![CDATA[
             MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (superType:Type)-[:DECLARES]->(otherMethod:Method),
-              (superType)-[:ASSIGNABLE_FROM]->(type)
+              (type)-[:EXTENDS|IMPLEMENTS*]->(superType)
             WHERE
               method.name = otherMethod.name
               AND method.signature = otherMethod.signature
@@ -66,10 +64,27 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:VirtualDependsOn">
+        <description>Propagates DEPENDS_ON relationships as VIRTUAL_DEPENDS_ON to types that extend or implement the referenced type.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
+              (dependent:Type)-[:DEPENDS_ON]->(superType)
+            WHERE NOT
+              (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
+            MERGE
+              (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
+            RETURN
+              count(virtualDependsOn) AS VirtualDependsOn
+        ]]></cypher>
+        <verify>
+           <aggregation/>
+        </verify>
+    </concept>
+
     <concept id="java:VirtualInvokes">
         <requiresConcept refId="java:MethodOverrides"/>
         <description>Propagates INVOKES relationships as VIRTUAL_INVOKES to methods which implement or override the invoked method.</description>
-        <deprecated></deprecated>
         <cypher><![CDATA[
             MATCH
               (method:Method)-[invokes:INVOKES]->(invokedMethod:Method),

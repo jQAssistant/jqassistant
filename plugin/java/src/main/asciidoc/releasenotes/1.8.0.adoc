@@ -1,8 +1,9 @@
 ifndef::jqa-in-manual[== Version 1.8.0]
 ifdef::jqa-in-manual[== Java Plugin 1.8.0]
 
+* Added concept `java:VirtualDependsOn` providing `VIRTUAL_DEPENDS_ON` relations based on `DEPENDS_ON` relations to super classes
 * Added concept `java:VirtualInvokes` providing `VIRTUAL_INVOKES` relations representing virtual invocations
 * Deprecated concept `java:InvokesOverriddenMethod` as it creates`INVOKES` relations that may be ambiguous
 * Type members (i.e. fields and methods) are now reported only using their signature.
   Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething()`
-
+* 

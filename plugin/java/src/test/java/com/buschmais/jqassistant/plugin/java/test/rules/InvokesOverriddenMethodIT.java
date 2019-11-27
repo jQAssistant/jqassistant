@@ -7,10 +7,7 @@ import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InvokeClient;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.java.*;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -38,11 +35,11 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void invokeInterfaceMethod() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> classes = query(
-                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' RETURN type")
+                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InterfaceTypeClient' and clientMethod.name='invokeInterfaceTypeMethod' RETURN type")
                 .getColumn("type");
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(InterfaceType.class)));
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(ClassType.class)));
@@ -58,11 +55,11 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void invokeClassMethod() throws Exception {
-        scanClasses(ClassType.class, SubClassType.class, InvokeClient.class);
+        scanClasses(ClassType.class, SubClassType.class, ClassTypeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> classes = query(
-                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InvokeClient' and clientMethod.name='invokeClassTypeMethod' RETURN type")
+                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='ClassTypeClient' and clientMethod.name='invokeClassTypeMethod' RETURN type")
                 .getColumn("type");
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(ClassType.class)));
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(SubClassType.class)));
@@ -78,12 +75,12 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void lineNumbers() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<InvokesDescriptor> interfaceInvocations = query(
                 "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[invocation:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) "
-                        + "WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='InterfaceType'"
+                        + "WHERE client.name='InterfaceTypeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='InterfaceType'"
                         + "RETURN invocation ORDER BY invocation.lineNumber").getColumn("invocation");
         assertThat(interfaceInvocations.size(), equalTo(2));
         InvokesDescriptor interfaceInvocation1 = interfaceInvocations.get(0);
@@ -93,7 +90,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
         assertThat(interfaceInvocation1.getLineNumber(), not(equalTo(interfaceInvocation2.getLineNumber())));
         List<InvokesDescriptor> classInvocations = query(
                 "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[invocation:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) "
-                        + "WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='ClassType'"
+                        + "WHERE client.name='InterfaceTypeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='ClassType'"
                         + "RETURN invocation ORDER BY invocation.lineNumber").getColumn("invocation");
         assertThat(classInvocations.size(), equalTo(2));
         InvokesDescriptor classInvocation1 = classInvocations.get(0);
@@ -111,16 +108,16 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void resolveWritesUniqueSameLine() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         // create existing relations with properties and correct line number
         assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {lineNumber: 9, prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 7);
+        verifyUniqueRelation("INVOKES", 5);
         store.commitTransaction();
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 8);
+        verifyUniqueRelation("INVOKES", 6);
         store.commitTransaction();
     }
 
@@ -132,16 +129,16 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void resolveWritesUniqueDifferentLine() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         // create existing relations with properties and different line number
         assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {lineNumber: 90, prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 7);
+        verifyUniqueRelation("INVOKES", 5);
         store.commitTransaction();
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 9);
+        verifyUniqueRelation("INVOKES", 7);
         store.commitTransaction();
     }
 
@@ -153,16 +150,16 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      */
     @Test
     public void resolveWritesUniqueWithoutLine() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         // create existing relations with properties and without line number
         assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 7);
+        verifyUniqueRelation("INVOKES", 5);
         store.commitTransaction();
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 9);
+        verifyUniqueRelation("INVOKES", 7);
         store.commitTransaction();
     }
 
