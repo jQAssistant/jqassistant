@@ -4,6 +4,6 @@
 ifndef::jqa-in-manual[== Version 1.8.0]
 ifdef::jqa-in-manual[== Neo4j Backend Version 1.8.0]
 
-- Upgraded to Neo4j 3.5.12
+- Upgraded to Neo4j 3.5.13
 - Removed APOC and Graph Algorithms libraries
 
