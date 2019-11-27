@@ -80,7 +80,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <doxia-markdown.version>1.8</doxia-markdown.version>
         <com.buschmais.xo.version>0.13.0</com.buschmais.xo.version>
-        <org.neo4j_3x.version>3.5.12</org.neo4j_3x.version>
+        <org.neo4j_3x.version>3.5.13</org.neo4j_3x.version>
         <guava.version>27.0.1-jre</guava.version>
         <caffeine.version>2.3.3</caffeine.version>
         <maven.assembly.version>3.1.0</maven.assembly.version>
