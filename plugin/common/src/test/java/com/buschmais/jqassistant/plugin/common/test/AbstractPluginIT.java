@@ -9,14 +9,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
@@ -31,12 +24,7 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
-import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -59,11 +47,7 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +71,6 @@ public abstract class AbstractPluginIT {
     protected ReportContext reportContext;
     protected InMemoryReportPlugin reportPlugin;
     protected RuleSet ruleSet;
-
 
     @BeforeAll
     public static void initPluginRepository() {
@@ -419,7 +402,11 @@ public abstract class AbstractPluginIT {
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
-            return (List<T>) columns.get(name);
+            List<T> column = (List<T>) columns.get(name);
+            if (column == null) {
+                throw new IllegalArgumentException("The result does not contain a column '" + name + "'.");
+            }
+            return column;
         }
     }
 
