@@ -6,4 +6,4 @@ ifdef::jqa-in-manual[== Java Plugin 1.8.0]
 * Deprecated concept `java:InvokesOverriddenMethod` as it creates`INVOKES` relations that may be ambiguous
 * Type members (i.e. fields and methods) are now reported only using their signature.
   Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething()`
-* 
+
