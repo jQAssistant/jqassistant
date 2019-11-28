@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
@@ -44,9 +45,9 @@ public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginI
 
     @Test
     public void scmInformationisNotPresentAsItIsNotExisting() {
-        List<MavenScmDescriptor> scmDescriptors =
-            query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getColumn("s");
 
-        assertThat(scmDescriptors, anyOf(hasSize(0), nullValue()));
+        List<Map<String, Object>> rows = query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getRows();
+
+        assertThat(rows, empty());
     }
 }
