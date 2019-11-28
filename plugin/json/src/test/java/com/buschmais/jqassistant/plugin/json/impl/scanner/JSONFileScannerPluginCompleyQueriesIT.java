@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -16,8 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
@@ -64,7 +64,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         ).getColumn("f");
 
         assertThat(results, Matchers.notNullValue());
-        assertThat(results, not(Matchers.empty()));
+        assertThat(results, not(empty()));
         assertThat(results, hasSize(1));
     }
 
@@ -112,14 +112,14 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        List<JSONKeyDescriptor> results = query("MATCH (f:Json:File) " +
-                                                "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
-                                                "WHERE " +
-                                                "NOT ((k)-[:HAS_VALUE]->()) " +
-                                                "RETURN k"
-        ).getColumn("k");
+        List<Map<String, Object>> rows = query("MATCH (f:Json:File) " +
+            "-[:CONTAINS]->(o:Json:Object)-[:HAS_KEY]->(k:Key:Json) " +
+            "WHERE " +
+            "NOT ((k)-[:HAS_VALUE]->()) " +
+            "RETURN k"
+        ).getRows();
 
-        assertThat(results, Matchers.nullValue());
+        assertThat(rows, empty());
     }
 
 
