@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.8.0-SNAPSHOT</version>
+        <version>1.8.0-MS1</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>1.8.0-SNAPSHOT</version>
+    <version>1.8.0-MS1</version>
 
     <name>jQAssistant Plugin for Apache Maven</name>
     <url>http://jqassistant.org/</url>
@@ -39,13 +39,13 @@
     <properties>
         <assertj-core.version>3.9.1</assertj-core.version>
         <checkstyle.version>8.18</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.8.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-core-framework.version>1.8.0-SNAPSHOT</jqa-core-framework.version>
-        <jqa-distribution-spec.version>1.8.0-SNAPSHOT</jqa-distribution-spec.version>
-        <jqa-java-plugin.version>1.8.0-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-own-constraints.version>1.8.0-SNAPSHOT</jqa-own-constraints.version>
-        <jqa-plugin-common.version>1.8.0-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-tycho-plugin.version>1.8.0-SNAPSHOT</jqa-tycho-plugin.version>
+        <jqa-asciidoctor-utilities.version>1.8.0-MS1</jqa-asciidoctor-utilities.version>
+        <jqa-core-framework.version>1.8.0-MS1</jqa-core-framework.version>
+        <jqa-distribution-spec.version>1.8.0-MS1</jqa-distribution-spec.version>
+        <jqa-java-plugin.version>1.8.0-MS1</jqa-java-plugin.version>
+        <jqa-own-constraints.version>1.8.0-MS1</jqa-own-constraints.version>
+        <jqa-plugin-common.version>1.8.0-MS1</jqa-plugin-common.version>
+        <jqa-tycho-plugin.version>1.8.0-MS1</jqa-tycho-plugin.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
@@ -58,9 +58,9 @@
          ! his own lifecyle inclusive versioning.
          ! Oliver B. Fischer, 2016-10-30
          !-->
-        <it.jqa.core.version>1.8.0-SNAPSHOT</it.jqa.core.version>
-        <it.jqa.java-plugin.version>1.8.0-SNAPSHOT</it.jqa.java-plugin.version>
-        <it.jqa.plugin-common.version>1.8.0-SNAPSHOT</it.jqa.plugin-common.version>
+        <it.jqa.core.version>1.8.0-MS1</it.jqa.core.version>
+        <it.jqa.java-plugin.version>1.8.0-MS1</it.jqa.java-plugin.version>
+        <it.jqa.plugin-common.version>1.8.0-MS1</it.jqa.plugin-common.version>
         <org.apache.maven_dependency-tree.version>3.0.1</org.apache.maven_dependency-tree.version>
     </properties>
 
