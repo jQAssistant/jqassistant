@@ -78,7 +78,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <doxia-markdown.version>1.8</doxia-markdown.version>
+        <doxia-markdown.version>1.9</doxia-markdown.version>
         <com.buschmais.xo.version>0.13.0</com.buschmais.xo.version>
         <org.neo4j_3x.version>3.5.13</org.neo4j_3x.version>
         <guava.version>28.1-jre</guava.version>
