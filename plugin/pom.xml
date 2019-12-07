@@ -49,7 +49,7 @@
         <jqa-neo4jbackend.version>1.8.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>1.8.0-SNAPSHOT</jqa-own-constraints.version>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
-        <mockito.version>2.24.0</mockito.version>
+        <mockito.version>3.2.0</mockito.version>
         <org.slf4j.version>2.0.0-alpha1</org.slf4j.version>
     </properties>
 
