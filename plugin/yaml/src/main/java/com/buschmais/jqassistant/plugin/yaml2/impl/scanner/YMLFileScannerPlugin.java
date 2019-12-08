@@ -10,9 +10,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2Descriptor;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2DocumentDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
@@ -21,7 +21,7 @@ import org.snakeyaml.engine.v2.events.Event;
 import static java.lang.String.format;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
-public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, YAML2FileDescriptor> {
+public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YMLFileDescriptor> {
 
     /**
      * Supported file extensions for YAML file resources.
@@ -38,14 +38,14 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     @Override
-    public YAML2FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public YMLFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         LoadSettings settings = LoadSettings.builder().build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
 
         // todo implement handleFileEnd
         // todo take it from the parsing context
-        YAML2FileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
+        YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
 
 
         try (InputStream in = item.createStream()) {
@@ -78,8 +78,8 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     }
 
-    private YAML2FileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
-        YAML2FileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YAML2FileDescriptor.class);
+    private YMLFileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
+        YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class);
         ContextType inFile = ContextType.ofInFile(yamlFileDescriptor);
         context.enter(inFile);
         return yamlFileDescriptor;
@@ -91,17 +91,17 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
             throwIllegalStateException(ContextType.Type.IN_SEQUENCE, context.peek().getType());
         }
 
-        YAML2DocumentDescriptor descriptor = createDescriptor(YAML2DocumentDescriptor.class);
+        YMLDocumentDescriptor descriptor = createDescriptor(YMLDocumentDescriptor.class);
         ContextType inDocument = ContextType.ofInDocument(descriptor);
 
         context.enter(inDocument);
 
         ContextType fileContext = context.getAncestor(ContextType.Ancestor.SECOND);
-        YAML2FileDescriptor dddd = (YAML2FileDescriptor) fileContext.getDescriptor();
-        dddd.getDocuments().add((YAML2DocumentDescriptor) inDocument.getDescriptor());
+        YMLFileDescriptor dddd = (YMLFileDescriptor) fileContext.getDescriptor();
+        dddd.getDocuments().add((YMLDocumentDescriptor) inDocument.getDescriptor());
     }
 
-    private <D extends YAML2Descriptor> D createDescriptor(Class<D> descriptorType) {
+    private <D extends YMLDescriptor> D createDescriptor(Class<D> descriptorType) {
         return getScannerContext().getStore().create(descriptorType);
     }
 

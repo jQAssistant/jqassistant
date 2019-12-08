@@ -7,9 +7,9 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 // todo Die Datei ist immer valide, aber nicht das Dokument ValidDescriptor
-public interface YAML2FileDescriptor
-extends YAML2Descriptor, FileDescriptor, Descriptor {
+public interface YMLFileDescriptor
+extends YMLDescriptor, FileDescriptor, Descriptor {
 
     @Relation("CONTAINS_DOCUMENT")
-    List<YAML2DocumentDescriptor> getDocuments();
+    List<YMLDocumentDescriptor> getDocuments();
 }

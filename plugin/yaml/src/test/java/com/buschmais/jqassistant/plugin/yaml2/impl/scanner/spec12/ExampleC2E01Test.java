@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 import java.io.File;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YAML2FileScannerPlugin;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +30,9 @@ class ExampleC2E01Test extends AbstractPluginIT {
 
         // example-c2-e01-sequence-of-scalars.yaml
 
-        File yamlFile = new File(getClassesDirectory(YAML2FileScannerPlugin.class), YAML_FILE);
+        File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), YAML_FILE);
 
-        YAML2FileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+        YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
 
         assertThat(result).isNotNull();
         assertThat(result.getDocuments()).isNotNull().isNotEmpty();

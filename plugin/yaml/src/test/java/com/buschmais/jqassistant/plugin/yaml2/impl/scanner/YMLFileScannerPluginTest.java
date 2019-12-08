@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class YAML2FileScannerPluginTest {
+class YMLFileScannerPluginTest {
 
     @Nested
     class ItemAcceptance {
-        private YAML2FileScannerPlugin plugin = new YAML2FileScannerPlugin();
+        private YMLFileScannerPlugin plugin = new YMLFileScannerPlugin();
 
         @Test
         void acceptsYAML() throws IOException {

@@ -7,5 +7,5 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 
 @Abstract
 @Label("YAML")
-public interface YAML2Descriptor extends Descriptor  {
+public interface YMLDescriptor extends Descriptor  {
 }

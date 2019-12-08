@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2Descriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 
-class ContextType<D extends YAML2Descriptor> {
+class ContextType<D extends YMLDescriptor> {
     private D descriptor;
     private Type type;
 
@@ -16,19 +16,19 @@ class ContextType<D extends YAML2Descriptor> {
         this(type, null);
     }
 
-    static <D extends YAML2Descriptor> ContextType ofInFile(D descriptor) {
+    static <D extends YMLDescriptor> ContextType ofInFile(D descriptor) {
         return new ContextType(Type.IN_FILE, descriptor);
     }
 
-    static <D extends YAML2Descriptor> ContextType ofInDocument(D descriptor) {
+    static <D extends YMLDescriptor> ContextType ofInDocument(D descriptor) {
         return new ContextType(Type.IN_DOCUMENT, descriptor);
     }
 
-    static <D extends YAML2Descriptor> ContextType ofMap(D descriptor) {
+    static <D extends YMLDescriptor> ContextType ofMap(D descriptor) {
         return new ContextType(Type.IN_MAP, descriptor);
     }
 
-    static <D extends YAML2Descriptor> ContextType ofSequence(D descriptor) {
+    static <D extends YMLDescriptor> ContextType ofSequence(D descriptor) {
         return new ContextType(Type.IN_SEQUENCE, descriptor);
     }
 

@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 import java.io.File;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class YAML2FileScannerPluginIT extends AbstractPluginIT {
+class YMLFileScannerPluginIT extends AbstractPluginIT {
 
     @BeforeEach
     void startTransaction() {
@@ -28,9 +28,9 @@ class YAML2FileScannerPluginIT extends AbstractPluginIT {
     class SimpleTests {
         @Test
         void canSimplyProcessASimpleMappingWithoutPeggingOut() {
-            File yamlFile = new File(getClassesDirectory(YAML2FileScannerPlugin.class), "/simple/simple-001.yaml");
+            File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), "/simple/simple-001.yaml");
 
-            YAML2FileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+            YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
 
             assertThat(result).isNotNull();
         }
@@ -38,10 +38,10 @@ class YAML2FileScannerPluginIT extends AbstractPluginIT {
         @Disabled("Test and scanner are not yet implemented.")
         @Test
         void parsesFileWithMultipleEmptyDocuments() {
-            File yamlFile = new File(getClassesDirectory(YAML2FileScannerPlugin.class),
+            File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class),
                                      "/simple/simple-010-multiple-empty-documents.yaml");
 
-            YAML2FileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+            YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
 
             assertThat(result).isNotNull();
 
@@ -76,9 +76,9 @@ class YAML2FileScannerPluginIT extends AbstractPluginIT {
         @Disabled("Test and scanner are not yet implemented.")
         @Test
         void canProcessASequenceOfStrings() {
-            File yamlFile = new File(getClassesDirectory(YAML2FileScannerPlugin.class), "/simple/simple-100-sequence-of-strings.yaml");
+            File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), "/simple/simple-100-sequence-of-strings.yaml");
 
-            YAML2FileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+            YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
 
             assertThat(result).isNotNull();
 
@@ -98,9 +98,9 @@ class YAML2FileScannerPluginIT extends AbstractPluginIT {
         @Disabled("Test and scanner are not yet implemented.")
         @Test
         void canProcessAMapOfStrings() {
-            File yamlFile = new File(getClassesDirectory(YAML2FileScannerPlugin.class), "/simple/simple-200-map-of-strings.yaml");
+            File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), "/simple/simple-200-map-of-strings.yaml");
 
-            YAML2FileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+            YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
 
             assertThat(result).isNotNull();
 
