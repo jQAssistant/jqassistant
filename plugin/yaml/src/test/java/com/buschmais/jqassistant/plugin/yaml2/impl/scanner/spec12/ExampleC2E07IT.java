@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-class ExampleC2E28Test {
+class ExampleC2E07IT {
     @Disabled("Test and scanner are not yet implemented.")
     @Test
     void scannerCanReadDocument() {

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExampleC2E01Test extends AbstractPluginIT {
+class ExampleC2E01IT extends AbstractPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e01-sequence-of-scalars.yaml";
 
     @BeforeEach
