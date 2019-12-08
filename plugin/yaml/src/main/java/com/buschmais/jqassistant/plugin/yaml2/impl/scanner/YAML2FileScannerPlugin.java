@@ -2,26 +2,23 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2Descriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2DocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YAML2FileDescriptor;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.events.Event;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.resolver.Resolver;
+
+import static java.lang.String.format;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, YAML2FileDescriptor> {
@@ -43,13 +40,12 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     @Override
     public YAML2FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        Store store = context.getStore();
-
-        // todo Do we have any advantage in using this method?
-        // .setLabel(string)
         LoadSettings settings = LoadSettings.builder().build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
-        YAML2FileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAML2FileDescriptor.class);
+
+        // todo implement handleFileEnd
+        // todo take it from the parsing context
+        YAML2FileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
 
 
         try (InputStream in = item.createStream()) {
@@ -65,43 +61,62 @@ public class YAML2FileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     private void processEvents(Iterable<Event> events) {
-        events.forEach(e -> {
-            System.out.print(e.getClass() + "##");
-            System.out.println("##" + e + "##"); });
+        // verbrauchend
+        // events.forEach(e -> { System.out.print(e.getClass() + "##");System.out.println("##" + e + "##"); });
 
-    }
-
-    /**
-     * Non-resolving resolver to avoid automatic type conversion provided by
-     * the used SnakeYAML libary.
-     * <p>
-     * One good example for this disabled automatic type coversion is the
-     * conversion of the string `OFF` to the boolean value `false`
-     */
-    private static class NonResolvingResolver extends Resolver {
-        @Override
-        protected void addImplicitResolvers() {
-        }
-    }
-
-
-    class TagOverridingConstructor extends Constructor {
-        private List<Tag> SUPPORTED_TAGS =
-            Arrays.asList(Tag.YAML, Tag.MERGE,
-                          Tag.SET, Tag.PAIRS, Tag.OMAP,
-                          Tag.BINARY, Tag.INT, Tag.FLOAT,
-                          Tag.BOOL, Tag.NULL,
-                          Tag.STR, Tag.SEQ, Tag.MAP);
-
-        @Override
-        protected Object constructObject(Node node) {
-            Tag tag = node.getTag();
-
-            if (!SUPPORTED_TAGS.contains(tag)) {
-                node.setTag(Tag.STR);
+        for (Event event : events) {
+            switch (event.getEventId()) {
+                case StreamStart:
+                    handleStreamStart(event);
+                    break;
+                case DocumentStart:
+                    handleDocumentStart(event);
+                    break;
             }
-
-            return super.constructObject(node);
         }
+
+
+    }
+
+    private YAML2FileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
+        YAML2FileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YAML2FileDescriptor.class);
+        ContextType inFile = ContextType.ofInFile(yamlFileDescriptor);
+        context.enter(inFile);
+        return yamlFileDescriptor;
+    }
+
+
+    private void handleDocumentStart(Event event) {
+        if (context.isNotInStream()) {
+            throwIllegalStateException(ContextType.Type.IN_SEQUENCE, context.peek().getType());
+        }
+
+        YAML2DocumentDescriptor descriptor = createDescriptor(YAML2DocumentDescriptor.class);
+        ContextType inDocument = ContextType.ofInDocument(descriptor);
+
+        context.enter(inDocument);
+
+        ContextType fileContext = context.getAncestor(ContextType.Ancestor.SECOND);
+        YAML2FileDescriptor dddd = (YAML2FileDescriptor) fileContext.getDescriptor();
+        dddd.getDocuments().add((YAML2DocumentDescriptor) inDocument.getDescriptor());
+    }
+
+    private <D extends YAML2Descriptor> D createDescriptor(Class<D> descriptorType) {
+        return getScannerContext().getStore().create(descriptorType);
+    }
+
+    private void handleStreamStart(Event event) {
+        ContextType inStream = ContextType.ofStream();
+        context.enter(inStream);
+    }
+
+    private void throwIllegalStateException(ContextType.Type expected,
+                                            ContextType.Type actual) {
+        // todo Which type of exception to throw in case of a wrong state
+        String message = format("Wrong internal state during parsing a YAML " +
+                                "document. Expected content: %d, actual " +
+                                "context: %d", expected, actual);
+
+        throw new IllegalStateException(message);
     }
 }
