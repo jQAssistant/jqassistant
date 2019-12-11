@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
+package com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DependencyGraphResolverTest {
+public class GraphResolverTest {
 
     @Mock
     private ArtifactResolver artifactResolver;
@@ -61,7 +61,7 @@ public class DependencyGraphResolverTest {
 
         MavenArtifactDescriptor mainArtifact = resolve(mainNode, false);
         MavenArtifactDescriptor testArtifact = resolve(mainNode, true);
-        DependencyGraphResolver resolver = new DependencyGraphResolver(artifactResolver, context);
+        GraphResolver resolver = new GraphResolver(artifactResolver, context);
 
         resolver.resolve(mainNode, mainArtifact, testArtifact);
 

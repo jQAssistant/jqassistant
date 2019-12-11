@@ -23,6 +23,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
@@ -49,6 +50,28 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
+    private final MavenArtifactResolver artifactResolver;
+
+    private final DependencyScanner dependencyScanner;
+
+    /**
+     * Default constructor.
+     */
+    public MavenProjectScannerPlugin() {
+        this(new MavenArtifactResolver(), new DependencyScanner());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param dependencyScanner
+     *            The {@link DependencyScanner} to use.
+     */
+    MavenProjectScannerPlugin(MavenArtifactResolver artifactResolver, DependencyScanner dependencyScanner) {
+        this.artifactResolver = artifactResolver;
+        this.dependencyScanner = dependencyScanner;
+    }
+
     @Override
     public boolean accepts(MavenProject item, String path, Scope scope) {
         return true;
@@ -57,27 +80,25 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     @Override
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) {
         ScannerContext context = scanner.getContext();
-        ArtifactResolver artifactResolver = new MavenArtifactResolver();
+        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
+        // resolve dependencies
+        Artifact artifact = project.getArtifact();
         context.push(ArtifactResolver.class, artifactResolver);
         try {
-            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
-            // resolve dependencies
-            Artifact artifact = project.getArtifact();
             // main artifact
-            MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, false), artifactResolver,
+            MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, false),
                     MavenMainArtifactDescriptor.class, scanner);
             projectDescriptor.getCreatesArtifacts().add(mainArtifactDescriptor);
             // test artifact
             MavenArtifactDescriptor testArtifactDescriptor = null;
             String testOutputDirectory = project.getBuild().getTestOutputDirectory();
             if (testOutputDirectory != null) {
-                testArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, true), artifactResolver,
-                        MavenTestArtifactDescriptor.class, scanner);
-                projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
+                testArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, true), MavenTestArtifactDescriptor.class, scanner);
                 DependsOnDescriptor dependsOnDescriptor = context.getStore().create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
                 dependsOnDescriptor.setScope(Artifact.SCOPE_COMPILE);
+                projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
             }
-            resolveDependencyGraph(project, mainArtifactDescriptor, testArtifactDescriptor, artifactResolver, context);
+            resolveDependencyGraph(project, mainArtifactDescriptor, testArtifactDescriptor, scanner);
 
             // Scan classes
             scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
@@ -107,26 +128,23 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Returns a resolved maven artifact descriptor for the given coordinates.
-     * 
+     *
      * @param coordinates
      *            The artifact coordinates.
-     * @param artifactResolver
-     *            The artifact resolver.
      * @param type
      *            The expected type.
      * @param scanner
      *            The scanner.
      * @return The artifact descriptor.
      */
-    private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(Coordinates coordinates, ArtifactResolver artifactResolver, Class<T> type,
-            Scanner scanner) {
+    private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(Coordinates coordinates, Class<T> type, Scanner scanner) {
         MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(coordinates, scanner.getContext());
         return scanner.getContext().getStore().addDescriptorType(mavenArtifactDescriptor, type);
     }
 
     /**
      * Resolves a maven project.
-     * 
+     *
      * @param project
      *            The project
      * @param expectedType
@@ -155,12 +173,13 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         return expectedType.cast(projectDescriptor);
     }
 
-    private void resolveDependencyGraph(MavenProject project, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor,
-            ArtifactResolver artifactResolver, ScannerContext context) {
+    private void resolveDependencyGraph(MavenProject project, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor, Scanner scanner) {
+        ScannerContext context = scanner.getContext();
         MavenSession session = context.peek(MavenSession.class);
         DependencyGraphBuilder dependencyGraphBuilder = context.peek(DependencyGraphBuilder.class);
         ProjectBuildingRequest projectBuildingRequest = session.getProjectBuildingRequest();
-        DefaultRepositorySystemSession repositorySystemSession = getVerboseRepositorySystemSession(projectBuildingRequest);
+        RepositorySystemSession repositorySession = projectBuildingRequest.getRepositorySession();
+        DefaultRepositorySystemSession repositorySystemSession = getVerboseRepositorySystemSession(repositorySession);
         ProjectBuildingRequest buildingRequest = getProjectBuildingRequest(project, projectBuildingRequest, repositorySystemSession);
         DependencyNode rootNode = null;
         try {
@@ -169,13 +188,11 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             LOGGER.warn("Cannot resolve dependency graph for " + project, e);
         }
         if (rootNode != null) {
-            DependencyGraphResolver dependencyGraphResolver = new DependencyGraphResolver(artifactResolver, context);
-            dependencyGraphResolver.resolve(rootNode, mainDescriptor, testDescriptor);
+            dependencyScanner.evaluate(rootNode, mainDescriptor, testDescriptor, repositorySession.getLocalRepository().getBasedir(), scanner);
         }
     }
 
-    private DefaultRepositorySystemSession getVerboseRepositorySystemSession(ProjectBuildingRequest projectBuildingRequest) {
-        RepositorySystemSession repositorySession = projectBuildingRequest.getRepositorySession();
+    private DefaultRepositorySystemSession getVerboseRepositorySystemSession(RepositorySystemSession repositorySession) {
         DefaultRepositorySystemSession repositorySystemSession = new DefaultRepositorySystemSession(repositorySession);
         repositorySystemSession.setConfigProperty(CONFIG_PROP_VERBOSE, "true");
         return repositorySystemSession;
@@ -191,7 +208,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Add project specific information.
-     * 
+     *
      * @param project
      *            The project.
      * @param projectDescriptor
@@ -206,7 +223,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Scan the pom.xml file and add it as model.
-     * 
+     *
      * @param project
      *            The Maven project
      * @param projectDescriptor
@@ -229,7 +246,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Add the relation to the parent project.
-     * 
+     *
      * @param project
      *            The project.
      * @param projectDescriptor
@@ -245,7 +262,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Add relations to the modules.
-     * 
+     *
      * @param project
      *            The project.
      * @param projectDescriptor
@@ -270,7 +287,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Scan the given directory for classes and add them to an artifact.
-     * 
+     *
      * @param projectDescriptor
      *            The maven project.
      * @param artifactDescriptor
@@ -290,7 +307,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Scan a {@link File} that represents a Java artifact.
-     * 
+     *
      * @param projectDescriptor
      *            The maven project descriptor.
      * @param artifactDescriptor
@@ -342,11 +359,11 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     /**
      * Scan a given file.
-     * 
+     *
      * <p>
      * The current project is pushed to the context.
      * </p>
-     * 
+     *
      * @param projectDescriptor
      *            The maven project descriptor.
      * @param file

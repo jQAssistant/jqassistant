@@ -10,9 +10,12 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -26,11 +29,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,9 +53,9 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
 
 /* todo This test uses lenient stubbing. Test is to complex to simply change the stubbing. Must be refactored. */
-
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class MavenProjectScannerPluginTest {
@@ -62,14 +67,28 @@ public class MavenProjectScannerPluginTest {
     private MavenSession mavenSession;
 
     @Mock
+    private MavenArtifactResolver mavenArtifactResolver;
+
+    @Mock
+    private DependencyScanner dependencyScanner;
+
+    @Mock
+    private RepositorySystemSession repositorySystemSession;
+
+    @Mock
+    private ScannerContext scannerContext;
+
+    @Mock
     private DependencyGraphBuilder dependencyGraphBuilder;
+
+    private LocalRepository localRepository = new LocalRepository(new File("target/localRepo"));
 
     @Captor
     ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
 
     @Test
     public void projectScannerPlugin() throws DependencyGraphBuilderException {
-        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin();
+        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin(mavenArtifactResolver, dependencyScanner);
 
         // Mock parent project
         MavenProject parentProject = mock(MavenProject.class);
@@ -134,6 +153,9 @@ public class MavenProjectScannerPluginTest {
         MavenTestArtifactDescriptor testArtifactDescriptor = mock(MavenTestArtifactDescriptor.class);
         JavaClassesDirectoryDescriptor testClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
         MavenArtifactDescriptor dependencyArtifact = mock(MavenArtifactDescriptor.class);
+        ArgumentMatcher<Coordinates> mainArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact")
+                && a.getType().equals("jar");
+        doReturn(mainArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(mainArtifactCoordinatesMatcher), eq(scannerContext));
         when(scanner.scan(any(File.class), eq("target/classes"), eq(CLASSPATH))).thenReturn(mainClassesDirectory);
         when(store.executeQuery(anyString(), anyMap())).thenAnswer((Answer<Query.Result<CompositeRowObject>>) invocation -> {
             Query.Result<CompositeRowObject> result = mock(Query.Result.class);
@@ -146,11 +168,16 @@ public class MavenProjectScannerPluginTest {
 
         // test classes directory
         when(scanner.scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH))).thenReturn(testClassesDirectory);
-        when(store.create(MavenArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifactDescriptor);
+        ArgumentMatcher<Coordinates> testArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact")
+                && a.getType().equals("test-jar");
+        doReturn(testArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(testArtifactCoordinatesMatcher), eq(scannerContext));
         when(store.addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class)).thenReturn(testClassesDirectory);
-        when(store.create(MavenArtifactDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
         when(store.addDescriptorType(testArtifactDescriptor, MavenTestArtifactDescriptor.class)).thenReturn(testArtifactDescriptor);
         when(store.addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class)).thenReturn(mainClassesDirectory);
+
+        doReturn(dependencyGraphBuilder).when(scannerContext).peek(DependencyGraphBuilder.class);
+        DependencyNode dependencyNode = mock(DependencyNode.class);
+        doReturn(dependencyNode).when(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
 
         // dependency artifacts
         when(store.addDescriptorType(any(MavenArtifactDescriptor.class), eq(MavenArtifactDescriptor.class)))
@@ -166,20 +193,14 @@ public class MavenProjectScannerPluginTest {
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
         when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
 
-        // Dependency Graph
+        MavenRepositoryDescriptor repositoryDescriptor = mock(MavenRepositoryDescriptor.class);
+        doReturn(repositoryDescriptor).when(store).create(MavenRepositoryDescriptor.class);
         ProjectBuildingRequest projectBuildingRequest = mock(ProjectBuildingRequest.class);
-        RepositorySystemSession repositorySystemSession = mock(RepositorySystemSession.class);
         doReturn(repositorySystemSession).when(projectBuildingRequest).getRepositorySession();
         doReturn(projectBuildingRequest).when(mavenSession).getProjectBuildingRequest();
-        DefaultDependencyNode rootNode = new DefaultDependencyNode(null, artifact, null, null, null);
-        DefaultDependencyNode dependencyNode = new DefaultDependencyNode(rootNode, dependency, null, null, null);
-        rootNode.setChildren(Collections.singletonList(dependencyNode));
-        dependencyNode.setChildren(Collections.emptyList());
-        doReturn(rootNode).when(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
+        doReturn(localRepository).when(repositorySystemSession).getLocalRepository();
 
-        ScannerContext scannerContext = mock(ScannerContext.class);
         when(scannerContext.peek(MavenSession.class)).thenReturn(mavenSession);
-        when(scannerContext.peek(DependencyGraphBuilder.class)).thenReturn(dependencyGraphBuilder);
         when(scannerContext.getStore()).thenReturn(store);
         when(scanner.getContext()).thenReturn(scannerContext);
 
@@ -206,21 +227,13 @@ public class MavenProjectScannerPluginTest {
         assertThat(effectiveModelCaptor.getValue().getDelegate(), is(effectiveModel));
         verify(scannerContext).pop(MavenPomDescriptor.class);
         verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
-        verify(store).create(MavenArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
+        verify(mavenArtifactResolver).resolve(argThat(mainArtifactCoordinatesMatcher), eq(scannerContext));
         verify(store).addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
-        verify(store).create(MavenArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0");
+        verify(mavenArtifactResolver).resolve(argThat(testArtifactCoordinatesMatcher), eq(scannerContext));
         verify(store).addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
-        verify(store).create(MavenArtifactDescriptor.class, "group:dependency:jar:main:2.0.0");
-        verify(mainArtifactDescriptor).setGroup("group");
-        verify(mainArtifactDescriptor).setName("artifact");
-        verify(mainArtifactDescriptor).setType("jar");
-        verify(mainArtifactDescriptor).setClassifier("main");
-        verify(mainArtifactDescriptor).setVersion("1.0.0");
-        verify(testArtifactDescriptor).setGroup("group");
-        verify(testArtifactDescriptor).setName("artifact");
-        verify(testArtifactDescriptor).setType("test-jar");
-        verify(testArtifactDescriptor).setClassifier("main");
-        verify(testArtifactDescriptor).setVersion("1.0.0");
+
+        verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
+        verify(dependencyScanner).evaluate(dependencyNode, mainArtifactDescriptor, testArtifactDescriptor, localRepository.getBasedir(), scanner);
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 

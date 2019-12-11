@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.hasSize;
 public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     @BeforeEach
     public void setUp() throws Exception {
-        File rootDirectory = getClassesDirectory(SingleConfiguredPluginIT.class);
+        File rootDirectory = getClassesDirectory(WithoutSourceControlManagementSectionIT.class);
         File projectDirectory = new File(rootDirectory, "scm/without");
         scanClassPathDirectory(projectDirectory);
 
