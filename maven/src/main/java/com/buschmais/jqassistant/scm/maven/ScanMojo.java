@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,18 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 
@@ -83,17 +90,29 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException {
+    public void execute(MavenProject mavenProject, Store store) {
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
-        ScannerContext scannerContext = new ScannerContextImpl(store);
-        scannerContext.push(MavenSession.class, session);
-        scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        ScannerContext scannerContext = new ScannerContextImpl(store);
         Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
-        scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
-        scannerContext.pop(DependencyGraphBuilder.class);
-        scannerContext.pop(MavenSession.class);
+
+        File localRepositoryDirectory = session.getProjectBuildingRequest().getRepositorySession().getLocalRepository().getBasedir();
+        MavenRepositoryFileResolver repositoryFileResolver = new MavenRepositoryFileResolver(localRepositoryDirectory.getAbsolutePath());
+        MavenRepositoryArtifactResolver repositoryArtifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, repositoryFileResolver);
+
+        scannerContext.push(MavenSession.class, session);
+        scannerContext.push(FileResolver.class, repositoryFileResolver);
+        scannerContext.push(ArtifactResolver.class, repositoryArtifactResolver);
+        scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
+        try {
+            scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
+        } finally {
+            scannerContext.pop(DependencyGraphBuilder.class);
+            scannerContext.pop(ArtifactResolver.class);
+            scannerContext.pop(FileResolver.class);
+            scannerContext.pop(MavenSession.class);
+        }
     }
 }
