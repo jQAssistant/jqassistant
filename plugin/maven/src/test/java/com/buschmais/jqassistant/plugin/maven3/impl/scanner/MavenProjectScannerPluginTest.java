@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -17,8 +20,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
-import com.buschmais.xo.api.Query;
-import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -32,7 +33,6 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.repository.LocalRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -40,9 +40,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.mockito.stubbing.Answer;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.hamcrest.CoreMatchers.is;
@@ -50,14 +47,9 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.argThat;
 
-/* todo This test uses lenient stubbing. Test is to complex to simply change the stubbing. Must be refactored. */
-@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class MavenProjectScannerPluginTest {
 
@@ -81,8 +73,6 @@ public class MavenProjectScannerPluginTest {
 
     @Mock
     private DependencyGraphBuilder dependencyGraphBuilder;
-
-    private LocalRepository localRepository = new LocalRepository(new File("target/localRepo"));
 
     @Captor
     ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
@@ -116,14 +106,6 @@ public class MavenProjectScannerPluginTest {
         when(project.getPackaging()).thenReturn("jar");
         when(project.getParent()).thenReturn(parentProject);
 
-        Set<Artifact> dependencies = new HashSet<>();
-        File dependencyFile = mock(File.class);
-        doReturn("/dependency.jar").when(dependencyFile).getAbsolutePath();
-        Artifact dependency = new DefaultArtifact("group", "dependency", VersionRange.createFromVersion("2.0.0"), "compile", "jar", "main", null);
-        dependency.setFile(dependencyFile);
-        dependencies.add(dependency);
-        when(project.getDependencyArtifacts()).thenReturn(dependencies);
-
         Build build = new Build();
         build.setOutputDirectory("target/classes");
         build.setTestOutputDirectory("target/test-classes");
@@ -133,7 +115,7 @@ public class MavenProjectScannerPluginTest {
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
-        when(store.find(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
+        when(store.find(MavenProjectDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
         when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
 
         Scanner scanner = mock(Scanner.class);
@@ -147,7 +129,7 @@ public class MavenProjectScannerPluginTest {
         when(store.create(MavenPomDescriptor.class)).thenReturn(effectiveModelDescriptor);
         Model effectiveModel = mock(Model.class);
         when(project.getModel()).thenReturn(effectiveModel);
-        when(scanner.scan(effectiveModel, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(effectiveModelDescriptor);
+        doReturn(effectiveModelDescriptor).when(scanner).scan(any(Model.class), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
 
         // classes directory
         MavenMainArtifactDescriptor mainArtifactDescriptor = mock(MavenMainArtifactDescriptor.class);
@@ -159,12 +141,6 @@ public class MavenProjectScannerPluginTest {
                 && a.getType().equals("jar");
         doReturn(mainArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(mainArtifactCoordinatesMatcher), eq(scannerContext));
         when(scanner.scan(any(File.class), eq("target/classes"), eq(CLASSPATH))).thenReturn(mainClassesDirectory);
-        when(store.executeQuery(anyString(), anyMap())).thenAnswer((Answer<Query.Result<CompositeRowObject>>) invocation -> {
-            Query.Result<CompositeRowObject> result = mock(Query.Result.class);
-            when(result.hasResult()).thenReturn(false);
-            return result;
-        });
-        when(store.create(MavenArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(mainArtifactDescriptor);
         when(store.addDescriptorType(mainArtifactDescriptor, MavenMainArtifactDescriptor.class)).thenReturn(mainArtifactDescriptor);
         when(store.addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class)).thenReturn(mainClassesDirectory);
 
@@ -182,25 +158,17 @@ public class MavenProjectScannerPluginTest {
         doReturn(dependencyNode).when(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
 
         // dependency artifacts
-        when(store.addDescriptorType(any(MavenArtifactDescriptor.class), eq(MavenArtifactDescriptor.class)))
-                .thenAnswer((Answer<MavenArtifactDescriptor>) invocation -> (MavenArtifactDescriptor) invocation.getArguments()[0]);
 
         DependsOnDescriptor testDependsOnMainDescriptor = mock(DependsOnDescriptor.class);
         when(store.create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor)).thenReturn(testDependsOnMainDescriptor);
-
-        DependsOnDescriptor mainDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
 
         MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
         when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
 
-        MavenRepositoryDescriptor repositoryDescriptor = mock(MavenRepositoryDescriptor.class);
-        doReturn(repositoryDescriptor).when(store).create(MavenRepositoryDescriptor.class);
         ProjectBuildingRequest projectBuildingRequest = mock(ProjectBuildingRequest.class);
         doReturn(repositorySystemSession).when(projectBuildingRequest).getRepositorySession();
         doReturn(projectBuildingRequest).when(mavenSession).getProjectBuildingRequest();
-        doReturn(localRepository).when(repositorySystemSession).getLocalRepository();
 
         when(scannerContext.peek(MavenSession.class)).thenReturn(mavenSession);
         when(scannerContext.getStore()).thenReturn(store);
@@ -246,5 +214,4 @@ public class MavenProjectScannerPluginTest {
         assertThat(createsArtifacts, hasItem(mainArtifactDescriptor));
         assertThat(createsArtifacts, hasItem(testArtifactDescriptor));
     }
-
 }
