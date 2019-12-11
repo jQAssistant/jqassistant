@@ -15,7 +15,7 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 
     /**
      * Constructor.
-     * 
+     *
      * @param repositoryRoot
      *            The root directory of the local repository.
      * @param repositoryFileResolver

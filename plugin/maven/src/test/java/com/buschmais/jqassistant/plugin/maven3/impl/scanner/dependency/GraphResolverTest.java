@@ -47,6 +47,7 @@ public class GraphResolverTest {
                 return mavenArtifactDescriptor;
             });
         }).when(artifactResolver).resolve(any(Coordinates.class), eq(context));
+        doReturn(artifactResolver).when(context).peek(ArtifactResolver.class);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class GraphResolverTest {
 
         MavenArtifactDescriptor mainArtifact = resolve(mainNode, false);
         MavenArtifactDescriptor testArtifact = resolve(mainNode, true);
-        GraphResolver resolver = new GraphResolver(artifactResolver, context);
+        GraphResolver resolver = new GraphResolver(context);
 
         resolver.resolve(mainNode, mainArtifact, testArtifact);
 

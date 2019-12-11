@@ -17,12 +17,12 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
  */
 class GraphResolver {
 
-    private final ArtifactResolver artifactResolver;
     private final ScannerContext context;
+    private final ArtifactResolver artifactResolver;
 
-    public GraphResolver(ArtifactResolver artifactResolver, ScannerContext context) {
-        this.artifactResolver = artifactResolver;
+    public GraphResolver(ScannerContext context) {
         this.context = context;
+        this.artifactResolver = context.peek(ArtifactResolver.class);
     }
 
     Map<Artifact, Set<Artifact>> resolve(DependencyNode root, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor) {

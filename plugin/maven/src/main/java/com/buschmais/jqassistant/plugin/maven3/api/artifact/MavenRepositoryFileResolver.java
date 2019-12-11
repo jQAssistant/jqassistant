@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenRepositoryResolver;
 
 /**
  * A file resolver strategy for a local maven repository.
@@ -13,15 +14,10 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescript
  */
 public class MavenRepositoryFileResolver extends AbstractFileResolver {
 
-    private MavenRepositoryDescriptor repositoryDescriptor;
+    private final String localRepositoryDirectory;
 
-    /**
-     * Constructor.
-     *
-     * @param repositoryDescriptor The descriptor representing the repository.
-     */
-    public MavenRepositoryFileResolver(MavenRepositoryDescriptor repositoryDescriptor) {
-        this.repositoryDescriptor = repositoryDescriptor;
+    public MavenRepositoryFileResolver(String localRepositoryDirectory) {
+        this.localRepositoryDirectory = localRepositoryDirectory;
     }
 
     @Override
@@ -31,6 +27,7 @@ public class MavenRepositoryFileResolver extends AbstractFileResolver {
 
     @Override
     public <D extends FileDescriptor> D match(String containedPath, Class<D> type, ScannerContext context) {
+        MavenRepositoryDescriptor repositoryDescriptor = MavenRepositoryResolver.resolve(context.getStore(), localRepositoryDirectory);
         return getOrCreateAs(containedPath, type, path -> repositoryDescriptor.findFile(containedPath), context);
     }
 }

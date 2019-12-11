@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
@@ -88,7 +89,8 @@ public class MavenProjectScannerPluginTest {
 
     @Test
     public void projectScannerPlugin() throws DependencyGraphBuilderException {
-        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin(mavenArtifactResolver, dependencyScanner);
+        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin(dependencyScanner);
+        doReturn(mavenArtifactResolver).when(scannerContext).peek(ArtifactResolver.class);
 
         // Mock parent project
         MavenProject parentProject = mock(MavenProject.class);
@@ -233,7 +235,7 @@ public class MavenProjectScannerPluginTest {
         verify(store).addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
 
         verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
-        verify(dependencyScanner).evaluate(dependencyNode, mainArtifactDescriptor, testArtifactDescriptor, localRepository.getBasedir(), scanner);
+        verify(dependencyScanner).evaluate(dependencyNode, mainArtifactDescriptor, testArtifactDescriptor, scanner);
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 
