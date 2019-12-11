@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 /**
  * Abstract base implementation for scanner plugins that handle containers of
  * elements like directories, archives, etc.
- * 
+ *
  * @param <I>
  *            The container type.
  * @param <E>
@@ -35,7 +35,10 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         ScannerContext context = scanner.getContext();
         D containerDescriptor = getContainerDescriptor(container, context);
         String containerPath = getContainerPath(container, path);
-        containerDescriptor.setFileName(containerPath);
+        if (containerDescriptor.getFileName() == null) {
+            // Plugins may re-use existing descriptor, don't overwrite their fileName
+            containerDescriptor.setFileName(containerPath);
+        }
         LOGGER.info("Entering {}", containerPath);
         ContainerFileResolver fileResolverStrategy = new ContainerFileResolver(containerDescriptor);
         context.push(FileResolver.class, fileResolverStrategy);
@@ -64,7 +67,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return the descriptor representing the artifact.
-     * 
+     *
      * @param container
      *            The container.
      * @param scannerContext
@@ -78,7 +81,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * <p>
      * The entries must not contain the relative root element, i.e. "/".
      * </p>
-     * 
+     *
      * @param container
      *            The container.
      * @return The iterable of entries.
@@ -89,7 +92,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return the normalized path to the container.
-     * 
+     *
      * @param container
      *            The container.
      * @return The normalized path.
@@ -107,7 +110,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * </ul>
      *
      * </p>
-     * 
+     *
      * @param container
      *            The container.
      * @param entry
@@ -119,7 +122,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
     /**
      * Create a scope depending on the container type, e.g. a JAR file should
      * return classpath scope.
-     * 
+     *
      * @param container
      *            The container.
      * @param containerDescriptor
@@ -131,7 +134,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Destroy the container dependent scope.
-     * 
+     *
      * @param container
      *            The container.
      * @param containerDescriptor
@@ -143,7 +146,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return a {@link Resource} representing an entry.
-     * 
+     *
      * @param container
      *            The container.
      * @param entry
