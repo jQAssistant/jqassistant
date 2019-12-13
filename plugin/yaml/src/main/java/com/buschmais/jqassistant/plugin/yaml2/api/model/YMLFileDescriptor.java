@@ -10,6 +10,6 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 public interface YMLFileDescriptor
 extends YMLDescriptor, FileDescriptor, Descriptor {
 
-    @Relation("CONTAINS_DOCUMENT")
+    @Relation("HAS_DOCUMENT")
     List<YMLDocumentDescriptor> getDocuments();
 }

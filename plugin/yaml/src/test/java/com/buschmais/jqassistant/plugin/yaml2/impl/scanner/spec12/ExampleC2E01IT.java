@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
 import java.io.File;
+import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin;
 
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+
+// todo finish this test!
 
 class ExampleC2E01IT extends AbstractPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e01-sequence-of-scalars.yaml";
@@ -26,20 +30,115 @@ class ExampleC2E01IT extends AbstractPluginIT {
     }
 
     @Test
-    void scannerCanReadDocument() {
-
-        // example-c2-e01-sequence-of-scalars.yaml
-
-        File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), YAML_FILE);
-
-        YMLFileDescriptor result = getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+    void thereIsOneDocument() {
+        YMLFileDescriptor result = readSourceDocument();
 
         assertThat(result).isNotNull();
         assertThat(result.getDocuments()).isNotNull().isNotEmpty();
         assertThat(result.getDocuments()).hasSize(1);
+    }
 
-        // todo finish this test!
+    @Test
+    void theDocumentContainsASequence() {
+        YMLFileDescriptor result = readSourceDocument();
 
-//        throw new RuntimeException("Please implement me!");
+        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
+        assertThat(documentDescriptor.getSequences()).isNotNull().isNotEmpty();
+
+        YMLDescriptor actual = documentDescriptor.getSequences().get(0);
+        assertThat(actual).isInstanceOf(YMLSequenceDescriptor.class);
+    }
+
+    @Test
+    void theSequenceContainsThreeItems() {
+        YMLFileDescriptor result = readSourceDocument();
+
+        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
+        YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
+        assertThat(sequenceDescriptor.getItems()).isNotNull()
+                                                 .isNotEmpty()
+                                                 .hasSize(3);
+    }
+
+    @Test
+    void theThreeItemsAreTheExpectedStrings() {
+        YMLFileDescriptor result = readSourceDocument();
+
+        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
+        YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
+        List<YMLDescriptor> items = sequenceDescriptor.getItems();
+
+        String[] values = items.stream()
+            .map(YMLScalarDescriptor.class::cast)
+            .map(YMLScalarDescriptor::getValue)
+            .toArray(String[]::new);
+
+        assertThat(values).containsExactly("Mark McGwire", "Sammy Sosa", "Ken Griffey");
+    }
+
+    YMLFileDescriptor readSourceDocument() {
+        File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), YAML_FILE);
+
+        return getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+    }
+
+    @Test
+    void yamlFileCanBeFoundViaCypher() {
+        readSourceDocument();
+
+        List<Object> s = query("MATCH (s:File:Yaml) WHERE s.fileName =~ '.*" +
+                               YAML_FILE + "' RETURN s").getColumn("s");
+
+        assertThat(s).hasSize(1);
+    }
+
+    @Test
+    void yamlDocumentCanBeFoundViaCypher() {
+        readSourceDocument();
+
+        String cypherQuery = "MATCH (f:File:Yaml) " +
+                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
+                             "WHERE f.fileName =~ '.*" +
+                             YAML_FILE + "' RETURN d";
+
+        List<?> results = query(cypherQuery).getColumn("d");
+
+        assertThat(results).hasSize(1);
+    }
+
+    @Test
+    void yamlSequenceInDocumentCanBeFoundViaCypher() {
+        readSourceDocument();
+
+        String cypherQuery = "MATCH (f:File:Yaml) " +
+                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
+                             "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " +
+                             "WHERE f.fileName =~ '.*" +
+                             YAML_FILE + "' RETURN s";
+
+        System.out.println(cypherQuery);
+        List<?> results = query(cypherQuery).getColumn("s");
+
+        assertThat(results).hasSize(1);
+    }
+
+    @Test
+    void yamlSequenceValuesCanBeFoundViaCypher() {
+        readSourceDocument();
+
+        String cypherQuery = "MATCH (f:File:Yaml) " +
+                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
+                             "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " +
+                             "-[:HAS_ITEM]->(sc:Yaml:Scalar) " +
+                             "WHERE f.fileName =~ '.*" +
+                             YAML_FILE + "' RETURN sc.value AS v";
+
+        System.out.println(cypherQuery);
+        List<String> results = query(cypherQuery).getColumn("v");
+
+        assertThat(results).hasSize(3)
+                           .containsExactly("Mark McGwire",
+                                            "Sammy Sosa",
+                                            "Ken Griffey");
     }
 }

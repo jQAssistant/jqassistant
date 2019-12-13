@@ -16,33 +16,32 @@ class ContextType<D extends YMLDescriptor> {
         this(type, null);
     }
 
-    static <D extends YMLDescriptor> ContextType ofInFile(D descriptor) {
-        return new ContextType(Type.IN_FILE, descriptor);
+    static <D extends YMLDescriptor> ContextType<D> ofInFile(D descriptor) {
+        return new ContextType<>(Type.IN_FILE, descriptor);
     }
 
-    static <D extends YMLDescriptor> ContextType ofInDocument(D descriptor) {
-        return new ContextType(Type.IN_DOCUMENT, descriptor);
+    static <D extends YMLDescriptor> ContextType<D> ofInDocument(D descriptor) {
+        return new ContextType<>(Type.IN_DOCUMENT, descriptor);
     }
 
-    static <D extends YMLDescriptor> ContextType ofMap(D descriptor) {
-        return new ContextType(Type.IN_MAP, descriptor);
+    static <D extends YMLDescriptor> ContextType<D> ofInMap(D descriptor) {
+        return new ContextType<>(Type.IN_MAP, descriptor);
     }
 
-    static <D extends YMLDescriptor> ContextType ofSequence(D descriptor) {
-        return new ContextType(Type.IN_SEQUENCE, descriptor);
+    static <D extends YMLDescriptor> ContextType<D> ofInSequence(D descriptor) {
+        return new ContextType<>(Type.IN_SEQUENCE, descriptor);
     }
 
-    static ContextType ofStream() {
-        return new ContextType(Type.IN_STREAM);
+    static <D extends YMLDescriptor> ContextType<D> ofInStream() {
+        return new ContextType<>(Type.IN_STREAM);
     }
 
     Type getType() {
         return type;
     }
 
-    public <E extends D> E getDescriptor() {
-        // todo not nice to cast here
-        return (E) descriptor;
+    public D getDescriptor() {
+        return descriptor;
     }
 
     enum Type {
@@ -50,8 +49,7 @@ class ContextType<D extends YMLDescriptor> {
         IN_FILE,
         IN_MAP,
         IN_SEQUENCE,
-        IN_STREAM;
-
+        IN_STREAM
     }
 
     enum Ancestor {

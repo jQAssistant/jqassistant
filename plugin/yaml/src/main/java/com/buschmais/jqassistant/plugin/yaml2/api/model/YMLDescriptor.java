@@ -6,6 +6,6 @@ import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
 @Abstract
-@Label("YAML")
+@Label("Yaml")
 public interface YMLDescriptor extends Descriptor  {
 }
