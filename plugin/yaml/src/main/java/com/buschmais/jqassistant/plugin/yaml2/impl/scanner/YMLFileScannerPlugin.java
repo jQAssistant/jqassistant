@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
@@ -78,6 +79,10 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
                 case Scalar:
                     handleScalar(event);
                     break;
+                case MappingStart:
+                    handleMapStart(event);
+                    break;
+                case MappingEnd:
                 case SequenceEnd:
                 case DocumentEnd:
                 case StreamEnd:
@@ -91,19 +96,50 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
     }
 
+    private void handleMapStart(Event event) {
+        YMLMapDescriptor mapDescriptor = createDescriptor(YMLMapDescriptor.class);
+        ContextType<YMLDescriptor> contextType = context.getCurrent();
+
+        ContextType<YMLMapDescriptor> inMap = ContextType.ofInMap(mapDescriptor);
+        context.enter(inMap);
+
+        if (context.isInMap()) {
+            YMLDocumentDescriptor documentDescriptor = (YMLDocumentDescriptor) contextType.getDescriptor();
+            documentDescriptor.getMaps().add(mapDescriptor);
+        } else {
+            // todo throw an IllegalStateException
+        }
+    }
+
     private void handleScalar(Event event) {
-        YMLScalarDescriptor scalarDescriptor = createDescriptor(YMLScalarDescriptor.class);
-        YMLDescriptor currentContextDescriptor = context.getCurrent().getDescriptor();
+        ContextType<YMLDescriptor> contextType = this.context.getCurrent();
 
         // todo Add support for tags
         // todo Add support for impl
-        scalarDescriptor.setValue(((ScalarEvent)event).getValue());
 
-        if (currentContextDescriptor instanceof YMLSequenceDescriptor) {
-            YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) currentContextDescriptor;
+        if (context.isInSequence()) {
+            YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) contextType.getDescriptor();
+            YMLScalarDescriptor scalarDescriptor = createDescriptor(YMLScalarDescriptor.class);
+
+            scalarDescriptor.setValue(((ScalarEvent) event).getValue());
             sequenceDescriptor.getItems().add(scalarDescriptor);
+        } else if (context.isInMap() && event.getEventId() == Event.ID.Scalar) {
+            YMLMapDescriptor mapDescriptor = (YMLMapDescriptor) contextType.getDescriptor();
+            YMLKeyDescriptor keyDescriptor = createDescriptor(YMLKeyDescriptor.class);
+            ContextType<YMLKeyDescriptor> newContextType = ContextType.ofInKey(keyDescriptor);
+            context.enter(newContextType);
+
+            keyDescriptor.setName(((ScalarEvent) event).getValue());
+            mapDescriptor.getKeys().add(keyDescriptor);
+        } else if (context.isInKey() && event.getEventId() == Event.ID.Scalar) {
+            YMLScalarDescriptor valueDescriptor = createDescriptor(YMLScalarDescriptor.class);
+            YMLKeyDescriptor keyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
+            addDescriptor(valueDescriptor, YMLValueDescriptor.class);
+            valueDescriptor.setValue(((ScalarEvent) event).getValue());
+            keyDescriptor.setValue(valueDescriptor);
+            context.leave();
         } else {
-            String fqcn = currentContextDescriptor.getClass().getCanonicalName();
+            String fqcn = contextType.getClass().getCanonicalName();
             String message = format("Unsupported YAML element represented by " +
                                     "class %s encountered.", fqcn);
             // todo throw new IllegalStateException(message  );
@@ -157,6 +193,10 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         ContextType<YMLFileDescriptor> fileContext = context.getAncestor(ContextType.Ancestor.SECOND);
         YMLFileDescriptor ymlFileDescriptor = fileContext.getDescriptor();
         ymlFileDescriptor.getDocuments().add(inDocument.getDescriptor());
+    }
+
+    private <T extends Descriptor, D extends YMLDescriptor> void addDescriptor(T descriptor, Class<D> descriptorType) {
+        getScannerContext().getStore().addDescriptorType(descriptor, descriptorType);
     }
 
     private <D extends YMLDescriptor> D createDescriptor(Class<D> descriptorType) {

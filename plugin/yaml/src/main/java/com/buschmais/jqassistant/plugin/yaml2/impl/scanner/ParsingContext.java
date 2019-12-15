@@ -46,6 +46,10 @@ class ParsingContext {
         return peek().getType() == ContextType.Type.IN_MAP;
     }
 
+    boolean isInKey() {
+        return peek().getType() == ContextType.Type.IN_KEY;
+    }
+
     boolean isInSequence() {
         return peek().getType() == ContextType.Type.IN_SEQUENCE;
     }

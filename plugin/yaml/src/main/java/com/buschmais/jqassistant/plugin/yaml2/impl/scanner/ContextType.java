@@ -36,6 +36,10 @@ class ContextType<D extends YMLDescriptor> {
         return new ContextType<>(Type.IN_STREAM);
     }
 
+    static <D extends YMLDescriptor> ContextType<D> ofInKey(D descriptor) {
+        return new ContextType<>(Type.IN_KEY, descriptor);
+    }
+
     Type getType() {
         return type;
     }
@@ -47,9 +51,10 @@ class ContextType<D extends YMLDescriptor> {
     enum Type {
         IN_DOCUMENT,
         IN_FILE,
+        IN_KEY,
         IN_MAP,
         IN_SEQUENCE,
-        IN_STREAM
+        IN_STREAM;
     }
 
     enum Ancestor {

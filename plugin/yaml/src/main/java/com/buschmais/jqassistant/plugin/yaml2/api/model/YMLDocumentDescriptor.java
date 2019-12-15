@@ -11,4 +11,6 @@ public interface YMLDocumentDescriptor extends YMLDescriptor {
     @Relation("HAS_SEQUENCE")
     List<YMLSequenceDescriptor> getSequences();
 
+    @Relation("HAS_MAP")
+    List<YMLMapDescriptor> getMaps();
 }

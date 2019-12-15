@@ -83,17 +83,17 @@ class ExampleC2E01IT extends AbstractPluginIT {
     }
 
     @Test
-    void yamlFileCanBeFoundViaCypher() {
+    void viaCypherFileCanBeFound() {
         readSourceDocument();
 
-        List<Object> s = query("MATCH (s:File:Yaml) WHERE s.fileName =~ '.*" +
+        List<Object> result = query("MATCH (s:File:Yaml) WHERE s.fileName =~ '.*" +
                                YAML_FILE + "' RETURN s").getColumn("s");
 
-        assertThat(s).hasSize(1);
+        assertThat(result).hasSize(1);
     }
 
     @Test
-    void yamlDocumentCanBeFoundViaCypher() {
+    void viaCypherDocumentCanBeFound() {
         readSourceDocument();
 
         String cypherQuery = "MATCH (f:File:Yaml) " +
@@ -107,7 +107,7 @@ class ExampleC2E01IT extends AbstractPluginIT {
     }
 
     @Test
-    void yamlSequenceInDocumentCanBeFoundViaCypher() {
+    void viaCypherSequenceInDocumentCanBeFound() {
         readSourceDocument();
 
         String cypherQuery = "MATCH (f:File:Yaml) " +
@@ -116,14 +116,13 @@ class ExampleC2E01IT extends AbstractPluginIT {
                              "WHERE f.fileName =~ '.*" +
                              YAML_FILE + "' RETURN s";
 
-        System.out.println(cypherQuery);
         List<?> results = query(cypherQuery).getColumn("s");
 
         assertThat(results).hasSize(1);
     }
 
     @Test
-    void yamlSequenceValuesCanBeFoundViaCypher() {
+    void viaCypherSequenceValuesCanBeFound() {
         readSourceDocument();
 
         String cypherQuery = "MATCH (f:File:Yaml) " +
@@ -133,7 +132,6 @@ class ExampleC2E01IT extends AbstractPluginIT {
                              "WHERE f.fileName =~ '.*" +
                              YAML_FILE + "' RETURN sc.value AS v";
 
-        System.out.println(cypherQuery);
         List<String> results = query(cypherQuery).getColumn("v");
 
         assertThat(results).hasSize(3)
@@ -141,4 +139,6 @@ class ExampleC2E01IT extends AbstractPluginIT {
                                             "Sammy Sosa",
                                             "Ken Griffey");
     }
+
+
 }
