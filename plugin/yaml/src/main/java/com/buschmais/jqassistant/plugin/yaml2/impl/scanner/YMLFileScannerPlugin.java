@@ -19,6 +19,7 @@ import org.snakeyaml.engine.v2.events.Event;
 import org.snakeyaml.engine.v2.events.ScalarEvent;
 
 import static java.lang.String.format;
+import static org.snakeyaml.engine.v2.events.Event.ID.Scalar;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YMLFileDescriptor> {
@@ -118,12 +119,14 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         // todo Add support for impl
 
         if (context.isInSequence()) {
+            int index = contextType.getPositionalContext().inc();
             YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) contextType.getDescriptor();
             YMLScalarDescriptor scalarDescriptor = createDescriptor(YMLScalarDescriptor.class);
 
+            scalarDescriptor.setIndex(index);
             scalarDescriptor.setValue(((ScalarEvent) event).getValue());
-            sequenceDescriptor.getItems().add(scalarDescriptor);
-        } else if (context.isInMap() && event.getEventId() == Event.ID.Scalar) {
+            sequenceDescriptor.getScalars().add(scalarDescriptor);
+        } else if (context.isInMap() && event.isEvent(Scalar)) {
             YMLMapDescriptor mapDescriptor = (YMLMapDescriptor) contextType.getDescriptor();
             YMLKeyDescriptor keyDescriptor = createDescriptor(YMLKeyDescriptor.class);
             ContextType<YMLKeyDescriptor> newContextType = ContextType.ofInKey(keyDescriptor);
@@ -131,7 +134,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
             keyDescriptor.setName(((ScalarEvent) event).getValue());
             mapDescriptor.getKeys().add(keyDescriptor);
-        } else if (context.isInKey() && event.getEventId() == Event.ID.Scalar) {
+        } else if (context.isInKey() && event.isEvent(Scalar)) {
             YMLScalarDescriptor valueDescriptor = createDescriptor(YMLScalarDescriptor.class);
             YMLKeyDescriptor keyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
             addDescriptor(valueDescriptor, YMLValueDescriptor.class);
@@ -167,10 +170,16 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         ContextType<YMLSequenceDescriptor> inSequence = ContextType.ofInSequence(ymlSequenceDescriptor);
         context.enter(inSequence);
 
-        YMLDescriptor ancestorDescriptor = context.getAncestor(ContextType.Ancestor.FIRST).getDescriptor();
+        ContextType<YMLDescriptor> ancestorContext = context.getAncestor(ContextType.Ancestor.FIRST);
+        YMLDescriptor ancestorDescriptor = ancestorContext.getDescriptor();
 
         if (ancestorDescriptor instanceof YMLDocumentDescriptor) {
-            ((YMLDocumentDescriptor)ancestorDescriptor).getSequences().add(ymlSequenceDescriptor);
+            ((YMLDocumentDescriptor) ancestorDescriptor).getSequences().add(ymlSequenceDescriptor);
+        } else if (context.isInSequence()) {
+            int index = ancestorContext.getPositionalContext().inc();
+            ymlSequenceDescriptor.setIndex(index);
+            YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) ancestorContext.getDescriptor();
+            descriptor.getSequences().add(ymlSequenceDescriptor);
         } else {
             // todo check if the type of the exeption is correct or if there is a better one
             String fqcn = ancestorDescriptor.getClass().getCanonicalName();

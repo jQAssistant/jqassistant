@@ -9,4 +9,9 @@ public interface YMLScalarDescriptor extends YMLDescriptor {
 
     @Property("value")
     void setValue(String value);
+
+    @Property("index")
+    Integer getIndex();
+
+    void setIndex(Integer index);
 }

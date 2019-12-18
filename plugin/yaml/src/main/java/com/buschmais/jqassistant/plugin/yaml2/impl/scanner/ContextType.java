@@ -2,46 +2,54 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 
+import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext.NO_POSITIONAL_CONTEXT;
+
 class ContextType<D extends YMLDescriptor> {
     private D descriptor;
     private Type type;
+    private PositionalContext positionalContext;
 
-    private ContextType(Type contextType, D contextDescriptor) {
+    private ContextType(Type contextType, D contextDescriptor,
+                        PositionalContext context) {
         type = contextType;
         descriptor = contextDescriptor;
-
+        positionalContext = context;
     }
 
-    public ContextType(Type type) {
-        this(type, null);
+    public ContextType(Type type, PositionalContext context) {
+        this(type, null, context);
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInFile(D descriptor) {
-        return new ContextType<>(Type.IN_FILE, descriptor);
+        return new ContextType<>(Type.IN_FILE, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInDocument(D descriptor) {
-        return new ContextType<>(Type.IN_DOCUMENT, descriptor);
+        return new ContextType<>(Type.IN_DOCUMENT, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInMap(D descriptor) {
-        return new ContextType<>(Type.IN_MAP, descriptor);
+        return new ContextType<>(Type.IN_MAP, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInSequence(D descriptor) {
-        return new ContextType<>(Type.IN_SEQUENCE, descriptor);
+        return new ContextType<>(Type.IN_SEQUENCE, descriptor, new PositionalContext());
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInStream() {
-        return new ContextType<>(Type.IN_STREAM);
+        return new ContextType<>(Type.IN_STREAM, NO_POSITIONAL_CONTEXT);
     }
 
     static <D extends YMLDescriptor> ContextType<D> ofInKey(D descriptor) {
-        return new ContextType<>(Type.IN_KEY, descriptor);
+        return new ContextType<>(Type.IN_KEY, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
     Type getType() {
         return type;
+    }
+
+    public PositionalContext getPositionalContext() {
+        return positionalContext;
     }
 
     public D getDescriptor() {

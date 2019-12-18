@@ -51,9 +51,9 @@ class ExampleC2E01IT extends AbstractYAMLPluginIT {
 
         YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
         YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
-        assertThat(sequenceDescriptor.getItems()).isNotNull()
-                                                 .isNotEmpty()
-                                                 .hasSize(3);
+        assertThat(sequenceDescriptor.getScalars()).isNotNull()
+                                                   .isNotEmpty()
+                                                   .hasSize(3);
     }
 
     @Test
@@ -62,12 +62,11 @@ class ExampleC2E01IT extends AbstractYAMLPluginIT {
 
         YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
         YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
-        List<YMLDescriptor> items = sequenceDescriptor.getItems();
+        List<YMLScalarDescriptor> items = sequenceDescriptor.getScalars();
 
         String[] values = items.stream()
-            .map(YMLScalarDescriptor.class::cast)
-            .map(YMLScalarDescriptor::getValue)
-            .toArray(String[]::new);
+                               .map(YMLScalarDescriptor::getValue)
+                               .toArray(String[]::new);
 
         assertThat(values).containsExactly("Mark McGwire", "Sammy Sosa", "Ken Griffey");
     }
