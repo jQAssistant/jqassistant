@@ -1,14 +1,10 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
-import java.io.File;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // todo finish this test!
 
-class ExampleC2E01IT extends AbstractPluginIT {
+class ExampleC2E01IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e01-sequence-of-scalars.yaml";
 
-    @BeforeEach
-    void startTransaction() {
-        store.beginTransaction();
+    @Override
+    String getSourceYAMLFile() {
+        return YAML_FILE;
     }
 
     @AfterEach
@@ -74,12 +70,6 @@ class ExampleC2E01IT extends AbstractPluginIT {
             .toArray(String[]::new);
 
         assertThat(values).containsExactly("Mark McGwire", "Sammy Sosa", "Ken Griffey");
-    }
-
-    YMLFileDescriptor readSourceDocument() {
-        File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), YAML_FILE);
-
-        return getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
     }
 
     @Test

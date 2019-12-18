@@ -1,17 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,23 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 
-class ExampleC2E02IT extends AbstractPluginIT {
+class ExampleC2E02IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e02-mapping-scalars-to-scalars.yaml";
 
-    @BeforeEach
-    void startTransaction() {
-        store.beginTransaction();
-    }
-
-    @AfterEach
-    void commitTransaction() {
-        store.commitTransaction();
-    }
-
-    YMLFileDescriptor readSourceDocument() {
-        File yamlFile = new File(getClassesDirectory(YMLFileScannerPlugin.class), YAML_FILE);
-
-        return getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+    @Override
+    String getSourceYAMLFile() {
+        return YAML_FILE;
     }
 
     @Test
