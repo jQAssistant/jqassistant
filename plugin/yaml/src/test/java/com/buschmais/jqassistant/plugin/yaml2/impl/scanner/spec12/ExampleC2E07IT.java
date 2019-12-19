@@ -1,7 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
-import org.junit.jupiter.api.Disabled;
+import java.util.List;
+
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
+
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ExampleC2E07IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e07-two-documents-in-a-stream.yaml";
@@ -11,9 +16,26 @@ class ExampleC2E07IT extends AbstractYAMLPluginIT {
         return YAML_FILE;
     }
 
-    @Disabled("Test and scanner are not yet implemented.")
     @Test
     void scannerCanReadDocument() {
-        throw new RuntimeException("Please implement me!");
+        readSourceDocument();
+    }
+
+    @Test
+    void theSourceFileContainsTwoDocuments() {
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
+
+        assertThat(ymlFileDescriptor.getDocuments()).hasSize(2);
+    }
+
+    @Test
+    void cypherTheSourceFileContainsTwoDocuments() {
+        readSourceDocument();
+
+        String cypherQuery = "MATCH (f:File:Yaml)-[:HAS_DOCUMENT]->(d:Document:Yaml) WHERE f.fileName =~ '.*" + YAML_FILE + "' RETURN f";
+
+        List<Object> result = query(cypherQuery).getColumn("f");
+
+        assertThat(result).hasSize(2);
     }
 }
