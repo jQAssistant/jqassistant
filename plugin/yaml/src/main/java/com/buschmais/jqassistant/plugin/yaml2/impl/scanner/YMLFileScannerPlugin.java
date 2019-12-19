@@ -102,14 +102,23 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         ContextType<YMLDescriptor> contextType = context.getCurrent();
 
         ContextType<YMLMapDescriptor> inMap = ContextType.ofInMap(mapDescriptor);
-        context.enter(inMap);
 
-        if (context.isInMap()) {
+
+        if (context.isInDocument()) {
             YMLDocumentDescriptor documentDescriptor = (YMLDocumentDescriptor) contextType.getDescriptor();
             documentDescriptor.getMaps().add(mapDescriptor);
+
+        } else if (context.isInSequence()) {
+            int index = contextType.getPositionalContext().inc();
+            YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) contextType.getDescriptor();
+            mapDescriptor.setIndex(index);
+            sequenceDescriptor.getMaps().add(mapDescriptor);
         } else {
-            // todo throw an IllegalStateException
+            // todo
+            throw new IllegalStateException();
         }
+
+        context.enter(inMap);
     }
 
     private void handleScalar(Event event) {
