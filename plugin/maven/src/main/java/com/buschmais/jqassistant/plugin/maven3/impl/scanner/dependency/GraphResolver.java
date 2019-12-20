@@ -15,31 +15,24 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
  * A {@link DependencyNodeVisitor} implementation that is used for creating a
  * graph of all artifact dependencies.
  */
-class GraphResolver {
+public class GraphResolver {
 
-    private final ScannerContext context;
-    private final ArtifactResolver artifactResolver;
-
-    public GraphResolver(ScannerContext context) {
-        this.context = context;
-        this.artifactResolver = context.peek(ArtifactResolver.class);
-    }
-
-    Map<Artifact, Set<Artifact>> resolve(DependencyNode root, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor) {
+    Map<Artifact, Set<Artifact>> resolve(DependencyNode root, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor,
+            ScannerContext context) {
         DependencyGraphVisitor visitor = new DependencyGraphVisitor();
         root.accept(visitor);
         Map<Artifact, Set<Artifact>> dependencies = visitor.getDependencies();
-        createGraph(dependencies, root.getArtifact(), mainDescriptor, testDescriptor);
+        createGraph(dependencies, root.getArtifact(), mainDescriptor, testDescriptor, context);
         return Collections.unmodifiableMap(dependencies);
     }
 
     private void createGraph(Map<Artifact, Set<Artifact>> dependencies, Artifact mainArtifact, MavenArtifactDescriptor mainArtifactDescriptor,
-            MavenArtifactDescriptor testArtifactDescriptor) {
+            MavenArtifactDescriptor testArtifactDescriptor, ScannerContext context) {
         for (Map.Entry<Artifact, Set<Artifact>> entry : dependencies.entrySet()) {
             Artifact dependentArtifact = entry.getKey();
             Set<Artifact> dependencyArtifacts = entry.getValue();
             for (Artifact dependencyArtifact : dependencyArtifacts) {
-                MavenArtifactDescriptor artifactDescriptor = resolve(dependencyArtifact);
+                MavenArtifactDescriptor artifactDescriptor = resolve(dependencyArtifact, context);
                 if (dependentArtifact.equals(mainArtifact)) {
                     if (Artifact.SCOPE_TEST.equals(dependencyArtifact.getScope())) {
                         // Attach test scoped dependencies directly to the test artifact
@@ -48,14 +41,15 @@ class GraphResolver {
                         mainArtifactDescriptor.addDependency(artifactDescriptor, dependencyArtifact.getScope(), dependencyArtifact.isOptional());
                     }
                 } else {
-                    MavenArtifactDescriptor dependentDescriptor = resolve(dependentArtifact);
+                    MavenArtifactDescriptor dependentDescriptor = resolve(dependentArtifact, context);
                     dependentDescriptor.addDependency(artifactDescriptor, dependencyArtifact.getScope(), dependencyArtifact.isOptional());
                 }
             }
         }
     }
 
-    private MavenArtifactDescriptor resolve(Artifact artifact) {
+    private MavenArtifactDescriptor resolve(Artifact artifact, ScannerContext context) {
+        ArtifactResolver artifactResolver = context.peek(ArtifactResolver.class);
         return artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), context);
     }
 

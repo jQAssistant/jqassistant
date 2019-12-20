@@ -23,6 +23,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.GraphResolver;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
@@ -55,7 +56,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * Default constructor.
      */
     public MavenProjectScannerPlugin() {
-        this(new DependencyScanner());
+        this(new DependencyScanner(new GraphResolver()));
     }
 
     /**

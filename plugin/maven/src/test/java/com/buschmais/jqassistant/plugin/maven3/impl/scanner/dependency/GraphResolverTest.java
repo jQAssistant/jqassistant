@@ -36,6 +36,8 @@ public class GraphResolverTest {
 
     private Map<String, MavenArtifactDescriptor> resolvedArtifacts = new HashMap<>();
 
+    private GraphResolver graphResolver;
+
     @BeforeEach
     public void setUp() {
         doAnswer(i -> {
@@ -48,6 +50,7 @@ public class GraphResolverTest {
             });
         }).when(artifactResolver).resolve(any(Coordinates.class), eq(context));
         doReturn(artifactResolver).when(context).peek(ArtifactResolver.class);
+        graphResolver = new GraphResolver();
     }
 
     @Test
@@ -62,9 +65,8 @@ public class GraphResolverTest {
 
         MavenArtifactDescriptor mainArtifact = resolve(mainNode, false);
         MavenArtifactDescriptor testArtifact = resolve(mainNode, true);
-        GraphResolver resolver = new GraphResolver(context);
 
-        resolver.resolve(mainNode, mainArtifact, testArtifact);
+        graphResolver.resolve(mainNode, mainArtifact, testArtifact, context);
 
         MavenArtifactDescriptor directDependency = resolve(directDependencyNode, false);
         MavenArtifactDescriptor transitiveDependency = resolve(transitiveDependencyNode, false);
