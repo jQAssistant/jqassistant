@@ -70,8 +70,10 @@
             MATCH
               (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
               (dependent:Type)-[:DEPENDS_ON]->(superType)
-            WHERE NOT
+            WHERE NOT (
               (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
+              or superType.fqn = "java.lang.Object"
+            )
             MERGE
               (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
             RETURN
