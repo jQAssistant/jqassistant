@@ -189,11 +189,13 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
         </plugins>
     </build>
 
+    <!-- The following section is only required if a Maven site shall be generated including a jQAssistant report -->
     <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
             </plugin>
             <plugin>
                 <groupId>@{project.groupId}</groupId>
