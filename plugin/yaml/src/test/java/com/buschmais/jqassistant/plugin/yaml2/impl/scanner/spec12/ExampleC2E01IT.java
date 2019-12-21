@@ -7,7 +7,9 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getSequences;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
 
 // todo finish this test!
@@ -30,27 +32,28 @@ class ExampleC2E01IT extends AbstractYAMLPluginIT {
         YMLFileDescriptor result = readSourceDocument();
 
         assertThat(result).isNotNull();
-        assertThat(result.getDocuments()).isNotNull().isNotEmpty();
-        assertThat(result.getDocuments()).hasSize(1);
+        assertThat(result).hasDocuments(1);
     }
 
     @Test
     void theDocumentContainsASequence() {
-        YMLFileDescriptor result = readSourceDocument();
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
-        assertThat(documentDescriptor.getSequences()).isNotNull().isNotEmpty();
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
+        assertThat(documentDescriptor).hasSequences(1);
 
-        YMLDescriptor actual = documentDescriptor.getSequences().get(0);
+        YMLDescriptor actual = getSequences(documentDescriptor).getSequence(0);
         assertThat(actual).isInstanceOf(YMLSequenceDescriptor.class);
     }
 
     @Test
     void theSequenceContainsThreeItems() {
-        YMLFileDescriptor result = readSourceDocument();
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
-        YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
+        YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequence(0);
+        // todo enable the assert below if https://github.com/buschmais/extended-objects/issues/174 has been fixed
+        // assertThat(sequenceDescriptor).hasItems(3);
         assertThat(sequenceDescriptor.getScalars()).isNotNull()
                                                    .isNotEmpty()
                                                    .hasSize(3);
@@ -60,8 +63,8 @@ class ExampleC2E01IT extends AbstractYAMLPluginIT {
     void theThreeItemsAreTheExpectedStrings() {
         YMLFileDescriptor result = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = result.getDocuments().get(0);
-        YMLSequenceDescriptor sequenceDescriptor = documentDescriptor.getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(result).getDocument(0);
+        YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequence(0);
         List<YMLScalarDescriptor> items = sequenceDescriptor.getScalars();
 
         String[] values = items.stream()

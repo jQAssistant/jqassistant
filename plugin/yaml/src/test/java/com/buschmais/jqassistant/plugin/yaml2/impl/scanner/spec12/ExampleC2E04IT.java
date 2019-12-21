@@ -7,7 +7,8 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
 class ExampleC2E04IT extends AbstractYAMLPluginIT {
 
@@ -27,10 +28,10 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
     void theDocumentContainsOnlyASequence() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = ymlFileDescriptor.getDocuments().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
 
-        assertThat(documentDescriptor.getSequences()).hasSize(1);
-        assertThat(documentDescriptor.getMaps()).isEmpty();
+        assertThat(documentDescriptor).hasSequences().hasSequences(1);
+        assertThat(documentDescriptor).hasNoMaps();
         // todo add later assert for scalars
     }
 
@@ -38,8 +39,8 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
     void theSecondListItemIsAMap() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        List<YMLSequenceDescriptor> sequences = ymlFileDescriptor.getDocuments().get(0).getSequences();
-        YMLSequenceDescriptor sequenceDescriptor = sequences.get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
+        YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequence(0);
         Optional<YMLMapDescriptor> mapDescriptor = sequenceDescriptor.getMaps().stream().filter(m -> m.getIndex() == 1).findFirst();
 
         assertThat(mapDescriptor).hasValueSatisfying(m -> {
@@ -51,8 +52,8 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
     void theSecondMapHasThreeKeys() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLSequenceDescriptor sequenceDescriptor = ymlFileDescriptor.getDocuments().get(0)
-                                                                    .getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
+        YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequence(0);
 
         Optional<YMLMapDescriptor> firstMap = sequenceDescriptor.getMaps().stream()
                                                                 .filter(m -> m.getIndex() == 1)
@@ -67,18 +68,15 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
     void theSecondMapHasACorrectMappingForAvg() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLSequenceDescriptor sequenceDescriptor = ymlFileDescriptor.getDocuments().get(0)
-                                                                    .getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocument(0);
+        YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequence(0);
 
-        Optional<YMLMapDescriptor> firstMap = sequenceDescriptor.getMaps().stream()
-                                                                .filter(m -> m.getIndex() == 1)
-                                                                .findFirst();
-        Optional<YMLKeyDescriptor> keyDescriptor = firstMap.get().getKeys().stream().filter(k -> k.getName().equals("avg")).findFirst();
+        YMLMapDescriptor mapDescriptor = getMaps(sequenceDescriptor).getMap(1);
 
-        assertThat(keyDescriptor.get().getName()).isEqualTo("avg");
-        YMLScalarDescriptor scalarDescriptor = (YMLScalarDescriptor) keyDescriptor.get().getValue();
+        assertThat(mapDescriptor).containsSimpleKeyWithName("avg");
+        YMLKeyDescriptor keyDescriptor = getKeys(mapDescriptor).getKeyByName("avg");
 
-        assertThat(scalarDescriptor.getValue()).isEqualTo("0.288");
+        assertThat(keyDescriptor).hasName("avg").hasScalarValue("0.288");
     }
 
     @Test
@@ -107,7 +105,6 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
                              "RETURN v.value AS val";
 
         List<Object> result = query(cypherQuery).getColumn("val");
-
 
         assertThat(result).hasSize(1).containsExactly("63");
     }

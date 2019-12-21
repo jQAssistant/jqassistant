@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
@@ -12,7 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getKeys;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 
@@ -28,33 +28,16 @@ class ExampleC2E02IT extends AbstractYAMLPluginIT {
     void theKeysHaveTheCorrectValuesAssigned() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLMapDescriptor map = ymlFileDescriptor.getDocuments().get(0)
+        YMLMapDescriptor map = getDocuments(ymlFileDescriptor).getDocument(0)
                                                 .getMaps().get(0);
 
-        Optional<YMLKeyDescriptor> keyHr = map.getKeys().stream().filter(k -> k.getName().equals("hr")).findAny();
-        Optional<YMLKeyDescriptor> keyAvg = map.getKeys().stream().filter(k -> k.getName().equals("avg")).findAny();
-        Optional<YMLKeyDescriptor> keyRbi = map.getKeys().stream().filter(k -> k.getName().equals("rbi")).findAny();
+        YMLKeyDescriptor keyHr = getKeys(map).getKeyByName("hr");
+        YMLKeyDescriptor keyAvg = getKeys(map).getKeyByName("avg");
+        YMLKeyDescriptor keyRbi = getKeys(map).getKeyByName("rbi");
 
-        assertThat(keyHr).get().extracting(YMLKeyDescriptor::getValue)
-                         .isNotNull()
-                         .isInstanceOfSatisfying(YMLScalarDescriptor.class, descriptor -> {
-                             assertThat(descriptor).extracting(YMLScalarDescriptor::getValue)
-                                                   .isEqualTo("65");
-                         });
-
-        assertThat(keyAvg).get().extracting(YMLKeyDescriptor::getValue)
-                          .isNotNull()
-                          .isInstanceOfSatisfying(YMLScalarDescriptor.class, descriptor -> {
-                              assertThat(descriptor).extracting(YMLScalarDescriptor::getValue)
-                                                    .isEqualTo("0.278");
-                          });
-
-        assertThat(keyRbi).get().extracting(YMLKeyDescriptor::getValue)
-                          .isNotNull()
-                          .isInstanceOfSatisfying(YMLScalarDescriptor.class, descriptor -> {
-                              assertThat(descriptor).extracting(YMLScalarDescriptor::getValue)
-                                                    .isEqualTo("147");
-                          });
+        assertThat(keyHr).hasValue().hasScalarAsValue().hasScalarValue("65");
+        assertThat(keyAvg).hasValue().hasScalarAsValue().hasScalarValue("0.278");
+        assertThat(keyRbi).hasValue().hasScalarAsValue().hasScalarValue("147");
     }
 
 
@@ -62,46 +45,41 @@ class ExampleC2E02IT extends AbstractYAMLPluginIT {
     void theKeysHaveTheCorrectKeyNamesAssigned() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLMapDescriptor map = ymlFileDescriptor.getDocuments().get(0)
+        YMLMapDescriptor map = getDocuments(ymlFileDescriptor).getDocument(0)
                                                 .getMaps().get(0);
 
-        Optional<YMLKeyDescriptor> keyHr = map.getKeys().stream().filter(k -> k.getName().equals("hr")).findAny();
-        Optional<YMLKeyDescriptor> keyAvg = map.getKeys().stream().filter(k -> k.getName().equals("avg")).findAny();
-        Optional<YMLKeyDescriptor> keyRbi = map.getKeys().stream().filter(k -> k.getName().equals("rbi")).findAny();
-
-        assertThat(keyHr).get().returns("hr", YMLKeyDescriptor::getName);
-        assertThat(keyAvg).get().returns("avg", YMLKeyDescriptor::getName);
-        assertThat(keyRbi).get().returns("rbi", YMLKeyDescriptor::getName);
+        assertThat(map).containsSimpleKeyWithName("hr");
+        assertThat(map).containsSimpleKeyWithName("avg");
+        assertThat(map).containsSimpleKeyWithName("rbi");
     }
 
     @Test
     void thereIsOneDocument() {
         YMLFileDescriptor yamlFileDescriptor = readSourceDocument();
 
-        assertThat(yamlFileDescriptor.getDocuments()).hasSize(1);
+        assertThat(yamlFileDescriptor).hasDocuments(1);
     }
 
     @Test
     void thereAreThreeKeysInTheMap() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        YMLMapDescriptor map = ymlFileDescriptor.getDocuments().get(0)
-                                                .getMaps().get(0);
+        YMLMapDescriptor map = getDocuments(ymlFileDescriptor).getDocument(0)
+                                                              .getMaps().get(0);
 
         assertThat(map.getKeys()).isNotEmpty().hasSize(3);
-
-        List<String> keys = map.getKeys().stream().map(YMLKeyDescriptor::getName).collect(Collectors.toList());
-
-        assertThat(keys).containsExactlyInAnyOrder("hr", "avg", "rbi");
+        assertThat(map).containsSimpleKeyWithName("hr");
+        assertThat(map).containsSimpleKeyWithName("rbi");
+        assertThat(map).containsSimpleKeyWithName("avg");
     }
 
     @Test
     void theDocumentContainsAMap() {
         YMLFileDescriptor yamlFileDescriptor = readSourceDocument();
-        YMLDocumentDescriptor documentDescriptor = yamlFileDescriptor.getDocuments().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(yamlFileDescriptor).getDocument(0);
 
-        assertThat(documentDescriptor.getMaps()).hasSize(1);
-        assertThat(documentDescriptor.getSequences()).hasSize(0);
+        assertThat(documentDescriptor).hasMaps(1);
+        assertThat(documentDescriptor).hasNoSequences();
     }
 
     @Test

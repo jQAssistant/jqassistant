@@ -10,11 +10,14 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getSequences;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 class ExampleC2E05IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e05-sequence-of-sequences.yaml";
+    private YMLScalarDescriptor first;
 
     @Override
     String getSourceYAMLFile() {
@@ -30,7 +33,7 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     void theDocumentContainsASequence() {
         YMLFileDescriptor fileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(fileDescriptor).getDocument(0);
 
         assertThat(documentDescriptor.getSequences()).hasSize(1);
     }
@@ -38,11 +41,10 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     @Test
     void theDocumentContainsOnlyASequence() {
         YMLFileDescriptor fileDescriptor = readSourceDocument();
+        YMLDocumentDescriptor documentDescriptor = getDocuments(fileDescriptor).getDocument(0);
 
-        YMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
-
-        assertThat(documentDescriptor.getSequences()).hasSize(1);
-        assertThat(documentDescriptor.getMaps()).hasSize(0);
+        assertThat(documentDescriptor).hasSequences(1);
+        assertThat(documentDescriptor).hasNoMaps();
         // todo Check for scalars later
 
     }
@@ -51,8 +53,8 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     void theDocumentContainsSequenceWithThreeItems() {
         YMLFileDescriptor fileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
-        YMLSequenceDescriptor seqDescriptor = documentDescriptor.getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(fileDescriptor).getDocument(0);
+        YMLSequenceDescriptor seqDescriptor = getSequences(documentDescriptor).getSequence(0);
 
         assertThat(seqDescriptor.getSequences()).hasSize(3);
     }
@@ -61,8 +63,8 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     void theFirstSequenceContainsThreeItems() {
         YMLFileDescriptor fileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
-        YMLSequenceDescriptor topSeqDescriptor = documentDescriptor.getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(fileDescriptor).getDocument(0);
+        YMLSequenceDescriptor topSeqDescriptor = getSequences(documentDescriptor).getSequence(0);
         Optional<YMLSequenceDescriptor> thirdSeqDescriptor = topSeqDescriptor.getSequences().stream().filter(sd -> sd.getIndex() == 1).findFirst();
 
         assertThat(thirdSeqDescriptor).get().extracting(YMLSequenceDescriptor::getScalars, LIST).hasSize(3);
@@ -72,8 +74,8 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     void theThirdSequenceContainsThreeItems() {
         YMLFileDescriptor fileDescriptor = readSourceDocument();
 
-        YMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
-        YMLSequenceDescriptor topSeqDescriptor = documentDescriptor.getSequences().get(0);
+        YMLDocumentDescriptor documentDescriptor = getDocuments(fileDescriptor).getDocument(0);
+        YMLSequenceDescriptor topSeqDescriptor = getSequences(documentDescriptor).getSequence(0);
         Optional<YMLSequenceDescriptor> secondSeqDescriptor = topSeqDescriptor.getSequences().stream().filter(sd -> sd.getIndex() == 2).findFirst();
 
         assertThat(secondSeqDescriptor).get().extracting(YMLSequenceDescriptor::getScalars, LIST).hasSize(3);

@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
 class ExampleC2E07IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e07-two-documents-in-a-stream.yaml";
@@ -25,7 +25,7 @@ class ExampleC2E07IT extends AbstractYAMLPluginIT {
     void theSourceFileContainsTwoDocuments() {
         YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
 
-        assertThat(ymlFileDescriptor.getDocuments()).hasSize(2);
+        assertThat(ymlFileDescriptor).hasDocuments(2);
     }
 
     @Test
