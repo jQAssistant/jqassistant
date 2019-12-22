@@ -65,6 +65,32 @@ class ContextType<D extends YMLDescriptor> {
         return descriptor;
     }
 
+    /* todo check if this methods are required
+    public boolean isDocumentContext() {
+        return type.equals(Type.IN_DOCUMENT);
+    }
+
+    public boolean isFileContext() {
+        return type.equals(Type.IN_FILE);
+    }
+
+    public boolean isKeyContext() {
+        return type.equals(Type.IN_KEY);
+    }
+
+    public boolean isMapContext() {
+        return type.equals(Type.IN_MAP);
+    }
+
+    public boolean isSequenceContext() {
+        return type.equals(Type.IN_SEQUENCE);
+    }
+
+    public boolean isStreamContext() {
+        return type.equals(Type.IN_STREAM);
+    }
+    */
+
     enum Type {
         IN_DOCUMENT,
         IN_FILE,

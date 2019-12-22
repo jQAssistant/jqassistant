@@ -194,25 +194,23 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
         YMLSequenceDescriptor ymlSequenceDescriptor = createDescriptor(YMLSequenceDescriptor.class);
         ContextType<YMLSequenceDescriptor> inSequence = ContextType.ofInSequence(ymlSequenceDescriptor);
-        context.enter(inSequence);
 
-        ContextType<YMLDescriptor> ancestorContext = context.getAncestor(ContextType.Ancestor.FIRST);
-        YMLDescriptor ancestorDescriptor = ancestorContext.getDescriptor();
-
-        if (ancestorDescriptor instanceof YMLDocumentDescriptor) {
-            ((YMLDocumentDescriptor) ancestorDescriptor).getSequences().add(ymlSequenceDescriptor);
+        if (context.isInDocument()) {
+            ((YMLDocumentDescriptor)context.getCurrent().getDescriptor()).getSequences().add(ymlSequenceDescriptor);
         } else if (context.isInSequence()) {
-            int index = ancestorContext.getPositionalContext().inc();
+            int index = context.getCurrent().getPositionalContext().inc();
             ymlSequenceDescriptor.setIndex(index);
-            YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) ancestorContext.getDescriptor();
+            YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) context.getCurrent().getDescriptor();
             descriptor.getSequences().add(ymlSequenceDescriptor);
         } else {
             // todo check if the type of the exeption is correct or if there is a better one
-            String fqcn = ancestorDescriptor.getClass().getCanonicalName();
+            String fqcn = context.getCurrent().getDescriptor().getClass().getCanonicalName();
             String message = format("Unsupported YAML element represented by " +
                                     "class %s encountered.", fqcn);
             throw new IllegalStateException(message  );
         }
+
+        context.enter(inSequence);
     }
 
     private void handleDocumentStart(Event event) {
