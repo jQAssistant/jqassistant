@@ -8,6 +8,7 @@ class ContextType<D extends YMLDescriptor> {
     private D descriptor;
     private Type type;
     private PositionalContext positionalContext;
+    boolean isKeyForValue = false;
 
     private ContextType(Type contextType, D contextDescriptor,
                         PositionalContext context) {
@@ -46,6 +47,14 @@ class ContextType<D extends YMLDescriptor> {
 
     Type getType() {
         return type;
+    }
+
+    public boolean isKeyForValue() {
+        return isKeyForValue;
+    }
+
+    public void setKeyForValue(boolean value) {
+        isKeyForValue = value;
     }
 
     public PositionalContext getPositionalContext() {

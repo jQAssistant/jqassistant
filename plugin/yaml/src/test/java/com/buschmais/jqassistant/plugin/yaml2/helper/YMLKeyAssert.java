@@ -85,4 +85,34 @@ public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLKeyDescr
 
             return this;
         }
+
+    public YMLKeyAssert hasMapAsValue() {
+        isNotNull();
+        hasValue();
+
+        String assertjErrorMessage = "\nExpecting key descriptor to have a <%s> as value\n" +
+                                     "but it has a <%s> as value\n";
+
+        YMLDescriptor value = actual.getValue();
+
+        if (!(value instanceof YMLMapDescriptor)) {
+            String actualType = ((Function<YMLDescriptor, String>) descriptor -> {
+                String type = "???";
+
+                if (descriptor instanceof YMLMapDescriptor) {
+                    type = "map";
+                } else if (descriptor instanceof YMLSequenceDescriptor) {
+                    type = "sequence";
+                } else if (descriptor instanceof YMLScalarDescriptor) {
+                    type = "scalar";
+                }
+
+                return type;
+            }).apply(actual);
+
+            failWithMessage(assertjErrorMessage, "map", actualType);
+        }
+
+        return this;
+    }
 }

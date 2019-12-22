@@ -24,7 +24,11 @@ public class TestHelper {
     }
 
     public static MapGetter getMaps(YMLSequenceDescriptor descriptor) {
-        return new MapGetter(descriptor);
+        return new MapGetter(() -> descriptor.getMaps());
+    }
+
+    public static MapGetter getMaps(YMLDocumentDescriptor descriptor) {
+        return new MapGetter(() -> descriptor.getMaps());
     }
 
     public static ScalarGetter getScalars(YMLSequenceDescriptor descriptor) {

@@ -94,4 +94,8 @@ public class YMLDocumentAssert extends AbstractObjectAssert<YMLDocumentAssert, Y
     }
 
 
+    public YMLDocumentAssert hasNoScalars() {
+        // todo implement this method. Added when where was no support for scalars in documents
+        return this;
+    }
 }

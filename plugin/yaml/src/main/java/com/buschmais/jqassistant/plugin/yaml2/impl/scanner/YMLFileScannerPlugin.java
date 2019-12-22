@@ -78,18 +78,31 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
                     handleSequenceStart(event);
                     break;
                 case Scalar:
+                    boolean scalarIsValueForKey = context.isInKey();
                     handleScalar(event);
+                    if (scalarIsValueForKey) {
+                        leaveCurrentContext(event);
+                    }
                     break;
                 case MappingStart:
+                    boolean mapIsValueForKey = context.isInKey();
                     handleMapStart(event);
+                    if (mapIsValueForKey) {
+                        context.getCurrent().setKeyForValue(mapIsValueForKey);
+                    }
                     break;
                 case MappingEnd:
                 case SequenceEnd:
                 case DocumentEnd:
                 case StreamEnd:
+                    boolean wasValueForKey = context.getCurrent().isKeyForValue();
                     leaveCurrentContext(event);
-                    break;
 
+                    if (wasValueForKey) {
+                        leaveCurrentContext(event);
+                    }
+
+                    break;
                     // todo no default ;-(
             }
         }
@@ -113,8 +126,12 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) contextType.getDescriptor();
             mapDescriptor.setIndex(index);
             sequenceDescriptor.getMaps().add(mapDescriptor);
-        } else {
+        } else if (context.isInKey()) {
+            getScannerContext().getStore().addDescriptorType(mapDescriptor, YMLValueDescriptor.class);
+            YMLKeyDescriptor ymlKeyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
+            ymlKeyDescriptor.setValue(mapDescriptor);
             // todo
+        } else {
             throw new IllegalStateException();
         }
 
@@ -149,7 +166,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             addDescriptor(valueDescriptor, YMLValueDescriptor.class);
             valueDescriptor.setValue(((ScalarEvent) event).getValue());
             keyDescriptor.setValue(valueDescriptor);
-            context.leave();
+            // context.leave();
         } else {
             String fqcn = contextType.getClass().getCanonicalName();
             String message = format("Unsupported YAML element represented by " +
