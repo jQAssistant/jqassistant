@@ -75,11 +75,14 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
                     handleDocumentStart(event);
                     break;
                 case SequenceStart:
+                    boolean seqIsValueForKey = context.isInKey();
                     handleSequenceStart(event);
+                    context.getCurrent().setKeyForValue(seqIsValueForKey);
                     break;
                 case Scalar:
                     boolean scalarIsValueForKey = context.isInKey();
                     handleScalar(event);
+
                     if (scalarIsValueForKey) {
                         leaveCurrentContext(event);
                     }
@@ -87,9 +90,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
                 case MappingStart:
                     boolean mapIsValueForKey = context.isInKey();
                     handleMapStart(event);
-                    if (mapIsValueForKey) {
-                        context.getCurrent().setKeyForValue(mapIsValueForKey);
-                    }
+                    context.getCurrent().setKeyForValue(mapIsValueForKey);
                     break;
                 case MappingEnd:
                 case SequenceEnd:
@@ -202,6 +203,9 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             ymlSequenceDescriptor.setIndex(index);
             YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) context.getCurrent().getDescriptor();
             descriptor.getSequences().add(ymlSequenceDescriptor);
+        } else if (context.isInKey()) {
+            YMLKeyDescriptor keyDescriptor = (YMLKeyDescriptor) context.getCurrent().getDescriptor();
+            keyDescriptor.setValue(ymlSequenceDescriptor);
         } else {
             // todo check if the type of the exeption is correct or if there is a better one
             String fqcn = context.getCurrent().getDescriptor().getClass().getCanonicalName();

@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ExampleC2E09IT extends AbstractYAMLPluginIT {
@@ -11,9 +10,14 @@ class ExampleC2E09IT extends AbstractYAMLPluginIT {
         return YAML_FILE;
     }
 
-    @Disabled("Test and scanner are not yet implemented.")
+    /* Note on the implemented tests
+     * For this example it is enough to be able to read the document. Further
+     * test only duplicate the already tested functionality.
+     * Oliver Fischer // 2019-12-22
+     */
     @Test
     void scannerCanReadDocument() {
-        throw new RuntimeException("Please implement me!");
+        readSourceDocument();
     }
+
 }
