@@ -3,3 +3,4 @@ todo Write Tests with unicode characters
 todo Track issue for SnakeYAML at https://bitbucket.org/asomov/snakeyaml-engine/issues/12/
 todo Improve the tests by using helper methods to make the tests more readable
 todo check how to computer (sum, avg) numeric values
+todo Add support for labels for simpley and compley keys
