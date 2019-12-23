@@ -14,9 +14,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.NoViableAltException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteTest {
     private IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
@@ -31,7 +32,7 @@ public class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteTest {
         class ANTLRRecognisedErrorNotFailedToReportItProperly extends Exception {
         }
 
-        Assertions.assertThatThrownBy(() -> {
+        assertThatThrownBy(() -> {
             try (InputStream inputStream = Files.newInputStream(jsonFile.toPath())) {
                 JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), "/not/given");
                 JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), "/not/given");

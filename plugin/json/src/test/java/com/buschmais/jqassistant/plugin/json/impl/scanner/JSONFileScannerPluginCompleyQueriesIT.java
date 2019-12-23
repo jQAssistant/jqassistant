@@ -7,17 +7,13 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor;
-import com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
@@ -45,7 +41,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                 "RETURN f"
         ).getColumn("f");
 
-        assertThat(results, hasSize(1));
+        assertThat(results).hasSize(1);
     }
 
     @Test
@@ -63,9 +59,9 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                      "RETURN f"
         ).getColumn("f");
 
-        assertThat(results, Matchers.notNullValue());
-        assertThat(results, not(empty()));
-        assertThat(results, hasSize(1));
+        assertThat(results).isNotNull();
+        assertThat(results).isNotEmpty();
+        assertThat(results).hasSize(1);
     }
 
     @Test
@@ -82,7 +78,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                 "RETURN f"
         ).getColumn("f");
 
-        assertThat(results, hasSize(1));
+        assertThat(results).hasSize(1);
     }
 
     @Test
@@ -101,7 +97,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                 "RETURN k"
         ).getColumn("k");
 
-        assertThat(results, hasSize(3));
+        assertThat(results).hasSize(3);
     }
 
 
@@ -119,7 +115,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
             "RETURN k"
         ).getRows();
 
-        assertThat(rows, empty());
+        assertThat(rows).isEmpty();
     }
 
 
@@ -136,13 +132,13 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                                         "RETURN o"
         ).getColumn("o");
 
-        assertThat(results, hasSize(1));
+        assertThat(results).hasSize(1);
 
         JSONScalarValueDescriptor valueDescriptor= results.get(0);
 
         // Assertion uses a double value because internally the value is
         // stored a double
-        assertThat(valueDescriptor.getValue(), equalTo(123.0D));
+        assertThat(valueDescriptor.getValue()).isEqualTo(123.0D);
     }
 
     @Test
@@ -166,8 +162,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                 "RETURN o"
         ).getColumn("o");
 
-        assertThat(resultsA, hasSize(1));
-        assertThat(resultsB, hasSize(1));
+        assertThat(resultsA).hasSize(1);
+        assertThat(resultsB).hasSize(1);
     }
 
     @Test
@@ -191,20 +187,8 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                 "RETURN a"
         ).getColumn("a");
 
-        assertThat(resultsA, hasSize(1));
-        assertThat(resultsB, hasSize(3));
+        assertThat(resultsA).hasSize(1);
+        assertThat(resultsB).hasSize(3);
     }
 
-    private JSONKeyDescriptor findKeyInDocument(List<JSONKeyDescriptor> keys, String name) {
-        JSONKeyDescriptor result = null;
-
-        for (JSONKeyDescriptor key : keys) {
-            if (key.getName().equals(name)) {
-                result = key;
-                break;
-            }
-        }
-
-        return result;
-    }
 }

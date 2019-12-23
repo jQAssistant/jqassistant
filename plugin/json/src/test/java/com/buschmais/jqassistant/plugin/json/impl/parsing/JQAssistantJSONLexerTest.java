@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,8 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.STRING;
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__4;
 import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONLexer.T__5;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class JQAssistantJSONLexerTest {
@@ -32,14 +30,14 @@ public class JQAssistantJSONLexerTest {
 
         List<? extends Token> foundTokens = lexer.getAllTokens();
 
-        assertThat("Number of expected and found tokens must be the same.",
-                   foundTokens.size(), Matchers.is(expectedTokens.length));
+        assertThat(foundTokens).as("Number of expected and found tokens must be the same.")
+                               .hasSize(expectedTokens.length);
 
         for (int i = 0; i < expectedTokens.length; i++) {
-            assertThat("Expected token and found token text mismatch.",
-                       foundTokens.get(i).getText(), equalTo(expectedTokens[i]));
+            assertThat(foundTokens.get(i).getText()).as("Expected token and found token text mismatch.")
+                                                    .isEqualTo(expectedTokens[i]);
 
-            assertThat(foundTokens.get(i).getType(), equalTo(exptectedTypeIds[i]));
+            assertThat(foundTokens.get(i).getType()).isEqualTo(exptectedTypeIds[i]);
         }
     }
 }

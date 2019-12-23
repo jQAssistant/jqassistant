@@ -10,12 +10,12 @@ import com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JQAssistantJSONParserHandlingOfInvalidJSONFilesTest {
 
@@ -27,31 +27,28 @@ public class JQAssistantJSONParserHandlingOfInvalidJSONFilesTest {
     @MethodSource("data")
     public void parserRecognizesAInvalidJSONFile(String pathToJSONFile) {
         IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
-        ThrowableAssert.ThrowingCallable shouldRaiseThrowable = new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
+        ThrowableAssert.ThrowingCallable shouldRaiseThrowable = () -> {
+            try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
 
-                    JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
-                    JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), pathToJSONFile);
+                JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
+                JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), pathToJSONFile);
 
-                    p.document();
-                }
+                p.document();
             }
         };
 
-        Assertions.assertThatThrownBy(shouldRaiseThrowable)
-                  .isInstanceOfAny(IllegalStateException.class,
-                                   RecognitionException.class,
-                                   JSONFileScannerPlugin.RecoverableParsingException.class,
-                                   NullPointerException.class)
-                  .satisfies(exception -> {
-                      if (NullPointerException.class.isAssignableFrom(exception.getClass())) {
-                          boolean predicateResult = antlrPredicate.isNPECausedByANTLRIssue746Predicate(exception);
+        assertThatThrownBy(shouldRaiseThrowable)
+            .isInstanceOfAny(IllegalStateException.class,
+                             RecognitionException.class,
+                             JSONFileScannerPlugin.RecoverableParsingException.class,
+                             NullPointerException.class)
+            .satisfies(exception -> {
+                if (NullPointerException.class.isAssignableFrom(exception.getClass())) {
+                    boolean predicateResult = antlrPredicate.isNPECausedByANTLRIssue746Predicate(exception);
 
-                          assertThat(predicateResult).isTrue();
-                      }
-                  });
+                    assertThat(predicateResult).isTrue();
+                }
+            });
     }
 }
 
