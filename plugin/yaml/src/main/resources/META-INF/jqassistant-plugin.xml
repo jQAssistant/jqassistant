@@ -3,13 +3,14 @@
     <description>Provides yet another a scanner for YAML files</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnkerDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLReferenceDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</class>
     </model>
     <scanner>
