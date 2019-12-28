@@ -6,9 +6,10 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("Key")
 public interface YMLKeyDescriptor extends YMLDescriptor {
-    String getName();
 
     @Property("name")
+    String getName();
+
     void setName(String name);
 
     @Relation("HAS_VALUE")
