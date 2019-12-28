@@ -155,15 +155,15 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             sequenceDescriptor.getScalars().add(scalarDescriptor);
         } else if (context.isInMap() && event.isEvent(Scalar)) {
             YMLMapDescriptor mapDescriptor = (YMLMapDescriptor) contextType.getDescriptor();
-            YMLKeyDescriptor keyDescriptor = createDescriptor(YMLKeyDescriptor.class);
-            ContextType<YMLKeyDescriptor> newContextType = ContextType.ofInKey(keyDescriptor);
+            YMLSimpleKeyDescriptor keyDescriptor = createDescriptor(YMLSimpleKeyDescriptor.class);
+            ContextType<YMLSimpleKeyDescriptor> newContextType = ContextType.ofInKey(keyDescriptor);
             context.enter(newContextType);
 
             keyDescriptor.setName(((ScalarEvent) event).getValue());
             mapDescriptor.getKeys().add(keyDescriptor);
         } else if (context.isInKey() && event.isEvent(Scalar)) {
             YMLScalarDescriptor valueDescriptor = createDescriptor(YMLScalarDescriptor.class);
-            YMLKeyDescriptor keyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
+            YMLSimpleKeyDescriptor keyDescriptor = (YMLSimpleKeyDescriptor) contextType.getDescriptor();
             addDescriptor(valueDescriptor, YMLValueDescriptor.class);
             valueDescriptor.setValue(((ScalarEvent) event).getValue());
             keyDescriptor.setValue(valueDescriptor);
@@ -204,7 +204,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) context.getCurrent().getDescriptor();
             descriptor.getSequences().add(ymlSequenceDescriptor);
         } else if (context.isInKey()) {
-            YMLKeyDescriptor keyDescriptor = (YMLKeyDescriptor) context.getCurrent().getDescriptor();
+            YMLSimpleKeyDescriptor keyDescriptor = (YMLSimpleKeyDescriptor) context.getCurrent().getDescriptor();
             keyDescriptor.setValue(ymlSequenceDescriptor);
         } else {
             // todo check if the type of the exeption is correct or if there is a better one
