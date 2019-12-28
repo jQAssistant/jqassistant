@@ -11,8 +11,9 @@ public interface JSONScalarValueDescriptor extends JSONValueDescriptor<Object> {
 
     @Property("value")
     @Override
-    void setValue(Object value);
+    Object getValue();
 
     @Override
-    Object getValue();
+    void setValue(Object value);
+
 }
