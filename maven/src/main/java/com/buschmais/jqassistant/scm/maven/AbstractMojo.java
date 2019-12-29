@@ -419,7 +419,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             builder.uri(store.getUri());
             builder.username(store.getUsername());
             builder.password(store.getPassword());
-            builder.encryptionLevel(store.getEncryptionLevel());
+            builder.encryption(store.getEncryption());
+            builder.trustStrategy(store.getTrustStrategy());
+            builder.trustCertificate(store.getTrustCertificate());
         }
         builder.properties(store.getProperties());
         builder.embedded(getEmbeddedNeo4jConfiguration());
