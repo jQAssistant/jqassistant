@@ -27,7 +27,11 @@ public class StoreConfiguration {
 
     private String password;
 
-    private String encryptionLevel;
+    private String encryption;
+
+    private String trustStrategy;
+
+    private String trustCertificate;
 
     @Default
     private Properties properties = new Properties();

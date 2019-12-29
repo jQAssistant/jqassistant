@@ -32,9 +32,17 @@ public class RemoteGraphStore extends AbstractGraphStore {
         if (password != null) {
             properties.setProperty(Property.PASSWORD.getKey(), password);
         }
-        String encryptionLevel = this.storeConfiguration.getEncryptionLevel();
-        if (encryptionLevel != null) {
-            properties.setProperty(Property.ENCRYPTION_LEVEL.getKey(), encryptionLevel);
+        String encryption = this.storeConfiguration.getEncryption();
+        if (encryption != null) {
+            properties.setProperty(Property.ENCRYPTION.getKey(), encryption);
+        }
+        String trustStrategy = this.storeConfiguration.getTrustStrategy();
+        if (trustStrategy != null) {
+            properties.setProperty(Property.TRUST_STRATEGY.getKey(), trustStrategy);
+        }
+        String trustCertificate = this.storeConfiguration.getTrustCertificate();
+        if (trustCertificate != null) {
+            properties.setProperty(Property.TRUST_CERTIFICATE.getKey(), trustCertificate);
         }
         Properties storeConfigurationProperties = this.storeConfiguration.getProperties();
         if (storeConfigurationProperties != null) {
