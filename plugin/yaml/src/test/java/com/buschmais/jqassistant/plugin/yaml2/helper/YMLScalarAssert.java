@@ -8,7 +8,7 @@ import org.assertj.core.api.AbstractObjectAssert;
 
 public class YMLScalarAssert extends AbstractObjectAssert<YMLScalarAssert, YMLScalarDescriptor> {
     public YMLScalarAssert(YMLScalarDescriptor descriptor) {
-        super(descriptor, YMLScalarDescriptor.class);
+        super(descriptor, YMLScalarAssert.class);
     }
 
     public YMLScalarAssert hasValue(String expectedValue) {

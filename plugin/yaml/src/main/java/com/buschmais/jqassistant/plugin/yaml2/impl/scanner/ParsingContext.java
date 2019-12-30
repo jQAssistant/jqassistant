@@ -7,9 +7,14 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 
 class ParsingContext {
     private LinkedList<ContextType<? extends YMLDescriptor>> stack = new LinkedList<>();
+    private AliasCache aliasCache = new AliasCache();
 
     public boolean isEmpty() {
         return stack.isEmpty();
+    }
+
+    public AliasCache getAliasCache() {
+        return aliasCache;
     }
 
     public <D extends YMLDescriptor> void enter(ContextType<D> type) {

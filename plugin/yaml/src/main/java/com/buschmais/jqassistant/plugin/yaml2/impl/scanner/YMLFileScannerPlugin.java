@@ -15,7 +15,9 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
+import org.snakeyaml.engine.v2.events.AliasEvent;
 import org.snakeyaml.engine.v2.events.Event;
+import org.snakeyaml.engine.v2.events.NodeEvent;
 import org.snakeyaml.engine.v2.events.ScalarEvent;
 
 import static java.lang.String.format;
@@ -68,6 +70,9 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         for (Event event : events) {
             System.out.println("## " + event);
             switch (event.getEventId()) {
+                case Alias:
+                    handleAlias(event);
+                    break;
                 case StreamStart:
                     handleStreamStart(event);
                     break;
@@ -104,11 +109,31 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
                     }
 
                     break;
-                    // todo no default ;-(
+                default:
+                    Event.ID eventId = event.getEventId();
+                    String message = format("Event '%s' is currently not supported", eventId);
+                    throw new IllegalStateException(message);
             }
         }
+    }
+
+    private void handleAlias(Event event) {
+        AliasEvent aliasEvent = AliasEvent.class.cast(event);
 
 
+    }
+
+    private void checkAndHandleAnchor(Event event, YMLDescriptor descriptor) {
+        if (NodeEvent.class.isAssignableFrom(event.getClass())) {
+            NodeEvent nodeEvent = NodeEvent.class.cast(event);
+            if (nodeEvent.getAnchor().isPresent()) {
+                YMLAnchorDescriptor ymlAnchorDescriptor = getScannerContext().getStore()
+                                                                             .addDescriptorType(descriptor, YMLAnchorDescriptor.class);
+                String alias = nodeEvent.getAnchor().get().getAnchor();
+                ymlAnchorDescriptor.setAnchorName(alias);
+                context.getAliasCache().addAlias(alias, descriptor);
+            }
+        }
     }
 
     private void handleMapStart(Event event) {
@@ -153,6 +178,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             scalarDescriptor.setIndex(index);
             scalarDescriptor.setValue(((ScalarEvent) event).getValue());
             sequenceDescriptor.getScalars().add(scalarDescriptor);
+            checkAndHandleAnchor(event, scalarDescriptor);
         } else if (context.isInMap() && event.isEvent(Scalar)) {
             YMLMapDescriptor mapDescriptor = (YMLMapDescriptor) contextType.getDescriptor();
             YMLSimpleKeyDescriptor keyDescriptor = createDescriptor(YMLSimpleKeyDescriptor.class);
@@ -167,6 +193,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             addDescriptor(valueDescriptor, YMLValueDescriptor.class);
             valueDescriptor.setValue(((ScalarEvent) event).getValue());
             keyDescriptor.setValue(valueDescriptor);
+            checkAndHandleAnchor(event, valueDescriptor);
             // context.leave();
         } else {
             String fqcn = contextType.getClass().getCanonicalName();
