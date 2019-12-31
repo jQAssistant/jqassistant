@@ -9,14 +9,14 @@ public class PositionalContext {
 
     private int currentIndex = 0;
 
-    int inc() {
+    public int inc() {
         return currentIndex++;
     }
 }
 
 class NoPositionalContext extends PositionalContext {
     @Override
-    int inc() {
+    public int inc() {
         throw new UnsupportedOperationException();
     }
 }
