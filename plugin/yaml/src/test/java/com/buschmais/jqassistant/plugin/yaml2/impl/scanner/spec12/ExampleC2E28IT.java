@@ -7,7 +7,7 @@ class ExampleC2E28IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e28-log-file.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

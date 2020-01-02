@@ -7,7 +7,7 @@ class ExampleC2E19IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e19-integers.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

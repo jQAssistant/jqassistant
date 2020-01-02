@@ -6,7 +6,7 @@ class ExampleC2E09IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e09-single-document-with-two-comments.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

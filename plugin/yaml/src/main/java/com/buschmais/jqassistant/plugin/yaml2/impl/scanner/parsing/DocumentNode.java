@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.snakeyaml.engine.v2.events.DocumentStartEvent;
 
-public class DocumentNode extends ParseNode<DocumentStartEvent> {
+public class DocumentNode extends BaseNode<DocumentStartEvent> {
     private ArrayList<SequenceNode> sequences = new ArrayList<>();
     private ArrayList<MapNode> maps = new ArrayList<>();
 

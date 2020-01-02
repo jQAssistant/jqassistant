@@ -2,13 +2,17 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.snakeyaml.engine.v2.events.SequenceStartEvent;
 
-public class SequenceNode extends ParseNode<SequenceStartEvent> {
+public class SequenceNode
+    extends BaseNode<SequenceStartEvent>
+    implements AnchorSupport<SequenceStartEvent> {
+    private ArrayList<AliasNode> aliases = new ArrayList<>(5);
     private ArrayList<ScalarNode> scalars = new ArrayList<>(5);
     private ArrayList<SequenceNode> sequences = new ArrayList<>(3);
-    private int index;
+    private Integer index;
     private ArrayList<MapNode> maps = new ArrayList<>(3);
 
     public SequenceNode(SequenceStartEvent event) {
@@ -31,19 +35,27 @@ public class SequenceNode extends ParseNode<SequenceStartEvent> {
         return new ArrayList<>(sequences);
     }
 
-    public void setIndex(int index) {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 
-    public int getIndex() {
-        return index;
+    public Optional<Integer> getIndex() {
+        return Optional.ofNullable(index);
     }
 
     public ArrayList<MapNode> getMaps() {
-        return maps;
+        return new ArrayList<>(maps);
     }
 
     public void addMap(MapNode node) {
         maps.add(node);
+    }
+
+    public ArrayList<AliasNode> getAliases() {
+        return new ArrayList<>(aliases);
+    }
+
+    public void addAlias(AliasNode node) {
+        aliases.add(node);
     }
 }

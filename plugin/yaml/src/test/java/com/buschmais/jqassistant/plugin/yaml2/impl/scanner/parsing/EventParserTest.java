@@ -22,7 +22,7 @@ class EventParserTest {
 
     @DisplayName("handle anchors")
     @Nested
-    class AnchorsAndAliases {
+    class Anchors {
         @DisplayName("for a scalar")
         @Test
         void anchorAForAScalarValueRecognized() {
@@ -43,8 +43,8 @@ class EventParserTest {
             assertThat(topSeqNode.getScalars()).hasSize(1);
             ScalarNode scalarNode = topSeqNode.getScalars().get(0);
 
-            assertThat(scalarNode.hasAnchor()).isTrue();
-            assertThat(scalarNode.getAnchor()).isEqualTo("anchor");
+            assertThat(scalarNode.getAnchor()).isPresent();
+            assertThat(scalarNode.getAnchor()).get().isEqualTo("anchor");
         }
 
         @DisplayName("for a scalar and adds them to the anchor reference")
@@ -64,9 +64,9 @@ class EventParserTest {
             parser.parse(events);
 
             assertThat(parser.hasAnchor("anchor")).isTrue();
-            assertThat(parser.getAnchor("anchor")).isInstanceOf(ScalarNode.class);
+            assertThat(parser.getAnchor("anchor")).get().isInstanceOf(ScalarNode.class);
 
-            ScalarNode scalarNode = (ScalarNode) parser.getAnchor("anchor");
+            ScalarNode scalarNode = (ScalarNode) parser.getAnchor("anchor").get();
 
             assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
         }
@@ -84,6 +84,54 @@ class EventParserTest {
         void anchorAndAliasForAMapValue() {
             throw new RuntimeException("This test is not implemented.");
         }
+    }
+
+    @DisplayName("aliases")
+    @Nested
+    class Aliases {
+        @DisplayName("for an existing scalar")
+        @Test
+        void aliasReferencesAScalar() {
+            Stream<Event> events = Stream.of(strStE(),
+                                             docStE(),
+                                             seqStE(),
+                                             scalarE("L0"),
+                                             scalarE("L1", anchor("anchor")),
+                                             scalarE("L2"),
+                                             alias("anchor"),
+                                             seqEndE(),
+                                             docEndE(),
+                                             strEndE());
+
+            StreamNode streamNode = parser.parse(events);
+            DocumentNode documentNode = streamNode.getDocuments().get(0);
+            SequenceNode sequenceNode = documentNode.getSequences().get(0);
+
+            assertThat(sequenceNode.getAliases()).isNotEmpty().hasSize(1);
+            AliasNode aliasNode = sequenceNode.getAliases().get(0);
+
+            assertThat(aliasNode.getReferencedNode()).isInstanceOf(ScalarNode.class);
+            assertThat(aliasNode.getIndex()).get().isEqualTo(3);
+
+            ScalarNode scalarNode = (ScalarNode) aliasNode.getReferencedNode();
+            assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
+        }
+
+        @Disabled
+        @DisplayName("for an existing map")
+        @Test
+        void aliasReferencesAMap() {
+            throw new RuntimeException();
+        }
+
+        @Disabled
+        @DisplayName("for an existing sequence")
+        @Test
+        void aliasReferencesASequence() {
+            throw new RuntimeException();
+        }
+
+
     }
 
     @DisplayName("parse a document")
@@ -358,6 +406,11 @@ class EventParserTest {
     }
 
 
+
+    private AliasEvent alias(String anchorName) {
+        Anchor anchor = new Anchor(anchorName);
+        return new AliasEvent(Optional.of(anchor));
+    }
 
     private ScalarEvent scalarE(String value) {
         return scalarE(value, null);

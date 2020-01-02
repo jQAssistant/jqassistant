@@ -7,7 +7,7 @@ class ExampleC2E24IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e24-cglobal-tags.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

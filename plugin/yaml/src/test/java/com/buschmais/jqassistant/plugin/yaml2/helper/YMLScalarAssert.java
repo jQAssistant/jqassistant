@@ -25,4 +25,18 @@ public class YMLScalarAssert extends AbstractObjectAssert<YMLScalarAssert, YMLSc
         return this;
     }
 
+    public YMLScalarAssert hasIndex(int expectedValue) {
+        isNotNull();
+
+        String assertjErrorMessage = "\nExpecting scalar descriptor to have an " +
+                                     "index of <%s>\n" +
+                                     "but its actual index is <%s>\n";
+
+        Integer actualValue = actual.getIndex();
+        if (!Objects.equals(expectedValue, actualValue)) {
+            failWithMessage(assertjErrorMessage, expectedValue, actualValue);
+        }
+
+        return this;
+    }
 }

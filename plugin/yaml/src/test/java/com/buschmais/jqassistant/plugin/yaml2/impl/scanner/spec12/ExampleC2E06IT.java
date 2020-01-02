@@ -14,7 +14,7 @@ class ExampleC2E06IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e06-mapping-of-mappings.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

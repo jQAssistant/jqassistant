@@ -12,7 +12,7 @@ class ExampleC2E07IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e07-two-documents-in-a-stream.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

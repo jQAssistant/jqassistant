@@ -6,7 +6,7 @@ class ExampleC2E20IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e20-floating point.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

@@ -14,7 +14,7 @@ class ExampleC2E10IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e10-node-for-sammy-sosa-appears-twice-in-this-document.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

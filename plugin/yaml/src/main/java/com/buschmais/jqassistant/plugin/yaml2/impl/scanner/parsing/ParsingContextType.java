@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext;
 
 import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext.NO_POSITIONAL_CONTEXT;
 
-class ParsingContextType<D extends ParseNode> {
+class ParsingContextType<D extends BaseNode> {
     private D node;
     private Type type;
     private PositionalContext positionalContext;
@@ -21,27 +21,27 @@ class ParsingContextType<D extends ParseNode> {
         this(type, null, context);
     }
 
-    static <D extends ParseNode> ParsingContextType<D> ofInFile(D descriptor) {
+    static <D extends BaseNode> ParsingContextType<D> ofInFile(D descriptor) {
         return new ParsingContextType<>(Type.IN_FILE, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends ParseNode> ParsingContextType<D> ofInDocument(D descriptor) {
+    static <D extends BaseNode> ParsingContextType<D> ofInDocument(D descriptor) {
         return new ParsingContextType<>(Type.IN_DOCUMENT, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends ParseNode> ParsingContextType<D> ofInMap(D descriptor) {
+    static <D extends BaseNode> ParsingContextType<D> ofInMap(D descriptor) {
         return new ParsingContextType<>(Type.IN_MAP, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends ParseNode> ParsingContextType<D> ofInSequence(D descriptor) {
+    static <D extends BaseNode> ParsingContextType<D> ofInSequence(D descriptor) {
         return new ParsingContextType<>(Type.IN_SEQUENCE, descriptor, new PositionalContext());
     }
 
-    static <N extends ParseNode> ParsingContextType<N> ofInStream(N node) {
+    static <N extends BaseNode> ParsingContextType<N> ofInStream(N node) {
         return new ParsingContextType<>(Type.IN_STREAM, node, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends ParseNode> ParsingContextType<D> ofInKey(D descriptor) {
+    static <D extends BaseNode> ParsingContextType<D> ofInKey(D descriptor) {
         return new ParsingContextType<>(Type.IN_KEY, descriptor, NO_POSITIONAL_CONTEXT);
     }
 

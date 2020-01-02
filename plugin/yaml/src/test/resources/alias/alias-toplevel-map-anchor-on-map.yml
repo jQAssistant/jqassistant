@@ -1,0 +1,7 @@
+kl1:
+  &alias
+  kl2a: lv2
+  kl2b: lv3
+kl2: *alias
+
+

@@ -6,7 +6,7 @@ class ExampleC2E14IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e14-in-the-folded-scalars-newlines-become spaces.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

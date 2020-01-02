@@ -20,7 +20,7 @@ class ExampleC2E05IT extends AbstractYAMLPluginIT {
     private YMLScalarDescriptor first;
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

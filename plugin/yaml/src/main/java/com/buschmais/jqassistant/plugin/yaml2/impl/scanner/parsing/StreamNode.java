@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.snakeyaml.engine.v2.events.StreamStartEvent;
 
-public class StreamNode extends ParseNode<StreamStartEvent> {
+public class StreamNode extends BaseNode<StreamStartEvent> {
 
     private ArrayList<DocumentNode> documents = new ArrayList<>();
 

@@ -6,7 +6,7 @@ class ExampleC2E26IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e26-ordered-mappings.yaml";
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

@@ -17,7 +17,7 @@ class ExampleC2E08IT extends AbstractYAMLPluginIT {
      */
 
     @Override
-    String getSourceYAMLFile() {
+    protected String getSourceYAMLFile() {
         return YAML_FILE;
     }
 

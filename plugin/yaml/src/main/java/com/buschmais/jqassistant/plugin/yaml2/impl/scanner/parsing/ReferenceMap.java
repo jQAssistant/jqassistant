@@ -1,20 +1,21 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class ReferenceMap {
-    private HashMap<String, ParseNode> references = new HashMap<>();
+    private HashMap<String, BaseNode> references = new HashMap<>();
 
 
     public boolean hasAnchor(String anchor) {
         return references.containsKey(anchor);
     }
 
-    public ParseNode<?> getAnchor(String anchor) {
-        return references.get(anchor);
+    public Optional<BaseNode<?>> getAnchor(String anchor) {
+        return Optional.ofNullable(references.get(anchor));
     }
 
-    public void addAnchor(String anchor, ParseNode<?> node) {
+    public void addAnchor(String anchor, BaseNode<?> node) {
         references.put(anchor, node);
     }
 }
