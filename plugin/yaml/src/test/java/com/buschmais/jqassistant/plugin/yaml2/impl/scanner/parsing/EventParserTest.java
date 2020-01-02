@@ -86,10 +86,11 @@ class EventParserTest {
         }
     }
 
-    @DisplayName("focus on document level")
+    @DisplayName("parse a document")
     @Nested
     class DocumentLevel {
 
+        @DisplayName("with a map")
         @Test
         void documentWithMap() {
             Stream<Event> events = Stream.of(strStE(),
@@ -114,6 +115,7 @@ class EventParserTest {
             // todo add assertions on the value of the key
         }
 
+        @DisplayName("which is empty")
         @Test
         void streamWithAnEmptyDocument() {
             Stream<Event> events = Stream.of(strStE(),
@@ -126,6 +128,7 @@ class EventParserTest {
             assertThat(root.getDocuments()).hasSize(1);
         }
 
+        @DisplayName("which is followed by a second empty document")
         @Test
         void streamWithTwoEmptyDocuments() {
             Stream<Event> events = Stream.of(strStE(),
@@ -139,6 +142,7 @@ class EventParserTest {
             assertThat(root.getDocuments()).hasSize(2);
         }
 
+        @DisplayName("with a sequence")
         @Test
         void documentWithSequence() {
             Stream<Event> events = Stream.of(strStE(),
@@ -163,7 +167,7 @@ class EventParserTest {
 
     }
 
-    @DisplayName("a sequence")
+    @DisplayName("parse a sequence")
     @Nested
     class SequenceLevel {
         @DisplayName("with a scalar as value")
@@ -237,7 +241,7 @@ class EventParserTest {
         }
     }
 
-    @DisplayName("a map")
+    @DisplayName("parse a map")
     @Nested
     class MapLevel {
         @DisplayName("with a simple key and a scalar as value")
@@ -287,6 +291,40 @@ class EventParserTest {
             KeyNode keyNode = mapNode.getKeys().get(0);
 
             assertThat(keyNode.getValue()).isInstanceOf(SequenceNode.class);
+        }
+
+        @DisplayName("with two keys with maps as value")
+        @Test
+        void withTwoMaps() {
+            Stream<Event> events = Stream.of(strStE(),
+                                             docStE(),
+                                             mapStE(),
+                                             scalarE("Mark McGwire"),
+                                             mapStE(),
+                                             scalarE("hr"),
+                                             scalarE("65"),
+                                             scalarE("avg"),
+                                             scalarE("0.278"),
+                                             mapEndE(),
+                                             scalarE("Sammy Sosa"),
+                                             mapStE(),
+                                             scalarE("hr"),
+                                             scalarE("63"),
+                                             scalarE("avg"),
+                                             scalarE("0.288"),
+                                             mapEndE(),
+                                             mapEndE(),
+                                             docEndE(),
+                                             strEndE());
+            StreamNode root = parser.parse(events);
+
+            DocumentNode documentNode = root.getDocuments().get(0);
+
+            assertThat(documentNode.getMaps()).hasSize(1);
+
+            MapNode mapNode = documentNode.getMaps().get(0);
+
+            assertThat(mapNode.getKeys()).hasSize(2);
         }
 
         @DisplayName("with a simple key and map as value")

@@ -14,7 +14,7 @@ public class EventParser {
     ParserContext parserContext = new ParserContext();
     private ReferenceMap references = new ReferenceMap();
 
-    StreamNode parse(Stream<Event> events) {
+    public StreamNode parse(Stream<Event> events) {
         Consumer<Event> consumer = event -> {
             switch (event.getEventId()) {
                 case Scalar:
@@ -47,12 +47,12 @@ public class EventParser {
                 case SequenceEnd:
                 case DocumentEnd:
                 case StreamEnd:
-                   // boolean wasValueForKey = parserContext.getCurrent().isKeyForValue();
+                    boolean wasValueForKey = parserContext.getCurrent().isKeyForValue();
                     parserContext.leave();
 
-                    //if (wasValueForKey) {
-                    //    parserContext.leave();
-                   // }
+                    if (wasValueForKey) {
+                        parserContext.leave();
+                    }
 
                     break;
 

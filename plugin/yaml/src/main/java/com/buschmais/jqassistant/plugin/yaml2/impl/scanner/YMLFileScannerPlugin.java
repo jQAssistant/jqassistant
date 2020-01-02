@@ -2,6 +2,9 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -12,6 +15,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.EventParser;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
@@ -45,6 +49,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         ScannerContext context = scanner.getContext();
         LoadSettings settings = LoadSettings.builder().build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
+        EventParser eventParser = new EventParser();
 
         // todo implement handleFileEnd
         // todo take it from the parsing context
@@ -54,7 +59,14 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         try (InputStream in = item.createStream()) {
             Parse parser = new Parse(settings);
             Iterable<Event> events = parser.parseInputStream(in);
-            processEvents(events);
+            List<Event> copy = StreamSupport.stream(events.spliterator(), false)
+                                               .collect(Collectors.toList());
+            processEvents(() -> copy.iterator());
+
+            System.out.println("----");
+            copy.forEach(e -> System.out.println(e));
+            System.out.println("----");
+            eventParser.parse(copy.stream());
         } catch (RuntimeException re) {
             // todo Improve the errorhandling
             throw re;
