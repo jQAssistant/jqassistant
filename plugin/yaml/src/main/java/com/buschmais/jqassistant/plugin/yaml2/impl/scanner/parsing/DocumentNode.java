@@ -8,6 +8,7 @@ import org.snakeyaml.engine.v2.events.DocumentStartEvent;
 public class DocumentNode extends BaseNode<DocumentStartEvent> {
     private ArrayList<SequenceNode> sequences = new ArrayList<>();
     private ArrayList<MapNode> maps = new ArrayList<>();
+    private ArrayList<ScalarNode> scalars = new ArrayList<>();
 
     public DocumentNode(DocumentStartEvent event) {
         super(event);
@@ -27,5 +28,13 @@ public class DocumentNode extends BaseNode<DocumentStartEvent> {
 
     public void addMap(MapNode node) {
         maps.add(node);
+    }
+
+    public List<ScalarNode> getScalars() {
+        return new ArrayList<>(scalars);
+    }
+
+    public void addScalar(ScalarNode node) {
+        scalars.add(node);
     }
 }

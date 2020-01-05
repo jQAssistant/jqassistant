@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.EventParser;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.ReferenceMap;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.StreamNode;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;

@@ -137,6 +137,12 @@ class EventParserTest {
     @DisplayName("parse a document")
     @Nested
     class DocumentLevel {
+        @Disabled
+        @DisplayName("with a scalar")
+        @Test
+        void documentWithScalar() {
+            throw new RuntimeException("This test is not implemented.");
+        }
 
         @DisplayName("with a map")
         @Test

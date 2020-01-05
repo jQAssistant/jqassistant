@@ -211,11 +211,16 @@ public class EventParser {
             //keyNode.setKeyName(event.getValue());
             keyNode.setValue(scalarNode);
             // todo   checkAndHandleAnchor(valueDescriptor);
+        } else if (parserContext.isInDocument() && event.isEvent(Scalar)) {
+            DocumentNode documentNode = (DocumentNode) contextType.getNode();
+            ScalarNode scalarNode = new ScalarNode(event);
+            documentNode.addScalar(scalarNode);
+            // todo   checkAndHandleAnchor(valueDescriptor);
         } else {
             String fqcn = contextType.getClass().getCanonicalName();
             String message = format("Unsupported YAML element represented by " +
-                                    "class %s encountered.", fqcn);
-            // todo throw new IllegalStateException(message  );
+                                    "class <%s> encountered.", fqcn);
+            throw new IllegalStateException(message);
         }
 
         // todo Handle unsupported descriptor

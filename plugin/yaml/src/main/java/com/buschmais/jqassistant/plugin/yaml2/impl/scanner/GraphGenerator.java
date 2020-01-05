@@ -65,6 +65,11 @@ public class GraphGenerator {
                 Consumer<YMLDescriptor> newHandler = descriptor -> documentDescriptor.getMaps().add((YMLMapDescriptor) descriptor);
                 traverse(mapNode, newHandler, mode);
             });
+
+            documentNode.getScalars().forEach(mapNode -> {
+                Consumer<YMLDescriptor> newHandler = descriptor -> documentDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
+                traverse(mapNode, newHandler, mode);
+            });
         } else if (node.getClass().isAssignableFrom(SequenceNode.class)) {
             SequenceNode sequenceNode = (SequenceNode) node;
             YMLSequenceDescriptor sequenceDescriptor = store.create(YMLSequenceDescriptor.class);

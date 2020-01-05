@@ -94,8 +94,27 @@ public class YMLDocumentAssert extends AbstractObjectAssert<YMLDocumentAssert, Y
     }
 
 
+    public YMLDocumentAssert hasScalars() {
+        isNotNull();
+
+        String assertjErrorMessage = "\nExpecting document descriptor to have scalars";
+
+        if (actual.getScalars().isEmpty()) {
+            failWithMessage(assertjErrorMessage);
+        }
+
+        return this;
+    }
+
     public YMLDocumentAssert hasNoScalars() {
-        // todo implement this method. Added when where was no support for scalars in documents
+        isNotNull();
+
+        String assertjErrorMessage = "\nExpecting document descriptor to have no scalars\nbut has <%s> scalars\n";
+
+        if (!actual.getScalars().isEmpty()) {
+            failWithMessage(assertjErrorMessage);
+        }
+
         return this;
     }
 }

@@ -13,4 +13,7 @@ public interface YMLDocumentDescriptor extends YMLDescriptor {
 
     @Relation("HAS_MAP")
     List<YMLMapDescriptor> getMaps();
+
+    @Relation("HAS_SCALAR")
+    List<YMLScalarDescriptor> getScalars();
 }
