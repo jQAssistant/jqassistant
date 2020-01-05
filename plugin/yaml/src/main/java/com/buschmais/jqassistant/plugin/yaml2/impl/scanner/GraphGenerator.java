@@ -31,12 +31,10 @@ public class GraphGenerator {
     }
 
     private AnchorProcessor anchorProcessor = new AnchorProcessor();
-    private final ReferenceMap referenceMap;
     private Store store;
 
-    public GraphGenerator(Store store, ReferenceMap references) {
+    public GraphGenerator(Store store) {
         this.store = store;
-        this.referenceMap = references;
     }
 
     public Collection<YMLDocumentDescriptor> generate(StreamNode root) {

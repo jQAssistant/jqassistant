@@ -57,8 +57,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             Iterable<Event> events = parser.parseInputStream(in);
             StreamNode streamNode = eventParser.parse(StreamSupport.stream(events.spliterator(), false));
             Store store = getScannerContext().getStore();
-            ReferenceMap referenceMap = eventParser.getReferenceMap();
-            GraphGenerator generator = new GraphGenerator(store,referenceMap);
+            GraphGenerator generator = new GraphGenerator(store);
             Collection<YMLDocumentDescriptor> documents = generator.generate(streamNode);
 
             documents.forEach(documentDescriptor -> {
