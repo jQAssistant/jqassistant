@@ -29,9 +29,13 @@ public class AliasIT extends AbstractYAMLPluginIT {
             YMLSequenceDescriptor sequenceDescriptor = (YMLSequenceDescriptor) key.getValue();
 
             assertThat(sequenceDescriptor).hasItems(3);
-            assertThat(sequenceDescriptor.getScalars().get(0).getValue()).isEqualTo("s1v1");
-            assertThat(sequenceDescriptor.getScalars().get(1).getValue()).isEqualTo("s1v2");
-            assertThat(sequenceDescriptor.getScalars().get(2).getValue()).isEqualTo("s1v3");
+            YMLScalarDescriptor item0 = getScalars(sequenceDescriptor).getScalar(0);
+            YMLScalarDescriptor item1 = getScalars(sequenceDescriptor).getScalar(1);
+            YMLScalarDescriptor item2 = getScalars(sequenceDescriptor).getScalar(2);
+
+            assertThat(item0).hasValue("s1v1").hasIndex(0);
+            assertThat(item1).hasValue("s1v2").hasIndex(1);
+            assertThat(item2).hasValue("s1v3").hasIndex(2);
         }
 
         @Test
