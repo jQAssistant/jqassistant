@@ -41,8 +41,12 @@ class ParsingContextType<D extends BaseNode> {
         return new ParsingContextType<>(Type.IN_STREAM, node, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInKey(D descriptor) {
-        return new ParsingContextType<>(Type.IN_KEY, descriptor, NO_POSITIONAL_CONTEXT);
+    static <D extends BaseNode> ParsingContextType<D> ofInKey(D node) {
+        return new ParsingContextType<>(Type.IN_KEY, node, NO_POSITIONAL_CONTEXT);
+    }
+
+    static <D extends BaseNode> ParsingContextType<D> ofInComplexKey(D node) {
+        return new ParsingContextType<>(Type.IN_COMPLEX_KEY, node, NO_POSITIONAL_CONTEXT);
     }
 
     Type getType() {
@@ -66,8 +70,10 @@ class ParsingContextType<D extends BaseNode> {
     }
 
     enum Type {
+        IN_COMPLEX_KEY,
         IN_DOCUMENT,
         IN_FILE,
+        // todo rename in IN_SIMPLE_KEY
         IN_KEY,
         IN_MAP,
         IN_SEQUENCE,

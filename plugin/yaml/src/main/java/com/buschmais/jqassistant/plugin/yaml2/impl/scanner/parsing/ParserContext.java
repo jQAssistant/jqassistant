@@ -50,8 +50,16 @@ public class ParserContext {
         return peek().getType() == ParsingContextType.Type.IN_MAP;
     }
 
-    boolean isInKey() {
+    boolean isInSimpleKey() {
         return peek().getType() == ParsingContextType.Type.IN_KEY;
+    }
+
+    boolean isInComplexKey() {
+        return peek().getType() == ParsingContextType.Type.IN_COMPLEX_KEY;
+    }
+
+    boolean isInKey() {
+        return isInSimpleKey() || isInComplexKey();
     }
 
     boolean isInSequence() {

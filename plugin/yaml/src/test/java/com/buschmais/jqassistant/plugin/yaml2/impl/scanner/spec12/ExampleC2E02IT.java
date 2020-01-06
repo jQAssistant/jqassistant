@@ -31,9 +31,9 @@ class ExampleC2E02IT extends AbstractYAMLPluginIT {
         YMLMapDescriptor map = getDocuments(ymlFileDescriptor).getDocument(0)
                                                 .getMaps().get(0);
 
-        YMLKeyDescriptor keyHr = getKeys(map).getKeyByName("hr");
-        YMLKeyDescriptor keyAvg = getKeys(map).getKeyByName("avg");
-        YMLKeyDescriptor keyRbi = getKeys(map).getKeyByName("rbi");
+        YMLSimpleKeyDescriptor keyHr = getKeys(map).getKeyByName("hr");
+        YMLSimpleKeyDescriptor keyAvg = getKeys(map).getKeyByName("avg");
+        YMLSimpleKeyDescriptor keyRbi = getKeys(map).getKeyByName("rbi");
 
         assertThat(keyHr).hasValue().hasScalarAsValue().hasScalarValue("65");
         assertThat(keyAvg).hasValue().hasScalarAsValue().hasScalarValue("0.278");

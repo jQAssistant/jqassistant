@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions;
 
 public class YMLPluginAssertions extends Assertions {
 
-    public static YMLKeyAssert assertThat(YMLKeyDescriptor descriptor) {
+    public static YMLKeyAssert assertThat(YMLSimpleKeyDescriptor descriptor) {
         return new YMLKeyAssert(descriptor);
     }
 

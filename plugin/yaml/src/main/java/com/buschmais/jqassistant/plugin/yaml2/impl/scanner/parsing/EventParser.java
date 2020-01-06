@@ -135,6 +135,15 @@ public class EventParser {
             YMLKeyDescriptor ymlKeyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
             ymlKeyDescriptor.setValue(mapDescriptor);
              */
+        } else if (parserContext.isInMap()) {
+            // sequence as key of a map
+            ComplexKeyNode complexKey = new ComplexKeyNode(event);
+            complexKey.setKeyNode(mapNode);
+            ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
+            MapNode parentMapNode = (MapNode) parserContext.getCurrent().getNode();
+            parentMapNode.addKey(complexKey);
+            parserContext.enter(inComplexKey);
+
         } else {
             // todo
             throw new IllegalStateException();
@@ -164,6 +173,15 @@ public class EventParser {
             descriptor.getSequences().add(ymlSequenceDescriptor);
 
              */
+        } else if (parserContext.isInMap()) {
+            // sequence as key of a map
+            ComplexKeyNode complexKey = new ComplexKeyNode(event);
+            complexKey.setKeyNode(sequenceNode);
+            ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
+            MapNode mapNode = (MapNode) parserContext.getCurrent().getNode();
+            mapNode.addKey(complexKey);
+            parserContext.enter(inComplexKey);
+            // todo   checkAndHandleAnchor(valueDescriptor);
         } else if (parserContext.isInKey()) {
             KeyNode keyNode = (KeyNode) parserContext.getCurrent().getNode();
             keyNode.setValue(sequenceNode);
@@ -198,7 +216,7 @@ public class EventParser {
         } else if (parserContext.isInMap() && event.isEvent(Scalar)) {
 
             MapNode mapNode = (MapNode) contextType.getNode();
-            KeyNode keyNode = new KeyNode(event);
+            SimpleKeyNode keyNode = new SimpleKeyNode(event);
             keyNode.setKeyName(event.getValue());
 
             ParsingContextType<KeyNode> newContextType = ParsingContextType.ofInKey(keyNode);

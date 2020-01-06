@@ -5,6 +5,7 @@
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</class>

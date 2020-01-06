@@ -74,7 +74,7 @@ class ExampleC2E04IT extends AbstractYAMLPluginIT {
         YMLMapDescriptor mapDescriptor = getMaps(sequenceDescriptor).getMap(1);
 
         assertThat(mapDescriptor).containsSimpleKeyWithName("avg");
-        YMLKeyDescriptor keyDescriptor = getKeys(mapDescriptor).getKeyByName("avg");
+        YMLSimpleKeyDescriptor keyDescriptor = getKeys(mapDescriptor).getKeyByName("avg");
 
         assertThat(keyDescriptor).hasName("avg").hasScalarValue("0.288");
     }

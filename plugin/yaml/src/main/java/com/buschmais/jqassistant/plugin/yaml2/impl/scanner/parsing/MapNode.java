@@ -9,7 +9,8 @@ import org.snakeyaml.engine.v2.events.MappingStartEvent;
 public class MapNode extends BaseNode<MappingStartEvent>
     implements AnchorSupport<MappingStartEvent> {
     private Integer index;
-    private ArrayList<KeyNode> keys = new ArrayList<>();
+    private ArrayList<SimpleKeyNode> simpleKeys = new ArrayList<>();
+    private ArrayList<ComplexKeyNode> complexKeys = new ArrayList<>();
 
     public MapNode(MappingStartEvent event) {
         super(event);
@@ -23,11 +24,19 @@ public class MapNode extends BaseNode<MappingStartEvent>
         this.index = index;
     }
 
-    public void addKey(KeyNode node) {
-        keys.add(node);
+    public void addKey(SimpleKeyNode node) {
+        simpleKeys.add(node);
     }
 
-    public List<KeyNode> getKeys() {
-        return new ArrayList<>(keys);
+    public void addKey(ComplexKeyNode node) {
+        complexKeys.add(node);
+    }
+
+    public List<SimpleKeyNode> getSimpleKeys() {
+        return new ArrayList<>(simpleKeys);
+    }
+
+    public ArrayList<ComplexKeyNode> getComplexKeys() {
+        return complexKeys;
     }
 }

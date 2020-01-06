@@ -68,4 +68,17 @@ class ExampleC2E10IT extends AbstractYAMLPluginIT {
 
         assertThat(result).isNotEmpty();
     }
+
+    @Test
+    void cypherTheValueOfEachMappingHasTheLabelValue() {
+        readSourceDocument();
+
+        String cypherQuery = "MATCH (s:Sequence:Value:Yaml) " +
+                             "RETURN s";
+
+        List<Object> result = query(cypherQuery).getColumn("s");
+
+        assertThat(result).isNotEmpty();
+
+    }
 }

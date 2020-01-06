@@ -121,7 +121,7 @@ public class GraphGenerator {
 
             anchorProcessor.process(mapNode, mapDescriptor, mode);
 
-            mapNode.getKeys().forEach(keyNode -> {
+            mapNode.getSimpleKeys().forEach(keyNode -> {
                 YMLSimpleKeyDescriptor keyDescriptor = store.create(YMLSimpleKeyDescriptor.class);
                 keyDescriptor.setName(keyNode.getKeyName());
                 mapDescriptor.getKeys().add(keyDescriptor);
@@ -139,6 +139,20 @@ public class GraphGenerator {
                     BaseNode<?> valueNode = keyNode.getValue();
                     traverse(valueNode, newHandler, mode);
                 }
+
+                store.addDescriptorType(keyDescriptor.getValue(), YMLValueDescriptor.class);
+            });
+
+            mapNode.getComplexKeys().forEach(keyNode -> {
+                YMLComplexKeyDescriptor keyDescriptor = store.create(YMLComplexKeyDescriptor.class);
+
+                mapDescriptor.getComplexKeys().add(keyDescriptor);
+                // todo Check if a alias can here occour
+                traverse(keyNode.getKeyNode(), descriptor -> keyDescriptor.setKey(descriptor), mode);
+                traverse(keyNode.getValue(), descriptor -> keyDescriptor.setValue(descriptor), mode);
+
+                store.addDescriptorType(keyDescriptor.getKey(), YMLComplexKeyValue.class);
+                store.addDescriptorType(keyDescriptor.getValue(), YMLValueDescriptor.class);
             });
         } else {
             // todo

@@ -7,9 +7,10 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
 import org.assertj.core.api.AbstractObjectAssert;
 
-public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLKeyDescriptor> {
+// todo rename to YMLSimpleKeyAssert
+public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLSimpleKeyDescriptor> {
 
-    public YMLKeyAssert(YMLKeyDescriptor descriptor) {
+    public YMLKeyAssert(YMLSimpleKeyDescriptor descriptor) {
         super(descriptor, YMLKeyAssert.class);
     }
 

@@ -9,11 +9,15 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("Map")
 public interface YMLMapDescriptor extends YMLDescriptor {
 
+    // todo rename to getSimpleKeys
     @Relation("HAS_KEY")
-    List<YMLKeyDescriptor> getKeys();
+    List<YMLSimpleKeyDescriptor> getKeys();
 
     @Property("index")
     Integer getIndex();
 
     void setIndex(Integer index);
+
+    @Relation("HAS_KEY")
+    List<YMLComplexKeyDescriptor> getComplexKeys();
 }

@@ -22,7 +22,7 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
             YMLDocumentDescriptor document = getDocuments(fileDescriptor).getDocument(0);
             YMLMapDescriptor map = getMaps(document).getMap(0);
-            YMLKeyDescriptor key = getKeys(map).getKeyByName("k2");
+            YMLSimpleKeyDescriptor key = getKeys(map).getKeyByName("k2");
 
             assertThat(key).isNotNull().hasSequenceAsValue();
 
@@ -57,7 +57,7 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
             YMLDocumentDescriptor document = getDocuments(fileDescriptor).getDocument(0);
             YMLMapDescriptor map = getMaps(document).getMap(0);
-            YMLKeyDescriptor key = getKeys(map).getKeyByName("kl2");
+            YMLSimpleKeyDescriptor key = getKeys(map).getKeyByName("kl2");
 
             assertThat(key).isNotNull().hasMapAsValue();
 

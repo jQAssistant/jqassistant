@@ -16,6 +16,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// todo improve test coverage based on coverage
 @DisplayName("Event parser can")
 class EventParserTest {
     EventParser parser = new EventParser();
@@ -83,6 +84,52 @@ class EventParserTest {
         @Test
         void anchorAndAliasForAMapValue() {
             throw new RuntimeException("This test is not implemented.");
+        }
+    }
+
+    @DisplayName("complex keys")
+    @Nested
+    class ComplexKey {
+        @DisplayName("with a sequence as key node")
+        @Test
+        void withSequenceAsKeyNode() {
+            Stream<Event> events = Stream.of(strStE(),
+                            docStE(),
+                            mapStE(),
+                            seqStE(),
+                            scalarE("Detroit Tigers"),
+                            scalarE("Chicago cubs"),
+                            seqEndE(),
+                            seqStE(),
+                            scalarE("2001-07-23"),
+                            seqEndE(),
+                            seqStE(),
+                            scalarE("New York Yankees"),
+                            scalarE("Atlanta Braves"),
+                            seqEndE(),
+                            seqStE(),
+                            seqStE(),
+                            scalarE("2001-07-02"),
+                            seqEndE(),
+                            mapEndE(),
+                            docEndE(),
+                            seqEndE());
+
+            StreamNode streamNode = parser.parse(events);
+
+            DocumentNode documentNode = streamNode.getDocuments().get(0);
+
+            assertThat(documentNode).isNotNull();
+            assertThat(documentNode.getMaps()).hasSize(1);
+
+            MapNode mapNode = documentNode.getMaps().get(0);
+
+            assertThat(mapNode.getComplexKeys()).hasSize(2);
+
+            assertThat(mapNode.getComplexKeys()).allSatisfy(ck -> {
+                assertThat(ck.getKeyNode()).isNotNull().isInstanceOf(SequenceNode.class);
+                assertThat(ck.getValue()).isNotNull().isInstanceOf(SequenceNode.class);
+            });
         }
     }
 
@@ -164,7 +211,7 @@ class EventParserTest {
 
             MapNode mapNode = documentNode.getMaps().get(0);
 
-            assertThat(mapNode.getKeys()).hasSize(1);
+            assertThat(mapNode.getSimpleKeys()).hasSize(1);
 
             // todo add assertions on the value of the key
         }
@@ -314,8 +361,8 @@ class EventParserTest {
             DocumentNode documentNode = root.getDocuments().get(0);
             MapNode mapNode = documentNode.getMaps().get(0);
 
-            assertThat(mapNode.getKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getKeys().get(0);
+            assertThat(mapNode.getSimpleKeys()).hasSize(1);
+            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
 
             assertThat(keyNode.getValue()).isInstanceOf(ScalarNode.class);
             ScalarNode valueNode = (ScalarNode) keyNode.getValue();
@@ -341,8 +388,8 @@ class EventParserTest {
             DocumentNode documentNode = root.getDocuments().get(0);
             MapNode mapNode = documentNode.getMaps().get(0);
 
-            assertThat(mapNode.getKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getKeys().get(0);
+            assertThat(mapNode.getSimpleKeys()).hasSize(1);
+            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
 
             assertThat(keyNode.getValue()).isInstanceOf(SequenceNode.class);
         }
@@ -378,7 +425,7 @@ class EventParserTest {
 
             MapNode mapNode = documentNode.getMaps().get(0);
 
-            assertThat(mapNode.getKeys()).hasSize(2);
+            assertThat(mapNode.getSimpleKeys()).hasSize(2);
         }
 
         @DisplayName("with a simple key and map as value")
@@ -400,14 +447,14 @@ class EventParserTest {
             DocumentNode documentNode = root.getDocuments().get(0);
             MapNode mapNode = documentNode.getMaps().get(0);
 
-            assertThat(mapNode.getKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getKeys().get(0);
+            assertThat(mapNode.getSimpleKeys()).hasSize(1);
+            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
 
             assertThat(keyNode.getValue()).isInstanceOf(MapNode.class);
 
             MapNode subMapNode = (MapNode) keyNode.getValue();
 
-            assertThat(subMapNode.getKeys()).hasSize(1);
+            assertThat(subMapNode.getSimpleKeys()).hasSize(1);
         }
     }
 
