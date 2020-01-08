@@ -13,10 +13,8 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
@@ -99,11 +97,9 @@ public class ScanMojo extends AbstractModuleMojo {
         Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest().getRepositorySession().getLocalRepository().getBasedir();
-        MavenRepositoryFileResolver repositoryFileResolver = new MavenRepositoryFileResolver(localRepositoryDirectory.getAbsolutePath());
-        MavenRepositoryArtifactResolver repositoryArtifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, repositoryFileResolver);
+        MavenRepositoryArtifactResolver repositoryArtifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory);
 
         scannerContext.push(MavenSession.class, session);
-        scannerContext.push(FileResolver.class, repositoryFileResolver);
         scannerContext.push(ArtifactResolver.class, repositoryArtifactResolver);
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         try {
@@ -111,7 +107,6 @@ public class ScanMojo extends AbstractModuleMojo {
         } finally {
             scannerContext.pop(DependencyGraphBuilder.class);
             scannerContext.pop(ArtifactResolver.class);
-            scannerContext.pop(FileResolver.class);
             scannerContext.pop(MavenSession.class);
         }
     }
