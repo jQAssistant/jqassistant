@@ -168,7 +168,7 @@ public abstract class AbstractPluginIT {
         StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration, pluginRepository.getStorePluginRepository());
         store.start();
-        if (testStore == null || testStore.reset()) {
+        if (testStore != null && testStore.reset()) {
             store.reset();
         }
     }
