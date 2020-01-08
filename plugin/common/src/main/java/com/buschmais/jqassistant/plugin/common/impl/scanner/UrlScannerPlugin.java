@@ -7,6 +7,7 @@ import java.net.URLConnection;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -23,7 +24,7 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
 
     @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
-        return true;
+        return scope.equals(DefaultScope.NONE);
     }
 
     @Override

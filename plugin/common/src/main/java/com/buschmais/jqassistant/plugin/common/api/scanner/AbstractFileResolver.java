@@ -58,7 +58,7 @@ public abstract class AbstractFileResolver implements FileResolver {
      *            The path.
      * @param type
      *            The requested type.
-     * @param existing
+     * @param resolveExisting
      *            A {@link Function} to resolve an existing {@link FileDescriptor}.
      * @param context
      *            The {@link ScannerContext}.
@@ -66,9 +66,9 @@ public abstract class AbstractFileResolver implements FileResolver {
      *            The requested type.
      * @return The {@link FileDescriptor}.
      */
-    protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> existing, ScannerContext context) {
+    protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> resolveExisting, ScannerContext context) {
         FileDescriptor descriptor = cache.get(path, p -> {
-            FileDescriptor fileDescriptor = existing.apply(p);
+            FileDescriptor fileDescriptor = resolveExisting.apply(p);
             if (fileDescriptor != null) {
                 return fileDescriptor;
             }
@@ -82,7 +82,7 @@ public abstract class AbstractFileResolver implements FileResolver {
     /**
      * Ensures if the given {@link FileDescriptor} implements the requested type by
      * migrating or just casting it.
-     * 
+     *
      * @param descriptor
      *            The {@link FileDescriptor}.
      * @param type
