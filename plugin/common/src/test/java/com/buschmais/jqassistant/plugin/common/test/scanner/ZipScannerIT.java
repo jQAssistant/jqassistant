@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -49,7 +50,7 @@ public class ZipScannerIT extends AbstractPluginIT {
         File archive = createZipArchive();
         try {
             store.beginTransaction();
-            FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
+            FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), DefaultScope.NONE);
             assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
             ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
             assertThat(archiveDescriptor.isValid(), equalTo(true));
@@ -63,7 +64,7 @@ public class ZipScannerIT extends AbstractPluginIT {
 
     /**
      * Creates a ZIP archvie containing a file "test.txt"
-     * 
+     *
      * @return archive The archive.
      * @throws IOException
      */

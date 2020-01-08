@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -37,7 +38,7 @@ public class TarScannerIT extends AbstractPluginIT {
         File archive = createTarArchive();
         try {
             store.beginTransaction();
-            FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
+            FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), DefaultScope.NONE);
             assertThat(descriptor, instanceOf(TarArchiveDescriptor.class));
             TarArchiveDescriptor archiveDescriptor = (TarArchiveDescriptor) descriptor;
             assertThat(archiveDescriptor.getContains().size(), equalTo(2));
@@ -51,7 +52,7 @@ public class TarScannerIT extends AbstractPluginIT {
 
     /**
      * Creates a TAR archive.
-     * 
+     *
      * @return archive The archive.
      * @throws IOException
      */
