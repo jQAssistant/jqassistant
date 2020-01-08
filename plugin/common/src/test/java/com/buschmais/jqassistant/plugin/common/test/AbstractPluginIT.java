@@ -139,7 +139,7 @@ public abstract class AbstractPluginIT {
                 .orElseThrow(() -> new AssertionError("Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));
 
         TestStore testStore = method.getAnnotation(TestStore.class);
-        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.FILE;
+        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
         StoreConfiguration.StoreConfigurationBuilder storeConfigurationBuilder = StoreConfiguration.builder();
         switch (type) {
         case FILE:
