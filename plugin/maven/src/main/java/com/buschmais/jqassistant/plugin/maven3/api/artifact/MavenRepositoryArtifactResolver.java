@@ -3,13 +3,12 @@ package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 import java.io.File;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class MavenRepositoryArtifactResolver implements ArtifactResolver {
-
-    private MavenRepositoryFileResolver repositoryFileResolver;
 
     private String repositoryRoot;
 
@@ -18,18 +17,16 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
      *
      * @param repositoryRoot
      *            The root directory of the local repository.
-     * @param repositoryFileResolver
-     *            The repository file resolver.
      */
-    public MavenRepositoryArtifactResolver(File repositoryRoot, MavenRepositoryFileResolver repositoryFileResolver) {
-        this.repositoryFileResolver = repositoryFileResolver;
+    public MavenRepositoryArtifactResolver(File repositoryRoot) {
         this.repositoryRoot = repositoryRoot.getAbsolutePath().replace('\\', '/');
     }
 
     @Override
     public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fileName = getFileName(coordinates);
-        MavenArtifactFileDescriptor mavenArtifactDescriptor = repositoryFileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
+        MavenArtifactFileDescriptor mavenArtifactDescriptor = scannerContext.peek(FileResolver.class).require(fileName, MavenArtifactFileDescriptor.class,
+                scannerContext);
         // TODO do not set coordinates on existing descriptors
         MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
         MavenArtifactHelper.setId(mavenArtifactDescriptor, coordinates);
@@ -42,8 +39,7 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
         String version = coordinates.getVersion();
         String classifier = coordinates.getClassifier();
         String type = coordinates.getType();
-        StringBuilder fileName = new StringBuilder();
-        fileName.append(repositoryRoot);
+        StringBuilder fileName = new StringBuilder(repositoryRoot);
         if (StringUtils.isNotEmpty(group)) {
             fileName.append('/');
             fileName.append(group.replace('.', '/'));

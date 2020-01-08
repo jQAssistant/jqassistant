@@ -4,10 +4,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
-import com.buschmais.xo.neo4j.api.annotation.*;
+import com.buschmais.xo.neo4j.api.annotation.Cypher;
+import com.buschmais.xo.neo4j.api.annotation.Indexed;
+import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Property;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -106,10 +109,6 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
     void setSnapshotsChecksumPolicy(String policy);
 
     String getSnapshotsChecksumPolicy();
-
-    @ResultOf
-    @Cypher("MATCH (file:File) WHERE file.fileName={fileName} RETURN file")
-    FileDescriptor findFile(@Parameter("fileName") String fileName);
 
     @ResultOf
     @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Release:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
