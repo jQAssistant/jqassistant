@@ -10,23 +10,28 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 
-    private String repositoryRoot;
+    private final String repositoryRoot;
+
+    private final FileResolver fileResolver;
 
     /**
      * Constructor.
      *
      * @param repositoryRoot
      *            The root directory of the local repository.
+     * @param fileResolver
+     *            The {@link FileResolver} to be used for looking up files in the
+     *            local repository.
      */
-    public MavenRepositoryArtifactResolver(File repositoryRoot) {
+    public MavenRepositoryArtifactResolver(File repositoryRoot, FileResolver fileResolver) {
         this.repositoryRoot = repositoryRoot.getAbsolutePath().replace('\\', '/');
+        this.fileResolver = fileResolver;
     }
 
     @Override
     public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fileName = getFileName(coordinates);
-        MavenArtifactFileDescriptor mavenArtifactDescriptor = scannerContext.peek(FileResolver.class).require(fileName, MavenArtifactFileDescriptor.class,
-                scannerContext);
+        MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
         // TODO do not set coordinates on existing descriptors
         MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
         MavenArtifactHelper.setId(mavenArtifactDescriptor, coordinates);
