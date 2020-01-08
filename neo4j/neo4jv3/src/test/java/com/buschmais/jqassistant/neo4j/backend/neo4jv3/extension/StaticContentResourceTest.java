@@ -42,28 +42,28 @@ public class StaticContentResourceTest {
     public void htmlResource() throws IOException {
         Response response = staticContentResource.file("/test/other.html");
 
-        verifyIndexResponse(response, "<h1>Other</h1>"+ System.lineSeparator(), TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Other</h1>\n", TEXT_HTML_TYPE);
     }
 
     @Test
     public void cssResource() throws IOException {
         Response response = staticContentResource.file("/test/styles.css");
 
-        verifyIndexResponse(response, "/* Styles */"+ System.lineSeparator(), TEXT_CSS_TYPE);
+        verifyIndexResponse(response, "/* Styles */\n", TEXT_CSS_TYPE);
     }
 
     @Test
     public void indexFromFolderWithTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test/");
 
-        verifyIndexResponse(response, "<h1>Index</h1>"+ System.lineSeparator(), TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
     }
 
     @Test
     public void indexFromFolderWithoutTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test");
 
-        verifyIndexResponse(response, "<h1>Index</h1>" + System.lineSeparator(), TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
     }
 
     private void verifyIndexResponse(Response response, String expectedContent, MediaType expectedMimeType) throws IOException {
