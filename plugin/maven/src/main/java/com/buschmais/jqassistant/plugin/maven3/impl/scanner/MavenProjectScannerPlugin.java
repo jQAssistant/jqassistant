@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
@@ -48,9 +49,19 @@ import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_
  */
 public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
 
+    private static final String PROPERTY_NAME_DEPENDENCIES_ENABLE = "maven3.dependencies.enable";
+
+    private static final String PROPERTY_NAME_DEPENDENCIES_INCLUDES = "maven3.dependencies.includes";
+
+    private static final String PROPERTY_NAME_DEPENDENCIES_EXCLUDES = "maven3.dependencies.excludes";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
     private final DependencyScanner dependencyScanner;
+
+    private boolean scanDependencies;
+
+    private ArtifactFilter dependencyFilter = null;
 
     /**
      * Default constructor.
@@ -67,6 +78,15 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     MavenProjectScannerPlugin(DependencyScanner dependencyScanner) {
         this.dependencyScanner = dependencyScanner;
+    }
+
+    @Override
+    protected void configure() {
+        scanDependencies = getBooleanProperty(PROPERTY_NAME_DEPENDENCIES_ENABLE, false);
+        String dependencyFilterIncludes = getStringProperty(PROPERTY_NAME_DEPENDENCIES_INCLUDES, null);
+        String dependencyFilterExcludes = getStringProperty(PROPERTY_NAME_DEPENDENCIES_EXCLUDES, null);
+        dependencyFilter = new ArtifactFilter(dependencyFilterIncludes, dependencyFilterExcludes);
+
     }
 
     @Override
@@ -185,7 +205,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             LOGGER.warn("Cannot resolve dependency graph for " + project, e);
         }
         if (rootNode != null) {
-            dependencyScanner.evaluate(rootNode, mainDescriptor, testDescriptor, scanner);
+            dependencyScanner.evaluate(rootNode, mainDescriptor, testDescriptor, scanDependencies, dependencyFilter, scanner);
         }
     }
 
