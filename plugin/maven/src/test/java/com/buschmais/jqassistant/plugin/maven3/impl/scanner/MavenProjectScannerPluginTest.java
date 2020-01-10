@@ -45,6 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -76,10 +77,31 @@ public class MavenProjectScannerPluginTest {
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     @Captor
-    ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
+    private ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
+
+    @Captor
+    private ArgumentCaptor<ArtifactFilter> artifactFilterCaptor;
 
     @Test
-    public void projectScannerPlugin() throws DependencyGraphBuilderException {
+    public void scan() throws DependencyGraphBuilderException {
+        scanAndVerify(new HashMap<>(), false);
+    }
+
+    @Test
+    public void scanDependencies() throws DependencyGraphBuilderException {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("maven3.dependencies.scan", "true");
+        properties.put("maven3.dependencies.includes", "included");
+        properties.put("maven3.dependencies.excludes", "excluded");
+
+        scanAndVerify(properties, true);
+
+        ArtifactFilter artifactFilter = artifactFilterCaptor.getValue();
+        assertThat(artifactFilter.getIncludes(), hasItems("included"));
+        assertThat(artifactFilter.getExcludes(), hasItems("excluded"));
+    }
+
+    private void scanAndVerify(Map<String, Object> properties, boolean expectedDependenciesScan) throws DependencyGraphBuilderException {
         MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin(dependencyScanner);
         doReturn(mavenArtifactResolver).when(scannerContext).peek(ArtifactResolver.class);
 
@@ -106,13 +128,12 @@ public class MavenProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
         when(project.getParent()).thenReturn(parentProject);
+        properties.put(MavenProject.class.getName(), project);
 
         Build build = new Build();
         build.setOutputDirectory("target/classes");
         build.setTestOutputDirectory("target/test-classes");
         when(project.getBuild()).thenReturn(build);
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(MavenProject.class.getName(), project);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
@@ -137,7 +158,6 @@ public class MavenProjectScannerPluginTest {
         JavaClassesDirectoryDescriptor mainClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
         MavenTestArtifactDescriptor testArtifactDescriptor = mock(MavenTestArtifactDescriptor.class);
         JavaClassesDirectoryDescriptor testClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
-        MavenArtifactDescriptor dependencyArtifact = mock(MavenArtifactDescriptor.class);
         ArgumentMatcher<Coordinates> mainArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact")
                 && a.getType().equals("jar");
         doReturn(mainArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(mainArtifactCoordinatesMatcher), eq(scannerContext));
@@ -204,8 +224,8 @@ public class MavenProjectScannerPluginTest {
         verify(store).addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
 
         verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
-        verify(dependencyScanner).evaluate(eq(dependencyNode), eq(mainArtifactDescriptor), eq(testArtifactDescriptor), eq(false), any(ArtifactFilter.class),
-                eq(scanner));
+        verify(dependencyScanner).evaluate(eq(dependencyNode), eq(mainArtifactDescriptor), eq(testArtifactDescriptor), eq(expectedDependenciesScan),
+                artifactFilterCaptor.capture(), eq(scanner));
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 

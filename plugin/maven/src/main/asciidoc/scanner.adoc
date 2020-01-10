@@ -1,9 +1,26 @@
 [[MavenProjectScanner]]
 == Scanner for Maven projects
+
 Imports information from Maven projects.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property                      | Description                                                                    | Default
+| maven.dependencies.scan     | If set to `true` the declared dependencies will be scanned.                    | `false`
+| maven.dependencies.includes | A comma separated list of artifact patterns to include in the dependency scan  | include all artifacts
+| maven.dependencies.excludes | A comma separated list of artifact patterns to exclude from the dependeny scan | exclude no artifacts
+|====
+
+TIP: The dependency tree is available as `(project:Maven:Project)-[:CREATES]->(:Artifact)-[:DEPENDS_ON*]->(dependency:Artifact)`.
+If scanning of dependencies is enabled the included artifacts can be controlled using the includes and excludes filter.
+They follow the Maven syntax, i.e. `[groupId]:[artifactId]:[type]:[version]` or `[groupId]:[artifactId]:[type]:[classifier]:[version]` and allow using wildcards.
 
 [[:Maven:Project]]
 === Nodes labled with `:Maven:Project:File:Directory`
+
 A `pom.xml` file describing a single Maven project.
 
 .Properties of `:Maven:Project:File:Directory`

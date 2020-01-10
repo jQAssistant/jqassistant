@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -12,7 +13,7 @@ import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
  *
  * Supported patterns:
  *
- * - `[groupId]:[artifactId]:[type]:[version]` -
+ * `[groupId]:[artifactId]:[type]:[version]` and
  * `[groupId]:[artifactId]:[type]:[classifier]:[version]`
  */
 public class ArtifactFilter {
@@ -29,8 +30,16 @@ public class ArtifactFilter {
      *            The list of exclude patterns or `null` to exclude nothing.
      */
     public ArtifactFilter(String includes, String excludes) {
-        this.includes = parseFilterPattern(includes);
-        this.excludes = parseFilterPattern(excludes);
+        this.includes = parse(includes);
+        this.excludes = parse(excludes);
+    }
+
+    public List<String> getIncludes() {
+        return includes;
+    }
+
+    public List<String> getExcludes() {
+        return excludes;
     }
 
     /**
@@ -46,7 +55,7 @@ public class ArtifactFilter {
         return (includesFilter == null || includesFilter.include(artifact)) && (excludesFilter == null || excludesFilter.include(artifact));
     }
 
-    private List<String> parseFilterPattern(String patterns) {
+    private List<String> parse(String patterns) {
         if (patterns == null) {
             return null;
         }
@@ -57,11 +66,7 @@ public class ArtifactFilter {
                 result.add(trimmed);
             }
         }
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
-    @Override
-    public String toString() {
-        return "ArtifactFilter{" + "includes=" + includes + ", excludes=" + excludes + '}';
-    }
 }
