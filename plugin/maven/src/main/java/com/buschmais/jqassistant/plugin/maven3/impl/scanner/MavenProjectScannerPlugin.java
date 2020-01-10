@@ -49,7 +49,7 @@ import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_
  */
 public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
 
-    private static final String PROPERTY_NAME_DEPENDENCIES_ENABLE = "maven3.dependencies.enable";
+    private static final String PROPERTY_NAME_DEPENDENCIES_SCAN = "maven3.dependencies.scan";
 
     private static final String PROPERTY_NAME_DEPENDENCIES_INCLUDES = "maven3.dependencies.includes";
 
@@ -82,7 +82,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
     @Override
     protected void configure() {
-        scanDependencies = getBooleanProperty(PROPERTY_NAME_DEPENDENCIES_ENABLE, false);
+        scanDependencies = getBooleanProperty(PROPERTY_NAME_DEPENDENCIES_SCAN, false);
         String dependencyFilterIncludes = getStringProperty(PROPERTY_NAME_DEPENDENCIES_INCLUDES, null);
         String dependencyFilterExcludes = getStringProperty(PROPERTY_NAME_DEPENDENCIES_EXCLUDES, null);
         dependencyFilter = new ArtifactFilter(dependencyFilterIncludes, dependencyFilterExcludes);
