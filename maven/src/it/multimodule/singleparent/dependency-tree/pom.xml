@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@.integration</artifactId>
+        <version>@project.version@</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+    <artifactId>@project.artifactId@.integration.multimodule.singleparent.dependency-tree</artifactId>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <configuration>
+                    <scanProperties>
+                        <maven3.dependencies.scan>true</maven3.dependencies.scan>
+                        <maven3.dependencies.includes>org.springframework*:*:*:*</maven3.dependencies.includes>
+                    </scanProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>2.2.2.RELEASE</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+</project>
