@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 
+import java.net.URL;
+
 /**
  * Represents a parameter for an additional directory to include while scanning.
  */
@@ -9,6 +11,8 @@ public class ScanInclude {
      * The path to include in scanning.
      */
     private String path;
+
+    private URL url;
 
     /**
      * The name of the scope to use, e.g. "java:classpath".
@@ -31,8 +35,16 @@ public class ScanInclude {
         this.scope = scope;
     }
 
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
+
     @Override
     public String toString() {
-        return "ScanInclude{" + "path='" + path + '\'' + ", scope='" + scope + '\'' + '}';
+        return "ScanInclude{" + "path='" + path + '\'' + ", url=" + url + ", scope='" + scope + '\'' + '}';
     }
 }

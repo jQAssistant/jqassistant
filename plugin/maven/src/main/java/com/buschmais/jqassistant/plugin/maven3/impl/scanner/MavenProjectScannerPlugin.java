@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String projectPath, Scope scope, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenSession mavenSession = context.peek(MavenSession.class);
         ProjectBuildingRequest projectBuildingRequest = mavenSession.getProjectBuildingRequest();
@@ -133,9 +134,19 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
+                String path = scanInclude.getPath();
+                URL url = scanInclude.getUrl();
                 String scopeName = scanInclude.getScope();
                 Scope includeScope = scanner.resolveScope(scopeName);
-                scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
+                FileDescriptor fileDescriptor = null;
+                if (path != null) {
+                    fileDescriptor = scanPath(projectDescriptor, path, includeScope, scanner);
+                } else if (url != null) {
+                    fileDescriptor = scanUrl(url, includeScope, scanner);
+                }
+                if (fileDescriptor != null) {
+                    projectDescriptor.getContains().add(fileDescriptor);
+                }
             }
         }
         return projectDescriptor;
@@ -362,16 +373,30 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *            The scanner.
      */
-    private <F extends FileDescriptor> void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
+    private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
         File file = new File(path);
-        if (!file.exists()) {
-            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
+        if (file.exists()) {
+            return scanFile(projectDescriptor, file, path, scope, scanner);
         } else {
-            F fileDescriptor = scanFile(projectDescriptor, file, path, scope, scanner);
-            if (fileDescriptor != null) {
-                projectDescriptor.getContains().add(fileDescriptor);
-            }
+            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
         }
+        return null;
+    }
+
+    /**
+     * Scan a given path and add it to
+     * {@link MavenProjectDirectoryDescriptor#getContains()}.
+     *
+     * @param url
+     *            The path.
+     * @param scope
+     *            The scope.
+     * @param scanner
+     *            The scanner.
+     */
+    private <F extends FileDescriptor> F scanUrl(URL url, Scope scope, Scanner scanner) {
+        F descriptor = scanner.scan(url, url.toString(), scope);
+        return descriptor;
     }
 
     /**
