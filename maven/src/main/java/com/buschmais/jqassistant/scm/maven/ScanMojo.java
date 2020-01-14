@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -89,7 +90,8 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MavenProject mavenProject, Store store) {
+    public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException {
+        validate();
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
@@ -110,6 +112,23 @@ public class ScanMojo extends AbstractModuleMojo {
             scannerContext.pop(DependencyGraphBuilder.class);
             scannerContext.pop(ArtifactResolver.class);
             scannerContext.pop(MavenSession.class);
+        }
+    }
+
+    /**
+     * Validate the given configuration.
+     *
+     * @throws MojoExecutionException
+     *             If the validation fails.
+     */
+    private void validate() throws MojoExecutionException {
+        if (scanIncludes != null) {
+            for (ScanInclude scanInclude : scanIncludes) {
+                if (scanInclude.getPath() != null && scanInclude.getUrl() != null) {
+                    throw new MojoExecutionException(
+                            "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
+                }
+            }
         }
     }
 }

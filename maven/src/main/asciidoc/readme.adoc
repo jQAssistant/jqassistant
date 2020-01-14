@@ -123,6 +123,10 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                     <path>${project.build.directory}/extra-classes</path>
                                     <scope>java:classpath</scope>
                                 </scanInclude>
+                                <scanInclude>
+                                    <url>https://repo1.maven.org/maven2</path>
+                                    <scope>maven:repository</scope>
+                                </scanInclude>
                             </scanIncludes>
                             <scanProperties>
                                 <customScanner.property>value</customScanner.property>
@@ -258,6 +262,7 @@ Scans the project directories according to the given configuration (e.g. compile
 gathered information in the database.
 
 ===== Configuration
+
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
@@ -266,7 +271,7 @@ gathered information in the database.
 ** indicates whether the store shall be reset (i.e. cleaned up) before scanning
 ** default: 'true'
 * scanIncludes
-** add directories or files to be included while scanning
+** add directories, files or URLs to be included while scanning (optionally qualifed with a scope)
 ** wildcards are not supported
 * scanProperties
 ** allows passing properties to scanner plugins
@@ -274,7 +279,8 @@ gathered information in the database.
 ** continue scanning even if a plugin fails with an unrecoverable error
 ** default: `false`
 
-WARNING: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
+WARNING: Using 'continueOnError' might create inconsistent data.
+Any reported errors should be reported to the plugin developer.
 
 [[available-scopes]]
 ==== jqassistant:available-scopes

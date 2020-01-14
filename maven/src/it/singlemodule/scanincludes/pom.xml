@@ -19,6 +19,9 @@
                         <scanInclude>
                             <path>${basedir}/config</path>
                         </scanInclude>
+                        <scanInclude>
+                            <url>file:config/test.properties</url>
+                        </scanInclude>
                     </scanIncludes>
                 </configuration>
             </plugin>

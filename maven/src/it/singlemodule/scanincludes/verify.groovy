@@ -1,7 +1,6 @@
 def reportFile = new File(basedir, 'target/jqassistant/jqassistant-report.xml')
 assert reportFile.exists()
-def report = new XmlSlurper().parse(reportFile)
-def testValueConcept = report.group.concept.find { it.@id == "scanInclude:Properties" }
-assert testValueConcept != null
-assert testValueConcept.result.rows['@count'] == "1";
-assert testValueConcept.result.rows.row[0].column[0].value == "/test.properties";
+def jqassistantReport = new XmlSlurper().parse(reportFile)
+def defaultGroup = jqassistantReport.group.find { it.@id = 'default' }
+assert defaultGroup.concept.find { it.@id == 'scanInclude:PropertiesFile' }.status == "success"
+assert defaultGroup.concept.find { it.@id == 'scanInclude:PropertiesUrl' }.status == "success"
