@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -20,7 +21,12 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
@@ -138,14 +144,14 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                 URL url = scanInclude.getUrl();
                 String scopeName = scanInclude.getScope();
                 Scope includeScope = scanner.resolveScope(scopeName);
-                FileDescriptor fileDescriptor = null;
+                Descriptor descriptor = null;
                 if (path != null) {
-                    fileDescriptor = scanPath(projectDescriptor, path, includeScope, scanner);
+                    descriptor = scanPath(projectDescriptor, path, includeScope, scanner);
                 } else if (url != null) {
-                    fileDescriptor = scanUrl(url, includeScope, scanner);
+                    descriptor = scanner.scan(url, url.toString(), includeScope);
                 }
-                if (fileDescriptor != null) {
-                    projectDescriptor.getContains().add(fileDescriptor);
+                if (descriptor != null && descriptor instanceof FileDescriptor) {
+                    projectDescriptor.getContains().add((FileDescriptor) descriptor);
                 }
             }
         }
@@ -381,22 +387,6 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
         }
         return null;
-    }
-
-    /**
-     * Scan a given path and add it to
-     * {@link MavenProjectDirectoryDescriptor#getContains()}.
-     *
-     * @param url
-     *            The path.
-     * @param scope
-     *            The scope.
-     * @param scanner
-     *            The scanner.
-     */
-    private <F extends FileDescriptor> F scanUrl(URL url, Scope scope, Scanner scanner) {
-        F descriptor = scanner.scan(url, url.toString(), scope);
-        return descriptor;
     }
 
     /**
