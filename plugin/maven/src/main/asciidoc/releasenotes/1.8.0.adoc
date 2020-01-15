@@ -7,4 +7,5 @@ ifdef::jqa-in-manual[== Maven 3 Plugin 1.8.0]
 * Added plugin configuration options for scanning artifacts that are declared as dependencies to a Maven project (https://github.com/jQAssistant/jqa-maven3-plugin/issues/10[issue])
 ** `maven3.dependencies.scan` for enabling scanning dependencies
 ** `maven3.dependencies.includes` and `maven3.dependencies.excludes` taking Maven artifact filters to control which artifact should be scanned
+* Added capability to scan URLs as part of scanIncludes
 
