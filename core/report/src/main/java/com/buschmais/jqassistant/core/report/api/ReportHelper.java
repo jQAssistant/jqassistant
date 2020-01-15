@@ -1,12 +1,21 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
+import java.util.StringTokenizer;
 import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -28,15 +37,10 @@ public final class ReportHelper {
     }
 
     public static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
-
     public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
-
     private static String FOOTER = "-------------------------------------------------------------------";
-
     private final LoggingStrategy warnLogger;
-
     private final LoggingStrategy errorLogger;
-
     private final LoggingStrategy debugLogger;
 
     /**
@@ -49,6 +53,66 @@ public final class ReportHelper {
         this.errorLogger = message -> log.error(message);
         this.warnLogger = message -> log.warn(message);
         this.debugLogger = message -> log.debug(message);
+    }
+
+    /**
+     * Escape the id of the given rule in a way such that it can be used as file
+     * name.
+     *
+     * @param rule
+     *            The rule.
+     * @return The escaped name.
+     */
+    public static String escapeRuleId(Rule rule) {
+        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
+    }
+
+    /**
+     * Converts a value to its string representation.
+     *
+     * @param value
+     *            The value.
+     * @return The string representation
+     */
+    public static String getLabel(Object value) {
+        if (value == null) {
+            return "";
+        } else if (value instanceof CompositeObject) {
+            CompositeObject descriptor = (CompositeObject) value;
+            String label = getLanguageLabel(descriptor);
+            if (label != null) {
+                return label;
+            }
+            return getLabel(descriptor.getDelegate());
+        } else if (value.getClass().isArray()) {
+            Object[] objects = (Object[]) value;
+            return getLabel(asList(objects));
+        } else if (value instanceof Iterable) {
+            Spliterator<?> spliterator = ((Iterable<?>) value).spliterator();
+            List<String> elements = StreamSupport.stream(spliterator, false).map(element -> getLabel(element)).collect(toList());
+            return StringUtils.join(elements, ", ");
+        } else if (value instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) value;
+            if (map.size() == 1) {
+                return getLabel(map.values().iterator().next());
+            } else {
+                List<String> entries = map.entrySet().stream().map(entry -> getLabel(entry.getKey() + ":" + getLabel(entry.getValue()))).collect(toList());
+                return getLabel(entries);
+            }
+        } else if (value instanceof Neo4jPropertyContainer) {
+            Neo4jPropertyContainer neo4jPropertyContainer = (Neo4jPropertyContainer) value;
+            return getLabel(neo4jPropertyContainer.getProperties());
+        }
+        return value.toString();
+    }
+
+    private static String getLanguageLabel(CompositeObject descriptor) {
+        LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
+        if (elementValue != null) {
+            SourceProvider sourceProvider = elementValue.getSourceProvider();
+            return sourceProvider.getName(descriptor);
+        }
+        return null;
     }
 
     /**
@@ -184,64 +248,6 @@ public final class ReportHelper {
         while (tokenizer.hasMoreTokens()) {
             loggingStrategy.log(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
         }
-    }
-
-    /**
-     * Escape the id of the given rule in a way such that it can be used as file
-     * name.
-     *
-     * @param rule
-     *            The rule.
-     * @return The escaped name.
-     */
-    public static String escapeRuleId(Rule rule) {
-        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
-    }
-
-    /**
-     * Converts a value to its string representation.
-     *
-     * @param value
-     *            The value.
-     * @return The string representation
-     */
-    public static String getLabel(Object value) {
-        if (value != null) {
-            if (value instanceof CompositeObject) {
-                CompositeObject descriptor = (CompositeObject) value;
-                String label = getLanguageLabel(descriptor);
-                if (label != null) {
-                    return label;
-                }
-                Object delegate = descriptor.getDelegate();
-                if (delegate instanceof Neo4jPropertyContainer) {
-                    Neo4jPropertyContainer neo4jPropertyContainer = (Neo4jPropertyContainer) delegate;
-                    return "(" + getLabel(neo4jPropertyContainer.getProperties()) + ")";
-                }
-            } else if (value.getClass().isArray()) {
-                Object[] objects = (Object[]) value;
-                return getLabel(asList(objects));
-            } else if (value instanceof Iterable) {
-                Spliterator<?> spliterator = ((Iterable<?>) value).spliterator();
-                List<String> elements = StreamSupport.stream(spliterator, false).map(element -> getLabel(element)).collect(toList());
-                return StringUtils.join(elements, ", ");
-            } else if (value instanceof Map) {
-                List<String> entries = ((Map<?, ?>) value).entrySet().stream().map(entry -> getLabel(entry.getKey() + ":" + getLabel(entry.getValue())))
-                        .collect(toList());
-                return getLabel(entries);
-            }
-            return value.toString();
-        }
-        return null;
-    }
-
-    private static String getLanguageLabel(CompositeObject descriptor) {
-        LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
-        if (elementValue != null) {
-            SourceProvider sourceProvider = elementValue.getSourceProvider();
-            return sourceProvider.getName(descriptor);
-        }
-        return null;
     }
 
 }

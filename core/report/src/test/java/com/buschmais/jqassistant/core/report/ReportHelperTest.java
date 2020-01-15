@@ -196,19 +196,22 @@ public class ReportHelperTest {
         assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));
         assertThat(ReportHelper.getLabel(singletonList(descriptorWithLabel)), equalTo("value"));
         assertThat(ReportHelper.getLabel(new String[] { "value1", "value2" }), equalTo("value1, value2"));
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", descriptorWithLabel);
-        map.put("key2", "simpleValue");
-        assertThat(ReportHelper.getLabel(map), equalTo("key1:value, key2:simpleValue"));
+        Map<String, Object> singleProperty = new HashMap<>();
+        singleProperty.put("key", "Value");
+        assertThat(ReportHelper.getLabel(singleProperty), equalTo("Value"));
+        Map<String, Object> multipleProperties = new HashMap<>();
+        multipleProperties.put("key1", descriptorWithLabel);
+        multipleProperties.put("key2", "simpleValue");
+        assertThat(ReportHelper.getLabel(multipleProperties), equalTo("key1:value, key2:simpleValue"));
         TestDescriptorWithLanguageElement descriptorWithEmptyLanguageLabel = mock(TestDescriptorWithLanguageElement.class);
         assertThat(ReportHelper.getLabel(descriptorWithEmptyLanguageLabel), notNullValue());
 
         // Composite object without supported label
         Neo4jNode neo4jNode = mock(Neo4jNode.class);
-        doReturn(map).when(neo4jNode).getProperties();
+        doReturn(multipleProperties).when(neo4jNode).getProperties();
         CompositeObject compositeObject = mock(CompositeObject.class);
         doReturn(neo4jNode).when(compositeObject).getDelegate();
-        assertThat(ReportHelper.getLabel(compositeObject), equalTo("(key1:value, key2:simpleValue)"));
+        assertThat(ReportHelper.getLabel(compositeObject), equalTo("key1:value, key2:simpleValue"));
 
     }
 
