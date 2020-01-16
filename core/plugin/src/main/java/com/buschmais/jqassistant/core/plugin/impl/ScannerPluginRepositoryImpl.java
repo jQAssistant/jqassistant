@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
+
+import org.jqassistant.schema.plugin.v1.ClassListType;
+import org.jqassistant.schema.plugin.v1.IdClassListType;
+import org.jqassistant.schema.plugin.v1.IdClassType;
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 
 /**
  * Scanner plugin repository implementation.

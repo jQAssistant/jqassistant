@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

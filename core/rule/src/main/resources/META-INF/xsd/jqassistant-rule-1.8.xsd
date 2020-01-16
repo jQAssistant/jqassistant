@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jqassistant-rules="http://schema.jqassistant.org/rule/v1.8"
+           targetNamespace="http://schema.jqassistant.org/rule/v1.8"
+           xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 http://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
 
     <xs:element name="jqassistant-rules">
         <xs:complexType>

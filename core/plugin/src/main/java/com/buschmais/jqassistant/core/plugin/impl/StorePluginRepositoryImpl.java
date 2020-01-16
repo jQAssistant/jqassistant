@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.schema.v1.ClassListType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+
+import org.jqassistant.schema.plugin.v1.ClassListType;
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 
 /**
  * Scanner plugin repository implementation.
@@ -25,7 +26,7 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
      */
     public StorePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.descriptorTypes = getTypes(plugins,plugin -> plugin.getModel());
+        this.descriptorTypes = getTypes(plugins, plugin -> plugin.getModel());
         this.procedureTypes = getTypes(plugins, plugin -> plugin.getProcedure());
         this.functionTypes = getTypes(plugins, plugin -> plugin.getFunction());
     }
@@ -34,7 +35,6 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
     public List<Class<?>> getDescriptorTypes() {
         return descriptorTypes;
     }
-
 
     @Override
     public List<Class<?>> getProcedureTypes() {

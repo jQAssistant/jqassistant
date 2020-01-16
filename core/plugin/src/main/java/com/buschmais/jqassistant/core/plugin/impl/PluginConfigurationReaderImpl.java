@@ -9,10 +9,10 @@ import java.util.*;
 import javax.xml.validation.Schema;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +24,13 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
     private static final Schema SCHEMA = XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE);
-    private static final String NAMESPACE = "http://www.buschmais.com/jqassistant/core/plugin/schema/v1.8";
+    private static final String NAMESPACE = "http://schema.jqassistant.org/plugin/v1.8";
 
     private final ClassLoader pluginClassLoader;
 
     private JAXBUnmarshaller<JqassistantPlugin> jaxbUnmarshaller;
 
     private List<JqassistantPlugin> plugins = null;
-
 
     /**
      * Default constructor.
@@ -43,7 +42,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     /**
      * Constructor.
      *
-     * @param pluginClassLoader The class loader to use for detecting plugins.
+     * @param pluginClassLoader
+     *            The class loader to use for detecting plugins.
      */
     public PluginConfigurationReaderImpl(ClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
@@ -63,7 +63,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     /**
      * Read the catalogs from an {@link URL}.
      *
-     * @param pluginUrl The {@link URL}.
+     * @param pluginUrl
+     *            The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
     private JqassistantPlugin readPlugin(URL pluginUrl) {
@@ -75,8 +76,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     }
 
     /**
-     * Returns an {@link Iterable} over all plugins which can be resolved from
-     * the current classpath.
+     * Returns an {@link Iterable} over all plugins which can be resolved from the
+     * current classpath.
      *
      * @return The plugins which can be resolved from the current classpath.
      */

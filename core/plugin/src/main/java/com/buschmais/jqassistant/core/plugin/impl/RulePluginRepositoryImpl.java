@@ -7,16 +7,17 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassListType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.IdClassType;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.plugin.schema.v1.RulesType;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.ClasspathRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
+
+import org.jqassistant.schema.plugin.v1.IdClassListType;
+import org.jqassistant.schema.plugin.v1.IdClassType;
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v1.RulesType;
 
 /**
  * Rule repository implementation.

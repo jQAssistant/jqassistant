@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.report;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -13,8 +16,8 @@ import javax.xml.validation.SchemaFactory;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
-import com.buschmais.jqassistant.core.report.schema.v1.*;
 
+import org.jqassistant.schema.report.v1.*;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -105,7 +108,7 @@ public class XmlReportTest {
 
     private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.4.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.8.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportPlugin.ENCODING));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

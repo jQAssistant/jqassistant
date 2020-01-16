@@ -12,37 +12,35 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
-import com.buschmais.jqassistant.core.rule.schema.v1.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jqassistant.schema.rule.v1.*;
 
 /**
  * A {@link RuleParserPlugin} implementation.
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULES_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
-    private static final String NAMESPACE_RULES_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
-    private static final String NAMESPACE_RULES_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
-    private static final String NAMESPACE_RULES_1_3 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.3";
-    private static final String NAMESPACE_RULES_1_4 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.4";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.4.xsd";
+    private static final String NAMESPACE_RULE_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
+    private static final String NAMESPACE_RULE_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
+    private static final String NAMESPACE_RULE_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
+    private static final String NAMESPACE_RULE_1_3 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.3";
+    private static final String NAMESPACE_RULE_1_4 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.4";
+    private static final String NAMESPACE_RULE_1_8 = "http://schema.jqassistant.org/rule/v1.8";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rule-1.8.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleParserPlugin.class);
 
     private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
 
     @Override
     public void initialize() {
         Map<String, String> namespaceMappings = new HashMap<>();
-        namespaceMappings.put(NAMESPACE_RULES_1_0, NAMESPACE_RULES_1_4);
-        namespaceMappings.put(NAMESPACE_RULES_1_1, NAMESPACE_RULES_1_4);
-        namespaceMappings.put(NAMESPACE_RULES_1_2, NAMESPACE_RULES_1_4);
-        namespaceMappings.put(NAMESPACE_RULES_1_3, NAMESPACE_RULES_1_4);
+        namespaceMappings.put(NAMESPACE_RULE_1_0, NAMESPACE_RULE_1_8);
+        namespaceMappings.put(NAMESPACE_RULE_1_1, NAMESPACE_RULE_1_8);
+        namespaceMappings.put(NAMESPACE_RULE_1_2, NAMESPACE_RULE_1_8);
+        namespaceMappings.put(NAMESPACE_RULE_1_3, NAMESPACE_RULE_1_8);
+        namespaceMappings.put(NAMESPACE_RULE_1_4, NAMESPACE_RULE_1_8);
         this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, namespaceMappings);
     }
 

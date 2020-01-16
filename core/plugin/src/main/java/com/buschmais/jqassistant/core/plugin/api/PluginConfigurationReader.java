@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.plugin.api;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 
 /**
  * Defines the interface for plugin readers.

@@ -18,9 +18,9 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
-import com.buschmais.jqassistant.core.rule.schema.v1.*;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.jqassistant.schema.rule.v1.*;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
@@ -45,8 +45,8 @@ public class XmlRuleSetWriter implements RuleSetWriter {
     @Override
     public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
-        RuleSelection ruleSelection = RuleSelection.builder().groupIds(ruleSet.getGroupsBucket().getIds())
-                .constraintIds(ruleSet.getConstraintBucket().getIds()).conceptIds(ruleSet.getConceptBucket().getIds()).build();
+        RuleSelection ruleSelection = RuleSelection.builder().groupIds(ruleSet.getGroupsBucket().getIds()).constraintIds(ruleSet.getConstraintBucket().getIds())
+                .conceptIds(ruleSet.getConceptBucket().getIds()).build();
         new RuleSetExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
