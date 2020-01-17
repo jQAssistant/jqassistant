@@ -4,5 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.7.0]
 ifdef::jqa-in-manual[== Plugin Parent POM 1.7.0]
 
-To be written.
+No changes.
 
