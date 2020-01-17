@@ -1,4 +1,4 @@
 == jQAssistant Distribution Specification Version 1.8.0
 
-To be written.
+No changes.
 
