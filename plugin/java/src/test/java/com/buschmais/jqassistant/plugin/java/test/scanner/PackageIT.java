@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +25,10 @@ public class PackageIT extends AbstractJavaPluginIT {
     /**
      * Verifies that all packages are added to the artifact while scanning a
      * directory.
-     * 
-     * @throws IOException
-     *             If the test fails.
+     *
      */
     @Test
-    public void artifactContainsPackages() throws IOException {
+    public void artifactContainsPackages() {
         scanClassPathDirectory(getClassesDirectory(Pojo.class));
         store.beginTransaction();
         // Assert that all packages of Pojo.class are contained in the artifact

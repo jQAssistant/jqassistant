@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,11 +8,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,10 +20,8 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
 import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.NON_DEFAULT;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -41,15 +34,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies an annotation on class level.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void annotatedClass() throws IOException, NoSuchFieldException {
+    public void annotatedClass() throws NoSuchFieldException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class, Enumeration.class);
         // verify annotation type
         store.beginTransaction();
-        TestResult testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN t, a, at");
+        TestResult testResult = query(
+                "MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN t, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((TypeDescriptor) row.get("t"), typeDescriptor(AnnotatedType.class));
@@ -61,7 +53,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
         List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("class"))));
         assertThat(values, hasItem(valueDescriptor("classValue", typeDescriptor(Number.class))));
-        assertThat(values, hasItem(valueDescriptor("arrayValue", allOf(hasItem(valueDescriptor("[0]", is("a"))), hasItem(valueDescriptor("[1]", is("b")))))));
+        assertThat(values, hasItem(valueDescriptor("arrayValue", hasItems(valueDescriptor("[0]", is("a")), valueDescriptor("[1]", is("b"))))));
         assertThat(values, hasItem(valueDescriptor("enumerationValue", fieldDescriptor(NON_DEFAULT))));
         assertThat(values, hasItem(valueDescriptor("nestedAnnotationValue", hasItem(valueDescriptor("value", is("nestedClass"))))));
         assertThat(values,
@@ -72,11 +64,9 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies an annotation on method level.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void annotatedMethod() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    public void annotatedMethod() throws ReflectiveOperationException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method level
         store.beginTransaction();
@@ -97,15 +87,14 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies an annotation on method parameter level.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void annotatedMethodParameter() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    public void annotatedMethodParameter() throws ReflectiveOperationException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method parameter level
         store.beginTransaction();
-        TestResult testResult = query("MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
+        TestResult testResult = query(
+                "MATCH (m:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->(a:Java:ByteCode:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN m, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((MethodDescriptor) row.get("m"), methodDescriptor(AnnotatedType.class, "annotatedMethod", String.class));
@@ -122,11 +111,9 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies an annotation on field level.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void annotatedField() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    public void annotatedField() throws NoSuchFieldException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
@@ -147,18 +134,15 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies dependencies generated by default values of annotation methods.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void annotationDefaultValues() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    public void annotationDefaultValues() throws NoSuchFieldException {
         scanClasses(AnnotationWithDefaultValue.class);
         store.beginTransaction();
         assertThat(query("MATCH (t:Type:Annotation) RETURN t").getColumn("t"), hasItem(typeDescriptor(AnnotationWithDefaultValue.class)));
         assertThat(query("MATCH (t:Type:Annotation)-[:DECLARES]->(m:Method)-[:HAS_DEFAULT]->(v:Value) WHERE m.name='classValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, typeDescriptor(Number.class))));
-        assertThat(
-                query("MATCH (t:Type:Annotation)-[:DECLARES]->(m:Method)-[:HAS_DEFAULT]->(v:Value) WHERE m.name='enumerationValue' RETURN v").getColumn("v"),
+        assertThat(query("MATCH (t:Type:Annotation)-[:DECLARES]->(m:Method)-[:HAS_DEFAULT]->(v:Value) WHERE m.name='enumerationValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, fieldDescriptor(DEFAULT))));
         assertThat(query("MATCH (t:Type:Annotation)-[:DECLARES]->(m:Method)-[:HAS_DEFAULT]->(v:Value) WHERE m.name='primitiveValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, is(0d))));
@@ -172,12 +156,9 @@ public class AnnotationIT extends AbstractJavaPluginIT {
     /**
      * Verifies dependencies generated by default values of annotation methods.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    // @Ignore("Scanning the constructor of generic type fails if a parameter annotation is present.")
-    public void innerClass() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    public void innerClass() throws NoSuchMethodException {
         scanClasses(AnnotatedType.GenericInnerAnnotatedType.class, Annotation.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (c:Constructor)-[:HAS]->(:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(Type:Annotation) RETURN c");

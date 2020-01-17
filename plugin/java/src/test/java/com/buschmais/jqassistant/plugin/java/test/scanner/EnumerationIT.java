@@ -6,12 +6,12 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.enumeration.EnumerationType;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -21,7 +21,7 @@ public class EnumerationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link EnumerationType}.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws NoSuchMethodException
@@ -33,9 +33,8 @@ public class EnumerationIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Enum) RETURN e").getColumn("e"), hasItem(typeDescriptor(EnumerationType.class)));
         assertThat(query("MATCH (e:Type:Enum)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Enum.class)));
-        assertThat(query("MATCH (e:Type:Enum)-[:DECLARES]->(f:Field) RETURN f").getColumn("f"), CoreMatchers.allOf(
-                hasItem(fieldDescriptor(EnumerationType.class, "A")), hasItem(fieldDescriptor(EnumerationType.class, "B")),
-                hasItem(fieldDescriptor(EnumerationType.class, "value"))));
+        assertThat(query("MATCH (e:Type:Enum)-[:DECLARES]->(f:Field) RETURN f").getColumn("f"), hasItems(fieldDescriptor(EnumerationType.class, "A"),
+                fieldDescriptor(EnumerationType.class, "B"), fieldDescriptor(EnumerationType.class, "value")));
         assertThat(query("MATCH (e:Type:Enum)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(MethodDescriptorMatcher.constructorDescriptor(EnumerationType.class, String.class, int.class, boolean.class)));
         store.commitTransaction();

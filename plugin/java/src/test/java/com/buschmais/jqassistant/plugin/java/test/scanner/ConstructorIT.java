@@ -9,8 +9,8 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.Overlo
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -20,14 +20,12 @@ public class ConstructorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link ImplicitDefaultConstructor}.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
+     *
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
+    public void implicitDefaultConstructor() throws NoSuchMethodException {
         scanClasses(ImplicitDefaultConstructor.class);
         store.beginTransaction();
         assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
@@ -36,19 +34,17 @@ public class ConstructorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link OverloadedConstructor}.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
+     *
      * @throws NoSuchMethodException
      *             If the test fails.
      */
 
     @Test
-    public void overloadedConstructors() throws IOException, NoSuchMethodException {
+    public void overloadedConstructors() throws NoSuchMethodException {
         scanClasses(OverloadedConstructor.class);
         store.beginTransaction();
         assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"),
-                allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)), hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
+                hasItems(constructorDescriptor(OverloadedConstructor.class), constructorDescriptor(OverloadedConstructor.class, String.class)));
         store.commitTransaction();
     }
 }

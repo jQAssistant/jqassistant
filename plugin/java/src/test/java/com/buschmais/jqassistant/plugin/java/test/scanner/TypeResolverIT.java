@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,32 +19,26 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.resolver.B;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class TypeResolverIT extends AbstractJavaPluginIT {
 
     /**
-     * Verify scanning dependent types in one artifact where the dependent type
-     * is scanned first.
+     * Verify scanning dependent types in one artifact where the dependent type is
+     * scanned first.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void dependentTypeFirst() throws IOException {
+    public void dependentTypeFirst() {
         scanClasses("a1", B.class);
         scanClasses("a1", A.class);
         store.beginTransaction();
         TestResult testResult = query("match (a:Artifact)-[:CONTAINS]->(t:Type) where a.fqn={artifact} return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
         assertThat(testResult.getRows().size(), equalTo(2));
-        assertThat(testResult.getColumn("t"), allOf(hasItem(typeDescriptor(A.class)), hasItem(typeDescriptor(B.class))));
+        assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn={artifact} return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
         assertThat(testResult.getColumn("t"), allOf(not(hasItem(typeDescriptor(A.class))), not(hasItem(typeDescriptor(B.class)))));
@@ -56,18 +49,16 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      * Verify scanning dependent types in one artifact where the dependency is
      * scanned first.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void dependencyTypeFirst() throws IOException {
+    public void dependencyTypeFirst() {
         scanClasses("a1", A.class);
         scanClasses("a1", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (a:Artifact)-[:CONTAINS]->(t:Type) where a.fqn={artifact} return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
         assertThat(testResult.getRows().size(), equalTo(2));
-        assertThat(testResult.getColumn("t"), allOf(hasItem(typeDescriptor(A.class)), hasItem(typeDescriptor(B.class))));
+        assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn={artifact} return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
         assertThat(testResult.getColumn("t"), allOf(not(hasItem(typeDescriptor(A.class))), not(hasItem(typeDescriptor(B.class)))));
@@ -77,11 +68,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     /**
      * Verifies scanning dependent types located in dependent artifacts.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void dependentArtifacts() throws IOException {
+    public void dependentArtifacts() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -112,14 +101,12 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies scanning dependent types located in artifacts which are
-     * transitively dependent.
+     * Verifies scanning dependent types located in artifacts which are transitively
+     * dependent.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void transitiveDependentArtifacts() throws IOException {
+    public void transitiveDependentArtifacts() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -148,11 +135,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     /**
      * Verifies scanning dependent types located in independent artifacts.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void independentArtifacts() throws IOException {
+    public void independentArtifacts() {
         scanClasses("a1", A.class);
         scanClasses("a2", B.class);
         store.beginTransaction();
@@ -177,14 +162,11 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies scanning the same type which exists in two independent
-     * artifacts.
+     * Verifies scanning the same type which exists in two independent artifacts.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void duplicateType() throws IOException {
+    public void duplicateType() {
         scanClasses("a1", A.class);
         scanClasses("a2", A.class);
         store.beginTransaction();
@@ -198,11 +180,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      * Verifies scanning a type depending on another type which exists in two
      * independent artifacts.
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void ambiguousDependencies() throws IOException {
+    public void ambiguousDependencies() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -227,11 +207,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    public void duplicateTypeInSameArtifact() throws IOException {
+    public void duplicateTypeInSameArtifact() {
         File directory = getClassesDirectory(A.class);
         final String resource = "/" + A.class.getName().replace(".", "/") + ".class";
         final File file = new File(directory, resource);
