@@ -233,8 +233,67 @@
               count(type) as Types
         ]]></cypher>
         <verify>
-            <aggregation column="Types" />
+            <aggregation column="Types"/>
         </verify>
+    </concept>
+
+    <concept id="java:FunctionalInterface">
+        <description>Labels functional interfaces (i.e. to be used as lambda expressions)
+            with `FunctionalInterface`.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (i:Java:Interface)-[:DECLARES]->(m:Member:Java:Method {abstract: true})
+            WITH
+                i, count(m) AS methods
+            WHERE
+                methods = 1
+            SET
+                i:FunctionalInterface
+            RETURN
+                i AS FunctionInterface
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:DefaultMethod">
+        <description>Labels default methods of interfaces with `Default`.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type:Java:Interface)-[:DECLARES]->(defaultMethod:Java:Method)
+            WHERE NOT
+              exists(defaultMethod.abstract)
+            SET
+              defaultMethod:Default
+            RETURN
+              defaultMethod AS DefaultMethod, type AS Interface
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:LambdaMethod">
+        <description>Labels lambda methods with `Lambda` and creates a relation `DECLARES` from the declaring method.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(lambda:Method)
+            WHERE
+              exists(lambda.synthetic)
+              and exists(lambda.static)
+              and lambda.name starts with("lambda$")
+            SET
+              lambda:Lambda
+            WITH
+              type, lambda
+            MATCH
+              (type)-[:DECLARES]->(method:Method)
+            WHERE
+              method <> lambda
+              and method.firstLineNumber <= lambda.firstLineNumber
+              and method.lastLineNumber >= lambda.lastLineNumber
+            MERGE
+              (method)-[:DECLARES_LAMBDA]->(lambda)
+            RETURN
+              method, collect(lambda)
+        ]]></cypher>
     </concept>
 
 </jqa:jqassistant-rules>

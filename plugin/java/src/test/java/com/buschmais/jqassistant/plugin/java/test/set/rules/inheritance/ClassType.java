@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.rules.java;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
 /**
  * A class type.

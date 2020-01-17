@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.InterfaceType;
 
 import org.junit.jupiter.api.Test;
 

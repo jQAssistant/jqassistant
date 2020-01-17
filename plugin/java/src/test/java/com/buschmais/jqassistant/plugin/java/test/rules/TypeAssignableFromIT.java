@@ -3,14 +3,13 @@ package com.buschmais.jqassistant.plugin.java.test.rules;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.ClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.InterfaceType;
 
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;

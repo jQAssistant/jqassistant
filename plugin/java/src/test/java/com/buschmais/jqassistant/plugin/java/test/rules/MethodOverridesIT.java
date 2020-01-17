@@ -7,9 +7,9 @@ import java.util.Map;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.ClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.SubClassType;
 
 import org.junit.jupiter.api.Test;
 
