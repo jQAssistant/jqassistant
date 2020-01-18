@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
-
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.ImplicitDefaultConstructor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.OverloadedConstructor;
