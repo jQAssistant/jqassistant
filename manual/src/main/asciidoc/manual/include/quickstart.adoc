@@ -136,7 +136,9 @@ Within your parent module create a directory "jqassistant" and a rules file "my-
 [source,xml]
 .jqassistant/my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://schema.jqassistant.org/rule/v1.8">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/1.8"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
 
     <constraint id="my-rules:TestClassName">
         <requiresConcept refId="junit4:TestClass" />
@@ -155,7 +157,7 @@ Within your parent module create a directory "jqassistant" and a rules file "my-
         <includeConstraint refId="my-rules:TestClassName" />
     </group>
 
-</jqa:jqassistant-rules>
+</jqassistant-rules>
 ----
 
 ==== Run the build
