@@ -108,7 +108,7 @@ public class XmlReportTest {
 
     private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.8.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-v1.8.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportPlugin.ENCODING));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

@@ -2,8 +2,6 @@ package com.buschmais.jqassistant.core.shared.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,11 +15,12 @@ import javax.xml.validation.Schema;
 /**
  * Utility class for unmarshalling XML documents using JAXB.
  * <p>
- * A constructor is provided that takes namespace mappings which may be used to
- * unmarshal documents using an older, i.e. compatible schema version (e.g. for
- * reading a persistence.xml 2.0 descriptor using a 2.1 JAXBContext).
+ * A constructor is provided that takes a target namespace for to be used for
+ * unmarshalling (e.g. for reading a persistence.xml 2.0 descriptor using a 2.1
+ * JAXBContext).
  *
- * @param <X> The JAXB type of the root element.
+ * @param <X>
+ *            The JAXB type of the root element.
  */
 public class JAXBUnmarshaller<X> {
 
@@ -29,7 +28,7 @@ public class JAXBUnmarshaller<X> {
 
     private Schema schema;
 
-    private Map<String, String> namespaceMapping;
+    private String targetNamespace;
 
     private XMLInputFactory inputFactory;
 
@@ -38,35 +37,39 @@ public class JAXBUnmarshaller<X> {
     /**
      * Constructor.
      *
-     * @param rootElementType The expected root element type.
+     * @param rootElementType
+     *            The expected root element type.
      */
     public JAXBUnmarshaller(Class<X> rootElementType) {
-        this(rootElementType, null, Collections.<String, String>emptyMap());
+        this(rootElementType, null, null);
     }
 
     /**
      * Constructor.
      *
-     * @param rootElementType  The expected root element type.
-     * @param namespaceMapping The namespace mappings. The key namespaces contained in the
-     *                         map will be replaced their values while reading documents.
+     * @param rootElementType
+     *            The expected root element type.
+     * @param targetNamespace
+     *            The target namespace to use for unmarshalling.
      */
-    public JAXBUnmarshaller(Class<X> rootElementType, Map<String, String> namespaceMapping) {
-        this(rootElementType, null, namespaceMapping);
+    public JAXBUnmarshaller(Class<X> rootElementType, String targetNamespace) {
+        this(rootElementType, null, targetNamespace);
     }
 
     /**
      * Constructor.
      *
-     * @param rootElementType  The expected root element type.
-     * @param schema           The optional schema for validation.
-     * @param namespaceMapping The namespace mappings. The key namespaces contained in the
-     *                         map will be replaced their values while reading documents.
+     * @param rootElementType
+     *            The expected root element type.
+     * @param schema
+     *            The optional schema for validation.
+     * @param targetNamespace
+     *            The target namespace to use for unmarshalling.
      */
-    public JAXBUnmarshaller(Class<X> rootElementType, Schema schema, Map<String, String> namespaceMapping) {
+    public JAXBUnmarshaller(Class<X> rootElementType, Schema schema, String targetNamespace) {
         this.rootElementType = rootElementType;
         this.schema = schema;
-        this.namespaceMapping = namespaceMapping;
+        this.targetNamespace = targetNamespace;
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         try {
@@ -78,7 +81,7 @@ public class JAXBUnmarshaller<X> {
 
     public X unmarshal(InputStream stream) throws IOException {
         try {
-            XMLStreamReader xmlStreamReader = new NamespaceMappingStreamReader(inputFactory.createXMLStreamReader(stream), namespaceMapping);
+            XMLStreamReader xmlStreamReader = new NamespaceMappingStreamReader(inputFactory.createXMLStreamReader(stream), targetNamespace);
             return unmarshal(xmlStreamReader);
         } catch (XMLStreamException e) {
             throw new IOException("Cannot read XML document.", e);
@@ -98,21 +101,16 @@ public class JAXBUnmarshaller<X> {
     }
 
     /**
-     * A {@link StreamReaderDelegate} which maps all namespaces from a document
-     * to a specified namespace.
+     * A {@link StreamReaderDelegate} which maps all namespaces from a document to a
+     * specified namespace.
      */
     private static class NamespaceMappingStreamReader extends StreamReaderDelegate {
 
-        private Map<String, String> namespaceMapping;
+        private String targetNamespace;
 
-        public NamespaceMappingStreamReader(XMLStreamReader reader, Map<String, String> namespaceMapping) {
+        public NamespaceMappingStreamReader(XMLStreamReader reader, String targetNamespace) {
             super(reader);
-            this.namespaceMapping = namespaceMapping;
-        }
-
-        @Override
-        public String getAttributeNamespace(int index) {
-            return map(super.getAttributeNamespace(index));
+            this.targetNamespace = targetNamespace;
         }
 
         @Override
@@ -121,8 +119,7 @@ public class JAXBUnmarshaller<X> {
         }
 
         private String map(String documentNamespace) {
-            String namespace = namespaceMapping.get(documentNamespace);
-            return namespace != null ? namespace : documentNamespace;
+            return targetNamespace != null ? targetNamespace : documentNamespace;
         }
     }
 }

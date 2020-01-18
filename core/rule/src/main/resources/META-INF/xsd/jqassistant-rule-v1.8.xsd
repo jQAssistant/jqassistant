@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:jqassistant-rules="http://schema.jqassistant.org/rule/v1.8"
+           xmlns:tns="http://schema.jqassistant.org/rule/v1.8"
            targetNamespace="http://schema.jqassistant.org/rule/v1.8"
-           xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 http://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+           elementFormDefault="qualified">
 
     <xs:element name="jqassistant-rules">
         <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0"
+                <xs:element name="concept" type="tns:conceptType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="tns:constraintType" minOccurs="0"
                             maxOccurs="unbounded"/>
-                <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="group" type="tns:groupType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -30,7 +29,7 @@
 
     <xs:complexType name="parameterType">
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
+        <xs:attribute name="type" type="tns:parameterTypes" use="required"/>
         <xs:attribute name="defaultValue" type="xs:string"/>
     </xs:complexType>
 
@@ -73,16 +72,16 @@
 
     <xs:complexType name="includedReferenceType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceType">
-                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
+            <xs:extension base="tns:referenceType">
+                <xs:attribute name="severity" type="tns:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="verificationType">
         <xs:choice>
-            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType"/>
-            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType"/>
+            <xs:element name="rowCount" type="tns:rowCountVerificationType"/>
+            <xs:element name="aggregation" type="tns:aggregationVerificationType"/>
         </xs:choice>
     </xs:complexType>
 
@@ -99,30 +98,30 @@
 
     <xs:complexType name="severityRuleType" abstract="true">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
-                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
+            <xs:extension base="tns:referenceableType">
+                <xs:attribute name="severity" type="tns:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
 
-  <xs:complexType name="executableRuleType" abstract="true">
+    <xs:complexType name="executableRuleType" abstract="true">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:severityRuleType">
+            <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
-                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
+                    <xs:element name="requiresConcept" type="tns:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:element name="requiresParameter" type="jqassistant-rules:parameterType" minOccurs="0"
+                    <xs:element name="requiresParameter" type="tns:parameterType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:element name="description" type="xs:string" minOccurs="0"/>
                     <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
                     <xs:choice>
-                        <xs:element name="source" type="jqassistant-rules:sourceType"/>
+                        <xs:element name="source" type="tns:sourceType"/>
                         <xs:element name="cypher" type="xs:string"/>
-                        <xs:element name="script" type="jqassistant-rules:sourceType"/>
+                        <xs:element name="script" type="tns:sourceType"/>
                     </xs:choice>
-                    <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0"/>
-                    <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0"/>
+                    <xs:element name="verify" type="tns:verificationType" minOccurs="0"/>
+                    <xs:element name="report" type="tns:reportType" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -130,25 +129,25 @@
 
     <xs:complexType name="conceptType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:executableRuleType"/>
+            <xs:extension base="tns:executableRuleType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="constraintType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:executableRuleType"/>
+            <xs:extension base="tns:executableRuleType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="groupType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:severityRuleType">
+            <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
-                    <xs:element name="includeConcept" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                    <xs:element name="includeConcept" type="tns:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:element name="includeConstraint" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                    <xs:element name="includeConstraint" type="tns:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:element name="includeGroup" type="jqassistant-rules:includedReferenceType" minOccurs="0"
+                    <xs:element name="includeGroup" type="tns:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
@@ -157,7 +156,7 @@
 
     <xs:complexType name="reportType">
         <xs:sequence>
-            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="property" type="tns:propertyType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
         <xs:attribute name="primaryColumn" type="xs:string"/>

@@ -47,12 +47,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      */
     public PluginConfigurationReaderImpl(ClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
-        Map<String, String> namespaceMappings = new HashMap<>();
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0", NAMESPACE);
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1", NAMESPACE);
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.2", NAMESPACE);
-        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4", NAMESPACE);
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantPlugin.class, SCHEMA, namespaceMappings);
+        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantPlugin.class, SCHEMA, NAMESPACE);
     }
 
     @Override

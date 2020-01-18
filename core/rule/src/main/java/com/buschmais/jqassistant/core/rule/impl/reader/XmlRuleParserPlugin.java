@@ -21,13 +21,8 @@ import org.jqassistant.schema.rule.v1.*;
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE_1_0 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0";
-    private static final String NAMESPACE_RULE_1_1 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1";
-    private static final String NAMESPACE_RULE_1_2 = "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2";
-    private static final String NAMESPACE_RULE_1_3 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.3";
-    private static final String NAMESPACE_RULE_1_4 = "http://www.buschmais.com/jqassistant/core/rule/schema/v1.4";
     private static final String NAMESPACE_RULE_1_8 = "http://schema.jqassistant.org/rule/v1.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rule-1.8.xsd";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rule-v1.8.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -35,13 +30,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     @Override
     public void initialize() {
-        Map<String, String> namespaceMappings = new HashMap<>();
-        namespaceMappings.put(NAMESPACE_RULE_1_0, NAMESPACE_RULE_1_8);
-        namespaceMappings.put(NAMESPACE_RULE_1_1, NAMESPACE_RULE_1_8);
-        namespaceMappings.put(NAMESPACE_RULE_1_2, NAMESPACE_RULE_1_8);
-        namespaceMappings.put(NAMESPACE_RULE_1_3, NAMESPACE_RULE_1_8);
-        namespaceMappings.put(NAMESPACE_RULE_1_4, NAMESPACE_RULE_1_8);
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, namespaceMappings);
+        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE_1_8);
     }
 
     @Override
@@ -106,8 +95,8 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
-        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints)
-                .groups(includeGroups).build();
+        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints).groups(includeGroups)
+                .build();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
