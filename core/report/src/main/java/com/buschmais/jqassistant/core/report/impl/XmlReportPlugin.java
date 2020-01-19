@@ -39,7 +39,6 @@ public class XmlReportPlugin implements ReportPlugin {
     public static final String ENCODING = "UTF-8";
 
     public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v1.8";
-    public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -68,29 +67,23 @@ public class XmlReportPlugin implements ReportPlugin {
 
     @Override
     public void begin() throws ReportException {
-        run(new XmlOperation() {
-            @Override
-            public void run() throws XMLStreamException, IOException {
-                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), ENCODING);
-                XMLStreamWriter streamWriter= xmlOutputFactory.createXMLStreamWriter(writer);
-                xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
-                xmlStreamWriter.writeStartDocument(ENCODING, "1.0");
-                xmlStreamWriter.setPrefix(NAMESPACE_PREFIX, NAMESPACE_URL);
-                xmlStreamWriter.writeStartElement(NAMESPACE_URL, "jqassistant-report");
-                xmlStreamWriter.writeNamespace(NAMESPACE_PREFIX, NAMESPACE_URL);
-            }
+        run(() -> {
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), ENCODING);
+            XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
+            xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
+            xmlStreamWriter.writeStartDocument(ENCODING, "1.0");
+            xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
+            xmlStreamWriter.writeStartElement("jqassistant-report");
+            xmlStreamWriter.writeDefaultNamespace(NAMESPACE_URL);
         });
     }
 
     @Override
     public void end() throws ReportException {
-        run(new XmlOperation() {
-            @Override
-            public void run() throws XMLStreamException {
-                xmlStreamWriter.writeEndElement();
-                xmlStreamWriter.writeEndDocument();
-                xmlStreamWriter.close();
-            }
+        run(() -> {
+            xmlStreamWriter.writeEndElement();
+            xmlStreamWriter.writeEndDocument();
+            xmlStreamWriter.close();
         });
     }
 
