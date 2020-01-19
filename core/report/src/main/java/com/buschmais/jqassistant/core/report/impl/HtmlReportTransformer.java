@@ -40,12 +40,7 @@ public class HtmlReportTransformer implements ReportTransformer {
         Transformer transformer;
         try {
             transformerFactory = TransformerFactory.newInstance();
-            transformerFactory.setURIResolver(new URIResolver() {
-                @Override
-                public Source resolve(String href, String base) throws TransformerException {
-                    return new StreamSource(HtmlReportTransformer.class.getResourceAsStream(href));
-                }
-            });
+            transformerFactory.setURIResolver((href, base) -> new StreamSource(HtmlReportTransformer.class.getResourceAsStream(href)));
             transformer = transformerFactory.newTransformer(xsl);
         } catch (TransformerConfigurationException e) {
             throw new ReportTransformerException("Cannot get transformer factory.", e);

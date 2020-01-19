@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:tns="http://schema.jqassistant.org/report/v1.8">
     <xsl:output method="html" version="1.0" encoding="iso-8859-1"
                 indent="yes"/>
     <xsl:template name="content">
@@ -116,7 +117,7 @@
                     <th style="width:80%;">Group Name</th>
                     <th style="width:15%;">Date</th>
                 </tr>
-                <xsl:apply-templates select="//group"/>
+                <xsl:apply-templates select="//tns:group"/>
             </table>
         </div>
         <div>
@@ -135,10 +136,10 @@
                     <th style="width:15%;">Severity</th>
                     <th style="width:15%;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//constraint">
-                    <xsl:sort select="count(result)" order="descending"
+                <xsl:apply-templates select="//tns:constraint">
+                    <xsl:sort select="count(tns:result)" order="descending"
                               data-type="number"/>
-                    <xsl:sort select="severity/@level" order="ascending"/>
+                    <xsl:sort select="tns:severity/@level" order="ascending"/>
                 </xsl:apply-templates>
             </table>
         </div>
@@ -158,17 +159,17 @@
                     <th style="width:15%;">Severity</th>
                     <th style="width:15%;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//concept">
-                    <xsl:sort select="count(result)" order="descending"
+                <xsl:apply-templates select="//tns:concept">
+                    <xsl:sort select="count(tns:result)" order="descending"
                               data-type="number"/>
-                    <xsl:sort select="severity/@level" order="ascending"/>
+                    <xsl:sort select="tns:severity/@level" order="ascending"/>
                 </xsl:apply-templates>
             </table>
         </div>
     </xsl:template>
 
     <!-- ANALYSIS GROUP -->
-    <xsl:template match="group">
+    <xsl:template match="tns:group">
         <tr>
             <td>
                 <xsl:value-of select="position()"/>
@@ -183,14 +184,14 @@
     </xsl:template>
 
     <!-- CONSTRAINT/CONCEPT TABLE -->
-    <xsl:template match="constraint | concept">
-        <xsl:variable name="resultId" select="generate-id(result)"/>
+    <xsl:template match="tns:constraint | tns:concept">
+        <xsl:variable name="resultId" select="generate-id(tns:result)"/>
         <tr>
             <xsl:attribute name="class">
                 <xsl:choose>
-                    <xsl:when test="result and name()='constraint'">constraint_error</xsl:when>
-                    <xsl:when test="not(result) and name()='constraint'">constraint_success</xsl:when>
-                    <xsl:when test="not(result) and name()='concept'">concept_warn</xsl:when>
+                    <xsl:when test="tns:result and name()='constraint'">constraint_error</xsl:when>
+                    <xsl:when test="not(tns:result) and name()='constraint'">constraint_success</xsl:when>
+                    <xsl:when test="not(tns:result) and name()='concept'">concept_warn</xsl:when>
                     <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
@@ -199,11 +200,11 @@
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <span class="ruleName" title="{description/text()}"
+                <span class="ruleName" title="{tns:description/text()}"
                       onclick="javascript:toggle('{$resultId}');">
                     <xsl:attribute name="class">
                         <xsl:choose>
-                            <xsl:when test="result">ruleName nameWithResult</xsl:when>
+                            <xsl:when test="tns:result">ruleName nameWithResult</xsl:when>
                             <xsl:otherwise>ruleName</xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
@@ -211,31 +212,31 @@
                 </span>
             </td>
             <td class="right">
-                <xsl:value-of select="count(result/rows/row)"/>
+                <xsl:value-of select="count(tns:result/tns:rows/tns:row)"/>
             </td>
             <td class="right">
-                <xsl:value-of select="severity/text()"/>
+                <xsl:value-of select="tns:severity/text()"/>
             </td>
             <td class="right">
-                <xsl:value-of select="duration/text()"/>
+                <xsl:value-of select="tns:duration/text()"/>
             </td>
         </tr>
-        <xsl:if test="result">
+        <xsl:if test="tns:result">
             <tr id="{$resultId}" style="display:none;" name="resultRow">
                 <xsl:if test="name()='constraint'">
                     <xsl:attribute name="class">
                         <xsl:choose>
-                            <xsl:when test="result">constraint_error</xsl:when>
+                            <xsl:when test="tns:result">constraint_error</xsl:when>
                             <xsl:otherwise>constraint_success</xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
                     <td colspan="5">
-                        <xsl:apply-templates select="result"/>
+                        <xsl:apply-templates select="tns:result"/>
                     </td>
                 </xsl:if>
                 <xsl:if test="name()!='constraint'">
                     <td colspan="5">
-                        <xsl:apply-templates select="result"/>
+                        <xsl:apply-templates select="tns:result"/>
                     </td>
                 </xsl:if>
             </tr>
@@ -243,26 +244,26 @@
     </xsl:template>
 
     <!-- RESULT PART -->
-    <xsl:template match="result">
+    <xsl:template match="tns:result">
         <div class="result">
             <p>
-                <xsl:value-of select="../description/text()"/>
+                <xsl:value-of select="../tns:description/text()"/>
             </p>
             <table>
                 <tr>
-                    <xsl:for-each select="columns/column">
+                    <xsl:for-each select="tns:columns/tns:column">
                         <th>
                             <xsl:value-of select="text()"/>
                         </th>
                     </xsl:for-each>
                 </tr>
-                <xsl:for-each select="rows/row">
+                <xsl:for-each select="tns:rows/tns:row">
                     <xsl:variable name="row" select="position()"/>
                     <tr>
-                        <xsl:for-each select="../../columns/column">
+                        <xsl:for-each select="../../tns:columns/tns:column">
                             <xsl:variable name="col" select="text()"/>
                             <td>
-                                <xsl:value-of select="../../rows/row[$row]/column[@name=$col]/value"/>
+                                <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
                             </td>
                         </xsl:for-each>
                     </tr>
