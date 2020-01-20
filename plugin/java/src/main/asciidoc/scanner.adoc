@@ -1,7 +1,7 @@
 == Artifact Scanner
 
 [[:Java:Artifact]]
-=== Nodes labled with `:Java:Artifact
+=== Nodes labeled with `:Java:Artifact
 A directory or archive containing packages, classes and resources.
 
 .Properties of `:Java:Artifact`
@@ -21,12 +21,12 @@ A directory or archive containing packages, classes and resources.
 |====
 
 [[:Java:Artifact:Directory]]
-=== Nodes labled with `:Java:Artifact:Directory`
+=== Nodes labeled with `:Java:Artifact:Directory`
 
 A directory representing a Java artifact.
 
 [[:Java:Artifact:Jar:Archive]]
-=== Nodes labled with `:Java:Artifact:Jar:Archive`
+=== Nodes labeled with `:Java:Artifact:Jar:Archive`
 
 A JAR file representing a Java artifact.
 
@@ -37,7 +37,7 @@ A JAR file representing a Java artifact.
 Imports Java packages.
 
 [[:Java:Package]]
-=== Nodes labled with `:Java:Package`
+=== Nodes labeled with `:Java:Package`
 
 A Java package, i.e. a directory containing `.class` files or other directories.
 
@@ -79,7 +79,7 @@ property `fqn` and `DECLARES` relations to their members. These are `:Field` or
 |====
 
 [[:Java:Type]]
-=== Nodes labled with :Java:Type
+=== Nodes labeled with :Java:Type
 A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum` or `:Annotation`
 
 .Properties of `:Java:Type`
@@ -133,20 +133,20 @@ using `IMPLEMENTS` relations, i.e. queries must use
 | lineNumber | The line number the referenced field or method is read, written or invoked
 |====
 
-=== Nodes labled with `:Java:Type:Class`
+=== Nodes labeled with `:Java:Type:Class`
 Qualifies a Java type as class.
 
-=== Nodes labled with `:Java:Type:Interface`
+=== Nodes labeled with `:Java:Type:Interface`
 Qualifies a Java type node as interface.
 
-=== Nodes labled with `:Java:Type:Enum`
+=== Nodes labeled with `:Java:Type:Enum`
 Qualifies a Java type as enumeration.
 
-=== Nodes labled with `:Java:Type:Annotation`
+=== Nodes labeled with `:Java:Type:Annotation`
 Qualifies a Java type as annotation.
 
 [[:Java:Field]]
-=== Nodes labled with `:Java:Field`
+=== Nodes labeled with `:Java:Field`
 A field declared in a Java type.
 
 .Properties of `:Java:Field`
@@ -214,11 +214,11 @@ A method declared in a Java type.
 *NOTE* Methods which are referenced by scanned classes but have not been
 scanned themselves will only provide the property `signature`
 
-=== Nodes labled with `:Java:Method:Constructor`
+=== Nodes labeled with `:Java:Method:Constructor`
 Qualifies a method as constructor.
 
 [[:Java:Parameter]]
-=== Nodes labled with `:Java:Parameter`
+=== Nodes labeled with `:Java:Parameter`
 
 A method parameter.
 
@@ -238,7 +238,7 @@ A method parameter.
 |====
 
 [[:Java:Variable]]
-=== Nodes labled with `:Java:Variable`
+=== Nodes labeled with `:Java:Variable`
 A variable declared in a method.
 
 .Properties of `:Java:Variable`
@@ -250,7 +250,7 @@ A variable declared in a method.
 |====
 
 [[:Java:Value]]
-=== Nodes labled with `:Java:Value`
+=== Nodes labeled with `:Java:Value`
 
 A value, can be qualified by either `:Primitive`, `:Annotation`, `:Class`, `:Enum` or `:Array`.
 
@@ -262,7 +262,7 @@ A value, can be qualified by either `:Primitive`, `:Annotation`, `:Class`, `:Enu
 |====
 
 [[:Java:Value:Primitive]]
-=== Nodes labled with `:Value:Primitive`
+=== Nodes labeled with `:Value:Primitive`
 A primitive value.
 
 .Properties of `:Java:Value:Primitive`
@@ -273,7 +273,7 @@ A primitive value.
 |====
 
 [[:Java:Value:Annotation]]
-=== Nodes labled with `:Java:Value:Annotation`
+=== Nodes labeled with `:Java:Value:Annotation`
 Represents a annotation on a Java element, e.g. `@Entity public class ...`
 
 .Relations of `:Java:Value:Annotation:`
@@ -285,7 +285,7 @@ Represents a annotation on a Java element, e.g. `@Entity public class ...`
 |====
 
 [[:Java:Value:Class]]
-=== Nodes labled with `:Java:Value:Class`
+=== Nodes labeled with `:Java:Value:Class`
 Represents a class instance, e.g. as specified by annotation attribute.
 
 .Relations of `:Java:Value:Class:
@@ -296,7 +296,7 @@ Represents a class instance, e.g. as specified by annotation attribute.
 |====
 
 [[:Java:Value:Enum]]
-=== Nodes labled with `:Java:Value:Enum`
+=== Nodes labeled with `:Java:Value:Enum`
 Represents an enum value.
 
 .Relations of `:Java:Value:Enum:`
@@ -307,7 +307,7 @@ Represents an enum value.
 |====
 
 [[:Java:Value:Array]]
-=== Nodes labled with `:Java:Value:Array`
+=== Nodes labeled with `:Java:Value:Array`
 Represents an array value, i.e. a node referencing value nodes.
 
 .Relations of `:Java:Value:Array:`
@@ -324,7 +324,7 @@ Represents an array value, i.e. a node referencing value nodes.
 Imports manifest descriptors from `META-INF/MANIFEST.MF` files.
 
 [[:File:Java:Manifest]]
-=== Nodes labled with `:File:Java:Manifest`
+=== Nodes labeled with `:File:Java:Manifest`
 A `MANIFEST.MF` file containing sections.
 
 .Properties of `:File:Java:Manifest`
@@ -342,7 +342,7 @@ A `MANIFEST.MF` file containing sections.
 |====
 
 [[:Java:ManifestSection]]
-=== Nodes labled with `:Java:ManifestSection`
+=== Nodes labeled with `:Java:ManifestSection`
 A manifest section.
 
 .Relations of `:Java:ManifestSection`
@@ -353,7 +353,7 @@ A manifest section.
 |====
 
 [[:Java:Value:ManifestEntry]]
-=== Nodes labled with `:Java:Value:ManifestEntry`
+=== Nodes labeled with `:Java:Value:ManifestEntry`
 A manifest entry.
 
 .Properties of :Java:Value:ManifestEntry
@@ -375,7 +375,7 @@ the doctype
 `<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">`.
 
 [[:File:Java:Properties]]
-=== Nodes labled with `:File:Properties` or `:File:Properties:Xml`
+=== Nodes labeled with `:File:Properties` or `:File:Properties:Xml`
 
 A property file containing key/value pairs. A node with the labels
 `:File:Properties` can represent a text based property file (`\*.properties`)
@@ -396,7 +396,7 @@ or a XML based property file (`*.xml`).
 |====
 
 [[:Java:Value:Property]]
-=== Nodes labled with `:Java:Value:Property`
+=== Nodes labeled with `:Java:Value:Property`
 A key value/pair.
 
 .Properties of `:Java:Value:Property`
@@ -414,7 +414,7 @@ A key value/pair.
 Imports service loader descriptors from `META-INF/services` directories.
 
 [[:File:Java:ServiceLoader]]
-=== Nodes labled with `:File:Java:ServiceLoader`
+=== Nodes labeled with `:File:Java:ServiceLoader`
 A file containing the implementation class names for a service interface
 
 .Properties of `:File:Java:ServiceLoader`
@@ -466,4 +466,4 @@ public class ClassViolatingMyConstraint {
 ----
 
 NOTE: Suppression only applies to the primary column of a rule result.
-If not explicitly specified this is the first column specified in the return clause of concept or constraint.
+If not explicitly specified this is the first column specified in the return clause of a concept or constraint.
