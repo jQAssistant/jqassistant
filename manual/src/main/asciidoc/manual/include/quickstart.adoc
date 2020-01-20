@@ -112,6 +112,7 @@ Add the following lines to the parent pom.xml file of your project:
     </plugins>
 </build>
 
+<!-- Only required if a Maven site is generated -->
 <reporting>
     <plugins>
         <plugin>
@@ -131,34 +132,36 @@ Add the following lines to the parent pom.xml file of your project:
 
 ==== Add a rule
 
-Within your parent module create a directory "jqassistant" and a rules file "my-rules.xml" in it:
+Within your parent module create a directory `jqassistant` and a an Asciidoc file `my-rules.adoc` in it:
 
 [source,xml]
-.jqassistant/my-rules.xml
+.jqassistant/my-rules.adoc
+....
+= My Project
+
+// Include a summary of all executed rules and their status
+include::jQA:Summary[]
+
+[[default]]
+[role=group,includesConstraints="my-rules:*"]
+== Default Rules
+
+[[my-rules:TestClassName]]
+[source,cypher,role=constraint,requiresConcepts="junit4:TestClass"]
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/1.8"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
-
-    <constraint id="my-rules:TestClassName">
-        <requiresConcept refId="junit4:TestClass" />
-        <description>All JUnit test classes must have a name with suffix "Test".</description>
-        <cypher><![CDATA[
-            MATCH
-                (t:Junit4:Test:Class)
-            WHERE NOT
-                t.name =~ ".*Test"
-            RETURN
-                t AS InvalidTestClass
-        ]]></cypher>
-    </constraint>
-
-    <group id="default">
-        <includeConstraint refId="my-rules:TestClassName" />
-    </group>
-
-</jqassistant-rules>
+MATCH
+    (t:Junit4:Test:Class)
+WHERE NOT
+    t.name ends with "Test"
+RETURN
+    t AS InvalidTestClass
 ----
+
+== Imported Rules
+
+// Include specific rules that have been executed and their results.
+include::jQA:Rules[concepts="junit4:*"]
+....
 
 ==== Run the build
 
@@ -169,12 +172,9 @@ Execute the following command from your parent module:
 mvn install
 ----
 
-The build will fail with the message specified by your rule if it is violated. If everything is fine you can also create a report as part of your Maven site:
+The build will fail with the rule's message if it is violated.
 
-[source]
-----
-mvn site
-----
+The HTML report generated from the Asciidoc file including all results is available from `target/jqassistant/report/asciidoc/index.html`.
 
 ==== Explore your application
 
