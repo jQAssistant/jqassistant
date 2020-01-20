@@ -4,7 +4,7 @@ Imports results from JUnit 4 and JUnit 5 test suites written by Maven
 Surefire and Maven Failsave matching the file name `*TEST-*.xml`.
 
 [[:File:TestSuite]]
-=== Nodes labled with `:File:Junit:TestSuite`
+=== Nodes labeled with `:File:Junit:TestSuite`
 A file containing results of a JUnit 4 or JUnit 5 test suite.
 
 .Properties of `:File:JUnit:TestSuite`
