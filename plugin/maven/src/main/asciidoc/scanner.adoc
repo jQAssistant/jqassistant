@@ -19,7 +19,7 @@ If scanning of dependencies is enabled the included artifacts can be controlled 
 They follow the Maven syntax, i.e. `[groupId]:[artifactId]:[type]:[version]` or `[groupId]:[artifactId]:[type]:[classifier]:[version]` and allow using wildcards.
 
 [[:Maven:Project]]
-=== Nodes labled with `:Maven:Project:File:Directory`
+=== Nodes labeled with `:Maven:Project:File:Directory`
 
 A `pom.xml` file describing a single Maven project.
 
@@ -47,7 +47,7 @@ A `pom.xml` file describing a single Maven project.
 |====
 
 [[:Maven:Artifact]]
-=== Nodes labled with `:Maven:Artifact`
+=== Nodes labeled with `:Maven:Artifact`
 Represents an artifact, e.g. a JAR-File.
 
 NOTE: The artifact is further labeled with `:Main` representing the main artifact and `:Test` representing the test artifact.
@@ -84,7 +84,7 @@ NOTE: The artifact is further labeled with `:Main` representing the main artifac
 Imports information from Maven POMs (e.g. `pom.xml`) files.
 
 [[:Maven:Scm]]
-=== Nodes labled with `:Maven:Scm`
+=== Nodes labeled with `:Maven:Scm`
 
 .Properties of `:Maven:Scm`
 |====
@@ -96,7 +96,7 @@ Imports information from Maven POMs (e.g. `pom.xml`) files.
 |====
 
 [[:Maven:Pom]]
-=== Nodes labled with `:Maven:Pom`
+=== Nodes labeled with `:Maven:Pom`
 A POM describing a Maven project.
 
 .Properties of `:Maven:Pom`
@@ -135,7 +135,7 @@ NOTE: A <<:Maven:Pom>> node may be further qualified by a label `Effective` indi
 
 
 [[:Maven:Dependency]]
-===  Nodes labled with `:Maven:Dependency`
+===  Nodes labeled with `:Maven:Dependency`
 
 A declared or managed dependency of <<:Maven:Pom>>.
 
@@ -157,7 +157,7 @@ A declared or managed dependency of <<:Maven:Pom>>.
 
 
 [[:Maven:Exclusion]]
-===  Nodes labled with `:Maven:Exclusion`
+===  Nodes labeled with `:Maven:Exclusion`
 
 Describes an exclusion pattern for <<:Maven:Dependency>>.
 
@@ -235,7 +235,7 @@ The organization behind the project.
 |====
 
 [[:Maven:Repository]]
-=== Nodes labled with `:Maven:Repository`
+=== Nodes labeled with `:Maven:Repository`
 
 A Maven repository declared for a Maven POM or a profile in a Maven POM.
 
@@ -270,7 +270,7 @@ The roles a person plays in the project.
 
 
 [[:Maven:Profile]]
-=== Nodes labled with `:Maven:Profile`
+=== Nodes labeled with `:Maven:Profile`
 A maven profile
 
 .Properties of `:Maven:Profile`
@@ -295,7 +295,7 @@ A maven profile
 |====
 
 [[:Maven:ProfileActivation]]
-=== Nodes labled with `:Maven:ProfileActivation`
+=== Nodes labeled with `:Maven:ProfileActivation`
 A maven profile activation
 
 .Properties of `:Maven:ProfileActivation`
@@ -316,7 +316,7 @@ A maven profile activation
 |====
 
 [[:Maven:ActivationFile]]
-=== Nodes labled with `:Maven:ActivationFile`
+=== Nodes labeled with `:Maven:ActivationFile`
 File specification used to activate a profile
 
 .Properties of `:Maven:ActivationFile`
@@ -328,7 +328,7 @@ File specification used to activate a profile
 |====
 
 [[:Maven:ActivationOS]]
-=== Nodes labled with `:Maven:ActivationOS`
+=== Nodes labeled with `:Maven:ActivationOS`
 Defines operating system's attributes to activate a profile
 
 .Properties of `:Maven:ActivationOS`
@@ -342,7 +342,7 @@ Defines operating system's attributes to activate a profile
 |====
 
 [[:Maven:Module]]
-=== Nodes labled with `:Maven:Module`
+=== Nodes labeled with `:Maven:Module`
 
 A Maven module
 
@@ -354,7 +354,7 @@ A Maven module
 |====
 
 [[:Maven:Plugin]]
-=== Nodes labled with `:Maven:Plugin`
+=== Nodes labeled with `:Maven:Plugin`
 
 A Maven plugin. The Maven artifact of the plugin can be found
 through the outgoing `IS_ARTIFACT` relation.
@@ -377,7 +377,7 @@ through the outgoing `IS_ARTIFACT` relation.
 |====
 
 [[:Maven:License]]
-=== Nodes labled with `:Maven:License`
+=== Nodes labeled with `:Maven:License`
 A used license
 
 .Properties of `:Maven:License`
@@ -391,7 +391,7 @@ A used license
 |====
 
 [[:Maven:PluginExecution]]
-=== Nodes labled with `:Maven:PluginExecution`
+=== Nodes labeled with `:Maven:PluginExecution`
 A plugin execution
 
 .Properties of `:Maven:PluginExecution`
@@ -412,7 +412,7 @@ A plugin execution
 |====
 
 [[:Maven:Configuration]]
-=== Nodes labled with `:Maven:Configuration`
+=== Nodes labeled with `:Maven:Configuration`
 A configuration for plugins, executions
 
 .Relations of :Maven:Configuration
@@ -423,7 +423,7 @@ A configuration for plugins, executions
 |====
 
 [[:Maven:ExecutionGoal]]
-=== Nodes labled with `:Maven:ExecutionGoal`
+=== Nodes labeled with `:Maven:ExecutionGoal`
 A goal for plugin executions
 
 .Properties of `:Maven:ExecutionGoal`
