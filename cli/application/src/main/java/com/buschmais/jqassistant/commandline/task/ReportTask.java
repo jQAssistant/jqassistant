@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class ReportTask extends AbstractTask {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResetTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTask.class);
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
