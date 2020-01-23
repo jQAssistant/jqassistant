@@ -355,6 +355,7 @@ Both concepts and constraints may define required parameters:
 
 or in Asciidoc:
 
+.my-rules.adoc
 ....
 [[my-rules:my-rules:ApplicationRootPackage]]
 .Labels the root package of the application with "Root".
