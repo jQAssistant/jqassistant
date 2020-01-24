@@ -6,9 +6,11 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 public class ComplexKeyIT extends AbstractYAMLPluginIT {
 
     @Test

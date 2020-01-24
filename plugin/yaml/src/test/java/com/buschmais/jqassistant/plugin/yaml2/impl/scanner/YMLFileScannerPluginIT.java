@@ -7,9 +7,11 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class YMLFileScannerPluginIT extends AbstractPluginIT {
 
     @BeforeEach

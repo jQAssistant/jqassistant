@@ -6,10 +6,12 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E12IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e12-compact-nested-mapping.yaml";
 

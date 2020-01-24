@@ -6,10 +6,12 @@ import java.util.Optional;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E04IT extends AbstractYAMLPluginIT {
 
     private static String YAML_FILE = "/probes/example-c2-e04-sequence-of-mappings.yaml";

@@ -5,9 +5,11 @@ import java.util.List;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E07IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e07-two-documents-in-a-stream.yaml";
 

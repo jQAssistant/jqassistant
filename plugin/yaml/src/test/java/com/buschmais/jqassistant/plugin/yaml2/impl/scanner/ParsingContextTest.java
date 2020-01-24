@@ -1,10 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ParsingContextTest {
 
     ParsingContext pc = new ParsingContext();

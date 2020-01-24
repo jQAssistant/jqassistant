@@ -7,11 +7,13 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPl
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
 // todo Add a test with an alias as key of a map entry
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 public class AliasIT extends AbstractYAMLPluginIT {
 
     @Nested
