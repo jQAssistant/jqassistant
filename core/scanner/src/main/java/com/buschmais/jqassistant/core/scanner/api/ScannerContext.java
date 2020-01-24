@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
+import java.io.File;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
@@ -11,16 +13,18 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public interface ScannerContext {
 
+    String DATA_DIRECTORY = "data";
+
     /**
      * Return the store.
-     * 
+     *
      * @return The store.
      */
     Store getStore();
 
     /**
      * Push a value to the context.
-     * 
+     *
      * @param key
      *            The type of the value.
      * @param value
@@ -32,7 +36,7 @@ public interface ScannerContext {
 
     /**
      * Peek for a value in the context.
-     * 
+     *
      * @param key
      *            The type of the value.
      * @param <T>
@@ -59,7 +63,7 @@ public interface ScannerContext {
 
     /**
      * Pop a value from the context.
-     * 
+     *
      * @param key
      *            The type of the value.
      * @param <T>
@@ -71,7 +75,7 @@ public interface ScannerContext {
     /**
      * Set the descriptor which is currently enhanced by the scanner plugins in
      * the pipeline.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @param <D>
@@ -82,10 +86,14 @@ public interface ScannerContext {
     /**
      * Return the descriptor which is currently enhanced by the scanner plugins
      * in the pipeline.
-     * 
+     *
      * @param <D>
      *            The descriptor type.
      */
     <D extends Descriptor> D getCurrentDescriptor();
 
+    /**
+    * Return the directory for storing data using a given relative
+     */
+    File getDataDirectory(String path);
 }

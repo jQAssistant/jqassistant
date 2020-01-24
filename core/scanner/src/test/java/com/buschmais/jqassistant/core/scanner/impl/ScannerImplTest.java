@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,8 @@ import static org.mockito.Mockito.any;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class ScannerImplTest {
+
+    private static final File OUTPUT_DIRECTORY = new File(".");
 
     @Mock
     private Store store;
@@ -75,7 +78,7 @@ public class ScannerImplTest {
             return null;
         }).when(store).rollbackTransaction();
         // context
-        context = new ScannerContextImpl(store);
+        context = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
         Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
         plugins.put("testPlugin", scannerPlugin);
         doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(context, emptyMap());
@@ -84,7 +87,7 @@ public class ScannerImplTest {
     @Test
     public void resolveScope() {
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Scanner scanner = new ScannerImpl(new ScannerConfiguration(),  emptyMap(), scannerContext, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(new ScannerConfiguration(), emptyMap(), scannerContext, scannerPluginRepository);
         Assert.assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
         Assert.assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
         Assert.assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
@@ -118,7 +121,7 @@ public class ScannerImplTest {
 
     @Test
     public void failOnError() throws IOException {
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context,scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
         try {
             scanner.scan("test", "test", scope);
@@ -186,7 +189,7 @@ public class ScannerImplTest {
     @Test
     public void pluginPipeline() {
         Store store = mock(Store.class);
-        ScannerContext scannerContext = new ScannerContextImpl(store);
+        ScannerContext scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
         when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
             Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];
             return mock(descriptorType);

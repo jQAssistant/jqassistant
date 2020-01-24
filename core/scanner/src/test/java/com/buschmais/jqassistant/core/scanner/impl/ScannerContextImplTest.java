@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
+import java.io.File;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,20 +21,26 @@ import static org.junit.Assert.fail;
 @ExtendWith(MockitoExtension.class)
 public class ScannerContextImplTest {
 
+    public static final File OUTPUT_DIRECTORY = new File(".");
+
     @Mock
     private Store store;
 
+    private ScannerContextImpl scannerContext;
+
+    @BeforeEach
+    public void setUp() {
+        scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
+    }
+
     @Test
     public void peekNonExistingValue() {
-        ScannerContextImpl scannerContext = new ScannerContextImpl(store);
 
-        assertThatThrownBy(() -> scannerContext.peek(String.class))
-                  .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> scannerContext.peek(String.class)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     public void peekExistingValues() {
-        ScannerContextImpl scannerContext = new ScannerContextImpl(store);
         scannerContext.push(String.class, "Foo");
         assertThat(scannerContext.peek(String.class), equalTo("Foo"));
         scannerContext.push(String.class, "Bar");
@@ -49,11 +58,16 @@ public class ScannerContextImplTest {
 
     @Test
     public void peekDefaultValues() {
-        ScannerContextImpl scannerContext = new ScannerContextImpl(store);
         assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Bar"));
         scannerContext.push(String.class, "Foo");
         assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Foo"));
         assertThat(scannerContext.pop(String.class), equalTo("Foo"));
         assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Bar"));
+    }
+
+    @Test
+    public void dataDirectory() {
+        File test = scannerContext.getDataDirectory("test");
+        assertThat(test.getAbsoluteFile(), equalTo(new File(OUTPUT_DIRECTORY, "data/test").getAbsoluteFile()));
     }
 }

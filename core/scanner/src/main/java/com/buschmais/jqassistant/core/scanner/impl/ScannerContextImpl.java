@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
+import java.io.File;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,12 +10,17 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementation of the scanner context.
  */
+@Slf4j
 public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
+
+    private final File dataDirectory;
 
     private Descriptor current;
 
@@ -22,12 +28,15 @@ public class ScannerContextImpl implements ScannerContext {
 
     /**
      * Constructor.
-     * 
+     *
      * @param store
      *            The store.
+     * @param outputDirectory
+     *            The output directory
      */
-    public ScannerContextImpl(Store store) {
+    public ScannerContextImpl(Store store, File outputDirectory) {
         this.store = store;
+        this.dataDirectory = new File(outputDirectory, DATA_DIRECTORY);
     }
 
     @Override
@@ -67,14 +76,14 @@ public class ScannerContextImpl implements ScannerContext {
 
     /**
      * Determine the stack for the given key.
-     * 
+     *
      * @param key
      *            The key.
      * @param <T>
      *            The key key.
      * @return The stack.
      */
-    <T> Deque<T> getValues(Class<T> key) {
+    private <T> Deque<T> getValues(Class<T> key) {
         Deque<T> values = (Deque<T>) contextValuesPerKey.get(key);
         if (values == null) {
             values = new LinkedList<>();
@@ -86,5 +95,14 @@ public class ScannerContextImpl implements ScannerContext {
     @Override
     public Store getStore() {
         return store;
+    }
+
+    @Override
+    public File getDataDirectory(String path) {
+        File directory = new File(dataDirectory, path);
+        if (directory.mkdirs()) {
+            log.debug("Created data directory '{}'.", directory.getAbsolutePath());
+        }
+        return directory;
     }
 }
