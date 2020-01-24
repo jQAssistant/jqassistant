@@ -96,7 +96,7 @@ public class ScanMojo extends AbstractModuleMojo {
         configuration.setContinueOnError(continueOnError);
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(store);
+        ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
         Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest().getRepositorySession().getLocalRepository().getBasedir();
