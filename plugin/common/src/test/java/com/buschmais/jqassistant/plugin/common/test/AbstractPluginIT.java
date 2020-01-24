@@ -51,6 +51,7 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyMap;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,6 +64,9 @@ public abstract class AbstractPluginIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
 
     private static PluginRepositoryImpl pluginRepository;
+
+    private File outputDirectory;
+
     /**
      * The store.
      */
@@ -90,6 +94,8 @@ public abstract class AbstractPluginIT {
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
         initializeRuleSet();
+        outputDirectory = new File("target/jqassistant");
+        outputDirectory.mkdirs();
         startStore(testInfo);
         initializeAnalyzer();
     }
@@ -119,16 +125,14 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeAnalyzer() {
-        File outputDirectory = new File("target/jqassistant");
-        outputDirectory.mkdirs();
         this.reportContext = new ReportContextImpl(outputDirectory);
-        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(Collections.emptyMap()));
+        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(emptyMap()));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
-        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.emptyMap());
+        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap());
     }
 
     /**
@@ -188,7 +192,7 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(Collections.<String, Object> emptyMap());
+        return getScanner(emptyMap());
     }
 
     /**
@@ -199,7 +203,7 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
-        ScannerContext scannerContext = new ScannerContextImpl(store);
+        ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         return new ScannerImpl(getScannerConfiguration(), properties, scannerContext, scannerPluginRepository);
     }
