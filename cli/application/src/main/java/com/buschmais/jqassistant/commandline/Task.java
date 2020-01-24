@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
  */
 public interface Task extends OptionsProvider, OptionsConsumer {
 
+    String DEFAULT_OUTPUT_DIRECTORY = "jqassistant";
     String DEFAULT_STORE_DIRECTORY = "jqassistant/store";
     String DEFAULT_RULE_DIRECTORY = "jqassistant/rules";
     String DEFAULT_REPORT_DIRECTORY = "jqassistant/report";

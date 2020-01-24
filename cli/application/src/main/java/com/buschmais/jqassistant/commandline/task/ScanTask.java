@@ -62,7 +62,7 @@ public class ScanTask extends AbstractStoreTask {
 
     @Override
     protected void executeTask(Store store) throws CliExecutionException {
-        ScannerContext scannerContext = new ScannerContextImpl(store);
+        ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
         if (reset) {
             store.reset();
         }

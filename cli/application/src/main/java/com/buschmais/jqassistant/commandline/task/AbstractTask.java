@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public abstract class AbstractTask implements Task {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
+    protected File outputDirectory;
     protected PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
@@ -28,6 +30,8 @@ public abstract class AbstractTask implements Task {
 
     @Override
     public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) {
+        this.outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
+        this.outputDirectory.mkdirs();
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(LOGGER);

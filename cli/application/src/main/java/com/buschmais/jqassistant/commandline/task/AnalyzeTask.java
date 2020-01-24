@@ -3,7 +3,10 @@ package com.buschmais.jqassistant.commandline.task;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
@@ -30,6 +33,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyMap;
+
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
@@ -43,7 +48,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private File ruleParametersFile;
-    private File outputDirectory;
+    private File reportDirectory;
     private Severity failOnSeverity;
     private Severity warnOnSeverity;
     private boolean executeAppliedConcepts;
@@ -54,14 +59,15 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
 
-        ReportContext reportContext = new ReportContextImpl(outputDirectory, outputDirectory);
+        ReportContext reportContext = new ReportContextImpl(reportDirectory, reportDirectory);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap()),
+                    inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
         } catch (RuleException e) {
@@ -91,7 +97,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private Map<String, String> getRuleParameters() throws CliExecutionException {
         Map<String, String> ruleParameters;
         if (ruleParametersFile == null) {
-            ruleParameters = Collections.emptyMap();
+            ruleParameters = emptyMap();
         } else {
             Properties properties = new Properties();
             try {
@@ -113,7 +119,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
      * @param reportContext
      *            The ReportContext.
      * @return The list of report plugins.
-     * @param reportContext
      */
     private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext) {
         AnalyzerPluginRepository analyzerPluginRepository;
@@ -134,8 +139,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             this.ruleParametersFile = null;
         }
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
-        outputDirectory = new File(reportDirectoryValue);
-        outputDirectory.mkdirs();
+        reportDirectory = new File(reportDirectoryValue);
+        reportDirectory.mkdirs();
         failOnSeverity = getSeverity(
                 getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
         warnOnSeverity = getSeverity(
