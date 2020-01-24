@@ -31,7 +31,6 @@ public abstract class AbstractTask implements Task {
     @Override
     public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) {
         this.outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
-        this.outputDirectory.mkdirs();
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(LOGGER);
