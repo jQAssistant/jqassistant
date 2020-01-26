@@ -8,3 +8,5 @@ target
 *.log
 /src/main/asciidoc/scanner.html
 .java-version
+pom.xml.updatetonextdevversion
+pom.xml.updatetorelease
