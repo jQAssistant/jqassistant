@@ -1,0 +1,7 @@
+//
+//
+//
+ifndef::jqa-in-manual[== Version 1.9.0]
+ifdef::jqa-in-manual[== Maven 3 Plugin 1.9.0]
+
+No changes.
