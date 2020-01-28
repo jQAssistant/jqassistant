@@ -36,9 +36,9 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/1.8"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -212,9 +212,9 @@ further severity is given, e.g.
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/1.8"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
 
     <group id="my-rules:MyGroup" severity="blocker">
         <includeConstraint refId="my-rules:MyConstraint1"/>
@@ -328,9 +328,9 @@ Both concepts and constraints may define required parameters:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/1.8"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
 
     <concept id="my-rules:ApplicationRootPackage">
         <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <1>
