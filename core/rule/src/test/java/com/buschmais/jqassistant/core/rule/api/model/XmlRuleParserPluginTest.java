@@ -3,12 +3,14 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -83,5 +85,13 @@ public class XmlRuleParserPluginTest {
 
         Group group = ruleSet.getGroupsBucket().getById("default");
         assertThat(group.getId(), equalTo("default"));
+    }
+
+    @Test
+    public void ruleSchema_1_8() throws RuleException {
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", RuleConfiguration.DEFAULT);
+        Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
+        assertThat(conceptIds.size(), equalTo(1));
+        assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
 }
