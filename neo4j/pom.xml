@@ -21,7 +21,7 @@
     </description>
 
     <properties>
-        <checkstyle.version>8.18</checkstyle.version>
+        <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.9.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-own-constraints.version>1.9.0-SNAPSHOT</jqa-own-constraints.version>
         <org.mockito.version>2.24.0</org.mockito.version>
