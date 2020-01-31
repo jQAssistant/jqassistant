@@ -206,7 +206,7 @@ public interface Store {
      * @return The {@link Descriptor}.
      */
     @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 8)
+    @ToBeRemovedInVersion(major = 1, minor = 9)
     <T extends Descriptor> T find(Class<T> type, String value);
 
     /**
