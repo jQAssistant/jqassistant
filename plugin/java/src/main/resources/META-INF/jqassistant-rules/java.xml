@@ -101,24 +101,6 @@
         </verify>
     </concept>
 
-    <concept id="java:InvokesOverriddenMethod">
-        <requiresConcept refId="java:MethodOverrides"/>
-        <requiresConcept refId="java:TypeAssignableFrom"/>
-        <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
-        <deprecated>To avoid ambiguities between INVOKES relations this concept has been replaced by "java:VirtualInvokes".</deprecated>
-        <cypher><![CDATA[
-            MATCH
-              (method:Method)-[invocation:INVOKES]->(invokedMethod:Method),
-              (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
-            MERGE
-              (method)-[r:INVOKES{lineNumber:invocation.lineNumber}]->(overridingMethod)
-            RETURN count(r) AS OverridingInvocations
-        ]]></cypher>
-        <verify>
-            <aggregation/>
-        </verify>
-    </concept>
-
     <concept id="java:MethodOverloads">
         <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
             methods have the same name but not the same signature).
