@@ -1,3 +1,9 @@
+// This sets the default value for the docRoot attribute for editing the
+// files in the IDE. However, the effective value is set at build time
+// by the Maven Plugin and might differ from this value.
+// Oliver B. Fischer, 2020-02-01
+:docRoot: ../../../../target/asciidoc-modules-documentation
+
 == jQAssistant 1.9.0
 
 === Changes to the Plugins
