@@ -41,7 +41,7 @@
 
     <properties>
         <assertj.version>3.9.1</assertj.version>
-        <checkstyle.version>8.18</checkstyle.version>
+        <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.9.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-own-constraints.version>1.9.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>1.9.0-SNAPSHOT</jqa-neo4jbackend.version>
