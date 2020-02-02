@@ -384,13 +384,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>java8</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>javaee6</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
