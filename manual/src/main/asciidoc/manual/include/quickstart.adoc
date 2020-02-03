@@ -92,11 +92,16 @@ Add the following lines to the parent pom.xml file of your project:
 
 [source,xml]
 ----
+<properties>
+  <!-- Define your desired jQAssistant version here -->
+  <jqassistant.version>...</jqassistant.version>
+</properties>
 <build>
     <plugins>
         <plugin>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqassistant-maven-plugin</artifactId>
+            <version>${jqassistant.version}</version>
             <executions>
                 <execution>
                     <goals>
@@ -111,28 +116,11 @@ Add the following lines to the parent pom.xml file of your project:
         </plugin>
     </plugins>
 </build>
-
-<!-- Only required if a Maven site is generated -->
-<reporting>
-    <plugins>
-        <plugin>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>jqassistant-maven-plugin</artifactId>
-            <reportSets>
-                <reportSet>
-                    <reports>
-                        <report>report</report>
-                    </reports>
-                </reportSet>
-            </reportSets>
-        </plugin>
-    </plugins>
-</reporting>
 ----
 
 ==== Add a rule
 
-Within your parent module create a directory `jqassistant` and a an Asciidoc file `my-rules.adoc` in it:
+Within your parent module create a directory `jqassistant` and a file `my-rules.adoc`:
 
 [source,xml]
 .jqassistant/my-rules.adoc
@@ -160,7 +148,7 @@ RETURN
 == Imported Rules
 
 // Include specific rules that have been executed and their results.
-include::jQA:Rules[concepts="junit4:*"]
+include::jQA:Rules[concepts="junit*:*"]
 ....
 
 ==== Run the build
