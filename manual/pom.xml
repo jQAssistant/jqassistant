@@ -42,7 +42,8 @@
     <properties>
         <jqa-own-constraints.version>1.9.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-distribution-spec.version>1.9.0-SNAPSHOT</jqa-distribution-spec.version>
-        <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
+        <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
+        <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
         <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
     </properties>
 
@@ -134,7 +135,7 @@
                         <configuration>
                             <attributes>
                                 <stylesheet>../jqassistant.css</stylesheet>
-                                <docRoot>/${asciidoc.directory}</docRoot>
+                                <docRoot>${asciidoc.directory}</docRoot>
                             </attributes>
                             <sourceDirectory>src/main/asciidoc/manual</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-docs/manual</outputDirectory>
@@ -185,8 +186,8 @@
                         <tabsize>4</tabsize>
                         <!--
                         <stylesheet>../jqassistant.css</stylesheet>
-                        <docRoot>/${asciidoc.directory}</docRoot>
                         -->
+                        <docRoot>${asciidoc.directory}</docRoot>
                         <projectGroupId>${project.groupId}</projectGroupId>
                         <projectArtifactId>${project.artifactId}</projectArtifactId>
                         <projectVersion>${project.version}</projectVersion>
