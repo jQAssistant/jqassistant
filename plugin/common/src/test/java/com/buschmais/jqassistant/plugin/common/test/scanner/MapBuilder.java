@@ -3,14 +3,21 @@ package com.buschmais.jqassistant.plugin.common.test.scanner;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 /**
  * Utility class for building maps using a fluent API.
- * 
+ *
+ * @deprecated Migrate to
+ *             {@link com.buschmais.jqassistant.core.shared.map.MapBuilder}.
+ *
  * @param <K>
  *            The key type.
  * @param <V>
  *            The value Type.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 1, minor = 10)
 public class MapBuilder<K, V> {
 
     private Map<K, V> map = new HashMap<>();
@@ -23,7 +30,7 @@ public class MapBuilder<K, V> {
 
     /**
      * Create a map builder instance.
-     * 
+     *
      * @return The map builder instance.
      */
     public static <K, V> MapBuilder<K, V> create() {
@@ -47,7 +54,7 @@ public class MapBuilder<K, V> {
 
     /**
      * Put a key/value pair.
-     * 
+     *
      * @param key
      *            The key.
      * @param value
@@ -61,7 +68,7 @@ public class MapBuilder<K, V> {
 
     /**
      * Return the map.
-     * 
+     *
      * @return The map.
      */
     public Map<K, V> get() {
