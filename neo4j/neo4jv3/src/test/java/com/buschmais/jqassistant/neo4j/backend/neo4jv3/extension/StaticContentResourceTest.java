@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.neo4j.kernel.configuration.Config;
 import org.neo4j.server.web.WebServer;
 
+import static java.lang.System.lineSeparator;
 import static javax.ws.rs.core.MediaType.TEXT_HTML_TYPE;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -42,28 +43,28 @@ public class StaticContentResourceTest {
     public void htmlResource() throws IOException {
         Response response = staticContentResource.file("/test/other.html");
 
-        verifyIndexResponse(response, "<h1>Other</h1>\n", TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Other</h1>" + lineSeparator(), TEXT_HTML_TYPE);
     }
 
     @Test
     public void cssResource() throws IOException {
         Response response = staticContentResource.file("/test/styles.css");
 
-        verifyIndexResponse(response, "/* Styles */\n", TEXT_CSS_TYPE);
+        verifyIndexResponse(response, "/* Styles */" + lineSeparator(), TEXT_CSS_TYPE);
     }
 
     @Test
     public void indexFromFolderWithTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test/");
 
-        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Index</h1>" + lineSeparator(), TEXT_HTML_TYPE);
     }
 
     @Test
     public void indexFromFolderWithoutTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test");
 
-        verifyIndexResponse(response, "<h1>Index</h1>\n", TEXT_HTML_TYPE);
+        verifyIndexResponse(response, "<h1>Index</h1>" + lineSeparator(), TEXT_HTML_TYPE);
     }
 
     private void verifyIndexResponse(Response response, String expectedContent, MediaType expectedMimeType) throws IOException {
