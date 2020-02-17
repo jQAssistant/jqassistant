@@ -98,6 +98,7 @@
                         </scanInclude>
                     </scanIncludes>
                     <groups>
+                        <group>jqa-github-integration</group>
                         <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
                         <group>jqa-maven-dependency-constraints</group>
@@ -105,6 +106,11 @@
                     </groups>
                 </configuration>
                 <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>github-integration</artifactId>
+                        <version>${jqa-own-constraints.version}</version>
+                    </dependency>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>legal-constraints</artifactId>
