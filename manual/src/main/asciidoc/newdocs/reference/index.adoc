@@ -1,6 +1,13 @@
+
+
+:tip-caption: 💡
+
 = jQAssistant Reference
 
 :sectnums:
 
 include::formats/00-formats.adoc[]
+
+include::{docRoot}/com/buschmais/jqassistant/plugin/yaml2/api/model/index.adoc[leveloffset=1]
+
 

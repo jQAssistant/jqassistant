@@ -43,7 +43,7 @@
         <jqa-own-constraints.version>1.9.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-distribution-spec.version>1.9.0-SNAPSHOT</jqa-distribution-spec.version>
         <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
-        <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
+        <sourcedoc.directory>${project.build.directory}/asciidoc-modules-documentation</sourcedoc.directory>
         <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
     </properties>
 
@@ -113,6 +113,7 @@
                             <sourceDocumentName>index.adoc</sourceDocumentName>
                             <attributes>
                                 <toc>left</toc>
+                                <docRoot>${sourcedoc.directory}</docRoot>
                             </attributes>
                         </configuration>
                     </execution>
@@ -128,6 +129,7 @@
                             <sourceDocumentName>index.adoc</sourceDocumentName>
                             <attributes>
                                 <toc>left</toc>
+                                <docRoot>${sourcedoc.directory}</docRoot>
                             </attributes>
                         </configuration>
                     </execution>
@@ -241,6 +243,52 @@
                             <includeTypes>zip</includeTypes>
                             <includeClassifiers>asciidoc</includeClassifiers>
                             <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jqa-sources</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.buschmais.jqassistant.plugin</groupId>
+                                    <artifactId>yaml2</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
+                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-java-to-asciidoc-files</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="copy-and-rename-java-to-asciidoctor">
+                                <copy todir="${sourcedoc.directory}">
+                                    <fileset dir="${sourcedoc.directory}"/>
+                                    <globmapper from="*.java" to="*.adoc"/>
+                                </copy>
+                                <replaceregexp byline="true">
+                                    <regexp pattern="include::(.*)\.java\[(.*)\]"/>
+                                    <substitution expression="include::\1.adoc\[\2\]"/>
+                                    <fileset dir="${sourcedoc.directory}">
+                                        <include name="**/*.adoc"/>
+                                    </fileset>
+                                </replaceregexp>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
