@@ -1,0 +1,25 @@
+
+= YAML II Plugin
+
+:yamlSpec: https://yaml.org/spec/1.2/spec.html
+
+:iov:
+
+ifdef::iov[YAML File (`.yaml` or `.yml` extension)]
+ifndef::iov[Used labels]
+
+:!iov:
+
+ifdef::iov[YAML File (`.yaml` or `.yml` extension)]
+ifndef::iov[Used labels]
+
+include::introduction.adoc[]
+include::overview.adoc[]
+include::YMLFileDescriptor.java[tags=doc]
+include::YMLDocumentDescriptor.java[tags=doc]
+include::YMLScalarDescriptor.java[tag=doc]
+include::YMLSequenceDescriptor.java[tag=doc]
+include::YMLSimpleKeyDescriptor.java[tag=doc]
+include::YMLMapDescriptor.java[tag=doc]
+include::YMLAliasDescriptor.java[tag=doc]
+include::YMLAnchorDescriptor.java[tag=doc]
