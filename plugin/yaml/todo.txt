@@ -8,3 +8,4 @@ todo Write explicit tests for labels Anchor and Reference
 todo Write explicit tests for anchors on maps, sequences and scalars
 todo Add support for invalid documents
 todo Add label item for elements of a sequence
+todo The plugin must be enabled by default
