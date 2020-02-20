@@ -76,18 +76,31 @@ public class GraphGenerator {
             sequenceNode.getIndex().ifPresent(i -> sequenceDescriptor.setIndex(i));
             handler.accept(sequenceDescriptor);
 
+            Consumer<YMLDescriptor> addItemDescriptor = descriptor -> store.addDescriptorType(descriptor, YMLItemDescriptor.class);
+
             sequenceNode.getScalars().forEach(scalarNode -> {
-                Consumer<YMLDescriptor> newHandler = descriptor -> sequenceDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
+                Consumer<YMLDescriptor> newHandler = descriptor -> {
+                    sequenceDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
+                    addItemDescriptor.accept(descriptor);
+                };
+
                 traverse(scalarNode, newHandler, mode);
             });
 
             sequenceNode.getMaps().forEach(mapNode -> {
-                Consumer<YMLDescriptor> newHandler = descriptor -> sequenceDescriptor.getMaps().add((YMLMapDescriptor) descriptor);
+                Consumer<YMLDescriptor> newHandler = descriptor -> {
+                    addItemDescriptor.accept(descriptor);
+                    sequenceDescriptor.getMaps().add((YMLMapDescriptor) descriptor);
+                };
                 traverse(mapNode, newHandler, mode);
             });
 
             sequenceNode.getSequences().forEach(seqNode -> {
-                Consumer<YMLDescriptor> newHandler = descriptor -> sequenceDescriptor.getSequences().add((YMLSequenceDescriptor) descriptor);
+                Consumer<YMLDescriptor> newHandler = descriptor -> {
+                    addItemDescriptor.accept(descriptor);
+                    sequenceDescriptor.getSequences().add((YMLSequenceDescriptor) descriptor);
+                };
+
                 traverse(seqNode, newHandler, mode);
             });
 
@@ -98,6 +111,7 @@ public class GraphGenerator {
                     YMLScalarDescriptor scalarDescriptor = (YMLScalarDescriptor) descriptor;
                     aliasNode.getIndex().ifPresent(index -> scalarDescriptor.setIndex(index));
                     sequenceDescriptor.getScalars().add(scalarDescriptor);
+                    addItemDescriptor.accept(descriptor);
                 };
                 BaseNode<?> referencedNode = aliasNode.getReferencedNode();
                 traverse(referencedNode, scalarHandler, Mode.REFERENCE);

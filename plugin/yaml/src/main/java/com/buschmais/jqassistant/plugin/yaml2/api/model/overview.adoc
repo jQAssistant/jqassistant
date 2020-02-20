@@ -17,6 +17,7 @@ include::YMLComplexKeyDescriptor.java[tag=labeloverview]
 include::YMLMapDescriptor.java[tag=labeloverview]
 include::YMLValueDescriptor.java[tag=labeloverview]
 include::YMLSequenceDescriptor.java[tag=labeloverview]
+include::YMLItemDescriptor.java[tag=labeloverview]
 include::YMLAliasDescriptor.java[tag=labeloverview]
 include::YMLAnchorDescriptor.java[tag=labeloverview]
 

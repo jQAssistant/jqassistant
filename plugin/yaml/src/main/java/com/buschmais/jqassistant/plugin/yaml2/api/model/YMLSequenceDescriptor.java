@@ -11,6 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 ==  A Sequence
 
 A sequence as specified in the {yamlSpec}#id2759963[YAML 1.2 specification^].
+Each item of sequence xref:yaml2item[has an additional label `:Item`].
 
 .A Sequence with two maps as items
 [source,yaml]
