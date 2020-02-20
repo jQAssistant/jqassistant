@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /* tag::doc[]
 
 [[yaml2sequence,Sequence]]
-==  A Sequence -- :Yaml:Sequence
+==  A Sequence
 
 A sequence as specified in the {yamlSpec}#id2759963[YAML 1.2 specification^].
 
@@ -19,6 +19,20 @@ A sequence as specified in the {yamlSpec}#id2759963[YAML 1.2 specification^].
 - Hirogen: Delta quadrant
 ----
 
+.Used Combination of Labels
+[cols="1h,2"]
+|===
+
+tag::labeloverview[]
+
+ifdef::iov[| <<yaml2sequence,Sequence>>]
+ifndef::iov[| Used labels]
+| `:Yaml:Sequence`
+
+end::labeloverview[]
+
+|===
+
 end::doc[] */
 
 @Label("Sequence")
@@ -26,9 +40,9 @@ public interface YMLSequenceDescriptor extends YMLDescriptor, YMLIndexable {
 
 /* tag::doc[]
 
-.Relations of :Yaml:Sequence
+.Relations of a Sequence
 [options="header",cols="2,2,1,5"]
-|====
+|===
 
 | Relation Name
 | Target Node Type
@@ -55,7 +69,7 @@ end::doc[] */
     List<YMLScalarDescriptor> getScalars();
 
 /* tag::doc[]
-|====
+|===
 
 end::doc[]
 */
@@ -63,7 +77,7 @@ end::doc[]
 /* tag::doc[]
 .Properties of :Yaml:Sequence
 [options="header",cols="2,2,6"]
-|====
+|===
 
 | Property Name
 | Existence
@@ -75,6 +89,6 @@ end::doc[] */
 
 
 /* tag::doc[]
-|====
+|===
  end::doc[] */
 }

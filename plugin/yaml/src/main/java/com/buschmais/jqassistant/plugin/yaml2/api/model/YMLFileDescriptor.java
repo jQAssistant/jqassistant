@@ -18,7 +18,7 @@ multiple xref:yaml2document[YAML documents].
 
 .Used Combination of Labels
 [cols="1h,2"]
-|====
+|===
 
 tag::labeloverview[]
 
@@ -28,7 +28,7 @@ ifndef::iov[| Used labels]
 
 end::labeloverview[]
 
-|====
+|===
 
 end::doc[]
  */
@@ -39,7 +39,7 @@ extends YMLDescriptor, FileDescriptor, Descriptor {
 
 .Relations of a YAML file
 [options="header",cols="2,2,1,5"]
-|====
+|===
 
 | Relation Name
 | Target Node
@@ -59,7 +59,7 @@ extends YMLDescriptor, FileDescriptor, Descriptor {
     List<YMLDocumentDescriptor> getDocuments();
 
 /* tag::doc[]
-|====
+|===
 end::doc[] */
 
 }

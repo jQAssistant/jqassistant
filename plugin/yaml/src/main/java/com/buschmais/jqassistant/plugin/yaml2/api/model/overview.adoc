@@ -6,16 +6,21 @@
 :iov: # iov = in overview
 
 [options="header",cols="2,3"]
-|====
+|===
 | Entity
 | Used Combination of Labels
 
 include::YMLDocumentDescriptor.java[tag=labeloverview]
 include::YMLFileDescriptor.java[tag=labeloverview]
-include::YMLSimpleKeyDescriptor.java[tag=lableoverview]
+include::YMLSimpleKeyDescriptor.java[tag=labeloverview]
+include::YMLComplexKeyDescriptor.java[tag=labeloverview]
 include::YMLMapDescriptor.java[tag=labeloverview]
+include::YMLValueDescriptor.java[tag=labeloverview]
+include::YMLSequenceDescriptor.java[tag=labeloverview]
+include::YMLAliasDescriptor.java[tag=labeloverview]
+include::YMLAnchorDescriptor.java[tag=labeloverview]
 
-|====
+|===
 
 :!iov:
 

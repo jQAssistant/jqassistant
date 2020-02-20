@@ -5,14 +5,31 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /* tag::doc[]
 
-[[yaml2simplekey,key]]
-== A Key in a Map
+[[yaml2simplekey,simple key]]
+== Simple Key
 
-A simple key of a key-value pair in a map.
+A simple key of a key-value pair in a map represented by a scalar
+value. Beside the simple key there is also the
+<<yaml2complexkey,complex key>>, which can also be used as key
+for maps.
+Usage examples can be found in {yamlSpec}#id2760395[chapter 2.2
+of the YAML specification^].
+
+.A map with a simple key and a complex key in the same map
+// Source highlightning does not work currently
+// for complex keys with Coderay as highlighter
+// Oliver B. Fischer, 2020-02-18
+[source]
+----
+simpleKey: "Value for a simple key"
+? - combined
+  - key
+: "Value for a complex key"
+----
 
 .Used Combination of Labels
 [cols="1h,2"]
-|====
+|===
 
 tag::labeloverview[]
 
@@ -21,7 +38,8 @@ ifndef::iov[| Used labels]
 | `:Yaml:Key:Simple`
 
 end::labeloverview[]
-|====
+
+|===
 
 end::doc[] */
 @Label("Simple")
@@ -29,9 +47,9 @@ public interface YMLSimpleKeyDescriptor extends YMLKeyDescriptor {
 
 /* tag::doc[]
 
-.Relations of a xxxxxx
+.Relations of a simple key
 [options="header",cols="2,2,1,5"]
-|====
+|===
 
 | Relation Name
 | Target Node
@@ -40,14 +58,14 @@ public interface YMLSimpleKeyDescriptor extends YMLKeyDescriptor {
 
 include::YMLKeyDescriptor.java[tag=has-value-relation]
 
-|====
+|===
 end::doc[] */
 
 
 /* tag::doc[]
 .Properties of simple key
 [options="header",cols="2,2,6"]
-|====
+|===
 
 | Property Name
 | Existence
@@ -68,7 +86,7 @@ end::doc[] */
     String getName();
 
 /* tag::doc[]
-|====
+|===
 end::doc[] */
 
     void setName(String name);

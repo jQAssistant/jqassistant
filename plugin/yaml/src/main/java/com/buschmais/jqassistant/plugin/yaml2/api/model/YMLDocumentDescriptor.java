@@ -27,7 +27,7 @@ NCC-1701-D: Jean-Luc Picard
 
 .Used Combination of Labels
 [cols="1h,2"]
-|====
+|===
 
 tag::labeloverview[]
 
@@ -37,7 +37,7 @@ ifndef::iov[| Used labels]
 
 end::labeloverview[]
 
-|====
+|===
 
 
 end::doc[] */
@@ -48,7 +48,7 @@ public interface YMLDocumentDescriptor extends YMLDescriptor {
 
 .Relations of :Yaml:Document
 [options="header",cols="2,2,1,5"]
-|====
+|===
 
 | Relation Name
 | Target Node Type
@@ -85,7 +85,7 @@ end::doc[] */
     List<YMLScalarDescriptor> getScalars();
 
 /* tag::doc[]
-|====
+|===
 end::doc[]
 */
 

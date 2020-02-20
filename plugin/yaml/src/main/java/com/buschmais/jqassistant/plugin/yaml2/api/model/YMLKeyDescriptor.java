@@ -11,9 +11,9 @@ public interface YMLKeyDescriptor extends YMLDescriptor {
 /* tag::has-value-relation[]
 
 | `HAS_VALUE`
-| b
+| <<yaml2map>>, <<yaml2sequence>> or <<yaml2scalar>>
 | 0..1
-| d
+| Reference to the value of this key-value pair
 
 end::has-value-relation[] */
     @Relation("HAS_VALUE")
