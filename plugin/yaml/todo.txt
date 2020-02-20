@@ -9,5 +9,4 @@ todo Write explicit tests for anchors on maps, sequences and scalars
 todo Add support for invalid documents
 todo Add label item for elements of a sequence
 todo The plugin must be enabled by default
-todo Check if empty nodes are handled properly
 todo Check the resulting graph in case of anchor and alias
