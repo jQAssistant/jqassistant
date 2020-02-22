@@ -47,4 +47,27 @@ public class SequenceIT extends AbstractYAMLPluginIT {
         assertThat(result).hasSize(5);
     }
 
+    @Test
+    void firstItemOfSequenceHasTheLabelFirst() {
+        readSourceDocument("/sequences/abcd.yaml");
+
+        String query = "MATCH (item:Yaml:Item:First) " +
+                       "RETURN item";
+
+        List<YMLScalarDescriptor> result = query(query).getColumn("item");
+
+        assertThat(result).isNotEmpty().hasSize(1);
+    }
+
+    @Test
+    void lastItemOfSequenceHasTheLabelLast() {
+        readSourceDocument("/sequences/abcd.yaml");
+
+        String query = "MATCH (item:Yaml:Item:Last) " +
+                       "RETURN item";
+
+        List<YMLScalarDescriptor> result = query(query).getColumn("item");
+
+        assertThat(result).isNotEmpty().hasSize(1);
+    }
 }

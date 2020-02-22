@@ -23,6 +23,18 @@ end::labeloverview[]
 
 |===
 
+.Additional Labels of an Item
+[cols="1,1,2",options="header"]
+|===
+| Label
+| Existence
+| Description
+
+include::YMLFirstDescriptor.java[tag=labeldoc]
+include::YMLLastDescriptor.java[tag=labeldoc]
+
+|===
+
 end::doc[] */
 @Label("Item")
 public interface YMLItemDescriptor extends YMLDescriptor {

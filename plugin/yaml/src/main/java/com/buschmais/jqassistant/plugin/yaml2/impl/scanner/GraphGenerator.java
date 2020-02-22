@@ -2,7 +2,10 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
@@ -117,6 +120,27 @@ public class GraphGenerator {
                 traverse(referencedNode, scalarHandler, Mode.REFERENCE);
             });
 
+            Comparator<YMLDescriptor> indexComparator = (lhs, rhs) -> {
+                Integer lhsIndex = ((YMLIndexable) lhs).getIndex();
+                Integer rhsIndex = ((YMLIndexable) rhs).getIndex();
+                return Integer.compare(lhsIndex, rhsIndex);
+            };
+            Optional<? extends YMLDescriptor> first =
+                Stream.of(sequenceDescriptor.getScalars(),
+                          sequenceDescriptor.getSequences(),
+                          sequenceDescriptor.getMaps())
+                      .flatMap(Collection::stream)
+                      .min(indexComparator);
+
+            Optional<? extends YMLDescriptor> last =
+                Stream.of(sequenceDescriptor.getScalars(),
+                          sequenceDescriptor.getSequences(),
+                          sequenceDescriptor.getMaps())
+                      .flatMap(Collection::stream)
+                      .max(indexComparator);
+
+            last.ifPresent(descriptor -> store.addDescriptorType(descriptor, YMLLastDescriptor.class));
+            first.ifPresent(descriptor -> store.addDescriptorType(descriptor, YMLFirstDescriptor.class));
 
         } else if (node.getClass().isAssignableFrom(ScalarNode.class)) {
             ScalarNode scalarNode = (ScalarNode) node;
