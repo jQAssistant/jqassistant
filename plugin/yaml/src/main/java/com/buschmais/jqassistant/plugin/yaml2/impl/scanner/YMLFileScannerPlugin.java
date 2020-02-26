@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.StreamNode;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.events.Event;
+import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -62,6 +63,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         try (InputStream in = item.createStream()) {
             Parse parser = new Parse(settings);
             Iterable<Event> events = parser.parseInputStream(in);
+            yamlFileDescriptor.setValid(true);
             StreamNode streamNode = eventParser.parse(StreamSupport.stream(events.spliterator(), false));
             Store store = getScannerContext().getStore();
             GraphGenerator generator = new GraphGenerator(store);
@@ -70,9 +72,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             documents.forEach(documentDescriptor -> {
                 yamlFileDescriptor.getDocuments().add(documentDescriptor);
             });
-        } catch (RuntimeException re) {
-            // todo Improve the errorhandling
-            throw re;
+        } catch (YamlEngineException e) {
+            yamlFileDescriptor.setValid(false);
         }
 
         return yamlFileDescriptor;

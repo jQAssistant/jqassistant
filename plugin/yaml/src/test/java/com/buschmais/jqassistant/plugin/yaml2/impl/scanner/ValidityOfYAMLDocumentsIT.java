@@ -1,0 +1,39 @@
+package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
+
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
+public class ValidityOfYAMLDocumentsIT extends AbstractYAMLPluginIT {
+
+    @BeforeEach
+    void startTransaction() {
+        store.beginTransaction();
+    }
+
+    @AfterEach
+    void commitTransaction() {
+        store.commitTransaction();
+    }
+
+    @Test
+    void invalidFilesAreMarkedAsInvalid() {
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/erroneus/erroneus-001.yaml");
+
+        assertThat(ymlFileDescriptor.isValid()).isFalse();
+    }
+
+    @Test
+    void validFilesAreMarkedAsValid() {
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/erroneus/valid-master.yml");
+
+        assertThat(ymlFileDescriptor.isValid()).isTrue();
+    }
+}

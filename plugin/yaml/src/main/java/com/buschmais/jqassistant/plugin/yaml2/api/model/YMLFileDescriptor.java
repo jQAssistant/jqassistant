@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 // todo Die Datei ist immer valide, aber nicht das Dokument ValidDescriptor
@@ -33,7 +34,7 @@ end::labeloverview[]
 end::doc[]
  */
 public interface YMLFileDescriptor
-extends YMLDescriptor, FileDescriptor, Descriptor {
+    extends YMLDescriptor, FileDescriptor, Descriptor, ValidDescriptor {
 
 /* tag::doc[]
 
@@ -60,6 +61,30 @@ extends YMLDescriptor, FileDescriptor, Descriptor {
 
 /* tag::doc[]
 |===
+end::doc[] */
+
+/* tag::doc[]
+
+.Properties of a YAML File
+[options="header",cols="2,2,6"]
+|===
+
+| Property Name
+| Existence
+| Description
+
+include::{docRoot}/com/buschmais/jqassistant/plugin/common/api/model/ValidDescriptor.adoc[tags="valid-property"]
+
+|===
+
+In case the scanner of the YAML 2 plugin is not able to scan all documents
+of the YAML file, the file will be marked as not valid by setting
+the property `valid` of the node representing the YAML file to `false`.
+This is done on the file level even if only one document of many is not valid.
+This behavior is due to the used
+https://bitbucket.org/asomov/snakeyaml-engine[SnakeYAML Engine^] library.
+
+
 end::doc[] */
 
 }

@@ -6,6 +6,5 @@ todo check how to compute (sum, avg) numeric values
 todo Add support for labels for simply and complex keys
 todo Write explicit tests for labels Anchor and Reference
 todo Write explicit tests for anchors on maps, sequences and scalars
-todo Add support for invalid documents
 todo The plugin must be enabled by default
 todo Check the resulting graph in case of anchor and alias
