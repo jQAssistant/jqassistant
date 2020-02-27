@@ -260,6 +260,13 @@
                                     <classifier>sources</classifier>
                                     <outputDirectory>${sourcedoc.directory}</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.buschmais.jqassistant.plugin</groupId>
+                                    <artifactId>common</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
+                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
