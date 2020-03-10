@@ -4,5 +4,7 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Core Framework 1.9.0]
 
-No changes for this release.
+- Fixed an issue for loading jQAssistant plugins on JDK 11
+
+
 
