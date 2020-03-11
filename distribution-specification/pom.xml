@@ -65,6 +65,7 @@
         <jqa-cdi-plugin.version>1.9.0-SNAPSHOT</jqa-cdi-plugin.version>
         <jqa-core-framework.version>1.9.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-graphml-plugin.version>1.9.0-SNAPSHOT</jqa-graphml-plugin.version>
+        <jqa-graphql-plugin.version>1.9.0-SNAPSHOT</jqa-graphql-plugin.version>
         <jqa-ejb3-plugin.version>1.9.0-SNAPSHOT</jqa-ejb3-plugin.version>
         <jqa-javaee6-plugin.version>1.9.0-SNAPSHOT</jqa-javaee6-plugin.version>
         <jqa-java-plugin.version>1.9.0-SNAPSHOT</jqa-java-plugin.version>
@@ -444,6 +445,25 @@
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>graphml</artifactId>
                 <version>${jqa-graphml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>graphql</artifactId>
+                <version>${jqa-graphql-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>graphql</artifactId>
+                <version>${jqa-graphql-plugin.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
