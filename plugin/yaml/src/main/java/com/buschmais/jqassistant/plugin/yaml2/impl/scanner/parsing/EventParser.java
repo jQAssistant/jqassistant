@@ -80,7 +80,7 @@ public class EventParser {
     private void handleAlias(AliasEvent event) {
         String aliasName = event.getAnchor()
                                 .orElseThrow(() -> new IllegalStateException("Alias event without anchor name"))
-                                .getAnchor();
+                                .getValue();
         AliasNode aliasNode = new AliasNode(event);
         BaseNode<?> referencedNode = references.getAnchor(aliasName).get();
         /*
@@ -213,7 +213,7 @@ public class EventParser {
             scalarNode.setIndex(index);
             sequenceNode.addScalar(scalarNode);
             checkAndHandleAnchor(scalarNode);
-        } else if (parserContext.isInMap() && event.isEvent(Scalar)) {
+        } else if (parserContext.isInMap() && event.getEventId() == Scalar) {
 
             MapNode mapNode = (MapNode) contextType.getNode();
             SimpleKeyNode keyNode = new SimpleKeyNode(event);
@@ -223,13 +223,13 @@ public class EventParser {
             parserContext.enter(newContextType);
 
             mapNode.addKey(keyNode);
-        } else if (parserContext.isInKey() && event.isEvent(Scalar)) {
+        } else if (parserContext.isInKey() && event.getEventId() == Scalar) {
             ScalarNode scalarNode = new ScalarNode(event);
             KeyNode keyNode = (KeyNode) contextType.getNode();
             //keyNode.setKeyName(event.getValue());
             keyNode.setValue(scalarNode);
             // todo   checkAndHandleAnchor(valueDescriptor);
-        } else if (parserContext.isInDocument() && event.isEvent(Scalar)) {
+        } else if (parserContext.isInDocument() && event.getEventId() == Scalar) {
             DocumentNode documentNode = (DocumentNode) contextType.getNode();
             ScalarNode scalarNode = new ScalarNode(event);
             documentNode.addScalar(scalarNode);
@@ -250,7 +250,7 @@ public class EventParser {
         nodeEvent.getAnchor().ifPresent(new Consumer<Anchor>() {
             @Override
             public void accept(Anchor anchor) {
-                references.addAnchor(anchor.getAnchor(), parseNode);
+                references.addAnchor(anchor.getValue(), parseNode);
             }
         });
         /*
