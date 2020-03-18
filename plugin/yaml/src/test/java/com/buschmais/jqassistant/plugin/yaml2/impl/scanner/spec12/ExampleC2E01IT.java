@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getSequences;
@@ -14,7 +13,6 @@ import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.
 
 
 // todo finish this test!
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E01IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e01-sequence-of-scalars.yaml";
 

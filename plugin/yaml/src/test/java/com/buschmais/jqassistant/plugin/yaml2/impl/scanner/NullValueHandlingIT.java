@@ -6,11 +6,9 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 public class NullValueHandlingIT extends AbstractYAMLPluginIT {
 
 

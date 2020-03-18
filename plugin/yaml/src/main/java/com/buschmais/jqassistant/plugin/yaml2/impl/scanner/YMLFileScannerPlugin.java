@@ -43,9 +43,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) {
-        boolean activated = isPluginActive();
         String lowercasePath = path.toLowerCase();
-        return activated && lowercasePath.endsWith(YAML_FILE_EXTENSION) || lowercasePath.endsWith(YML_FILE_EXTENSION);
+        return lowercasePath.endsWith(YAML_FILE_EXTENSION) || lowercasePath.endsWith(YML_FILE_EXTENSION);
     }
 
     @Override

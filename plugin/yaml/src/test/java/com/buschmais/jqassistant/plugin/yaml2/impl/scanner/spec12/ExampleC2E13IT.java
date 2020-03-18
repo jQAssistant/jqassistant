@@ -7,12 +7,10 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E13IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e13-in-literals-newlines-are-preserved.yaml";
 

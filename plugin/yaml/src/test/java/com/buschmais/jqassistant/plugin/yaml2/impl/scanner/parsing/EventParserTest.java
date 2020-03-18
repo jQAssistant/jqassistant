@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.snakeyaml.engine.v2.common.Anchor;
 import org.snakeyaml.engine.v2.common.FlowStyle;
 import org.snakeyaml.engine.v2.common.ScalarStyle;
@@ -19,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // todo improve test coverage based on coverage
 @DisplayName("Event parser can")
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class EventParserTest {
     EventParser parser = new EventParser();
 

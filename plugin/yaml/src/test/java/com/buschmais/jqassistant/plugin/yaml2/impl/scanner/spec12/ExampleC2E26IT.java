@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E26IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e26-ordered-mappings.yaml";
 

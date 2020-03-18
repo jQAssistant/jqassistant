@@ -6,11 +6,9 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPl
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 public class ValidityOfYAMLDocumentsIT extends AbstractYAMLPluginIT {
 
     @BeforeEach

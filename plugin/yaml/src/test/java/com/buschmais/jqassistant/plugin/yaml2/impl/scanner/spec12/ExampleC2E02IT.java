@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,7 +18,6 @@ import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getKeys;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class ExampleC2E02IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/probes/example-c2-e02-mapping-scalars-to-scalars.yaml";
 

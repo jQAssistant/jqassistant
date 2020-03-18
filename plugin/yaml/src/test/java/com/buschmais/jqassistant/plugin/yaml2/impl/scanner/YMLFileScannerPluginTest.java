@@ -7,12 +7,10 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-@EnabledIfSystemProperty(named = "jqassistant.yaml2.activate", matches = "^true$")
 class YMLFileScannerPluginTest {
 
     @Nested
