@@ -1,14 +1,17 @@
 package com.buschmais.jqassistant.plugin.yaml2.helper;
 
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
-import org.assertj.core.api.AbstractObjectAssert;
-
-public class YMLFileAssert extends AbstractObjectAssert<YMLFileAssert, YMLFileDescriptor> {
-
+public class YMLFileAssert extends AbstractYMLAssert<YMLFileAssert, YMLFileDescriptor> {
 
     public YMLFileAssert(YMLFileDescriptor descriptor) {
         super(descriptor, YMLFileAssert.class);
+    }
+
+    @Override
+    public YMLFileAssert andContinueAssertionOnThis() {
+        return this;
     }
 
     public YMLFileAssert hasDocuments(int expectedDocuments) {
@@ -36,5 +39,10 @@ public class YMLFileAssert extends AbstractObjectAssert<YMLFileAssert, YMLFileDe
         }
 
         return this;
+    }
+
+    public YMLDocumentAssert getDocumentByParseIndex(int index) {
+        YMLDocumentDescriptor document = TestHelper.getDocuments(actual).getDocumentByParsePosition(index);
+        return new YMLDocumentAssert(document);
     }
 }

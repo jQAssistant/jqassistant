@@ -14,7 +14,7 @@ public class SequenceGetter {
 
     }
 
-    public YMLSequenceDescriptor getSequence(int index) {
+    public YMLSequenceDescriptor getSequenceByParsePosition(int index) {
         /* Implementation notice
          * Actually there is no reliable order in a YML document,
          * except for sequences or collections as it is called

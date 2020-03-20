@@ -23,14 +23,14 @@ public class ValidityOfYAMLDocumentsIT extends AbstractYAMLPluginIT {
 
     @Test
     void invalidFilesAreMarkedAsInvalid() {
-        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/erroneus/erroneus-001.yaml");
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/validity/erroneus.yaml");
 
         assertThat(ymlFileDescriptor.isValid()).isFalse();
     }
 
     @Test
     void validFilesAreMarkedAsValid() {
-        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/erroneus/valid-master.yml");
+        YMLFileDescriptor ymlFileDescriptor = readSourceDocument("/validity/valid.yml");
 
         assertThat(ymlFileDescriptor.isValid()).isTrue();
     }

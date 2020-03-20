@@ -21,7 +21,7 @@ public class ComplexKeyIT extends AbstractYAMLPluginIT {
          * the parser emits the start of a sequence or the start of a map
          * at the position of the key.
          */
-        readSourceDocument("/complexkey/complexkey-scalar-as-keyvalue.yml");
+        readSourceDocument("/complexkey/scalar-as-keyvalue.yml");
 
         String query = "MATCH (key:Key:Yaml), " +
                        "      (value:Value:Scalar) " +
@@ -39,7 +39,7 @@ public class ComplexKeyIT extends AbstractYAMLPluginIT {
 
     @Test
     void cypherAMapCanBeUsedAsKeyValueForAComplexKey() {
-        readSourceDocument("/complexkey/complexkey-map-as-keyvalue.yml");
+        readSourceDocument("/complexkey/map-as-keyvalue.yml");
 
         String query = "MATCH (key:Key:Yaml:Complex), " +
                        "      (complexKeyValue:ComplexKeyValue:Yaml:Map) " +
@@ -56,7 +56,7 @@ public class ComplexKeyIT extends AbstractYAMLPluginIT {
 
     @Test
     void cypherASequenceCanBeUsedAsKeyValueForAComplexKey() {
-        readSourceDocument("/complexkey/complexkey-sequence-as-keyvalue.yml");
+        readSourceDocument("/complexkey/sequence-as-keyvalue.yml");
 
         String query = "MATCH (key:Key:Yaml:Complex), " +
                        "      (complexKeyValue:ComplexKeyValue:Yaml:Sequence) " +

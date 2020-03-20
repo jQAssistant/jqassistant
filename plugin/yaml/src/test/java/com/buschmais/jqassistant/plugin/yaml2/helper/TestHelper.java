@@ -16,22 +16,26 @@ public class TestHelper {
     }
 
     public static SequenceGetter getSequences(YMLDocumentDescriptor descriptor) {
-        return new SequenceGetter(() -> descriptor.getSequences());
+        return new SequenceGetter(descriptor::getSequences);
     }
 
     public static SequenceGetter getSequences(YMLSequenceDescriptor descriptor) {
-        return new SequenceGetter(() -> descriptor.getSequences());
+        return new SequenceGetter(descriptor::getSequences);
     }
 
     public static MapGetter getMaps(YMLSequenceDescriptor descriptor) {
-        return new MapGetter(() -> descriptor.getMaps());
+        return new MapGetter(descriptor::getMaps);
     }
 
     public static MapGetter getMaps(YMLDocumentDescriptor descriptor) {
-        return new MapGetter(() -> descriptor.getMaps());
+        return new MapGetter(descriptor::getMaps);
     }
 
     public static ScalarGetter getScalars(YMLSequenceDescriptor descriptor) {
-        return new ScalarGetter(descriptor);
+        return new ScalarGetter(descriptor::getScalars);
+    }
+
+    public static ScalarGetter getScalars(YMLDocumentDescriptor descriptor) {
+        return new ScalarGetter(descriptor::getScalars);
     }
 }

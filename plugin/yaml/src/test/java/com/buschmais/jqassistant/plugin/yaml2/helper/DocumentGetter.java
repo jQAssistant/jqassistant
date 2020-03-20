@@ -11,7 +11,7 @@ public class DocumentGetter {
         ymlFileDescriptor = descriptor;
     }
 
-    public YMLDocumentDescriptor getDocument(int index) {
+    public YMLDocumentDescriptor getDocumentByParsePosition(int index) {
         return ymlFileDescriptor.getDocuments().get(index);
     }
 }

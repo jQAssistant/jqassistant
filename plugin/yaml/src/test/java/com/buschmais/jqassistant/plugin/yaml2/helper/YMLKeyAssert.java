@@ -5,15 +5,17 @@ import java.util.function.Function;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
-import org.assertj.core.api.AbstractObjectAssert;
-
 // todo rename to YMLSimpleKeyAssert
-public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLSimpleKeyDescriptor> {
+public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDescriptor> {
 
     public YMLKeyAssert(YMLSimpleKeyDescriptor descriptor) {
         super(descriptor, YMLKeyAssert.class);
     }
 
+    @Override
+    public YMLKeyAssert andContinueAssertionOnThis() {
+        return this;
+    }
 
     public YMLKeyAssert hasName(String expectedName) {
         isNotNull();
@@ -43,7 +45,6 @@ public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLSimpleKe
     }
 
     public YMLKeyAssert hasScalarAsValue() {
-        isNotNull();
         hasValue();
 
         String assertjErrorMessage = "\nExpecting key descriptor to have a <%s> as value\n" +
@@ -75,20 +76,19 @@ public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLSimpleKe
         public YMLKeyAssert hasScalarValue(String expectedValue) {
             hasScalarAsValue();
 
-            String assertjErrorMessage = "\nExpecting key descriptor to have scalar value of <%s>\n" +
-                                         "but its actual value is <%s>\n";
+        String assertjErrorMessage = "\nExpecting key descriptor to have scalar value of <%s>\n" +
+                                     "but its actual value is <%s>\n";
 
-            YMLScalarDescriptor scalarValue = YMLScalarDescriptor.class.cast(actual.getValue());
-            String actualValue = scalarValue.getValue();
-            if (!Objects.equals(expectedValue, actualValue)) {
-                failWithMessage(assertjErrorMessage, expectedValue, actualValue);
-            }
-
-            return this;
+        YMLScalarDescriptor scalarValue = YMLScalarDescriptor.class.cast(actual.getValue());
+        String actualValue = scalarValue.getValue();
+        if (!Objects.equals(expectedValue, actualValue)) {
+            failWithMessage(assertjErrorMessage, expectedValue, actualValue);
         }
 
+        return this;
+    }
+
     public YMLKeyAssert hasMapAsValue() {
-        isNotNull();
         hasValue();
 
         String assertjErrorMessage = "\nExpecting key descriptor to have a <%s> as value\n" +
@@ -118,7 +118,6 @@ public class YMLKeyAssert extends AbstractObjectAssert<YMLKeyAssert, YMLSimpleKe
     }
 
     public YMLKeyAssert hasSequenceAsValue() {
-        isNotNull();
         hasValue();
 
         String assertjErrorMessage = "\nExpecting key descriptor to have a <%s> as value\n" +

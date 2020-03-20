@@ -5,12 +5,15 @@ import java.util.Optional;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor;
 
-import org.assertj.core.api.AbstractObjectAssert;
-
-public class YMLMapAssert extends AbstractObjectAssert<YMLMapAssert, YMLMapDescriptor> {
+public class YMLMapAssert extends AbstractYMLAssert<YMLMapAssert, YMLMapDescriptor> {
 
     public YMLMapAssert(YMLMapDescriptor descriptor) {
         super(descriptor, YMLMapAssert.class);
+    }
+
+    @Override
+    public YMLMapAssert andContinueAssertionOnThis() {
+        return this;
     }
 
     public YMLMapAssert containsSimpleKeyWithName(String keyName) {

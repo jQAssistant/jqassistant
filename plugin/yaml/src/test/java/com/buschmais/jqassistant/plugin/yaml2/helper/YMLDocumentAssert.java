@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.plugin.yaml2.helper;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 
-import org.assertj.core.api.AbstractObjectAssert;
-
-public class YMLDocumentAssert extends AbstractObjectAssert<YMLDocumentAssert, YMLDocumentDescriptor> {
+public class YMLDocumentAssert extends AbstractYMLAssert<YMLDocumentAssert, YMLDocumentDescriptor> {
 
     public YMLDocumentAssert(YMLDocumentDescriptor descriptor) {
         super(descriptor, YMLDocumentAssert.class);
+    }
+
+    public YMLDocumentAssert andContinueAssertionOnThis() {
+        return this;
     }
 
     public YMLDocumentAssert hasMaps() {
@@ -116,5 +119,25 @@ public class YMLDocumentAssert extends AbstractObjectAssert<YMLDocumentAssert, Y
         }
 
         return this;
+    }
+
+    public YMLDocumentAssert hasScalars(int expected) {
+        hasScalars();
+
+        String assertjErrorMessage ="\nExpecting document descriptor to have <%d> scalars" +
+                                    "\nbut has <%d> scalars" +
+                                    "\n";
+
+        if (actual.getScalars().size() != expected) {
+            failWithMessage(assertjErrorMessage, expected, actual.getScalars().size());
+        }
+
+        return this;
+    }
+
+    public YMLScalarAssert getScalarByParseIndex(int index) {
+        YMLScalarDescriptor scalar = TestHelper.getScalars(actual).getScalarByParsePosition(index);
+
+        return new YMLScalarAssert(scalar);
     }
 }

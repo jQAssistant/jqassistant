@@ -24,7 +24,7 @@ public class SequenceIT extends AbstractYAMLPluginIT {
 
     @Test
     void eachItemOfASequenceHasTheLabelItemForEachItemInDocument() {
-        readSourceDocument("/sequences/five-items.yaml");
+        readSourceDocument("/sequence/five-items.yaml");
 
         String query = "MATCH (item:Yaml:Item) " +
                        "RETURN item";
@@ -37,7 +37,7 @@ public class SequenceIT extends AbstractYAMLPluginIT {
 
     @Test
     void eachItemOfTheToplevelSequenceHasTheLabelItem() {
-        readSourceDocument("/sequences/five-items.yaml");
+        readSourceDocument("/sequence/five-items.yaml");
 
         String query = "MATCH (:Document)-->(:Sequence)-->(item:Yaml:Item) " +
                        "RETURN item";
@@ -49,7 +49,7 @@ public class SequenceIT extends AbstractYAMLPluginIT {
 
     @Test
     void firstItemOfSequenceHasTheLabelFirst() {
-        readSourceDocument("/sequences/abcd.yaml");
+        readSourceDocument("/sequence/abcd.yaml");
 
         String query = "MATCH (item:Yaml:Item:First) " +
                        "RETURN item";
@@ -61,7 +61,7 @@ public class SequenceIT extends AbstractYAMLPluginIT {
 
     @Test
     void lastItemOfSequenceHasTheLabelLast() {
-        readSourceDocument("/sequences/abcd.yaml");
+        readSourceDocument("/sequence/abcd.yaml");
 
         String query = "MATCH (item:Yaml:Item:Last) " +
                        "RETURN item";

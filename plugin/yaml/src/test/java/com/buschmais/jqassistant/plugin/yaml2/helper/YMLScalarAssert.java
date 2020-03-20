@@ -4,11 +4,14 @@ import java.util.Objects;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 
-import org.assertj.core.api.AbstractObjectAssert;
-
-public class YMLScalarAssert extends AbstractObjectAssert<YMLScalarAssert, YMLScalarDescriptor> {
+public class YMLScalarAssert extends AbstractYMLAssert<YMLScalarAssert, YMLScalarDescriptor> {
     public YMLScalarAssert(YMLScalarDescriptor descriptor) {
         super(descriptor, YMLScalarAssert.class);
+    }
+
+    @Override
+    public YMLScalarAssert andContinueAssertionOnThis() {
+        return this;
     }
 
     public YMLScalarAssert hasValue(String expectedValue) {
@@ -25,7 +28,7 @@ public class YMLScalarAssert extends AbstractObjectAssert<YMLScalarAssert, YMLSc
         return this;
     }
 
-    public YMLScalarAssert hasIndex(int expectedValue) {
+    public YMLScalarAssert withSequenceIndex(int expectedValue) {
         isNotNull();
 
         String assertjErrorMessage = "\nExpecting scalar descriptor to have an " +
@@ -35,6 +38,20 @@ public class YMLScalarAssert extends AbstractObjectAssert<YMLScalarAssert, YMLSc
         Integer actualValue = actual.getIndex();
         if (!Objects.equals(expectedValue, actualValue)) {
             failWithMessage(assertjErrorMessage, expectedValue, actualValue);
+        }
+
+        return this;
+    }
+
+    public YMLScalarAssert hasEmptyValue() {
+        isNotNull();
+
+        String assertjErrorMessage = "\nExpecting scalar descriptor to have value of <>\n" +
+                                     "but its actual value is <%s>\n";
+
+        String actualValue = actual.getValue();
+        if (!"".equals(actualValue)) {
+            failWithMessage(assertjErrorMessage, actualValue);
         }
 
         return this;

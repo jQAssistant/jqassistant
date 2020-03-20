@@ -17,7 +17,6 @@ public class EventParser {
 
     public StreamNode parse(Stream<Event> events) {
         Consumer<Event> consumer = event -> {
-            System.out.println("::: " + event);
             switch (event.getEventId()) {
                 case Alias:
                     boolean referencedNodeIsValueForKey = parserContext.isInKey();
@@ -53,7 +52,6 @@ public class EventParser {
                     handleMapStart((MappingStartEvent) event);
                     parserContext.getCurrent().setKeyForValue(mapIsValueForKey);
                     break;
-
                 case MappingEnd:
                 case SequenceEnd:
                 case DocumentEnd:
@@ -114,7 +112,7 @@ public class EventParser {
     private void handleMapStart(MappingStartEvent event) {
         MapNode mapNode = new MapNode(event);
 
-        ParsingContextType<BaseNode> contextType = parserContext.getCurrent();
+        ParsingContextType<BaseNode<?>> contextType = parserContext.getCurrent();
 
         ParsingContextType<MapNode> inMap = ParsingContextType.ofInMap(mapNode);
         checkAndHandleAnchor(mapNode);
