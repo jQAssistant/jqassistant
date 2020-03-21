@@ -63,7 +63,6 @@ end::doc[] */
     | 1..n
     | Reference to key or a compley key in the map
     end::doc[] */
-    // todo rename to getSimpleKeys
     @Relation("HAS_KEY")
     List<YMLSimpleKeyDescriptor> getKeys();
 

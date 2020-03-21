@@ -5,3 +5,5 @@ todo Add support for labels for simply and complex keys
 todo Write explicit tests for labels Anchor and Reference
 todo Write explicit tests for anchors on maps, sequences and scalars
 todo Check the resulting graph in case of anchor and alias
+todo Add a relation from an alias to an anchor
+todo Move the index from an item to the relation

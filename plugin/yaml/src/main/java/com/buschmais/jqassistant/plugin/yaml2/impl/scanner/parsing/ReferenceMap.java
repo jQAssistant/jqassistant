@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class ReferenceMap {
-    private HashMap<String, BaseNode> references = new HashMap<>();
+    private HashMap<String, BaseNode<?>> references = new HashMap<>();
 
 
     public boolean hasAnchor(String anchor) {

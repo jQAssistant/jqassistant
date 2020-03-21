@@ -81,7 +81,6 @@ end::doc[] */
 | The name of a key as scalar value
 end::doc[] */
 
-    // todo rename to key
     @Property("name")
     String getName();
 

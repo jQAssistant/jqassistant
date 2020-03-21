@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 import org.snakeyaml.engine.v2.events.NodeEvent;
 
-// todo A key is actual also a node which can have an anchor
 public class ComplexKeyNode extends KeyNode {
 
     private BaseNode<?> valueNode;
@@ -20,7 +19,6 @@ public class ComplexKeyNode extends KeyNode {
         return valueNode;
     }
 
-    // todo rename to getKeyValue or something like this
     public BaseNode<?> getKeyNode() {
         return keyNode;
     }

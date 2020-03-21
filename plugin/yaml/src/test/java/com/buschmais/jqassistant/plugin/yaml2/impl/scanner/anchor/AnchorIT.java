@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.alias;
+package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.anchor;
 
 import java.util.List;
 
@@ -11,14 +11,13 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
-// todo Add a test with an alias as key of a map entry
-public class AliasIT extends AbstractYAMLPluginIT {
+public class AnchorIT extends AbstractYAMLPluginIT {
 
     @Nested
     class TopLevelMap {
         @Test
         void thePluginHandlesAnAliasForSequenceProperlyAsValueForKeyProperly() {
-            YMLFileDescriptor fileDescriptor = readSourceDocument("/alias/toplevel-map-anchor-on-sequence.yml");
+            YMLFileDescriptor fileDescriptor = readSourceDocument("/anchor/toplevel-map-anchor-on-sequence.yml");
 
             YMLDocumentDescriptor document = getDocuments(fileDescriptor).getDocumentByParsePosition(0);
             YMLMapDescriptor map = getMaps(document).getMapByParsePosition(0);
@@ -40,7 +39,7 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
         @Test
         void cypherAliasOnASequenceCanBeFoundViaCypher() {
-            readSourceDocument("/alias/toplevel-map-anchor-on-sequence.yml");
+            readSourceDocument("/anchor/toplevel-map-anchor-on-sequence.yml");
 
             String cypherQuery = "MATCH (a:Anchor:Yaml:Sequence {" +
                                  "anchorName: 'alias' }) " +
@@ -52,8 +51,34 @@ public class AliasIT extends AbstractYAMLPluginIT {
         }
 
         @Test
+        void cypherAliasOnValueOfKeyValuePairIsQueryableViaCypher() {
+            readSourceDocument("/anchor/toplevel-map-anchor-on-keyvalue.yml");
+
+            String cypherQuery = "MATCH (a:Anchor:Yaml:Value:Scalar {" +
+                                 "anchorName: 'a' }) " +
+                                 "RETURN a";
+
+            List<Object> result = query(cypherQuery).getColumn("a");
+
+            assertThat(result).hasSize(1);
+        }
+
+        @Test
+        void cypherAnchorOnSequenceInMapCanBeFoundViaCypher() {
+            readSourceDocument("/anchor/toplevel-map-anchor-on-sequence-value.yml");
+
+            String cypherQuery = "MATCH (a:Anchor:Yaml:Value:Sequence) " +
+                                 "RETURN a";
+
+            List<Object> result = query(cypherQuery).getColumn("a");
+
+            assertThat(result).hasSize(1);
+        }
+
+
+        @Test
         void thePluginHandlesAnAliasForAMapProperlyAsValueForKeyProperly() {
-            YMLFileDescriptor fileDescriptor = readSourceDocument("/alias/toplevel-map-anchor-on-map.yml");
+            YMLFileDescriptor fileDescriptor = readSourceDocument("/anchor/toplevel-map-anchor-on-map.yml");
 
             YMLDocumentDescriptor document = getDocuments(fileDescriptor).getDocumentByParsePosition(0);
             YMLMapDescriptor map = getMaps(document).getMapByParsePosition(0);
@@ -69,7 +94,7 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
         @Test
         void cypherAnchorOnAMapCanBeFoundViaCypher() {
-            readSourceDocument("/alias/toplevel-map-anchor-on-map.yml");
+            readSourceDocument("/anchor/toplevel-map-anchor-on-map.yml");
 
             String cypherQuery = "MATCH (a:Anchor:Yaml:Map {" +
                                  "anchorName: 'alias' }) " +
@@ -84,9 +109,10 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
     @Nested
     class TopLevelSequence {
+
         @Test
         void thePluginHandlesInSequenceAnAliasForScalarProperly() {
-            YMLFileDescriptor fileDescriptor = readSourceDocument("/alias/toplevel-sequence-anchor-on-scalar.yml");
+            YMLFileDescriptor fileDescriptor = readSourceDocument("/anchor/toplevel-sequence-anchor-on-scalar.yml");
 
             YMLDocumentDescriptor document = getDocuments(fileDescriptor).getDocumentByParsePosition(0);
             YMLSequenceDescriptor sequence = getSequences(document).getSequenceByParsePosition(0);
@@ -99,8 +125,20 @@ public class AliasIT extends AbstractYAMLPluginIT {
         }
 
         @Test
+        void aliasWithoutAnchorMarksTheWholeFileAsInvalid() {
+            readSourceDocument("/anchor/toplevel-sequence-alias-without-anchor.yml");
+
+            String cypherQuery = "MATCH (f:Yaml:File {valid: false}) RETURN f";
+
+            List<YMLFileDescriptor> result = query(cypherQuery).getColumn("f");
+
+            assertThat(result).hasSize(1);
+        }
+
+
+        @Test
         void cypherAliasOnSequenceCanBeFoundViaCypher() {
-            readSourceDocument("/alias/toplevel-sequence-anchor-on-scalar.yml");
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-scalar.yml");
 
             String cypherQuery = "MATCH (a:Anchor:Yaml:Scalar {" +
                                  "anchorName: 'alias' }) " +
@@ -113,6 +151,22 @@ public class AliasIT extends AbstractYAMLPluginIT {
 
     }
 
+    @Nested
+    class TopLevelScalar {
+        @Test
+        void cypherAnchorOnASingleScalarInADocumentCanBeFoundViaCypher() {
+            readSourceDocument("/anchor/toplevel-scalar-with-anchor.yml");
+
+            String cypherQuery = "MATCH (a:Anchor:Yaml:Scalar {" +
+                                 "anchorName: 'a', value: 'foobar'}) " +
+                                 "RETURN a";
+
+            List<Object> result = query(cypherQuery).getColumn("a");
+
+            assertThat(result).hasSize(1);
+        }
+
+    }
 
 
 

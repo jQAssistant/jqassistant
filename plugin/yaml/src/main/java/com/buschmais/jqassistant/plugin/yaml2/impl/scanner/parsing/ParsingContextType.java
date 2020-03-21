@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext;
 
 import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext.NO_POSITIONAL_CONTEXT;
 
-class ParsingContextType<D extends BaseNode> {
+class ParsingContextType<D extends BaseNode<?>> {
     private D node;
     private Type type;
     private PositionalContext positionalContext;
@@ -21,31 +21,31 @@ class ParsingContextType<D extends BaseNode> {
         this(type, null, context);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInFile(D descriptor) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInFile(D descriptor) {
         return new ParsingContextType<>(Type.IN_FILE, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInDocument(D descriptor) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInDocument(D descriptor) {
         return new ParsingContextType<>(Type.IN_DOCUMENT, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInMap(D descriptor) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInMap(D descriptor) {
         return new ParsingContextType<>(Type.IN_MAP, descriptor, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInSequence(D descriptor) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInSequence(D descriptor) {
         return new ParsingContextType<>(Type.IN_SEQUENCE, descriptor, new PositionalContext());
     }
 
-    static <N extends BaseNode> ParsingContextType<N> ofInStream(N node) {
+    static <N extends BaseNode<?>> ParsingContextType<N> ofInStream(N node) {
         return new ParsingContextType<>(Type.IN_STREAM, node, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInKey(D node) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInKey(D node) {
         return new ParsingContextType<>(Type.IN_KEY, node, NO_POSITIONAL_CONTEXT);
     }
 
-    static <D extends BaseNode> ParsingContextType<D> ofInComplexKey(D node) {
+    static <D extends BaseNode<?>> ParsingContextType<D> ofInComplexKey(D node) {
         return new ParsingContextType<>(Type.IN_COMPLEX_KEY, node, NO_POSITIONAL_CONTEXT);
     }
 
@@ -73,7 +73,6 @@ class ParsingContextType<D extends BaseNode> {
         IN_COMPLEX_KEY,
         IN_DOCUMENT,
         IN_FILE,
-        // todo rename in IN_SIMPLE_KEY
         IN_KEY,
         IN_MAP,
         IN_SEQUENCE,

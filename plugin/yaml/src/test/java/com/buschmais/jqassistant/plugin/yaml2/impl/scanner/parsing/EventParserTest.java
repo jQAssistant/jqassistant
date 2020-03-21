@@ -12,11 +12,10 @@ import org.snakeyaml.engine.v2.common.FlowStyle;
 import org.snakeyaml.engine.v2.common.ScalarStyle;
 import org.snakeyaml.engine.v2.events.*;
 
+import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
-import static org.assertj.core.api.Assertions.assertThat;
 
-// todo improve test coverage based on coverage
 @DisplayName("Event parser can")
 class EventParserTest {
     EventParser parser = new EventParser();
@@ -213,7 +212,9 @@ class EventParserTest {
 
             assertThat(mapNode.getSimpleKeys()).hasSize(1);
 
-            // todo add assertions on the value of the key
+            SimpleKeyNode simpleKeyNode = mapNode.getSimpleKeys().get(0);
+
+            assertThat(simpleKeyNode.getKeyName()).isEqualTo("A");
         }
 
         @DisplayName("which is empty")

@@ -4,27 +4,22 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class ParserContext {
-    private LinkedList<ParsingContextType<? extends BaseNode>> stack = new LinkedList<>();
+    private LinkedList<ParsingContextType<? extends BaseNode<?>>> stack = new LinkedList<>();
     private StreamNode rootNode;
-    //private AliasCache aliasCache = new AliasCache();
 
     public boolean isEmpty() {
         return stack.isEmpty();
     }
 
-    //public AliasCache getAliasCache() {
-    //    return aliasCache;
-    //}
-
-    public <N extends BaseNode> void enter(ParsingContextType<N> type) {
+    public <N extends BaseNode<?>> void enter(ParsingContextType<N> type) {
         getStack().push(type);
     }
 
-    private Deque<ParsingContextType<? extends BaseNode>> getStack() {
+    private Deque<ParsingContextType<? extends BaseNode<?>>> getStack() {
         return stack;
     }
 
-    public ParsingContextType<? extends BaseNode> peek() {
+    public ParsingContextType<? extends BaseNode<?>> peek() {
         if (isEmpty()) {
             IllegalStateException e = new IllegalStateException("No context available at the moment");
             throw e;
@@ -74,12 +69,12 @@ public class ParserContext {
         return !isInStream();
     }
 
-    public <T extends BaseNode> ParsingContextType<T> getAncestor(ParsingContextType.Ancestor ancestor) {
+    public <T extends BaseNode<?>> ParsingContextType<T> getAncestor(ParsingContextType.Ancestor ancestor) {
         ParsingContextType<T> result = (ParsingContextType<T>) stack.get(ancestor.getOffset());
         return result;
     }
 
-    public <T extends BaseNode> ParsingContextType<T> getCurrent() {
+    public <T extends BaseNode<?>> ParsingContextType<T> getCurrent() {
         return (ParsingContextType<T>) stack.getFirst();
     }
 

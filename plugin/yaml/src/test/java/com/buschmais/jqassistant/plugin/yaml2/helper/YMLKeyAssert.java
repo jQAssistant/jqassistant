@@ -1,11 +1,9 @@
 package com.buschmais.jqassistant.plugin.yaml2.helper;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
-// todo rename to YMLSimpleKeyAssert
 public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDescriptor> {
 
     public YMLKeyAssert(YMLSimpleKeyDescriptor descriptor) {
@@ -53,19 +51,7 @@ public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDe
         YMLDescriptor value = actual.getValue();
 
         if (!(value instanceof YMLScalarDescriptor)) {
-            String actualType = ((Function<YMLDescriptor, String>) descriptor -> {
-                String type = "???";
-
-                if (descriptor instanceof YMLMapDescriptor) {
-                    type = "map";
-                } else if (descriptor instanceof YMLSequenceDescriptor) {
-                    type = "sequence";
-                } else if (descriptor instanceof YMLScalarDescriptor) {
-                    type = "scalar";
-                }
-
-                return type;
-            }).apply(actual);
+            String actualType = getActualTypeOf(value);
 
             failWithMessage(assertjErrorMessage, "scalar", actualType);
         }
@@ -73,8 +59,8 @@ public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDe
         return this;
     }
 
-        public YMLKeyAssert hasScalarValue(String expectedValue) {
-            hasScalarAsValue();
+    public YMLKeyAssert hasScalarValue(String expectedValue) {
+        hasScalarAsValue();
 
         String assertjErrorMessage = "\nExpecting key descriptor to have scalar value of <%s>\n" +
                                      "but its actual value is <%s>\n";
@@ -97,19 +83,7 @@ public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDe
         YMLDescriptor value = actual.getValue();
 
         if (!(value instanceof YMLMapDescriptor)) {
-            String actualType = ((Function<YMLDescriptor, String>) descriptor -> {
-                String type = "???";
-
-                if (descriptor instanceof YMLMapDescriptor) {
-                    type = "map";
-                } else if (descriptor instanceof YMLSequenceDescriptor) {
-                    type = "sequence";
-                } else if (descriptor instanceof YMLScalarDescriptor) {
-                    type = "scalar";
-                }
-
-                return type;
-            }).apply(actual);
+            String actualType = getActualTypeOf(value);
 
             failWithMessage(assertjErrorMessage, "map", actualType);
         }
@@ -125,25 +99,31 @@ public class YMLKeyAssert extends AbstractYMLAssert<YMLKeyAssert, YMLSimpleKeyDe
 
         YMLDescriptor value = actual.getValue();
 
-        // todo extract method
         if (!(value instanceof YMLSequenceDescriptor)) {
-            String actualType = ((Function<YMLDescriptor, String>) descriptor -> {
-                String type = "???";
-
-                if (descriptor instanceof YMLMapDescriptor) {
-                    type = "map";
-                } else if (descriptor instanceof YMLSequenceDescriptor) {
-                    type = "sequence";
-                } else if (descriptor instanceof YMLScalarDescriptor) {
-                    type = "scalar";
-                }
-
-                return type;
-            }).apply(actual);
+            String actualType = getActualTypeOf(value);
 
             failWithMessage(assertjErrorMessage, "sequence", actualType);
         }
 
         return this;
+    }
+
+    private static String getActualTypeOf(YMLDescriptor descriptor) {
+        String actualType = null;
+
+        if (descriptor instanceof YMLMapDescriptor) {
+            actualType = "map";
+        } else if (descriptor instanceof YMLSequenceDescriptor) {
+            actualType = "sequence";
+        } else if (descriptor instanceof YMLScalarDescriptor) {
+            actualType = "scalar";
+        }
+
+        if (null == actualType) {
+            String message = "Unsupported descriptor type found";
+            throw new IllegalStateException(message);
+        }
+
+        return actualType;
     }
 }

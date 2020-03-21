@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -24,9 +23,6 @@ import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.events.Event;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YMLFileDescriptor> {
 
@@ -35,9 +31,6 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
      */
     public final static String YAML_FILE_EXTENSION = ".yaml";
     public final static String YML_FILE_EXTENSION = ".yml";
-
-    public final static String ACTIVATION_PROPERTY = "jqassistant.yaml2.activate";
-
 
     private ParsingContext context = new ParsingContext();
 
@@ -53,11 +46,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         LoadSettings settings = LoadSettings.builder().build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         EventParser eventParser = new EventParser();
-
-        // todo implement handleFileEnd
-        // todo take it from the parsing context
         YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
-
 
         try (InputStream in = item.createStream()) {
             Parse parser = new Parse(settings);
@@ -71,7 +60,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             documents.forEach(documentDescriptor -> {
                 yamlFileDescriptor.getDocuments().add(documentDescriptor);
             });
-        } catch (YamlEngineException e) {
+        } catch (GraphGenerationFailedException | YamlEngineException e) {
             yamlFileDescriptor.setValid(false);
         }
 
@@ -84,12 +73,5 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         ContextType<YMLFileDescriptor> inFile = ContextType.ofInFile(yamlFileDescriptor);
         context.enter(inFile);
         return yamlFileDescriptor;
-    }
-
-    private boolean isPluginActive() {
-        Optional<String> setting = of(ofNullable(System.getProperty(ACTIVATION_PROPERTY)).orElse("false"));
-        boolean activated = setting.map(s -> "true".equalsIgnoreCase(s)).get();
-
-        return activated;
     }
 }

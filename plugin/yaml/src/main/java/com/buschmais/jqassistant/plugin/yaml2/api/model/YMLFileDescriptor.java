@@ -7,8 +7,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-// todo Die Datei ist immer valide, aber nicht das Dokument ValidDescriptor
-
 /*
 tag::doc[]
 

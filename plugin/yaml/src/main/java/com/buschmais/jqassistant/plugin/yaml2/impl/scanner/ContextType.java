@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
+import java.util.Objects;
+
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 
 import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext.NO_POSITIONAL_CONTEXT;
@@ -65,31 +67,25 @@ class ContextType<D extends YMLDescriptor> {
         return descriptor;
     }
 
-    /* todo check if this methods are required
-    public boolean isDocumentContext() {
-        return type.equals(Type.IN_DOCUMENT);
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        ContextType<?> that = (ContextType<?>) other;
+        return isKeyForValue == that.isKeyForValue &&
+               Objects.equals(descriptor, that.descriptor) &&
+               type == that.type &&
+               Objects.equals(positionalContext, that.positionalContext);
     }
 
-    public boolean isFileContext() {
-        return type.equals(Type.IN_FILE);
+    @Override
+    public int hashCode() {
+        return Objects.hash(descriptor, type, positionalContext, isKeyForValue);
     }
-
-    public boolean isKeyContext() {
-        return type.equals(Type.IN_KEY);
-    }
-
-    public boolean isMapContext() {
-        return type.equals(Type.IN_MAP);
-    }
-
-    public boolean isSequenceContext() {
-        return type.equals(Type.IN_SEQUENCE);
-    }
-
-    public boolean isStreamContext() {
-        return type.equals(Type.IN_STREAM);
-    }
-    */
 
     enum Type {
         IN_DOCUMENT,

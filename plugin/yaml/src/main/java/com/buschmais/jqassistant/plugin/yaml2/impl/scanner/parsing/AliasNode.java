@@ -25,6 +25,10 @@ public class AliasNode extends BaseNode<AliasEvent> {
         this.referencedNode = Objects.requireNonNull(node);
     }
 
+    public String getAnchorName() {
+        return getEvent().getAlias().getValue();
+    }
+
     public BaseNode<?> getReferencedNode() {
         return referencedNode;
     }

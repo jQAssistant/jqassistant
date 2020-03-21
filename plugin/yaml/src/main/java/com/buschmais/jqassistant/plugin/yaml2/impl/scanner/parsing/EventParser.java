@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.snakeyaml.engine.v2.common.Anchor;
 import org.snakeyaml.engine.v2.events.*;
 
 import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.ParsingContextType.Ancestor.FIRST;
@@ -39,19 +38,23 @@ public class EventParser {
                 case StreamStart:
                     handleStreamStart((StreamStartEvent) event);
                     break;
+
                 case DocumentStart:
                     handleDocumentStart((DocumentStartEvent) event);
                     break;
+
                 case SequenceStart:
                     boolean seqIsValueForKey = parserContext.isInKey();
                     handleSequenceStart((SequenceStartEvent) event);
                     parserContext.getCurrent().setKeyForValue(seqIsValueForKey);
                     break;
+
                 case MappingStart:
                     boolean mapIsValueForKey = parserContext.isInKey();
                     handleMapStart((MappingStartEvent) event);
                     parserContext.getCurrent().setKeyForValue(mapIsValueForKey);
                     break;
+
                 case MappingEnd:
                 case SequenceEnd:
                 case DocumentEnd:
@@ -65,9 +68,8 @@ public class EventParser {
 
                     break;
 
-
-
-                // todo add default as error handler
+                default:
+                    abortProcessing(parserContext.getCurrent(), event);
             }
         };
 
@@ -75,21 +77,22 @@ public class EventParser {
         return parserContext.getRootNode();
     }
 
+    private void abortProcessing(ParsingContextType<BaseNode<?>> context, Event event) {
+        ParsingContextType.Type type = context.getType();
+        Event.ID eventId = event.getEventId();
+        String message = format("Unable to process event '%s' while current parsing context is '%s'",
+                                type, eventId);
+
+        throw new IllegalStateException(message);
+    }
+
     private void handleAlias(AliasEvent event) {
         String aliasName = event.getAnchor()
+                                // todo use the abort method
                                 .orElseThrow(() -> new IllegalStateException("Alias event without anchor name"))
                                 .getValue();
         AliasNode aliasNode = new AliasNode(event);
-        BaseNode<?> referencedNode = references.getAnchor(aliasName).get();
-        /*
-                                                .orElseThrow(() -> {
-                                                    String message = format("No anchor <%s> found", aliasName);
-                                                    throw new NoSuchElementException(message);
-                                                });
-         */
-        // todo Pay attention to the context of the alias
-        // An alias can be everything
-        aliasNode.setReferencedNode(referencedNode);
+        references.getAnchor(aliasName).ifPresent(aliasNode::setReferencedNode);
 
         if (parserContext.isInSequence()) {
             ParsingContextType<SequenceNode> context = parserContext.getCurrent();
@@ -103,8 +106,7 @@ public class EventParser {
             KeyNode keyNode = context.getNode();
             keyNode.setValue(aliasNode);
         } else {
-            // todo
-            throw new IllegalStateException();
+            abortProcessing(parserContext.getCurrent(), event);
         }
 
     }
@@ -128,23 +130,15 @@ public class EventParser {
         } else if (parserContext.isInKey()) {
             KeyNode keyNode = (KeyNode) parserContext.getCurrent().getNode();
             keyNode.setValue(mapNode);
-            /*
-            getScannerContext().getStore().addDescriptorType(mapDescriptor, YMLValueDescriptor.class);
-            YMLKeyDescriptor ymlKeyDescriptor = (YMLKeyDescriptor) contextType.getDescriptor();
-            ymlKeyDescriptor.setValue(mapDescriptor);
-             */
         } else if (parserContext.isInMap()) {
-            // sequence as key of a map
             ComplexKeyNode complexKey = new ComplexKeyNode(event);
             complexKey.setKeyNode(mapNode);
             ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
             MapNode parentMapNode = (MapNode) parserContext.getCurrent().getNode();
             parentMapNode.addKey(complexKey);
             parserContext.enter(inComplexKey);
-
         } else {
-            // todo
-            throw new IllegalStateException();
+            abortProcessing(parserContext.getCurrent(), event);
         }
 
         parserContext.enter(inMap);
@@ -152,8 +146,6 @@ public class EventParser {
 
 
     private void handleSequenceStart(SequenceStartEvent event) {
-        // todo can we assert here something useful?
-
         SequenceNode sequenceNode = new SequenceNode(event);
         ParsingContextType<SequenceNode> inSequence = ParsingContextType.ofInSequence(sequenceNode);
 
@@ -164,44 +156,27 @@ public class EventParser {
             sequenceNode.setIndex(index);
             SequenceNode parentSeqNode = (SequenceNode) parserContext.getCurrent().getNode();
             parentSeqNode.addSequence(sequenceNode);
-            /*
-            int index = parserContext.getCurrent().getPositionalContext().inc();
-            ymlSequenceDescriptor.setIndex(index);
-            YMLSequenceDescriptor descriptor = (YMLSequenceDescriptor) context.getCurrent().getDescriptor();
-            descriptor.getSequences().add(ymlSequenceDescriptor);
-
-             */
         } else if (parserContext.isInMap()) {
-            // sequence as key of a map
             ComplexKeyNode complexKey = new ComplexKeyNode(event);
             complexKey.setKeyNode(sequenceNode);
             ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
             MapNode mapNode = (MapNode) parserContext.getCurrent().getNode();
             mapNode.addKey(complexKey);
             parserContext.enter(inComplexKey);
-            // todo   checkAndHandleAnchor(valueDescriptor);
+            checkAndHandleAnchor(sequenceNode);
         } else if (parserContext.isInKey()) {
             KeyNode keyNode = (KeyNode) parserContext.getCurrent().getNode();
             keyNode.setValue(sequenceNode);
             checkAndHandleAnchor(sequenceNode);
-            // YMLSimpleKeyDescriptor keyDescriptor = (YMLSimpleKeyDescriptor) context.getCurrent().getDescriptor();
-            // keyDescriptor.setValue(ymlSequenceDescriptor);
         } else {
-            // todo check if the type of the exeption is correct or if there is a better one
-            String fqcn = parserContext.getCurrent().getNode().getClass().getCanonicalName();
-            String message = format("Unsupported YAML element represented by " +
-                                    "class %s encountered.", fqcn);
-            throw new IllegalStateException(message  );
+            abortProcessing(parserContext.getCurrent(), event);
         }
 
         parserContext.enter(inSequence);
     }
 
     private void handleScalar(ScalarEvent event) {
-        ParsingContextType<BaseNode> contextType = this.parserContext.getCurrent();
-
-        // todo Add support for tags
-        // todo Add support for impl
+        ParsingContextType<BaseNode<?>> contextType = this.parserContext.getCurrent();
 
         if (parserContext.isInSequence()) {
             int index = contextType.getPositionalContext().inc();
@@ -224,51 +199,28 @@ public class EventParser {
         } else if (parserContext.isInKey() && event.getEventId() == Scalar) {
             ScalarNode scalarNode = new ScalarNode(event);
             KeyNode keyNode = (KeyNode) contextType.getNode();
-            //keyNode.setKeyName(event.getValue());
             keyNode.setValue(scalarNode);
-            // todo   checkAndHandleAnchor(valueDescriptor);
+            checkAndHandleAnchor(scalarNode);
         } else if (parserContext.isInDocument() && event.getEventId() == Scalar) {
             DocumentNode documentNode = (DocumentNode) contextType.getNode();
             ScalarNode scalarNode = new ScalarNode(event);
             documentNode.addScalar(scalarNode);
-            // todo   checkAndHandleAnchor(valueDescriptor);
+            checkAndHandleAnchor(scalarNode);
         } else {
-            String fqcn = contextType.getClass().getCanonicalName();
-            String message = format("Unsupported YAML element represented by " +
-                                    "class <%s> encountered.", fqcn);
-            throw new IllegalStateException(message);
+            abortProcessing(parserContext.getCurrent(), event);
         }
-
-        // todo Handle unsupported descriptor
     }
 
     private void checkAndHandleAnchor(BaseNode<?> parseNode) {
         NodeEvent nodeEvent = (NodeEvent) parseNode.getEvent();
 
-        nodeEvent.getAnchor().ifPresent(new Consumer<Anchor>() {
-            @Override
-            public void accept(Anchor anchor) {
-                references.addAnchor(anchor.getValue(), parseNode);
-            }
-        });
-        /*
-        if (NodeEvent.class.isAssignableFrom(event.getClass())) {
-            NodeEvent nodeEvent = NodeEvent.class.cast(event);
-            if (nodeEvent.getAnchor().isPresent()) {
-                YMLAnchorDescriptor ymlAnchorDescriptor = getScannerContext().getStore()
-                                                                             .addDescriptorType(descriptor, YMLAnchorDescriptor.class);
-                String alias = nodeEvent.getAnchor().get().getAnchor();
-                ymlAnchorDescriptor.setAnchorName(alias);
-                context.getAliasCache().addAlias(alias, descriptor);
-            }
-        }
-         */
+        nodeEvent.getAnchor()
+                 .ifPresent(anchor -> references.addAnchor(anchor.getValue(), parseNode));
     }
 
     private void handleDocumentStart(DocumentStartEvent event) {
         if (parserContext.isNotInStream()) {
-            // todo ????
-            throwIllegalStateException(ParsingContextType.Type.IN_SEQUENCE, parserContext.peek().getType());
+            abortProcessing(parserContext.getCurrent(), event);
         }
 
         DocumentNode documentNode = new DocumentNode(event);
@@ -287,16 +239,6 @@ public class EventParser {
         ParsingContextType<?> inStream = ParsingContextType.ofInStream(node);
         parserContext.setRootNode(node);
         parserContext.enter(inStream);
-    }
-
-    private void throwIllegalStateException(ParsingContextType.Type expected,
-                                            ParsingContextType.Type actual) {
-        // todo Which type of exception to throw in case of a wrong state
-        String message = format("Wrong internal state during parsing a YAML " +
-                                "document. Expected content: %s, actual " +
-                                "context: %s", expected, actual);
-
-        throw new IllegalStateException(message);
     }
 
     public boolean hasAnchor(String anchor) {

@@ -13,7 +13,9 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.*;
 
 import org.snakeyaml.engine.v2.events.NodeEvent;
 
-public class GraphGenerator {
+import static java.util.Optional.ofNullable;
+
+class GraphGenerator {
     private enum Mode {
         STANDARD(true),
         REFERENCE(false);
@@ -76,7 +78,7 @@ public class GraphGenerator {
         } else if (node.getClass().isAssignableFrom(SequenceNode.class)) {
             SequenceNode sequenceNode = (SequenceNode) node;
             YMLSequenceDescriptor sequenceDescriptor = store.create(YMLSequenceDescriptor.class);
-            sequenceNode.getIndex().ifPresent(i -> sequenceDescriptor.setIndex(i));
+            sequenceNode.getIndex().ifPresent(sequenceDescriptor::setIndex);
             handler.accept(sequenceDescriptor);
 
             Consumer<YMLDescriptor> addItemDescriptor = descriptor -> store.addDescriptorType(descriptor, YMLItemDescriptor.class);
@@ -112,11 +114,18 @@ public class GraphGenerator {
             sequenceNode.getAliases().forEach(aliasNode -> {
                 Consumer<YMLDescriptor> scalarHandler = descriptor -> {
                     YMLScalarDescriptor scalarDescriptor = (YMLScalarDescriptor) descriptor;
-                    aliasNode.getIndex().ifPresent(index -> scalarDescriptor.setIndex(index));
+                    aliasNode.getIndex().ifPresent(scalarDescriptor::setIndex);
                     sequenceDescriptor.getScalars().add(scalarDescriptor);
                     addItemDescriptor.accept(descriptor);
                 };
-                BaseNode<?> referencedNode = aliasNode.getReferencedNode();
+
+                BaseNode<?> referencedNode = ofNullable(aliasNode.getReferencedNode()).orElseThrow(() -> {
+                    String anchor = aliasNode.getAnchorName();
+                    String message = String.format("Anchor '%s' not found in document", anchor);
+                    // todo This exception is not the best for this situation. Ask Dirk how to handle this
+                    return new GraphGenerationFailedException(message);
+                });
+
                 traverse(referencedNode, scalarHandler, Mode.REFERENCE);
             });
 
@@ -146,7 +155,7 @@ public class GraphGenerator {
             ScalarNode scalarNode = (ScalarNode) node;
             YMLScalarDescriptor scalarDescriptor = store.create(YMLScalarDescriptor.class);
             scalarDescriptor.setValue(scalarNode.getScalarValue());
-            scalarNode.getIndex().ifPresent(i -> scalarDescriptor.setIndex(i));
+            scalarNode.getIndex().ifPresent(scalarDescriptor::setIndex);
 
             anchorProcessor.process(scalarNode, scalarDescriptor, mode);
 
@@ -154,7 +163,7 @@ public class GraphGenerator {
         } else if (node.getClass().isAssignableFrom(MapNode.class)) {
             MapNode mapNode = (MapNode) node;
             YMLMapDescriptor mapDescriptor = store.create(YMLMapDescriptor.class);
-            mapNode.getIndex().ifPresent(i -> mapDescriptor.setIndex(i));
+            mapNode.getIndex().ifPresent(mapDescriptor::setIndex);
             handler.accept(mapDescriptor);
 
             anchorProcessor.process(mapNode, mapDescriptor, mode);
@@ -186,8 +195,8 @@ public class GraphGenerator {
 
                 mapDescriptor.getComplexKeys().add(keyDescriptor);
                 // todo Check if a alias can here occour
-                traverse(keyNode.getKeyNode(), descriptor -> keyDescriptor.setKey(descriptor), mode);
-                traverse(keyNode.getValue(), descriptor -> keyDescriptor.setValue(descriptor), mode);
+                traverse(keyNode.getKeyNode(), keyDescriptor::setKey, mode);
+                traverse(keyNode.getValue(), keyDescriptor::setValue, mode);
 
                 store.addDescriptorType(keyDescriptor.getKey(), YMLComplexKeyValue.class);
                 store.addDescriptorType(keyDescriptor.getValue(), YMLValueDescriptor.class);
