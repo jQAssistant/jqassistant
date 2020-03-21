@@ -148,6 +148,7 @@ public class EventParser {
     private void handleSequenceStart(SequenceStartEvent event) {
         SequenceNode sequenceNode = new SequenceNode(event);
         ParsingContextType<SequenceNode> inSequence = ParsingContextType.ofInSequence(sequenceNode);
+        checkAndHandleAnchor(sequenceNode);
 
         if (parserContext.isInDocument()) {
             ((DocumentNode)parserContext.getCurrent().getNode()).addSequence(sequenceNode);
@@ -163,11 +164,9 @@ public class EventParser {
             MapNode mapNode = (MapNode) parserContext.getCurrent().getNode();
             mapNode.addKey(complexKey);
             parserContext.enter(inComplexKey);
-            checkAndHandleAnchor(sequenceNode);
         } else if (parserContext.isInKey()) {
             KeyNode keyNode = (KeyNode) parserContext.getCurrent().getNode();
             keyNode.setValue(sequenceNode);
-            checkAndHandleAnchor(sequenceNode);
         } else {
             abortProcessing(parserContext.getCurrent(), event);
         }
@@ -247,9 +246,5 @@ public class EventParser {
 
     public Optional<BaseNode<?>> getAnchor(String anchor) {
         return references.getAnchor(anchor);
-    }
-
-    public ReferenceMap getReferenceMap() {
-        return references;
     }
 }

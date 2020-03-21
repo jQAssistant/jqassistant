@@ -30,7 +30,7 @@ class EventParserTest {
             Stream<Event> events = Stream.of(strStE(),
                                              docStE(),
                                              seqStE(),
-                                             scalarE("L1", anchor("anchor")),
+                                             scalarE("L1", anchor("anchor1")),
                                              seqEndE(),
                                              docEndE(),
                                              strEndE());
@@ -44,7 +44,7 @@ class EventParserTest {
             ScalarNode scalarNode = topSeqNode.getScalars().get(0);
 
             assertThat(scalarNode.getAnchor()).isPresent();
-            assertThat(scalarNode.getAnchor()).get().isEqualTo("anchor");
+            assertThat(scalarNode.getAnchor()).get().isEqualTo("anchor1");
         }
 
         @DisplayName("for a scalar and adds them to the anchor reference")
@@ -55,7 +55,7 @@ class EventParserTest {
                                              docStE(),
                                              seqStE(),
                                              scalarE("L0"),
-                                             scalarE("L1", anchor("anchor")),
+                                             scalarE("L1", anchor("anchor2")),
                                              scalarE("L2"),
                                              seqEndE(),
                                              docEndE(),
@@ -63,10 +63,10 @@ class EventParserTest {
 
             parser.parse(events);
 
-            assertThat(parser.hasAnchor("anchor")).isTrue();
-            assertThat(parser.getAnchor("anchor")).get().isInstanceOf(ScalarNode.class);
+            assertThat(parser.hasAnchor("anchor2")).isTrue();
+            assertThat(parser.getAnchor("anchor2")).get().isInstanceOf(ScalarNode.class);
 
-            ScalarNode scalarNode = (ScalarNode) parser.getAnchor("anchor").get();
+            ScalarNode scalarNode = (ScalarNode) parser.getAnchor("anchor2").get();
 
             assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
         }

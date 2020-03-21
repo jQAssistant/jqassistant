@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext;
 
-import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.PositionalContext.NO_POSITIONAL_CONTEXT;
+import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.PositionalContext.NO_POSITIONAL_CONTEXT;
 
 class ParsingContextType<D extends BaseNode<?>> {
     private D node;
@@ -76,7 +75,7 @@ class ParsingContextType<D extends BaseNode<?>> {
         IN_KEY,
         IN_MAP,
         IN_SEQUENCE,
-        IN_STREAM;
+        IN_STREAM
     }
 
     enum Ancestor {

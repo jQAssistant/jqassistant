@@ -1,14 +1,13 @@
-package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
+package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph;
 
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 
 import static java.lang.String.format;
 
-class AliasCache {
+class AnchorCache {
     private Map<String, YMLDescriptor> alias = new Hashtable<>();
 
     void addAlias(String aliasName, YMLDescriptor target) {
@@ -17,8 +16,8 @@ class AliasCache {
 
     YMLDescriptor getTarget(String aliasName) {
         if (!alias.containsKey(aliasName)) {
-            String message = format("No target for alias '%s' found", aliasName);
-            throw new NoSuchElementException(message);
+            String message = format("No anchor for alias '%s' found", aliasName);
+            throw new GraphGenerationFailedException(message);
         }
 
         return alias.get(aliasName);

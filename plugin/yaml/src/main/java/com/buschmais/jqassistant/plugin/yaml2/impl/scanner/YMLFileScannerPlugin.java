@@ -15,6 +15,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph.GraphGenerationFailedException;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph.GraphGenerator;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.EventParser;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.StreamNode;
 
@@ -31,8 +33,6 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
      */
     public final static String YAML_FILE_EXTENSION = ".yaml";
     public final static String YML_FILE_EXTENSION = ".yml";
-
-    private ParsingContext context = new ParsingContext();
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) {
@@ -70,8 +70,6 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
     private YMLFileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
         YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class);
-        ContextType<YMLFileDescriptor> inFile = ContextType.ofInFile(yamlFileDescriptor);
-        context.enter(inFile);
         return yamlFileDescriptor;
     }
 }

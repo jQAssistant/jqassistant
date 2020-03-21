@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
+package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 import java.util.Objects;
 
-public class PositionalContext {
+class PositionalContext {
     public static PositionalContext NO_POSITIONAL_CONTEXT = new NoPositionalContext();
 
     private int currentIndex = 0;

@@ -1,0 +1,7 @@
+- &alias
+  - a
+  - b
+  - c
+- *alias
+
+

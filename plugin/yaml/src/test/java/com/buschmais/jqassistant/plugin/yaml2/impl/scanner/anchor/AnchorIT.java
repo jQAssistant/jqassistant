@@ -51,6 +51,18 @@ public class AnchorIT extends AbstractYAMLPluginIT {
         }
 
         @Test
+        void cypherAliasOnASequenceCanBeFoundViaCypherResultsInTwoChildSequences() {
+            readSourceDocument("/anchor/toplevel-map-anchor-on-sequence.yml");
+
+            String cypherQuery = "MATCH (m:Map:Yaml)-->(:Key)-[:HAS_VALUE]->(s:Sequence)" +
+                                 "RETURN s";
+
+            List<Object> result = query(cypherQuery).getColumn("s");
+
+            assertThat(result).hasSize(2);
+        }
+
+        @Test
         void cypherAliasOnValueOfKeyValuePairIsQueryableViaCypher() {
             readSourceDocument("/anchor/toplevel-map-anchor-on-keyvalue.yml");
 
@@ -109,6 +121,44 @@ public class AnchorIT extends AbstractYAMLPluginIT {
 
     @Nested
     class TopLevelSequence {
+
+        @Test
+        void cypherAnchorOnSequenceItem() {
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
+
+            String cypherQuery = "MATCH (a:Anchor:Yaml:Item:Sequence { index: 0 }) " +
+                                 "RETURN a";
+
+            List<Object> result = query(cypherQuery).getColumn("a");
+
+            assertThat(result).hasSize(1);
+        }
+
+        @TestStore(type = TestStore.Type.FILE)
+        @Test
+        void cypherAnchorOnSequenceItemResultsInThoChildSequences() {
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
+
+            String cypherQuery = "MATCH (d:Yaml:Document)-->(:Yaml:Sequence)" +
+                                 "-->(s:Yaml:Sequence) " +
+                                 "RETURN s";
+
+            List<Object> result = query(cypherQuery).getColumn("s");
+
+            assertThat(result).hasSize(2);
+        }
+
+        @Test
+        void cypherAnchorOnSequenceItemResultsInThoChildMaps() {
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-map.yml");
+
+            String cypherQuery = "MATCH (s:Sequence:Yaml)-->(m:Yaml:Map:Item) " +
+                                 "RETURN m";
+
+            List<Object> result = query(cypherQuery).getColumn("m");
+
+            assertThat(result).hasSize(2);
+        }
 
         @Test
         void thePluginHandlesInSequenceAnAliasForScalarProperly() {
