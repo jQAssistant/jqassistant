@@ -17,6 +17,7 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
 
     private final Store store;
     private final GraphGenerator generator;
+    private final AliasProcessor aliasProcessor;
     private AnchorProcessor anchorProcessor;
     private ReferenceNodeGetter refNodeGetter = new ReferenceNodeGetter();
 
@@ -27,10 +28,12 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
     };
     private Consumer<YMLDescriptor> addItemDescriptorHandler;
 
-    public SequenceNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor) {
+    public SequenceNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor,
+                                 AliasProcessor aliasProcessor) {
         this.store = store;
         this.generator = generator;
         this.anchorProcessor = anchorProcessor;
+        this.aliasProcessor = aliasProcessor;
     }
 
     @Override
@@ -71,6 +74,8 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
 
 
         node.getAliases().forEach(aliasNode -> {
+            BaseNode<?> referencedNode = refNodeGetter.apply(aliasNode);
+
             Callback<YMLDescriptor> callbackForAlias = descriptor -> {
                 YMLIndexable scalarDescriptor = (YMLIndexable) descriptor;
                 aliasNode.getIndex().ifPresent(scalarDescriptor::setIndex);
@@ -83,9 +88,10 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
                 } else if (descriptor instanceof YMLScalarDescriptor) {
                     sequenceDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
                 }
+
+                aliasProcessor.createReferenceEdge(aliasNode, descriptor);
             };
 
-            BaseNode<?> referencedNode = refNodeGetter.apply(aliasNode);
 
             generator.traverse(referencedNode, callbackForAlias, GraphGenerator.Mode.REFERENCE);
         });

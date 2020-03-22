@@ -37,11 +37,13 @@ public class GraphGenerator {
 
 
     public GraphGenerator(Store store) {
-        AnchorProcessor anchorProcessor = new AnchorProcessor(store);
+        AnchorCache anchorCache = new AnchorCache();
+        AliasProcessor aliasProcessor = new AliasProcessor(store, anchorCache);
+        AnchorProcessor anchorProcessor = new AnchorProcessor(store, anchorCache);
         DocumentNodeProcessor documentNodeProcessor = new DocumentNodeProcessor(store, this);
-        SequenceNodeProcessor sequenceNodeProcessor = new SequenceNodeProcessor(store, this, anchorProcessor);
+        SequenceNodeProcessor sequenceNodeProcessor = new SequenceNodeProcessor(store, this, anchorProcessor, aliasProcessor);
         ScalarNodeProcessor scalarNodeProcessor = new ScalarNodeProcessor(store, anchorProcessor);
-        MapNodeProcessor mapNodeProcessor = new MapNodeProcessor(store, this, anchorProcessor);
+        MapNodeProcessor mapNodeProcessor = new MapNodeProcessor(store, this, anchorProcessor, aliasProcessor);
 
         this.processors = Arrays.asList(documentNodeProcessor, sequenceNodeProcessor,
                                         mapNodeProcessor, scalarNodeProcessor);

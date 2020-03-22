@@ -49,9 +49,9 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
 
         try (InputStream in = item.createStream()) {
+            yamlFileDescriptor.setValid(true);
             Parse parser = new Parse(settings);
             Iterable<Event> events = parser.parseInputStream(in);
-            yamlFileDescriptor.setValid(true);
             StreamNode streamNode = eventParser.parse(StreamSupport.stream(events.spliterator(), false));
             Store store = getScannerContext().getStore();
             GraphGenerator generator = new GraphGenerator(store);
@@ -69,7 +69,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
 
     private YMLFileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
-        YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class);
+        YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class, YMLFileDescriptor.class);
         return yamlFileDescriptor;
     }
 }

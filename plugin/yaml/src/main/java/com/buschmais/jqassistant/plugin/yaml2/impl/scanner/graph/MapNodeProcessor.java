@@ -14,11 +14,14 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
     private final GraphGenerator generator;
     private final AnchorProcessor anchorProcessor;
     private final ReferenceNodeGetter refNodeGetter = new ReferenceNodeGetter();
+    private final AliasProcessor aliasProcessor;
 
-    public MapNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor) {
+    public MapNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor,
+                            AliasProcessor aliasProcessor) {
         this.store = store;
         this.generator = generator;
         this.anchorProcessor = anchorProcessor;
+        this.aliasProcessor = aliasProcessor;
     }
 
     @Override
@@ -41,7 +44,12 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
             if (keyNode.getValue().getClass().isAssignableFrom(AliasNode.class)) {
                 AliasNode aliasNode = (AliasNode) keyNode.getValue();
                 BaseNode<?> referencedNode = refNodeGetter.apply(aliasNode);
-                generator.traverse(referencedNode, addValueDescriptorHandler, GraphGenerator.Mode.REFERENCE);
+                Callback<YMLDescriptor> addAliasValueDescriptorHandler = descriptor -> {
+                    addValueDescriptorHandler.created(descriptor);
+                    aliasProcessor.createReferenceEdge(aliasNode, descriptor);
+                };
+
+                generator.traverse(referencedNode, addAliasValueDescriptorHandler, GraphGenerator.Mode.REFERENCE);
             } else {
                 BaseNode<?> valueNode = keyNode.getValue();
                 generator.traverse(valueNode, addValueDescriptorHandler, mode);

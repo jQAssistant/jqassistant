@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml2.api.model;
 
 import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /* tag::doc[]
 
@@ -34,6 +35,34 @@ end::labeloverview[]
 end::doc[] */
 @Label("Alias")
 public interface YMLAliasDescriptor extends YMLDescriptor {
+
+    /* tag::doc[]
+
+.Relations of an Alias
+[options="header",cols="2,2,1,5"]
+|===
+
+| Relation Name
+| Target Node Type
+| Cardinality
+| Description
+
+end::doc[] */
+
+/* tag::doc[]
+    | `IS_ALIAS_FOR`
+    | xref:yaml2anchor[Anchor]
+    | 1
+    | Reference to the anchor of this alias in the YAML document
+end::doc[] */
+    @Relation("IS_ALIAS_FOR")
+    YMLDescriptor getAnchor();
+
+/* tag::doc[]
+|===
+end::doc[] */
+
+    void setAnchor(YMLDescriptor anchor);
 
 /* tag::doc[]
 .Properties of an Alias

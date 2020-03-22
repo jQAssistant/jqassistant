@@ -12,9 +12,9 @@ class AnchorProcessor {
     private final Store store;
     private AnchorCache anchorCache;
 
-    public AnchorProcessor(Store store) {
+    public AnchorProcessor(Store store, AnchorCache cache) {
         this.store = store;
-        this.anchorCache = new AnchorCache();
+        this.anchorCache = cache;
     }
 
     public void process(AnchorSupport<? extends NodeEvent> node, YMLDescriptor descriptor, GraphGenerator.Mode mode) {

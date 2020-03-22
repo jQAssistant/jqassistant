@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 
 import org.junit.jupiter.api.Test;
 
-class C2E26IT extends AbstractYAMLPluginIT {
-    private static String YAML_FILE = "/spec-examples/example-c2-e26-ordered-mappings.yaml";
+class C02E27IT extends AbstractYAMLPluginIT {
+    private static String YAML_FILE = "/spec-examples/example-c2-e27-invoice.yaml";
 
     @Override
     protected String getSourceYAMLFile() {
@@ -14,7 +14,5 @@ class C2E26IT extends AbstractYAMLPluginIT {
     void scannerCanReadDocument() {
         readSourceDocument();
     }
-
-    /* Todo Write more specific tests */
 
 }
