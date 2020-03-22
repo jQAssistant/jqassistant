@@ -1,12 +1,16 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.*;
+import org.junit.runners.MethodSorters;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.common.Anchor;
 import org.snakeyaml.engine.v2.common.FlowStyle;
 import org.snakeyaml.engine.v2.common.ScalarStyle;
@@ -15,447 +19,603 @@ import org.snakeyaml.engine.v2.events.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-@DisplayName("Event parser can")
+// todo refactor this test class
+@DisplayName("Given a stream of parse events")
+@FixMethodOrder(MethodSorters.JVM)
 class EventParserTest {
-    EventParser parser = new EventParser();
+    private EventParser parser = new EventParser();
+    private StreamNode rootNode;
 
-    @DisplayName("handle anchors")
+    @DisplayName("with one document")
     @Nested
-    class Anchors {
-        @DisplayName("for a scalar")
-        @Test
-        void anchorAForAScalarValueRecognized() {
-
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("L1", anchor("anchor1")),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-
-            DocumentNode documentNode = root.getDocuments().get(0);
-            SequenceNode topSeqNode = documentNode.getSequences().get(0);
-
-            assertThat(topSeqNode.getScalars()).hasSize(1);
-            ScalarNode scalarNode = topSeqNode.getScalars().get(0);
-
-            assertThat(scalarNode.getAnchor()).isPresent();
-            assertThat(scalarNode.getAnchor()).get().isEqualTo("anchor1");
-        }
-
-        @DisplayName("for a scalar and adds them to the anchor reference")
-        @Test
-        void anchorCanBeFoundInTheAliasReference() {
-
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("L0"),
-                                             scalarE("L1", anchor("anchor2")),
-                                             scalarE("L2"),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            parser.parse(events);
-
-            assertThat(parser.hasAnchor("anchor2")).isTrue();
-            assertThat(parser.getAnchor("anchor2")).get().isInstanceOf(ScalarNode.class);
-
-            ScalarNode scalarNode = (ScalarNode) parser.getAnchor("anchor2").get();
-
-            assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
-        }
-
-        @Disabled
-        @DisplayName("for a sequence")
-        @Test
-        void anchorAndAliasForASequenceValue() {
-            throw new RuntimeException("This test is not implemented.");
-        }
-
-        @Disabled
-        @DisplayName("for a map")
-        @Test
-        void anchorAndAliasForAMapValue() {
-            throw new RuntimeException("This test is not implemented.");
-        }
-    }
-
-    @DisplayName("complex keys")
-    @Nested
-    class ComplexKey {
-        @DisplayName("with a sequence as key node")
-        @Test
-        void withSequenceAsKeyNode() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             seqStE(),
-                                             scalarE("Detroit Tigers"),
-                                             scalarE("Chicago cubs"),
-                                             seqEndE(),
-                                             seqStE(),
-                                             scalarE("2001-07-23"),
-                                             seqEndE(),
-                                             seqStE(),
-                                             scalarE("New York Yankees"),
-                                             scalarE("Atlanta Braves"),
-                                             seqEndE(),
-                                             seqStE(),
-                                             seqStE(),
-                                             scalarE("2001-07-02"),
-                                             seqEndE(),
-                                             mapEndE(),
-                                             docEndE(),
-                                             seqEndE());
-
-            StreamNode streamNode = parser.parse(events);
-
-            DocumentNode documentNode = streamNode.getDocuments().get(0);
-
-            assertThat(documentNode).isNotNull();
-            assertThat(documentNode.getMaps()).hasSize(1);
-
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getComplexKeys()).hasSize(2);
-
-            assertThat(mapNode.getComplexKeys()).allSatisfy(ck -> {
-                assertThat(ck.getKeyNode()).isNotNull().isInstanceOf(SequenceNode.class);
-                assertThat(ck.getValue()).isNotNull().isInstanceOf(SequenceNode.class);
-            });
-        }
-    }
-
-    @DisplayName("aliases")
-    @Nested
-    class Aliases {
-        @DisplayName("for an existing scalar")
-        @Test
-        void aliasReferencesAScalar() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("L0"),
-                                             scalarE("L1", anchor("anchor")),
-                                             scalarE("L2"),
-                                             alias("anchor"),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode streamNode = parser.parse(events);
-            DocumentNode documentNode = streamNode.getDocuments().get(0);
-            SequenceNode sequenceNode = documentNode.getSequences().get(0);
-
-            assertThat(sequenceNode.getAliases()).isNotEmpty().hasSize(1);
-            AliasNode aliasNode = sequenceNode.getAliases().get(0);
-
-            assertThat(aliasNode.getReferencedNode()).isInstanceOf(ScalarNode.class);
-            assertThat(aliasNode.getIndex()).get().isEqualTo(3);
-
-            ScalarNode scalarNode = (ScalarNode) aliasNode.getReferencedNode();
-            assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
-        }
-
-        @Disabled
-        @DisplayName("for an existing map")
-        @Test
-        void aliasReferencesAMap() {
-            throw new RuntimeException();
-        }
-
-        @Disabled
-        @DisplayName("for an existing sequence")
-        @Test
-        void aliasReferencesASequence() {
-            throw new RuntimeException();
-        }
-
-
-    }
-
-    @DisplayName("parse a document")
-    @Nested
-    class DocumentLevel {
-        @Disabled
-        @DisplayName("with a scalar")
-        @Test
-        void documentWithScalar() {
-            throw new RuntimeException("This test is not implemented.");
-        }
-
-        @DisplayName("with a map")
-        @Test
-        void documentWithMap() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             scalarE("A"),
-                                             scalarE("B"),
-                                             mapEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-
-            DocumentNode documentNode = root.getDocuments().get(0);
-
-            assertThat(documentNode.getMaps()).hasSize(1);
-
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getSimpleKeys()).hasSize(1);
-
-            SimpleKeyNode simpleKeyNode = mapNode.getSimpleKeys().get(0);
-
-            assertThat(simpleKeyNode.getKeyName()).isEqualTo("A");
-        }
+    class WithOneDocument {
 
         @DisplayName("which is empty")
-        @Test
-        void streamWithAnEmptyDocument() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(), docEndE(),
-                                             strEndE());
+        @Nested
+        class WhichIsEmpty {
+            @BeforeEach
+            void setUp() {
+                Stream<Event> events = Stream.of(strStE(),
+                                                 docStE(), docEndE(),
+                                                 strEndE());
+                rootNode = parser.parse(events);
+            }
 
-            StreamNode root = parser.parse(events);
+            @DisplayName("then the parse tree contains one document")
+            @Test
+            void parseTreeContainsOneDocument() {
+                assertThat(rootNode).isNotNull();
+                assertThat(rootNode.getDocuments()).hasSize(1);
+            }
 
-            assertThat(root).isNotNull();
-            assertThat(root.getDocuments()).hasSize(1);
+            @DisplayName("then the document is empty")
+            @Test
+            void theDocumentIsEmpty() {
+                DocumentNode documentNode = rootNode.getDocuments().get(0);
+
+                assertThat(documentNode.getScalars()).isEmpty();
+                assertThat(documentNode.getMaps()).isEmpty();
+                assertThat(documentNode.getSequences()).isEmpty();
+            }
         }
 
-        @DisplayName("which is followed by a second empty document")
-        @Test
-        void streamWithTwoEmptyDocuments() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(), docEndE(),
-                                             docStE(), docEndE(),
-                                             strEndE());
+        @DisplayName("with anchors")
+        @Nested
+        class Anchors {
+            @DisplayName("there the one anchor if on the only scalar value")
+            @Nested
+            class AnchorOnSingleScalarValue {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("L1", anchor("anchor1")),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
 
-            StreamNode root = parser.parse(events);
+                    rootNode = parser.parse(events);
+                }
 
-            assertThat(root).isNotNull();
-            assertThat(root.getDocuments()).hasSize(2);
+                @DisplayName("then the parse tree contains the this anchor on the right node")
+                @Test
+                void anchorAForAScalarValueRecognized() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode topSeqNode = documentNode.getSequences().get(0);
+
+                    assertThat(topSeqNode.getScalars()).hasSize(1);
+                    ScalarNode scalarNode = topSeqNode.getScalars().get(0);
+
+                    assertThat(scalarNode.getAnchor()).isPresent();
+                    assertThat(scalarNode.getAnchor()).get().isEqualTo("anchor1");
+                }
+            }
+
+            @DisplayName("there is on anchor on one of multiple scalar values")
+            @Nested
+            class AnchorOnOfManyScalarValues {
+
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("L0"),
+                                                     scalarE("L1", anchor("anchor2")),
+                                                     scalarE("L2"),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the scalar with the anchor can be found in the parser's anchor cache")
+                @Test
+                void anchorCanBeFoundInTheAliasReference() {
+                    assertThat(parser.hasAnchor("anchor2")).isTrue();
+                    assertThat(parser.getAnchor("anchor2")).get().isInstanceOf(ScalarNode.class);
+
+                    ScalarEvent scalarEvent = (ScalarEvent) parser.getAnchor("anchor2").get().getEvent();
+
+                    assertThat(scalarEvent.getValue()).isEqualTo("L1");
+                }
+            }
         }
 
-        @DisplayName("with a sequence")
-        @Test
-        void documentWithSequence() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("A"),
-                                             scalarE("B"),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
+        @DisplayName("with complex keys")
+        @Nested
+        class ComplexKey {
 
-            StreamNode root = parser.parse(events);
+            @DisplayName("there the complex key is a sequence")
+            @Nested
+            class TheComplexKeyIsASequence {
 
-            DocumentNode documentNode = root.getDocuments().get(0);
+                @BeforeEach
+                void setUp() throws IOException {
+                    rootNode = getParseTreeFromFile("/spec-examples/c2-e11-mapping-between-sequences.yaml");
+                }
 
-            assertThat(documentNode.getSequences()).hasSize(1);
+                @DisplayName("then the key value of each complex key is a sequence")
+                @Test
+                void theKeyOfAComplexKeyIsASequence() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
 
-            SequenceNode sequenceNode = documentNode.getSequences().get(0);
+                    assertThat(mapNode.getComplexKeys()).allSatisfy(ck -> {
+                        assertThat(ck.getKeyNode()).isNotNull().isInstanceOf(SequenceNode.class);
+                        assertThat(ck.getValue()).isNotNull().isInstanceOf(SequenceNode.class);
+                    });
+                }
 
-            assertThat(sequenceNode.getScalars()).hasSize(2);
+                @DisplayName("then the map in the document has two complex key")
+                @Test
+                void theMapHasTwoComplexKeys() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+
+                    assertThat(mapNode.getComplexKeys()).hasSize(2);
+
+                }
+
+                @DisplayName("then the document contains one map")
+                @Test
+                void theDocumentContainsOneMap() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+
+                    assertThat(documentNode).isNotNull();
+                    assertThat(documentNode.getMaps()).hasSize(1);
+                }
+            }
         }
 
+        @DisplayName("with a sequence at the toplevel")
+        @Nested
+        class SequenceLevel {
+
+            @DisplayName("and with a scalar value")
+            @Nested
+            class WithScalarValue {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("L1"),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the sequence has one scalar")
+                @Test
+                void theSequenceHasOneScalar() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode topSeqNode = documentNode.getSequences().get(0);
+
+                    assertThat(topSeqNode.getScalars()).hasSize(1);
+                    assertThat(topSeqNode.getSequences()).isEmpty();
+                    assertThat(topSeqNode.getMaps()).isEmpty();
+                }
+            }
+
+            @DisplayName("with a map as value")
+            @Nested
+            class WithAMapAsValue {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("A"),
+                                                     mapStE(),
+                                                     scalarE("K"),
+                                                     scalarE("V"),
+                                                     mapEndE(),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the sequence contains a map")
+                @Test
+                void sequencesWithAMap() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode sequenceNode = documentNode.getSequences().get(0);
+
+                    assertThat(sequenceNode.getMaps()).hasSize(1);
+                }
+
+                @DisplayName("then the map contains only one simple key")
+                @Test
+                void theMapContainsOnlyOneSimpleKey() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode sequenceNode = documentNode.getSequences().get(0);
+                    MapNode mapNode = sequenceNode.getMaps().get(0);
+
+                    assertThat(mapNode.getSimpleKeys()).hasSize(1);
+                    assertThat(mapNode.getAliasKeys()).isEmpty();
+                    assertThat(mapNode.getComplexKeys()).isEmpty();
+                }
+            }
+
+            @DisplayName("and a sequence as item of the toplevel sequence")
+            @Nested
+            class AndASequenceAsItemOfTheTopLevelSequence {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("L1"),
+                                                     seqStE(),
+                                                     scalarE("L1"),
+                                                     seqEndE(),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the parser tree contains exactly one document")
+                @Test
+                void exactlyOneDocument() {
+                    assertThat(rootNode.getDocuments()).hasSize(1);
+                }
+
+                @DisplayName("then the top level sequence has two items")
+                @Test
+                void sequenceHasTwoItems() {
+
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode topSeqNode = documentNode.getSequences().get(0);
+
+                    assertThat(topSeqNode.getItemsTotal()).isEqualTo(2);
+                    assertThat(topSeqNode.getScalars()).hasSize(1);
+                    assertThat(topSeqNode.getSequences()).hasSize(1);
+                }
+
+                @DisplayName("then the subsequence as exactly one item")
+                @Test
+                void valueOfTheSubsequenceHasOneItem() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode topSeqNode = documentNode.getSequences().get(0);
+                    SequenceNode chldSequenceNode = topSeqNode.getSequences().get(0);
+
+                    assertThat(chldSequenceNode.getItemsTotal()).isEqualTo(1);
+                }
+
+                @DisplayName("then the value of the subsequence is a scalar")
+                @Test
+                void valueOfTheSubsequenceIsAScalar() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode topSeqNode = documentNode.getSequences().get(0);
+                    SequenceNode chldSequenceNode = topSeqNode.getSequences().get(0);
+
+                    assertThat(chldSequenceNode.getScalars()).hasSize(1);
+                }
+
+            }
+        }
+
+        @DisplayName("with a map on the top level")
+        @Nested
+        class MapLevel {
+
+            @DisplayName("and a simple key and a scalar as value")
+            @Nested
+            class AndASimpleKeyAndAScalarValue {
+
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     mapStE(),
+                                                     scalarE("K"),
+                                                     scalarE("V"),
+                                                     mapEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the map contains one simple key")
+                @Test
+                void theMapContainsASimpleKey() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+
+                    assertThat(mapNode.getSimpleKeys()).hasSize(1);
+                }
+
+                @DisplayName("then the key of the map is a scalar value")
+                @Test
+                void theKeyIsAScalar() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+                    KeyNode keyNode = mapNode.getSimpleKeys().get(0);
+
+                    assertThat(keyNode.getValue()).isInstanceOf(ScalarNode.class);
+                }
+
+                @DisplayName("then the value of the key is a scalar with the correct value")
+                @Test
+                void theValueOfTheKeyIsCorrect() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+                    KeyNode keyNode = mapNode.getSimpleKeys().get(0);
+                    ScalarNode valueNode = (ScalarNode) keyNode.getValue();
+
+                    assertThat(valueNode.getScalarValue()).isEqualTo("V");
+                }
+            }
+
+            @DisplayName("and a sequence as value")
+            @Nested
+            class AndASequenceAsValue {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     mapStE(),
+                                                     scalarE("K"),
+                                                     seqStE(),
+                                                     scalarE("1"),
+                                                     scalarE("2"),
+                                                     seqEndE(),
+                                                     mapEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then the map has exactly one key")
+                @Test
+                void mapHasOneKey() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+
+                    assertThat(mapNode.getSimpleKeys()).hasSize(1);
+                }
+
+                @DisplayName("then the value of the map is a sequence")
+                @Test
+                void valueOfMapIsASequence() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+                    KeyNode keyNode = mapNode.getSimpleKeys().get(0);
+
+                    assertThat(keyNode.getValue()).isInstanceOf(SequenceNode.class);
+                }
+            }
+
+            @Nested
+            @DisplayName("and maps as values")
+            class AndAMapWithTwoKeys {
+                @BeforeEach
+                void setUp() throws IOException {
+                    rootNode = getParseTreeFromFile("/spec-examples/c2-e06-mapping-of-mappings.yaml");
+                }
+
+                @DisplayName("then the document contains one map ")
+                @Test
+                void theParseTreeContainsOneDocument() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+
+                    assertThat(documentNode.getMaps()).hasSize(1);
+                }
+
+                @DisplayName("then the map contains two simple keys")
+                @Test
+                void withTwoMap3s() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    MapNode mapNode = documentNode.getMaps().get(0);
+
+                    assertThat(mapNode.getSimpleKeys()).hasSize(2);
+                }
+            }
+        }
+
+        @DisplayName("with anchors and aliases")
+        @Nested
+        class AliasAndAnchor {
+            @DisplayName("there one item in the toplevel sequence aliases another item")
+            @Nested
+            class SequenceItemAliasesAnotherOne {
+                @BeforeEach
+                void setUp() {
+                    Stream<Event> events = Stream.of(strStE(),
+                                                     docStE(),
+                                                     seqStE(),
+                                                     scalarE("L0"),
+                                                     scalarE("L1", anchor("anchor")),
+                                                     scalarE("L2"),
+                                                     alias("anchor"),
+                                                     seqEndE(),
+                                                     docEndE(),
+                                                     strEndE());
+
+                    rootNode = parser.parse(events);
+                }
+
+                @DisplayName("then it alias item is the third item in the sequence")
+                @Test
+                void theAlisItemIsTheThirdItem() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode sequenceNode = documentNode.getSequences().get(0);
+
+                    assertThat(sequenceNode.getAliases()).isNotEmpty().hasSize(1);
+                    AliasNode aliasNode = sequenceNode.getAliases().get(0);
+
+                    assertThat(aliasNode.getAliasedNode()).isInstanceOf(ScalarNode.class);
+                    assertThat(aliasNode.getIndex()).get().isEqualTo(3);
+                }
+
+                @DisplayName("then the alias references the correct item")
+                @Test
+                void theAliasReferencesTheCorrectItem() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+                    SequenceNode sequenceNode = documentNode.getSequences().get(0);
+                    AliasNode aliasNode = sequenceNode.getAliases().get(0);
+
+                    assertThat(aliasNode.getAliasedNode()).isInstanceOf(ScalarNode.class);
+                    ScalarNode scalarNode = (ScalarNode) aliasNode.getAliasedNode();
+                    assertThat(scalarNode.getScalarValue()).isEqualTo("L1");
+                }
+            }
+
+            @DisplayName("there the anchor is on the key of a complex key and the alias is used as key in the same map")
+            @Nested
+            class AnchorOnKeyOfMapInComplexKeyAndAliasAsKeyInMap {
+
+                @BeforeEach
+                void setUp() throws IOException {
+                    rootNode = getParseTreeFromFile("/anchor/toplevel-map-anchor-in-complexkey-on-key-alias-is-also-key.yml");
+                }
+
+
+                @DisplayName("then the parse tree contains a single document")
+                @Test
+                void name1() {
+                    assertSoftly(sa -> {
+                        sa.assertThat(rootNode).isNotNull();
+                        sa.assertThat(rootNode.getDocuments()).hasSize(1);
+                    });
+                }
+
+                @DisplayName("then the found document has only one single map")
+                @Test
+                void foundDocumentHasOnlyOneSingleMap() {
+                    DocumentNode documentNode = rootNode.getDocuments().get(0);
+
+                    assertThat(documentNode.getMaps()).hasSize(1);
+                    assertThat(documentNode.getSequences()).isEmpty();
+                    assertThat(documentNode.getScalars()).isEmpty();
+                }
+
+
+                @DisplayName("then the map of the document has a complex key and an alias key")
+                @Test
+                void thenTheMapOfTheDocumentHasAComplexKeyAndAliasKey() {
+                    MapNode topLevelMapNode = rootNode.getDocuments().get(0).getMaps().get(0);
+
+                    assertThat(topLevelMapNode.getComplexKeys()).hasSize(1);
+                    assertThat(topLevelMapNode.getSimpleKeys()).isEmpty();
+                    assertThat(topLevelMapNode.getAliasKeys()).hasSize(1);
+                }
+
+                @DisplayName("then the alias key has the correct key name and the correct value")
+                @Test
+                void thenTheAliasKeyHasTheCorrectValue() {
+                    AliasKeyNode aliasKeyNode = rootNode.getDocuments().get(0).getMaps().get(0).getAliasKeys().get(0);
+
+                    assertThat(aliasKeyNode.getKey()).isInstanceOf(ScalarNode.class);
+                    assertThat(((ScalarNode) aliasKeyNode.getKey()).getScalarValue()).isEqualTo("ck1");
+                }
+            }
+
+            @DisplayName("there the anchor is in a complex key on the key value")
+            @Nested
+            class AnchorIsInAComplexKeyOnTheKeyValue {
+                @BeforeEach
+                void setUp() throws IOException {
+                    rootNode = getParseTreeFromFile("/anchor/toplevel-map-anchor-in-complexkey-on-key.yml");
+                }
+
+                @DisplayName("then the parse tree contains a single document")
+                @Test
+                void aaa() {
+                    assertSoftly(sa -> {
+                        sa.assertThat(rootNode).isNotNull();
+                        sa.assertThat(rootNode.getDocuments()).hasSize(1);
+                    });
+                }
+
+                @DisplayName("then the document contains only one map")
+                @Test
+                void afksfdkasjdhfsfd() {
+                    assertSoftly(sa -> {
+                        DocumentNode documentNode = rootNode.getDocuments().get(0);
+                        sa.assertThat(documentNode.getMaps()).hasSize(1);
+                        sa.assertThat(documentNode.getSequences()).isEmpty();
+                        sa.assertThat(documentNode.getScalars()).isEmpty();
+                    });
+                }
+
+                @DisplayName("then the map has one complex key")
+                @Test
+                void sadfasfsdlkfasdfasd() {
+                    MapNode mapNode = rootNode.getDocuments().get(0).getMaps().get(0);
+
+                    assertThat(mapNode.getComplexKeys()).hasSize(1);
+                }
+
+                @DisplayName("then the key of the key in the complex key is an anchor")
+                @Test
+                void a983oi3uoi33io3o() {
+                    ComplexKeyNode keyNode = rootNode.getDocuments().get(0)
+                                                     .getMaps().get(0).getComplexKeys().get(0);
+
+                    MapNode keyNodeOfMap = (MapNode) keyNode.getKeyNode();
+
+                    assertSoftly(sa -> {
+                        sa.assertThat(keyNodeOfMap.getSimpleKeys()).hasSize(1);
+                        SimpleKeyNode simpleKeyNode = keyNodeOfMap.getSimpleKeys().get(0);
+                        sa.assertThat(simpleKeyNode.getKeyName()).isEqualTo("ck1");
+                        sa.assertThat(simpleKeyNode.getKey().getAnchor()).isPresent();
+                        sa.assertThat(simpleKeyNode.getKey().getAnchor().get()).isEqualTo("kv");
+                    });
+                }
+
+                @DisplayName("then the value of the simple key in the top map is the same as the name of the anchor in the complex key")
+                @Test
+                void djdjdjdddd() {
+                    SimpleKeyNode simpleKeyNode = rootNode.getDocuments().get(0)
+                                                          .getMaps().get(0).getSimpleKeys().get(0);
+
+                    assertSoftly(sa -> {
+                        sa.assertThat(simpleKeyNode.getKeyName()).isEqualTo("zzz");
+                        sa.assertThat(simpleKeyNode.getValue()).isInstanceOf(AliasNode.class);
+                        sa.assertThat(((AliasNode) simpleKeyNode.getValue()).getAnchorName()).isEqualTo("kv");
+                    });
+                }
+            }
+        }
     }
 
-    @DisplayName("parse a sequence")
+    @DisplayName("with more then one document")
     @Nested
-    class SequenceLevel {
-        @DisplayName("with a scalar as value")
-        @Test
-        void sequenceWithOneScalar() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("L1"),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
+    class DocumentLevel {
 
-            StreamNode root = parser.parse(events);
+        @DisplayName("there both documents are empty")
+        @Nested
+        class BothDocumentsEmpty {
+            @BeforeEach
+            void setUp() {
+                Stream<Event> events = Stream.of(strStE(),
+                                                 docStE(), docEndE(),
+                                                 docStE(), docEndE(),
+                                                 strEndE());
 
-            DocumentNode documentNode = root.getDocuments().get(0);
-            SequenceNode topSeqNode = documentNode.getSequences().get(0);
+                rootNode = parser.parse(events);
+            }
 
-            assertThat(topSeqNode.getScalars()).hasSize(1);
-            assertThat(topSeqNode.getSequences()).isEmpty();
-        }
-
-        @DisplayName("with a map as value")
-        @Test
-        void sequencesWithAMap() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("A"),
-                                             mapStE(),
-                                             scalarE("K"),
-                                             scalarE("V"),
-                                             mapEndE(),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-
-            DocumentNode documentNode = root.getDocuments().get(0);
-            SequenceNode sequenceNode = documentNode.getSequences().get(0);
-
-            assertThat(sequenceNode.getMaps()).hasSize(1);
-        }
-
-        @DisplayName("with a sequence as value")
-        @Test
-        void sequenceWithASequence() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             seqStE(),
-                                             scalarE("L1"),
-                                             seqStE(),
-                                             scalarE("L1"),
-                                             seqEndE(),
-                                             seqEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-
-            DocumentNode documentNode = root.getDocuments().get(0);
-            SequenceNode topSeqNode = documentNode.getSequences().get(0);
-
-            assertThat(topSeqNode.getScalars()).hasSize(1);
-            assertThat(topSeqNode.getSequences()).hasSize(1);
-
-            SequenceNode chldSequenceNode = topSeqNode.getSequences().get(0);
-
-            assertThat(chldSequenceNode.getScalars()).hasSize(1);
-        }
-    }
-
-    @DisplayName("parse a map")
-    @Nested
-    class MapLevel {
-        @DisplayName("with a simple key and a scalar as value")
-        @Test
-        void withSimpleKeyAndScalarValue() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             scalarE("K"),
-                                             scalarE("V"),
-                                             mapEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-            DocumentNode documentNode = root.getDocuments().get(0);
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getSimpleKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
-
-            assertThat(keyNode.getValue()).isInstanceOf(ScalarNode.class);
-            ScalarNode valueNode = (ScalarNode) keyNode.getValue();
-            assertThat(valueNode.getScalarValue()).isEqualTo("V");
-        }
-
-        @DisplayName("with a simple key and a sequence as value")
-        @Test
-        void withSimpleKeyAndSequenceValue() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             scalarE("K"),
-                                             seqStE(),
-                                             scalarE("1"),
-                                             scalarE("2"),
-                                             seqEndE(),
-                                             mapEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-            DocumentNode documentNode = root.getDocuments().get(0);
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getSimpleKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
-
-            assertThat(keyNode.getValue()).isInstanceOf(SequenceNode.class);
-        }
-
-        @DisplayName("with two keys with maps as value")
-        @Test
-        void withTwoMaps() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             scalarE("Mark McGwire"),
-                                             mapStE(),
-                                             scalarE("hr"),
-                                             scalarE("65"),
-                                             scalarE("avg"),
-                                             scalarE("0.278"),
-                                             mapEndE(),
-                                             scalarE("Sammy Sosa"),
-                                             mapStE(),
-                                             scalarE("hr"),
-                                             scalarE("63"),
-                                             scalarE("avg"),
-                                             scalarE("0.288"),
-                                             mapEndE(),
-                                             mapEndE(),
-                                             docEndE(),
-                                             strEndE());
-            StreamNode root = parser.parse(events);
-
-            DocumentNode documentNode = root.getDocuments().get(0);
-
-            assertThat(documentNode.getMaps()).hasSize(1);
-
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getSimpleKeys()).hasSize(2);
-        }
-
-        @DisplayName("with a simple key and map as value")
-        @Test
-        void withSimpleKeyAndMapValue() {
-            Stream<Event> events = Stream.of(strStE(),
-                                             docStE(),
-                                             mapStE(),
-                                             scalarE("K"),
-                                             mapStE(),
-                                             scalarE("K2"),
-                                             scalarE("V2"),
-                                             mapEndE(),
-                                             mapEndE(),
-                                             docEndE(),
-                                             strEndE());
-
-            StreamNode root = parser.parse(events);
-            DocumentNode documentNode = root.getDocuments().get(0);
-            MapNode mapNode = documentNode.getMaps().get(0);
-
-            assertThat(mapNode.getSimpleKeys()).hasSize(1);
-            KeyNode keyNode = mapNode.getSimpleKeys().get(0);
-
-            assertThat(keyNode.getValue()).isInstanceOf(MapNode.class);
-
-            MapNode subMapNode = (MapNode) keyNode.getValue();
-
-            assertThat(subMapNode.getSimpleKeys()).hasSize(1);
+            @DisplayName("then the parse tree containts two documents")
+            @Test
+            void streamWithTwoEmptyDocuments() {
+                assertThat(rootNode).isNotNull();
+                assertThat(rootNode.getDocuments()).hasSize(2);
+            }
         }
     }
 
@@ -510,6 +670,17 @@ class EventParserTest {
 
     private Anchor anchor(String anchorName) {
         return new Anchor(anchorName);
+    }
+
+    private StreamNode getParseTreeFromFile(String file) throws IOException {
+        LoadSettings settings = LoadSettings.builder().build();
+        EventParser eventParser = new EventParser();
+
+        try (InputStream input = this.getClass().getResourceAsStream(file)) {
+            Parse parser = new Parse(settings);
+            Iterable<Event> events = parser.parseInputStream(input);
+            return eventParser.parse(StreamSupport.stream(events.spliterator(), false));
+        }
     }
 
 }

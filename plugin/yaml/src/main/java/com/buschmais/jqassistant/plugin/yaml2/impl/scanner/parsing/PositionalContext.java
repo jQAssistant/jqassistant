@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 import java.util.Objects;
 
 class PositionalContext {
-    public static PositionalContext NO_POSITIONAL_CONTEXT = new NoPositionalContext();
-
     private int currentIndex = 0;
 
     public int inc() {
@@ -27,11 +25,17 @@ class PositionalContext {
     public int hashCode() {
         return Objects.hash(currentIndex);
     }
+
+    public static PositionalContext noPositionalContext() {
+        return new NoPositionalContext();
+    }
+
+    static class NoPositionalContext extends PositionalContext {
+        @Override
+        public int inc() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
 }
 
-class NoPositionalContext extends PositionalContext {
-    @Override
-    public int inc() {
-        throw new UnsupportedOperationException();
-    }
-}

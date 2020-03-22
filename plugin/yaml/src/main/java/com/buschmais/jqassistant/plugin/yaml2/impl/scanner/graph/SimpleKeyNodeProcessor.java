@@ -3,23 +3,21 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.ScalarNode;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.SimpleKeyNode;
 
-public class ScalarNodeProcessor implements NodeProcessor<ScalarNode, YMLScalarDescriptor> {
-
+public class SimpleKeyNodeProcessor implements NodeProcessor<SimpleKeyNode, YMLScalarDescriptor> {
     private final Store store;
     private final AnchorProcessor anchorProcessor;
 
-    public ScalarNodeProcessor(Store store, AnchorProcessor anchorProcessor) {
+    public SimpleKeyNodeProcessor(Store store, AnchorProcessor anchorProcessor) {
         this.store = store;
         this.anchorProcessor = anchorProcessor;
     }
 
     @Override
-    public void process(ScalarNode node, Callback<YMLScalarDescriptor> callback, GraphGenerator.Mode mode) {
+    public void process(SimpleKeyNode node, Callback<YMLScalarDescriptor> callback, GraphGenerator.Mode mode) {
         YMLScalarDescriptor scalarDescriptor = store.create(YMLScalarDescriptor.class);
-        scalarDescriptor.setValue(node.getScalarValue());
-        node.getIndex().ifPresent(scalarDescriptor::setIndex);
+        scalarDescriptor.setValue(node.getKeyName());
 
         anchorProcessor.process(node, scalarDescriptor, mode);
 
@@ -28,6 +26,6 @@ public class ScalarNodeProcessor implements NodeProcessor<ScalarNode, YMLScalarD
 
     @Override
     public boolean accepts(AbstractBaseNode node) {
-        return node.getClass().isAssignableFrom(ScalarNode.class);
+        return node.getClass().isAssignableFrom(SimpleKeyNode.class);
     }
 }

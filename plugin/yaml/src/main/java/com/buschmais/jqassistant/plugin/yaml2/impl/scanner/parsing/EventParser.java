@@ -2,17 +2,21 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import org.snakeyaml.engine.v2.events.*;
 
-import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.ParsingContextType.Ancestor.FIRST;
 import static java.lang.String.format;
-import static org.snakeyaml.engine.v2.events.Event.ID.Scalar;
 
 public class EventParser {
-    ParserContext parserContext = new ParserContext();
-    private ReferenceMap references = new ReferenceMap();
+    private int tokenIndexSource = 0;
+    private ParserContext parserContext = new ParserContext();
+    private AnchorCache anchorCache = new AnchorCache();
+
+    int getNextTokenIndex() {
+        return tokenIndexSource++;
+    }
 
     public StreamNode parse(Stream<Event> events) {
         Consumer<Event> consumer = event -> {
@@ -22,7 +26,7 @@ public class EventParser {
                     handleAlias((AliasEvent) event);
 
                     if (referencedNodeIsValueForKey) {
-                        parserContext.leave();
+                        getParserContext().leave();
                     }
                     break;
 
@@ -74,10 +78,20 @@ public class EventParser {
         };
 
         events.forEachOrdered(consumer);
+
         return parserContext.getRootNode();
     }
 
-    private void abortProcessing(ParsingContextType<BaseNode<?>> context, Event event) {
+    protected ParserContext getParserContext() {
+        return parserContext;
+    }
+
+    protected AnchorCache getAnchorCache() {
+        return anchorCache;
+    }
+
+
+    private void abortProcessing(ParsingContextType<AbstractBaseNode> context, Event event) {
         ParsingContextType.Type type = context.getType();
         Event.ID eventId = event.getEventId();
         String message = format("Unable to process event '%s' while current parsing context is '%s'",
@@ -87,12 +101,9 @@ public class EventParser {
     }
 
     private void handleAlias(AliasEvent event) {
-        String aliasName = event.getAnchor()
-                                // todo use the abort method
-                                .orElseThrow(() -> new IllegalStateException("Alias event without anchor name"))
-                                .getValue();
-        AliasNode aliasNode = new AliasNode(event);
-        references.getAnchor(aliasName).ifPresent(aliasNode::setReferencedNode);
+        String aliasName = event.getAlias().getValue();
+        AliasNode aliasNode = new AliasNode(event, getNextTokenIndex());
+        anchorCache.getAnchor(aliasName).ifPresent(aliasNode::setAliasedNode);
 
         if (parserContext.isInSequence()) {
             ParsingContextType<SequenceNode> context = parserContext.getCurrent();
@@ -102,19 +113,34 @@ public class EventParser {
             SequenceNode sequenceNode = context.getNode();
             sequenceNode.addAlias(aliasNode);
         } else if (parserContext.isInKey()) {
-            ParsingContextType<KeyNode> context = parserContext.getCurrent();
-            KeyNode keyNode = context.getNode();
+            ParsingContextType<KeyNode<?>> context = parserContext.getCurrent();
+            KeyNode<?> keyNode = context.getNode();
             keyNode.setValue(aliasNode);
+        } else if (parserContext.isInMap()) {
+            BaseNode<? extends NodeEvent> referencedNode =
+                anchorCache.getAnchor(aliasName)
+                           .map((UnaryOperator<BaseNode<? extends NodeEvent>>) node -> {
+                              if (node instanceof SimpleKeyNode) {
+                                  return ((SimpleKeyNode) node).getKey();
+                              }
+                              return node;
+                          }).get();
+
+            AliasKeyNode keyNode = new AliasKeyNode(event, getNextTokenIndex(), referencedNode);
+            ParsingContextType<MapNode> context = parserContext.getCurrent();
+            MapNode mapNode = context.getNode();
+            mapNode.addKey(keyNode);
+            ParsingContextType<AliasKeyNode> inAliasKey = ParsingContextType.ofInAliasKey(keyNode);
+            parserContext.enter(inAliasKey);
         } else {
             abortProcessing(parserContext.getCurrent(), event);
         }
-
     }
 
     private void handleMapStart(MappingStartEvent event) {
-        MapNode mapNode = new MapNode(event);
+        MapNode mapNode = new MapNode(event, getNextTokenIndex());
 
-        ParsingContextType<BaseNode<?>> contextType = parserContext.getCurrent();
+        ParsingContextType<AbstractBaseNode> contextType = parserContext.getCurrent();
 
         ParsingContextType<MapNode> inMap = ParsingContextType.ofInMap(mapNode);
         checkAndHandleAnchor(mapNode);
@@ -128,10 +154,10 @@ public class EventParser {
             mapNode.setIndex(index);
             sequenceNode.addMap(mapNode);
         } else if (parserContext.isInKey()) {
-            KeyNode keyNode = (KeyNode) parserContext.getCurrent().getNode();
+            KeyNode<?> keyNode = (KeyNode<?>) parserContext.getCurrent().getNode();
             keyNode.setValue(mapNode);
         } else if (parserContext.isInMap()) {
-            ComplexKeyNode complexKey = new ComplexKeyNode(event);
+            ComplexKeyNode complexKey = new ComplexKeyNode(event, getNextTokenIndex());
             complexKey.setKeyNode(mapNode);
             ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
             MapNode parentMapNode = (MapNode) parserContext.getCurrent().getNode();
@@ -146,7 +172,7 @@ public class EventParser {
 
 
     private void handleSequenceStart(SequenceStartEvent event) {
-        SequenceNode sequenceNode = new SequenceNode(event);
+        SequenceNode sequenceNode = new SequenceNode(event, getNextTokenIndex());
         ParsingContextType<SequenceNode> inSequence = ParsingContextType.ofInSequence(sequenceNode);
         checkAndHandleAnchor(sequenceNode);
 
@@ -158,7 +184,7 @@ public class EventParser {
             SequenceNode parentSeqNode = (SequenceNode) parserContext.getCurrent().getNode();
             parentSeqNode.addSequence(sequenceNode);
         } else if (parserContext.isInMap()) {
-            ComplexKeyNode complexKey = new ComplexKeyNode(event);
+            ComplexKeyNode complexKey = new ComplexKeyNode(event, getNextTokenIndex());
             complexKey.setKeyNode(sequenceNode);
             ParsingContextType<ComplexKeyNode> inComplexKey = ParsingContextType.ofInComplexKey(complexKey);
             MapNode mapNode = (MapNode) parserContext.getCurrent().getNode();
@@ -175,34 +201,35 @@ public class EventParser {
     }
 
     private void handleScalar(ScalarEvent event) {
-        ParsingContextType<BaseNode<?>> contextType = this.parserContext.getCurrent();
+        ParsingContextType<AbstractBaseNode> contextType = this.parserContext.getCurrent();
 
         if (parserContext.isInSequence()) {
             int index = contextType.getPositionalContext().inc();
             SequenceNode sequenceNode = (SequenceNode) contextType.getNode();
-            ScalarNode scalarNode = new ScalarNode(event);
+            ScalarNode scalarNode = new ScalarNode(event, getNextTokenIndex());
 
             scalarNode.setIndex(index);
             sequenceNode.addScalar(scalarNode);
             checkAndHandleAnchor(scalarNode);
-        } else if (parserContext.isInMap() && event.getEventId() == Scalar) {
+        } else if (parserContext.isInMap()) {
 
             MapNode mapNode = (MapNode) contextType.getNode();
-            SimpleKeyNode keyNode = new SimpleKeyNode(event);
-            keyNode.setKeyName(event.getValue());
+            ScalarNode scalarNode = new ScalarNode(event, getNextTokenIndex());
+            SimpleKeyNode keyNode = new SimpleKeyNode(scalarNode, getNextTokenIndex());
+            checkAndHandleAnchor(keyNode);
 
             ParsingContextType<KeyNode> newContextType = ParsingContextType.ofInKey(keyNode);
             parserContext.enter(newContextType);
 
             mapNode.addKey(keyNode);
-        } else if (parserContext.isInKey() && event.getEventId() == Scalar) {
-            ScalarNode scalarNode = new ScalarNode(event);
-            KeyNode keyNode = (KeyNode) contextType.getNode();
+        } else if (parserContext.isInKey()) {
+            ScalarNode scalarNode = new ScalarNode(event, getNextTokenIndex());
+            KeyNode<?> keyNode = (KeyNode<?>) contextType.getNode();
             keyNode.setValue(scalarNode);
             checkAndHandleAnchor(scalarNode);
-        } else if (parserContext.isInDocument() && event.getEventId() == Scalar) {
+        } else if (parserContext.isInDocument()) {
             DocumentNode documentNode = (DocumentNode) contextType.getNode();
-            ScalarNode scalarNode = new ScalarNode(event);
+            ScalarNode scalarNode = new ScalarNode(event, getNextTokenIndex());
             documentNode.addScalar(scalarNode);
             checkAndHandleAnchor(scalarNode);
         } else {
@@ -210,11 +237,8 @@ public class EventParser {
         }
     }
 
-    private void checkAndHandleAnchor(BaseNode<?> parseNode) {
-        NodeEvent nodeEvent = (NodeEvent) parseNode.getEvent();
-
-        nodeEvent.getAnchor()
-                 .ifPresent(anchor -> references.addAnchor(anchor.getValue(), parseNode));
+    private void checkAndHandleAnchor(BaseNode<?> node) {
+        node.getEvent().getAnchor().ifPresent(anchor -> anchorCache.addAnchor(node));
     }
 
     private void handleDocumentStart(DocumentStartEvent event) {
@@ -222,29 +246,30 @@ public class EventParser {
             abortProcessing(parserContext.getCurrent(), event);
         }
 
-        DocumentNode documentNode = new DocumentNode(event);
+        DocumentNode documentNode = new DocumentNode(event, getNextTokenIndex());
         ParsingContextType<DocumentNode> inDocument = ParsingContextType.ofInDocument(documentNode);
 
         parserContext.enter(inDocument);
 
-        ParsingContextType<StreamNode> streamContext = parserContext.getAncestor(FIRST);
+        ParsingContextType<StreamNode> streamContext = parserContext.getParent();
         StreamNode streamNode = streamContext.getNode();
         streamNode.addDocument(documentNode);
     }
 
 
     private void handleStreamStart(StreamStartEvent event) {
-        StreamNode node = new StreamNode(event);
+        StreamNode node = new StreamNode(event, getNextTokenIndex());
         ParsingContextType<?> inStream = ParsingContextType.ofInStream(node);
         parserContext.setRootNode(node);
         parserContext.enter(inStream);
     }
 
     public boolean hasAnchor(String anchor) {
-        return references.hasAnchor(anchor);
+        return anchorCache.hasAnchor(anchor);
     }
 
-    public Optional<BaseNode<?>> getAnchor(String anchor) {
-        return references.getAnchor(anchor);
+    public Optional<BaseNode<? extends NodeEvent>> getAnchor(String anchor) {
+        return anchorCache.getAnchor(anchor);
     }
+
 }

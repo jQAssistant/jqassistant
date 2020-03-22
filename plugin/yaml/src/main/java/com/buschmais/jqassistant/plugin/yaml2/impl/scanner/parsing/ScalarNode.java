@@ -4,12 +4,11 @@ import java.util.Optional;
 
 import org.snakeyaml.engine.v2.events.ScalarEvent;
 
-public class ScalarNode extends BaseNode<ScalarEvent>
-    implements AnchorSupport<ScalarEvent> {
+public class ScalarNode extends BaseNode<ScalarEvent> {
     private Integer index;
 
-    public ScalarNode(ScalarEvent event) {
-        super(event);
+    public ScalarNode(ScalarEvent event, int tokenIndex) {
+        super(event, tokenIndex);
     }
 
     public void setIndex(Integer index) {
@@ -22,5 +21,10 @@ public class ScalarNode extends BaseNode<ScalarEvent>
 
     public String getScalarValue() {
         return getEvent().getValue();
+    }
+
+    @Override
+    protected String generateTextPresentation() {
+        return "=ScalarNode [" + getEvent() + "]";
     }
 }

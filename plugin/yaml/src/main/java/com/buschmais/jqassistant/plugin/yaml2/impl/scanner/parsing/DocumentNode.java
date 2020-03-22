@@ -5,17 +5,20 @@ import java.util.List;
 
 import org.snakeyaml.engine.v2.events.DocumentStartEvent;
 
-public class DocumentNode extends BaseNode<DocumentStartEvent> {
-    private ArrayList<SequenceNode> sequences = new ArrayList<>();
-    private ArrayList<MapNode> maps = new ArrayList<>();
-    private ArrayList<ScalarNode> scalars = new ArrayList<>();
+public class DocumentNode extends AbstractBaseNode
+    implements EventSupport<DocumentStartEvent> {
+    private final DocumentStartEvent event;
+    private final ArrayList<SequenceNode> sequences = new ArrayList<>();
+    private final ArrayList<MapNode> maps = new ArrayList<>();
+    private final ArrayList<ScalarNode> scalars = new ArrayList<>();
 
-    public DocumentNode(DocumentStartEvent event) {
-        super(event);
+    public DocumentNode(DocumentStartEvent event, int o) {
+        super(o);
+        this.event = event;
     }
 
     public List<SequenceNode> getSequences() {
-        return new ArrayList<>(sequences);
+        return sequences;
     }
 
     public void addSequence(SequenceNode node) {
@@ -23,7 +26,7 @@ public class DocumentNode extends BaseNode<DocumentStartEvent> {
     }
 
     public List<MapNode> getMaps() {
-        return new ArrayList<>(maps);
+        return maps;
     }
 
     public void addMap(MapNode node) {
@@ -31,10 +34,21 @@ public class DocumentNode extends BaseNode<DocumentStartEvent> {
     }
 
     public List<ScalarNode> getScalars() {
-        return new ArrayList<>(scalars);
+        return scalars;
     }
 
     public void addScalar(ScalarNode node) {
         scalars.add(node);
     }
+
+    @Override
+    public DocumentStartEvent getEvent() {
+        return event;
+    }
+
+    @Override
+    protected String generateTextPresentation() {
+        return "=DocumentNode [" + getEvent() + "]";
+    }
+
 }

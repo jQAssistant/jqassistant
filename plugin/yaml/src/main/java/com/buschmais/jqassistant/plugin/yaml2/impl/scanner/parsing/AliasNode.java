@@ -5,12 +5,13 @@ import java.util.Optional;
 
 import org.snakeyaml.engine.v2.events.AliasEvent;
 
-public class AliasNode extends BaseNode<AliasEvent> {
+public class AliasNode extends BaseNode<AliasEvent>
+    implements NodeWithAliasName {
     private Integer index;
-    private BaseNode<?> referencedNode;
+    private BaseNode<?> aliasedNode;
 
-    public AliasNode(AliasEvent event) {
-        super(event);
+    public AliasNode(AliasEvent event, int o) {
+        super(event, o);
     }
 
     public Optional<Integer> getIndex() {
@@ -21,15 +22,21 @@ public class AliasNode extends BaseNode<AliasEvent> {
         this.index = index;
     }
 
-    public void setReferencedNode(BaseNode<?> node) {
-        this.referencedNode = Objects.requireNonNull(node);
+    public void setAliasedNode(BaseNode<?> node) {
+        this.aliasedNode = Objects.requireNonNull(node);
     }
 
     public String getAnchorName() {
         return getEvent().getAlias().getValue();
     }
 
-    public BaseNode<?> getReferencedNode() {
-        return referencedNode;
+    public BaseNode<?> getAliasedNode() {
+        return aliasedNode;
     }
+
+    @Override
+    protected String generateTextPresentation() {
+        return "=AliasNode [" + getEvent() + "]";
+    }
+
 }

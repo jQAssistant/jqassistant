@@ -4,25 +4,24 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class ParserContext {
-    private LinkedList<ParsingContextType<? extends BaseNode<?>>> stack = new LinkedList<>();
+    private LinkedList<ParsingContextType<? extends AbstractBaseNode>> stack = new LinkedList<>();
     private StreamNode rootNode;
 
     public boolean isEmpty() {
         return stack.isEmpty();
     }
 
-    public <N extends BaseNode<?>> void enter(ParsingContextType<N> type) {
+    public <N extends AbstractBaseNode> void enter(ParsingContextType<N> type) {
         getStack().push(type);
     }
 
-    private Deque<ParsingContextType<? extends BaseNode<?>>> getStack() {
+    private Deque<ParsingContextType<? extends AbstractBaseNode>> getStack() {
         return stack;
     }
 
-    public ParsingContextType<? extends BaseNode<?>> peek() {
+    public ParsingContextType<? extends AbstractBaseNode> peek() {
         if (isEmpty()) {
-            IllegalStateException e = new IllegalStateException("No context available at the moment");
-            throw e;
+            throw new IllegalStateException("No context available at the moment");
         }
 
         return getStack().peek();
@@ -30,8 +29,7 @@ public class ParserContext {
 
     public void leave() {
         if (isEmpty()) {
-            IllegalStateException e = new IllegalStateException("No context available at the moment");
-            throw e;
+            throw new IllegalStateException("No context available at the moment");
         }
 
         getStack().pop();
@@ -54,7 +52,11 @@ public class ParserContext {
     }
 
     boolean isInKey() {
-        return isInSimpleKey() || isInComplexKey();
+        return isInSimpleKey() || isInComplexKey() || isInAliasKey();
+    }
+
+    boolean isInAliasKey() {
+        return peek().getType() == ParsingContextType.Type.IN_ALIAS_KEY;
     }
 
     boolean isInSequence() {
@@ -69,12 +71,12 @@ public class ParserContext {
         return !isInStream();
     }
 
-    public <T extends BaseNode<?>> ParsingContextType<T> getAncestor(ParsingContextType.Ancestor ancestor) {
-        ParsingContextType<T> result = (ParsingContextType<T>) stack.get(ancestor.getOffset());
+    public <T extends AbstractBaseNode> ParsingContextType<T> getParent() {
+        ParsingContextType<T> result = (ParsingContextType<T>) stack.get(1);
         return result;
     }
 
-    public <T extends BaseNode<?>> ParsingContextType<T> getCurrent() {
+    public <T extends AbstractBaseNode> ParsingContextType<T> getCurrent() {
         return (ParsingContextType<T>) stack.getFirst();
     }
 

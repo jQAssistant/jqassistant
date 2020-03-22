@@ -6,14 +6,14 @@ import java.util.Optional;
 
 import org.snakeyaml.engine.v2.events.MappingStartEvent;
 
-public class MapNode extends BaseNode<MappingStartEvent>
-    implements AnchorSupport<MappingStartEvent> {
+public class MapNode extends BaseNode<MappingStartEvent> {
     private Integer index;
     private ArrayList<SimpleKeyNode> simpleKeys = new ArrayList<>();
     private ArrayList<ComplexKeyNode> complexKeys = new ArrayList<>();
+    private ArrayList<AliasKeyNode> aliasKeys = new ArrayList<>();
 
-    public MapNode(MappingStartEvent event) {
-        super(event);
+    public MapNode(MappingStartEvent event, int o) {
+        super(event, o);
     }
 
     public Optional<Integer> getIndex() {
@@ -32,11 +32,25 @@ public class MapNode extends BaseNode<MappingStartEvent>
         complexKeys.add(node);
     }
 
+    public void addKey(AliasKeyNode node) {
+        aliasKeys.add(node);
+    }
+
     public List<SimpleKeyNode> getSimpleKeys() {
         return new ArrayList<>(simpleKeys);
     }
 
-    public ArrayList<ComplexKeyNode> getComplexKeys() {
-        return complexKeys;
+    public List<ComplexKeyNode> getComplexKeys() {
+        return new ArrayList<>(complexKeys);
     }
+
+    public List<AliasKeyNode> getAliasKeys() {
+        return new ArrayList<>(aliasKeys);
+    }
+
+    @Override
+    protected String generateTextPresentation() {
+        return "=MapNode [" + getEvent() + "]";
+    }
+
 }

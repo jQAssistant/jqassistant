@@ -7,16 +7,21 @@ import java.util.Optional;
 import org.snakeyaml.engine.v2.events.SequenceStartEvent;
 
 public class SequenceNode
-    extends BaseNode<SequenceStartEvent>
-    implements AnchorSupport<SequenceStartEvent> {
+    extends BaseNode<SequenceStartEvent> {
     private ArrayList<AliasNode> aliases = new ArrayList<>(5);
     private ArrayList<ScalarNode> scalars = new ArrayList<>(5);
     private ArrayList<SequenceNode> sequences = new ArrayList<>(3);
     private Integer index;
     private ArrayList<MapNode> maps = new ArrayList<>(3);
 
-    public SequenceNode(SequenceStartEvent event) {
-        super(event);
+    public int getItemsTotal() {
+        return getScalars().size() +
+               getAliases().size() +
+               getSequences().size();
+    }
+
+    public SequenceNode(SequenceStartEvent event, int o) {
+        super(event, o);
     }
 
     public List<ScalarNode> getScalars() {
@@ -57,5 +62,10 @@ public class SequenceNode
 
     public void addAlias(AliasNode node) {
         aliases.add(node);
+    }
+
+    @Override
+    protected String generateTextPresentation() {
+        return "=SequenceNode [" + getEvent() + "]";
     }
 }

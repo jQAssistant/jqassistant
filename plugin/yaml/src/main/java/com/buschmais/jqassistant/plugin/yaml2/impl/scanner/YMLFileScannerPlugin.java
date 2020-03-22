@@ -20,6 +20,8 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph.GraphGenerator;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.EventParser;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.StreamNode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.events.Event;
@@ -27,6 +29,7 @@ import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 @ScannerPlugin.Requires(FileDescriptor.class)
 public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YMLFileDescriptor> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YMLFileScannerPlugin.class);
 
     /**
      * Supported file extensions for YAML file resources.
@@ -47,9 +50,9 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         EventParser eventParser = new EventParser();
         YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
+        yamlFileDescriptor.setValid(false);
 
         try (InputStream in = item.createStream()) {
-            yamlFileDescriptor.setValid(true);
             Parse parser = new Parse(settings);
             Iterable<Event> events = parser.parseInputStream(in);
             StreamNode streamNode = eventParser.parse(StreamSupport.stream(events.spliterator(), false));
@@ -60,8 +63,9 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             documents.forEach(documentDescriptor -> {
                 yamlFileDescriptor.getDocuments().add(documentDescriptor);
             });
+            yamlFileDescriptor.setValid(true);
         } catch (GraphGenerationFailedException | YamlEngineException e) {
-            yamlFileDescriptor.setValid(false);
+            LOGGER.warn("YAML file '{}' seems to be invalid and will be marked as invalid. Result graph might be incorrect.", path);
         }
 
         return yamlFileDescriptor;

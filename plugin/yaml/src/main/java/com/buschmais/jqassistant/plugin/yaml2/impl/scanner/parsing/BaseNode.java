@@ -1,16 +1,20 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
-import org.snakeyaml.engine.v2.events.Event;
+import org.snakeyaml.engine.v2.events.NodeEvent;
 
-public abstract class BaseNode<E extends Event>
-    implements EventSupport<E> {
-    private E sourceEvent;
+public abstract class BaseNode<T extends NodeEvent>
+    extends AbstractBaseNode
+    implements AnchorSupport<T>, EventSupport<T>
+{
+    private final T event;
 
-    public BaseNode(E event) {
-        sourceEvent = event;
+    public BaseNode(T event, int tokenIndex) {
+        super(tokenIndex);
+        this.event = event;
     }
 
-    public E getEvent() {
-        return sourceEvent;
+    @Override
+    public T getEvent() {
+        return event;
     }
 }

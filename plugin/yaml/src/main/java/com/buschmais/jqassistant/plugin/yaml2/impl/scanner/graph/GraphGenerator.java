@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.BaseNode;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.StreamNode;
 
-import org.snakeyaml.engine.v2.events.Event;
+import static java.lang.String.format;
 
 public class GraphGenerator {
     private final List<NodeProcessor> processors;
@@ -43,10 +44,12 @@ public class GraphGenerator {
         DocumentNodeProcessor documentNodeProcessor = new DocumentNodeProcessor(store, this);
         SequenceNodeProcessor sequenceNodeProcessor = new SequenceNodeProcessor(store, this, anchorProcessor, aliasProcessor);
         ScalarNodeProcessor scalarNodeProcessor = new ScalarNodeProcessor(store, anchorProcessor);
+        SimpleKeyNodeProcessor simpleKeyNodeProcessor = new SimpleKeyNodeProcessor(store, anchorProcessor);
         MapNodeProcessor mapNodeProcessor = new MapNodeProcessor(store, this, anchorProcessor, aliasProcessor);
 
         this.processors = Arrays.asList(documentNodeProcessor, sequenceNodeProcessor,
-                                        mapNodeProcessor, scalarNodeProcessor);
+                                        mapNodeProcessor, scalarNodeProcessor,
+                                        simpleKeyNodeProcessor);
     }
 
     public Collection<YMLDocumentDescriptor> generate(StreamNode root) {
@@ -61,11 +64,18 @@ public class GraphGenerator {
         return result;
     }
 
-    void traverse(BaseNode<? extends Event> node, Callback<? extends YMLDescriptor> callback, Mode mode) {
+    void traverse(AbstractBaseNode node, Callback<? extends YMLDescriptor> callback, Mode mode) {
+        Supplier<IllegalStateException> exceptionSupplier = () -> {
+            String message = format("Failed to find process for node class '%s'",
+                                    node.getClass().getCanonicalName());
+            return new IllegalStateException(message);
+        };
+
         processors.stream()
                   .filter(h -> h.accepts(node))
                   .findFirst()
-                  .ifPresent(h -> h.process(node, callback, mode));
+                  .orElseThrow(exceptionSupplier)
+                  .process(node, callback, mode);
     }
 
 

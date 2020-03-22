@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.NodeWithAliasName;
 
 import static java.lang.String.format;
 
@@ -12,6 +13,10 @@ class AnchorCache {
 
     void addAlias(String aliasName, YMLDescriptor target) {
         alias.put(aliasName, target);
+    }
+
+    YMLDescriptor getTarget(NodeWithAliasName aliasNode) {
+        return getTarget(aliasNode.getAnchorName());
     }
 
     YMLDescriptor getTarget(String aliasName) {

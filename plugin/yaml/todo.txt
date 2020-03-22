@@ -1,9 +1,2 @@
 todo Track issue for SnakeYAML at https://bitbucket.org/asomov/snakeyaml-engine/issues/12/
-todo Improve the tests by using helper methods to make the tests more readable
-todo check how to compute (sum, avg) numeric values
-todo Add support for labels for simply and complex keys
-todo Write explicit tests for labels Anchor and Reference
-todo Write explicit tests for anchors on maps, sequences and scalars
-todo Check the resulting graph in case of anchor and alias
-todo Add a relation from an alias to an anchor
 todo Move the index from an item to the relation

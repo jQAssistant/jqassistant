@@ -5,10 +5,8 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.BaseNode;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.DocumentNode;
-
-import org.snakeyaml.engine.v2.events.Event;
 
 public class DocumentNodeProcessor
     implements NodeProcessor<DocumentNode, YMLDocumentDescriptor> {
@@ -45,7 +43,7 @@ public class DocumentNodeProcessor
     }
 
     @Override
-    public boolean accepts(BaseNode<? extends Event> node) {
+    public boolean accepts(AbstractBaseNode node) {
         return node.getClass().isAssignableFrom(DocumentNode.class);
     }
 }

@@ -1,51 +1,47 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing;
 
 
-import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.PositionalContext.NO_POSITIONAL_CONTEXT;
+import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.PositionalContext.noPositionalContext;
 
-class ParsingContextType<D extends BaseNode<?>> {
+class ParsingContextType<D extends AbstractBaseNode> {
     private D node;
     private Type type;
     private PositionalContext positionalContext;
     boolean isKeyForValue = false;
 
-    private ParsingContextType(Type contextType, D contextDescriptor,
+    private ParsingContextType(Type contextType, D contextNode,
                                PositionalContext context) {
         type = contextType;
-        node = contextDescriptor;
+        node = contextNode;
         positionalContext = context;
     }
 
-    public ParsingContextType(Type type, PositionalContext context) {
-        this(type, null, context);
+    static ParsingContextType<DocumentNode> ofInDocument(DocumentNode descriptor) {
+        return new ParsingContextType<>(Type.IN_DOCUMENT, descriptor, noPositionalContext());
     }
 
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInFile(D descriptor) {
-        return new ParsingContextType<>(Type.IN_FILE, descriptor, NO_POSITIONAL_CONTEXT);
+    static ParsingContextType<MapNode> ofInMap(MapNode descriptor) {
+        return new ParsingContextType<>(Type.IN_MAP, descriptor, noPositionalContext());
     }
 
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInDocument(D descriptor) {
-        return new ParsingContextType<>(Type.IN_DOCUMENT, descriptor, NO_POSITIONAL_CONTEXT);
-    }
-
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInMap(D descriptor) {
-        return new ParsingContextType<>(Type.IN_MAP, descriptor, NO_POSITIONAL_CONTEXT);
-    }
-
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInSequence(D descriptor) {
+    static ParsingContextType<SequenceNode> ofInSequence(SequenceNode descriptor) {
         return new ParsingContextType<>(Type.IN_SEQUENCE, descriptor, new PositionalContext());
     }
 
-    static <N extends BaseNode<?>> ParsingContextType<N> ofInStream(N node) {
-        return new ParsingContextType<>(Type.IN_STREAM, node, NO_POSITIONAL_CONTEXT);
+    static ParsingContextType<StreamNode> ofInStream(StreamNode node) {
+        return new ParsingContextType<>(Type.IN_STREAM, node, noPositionalContext());
     }
 
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInKey(D node) {
-        return new ParsingContextType<>(Type.IN_KEY, node, NO_POSITIONAL_CONTEXT);
+    static <D extends AbstractBaseNode> ParsingContextType<D> ofInKey(D node) {
+        return new ParsingContextType<>(Type.IN_KEY, node, noPositionalContext());
     }
 
-    static <D extends BaseNode<?>> ParsingContextType<D> ofInComplexKey(D node) {
-        return new ParsingContextType<>(Type.IN_COMPLEX_KEY, node, NO_POSITIONAL_CONTEXT);
+    static ParsingContextType<AliasKeyNode> ofInAliasKey(AliasKeyNode node) {
+        return new ParsingContextType<>(Type.IN_ALIAS_KEY, node, noPositionalContext());
+    }
+
+    static <D extends AbstractBaseNode> ParsingContextType<D> ofInComplexKey(D node) {
+        return new ParsingContextType<>(Type.IN_COMPLEX_KEY, node, noPositionalContext());
     }
 
     Type getType() {
@@ -69,28 +65,13 @@ class ParsingContextType<D extends BaseNode<?>> {
     }
 
     enum Type {
+        IN_ALIAS_KEY,
         IN_COMPLEX_KEY,
         IN_DOCUMENT,
-        IN_FILE,
         IN_KEY,
         IN_MAP,
         IN_SEQUENCE,
         IN_STREAM
-    }
-
-    enum Ancestor {
-        FIRST(1),
-        SECOND(2);
-
-        private final int offset;
-
-        Ancestor(int ancestorsOffset) {
-            offset = ancestorsOffset;
-        }
-
-        public int getOffset() {
-            return offset;
-        }
     }
 
     @Override
