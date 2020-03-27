@@ -15,6 +15,8 @@ public class SubClassType extends ClassType {
 
     @SuppressWarnings("unused")
     private void doSomething() {
+        // creates implicitly the referenced super class method in this class
+        doSomething(true);
     }
 
 }

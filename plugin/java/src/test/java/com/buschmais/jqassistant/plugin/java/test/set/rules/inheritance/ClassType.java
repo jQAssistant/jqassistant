@@ -13,6 +13,10 @@ public class ClassType implements InterfaceType {
     public void doSomething(int value) {
     }
 
+    @Override
+    public final void doSomething(boolean value) {
+    }
+
     @SuppressWarnings("unused")
     private void doSomething() {
     }

@@ -8,4 +8,10 @@ public interface InterfaceType {
     void doSomething(String value);
 
     void doSomething(int value);
+
+    /**
+     * Only declared in {@link InterfaceType} and {@link ClassType}, not overridden
+     * by {@link SubClassType}.
+     */
+    void doSomething(boolean value);
 }

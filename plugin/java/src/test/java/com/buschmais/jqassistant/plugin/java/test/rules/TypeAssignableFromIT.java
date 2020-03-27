@@ -58,7 +58,7 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
         store.commitTransaction();
         assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("ASSIGNABLE_FROM", 8);
+        verifyUniqueRelation("ASSIGNABLE_FROM", 9);
         store.commitTransaction();
     }
 

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.ClassType;
@@ -17,6 +17,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCC
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -38,13 +39,16 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(2));
+        assertThat(rows.size(), equalTo(3));
         Map<String, Object> row0 = rows.get(0);
-        assertThat((MethodDescriptor) row0.get("method"), methodDescriptor(ClassType.class, "doSomething", int.class));
-        assertThat((MethodDescriptor) row0.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", int.class));
+        assertThat((MethodDescriptor) row0.get("method"), methodDescriptor(ClassType.class, "doSomething", boolean.class));
+        assertThat((MethodDescriptor) row0.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", boolean.class));
         Map<String, Object> row1 = rows.get(1);
-        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(ClassType.class, "doSomething", String.class));
-        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(ClassType.class, "doSomething", int.class));
+        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", int.class));
+        Map<String, Object> row2 = rows.get(2);
+        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(ClassType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", String.class));
         store.commitTransaction();
     }
 
@@ -62,16 +66,24 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(3));
+        assertThat(rows.size(), equalTo(4));
         Map<String, Object> row0 = rows.get(0);
         assertThat((MethodDescriptor) row0.get("method"), constructorDescriptor(SubClassType.class));
         assertThat((MethodDescriptor) row0.get("otherMethod"), constructorDescriptor(ClassType.class));
         Map<String, Object> row1 = rows.get(1);
-        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(SubClassType.class, "doSomething", int.class));
-        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", int.class));
+        // subClassMethod implicitly created by method invocation
+        MethodDescriptor subClassMethod = (MethodDescriptor) row1.get("method");
+        MethodDescriptor superClassMethod = (MethodDescriptor) row1.get("otherMethod");
+        assertThat(subClassMethod.getSignature(), equalTo(superClassMethod.getSignature()));
+        assertThat(subClassMethod.getName(), nullValue());
+        assertThat(subClassMethod.getVisibility(), nullValue());
+        assertThat(superClassMethod, methodDescriptor(ClassType.class, "doSomething", boolean.class));
         Map<String, Object> row2 = rows.get(2);
-        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(SubClassType.class, "doSomething", String.class));
-        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(SubClassType.class, "doSomething", int.class));
+        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", int.class));
+        Map<String, Object> row3 = rows.get(3);
+        assertThat((MethodDescriptor) row3.get("method"), methodDescriptor(SubClassType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row3.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", String.class));
         store.commitTransaction();
     }
 
@@ -84,7 +96,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
     @Test
     public void methodOverridesUnique() throws Exception {
     	scanClasses(ClassType.class, InterfaceType.class);
-        Map<String, Object> params = MapBuilder.<String, Object> create("class", ClassType.class.getName()).put("interface", InterfaceType.class.getName()).get();
+        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("class", ClassType.class.getName()).entry("interface", InterfaceType.class.getName()).build();
         store.beginTransaction();
         // create existing relations with and without properties
         assertThat(query("MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERRIDES {prop: 'value'}]->(m2) RETURN r", params).getColumn("r").size(), equalTo(1));
@@ -93,7 +105,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         store.commitTransaction();
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("OVERRIDES", 2);
+        verifyUniqueRelation("OVERRIDES", 3);
         store.commitTransaction();
     }
 
