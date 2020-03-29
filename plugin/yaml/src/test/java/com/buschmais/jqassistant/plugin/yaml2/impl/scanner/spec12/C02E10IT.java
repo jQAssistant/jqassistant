@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
@@ -36,14 +35,6 @@ class C02E10IT extends AbstractYAMLPluginIT {
         assertThat(scalarDescriptor).isNotNull().hasValue("Sammy Sosa");
 
         // Cannot test if it has a anker label via the JAVA API
-    }
-
-    @Disabled("Test not written yet")
-    @Test
-    void theAliasForSammySosaWorksAsExpected() {
-        readSourceDocument();
-
-        throw new RuntimeException("This test is not implemented.");
     }
 
     @Test

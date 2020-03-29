@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
@@ -31,19 +30,6 @@ class C02E06IT extends AbstractYAMLPluginIT {
         assertThat(ymlDocumentDescriptor).hasMaps(1);
         assertThat(ymlDocumentDescriptor).hasNoSequences();
         assertThat(ymlDocumentDescriptor).hasNoScalars();
-    }
-
-    @Disabled("Depends on https://github.com/buschmais/extended-objects/issues/174")
-    @Test
-    void theMapOfTheDocumentHasTwoMappings() {
-        YMLFileDescriptor ymlFileDescriptor = readSourceDocument();
-        YMLDocumentDescriptor ymlDocumentDescriptor = getDocuments(ymlFileDescriptor).getDocumentByParsePosition(0);
-        YMLSequenceDescriptor sequence = getSequences(ymlDocumentDescriptor).getSequenceByParsePosition(0);
-
-        // todo Finish this test if https://github.com/buschmais/extended-objects/issues/174 has been fixed
-        // assertThat(sequence).has
-
-        throw new RuntimeException("This test is not implemented.");
     }
 
     @Test
