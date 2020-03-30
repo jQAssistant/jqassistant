@@ -26,81 +26,57 @@ import static org.junit.Assert.assertThat;
 public class MethodOverridesIT extends AbstractJavaPluginIT {
 
     /**
-     * Verifies the concept "java:MethodOverrides" for a class implementing an
-     * interface.
+     * Verifies the concept "java:MethodOverrides" for a hierarchy of an interface,
+     * class and sub-class.
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     public void methodOverrides() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class);
+        scanClasses(SubClassType.class, ClassType.class, InterfaceType.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
+        TestResult result = query(
+                "MATCH (type:Type)-[:DECLARES]->(method:Method)-[:OVERRIDES]->(superMethod:Method)<-[:DECLARES]-(superType:Type) RETURN method, superMethod ORDER BY type.fqn, method.signature");
         List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(3));
-        Map<String, Object> row0 = rows.get(0);
-        assertThat((MethodDescriptor) row0.get("method"), methodDescriptor(ClassType.class, "doSomething", boolean.class));
-        assertThat((MethodDescriptor) row0.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", boolean.class));
-        Map<String, Object> row1 = rows.get(1);
-        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(ClassType.class, "doSomething", int.class));
-        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", int.class));
-        Map<String, Object> row2 = rows.get(2);
-        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(ClassType.class, "doSomething", String.class));
-        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", String.class));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "java:MethodOverrides" for a class implementing an
-     * interface.
-     *
-     * @throws IOException
-     *             If the test fails.
-     */
-    @Test
-    public void methodOverridesSubClass() throws Exception {
-        scanClasses(ClassType.class, SubClassType.class);
-        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
-        List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(4));
-        Map<String, Object> row0 = rows.get(0);
-        assertThat((MethodDescriptor) row0.get("method"), constructorDescriptor(SubClassType.class));
-        assertThat((MethodDescriptor) row0.get("otherMethod"), constructorDescriptor(ClassType.class));
-        Map<String, Object> row1 = rows.get(1);
+        assertThat(rows.size(), equalTo(7));
+        verifyOverridesMethod(rows.get(0), ClassType.class, InterfaceType.class, "doSomething", boolean.class);
+        verifyOverridesMethod(rows.get(1), ClassType.class, InterfaceType.class, "doSomething", int.class);
+        verifyOverridesMethod(rows.get(2), ClassType.class, InterfaceType.class, "doSomething", String.class);
+        verifyOverridesConstructor(rows.get(3), SubClassType.class, ClassType.class);
+        Map<String, Object> row1 = rows.get(4);
         // subClassMethod implicitly created by method invocation
         MethodDescriptor subClassMethod = (MethodDescriptor) row1.get("method");
-        MethodDescriptor superClassMethod = (MethodDescriptor) row1.get("otherMethod");
+        MethodDescriptor superClassMethod = (MethodDescriptor) row1.get("superMethod");
         assertThat(subClassMethod.getSignature(), equalTo(superClassMethod.getSignature()));
         assertThat(subClassMethod.getName(), nullValue());
         assertThat(subClassMethod.getVisibility(), nullValue());
-        assertThat(superClassMethod, methodDescriptor(ClassType.class, "doSomething", boolean.class));
-        Map<String, Object> row2 = rows.get(2);
-        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(SubClassType.class, "doSomething", int.class));
-        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", int.class));
-        Map<String, Object> row3 = rows.get(3);
-        assertThat((MethodDescriptor) row3.get("method"), methodDescriptor(SubClassType.class, "doSomething", String.class));
-        assertThat((MethodDescriptor) row3.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", String.class));
+        verifyOverridesMethod(rows.get(5), SubClassType.class, ClassType.class, "doSomething", int.class);
+        verifyOverridesMethod(rows.get(6), SubClassType.class, ClassType.class, "doSomething", String.class);
         store.commitTransaction();
     }
 
     /**
-     * Verifies the uniqueness of concept "java:MethodOverrides" with keeping existing properties.
+     * Verifies the uniqueness of concept "java:MethodOverrides" with keeping
+     * existing properties.
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     public void methodOverridesUnique() throws Exception {
-    	scanClasses(ClassType.class, InterfaceType.class);
-        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("class", ClassType.class.getName()).entry("interface", InterfaceType.class.getName()).build();
+        scanClasses(ClassType.class, InterfaceType.class);
+        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("class", ClassType.class.getName())
+                .entry("interface", InterfaceType.class.getName()).build();
         store.beginTransaction();
         // create existing relations with and without properties
-        assertThat(query("MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERRIDES {prop: 'value'}]->(m2) RETURN r", params).getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(java.lang.String)' MERGE (m1)-[r:OVERRIDES]->(m2) RETURN r", params).getColumn("r").size(), equalTo(1));
+        assertThat(query(
+                "MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERRIDES {prop: 'value'}]->(m2) RETURN r",
+                params).getColumn("r").size(), equalTo(1));
+        assertThat(query(
+                "MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(java.lang.String)' MERGE (m1)-[r:OVERRIDES]->(m2) RETURN r",
+                params).getColumn("r").size(), equalTo(1));
         verifyUniqueRelation("OVERRIDES", 2);
         store.commitTransaction();
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
@@ -109,13 +85,28 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    private void verifyOverridesMethod(Map<String, Object> row, Class<?> type, Class<?> superType, String methodName, Class<?>... parameterTypes)
+            throws NoSuchMethodException {
+        assertThat((MethodDescriptor) row.get("method"), methodDescriptor(type, methodName, parameterTypes));
+        assertThat((MethodDescriptor) row.get("superMethod"), methodDescriptor(superType, methodName, parameterTypes));
+    }
+
+    private void verifyOverridesConstructor(Map<String, Object> row, Class<?> type, Class<?> superType, Class<?>... parameterTypes)
+            throws NoSuchMethodException {
+        assertThat((MethodDescriptor) row.get("method"), constructorDescriptor(type, parameterTypes));
+        assertThat((MethodDescriptor) row.get("superMethod"), constructorDescriptor(superType, parameterTypes));
+    }
+
     /**
      * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
+     *
+     * @param relationName
+     *            The name of the relation.
+     * @param total
+     *            The total of relations with the given name.
      */
     private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
+        assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }

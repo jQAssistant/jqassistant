@@ -1,4 +1,4 @@
-<jqassistant-rules xmlns:jqa="http://schema.jqassistant.org/rule/v1.8">
+<jqassistant-rules>
 
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
@@ -53,12 +53,18 @@
             MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (superType:Type)-[:DECLARES]->(superMethod:Method),
-              (type)-[:EXTENDS|IMPLEMENTS*]->(superType)
+              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
               method.signature = superMethod.signature
               and superMethod.visibility <> "private"
+            WITH
+              type, method, superType, superMethod, length(path) as depth
+            ORDER BY
+              depth asc
+            WITH
+              method, head(collect(superMethod)) as overriddenMethod
             MERGE
-              (method)-[:OVERRIDES]->(superMethod)
+              (method)-[:OVERRIDES]->(overriddenMethod)
             RETURN
               count(*) as OverriddenMethods
         ]]></cypher>

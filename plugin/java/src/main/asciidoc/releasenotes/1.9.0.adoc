@@ -1,5 +1,8 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Java Plugin 1.9.0]
 
-- relaxed concept `java:MethodOverrides` to include inherited methods that are invoked on a sub-class type
+- improved concept `java:MethodOverrides` to include inherited methods that are invoked on a sub-class type and only
+  reference directly overridden methods
+
+
 
