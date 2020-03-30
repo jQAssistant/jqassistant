@@ -19,7 +19,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class VisitorHelper {
 
-    public static final int ASM_OPCODES= Opcodes.ASM7;
+    public static final int ASM_OPCODES= Opcodes.ASM8;
 
     /**
      * The name of constructor methods.
