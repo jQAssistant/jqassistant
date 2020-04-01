@@ -1,7 +1,7 @@
 ---
 constraints:
   - id: id
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where
@@ -11,5 +11,6 @@ constraints:
       return
         count(throwable) AS c
     report:
+      type: ddd
       primaryColumn: c
 

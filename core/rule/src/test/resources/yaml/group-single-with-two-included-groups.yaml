@@ -1,6 +1,6 @@
 groups:
   - id: p_g
-    includesGroups:
+    includedGroups:
       - refId: a_g
       - refId: b_g
 

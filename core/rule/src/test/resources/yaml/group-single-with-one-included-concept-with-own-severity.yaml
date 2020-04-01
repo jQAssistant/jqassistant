@@ -1,6 +1,6 @@
 ---
 groups:
   - id: zzz
-    includesConcepts:
+    includedConcepts:
       - refId: xxx
         severity: minor

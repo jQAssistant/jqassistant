@@ -1,2 +1,4 @@
 groups:
-  - severity: blocker
+  - includedConcepts:
+      - refId: a
+      - refId: b

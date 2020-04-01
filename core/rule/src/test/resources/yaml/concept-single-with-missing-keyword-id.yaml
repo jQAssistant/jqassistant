@@ -1,7 +1,7 @@
 ---
 concepts:
   - description: Description
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

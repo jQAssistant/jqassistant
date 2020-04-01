@@ -1,0 +1,19 @@
+Comment on the Implementation of the Schema
+
+Unfortunately this scheme cannot make full use of definitions, as would
+be desirable.
+
+The reason is, that the current version (2019-09) does not offer
+full support for extending subschemas. allOf allows to combine
+two subschemas, but not to restrict the set of allowed properties
+by setting additionalProperties to false. Therefore some parts
+of the schema definition might seems to be redudant to the reader of
+the schema specification.
+
+For more details on that, please read the section "allOf" in the
+document "Combining schemas" at
+https://json-schema.org/understanding-json-schema/reference/combining.html
+
+
+Oliver B. Fischer
+2020-04-01

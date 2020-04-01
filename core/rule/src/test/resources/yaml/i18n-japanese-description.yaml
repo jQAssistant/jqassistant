@@ -1,4 +1,4 @@
 concepts:
   - id: concept
     description: おはようございます。
-    cypher: MATCH (a) RETURN a
+    source: MATCH (a) RETURN a

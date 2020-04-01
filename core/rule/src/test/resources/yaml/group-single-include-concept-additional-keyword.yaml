@@ -1,7 +1,7 @@
 ---
 groups:
   - id: snafu
-    includesConcepts:
+    includedConcepts:
       - refId: other
         severity: info
         foo: bar # Unsupported keyword foo

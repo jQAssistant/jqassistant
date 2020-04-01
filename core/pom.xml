@@ -42,9 +42,11 @@
     <properties>
         <assertj.version>3.9.1</assertj.version>
         <checkstyle.version>8.29</checkstyle.version>
+        <jackson.version>2.10.1</jackson.version>
         <jqa-asciidoctor-utilities.version>1.9.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-own-constraints.version>1.9.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>1.9.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <org.asciidoctor.version>1.5.8.1</org.asciidoctor.version>
         <org.asciidoctor-plugin.version>1.5.8</org.asciidoctor-plugin.version>
@@ -83,6 +85,16 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.networknt</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <version>${json-schema-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>

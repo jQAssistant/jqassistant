@@ -3,7 +3,7 @@ concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
     severity: blocker
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

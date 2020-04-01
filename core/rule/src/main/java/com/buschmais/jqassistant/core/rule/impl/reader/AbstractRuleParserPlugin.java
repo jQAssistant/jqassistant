@@ -21,13 +21,13 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRuleParserPlugin.class);
 
     protected static final String ROW_COUNT = "rowCount";
-    protected static final String ROW_COUNT_MIN = "rowCountMin";
-    protected static final String ROW_COUNT_MAX = "rowCountMax";
+    protected static final String ROW_COUNT_MIN = "min";
+    protected static final String ROW_COUNT_MAX = "max";
 
     protected static final String AGGREGATION = "aggregation";
-    protected static final String AGGREGATION_COLUMN = "aggregationColumn";
-    protected static final String AGGREGATION_MIN = "aggregationMin";
-    protected static final String AGGREGATION_MAX = "aggregationMax";
+    protected static final String AGGREGATION_COLUMN = "column";
+    protected static final String AGGREGATION_MIN = "min";
+    protected static final String AGGREGATION_MAX = "max";
 
     protected static final String PARAMETER_DEFAULT_VALUE = "defaultValue";
     protected static final String PARAMETER_NAME = "name";
@@ -40,16 +40,16 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String GROUP = "group";
     protected static final String GROUPS = "groups";
 
-    protected static final String INCLUDES_GROUPS = "includesGroups";
-    protected static final String INCLUDES_CONCEPTS = "includesConcepts";
-    protected static final String INCLUDES_CONSTRAINTS = "includesConstraints";
+    protected static final String INCLUDED_GROUPS = "includedGroups";
+    protected static final String INCLUDED_CONCEPTS = "includedConcepts";
+    protected static final String INCLUDED_CONSTRAINTS = "includedConstraints";
 
     protected static final String SEVERITY = "severity";
     protected static final String DEPENDS = "depends";
-    protected static final String REQUIRES_CONCEPTS = "requiresConcepts";
-    protected static final String REQUIRES_PARAMETERS = "requiresParameters";
+    protected static final String REQUIRED_CONCEPTS = "requiredConcepts";
+    protected static final String REQUIRED_PARAMETERS = "requiredParameters";
     protected static final String REPORT = "report";
-    protected static final String REPORT_TYPE = "reportType";
+    protected static final String REPORT_TYPE = "type";
     protected static final String PRIMARY_COLUMN = "primaryColumn";
     protected static final String REPORT_PROPERTIES = "properties";
     protected static final String VERIFY = "verify";

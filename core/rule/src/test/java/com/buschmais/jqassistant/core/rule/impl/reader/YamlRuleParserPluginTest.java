@@ -12,12 +12,12 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +40,7 @@ class YamlRuleParserPluginTest {
     class ConceptRelated {
         @Test
         void oneConcept() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-single-simple.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-simple.yaml");
 
             assertThat(ruleSet).isNotNull();
             assertThat(ruleSet.getConceptBucket().size()).isEqualTo(1);
@@ -50,14 +50,17 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptWithParameterEmptyListOfParameters() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-with-parameter-empty-list-of-parameters.yml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-with-parameter-empty-list-of-parameters.yml");
 
             assertThat(ruleSet.getConceptBucket().getAll()).hasSize(1);
+            Concept concept = ruleSet.getConceptBucket().getAll().stream().findFirst().get();
+
+            assertThat(concept.getParameters()).isEmpty();
         }
 
         @Test
         void oneConceptExplicitSeverity() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-single-with-severity.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-severity.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -66,7 +69,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptOneParameter() throws RuleException {
-            RuleSet ruleSet = readRuleSet("concept-single-with-one-parameter.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-one-parameter.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -76,7 +79,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptTwoParameters() throws RuleException {
-            RuleSet ruleSet = readRuleSet("concept-single-with-two-parameters.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-two-parameters.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -87,7 +90,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptVerificationAggregation() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-single-with-verification-aggrgation.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-verification-aggrgation.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -106,7 +109,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptVerificationRowCount() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-single-with-verification-rowcount.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-verification-rowcount.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -123,16 +126,16 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptWithMissingKeywordId() {
-            assertThatThrownBy(() -> readRuleSet("concept-single-with-missing-keyword-id.yaml"))
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-missing-keyword-id.yaml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("^A concept in rule source '[^']+' " +
-                                    "has missing required keys\\. The following keys are missing: id");
+                .hasMessageMatching("^Rule source '[^']+' misses the keyword 'id' " +
+                                    "at '\\$.concepts\\[0]'");
         }
 
         @Test
         void oneConceptComplex() throws Exception {
-            RuleSet ruleSet = readRuleSet("concept-single-simple.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-simple.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -160,9 +163,10 @@ class YamlRuleParserPluginTest {
 
 
 
+        @Disabled
         @ParameterizedTest
-        @CsvSource(value = {"concept-with-parameter-invalid-missing-field-name.yaml|name",
-                            "concept-with-parameter-invalid-missing-field-type.yaml|type"},
+        @CsvSource(value = {"/yaml/concept-with-parameter-invalid-missing-field-name.yaml|name",
+                            "/yaml/concept-with-parameter-invalid-missing-field-type.yaml|type"},
                    delimiter = '|')
         void oneConceptParameterInvalidRequiredFieldIsMissing(String resourcePath, String missingKeyword) {
             assertThatThrownBy(() -> readRuleSet(resourcePath))
@@ -174,7 +178,8 @@ class YamlRuleParserPluginTest {
                                         missingKeyword);
         }
 
-        @CsvSource(value = {"concept-with-parameter-and-unsupported-keyword.yml|unsupported"},
+        @Disabled
+        @CsvSource(value = {"/yaml/concept-with-parameter-and-unsupported-keyword.yml|unsupported"},
                    delimiter = '|')
         @ParameterizedTest
         void oneConceptParameterInvalidParameterUnsupportedKeyword(String resourcePath,
@@ -190,50 +195,66 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptParameterInvalidUnsupportedDatastructure() throws RuleException {
-            assertThatThrownBy(() -> readRuleSet("concept-with-parameter-with-illegal-datastructure.yml"))
+            String regex = "Rule source '[^']+' must have one of " +
+                           "'boolean, byte, char, double, float, int, long, short, String' " +
+                           "at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-with-illegal-datastructure.yml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("Cannot process rules from '[^']+' because of an invalid YAML datastructure");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneConceptParameterInvalidMissingParameterName() {
-            assertThatThrownBy(() -> readRuleSet("concept-with-parameter-missing-name.yml"))
+            String regex = "Rule source '[^']+' contains at " +
+                           "'\\$.concepts\\[0].requiredParameters\\[0].name' " +
+                           "nothing where a scalar is expected";
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-name.yml"))
                 .isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("A parameter of concept '[^']+' in rule source " +
-                                        "'[^']+' has no name");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneConceptParamterInvalidMissingType() {
-            assertThatThrownBy(() -> readRuleSet("concept-with-parameter-missing-type.yml"))
+            String regex = "Rule source '[^']+' must have one of " +
+                           "'boolean, byte, char, double, float, int, long, short, String'" +
+                           " at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-type.yml"))
                 .isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("The parameter '[^']+' of concept '[^']+' in rule source '[^']+' " +
-                                        "has no parameter type specified");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneConceptParameterInvalidUnsupportedType() {
-            assertThatThrownBy(() -> readRuleSet("concept-with-parameter-unsupported-type.yml"))
+            String regex = "Rule source '[^']+' must have one of " +
+                           "'boolean, byte, char, double, float, int, long, short, String' " +
+                           "at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-unsupported-type.yml"))
                 .isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("'snafu' is not a supported type for a parameter");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneConceptParameterInvalidMissingDefaultValue() {
-            assertThatThrownBy(() -> readRuleSet("concept-with-parameter-missing-default-value.yml"))
+            String regex = "Rule source " +
+                           "'[^']+' contains at '\\$.concepts\\[0].requiredParameters\\[0].defaultValue' " +
+                           "nothing where a scalar is expected";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-default-value.yml"))
                 .isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("The parameter '[^']+' of concept '[^']+' in rule source " +
-                                        "'[^']+' has no default value");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneConceptOneDepedencyNotOptional() throws RuleException {
-            RuleSet ruleSet = readRuleSet("concept-single-with-dependency-one.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-with-dependency-one.yaml");
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
             assertThat(concept.getRequiresConcepts()).containsKey("concept:other");
@@ -243,10 +264,11 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptOneDependencyWithUnsupportedKey() throws RuleException {
-            String messageRegex = "The concept '[^']+' in rule source '[^']+' requires one or more concepts, but " +
-                                  "a concept reference has one or more unsupported keys. The following keys are " +
-                                  "unsupported: thisKeyIsNotSupported";
-            assertThatThrownBy(() -> readRuleSet("concept-single-with-one-dependency-and-unsupported-key.yaml"))
+            String messageRegex = "Rule source '[^']+' contains the unknown " +
+                                  "keyword 'thisKeyIsNotSupported' at " +
+                                  "'\\$.concepts\\[0].requiredConcepts\\[0]'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-one-dependency-and-unsupported-key.yaml"))
                 .isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
                 .hasMessageMatching(messageRegex);
@@ -254,10 +276,9 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneConceptOneDepdencyWithMissingRequiredKey() throws RuleException {
-            String messageRegex = "The concept 'java:Throwable' in rule source '[^']+' requires one or more " +
-                                  "concepts, but a concept reference misses one or more required keys. " +
-                                  "The following keys are missing: refId";
-            assertThatThrownBy(() -> readRuleSet("concept-single-with-dependency-with-missing-required-key.yaml"))
+            String messageRegex = "^Rule source '[^']+' misses the keyword 'refId' " +
+                                  "at '\\$.concepts\\[0].requiredConcepts\\[0]'";
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-dependency-with-missing-required-key.yaml"))
                 .hasNoCause()
                 .hasMessageMatching(messageRegex)
                 .isExactlyInstanceOf(RuleException.class);
@@ -274,7 +295,7 @@ class YamlRuleParserPluginTest {
     class DocumentRelated {
         @Test
         void documentEmpty() throws RuleException {
-            RuleSet ruleSet = readRuleSet("document-empty.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/document-empty.yaml");
 
             assertThat(ruleSet.getGroupsBucket().getAll()).isEmpty();
             assertThat(ruleSet.getConceptBucket().getAll()).isEmpty();
@@ -283,7 +304,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void documentEmptyEmptyFile() throws RuleException {
-            RuleSet ruleSet = readRuleSet("document-empty-empty-file.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/document-empty-empty-file.yaml");
 
             assertThat(ruleSet.getGroupsBucket().getAll()).isEmpty();
             assertThat(ruleSet.getConceptBucket().getAll()).isEmpty();
@@ -292,7 +313,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void documentOnlyToplevelKeywordsButAllEmpty() throws RuleException {
-            RuleSet ruleSet = readRuleSet("document-only-toplevel-keywords-but-all-empty.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/document-only-toplevel-keywords-but-all-empty.yaml");
 
             assertThat(ruleSet.getGroupsBucket().getAll()).isEmpty();
             assertThat(ruleSet.getConceptBucket().getAll()).isEmpty();
@@ -301,10 +322,13 @@ class YamlRuleParserPluginTest {
 
         @Test
         void documentUnknownTopLevelKeyword() throws Exception {
-            assertThatThrownBy(() -> readRuleSet("document-unknown-toplevel-keyword.yml"))
+            String regex = "Rule source '[^']+' contains the unknown " +
+                           "keyword 'foobar' at '\\$'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/document-unknown-toplevel-keyword.yml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("Rule source '[^']+' contains the following unsupported keys: foobar");
+                .hasMessageMatching(regex);
         }
     }
 
@@ -344,7 +368,7 @@ class YamlRuleParserPluginTest {
     class GroupRelated {
         @Test
         void oneGroupOneIncludedConstraint() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-one-included-constraint.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-one-included-constraint.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -363,25 +387,29 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConceptMissingRefId() throws Exception {
-            assertThatThrownBy(() ->readRuleSet("group-single-include-concept-missing-refid.yaml"))
+            String regex = "Rule source '[^']+' misses the keyword 'refId' " +
+                           "at '\\$.groups\\[0].includedConcepts\\[0]'";
+
+            assertThatThrownBy(() ->readRuleSet("/yaml/group-single-include-concept-missing-refid.yaml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("Rule source '[^']+' contains the group 'my_group' with an included " +
-                                    "concept without the following required keys: refId");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneGroupUnknownKeyword() throws RuleException {
-            assertThatThrownBy(() -> readRuleSet("group-single-with-unknown-keyword.yaml"))
+            String regex = "Rule source '[^']+' contains the unknown keyword " +
+                           "'foo' at '\\$.groups\\[0]'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/group-single-with-unknown-keyword.yaml"))
                 .isInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("Rule source with id '[^']+' contains a group containing the " +
-                                        "following unsupported keys: foo");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneGroupIncludeConstraintWithDifferentSeverity() throws Exception {
-            RuleSet ruleSet = readRuleSet("group-single-include-constraint-different-severity.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-constraint-different-severity.yaml");
 
             Group group = ruleSet.getGroupsBucket().getAll().iterator().next();
 
@@ -398,24 +426,31 @@ class YamlRuleParserPluginTest {
 
         @Test
         void groupWithAnIncludedWithoutValueForSeverity() {
-            assertThatThrownBy(() -> readRuleSet("group-single-with-include-concept-no-value-for-severity.yaml"))
+            String regex = "Rule source '[^']+' must have one of " +
+                           "'blocker, critical, major, minor, info' at " +
+                           "'\\$.groups\\[0].includedConcepts\\[0].severity'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/group-single-with-include-concept-no-value-for-severity.yaml"))
                 .isInstanceOf(RuleException.class)
                 .hasNoCause()
-                .hasMessageMatching("Rule source '[^']+' contains the group 'myGroup' with an " +
-                                        "included concept without specified value for its severity");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneGroupIncludeConceptSeverityUnknown() throws Exception {
-            assertThatThrownBy(() -> readRuleSet("group-single-include-concept-severity-unknown.yml"))
+            String regex = "Rule source '[^']+' must have one of " +
+                           "'blocker, critical, major, minor, info' at " +
+                           "'\\$.groups\\[0].includedConcepts\\[0].severity'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-severity-unknown.yml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessage("Unknown severity 'peng'");
+                .hasMessageMatching(regex);
         }
 
         @Test
         void oneGroup() throws Exception {
-            RuleSet ruleSet = readRuleSet("group-single.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single.yaml");
 
             assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
             assertThat(ruleSet.getConstraintBucket().size()).isEqualTo(0);
@@ -424,7 +459,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConstraintEmptyList() throws Exception {
-            RuleSet ruleSet = readRuleSet("group-single-include-constraint-empty-list.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-constraint-empty-list.yaml");
 
             Group group = ruleSet.getGroupsBucket().getAll().iterator().next();
 
@@ -434,7 +469,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConceptEmptyList() throws Exception {
-            RuleSet ruleSet = readRuleSet("group-single-include-concept-empty-list.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-concept-empty-list.yaml");
 
             Group group = ruleSet.getGroupsBucket().getAll().iterator().next();
 
@@ -444,16 +479,15 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupMissingKeyword() throws Exception {
-            assertThatThrownBy(() -> readRuleSet("group-single-missing-keyword.yaml"))
+            assertThatThrownBy(() -> readRuleSet("/yaml/group-single-missing-keyword.yaml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("Rule source with id '[^']+' contains a group with the " +
-                                    "following missing keys: id");
+                .hasMessageMatching("Rule source '[^']+' misses the keyword 'id' at '\\$.groups\\[0]'");
         }
 
         @Test
         void oneGroupIncludeGroupEmptyList() throws Exception {
-            RuleSet ruleSet = readRuleSet("group-single-include-group-empty-list.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-group-empty-list.yaml");
 
             Group group = ruleSet.getGroupsBucket().getAll().iterator().next();
 
@@ -465,7 +499,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void twoGroups() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-two.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-two.yaml");
 
             assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(2);
             assertThat(ruleSet.getConstraintBucket().size()).isEqualTo(0);
@@ -474,7 +508,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConceptComplex() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-with-one-included-concept.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-with-one-included-concept.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -493,7 +527,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConceptExplicitSeveritySpecification() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-with-one-included-concept-with-own-severity.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-with-one-included-concept-with-own-severity.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -514,7 +548,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeOneGroup() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-with-one-included-group.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-with-one-included-group.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -532,16 +566,15 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConceptAdditionalKeyword() throws RuleException {
-            assertThatThrownBy(() -> readRuleSet("group-single-include-concept-additional-keyword.yaml"))
+            assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-additional-keyword.yaml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
-                .hasMessageMatching("Rule source '[^']+' contains the group 'snafu' with an included concept with " +
-                                    "the following unsupported keys: foo");
+                .hasMessageMatching("Rule source '[^']+' contains the unknown keyword 'foo' at '\\$.groups\\[0\\].includedConcepts\\[0\\]'");
         }
 
         @Test
         void oneGroupIncludeConceptTwo() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-include-concept-two.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-concept-two.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -558,7 +591,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void oneGroupIncludeConstraintTwo() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-include-constraint-two.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-include-constraint-two.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -573,7 +606,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void singleGroupWithTwoIncludedGroups() throws RuleException {
-            RuleSet ruleSet = readRuleSet("group-single-with-two-included-groups.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-with-two-included-groups.yaml");
 
             GroupsBucket groups = ruleSet.getGroupsBucket();
 
@@ -593,7 +626,7 @@ class YamlRuleParserPluginTest {
     class I18N {
         @Test
         void japaneseDescription() throws RuleException {
-            RuleSet ruleSet = readRuleSet("i18n-japanese-description.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/i18n-japanese-description.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -602,7 +635,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void emojiUsage() throws RuleException {
-            RuleSet ruleSet = readRuleSet("i18n-emoji-usage.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/i18n-emoji-usage.yaml");
 
             Concept concept = ruleSet.getConceptBucket().getAll().iterator().next();
 
@@ -615,10 +648,11 @@ class YamlRuleParserPluginTest {
     class VerificationRelated {
         @Test
         void unsupportedKeyword() {
-            String messageRegex = "^Rule '[^']+' in rule source with id '[^']+' contains unsupported keywords " +
-                                  "for a verification. The following keys are not supported: unsupportedKeyWord";
+            String messageRegex = "^Rule source '[^']+' contains the unknown " +
+                                  "keyword 'unsupportedKeyWord' at " +
+                                  "'\\$.concepts\\[0].verify'";
 
-            assertThatThrownBy(() -> readRuleSet("concept-single-with-verification-unsupported-keyword.yaml"))
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-verification-unsupported-keyword.yaml"))
                 .hasNoCause()
                 .hasMessageMatching(messageRegex)
                 .isExactlyInstanceOf(RuleException.class);
@@ -626,10 +660,10 @@ class YamlRuleParserPluginTest {
 
         @Test
         void aggregationAndRowcount() {
-            String messageRegex = "Rule '[^']+' in rule source with id '[^']+' contains a concept with a " +
-                                  "verification via row count and aggregation. Only one verification method " +
-                                  "can be used.";
-            assertThatThrownBy(() -> readRuleSet("concept-single-with-verification-and-rowcount.yaml"))
+            String messageRegex = "Rule source '[^']+' can have only one of " +
+                                  "the given keywords at '\\$.concepts\\[0].verify'";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-verification-and-rowcount.yaml"))
                 .hasNoCause()
                 .isExactlyInstanceOf(RuleException.class)
                 .hasMessageMatching(messageRegex);
@@ -641,7 +675,7 @@ class YamlRuleParserPluginTest {
     class ReportRelated {
         @Test
         void onlyReportKeywordIsGiven() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-without-any-key.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-without-any-key.yaml");
 
             assertThat(ruleSet.getConstraintBucket().getAll()).hasSize(1);
 
@@ -658,7 +692,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void reportBlockWithNoProperties() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-no-properties.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-no-properties.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -671,7 +705,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void reportBlockWithManyProperties() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-many-properties.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-many-properties.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -680,14 +714,14 @@ class YamlRuleParserPluginTest {
             Report report = constraint.getReport();
 
             assertThat(report.getProperties()).isNotNull();
-            assertThat(report.getProperties()).hasSize(3);
+            assertThat(report.getProperties()).hasSize(4);
             assertThat(report.getProperties()).contains(makeEntry("asciidoc.foobar", "A"), makeEntry("b", "B"),
-                                                        makeEntry("c", "C"));
+                                                        makeEntry("c", "C"), makeEntry("A", 3));
         }
 
         @Test
         void reportBlockWithPrimaryColumn() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-no-properties.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-no-properties.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -700,7 +734,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void reportBlockWithReportType() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-with-report-type.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-with-report-type.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -714,7 +748,7 @@ class YamlRuleParserPluginTest {
 
         @Test
         void reportBlockWithReportTypeMultipleCommaSeparatedValues() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-with-report-type-multiple.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-with-report-type-multiple.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -726,20 +760,33 @@ class YamlRuleParserPluginTest {
             assertThat(report.getSelectedTypes()).hasSize(3);
         }
 
-        @ParameterizedTest
-        @ValueSource(strings = {"constraint-with-report-with-invalid-block-structure-01.yaml",
-                                "constraint-with-report-with-invalid-block-structure-02.yaml"})
-        void reportSectionWithInvalidBlockStructure(String yamlFilename) throws RuleException {
-            assertThatThrownBy(() -> readRuleSet(yamlFilename))
+        @Test
+        void reportSectionWithInvalidBlockStructureNotNeededMap() {
+            String regex = "^Rule source '[^']+' contains " +
+                           "at '\\$.constraints\\[0].report.primaryColumn' a map " +
+                           "where a scalar is expected";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/constraint-with-report-with-invalid-block-structure-02.yaml"))
                 .hasNoCause()
                 .isInstanceOf(RuleException.class)
-                .hasMessageMatching("^Cannot process rules from '[^']+' " +
-                                    "because of an invalid YAML datastructure");
+                .hasMessageMatching(regex);
+        }
+
+        @Test
+        void reportSectionWithInvalidBlockStructureSequence() {
+            String regex = "^Rule source '[^']+' contains " +
+                           "at '\\$.constraints\\[0].report' a sequence where a " +
+                           "map is expected";
+
+            assertThatThrownBy(() -> readRuleSet("/yaml/constraint-with-report-with-invalid-block-structure-01.yaml"))
+                .hasNoCause()
+                .isInstanceOf(RuleException.class)
+                .hasMessageMatching(regex);
         }
 
         @Test
         void reportSectionWithAllPossibleKeys() throws RuleException {
-            RuleSet ruleSet = readRuleSet("constraint-with-report-all-possible-keys.yaml");
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-report-all-possible-keys.yaml");
 
             Constraint constraint = ruleSet.getConstraintBucket().getAll().iterator().next();
 
@@ -755,16 +802,15 @@ class YamlRuleParserPluginTest {
 
         @Test
         void reportSectionWithUnknownKeyword() throws RuleException {
-            assertThatThrownBy(() -> readRuleSet("constraint-with-report-and-with-unknown-keyword.yml"))
+            assertThatThrownBy(() -> readRuleSet("/yaml/constraint-with-report-and-with-unknown-keyword.yml"))
                 .hasNoCause()
                 .isInstanceOf(RuleException.class)
-                .hasMessageMatching("^Rule source '[^']+' " +
-                    "contains a constraint with one or more unknown keys in the report block: foobar, snafu, wtf");
+                .hasMessageMatching("^Rule source '[^']+' contains the unknown keyword 'wtf' at '\\$.constraints\\[0].report'");
         }
     }
 
     RuleSet readRuleSet(String resource) throws RuleException {
-        return RuleSetTestHelper.readRuleSet("/yaml/" + resource, RuleConfiguration.DEFAULT);
+        return RuleSetTestHelper.readRuleSet(resource, RuleConfiguration.DEFAULT);
     }
 
     static Stream<String> windowsUrlPositive() {
@@ -803,7 +849,7 @@ class YamlRuleParserPluginTest {
                          "https://host.domain/rules.ADOC");
     }
 
-    static private Map.Entry<String, String> makeEntry(String key, String value) {
+    static private Map.Entry<String, Object> makeEntry(String key, Object value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 

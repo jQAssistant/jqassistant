@@ -1,6 +1,6 @@
 ---
 groups:
   - id: nnn
-    includesGroups:
+    includedGroups:
       - refId: mmm
         severity: blocker

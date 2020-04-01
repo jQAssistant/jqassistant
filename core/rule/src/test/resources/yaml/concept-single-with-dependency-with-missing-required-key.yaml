@@ -2,10 +2,10 @@
 concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
-    requiresConcepts:
+    requiredConcepts:
       - # this is the missing required key => refId: concept:other
         optional: false
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

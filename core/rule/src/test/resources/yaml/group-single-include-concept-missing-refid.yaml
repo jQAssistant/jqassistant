@@ -1,4 +1,4 @@
 groups:
   - id: my_group
-    includesConcepts:
+    includedConcepts:
       - severity: info

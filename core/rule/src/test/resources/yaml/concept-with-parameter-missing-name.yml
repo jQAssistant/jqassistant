@@ -2,12 +2,12 @@
 concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
-    requiresParameters:
+    requiredParameters:
       - name:
-        defaultValue:
+        defaultValue: foorbar
         type: String
 
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

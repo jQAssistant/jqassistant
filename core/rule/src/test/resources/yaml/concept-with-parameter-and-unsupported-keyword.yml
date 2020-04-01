@@ -2,13 +2,13 @@
 concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
-    requiresParameters:
+    requiredParameters:
       - name: fqcn
         unsupported: not allowed here
         defaultValue: foobar
         type: String
 
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where

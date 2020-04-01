@@ -2,10 +2,10 @@
 concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
-    requiresConcepts:
+    requiredConcepts:
       - refId: concept:other
         optional: false
-    cypher: |
+    source: |
       match
         (throwable)-[:EXTENDS*]->(t:Type)
       where
@@ -16,10 +16,10 @@ concepts:
         count(throwable) AS Throwables
     verify:
       aggregation:
-        aggregationColumn: Throwables
-        aggregationMin: 10
-        aggregationMax: 20
+        column: Throwables
+        min: 10
+        max: 20
       rowCount:
-        rowCountMin: 10
-        rowCountMax: 20
+        min: 10
+        max: 20
 

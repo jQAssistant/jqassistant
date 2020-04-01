@@ -1,4 +1,4 @@
   concepts:
   - id: 🐶
     description: 🐱
-    cypher: MATCH (a) RETURN a
+    source: MATCH (a) RETURN a

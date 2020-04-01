@@ -1,7 +1,7 @@
 groups:
   - id: group
-    includesGroups:
-    includesConstraints:
+    includedGroups:
+    includedConstraints:
       - refId: constraint
-    includesConcepts:
+    includedConcepts:
       - refId: concept
