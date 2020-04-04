@@ -188,7 +188,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private CachingStoreProvider cachingStoreProvider;
 
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
+    public synchronized final void execute() throws MojoExecutionException, MojoFailureException {
         if (!runtimeInformation.isMavenVersion("[3.5,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.5.x or above.");
         }
@@ -232,7 +232,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return A rule set. .
      * @throws MojoExecutionException If the rules cannot be read.
      */
-    protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
+    protected final RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         if (rulesUrl != null) {
@@ -262,7 +262,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
     }
 
-    protected RuleConfiguration getRuleConfiguration() {
+    protected final RuleConfiguration getRuleConfiguration() {
         Severity defaultConceptSeverity = DEFAULT.getDefaultConceptSeverity();
         Severity defaultConstraintSeverity = DEFAULT.getDefaultConstraintSeverity();
         Severity defaultGroupSeverity = DEFAULT.getDefaultGroupSeverity();
@@ -329,18 +329,17 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException On execution errors.
      * @throws MojoFailureException   On execution failures.
      */
-    protected void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
-            synchronized (cachingStoreProvider) {
-                Store store = getStore(rootModule);
-                if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
-                    store.reset();
-                }
-                try {
-                    storeOperation.run(rootModule, store);
-                } finally {
-                    releaseStore(store);
-                }
-            }
+    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules)
+            throws MojoExecutionException, MojoFailureException {
+        Store store = getStore(rootModule);
+        if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
+            store.reset();
+        }
+        try {
+            storeOperation.run(rootModule, store);
+        } finally {
+            releaseStore(store);
+        }
     }
 
     /**
@@ -349,7 +348,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @param rootModule The root module.
      * @return The set of already executed modules belonging to the root module.
      */
-    protected Set<MavenProject> getExecutedModules(MavenProject rootModule) {
+    private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
         String executionKey = createExecutionKey( execution );
         String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
         Map<String, Set<MavenProject>> executedProjectsPerExecutionKey =

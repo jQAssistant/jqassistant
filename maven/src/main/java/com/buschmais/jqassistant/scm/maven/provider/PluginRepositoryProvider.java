@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 @Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
 public class PluginRepositoryProvider implements Disposable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PluginRepositoryProvider.class);
-
     private PluginRepository pluginRepository;
 
     public PluginRepositoryProvider() {

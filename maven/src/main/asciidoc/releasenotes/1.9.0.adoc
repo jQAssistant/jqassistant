@@ -4,8 +4,5 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Plugin for Maven 1.9.0]
 
-* Added Asciidoc Report plugin to the jQA Maven plugin, i.e. it does no longer need to be added as explicit dependency
-* Removed configuration options for APOC and Graph Algorithms.
-These will be available as separate plugins, see https://github.com/jqassistant-contrib/jqassistant-apoc-plugin[APOC plugin] and https://github.com/jqassistant-contrib/jqassistant-graph-algorithms-plugin[Graph Algorithms plugin].
-* Removed deprecated options `jqassistant.severity`, `jqassistant.failOnViolations`, `jqassistant.server.address` and `jqassistant.server.port`
+* Fixed a race condition for Maven builds running in multiple threads (e.g. `-T4`)
 
