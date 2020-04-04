@@ -8,8 +8,6 @@ import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
 public class PluginRepositoryProvider implements Disposable {
