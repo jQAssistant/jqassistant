@@ -14,12 +14,6 @@ public class PluginRepositoryProvider implements Disposable {
 
     private PluginRepository pluginRepository;
 
-    public PluginRepositoryProvider() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-        this.pluginRepository.initialize();
-    }
-
     @Override
     public synchronized void dispose() {
         if (this.pluginRepository != null) {
@@ -27,7 +21,13 @@ public class PluginRepositoryProvider implements Disposable {
         }
     }
 
-    public PluginRepository getPluginRepository() {
+    public synchronized PluginRepository getPluginRepository() {
+        if (pluginRepository == null) {
+            // do a lazy init of the plugin repo to speed-up if the plugin execution shall be skipped
+            PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+            pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+            this.pluginRepository.initialize();
+        }
         return pluginRepository;
     }
 

@@ -52,7 +52,7 @@ public class CachingStoreProvider implements Disposable {
      *            The pluginRepository.
      * @return The store.
      */
-    public Store getStore(StoreConfiguration storeConfiguration, PluginRepository pluginRepository) {
+    public synchronized Store getStore(StoreConfiguration storeConfiguration, PluginRepository pluginRepository) {
         StoreKey key = StoreKey.builder().uri(storeConfiguration.getUri().normalize()).username(storeConfiguration.getUsername()).build();
         Store store = storesByKey.get(key);
         if (store == null) {
