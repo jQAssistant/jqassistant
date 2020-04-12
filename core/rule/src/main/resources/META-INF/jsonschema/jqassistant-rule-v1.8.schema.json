@@ -50,12 +50,12 @@
               { "type" : "null" }
             ]
           },
-          "requiredConcepts" : {
+          "requiresConcepts" : {
             "type" : "array",
             "minItems" : 0,
             "items" : { "$ref" : "#/$defs/referenceJSch" }
           },
-          "requiredParameters" : {
+          "requiresParameters" : {
             "anyOf": [
               {
                 "type": "array",

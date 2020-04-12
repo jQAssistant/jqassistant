@@ -307,10 +307,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Map<String, Boolean> extractRequiredConcepts(Map<String, Object> map) {
         Map<String, Boolean> requiredConcepts = new HashMap<>();
 
-        boolean hasRequiresSection = map.containsKey(REQUIRED_CONCEPTS);
+        boolean hasRequiresSection = map.containsKey(REQUIRES_CONCEPTS);
 
         if (hasRequiresSection) {
-            List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(REQUIRED_CONCEPTS);
+            List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(REQUIRES_CONCEPTS);
 
             for (Map<String, Object> required : list) {
                 String refIdVal = (String) required.get(REF_ID);
@@ -328,11 +328,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Map<String, Parameter> extractParameters(Map<String, Object> map) {
         Map<String, Parameter> parameters = emptyMap();
 
-        boolean hasParameters = map.containsKey(REQUIRED_PARAMETERS);
+        boolean hasParameters = map.containsKey(REQUIRES_PARAMETERS);
 
         if (hasParameters) {
             // todo computeIfAbsend ersetzen
-            List<Map<String, Object>> list = (List<Map<String, Object>>) map.computeIfAbsent(REQUIRED_PARAMETERS,
+            List<Map<String, Object>> list = (List<Map<String, Object>>) map.computeIfAbsent(REQUIRES_PARAMETERS,
                                                                                              key -> emptyList());
             parameters = new HashMap<>();
 

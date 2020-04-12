@@ -3,7 +3,7 @@ concepts:
   - id: java:Throwable
     description: Labels types deriving from java.lang.Throwable as "Throwable".
 
-    requiredParameters:
+    requiresParameters:
       - name: fqcn
         type: String
         defaultValue: foobar

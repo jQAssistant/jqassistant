@@ -197,7 +197,7 @@ class YamlRuleParserPluginTest {
         void oneConceptParameterInvalidUnsupportedDatastructure() throws RuleException {
             String regex = "Rule source '[^']+' must have one of " +
                            "'boolean, byte, char, double, float, int, long, short, String' " +
-                           "at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+                           "at '\\$.concepts\\[0].requiresParameters\\[0].type'";
 
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-with-illegal-datastructure.yml"))
                 .hasNoCause()
@@ -208,7 +208,7 @@ class YamlRuleParserPluginTest {
         @Test
         void oneConceptParameterInvalidMissingParameterName() {
             String regex = "Rule source '[^']+' contains at " +
-                           "'\\$.concepts\\[0].requiredParameters\\[0].name' " +
+                           "'\\$.concepts\\[0].requiresParameters\\[0].name' " +
                            "nothing where a scalar is expected";
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-name.yml"))
                 .isExactlyInstanceOf(RuleException.class)
@@ -220,7 +220,7 @@ class YamlRuleParserPluginTest {
         void oneConceptParamterInvalidMissingType() {
             String regex = "Rule source '[^']+' must have one of " +
                            "'boolean, byte, char, double, float, int, long, short, String'" +
-                           " at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+                           " at '\\$.concepts\\[0].requiresParameters\\[0].type'";
 
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-type.yml"))
                 .isExactlyInstanceOf(RuleException.class)
@@ -232,7 +232,7 @@ class YamlRuleParserPluginTest {
         void oneConceptParameterInvalidUnsupportedType() {
             String regex = "Rule source '[^']+' must have one of " +
                            "'boolean, byte, char, double, float, int, long, short, String' " +
-                           "at '\\$.concepts\\[0].requiredParameters\\[0].type'";
+                           "at '\\$.concepts\\[0].requiresParameters\\[0].type'";
 
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-unsupported-type.yml"))
                 .isExactlyInstanceOf(RuleException.class)
@@ -243,7 +243,7 @@ class YamlRuleParserPluginTest {
         @Test
         void oneConceptParameterInvalidMissingDefaultValue() {
             String regex = "Rule source " +
-                           "'[^']+' contains at '\\$.concepts\\[0].requiredParameters\\[0].defaultValue' " +
+                           "'[^']+' contains at '\\$.concepts\\[0].requiresParameters\\[0].defaultValue' " +
                            "nothing where a scalar is expected";
 
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-missing-default-value.yml"))
@@ -266,7 +266,7 @@ class YamlRuleParserPluginTest {
         void oneConceptOneDependencyWithUnsupportedKey() throws RuleException {
             String messageRegex = "Rule source '[^']+' contains the unknown " +
                                   "keyword 'thisKeyIsNotSupported' at " +
-                                  "'\\$.concepts\\[0].requiredConcepts\\[0]'";
+                                  "'\\$.concepts\\[0].requiresConcepts\\[0]'";
 
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-one-dependency-and-unsupported-key.yaml"))
                 .isExactlyInstanceOf(RuleException.class)
@@ -277,7 +277,7 @@ class YamlRuleParserPluginTest {
         @Test
         void oneConceptOneDepdencyWithMissingRequiredKey() throws RuleException {
             String messageRegex = "^Rule source '[^']+' misses the keyword 'refId' " +
-                                  "at '\\$.concepts\\[0].requiredConcepts\\[0]'";
+                                  "at '\\$.concepts\\[0].requiresConcepts\\[0]'";
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-dependency-with-missing-required-key.yaml"))
                 .hasNoCause()
                 .hasMessageMatching(messageRegex)
