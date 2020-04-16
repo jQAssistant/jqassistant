@@ -1,0 +1,53 @@
+//
+//
+//
+//
+
+:rule-type: concept
+:rule-type-plural: concepts
+:rule-type-default-severity: minor
+:rule-section-title: Concepts
+
+include::yaml-ccg-template.adoc[]
+
+:rule-type!:
+:rule-type-plural!:
+:rule-type-default-severity!:
+:rule-section-title!:
+
+//------------------------------------------------------------------------
+
+.A concept with all possible elements in a YAML rule document
+[source,yaml]
+----
+concepts:
+  - id: junit5:TaggedMethodWithMetaAnnotation
+    requiresConcepts:
+      - refId: junit5:TestMethod
+      - refId: junit5:RepeatedTestMethod
+      - refId: junit5:TestTemplateMethod
+      - refId: junit5:ParameterizedTestMethod"
+    description: >
+      Labels all methods annotated by an Junit meta annotation
+      with "Junit5", "Test" and "Tag"
+    source: |
+      MATCH   (meth:Java:Method:Junit5:Test)-[:ANNOTATED_BY]->(a:Annotation)
+              -[:OF_TYPE]->(metaAnn:Java:Type:Annotation)
+              -[:ANNOTATED_BY]->(tagAnn:Java:Annotation)
+              -[:OF_TYPE]->(tagAnnType:Java:Type { name: 'Tag'})
+      SET     meth:Tag
+      RETURN  meth AS TestMethod
+
+      UNION
+
+      MATCH   (meth:Java:Method:Junit5:Test)-[:ANNOTATED_BY]->
+              (a:Annotation)-[:OF_TYPE]->
+              (metaAnn:Annotation)-[:ANNOTATED_BY]->
+              (tags:Annotation)-[:OF_TYPE]->
+              (tagsType { fqn: 'org.junit.jupiter.api.Tags' }),
+              (tags)-[:HAS]->(v:Array:Value)-[:CONTAINS]->
+              (b:Annotation:Value)-[:OF_TYPE]->
+              (tag:Type { fqn: 'org.junit.jupiter.api.Tag' })
+      SET     meth:Tag
+      RETURN  meth AS TestMethod
+----

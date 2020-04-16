@@ -1,0 +1,112 @@
+//
+//
+//
+
+:yamlSpec: https://yaml.org/spec/1.2/spec.html
+
+
+== YAML
+
+YAML is a markup language optimized to be human readable and supported
+by many editors and programming languages. YAML is basically based on
+three elements: scalar, sequence, and map. As a sequence and a map
+can contain any other element. Therefore YAML allows to build tree structures,
+a feature which allows jQAssistant to embed contraints, concepts, and
+groups in one document. The structure used for this is very much aligned
+to the XML Schema used by jQAssistant to embed rules in XML documents.
+
+jQAssistant supports YAML 1.2. To take advantage of all YAML features,
+it is recommended to read the YAML specification available at
+{yamlSpec}[^].
+
+YAML 1.2 is a subset of JSON, that means any YAML 1.2 data structure can be
+represented by an equivalent JSON data structure. This allows to provide and
+to validate a YAML document against a https://json-schema.org/[JSON Schema^].
+
+Therefore jQAssistant provides a JSON Schema for rule documents,
+which can be found in the xref:apdx-json-schema[appendix].
+
+TIP: This schema can be used in
+an IDE like IntelliJ IDEA to check the validity of a rule document
+while writing it.
+
+=== Toplevel Structure
+
+A YAML rule document can have three keys: `concepts`, `constraints`, and
+`groups`. `concepts` and `constraints` can take a sequence with valid rule
+definitions and `groups` can take a sequence with group definitions.
+
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `concepts`
+| 0..1
+| Sequence of concept definitions
+
+| `constraints`
+| 0..1
+| Sequence of constraint definitions.
+
+| `groups`
+| 0..1
+| Sequence of group definitions.
+
+|===
+
+.A rule document with one concept, one constraint and no group definitions
+[source,yaml]
+----
+concepts:
+  - id: spring-boot:Application
+    description: >
+      All types of of a Spring Boot application must be located in the same
+      package or a sub-package of the application class.
+    source: |
+      MATCH
+        (application:Type:Class)-[:ANNOTATED_BY]->
+          ()-[:OF_TYPE]->(annotationType:Type)
+      WHERE
+        annotationType.fqn = "org.springframework.boot.autoconfigure.SpringBootApplication"
+      SET
+        application:Spring:Boot:Application:Configuration:Component
+      RETURN
+        application AS Application
+
+constraints:
+  - id: spring-component:ControllerMustOnlyDependOnServicesRepositories
+    description: >
+      A Spring controller can only have dependencies to other Spring components
+      that are services or repositories.
+    requiredConcepts:
+      - refId: java:VirtualDependsOn
+      - refId: spring-component:AnnotatedInjectables
+    source: |
+      MATCH
+        (artifact:Artifact)-[:CONTAINS]->
+          (controller:Spring:Controller)-[:DEPENDS_ON|VIRTUAL_DEPENDS_ON]->
+            (other:Spring:Injectable)
+      WHERE NOT (artifact:Test OR other:Service OR other:Repository )
+      RETURN
+        controller AS Controller, collect(other) AS InvalidDependencies
+
+groups:
+----
+
+:rule-type: concept
+:rule-type-plural: concept
+:rule-type-default-severity: minor
+:rule-section-title: Concepts
+
+include::yaml-concept.adoc[]
+include::yaml-constraint.adoc[]
+
+:rule-type!:
+:rule-type-plural!:
+
+include::yaml-groups.adoc[]
+include::yaml-examples.adoc[]
+

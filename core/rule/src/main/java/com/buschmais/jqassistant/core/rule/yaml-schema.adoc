@@ -1,0 +1,12 @@
+
+[[apdx-json-schema]]
+[appendix]
+= JSON Schema for rule documents
+
+.JSON Schema 1.8 for jQAssitant rule documents
+[source,json,linenums]
+----
+include::../../../../../META-INF/jsonschema/jqassistant-rule-v1.8.schema.json[]
+----
+
+

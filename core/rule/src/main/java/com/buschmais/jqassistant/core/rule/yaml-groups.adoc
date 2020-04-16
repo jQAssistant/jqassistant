@@ -1,0 +1,40 @@
+//
+//
+//
+
+=== Groups
+
+A group in a YAML rule document is represented as a map of keys as concepts
+and constraints.
+
+.Toplevel keys of a map to specify a {rule-type} in a YAML rule document
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `id`
+| 1
+| The unique id for this group.
+
+| `severity`
+| 0..1
+| Severity for all included groups, constraints, and concept, overwriting
+  the specified severity for those.
+  Must be one of `blocker`, `critical`, `major`, `minor`, or `info`.
+
+| `includedConcepts`
+| 0..1
+| Sequence of references to concepts to be included in this group.
+
+| `includedConstraints`
+| 0..1
+| Sequence of references to constraints to be included in this group.
+
+| `includedGroups`
+| 0..1
+| Sequence of references to other groups to be included in this group.
+
+|===

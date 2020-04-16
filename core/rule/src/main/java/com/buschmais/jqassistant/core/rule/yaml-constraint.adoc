@@ -1,0 +1,15 @@
+//
+//
+//
+
+:rule-type: constraint
+:rule-type-plural: constraints
+:rule-type-default-severity: major
+:rule-section-title: Constraints
+
+include::yaml-ccg-template.adoc[]
+
+:rule-type!:
+:rule-type-plural!:
+:rule-type-default-severity!:
+:rule-section-title!:
