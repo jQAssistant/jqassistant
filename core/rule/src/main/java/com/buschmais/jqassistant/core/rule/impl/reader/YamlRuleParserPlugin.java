@@ -172,7 +172,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             includedGroups.add(reference);
         }
 
-        Group group = Group.builder().id(id).severity(null /* todo Was ist hier der Defaultwert?*/)
+        String severityVal = (String) map.get(SEVERITY);
+        Severity severity = severityVal == null ? null : toSeverity(severityVal);
+
+        Group group = Group.builder().id(id).severity(severity)
                            .ruleSource(context.getSource())
                            .concepts(includedConcepts).constraints(includedConstraints)
                            .groups(includedGroups)
@@ -184,9 +187,6 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private RuleSeverityAssociation extractRuleReferencesFrom(Map<String, String> refSpec) throws RuleException {
         String refId = refSpec.get(REF_ID);
         String severityVal = refSpec.get(SEVERITY);
-
-        // todo Wie ist hier das erwartete Verhalten?
-        // Was ist, wenn keine Severity angegeben wurde
         Severity severity = severityVal == null ? null : toSeverity(severityVal);
 
         return new RuleSeverityAssociation(refId, severity);

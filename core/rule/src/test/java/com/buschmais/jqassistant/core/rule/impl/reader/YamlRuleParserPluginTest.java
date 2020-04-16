@@ -397,6 +397,28 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
+        void oneGroupSeverityExplicitlySet() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-severity-explicitly-set.yaml");
+
+            assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
+
+            Group group = ruleSet.getGroupsBucket().getById("a");
+
+            assertThat(group.getSeverity()).isEqualTo(Severity.BLOCKER);
+        }
+
+        @Test
+        void oneGroupSeverityNotSet() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/group-single-severity-not-set.yaml");
+
+            assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
+
+            Group group = ruleSet.getGroupsBucket().getById("abc");
+
+            assertThat(group.getSeverity()).isNull();
+        }
+
+        @Test
         void oneGroupUnknownKeyword() throws RuleException {
             String regex = "Rule source '[^']+' contains the unknown keyword " +
                            "'foo' at '\\$.groups\\[0]'";
