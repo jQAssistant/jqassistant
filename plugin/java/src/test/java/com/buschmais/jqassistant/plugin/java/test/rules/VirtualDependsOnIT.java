@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.*;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.virtualdependson.*;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,56 +1,66 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.*;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.AbstractClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.ClientType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.SubClassType;
 
-import org.junit.jupiter.api.Test;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.of;
 
 /**
  * Tests for the concept java:VirtualInvokes.
  */
 public class VirtualInvokesIT extends AbstractJavaPluginIT {
 
-    /**
-     * Verifies the concept "java:VirtualInvokes" for a class implementing an
-     * interface.
-     *
-     * @throws IOException
-     *             If the test fails.
-     */
-    @Test
-    public void invokeInterfaceMethod() throws Exception {
-        scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
+    @MethodSource("parameters")
+    @ParameterizedTest
+    public void virtualInvokes(String clientMethodName, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
+        scanClasses(InterfaceType.class, AbstractClassType.class, SubClassType.class, ClientType.class);
         assertThat(applyConcept("java:VirtualInvokes").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        List<Integer> lineNumbers = query(
-                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[v:VIRTUAL_INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InterfaceTypeClient' and clientMethod.name='invokeInterfaceTypeMethod' RETURN distinct v.lineNumber as lineNumber")
-                        .getColumn("lineNumber");
-        assertThat(lineNumbers.size(), equalTo(2));
+        TestResult result = query(
+                "MATCH (:Type{name:'ClientType'})-[:DECLARES]->(:Method{name:{clientMethodName}})-[:VIRTUAL_INVOKES]->(invokedMethod:Method) RETURN invokedMethod",
+                MapBuilder.<String, Object> builder().entry("clientMethodName", clientMethodName).build());
+        assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
+        for (Map<String, Object> row : result.getRows()) {
+            MethodDescriptor methodDescriptor = (MethodDescriptor) row.get("invokedMethod");
+            assertThat(methodDescriptor, anyOf(methodDescriptorMatchers));
+        }
         store.commitTransaction();
     }
 
-    /**
-     * Verifies the concept "java:VirtualInvokes" for a sub class extending a class.
-     *
-     * @throws IOException
-     *             If the test fails.
-     */
-    @Test
-    public void invokeClassMethod() throws Exception {
-        scanClasses(ClassType.class, SubClassType.class, ClassTypeClient.class);
-        assertThat(applyConcept("java:VirtualInvokes").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        List<Integer> lineNumbers = query(
-                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[v:VIRTUAL_INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='ClassTypeClient' and clientMethod.name='invokeClassTypeMethod' RETURN distinct v.lineNumber as lineNumber")
-                        .getColumn("lineNumber");
-        assertThat(lineNumbers.size(), equalTo(2));
-        store.commitTransaction();
+    private static Stream<Arguments> parameters() throws NoSuchMethodException {
+        return Stream.of(
+                of("methodOnInterfaceType", asList(methodDescriptor(AbstractClassType.class, "method"), methodDescriptor(SubClassType.class, "method"))),
+                of("methodOnAbstractClassType", singletonList(methodDescriptor(SubClassType.class, "method"))), of("methodOnSubClassType", emptyList()),
+
+                of("abstractClassMethodOnInterfaceType", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
+                of("abstractClassMethodOnAbstractClassType", emptyList()),
+                of("abstractClassMethodOnSubType", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
+
+                of("subClassMethodOnInterfaceType", singletonList(methodDescriptor(SubClassType.class, "subClassMethod"))),
+                of("subClassMethodOnAbstractClassType", singletonList(methodDescriptor(SubClassType.class, "subClassMethod"))),
+                of("subClassMethodOnSubType", emptyList()));
     }
 }

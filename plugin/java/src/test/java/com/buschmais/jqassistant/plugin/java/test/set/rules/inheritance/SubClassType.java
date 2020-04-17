@@ -1,22 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
-/**
- * A sub class type.
- */
-public class SubClassType extends ClassType {
+public class SubClassType extends AbstractClassType {
 
     @Override
-    public void doSomething(String value) {
+    public void method() {
+        super.method(); // must not create a VIRTUAL_INVOKES on this method
     }
 
     @Override
-    public void doSomething(int value) {
-    }
-
-    @SuppressWarnings("unused")
-    private void doSomething() {
-        // creates implicitly the referenced super class method in this class
-        doSomething(true);
+    public final void subClassMethod() {
     }
 
 }

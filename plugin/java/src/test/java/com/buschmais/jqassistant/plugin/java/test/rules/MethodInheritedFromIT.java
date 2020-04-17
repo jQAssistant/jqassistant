@@ -28,38 +28,36 @@ import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 /**
- * Tests for the concept java:MethodOverrides.
+ * Tests for the concept java:MethodInheritedFrom.
  */
-public class MethodOverridesIT extends AbstractJavaPluginIT {
+public class MethodInheritedFromIT extends AbstractJavaPluginIT {
 
     @MethodSource("parameters")
     @ParameterizedTest
     public void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
         scanClasses(ClientType.class, InterfaceType.class, AbstractClassType.class, SubClassType.class);
-        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:MethodInheritedFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (type:Type{fqn:{type}})-[:DECLARES]->(:Method{signature:{signature}})-[:OVERRIDES]->(overriddenMethod:Method) RETURN overriddenMethod",
+                "MATCH (type:Type{fqn:{type}})-[:DECLARES]->(:Method{signature:{signature}})-[:INHERITED_FROM]->(inheritedMethod:Method) RETURN inheritedMethod",
                 MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
         assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
         for (Map<String, Object> row : result.getRows()) {
-            MethodDescriptor methodDescriptor = (MethodDescriptor) row.get("overriddenMethod");
+            MethodDescriptor methodDescriptor = (MethodDescriptor) row.get("inheritedMethod");
             assertThat(methodDescriptor, anyOf(methodDescriptorMatchers));
         }
         store.commitTransaction();
     }
 
     private static Stream<Arguments> parameters() throws NoSuchMethodException {
-        return Stream.of(of(InterfaceType.class, "void method()", emptyList()),
-                of(AbstractClassType.class, "void method()", singletonList(methodDescriptor(InterfaceType.class, "method"))),
-                of(SubClassType.class, "void method()", singletonList(methodDescriptor(AbstractClassType.class, "method"))),
+        return Stream.of(of(InterfaceType.class, "void method()", emptyList()), of(AbstractClassType.class, "void method()", emptyList()),
+                of(SubClassType.class, "void method()", emptyList()),
 
-                of(InterfaceType.class, "void abstractClassMethod()", emptyList()),
-                of(AbstractClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "abstractClassMethod"))),
-                of(SubClassType.class, "void abstractClassMethod()", emptyList()),
+                of(InterfaceType.class, "void abstractClassMethod()", emptyList()), of(AbstractClassType.class, "void abstractClassMethod()", emptyList()),
+                of(SubClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
 
                 of(InterfaceType.class, "void subClassMethod()", emptyList()),
-                of(AbstractClassType.class, "void subClassMethod()", emptyList()),
-                of(SubClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))));
+                of(AbstractClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))),
+                of(SubClassType.class, "void subClassMethod()", emptyList()));
     }
 }

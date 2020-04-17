@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.ClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.AbstractClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.InterfaceType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.SubClassType;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +29,12 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
      */
     @Test
     public void assignableFrom() throws RuleException {
-        scanClasses(ClassType.class);
+        scanClasses(SubClassType.class, AbstractClassType.class, InterfaceType.class);
         assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (types:Type)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumn("assignableType"),
-                hasItems(typeDescriptor(ClassType.class), typeDescriptor(InterfaceType.class), typeDescriptor(Object.class)));
+                hasItems(typeDescriptor(SubClassType.class), typeDescriptor(AbstractClassType.class), typeDescriptor(InterfaceType.class),
+                        typeDescriptor(Object.class)));
         store.commitTransaction();
     }
 
@@ -45,20 +47,20 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
      */
     @Test
     public void assignableFromUnique() throws RuleException {
-        scanClasses(ClassType.class);
+        scanClasses(AbstractClassType.class);
         store.beginTransaction();
         // create existing relations with and without properties
-        assertThat(query("MATCH (c:Class {name: 'ClassType'}) MERGE (c)-[r:ASSIGNABLE_FROM {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (c:Class {name: 'AbstractClassType'}) MERGE (c)-[r:ASSIGNABLE_FROM {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
         assertThat(query("MATCH (i:Type {name: 'InterfaceType'}) MERGE (i)-[r:ASSIGNABLE_FROM]->(i) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (c:Class {name: 'ClassType'}), (i:Type {name: 'InterfaceType'}) MERGE (i)-[r:ASSIGNABLE_FROM {prop: 'value'}]->(c) RETURN r")
+        assertThat(query("MATCH (c:Class {name: 'AbstractClassType'}), (i:Type {name: 'InterfaceType'}) MERGE (i)-[r:ASSIGNABLE_FROM {prop: 'value'}]->(c) RETURN r")
                 .getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (c:Class {name: 'ClassType'}), (o:Type {name: 'Object'}) MERGE (o)-[r:ASSIGNABLE_FROM]->(c) RETURN r").getColumn("r").size(),
+        assertThat(query("MATCH (c:Class {name: 'AbstractClassType'}), (o:Type {name: 'Object'}) MERGE (o)-[r:ASSIGNABLE_FROM]->(c) RETURN r").getColumn("r").size(),
                 equalTo(1));
         verifyUniqueRelation("ASSIGNABLE_FROM", 4);
         store.commitTransaction();
         assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation("ASSIGNABLE_FROM", 9);
+        verifyUniqueRelation("ASSIGNABLE_FROM", 6);
         store.commitTransaction();
     }
 

@@ -1,17 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
-/**
- * An interface type.
- */
 public interface InterfaceType {
 
-    void doSomething(String value);
+    void method();
 
-    void doSomething(int value);
+    void abstractClassMethod();
 
-    /**
-     * Only declared in {@link InterfaceType} and {@link ClassType}, not overridden
-     * by {@link SubClassType}.
-     */
-    void doSomething(boolean value);
+    void subClassMethod();
+
 }
