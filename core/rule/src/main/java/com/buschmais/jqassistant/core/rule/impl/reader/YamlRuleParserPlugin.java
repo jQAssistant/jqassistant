@@ -201,9 +201,17 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         String id = (String) map.get(ID);
         String description = (String) map.get(DESCRIPTION);
         String source = (String) map.get(SOURCE);
+        String language = (String) map.get(LANGUAGE);
         String serverityV = (String) map.get(SEVERITY);
 
-        CypherExecutable executable = new CypherExecutable(source);
+        Executable<?> executable = null;
+
+        if (CYPHER.equals(language) || null == language) {
+            executable = new CypherExecutable(source);
+        } else {
+            executable = new ScriptExecutable(language, source);
+        }
+
         Map<String, Boolean> required = extractRequiredConcepts(map);
         Map<String, Parameter> parameters = extractParameters(map);
         Verification verification = extractVerification(map);

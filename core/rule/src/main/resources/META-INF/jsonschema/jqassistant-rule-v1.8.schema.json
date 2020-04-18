@@ -80,6 +80,7 @@
             ]
           },
           "severity" : { "$ref" : "#/$defs/severityJSch" },
+          "language" : { "type" : "string" },
           "source" : { "$ref" : "#/$defs/sourceJSch" },
           "verify" : {
             "type" : "object",

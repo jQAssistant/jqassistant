@@ -41,6 +41,15 @@ jQAssistants's XML Schema.
 | Description of the {rule-type}.  Intended to be shown to the user in case
   the verification of the rule failed and to document the rule itself.
 
+| `language`
+| 0..1
+| Specifies the language the actual rule is written in.
+
+  If not specified it is assumed that the actual rule is written
+  in Cypher.
+
+// todo Link to new user guide and to the section about writing rules in other languages than Cypher
+
 | `requiresConcepts`
 | 0..1
 | Sequence of required concepts of the rule, which must be executed

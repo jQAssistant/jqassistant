@@ -275,6 +275,39 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
+        void oneConceptWithRuleLanguageExplicitlySetToCypher() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-rule-language-explicitly-set.yaml");
+
+            assertThat(ruleSet.getConceptBucket().getById("java:Throwable")).isNotNull();
+
+            Concept concept = ruleSet.getConceptBucket().getById("java:Throwable");
+
+            assertThat(concept.getExecutable().getLanguage()).isEqualTo("cypher");
+        }
+
+        @Test
+        void oneConceptWithRuleLanguageExplicitlySetToJavaScript() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-rule-language-explicitly-set-to-js.yaml");
+
+            assertThat(ruleSet.getConceptBucket().getById("java:Throwable")).isNotNull();
+
+            Concept concept = ruleSet.getConceptBucket().getById("java:Throwable");
+
+            assertThat(concept.getExecutable().getLanguage()).isEqualTo("JavaScript");
+        }
+
+        @Test
+        void oneConceptWithRuleLanguageExplicitlySetToCypherImplicitly() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/concept-single-rule-language-not-explicitly-set.yaml");
+
+            assertThat(ruleSet.getConceptBucket().getById("java:Throwable")).isNotNull();
+
+            Concept concept = ruleSet.getConceptBucket().getById("java:Throwable");
+
+            assertThat(concept.getExecutable().getLanguage()).isEqualTo("cypher");
+        }
+
+        @Test
         void oneConceptOneDepdencyWithMissingRequiredKey() throws RuleException {
             String messageRegex = "^Rule source '[^']+' misses the keyword 'refId' " +
                                   "at '\\$.concepts\\[0].requiresConcepts\\[0]'";
@@ -285,11 +318,6 @@ class YamlRuleParserPluginTest {
         }
     }
 
-
-    @Nested
-    class ConstraintRelated {
-
-    }
 
     @Nested
     class DocumentRelated {
