@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,11 +23,9 @@ public class DefaultUriScannerPluginIT extends AbstractPluginIT {
     /**
      * Scan a directory using two dependent plugins for a custom scope.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    public void fileUri() throws IOException, URISyntaxException {
+    public void fileUri() throws URISyntaxException {
         store.beginTransaction();
         URL resource = DefaultUriScannerPluginIT.class.getResource("/");
         URI uri = resource.toURI();

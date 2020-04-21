@@ -27,7 +27,7 @@ public class LocalFileSystemFileResolver extends AbstractFileResolver {
         return getOrCreateAs(requiredPath, type, s -> {
             Map<String, Object> params = new HashMap<>();
             params.put("fileName", s);
-            Result<Result.CompositeRowObject> result = context.getStore().executeQuery("MATCH (file:File) WHERE file.fileName={fileName} RETURN file", params);
+            Result<Result.CompositeRowObject> result = context.getStore().executeQuery("MATCH (file:File) WHERE file.fileName=$fileName RETURN file", params);
             return result.hasResult() ? result.getSingleResult().get("file", FileDescriptor.class) : null;
         }, context);
     }

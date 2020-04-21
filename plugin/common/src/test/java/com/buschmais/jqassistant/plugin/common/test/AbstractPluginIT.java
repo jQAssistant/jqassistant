@@ -157,6 +157,7 @@ public abstract class AbstractPluginIT {
             break;
         case REMOTE:
             storeConfigurationBuilder.uri(new URI("bolt://localhost:7687"));
+            storeConfigurationBuilder.encryption("NONE");
             storeConfigurationBuilder.username("neo4j").password("admin");
             Properties properties = new Properties();
             properties.put("neo4j.remote.statement.log.level", "info");
@@ -172,7 +173,7 @@ public abstract class AbstractPluginIT {
         StoreConfiguration configuration = storeConfigurationBuilder.build();
         store = StoreFactory.getStore(configuration, pluginRepository.getStorePluginRepository());
         store.start();
-        if (testStore != null && testStore.reset()) {
+        if (testStore == null || testStore.reset()) {
             store.reset();
         }
     }
@@ -251,7 +252,7 @@ public abstract class AbstractPluginIT {
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object> emptyMap());
+        return query(query, emptyMap());
     }
 
     /**

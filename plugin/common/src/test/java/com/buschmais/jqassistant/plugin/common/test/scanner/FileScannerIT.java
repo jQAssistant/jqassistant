@@ -17,10 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Verifies file/directory scanning.
@@ -29,7 +26,7 @@ public class FileScannerIT extends AbstractPluginIT {
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -69,7 +66,7 @@ public class FileScannerIT extends AbstractPluginIT {
             currentName.append('/').append(scanner.next());
             Map<String, Object> params = new HashMap<>();
             params.put("name", currentName.toString());
-            List<FileDescriptor> files = query("match (f:File) where f.fileName={name} return f", params).getColumn("f");
+            List<FileDescriptor> files = query("match (f:File) where f.fileName=$name return f", params).getColumn("f");
             assertThat(files.size(), equalTo(1));
             FileDescriptor current = files.get(0);
             if (previous != null) {
