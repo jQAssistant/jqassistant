@@ -200,7 +200,7 @@ public abstract class AbstractGraphStore implements Store {
         do {
             beginTransaction();
             Result.CompositeRowObject result = executeQuery(
-                    "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT {limit} DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
+                    "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT $limit DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
                     params).getSingleResult();
             nodes = result.get("nodes", Long.class);
             relations = result.get("relations", Long.class);
