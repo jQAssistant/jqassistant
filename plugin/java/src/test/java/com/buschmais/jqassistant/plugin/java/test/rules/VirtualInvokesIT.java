@@ -21,7 +21,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -53,14 +52,15 @@ public class VirtualInvokesIT extends AbstractJavaPluginIT {
     private static Stream<Arguments> parameters() throws NoSuchMethodException {
         return Stream.of(
                 of("methodOnInterfaceType", asList(methodDescriptor(AbstractClassType.class, "method"), methodDescriptor(SubClassType.class, "method"))),
-                of("methodOnAbstractClassType", singletonList(methodDescriptor(SubClassType.class, "method"))), of("methodOnSubClassType", emptyList()),
+                of("methodOnAbstractClassType", asList(methodDescriptor(AbstractClassType.class, "method"), methodDescriptor(SubClassType.class, "method"))),
+                of("methodOnSubClassType", singletonList(methodDescriptor(SubClassType.class, "method"))),
 
                 of("abstractClassMethodOnInterfaceType", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
-                of("abstractClassMethodOnAbstractClassType", emptyList()),
+                of("abstractClassMethodOnAbstractClassType", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
                 of("abstractClassMethodOnSubType", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
 
                 of("subClassMethodOnInterfaceType", singletonList(methodDescriptor(SubClassType.class, "subClassMethod"))),
                 of("subClassMethodOnAbstractClassType", singletonList(methodDescriptor(SubClassType.class, "subClassMethod"))),
-                of("subClassMethodOnSubType", emptyList()));
+                of("subClassMethodOnSubType", singletonList(methodDescriptor(SubClassType.class, "subClassMethod"))));
     }
 }

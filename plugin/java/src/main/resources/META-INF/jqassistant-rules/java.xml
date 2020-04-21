@@ -46,38 +46,6 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java:MethodOverrides">
-        <requiresConcept refId="java:MethodInheritedFrom"/>
-        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-              (type:Type)-[:DECLARES]->(method:Method),
-              (superType:Type)-[:DECLARES]->(superMethod:Method),
-              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
-            WHERE
-              not (
-                (method)-[:INHERITED_FROM]->(:Method)
-                or (superMethod)-[:INHERITED_FROM]->(:Method)
-              )
-              and method.signature = superMethod.signature
-              and superMethod.visibility <> "private"
-            WITH
-              type, method, superType, superMethod, length(path) as depth
-            ORDER BY
-              depth asc
-            WITH
-              method, head(collect(superMethod)) as overriddenMethod
-            MERGE
-              (method)-[:OVERRIDES]->(overriddenMethod)
-            RETURN
-              count(*) as OverriddenMethods
-        ]]></cypher>
-        <verify>
-            <aggregation/>
-        </verify>
-    </concept>
-
     <concept id="java:MethodInheritedFrom">
         <description>Creates a relationship INHERITS between two "Method" labeled nodes if a method is inherited from a super type.
         </description>
@@ -87,7 +55,8 @@
               (superType:Type)-[:DECLARES]->(superMethod:Method),
               path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
-              not exists(method.name)
+              type <> superType
+              and not exists(method.name)
               and exists(superMethod.name)
               and method.signature = superMethod.signature
               and superMethod.visibility <> "private"
@@ -107,6 +76,39 @@
         </verify>
     </concept>
 
+    <concept id="java:MethodOverrides">
+        <requiresConcept refId="java:MethodInheritedFrom"/>
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[:DECLARES]->(method:Method),
+              (superType:Type)-[:DECLARES]->(superMethod:Method),
+              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
+            WHERE
+              type <> superType
+              and method.signature = superMethod.signature
+              and superMethod.visibility <> "private"
+              and not (
+                (method)-[:INHERITED_FROM]->(:Method)
+                or (superMethod)-[:INHERITED_FROM]->(:Method)
+              )
+            WITH
+              type, method, superType, superMethod, length(path) as depth
+            ORDER BY
+              depth asc
+            WITH
+              method, head(collect(superMethod)) as overriddenMethod
+            MERGE
+              (method)-[:OVERRIDES]->(overriddenMethod)
+            RETURN
+              count(*) as OverriddenMethods
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
     <concept id="java:VirtualInvokes">
         <requiresConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:MethodInheritedFrom"/>
@@ -118,13 +120,14 @@
               (method:Method)-[invokes:INVOKES]->(:Method)-[:INHERITED_FROM*0..1]->(invokedMethod:Method),
               (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
             WHERE NOT (                                     // exclude...
-              (method)-[invokes]->(overridingMethod)        // ...existing INVOKES relation
+              exists(overridingMethod.abstract)             // ...abstract methods
               or (method)-[:OVERRIDES]->(invokedMethod)     // ...super calls to overridden methods
-              or ((overridingMethod)-[:INHERITED_FROM]->()) // ...inherited methods
-              or exists(overridingMethod.abstract)          // ...abstract methods
+              or (overridingMethod)-[:INHERITED_FROM]->()   // ...inherited methods
             )
+            WITH
+              method, overridingMethod, coalesce(invokes.lineNumber, -1) as lineNumber
             MERGE
-              (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:invokes.lineNumber}]->(overridingMethod)
+              (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]->(overridingMethod)
             RETURN
               count(virtualInvokes) as VirtualInvokes
             ]]></cypher>
