@@ -6,11 +6,7 @@ import java.util.List;
 
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
-import com.buschmais.xo.neo4j.api.annotation.Cypher;
-import com.buschmais.xo.neo4j.api.annotation.Indexed;
-import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Property;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.neo4j.api.annotation.*;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -111,23 +107,23 @@ public interface MavenRepositoryDescriptor extends MavenDescriptor {
     String getSnapshotsChecksumPolicy();
 
     @ResultOf
-    @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Release:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
+    @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Release:Xml) WHERE id(repository)=$this and pom.fqn=$coordinates RETURN pom")
     MavenPomXmlDescriptor findReleaseModel(@Parameter("coordinates") String coordinates);
 
     @ResultOf
-    @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Snapshot:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
+    @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Snapshot:Xml) WHERE id(repository)=$this and pom.fqn=$coordinates RETURN pom")
     MavenPomXmlDescriptor findSnapshotModel(@Parameter("coordinates") String coordinates);
 
     @ResultOf
-    @Cypher("MATCH (repository), (pom:Maven:Pom:Xml) WHERE id(repository)={this} and id(pom)={pom} CREATE (repository)-[:CONTAINS_POM]->(pom)")
+    @Cypher("MATCH (repository), (pom:Maven:Pom:Xml) WHERE id(repository)=$this and id(pom)=$pom CREATE (repository)-[:CONTAINS_POM]->(pom)")
     void addModel(@Parameter("pom") MavenPomXmlDescriptor modelDescriptor);
 
     @ResultOf
-    @Cypher("MATCH (repository)-[:CONTAINS_ARTIFACT]->(artifact:Artifact) WHERE id(repository)={this} and artifact.fqn={coordinates} RETURN artifact")
+    @Cypher("MATCH (repository)-[:CONTAINS_ARTIFACT]->(artifact:Artifact) WHERE id(repository)=$this and artifact.fqn=$coordinates RETURN artifact")
     MavenArtifactDescriptor findArtifact(@Parameter("coordinates") String coordinates);
 
     @ResultOf
-    @Cypher("MATCH (repository), (artifact:Maven:Artifact) WHERE id(repository)={this} and id(artifact)={artifact} CREATE (repository)-[:CONTAINS_ARTIFACT]->(artifact)")
+    @Cypher("MATCH (repository), (artifact:Maven:Artifact) WHERE id(repository)=$this and id(artifact)=$artifact CREATE (repository)-[:CONTAINS_ARTIFACT]->(artifact)")
     void addArtifact(@Parameter("artifact") MavenArtifactDescriptor artifactDescriptor);
 
 }

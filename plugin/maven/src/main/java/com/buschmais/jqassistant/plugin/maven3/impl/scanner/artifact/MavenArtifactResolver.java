@@ -35,7 +35,7 @@ public class MavenArtifactResolver implements ArtifactResolver {
     private MavenArtifactDescriptor find(String fqn, ScannerContext scannerContext) {
         Map<String, Object> params = new HashMap<>();
         params.put("fqn", fqn);
-        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MATCH (a:Maven:Artifact) WHERE a.fqn={fqn} RETURN a", params);
+        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MATCH (a:Maven:Artifact) WHERE a.fqn=$fqn RETURN a", params);
         return result.hasResult() ? result.getSingleResult().get("a", MavenArtifactDescriptor.class) : null;
     }
 }
