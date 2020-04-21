@@ -17,7 +17,6 @@ class C02E11IT extends AbstractYAMLPluginIT {
         return YAML_FILE;
     }
 
-    @TestStore(type = TestStore.Type.FILE)
     @Test
     void scannerCanReadDocument() {
         readSourceDocument();

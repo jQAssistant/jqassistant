@@ -134,7 +134,6 @@ public class AnchorIT extends AbstractYAMLPluginIT {
             assertThat(result).hasSize(1);
         }
 
-        @TestStore(type = TestStore.Type.FILE)
         @Test
         void cypherAnchorOnSequenceItemResultsInThoChildSequences() {
             readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");

@@ -82,7 +82,6 @@ public class AliasIT extends AbstractYAMLPluginIT {
         assertThat(testResult.getColumn("anchor")).hasSize(1);
     }
 
-    @TestStore(type = TestStore.Type.FILE)
     @Test
     void cypherAnchorInComplexKeyOnKeyOfMapAndAliasAsKeyInMap() {
         readSourceDocument("/anchor/toplevel-map-anchor-in-complexkey-on-key-alias-is-also-key.yml");
