@@ -39,7 +39,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (type:Type{fqn:{type}})-[:DECLARES]->(:Method{signature:{signature}})-[:OVERRIDES]->(overriddenMethod:Method) RETURN overriddenMethod",
+                "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Method{signature:$signature})-[:OVERRIDES]->(overriddenMethod:Method) RETURN overriddenMethod",
                 MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
         assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
         for (Map<String, Object> row : result.getRows()) {

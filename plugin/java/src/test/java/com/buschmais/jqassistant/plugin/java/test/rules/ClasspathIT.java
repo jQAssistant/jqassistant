@@ -5,20 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.LineNumberDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.AnnotationType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ClassType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.EnumType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ExceptionType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.InterfaceType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ValueType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.*;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
 
 import org.hamcrest.Matcher;
@@ -52,7 +41,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("a1", "b").put("a2", "a").get();
         List<TypeDescriptor> resolvedTypes = query(
-                "MATCH (a1:Artifact)-[:REQUIRES]->(t1:Type)-[:RESOLVES_TO]->(rt:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn={a1} and a2.fqn={a2} RETURN rt",
+                "MATCH (a1:Artifact)-[:REQUIRES]->(t1:Type)-[:RESOLVES_TO]->(rt:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn=$a1 and a2.fqn=$a2 RETURN rt",
                 params).getColumn("rt");
         assertThat(resolvedTypes.size(), equalTo(6));
         assertThat(resolvedTypes, hasItems(typeDescriptor(AnnotationType.class), typeDescriptor(ClassType.class), typeDescriptor(InterfaceType.class),
@@ -73,13 +62,13 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         Map<String, Object> params = MapBuilder.<String, Object> create("a1", "b").put("a2", "a").get();
         // Methods
         List<MethodDescriptor> resolvedMethods = query(
-                "MATCH (a1:Artifact)-[:REQUIRES]->(:Type)-[:DECLARES]->()-[:RESOLVES_TO]->(rm:Method)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn={a1} and a2.fqn={a2} RETURN rm",
+                "MATCH (a1:Artifact)-[:REQUIRES]->(:Type)-[:DECLARES]->()-[:RESOLVES_TO]->(rm:Method)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn=$a1 and a2.fqn=$a2 RETURN rm",
                 params).getColumn("rm");
         assertThat(resolvedMethods.size(), equalTo(2));
         assertThat(resolvedMethods, hasItems(constructorDescriptor(ClassType.class), methodDescriptor(ClassType.class, "bar", int.class)));
         // Fields
         List<FieldDescriptor> resolvedFields = query(
-                "MATCH (a1:Artifact)-[:REQUIRES]->(:Type)-[:DECLARES]->()-[:RESOLVES_TO]->(rf:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn={a1} and a2.fqn={a2} RETURN rf",
+                "MATCH (a1:Artifact)-[:REQUIRES]->(:Type)-[:DECLARES]->()-[:RESOLVES_TO]->(rf:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a2:Artifact) WHERE a1.fqn=$a1 and a2.fqn=$a2 RETURN rf",
                 params).getColumn("rf");
         assertThat(resolvedFields.size(), equalTo(2));
         assertThat(resolvedFields, hasItems(fieldDescriptor(ClassType.class, "foo"), fieldDescriptor(EnumType.B)));
@@ -113,7 +102,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
         List<TypeDescriptor> dependencies = query(
-                "MATCH (dependentType:Type)-[d:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} and exists(d.weight) RETURN t",
+                "MATCH (dependentType:Type)-[d:DEPENDS_ON{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn=$dependentType and a.fqn=$a and exists(d.weight) RETURN t",
                 params).getColumn("t");
         assertThat(dependencies.size(), equalTo(6));
         assertThat(dependencies, hasItems(typeDescriptor(AnnotationType.class), typeDescriptor(ClassType.class), typeDescriptor(InterfaceType.class),
@@ -133,7 +122,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
         List<TypeDescriptor> extendedTypes = query(
-                "MATCH (dependentType:Type)-[:EXTENDS{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and a.fqn={a} RETURN t",
+                "MATCH (dependentType:Type)-[:EXTENDS{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn=$dependentType and a.fqn=$a RETURN t",
                 params).getColumn("t");
         assertThat(extendedTypes.size(), equalTo(1));
         assertThat(extendedTypes, hasItems(typeDescriptor(ClassType.class)));
@@ -474,7 +463,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         assertThat(applyConcept(concept).getStatus(), equalTo(SUCCESS));
     }
 
-    private void scanClasses() throws IOException {
+    private void scanClasses() {
         scanClasses("a", ClassType.class, InterfaceType.class, AnnotationType.class, EnumType.class, ExceptionType.class, ValueType.class);
         scanClasses("b", DependentType.class);
     }

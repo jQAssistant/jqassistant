@@ -28,6 +28,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
      *             If scanning fails.
      */
     @Test
+    @TestStore(type = TestStore.Type.REMOTE)
     public void javaRuntime01Scan() throws Exception {
         String javaHome = System.getProperty("java.home");
         assumeNotNull("java.home is not set.", javaHome);
@@ -36,7 +37,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         store.beginTransaction();
         getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
-        applyConcept("javaruntime:PackageDependency");
+        applyConcept("java:VirtualInvokes");
     }
 
 }

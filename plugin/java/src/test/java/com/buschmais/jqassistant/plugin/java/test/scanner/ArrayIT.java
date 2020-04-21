@@ -22,9 +22,9 @@ public class ArrayIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("className", Array.class.getName());
-        TestResult testResult = query("MATCH (t:Type)-[:DECLARES]->(f:Field) WHERE t.fqn={className} RETURN f", parameters);
+        TestResult testResult = query("MATCH (t:Type)-[:DECLARES]->(f:Field) WHERE t.fqn=$className RETURN f", parameters);
         assertThat(testResult.getColumn("f"), hasItem(fieldDescriptor(Array.class, "stringArray")));
-        testResult = query("MATCH (t:Type)-[:DECLARES]->(m:Method) WHERE t.fqn={className} RETURN m", parameters);
+        testResult = query("MATCH (t:Type)-[:DECLARES]->(m:Method) WHERE t.fqn=$className RETURN m", parameters);
         assertThat(testResult.getColumn("m"), hasItems(methodDescriptor(Array.class, "getStringArray"), methodDescriptor(Array.class, "getStringArray")));
         store.commitTransaction();
     }

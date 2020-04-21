@@ -16,7 +16,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      * @return The number of dependencies.
      */
     @ResultOf
-    @Cypher("MATCH (artifact:Artifact)-[d:DEPENDS_ON]->(:Artifact) WHERE id(artifact)={this} RETURN count(d)")
+    @Cypher("MATCH (artifact:Artifact)-[d:DEPENDS_ON]->(:Artifact) WHERE id(artifact)=$this RETURN count(d)")
     long getNumberOfDependencies();
 
     /**
@@ -31,13 +31,13 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
     @Cypher("MATCH\n" +
         "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(type:Type)\n" +
         "WHERE\n" +
-        "  type.fqn={fqn}\n" +
+        "  type.fqn=$fqn\n" +
         "WITH\n" +
         "  dependency, type\n" +
         "MATCH\n" +
         "  shortestPath((artifact)-[:DEPENDS_ON*]->(dependency))\n" +
         "WHERE\n" +
-        "  id(artifact)={this}\n" +
+        "  id(artifact)=$this\n" +
         "RETURN\n" +
         "  type\n" +
         "LIMIT 1")

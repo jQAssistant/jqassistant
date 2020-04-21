@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,22 +19,20 @@ public class FieldValueIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on class level.
-     * 
-     * @throws IOException
-     *             If the test fails.
+     *
      */
     @Test
-    public void fieldValues() throws IOException {
+    public void fieldValues() {
         scanClasses(FieldValue.class);
         store.beginTransaction();
         verifyValue("stringValue", "StringValue");
-        verifyValue("intValue", Integer.valueOf(1));
+        verifyValue("longValue", 1l);
         store.commitTransaction();
     }
 
     private <V> void verifyValue(String fieldName, V expectedValue) {
         Map<String, Object> params = MapBuilder.<String, Object> create("fieldName", fieldName).get();
-        TestResult testResult = query("MATCH (:Type)-[:DECLARES]->(f:Field)-[:HAS]->(v:Value:Primitive) WHERE f.name={fieldName} RETURN v.value as value",
+        TestResult testResult = query("MATCH (:Type)-[:DECLARES]->(f:Field)-[:HAS]->(v:Value:Primitive) WHERE f.name=$fieldName RETURN v.value as value",
                 params);
         List<Map<String, Object>> rows = testResult.getRows();
         assertThat(rows.size(), equalTo(1));

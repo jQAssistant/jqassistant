@@ -39,7 +39,7 @@ public class VirtualInvokesIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java:VirtualInvokes").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (:Type{name:'ClientType'})-[:DECLARES]->(:Method{name:{clientMethodName}})-[:VIRTUAL_INVOKES]->(invokedMethod:Method) RETURN invokedMethod",
+                "MATCH (:Type{name:'ClientType'})-[:DECLARES]->(:Method{name:$clientMethodName})-[:VIRTUAL_INVOKES]->(invokedMethod:Method) RETURN invokedMethod",
                 MapBuilder.<String, Object> builder().entry("clientMethodName", clientMethodName).build());
         assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
         for (Map<String, Object> row : result.getRows()) {

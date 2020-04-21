@@ -39,7 +39,7 @@ public class MethodInheritedFromIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java:MethodInheritedFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (type:Type{fqn:{type}})-[:DECLARES]->(:Method{signature:{signature}})-[:INHERITED_FROM]->(inheritedMethod:Method) RETURN inheritedMethod",
+                "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Method{signature:$signature})-[:INHERITED_FROM]->(inheritedMethod:Method) RETURN inheritedMethod",
                 MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
         assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
         for (Map<String, Object> row : result.getRows()) {
