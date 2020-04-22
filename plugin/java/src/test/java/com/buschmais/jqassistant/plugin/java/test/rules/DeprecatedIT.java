@@ -39,7 +39,7 @@ public class DeprecatedIT extends AbstractJavaPluginIT {
         assertThat(query("MATCH (element:Method:Deprecated) RETURN element").getColumn("element"), hasItem(methodDescriptor(DeprecatedType.class, "getValue")));
         assertThat(query("MATCH (element:Method:Deprecated) RETURN element").getColumn("element"),
                 hasItem(methodDescriptor(DeprecatedType.class, "setValue", int.class)));
-        assertThat(query("MATCH (element:Parameter:Deprecated) RETURN element.index as index").getColumn("index"), hasItem(equalTo(0)));
+        assertThat(query("MATCH (element:Parameter:Deprecated{index:0}) RETURN element").getRows().size(), equalTo(1));
         store.commitTransaction();
     }
 }

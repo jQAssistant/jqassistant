@@ -19,26 +19,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldAnnotationValueType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.FieldTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.ImplementedInterface;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.ImplementedInterfaceTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.InvokeMethodType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.LocalVariable;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodAnnotationValueType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodParameterTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodReturnType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.MethodReturnTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperClass;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperClassTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotationValueType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -117,7 +98,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(DependentType.class);
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("t1", DependentType.class.getName()).put("t2", LocalVariable.class.getName()).get();
-        List<Map<String, Object>> rows = query("MATCH (t1:Type)-[d:DEPENDS_ON]->(t2:Type) WHERE t1.fqn={t1} and t2.fqn={t2} RETURN d", params).getRows();
+        List<Map<String, Object>> rows = query("MATCH (t1:Type)-[d:DEPENDS_ON]->(t2:Type) WHERE t1.fqn=$t1 and t2.fqn=$t2 RETURN d", params).getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
         TypeDependsOnDescriptor dependsOn = (TypeDependsOnDescriptor) row.get("d");
@@ -149,10 +130,10 @@ public class DependencyIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
+        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(B.class.getPackage())));
         parameters.put("package", B.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
+        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(A.class.getPackage())));
         store.commitTransaction();
     }
@@ -182,11 +163,11 @@ public class DependencyIT extends AbstractJavaPluginIT {
     private Map<String, Object> verifyArtifactDependency(String from, String to) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", from);
-        List<Object> usedDependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters)
+        List<Object> usedDependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2", parameters)
                 .getColumn("a2");
         assertThat(usedDependency, hasItem(artifactDescriptor(to)));
         // The DEPENDS_RELATION must be unique
-        List<Object> dependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2");
+        List<Object> dependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2", parameters).getColumn("a2");
         assertThat(dependency.size(), equalTo(1));
         return parameters;
     }

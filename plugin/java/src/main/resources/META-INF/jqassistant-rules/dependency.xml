@@ -8,7 +8,7 @@
                 (p1:Package)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(p2:Package)
             WHERE
                 p1<>p2
-            CREATE UNIQUE
+            MERGE
                 (p1)-[:DEPENDS_ON]->(p2)
             RETURN
                 p1 AS package, COUNT(DISTINCT p2) AS PackageDependencies
@@ -53,7 +53,7 @@
             WHERE
                 p1<>p2
             RETURN
-                p1 AS Package, EXTRACT(p IN nodes(path) | p.fqn) AS Cycle
+                p1 as Package, nodes(path) as Cycle
             ORDER BY
                 Package.fqn
         ]]></cypher>
@@ -69,7 +69,7 @@
             WHERE
                 a1<>a2
             RETURN
-                a1 AS Artifact, EXTRACT(a IN nodes(path) | a.fqn) AS Cycle
+                a1 as Artifact, nodes(path) as Cycle
             ORDER BY
                 Artifact.fqn
         ]]></cypher>
