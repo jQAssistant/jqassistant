@@ -28,9 +28,9 @@ public interface TestCaseDescriptor extends JUnitDescriptor, NamedDescriptor {
     void setClassName(String className);
 
     @Property("time")
-    float getTime();
+    Number getTime();
 
-    void setTime(float time);
+    void setTime(Number time);
 
     @Property("result")
     Result getResult();

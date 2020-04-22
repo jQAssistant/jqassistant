@@ -32,9 +32,9 @@ public interface TestSuiteDescriptor extends JUnitDescriptor, NamedDescriptor, X
     void setSkipped(int skipped);
 
     @Property("time")
-    float getTime();
+    Number getTime();
 
-    void setTime(float time);
+    void setTime(Number time);
 
     @Relation("CONTAINS")
     List<TestCaseDescriptor> getTestCases();

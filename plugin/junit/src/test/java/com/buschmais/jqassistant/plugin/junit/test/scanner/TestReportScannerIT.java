@@ -15,18 +15,14 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class TestReportScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      */
@@ -37,7 +33,7 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object>create().put("fileName", testReportFile).get();
         List<FileDescriptor> fileDescriptors =
-                query("MATCH (suite:JUnit:File) where suite.fileName={fileName} RETURN suite", params).getColumn
+                query("MATCH (suite:JUnit:File) where suite.fileName=$fileName RETURN suite", params).getColumn
                         ("suite");
         assertThat(fileDescriptors.size(), equalTo(1));
         FileDescriptor fileDescriptor = fileDescriptors.get(0);
@@ -48,7 +44,7 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
         assertThat(testSuiteDescriptor.getFailures(), equalTo(1));
         assertThat(testSuiteDescriptor.getErrors(), equalTo(1));
         assertThat(testSuiteDescriptor.getSkipped(), equalTo(1));
-        assertThat(testSuiteDescriptor.getTime(), equalTo(0.058f));
+        assertThat(testSuiteDescriptor.getTime().floatValue(), equalTo(0.058f));
         assertThat(testSuiteDescriptor.getTestCases().size(), equalTo(5));
         verifyTestCase("success", TestCaseDescriptor.Result.SUCCESS, 0.001f);
         verifyTestCase("inherited", TestCaseDescriptor.Result.SUCCESS, 0.002f);
@@ -68,7 +64,7 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
         TestCaseDescriptor testCaseDescriptor = testCaseDescriptors.get(0);
         assertThat(testCaseDescriptor.getName(), equalTo(expectedName));
         assertThat(testCaseDescriptor.getClassName(), equalTo(Example.class.getName()));
-        assertThat(testCaseDescriptor.getTime(), equalTo(expectedTime));
+        assertThat(testCaseDescriptor.getTime().floatValue(), equalTo(expectedTime));
         assertThat(testCaseDescriptor.getResult(), equalTo(expectedResult));
         return testCaseDescriptor;
     }

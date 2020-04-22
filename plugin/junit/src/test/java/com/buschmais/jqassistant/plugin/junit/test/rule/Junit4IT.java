@@ -20,10 +20,7 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.Matchers.anEmptyMap;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -98,7 +95,7 @@ public class Junit4IT extends AbstractJunitIT {
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object>create("testClass", TestClass.class.getName()).get();
         List<Object> suites =
-                query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn={testClass} RETURN s", params)
+                query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn=$testClass RETURN s", params)
                         .getColumn("s");
         assertThat(suites, hasItem(typeDescriptor(TestSuite.class)));
         store.commitTransaction();
@@ -118,7 +115,7 @@ public class Junit4IT extends AbstractJunitIT {
     	scanClasses(TestSuite.class, TestClass.class);
         store.beginTransaction();
         // create existing relation with property
-        assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn={suiteClass} AND c.fqn={testClass} MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r", params).getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn=$suiteClass AND c.fqn=$testClass MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r", params).getColumn("r").size(), equalTo(1));
         verifyUniqueRelation("CONTAINS_TESTCLASS", 1);
         store.commitTransaction();
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));

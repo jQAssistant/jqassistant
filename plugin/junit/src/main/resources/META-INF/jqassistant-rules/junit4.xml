@@ -154,7 +154,7 @@
               suite, suiteClasses
             MATCH
               (suiteClasses)-[:HAS]->(:Array:Value)-[:CONTAINS]->(Class:Value)-[:IS]->(testClass:Type)
-            CREATE UNIQUE
+            MERGE
               (suite)-[c:CONTAINS_TESTCLASS]->(testClass)
             RETURN
               suite, collect(testClass)
