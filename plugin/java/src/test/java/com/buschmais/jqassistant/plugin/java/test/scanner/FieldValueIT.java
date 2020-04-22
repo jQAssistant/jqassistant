@@ -25,19 +25,18 @@ public class FieldValueIT extends AbstractJavaPluginIT {
     public void fieldValues() {
         scanClasses(FieldValue.class);
         store.beginTransaction();
-        verifyValue("stringValue", "StringValue");
-        verifyValue("longValue", 1l);
+        assertThat(getFieldValue("stringValue", String.class), equalTo("StringValue"));
+        assertThat(getFieldValue("longValue", Number.class).longValue(), equalTo(1l));
         store.commitTransaction();
     }
 
-    private <V> void verifyValue(String fieldName, V expectedValue) {
+    private <V> V getFieldValue(String fieldName, Class<V> type) {
         Map<String, Object> params = MapBuilder.<String, Object> create("fieldName", fieldName).get();
         TestResult testResult = query("MATCH (:Type)-[:DECLARES]->(f:Field)-[:HAS]->(v:Value:Primitive) WHERE f.name=$fieldName RETURN v.value as value",
                 params);
         List<Map<String, Object>> rows = testResult.getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
-        V value = (V) row.get("value");
-        assertThat(value, equalTo(expectedValue));
+        return type.cast(row.get("value"));
     }
 }
