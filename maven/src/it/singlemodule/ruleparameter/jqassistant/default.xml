@@ -11,7 +11,7 @@
             MATCH
               (project:Maven:Project)
             WHERE
-              project.artifactId={testArtifactId}
+              project.artifactId=$testArtifactId
             RETURN
               project
         </cypher>
