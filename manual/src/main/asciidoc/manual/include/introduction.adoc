@@ -339,7 +339,7 @@ Both concepts and constraints may define required parameters:
            MATCH
              (root:Package)
            WHERE
-             root.name = {rootPackage} <2>
+             root.name = $rootPackage <2>
            SET
              root:Root
            RETURN
@@ -365,7 +365,7 @@ or in Asciidoc:
 MATCH
   (root:Package)
 WHERE
-  root.name = {rootPackage} <2>
+  root.name = $rootPackage <2>
 SET
   root:Root
 RETURN
