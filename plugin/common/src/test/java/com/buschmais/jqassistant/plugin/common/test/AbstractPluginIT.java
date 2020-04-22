@@ -239,8 +239,8 @@ public abstract class AbstractPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("className", this.getClass().getName());
-        store.executeQuery("MATCH (t:Type)-[r]-() WHERE t.fqn={className} DELETE r", parameters).close();
-        store.executeQuery("MATCH (t:Type) WHERE t.fqn={className} DELETE t", parameters).close();
+        store.executeQuery("MATCH (t:Type)-[r]-() WHERE t.fqn=$className DELETE r", parameters).close();
+        store.executeQuery("MATCH (t:Type) WHERE t.fqn=$className DELETE t", parameters).close();
         store.commitTransaction();
     }
 
