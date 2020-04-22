@@ -22,12 +22,7 @@ import org.mockito.Mockito;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -418,7 +413,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         Map<String, Object> params = new HashMap<>();
         params.put("pom", pomDescriptor);
         List<MavenDependencyDescriptor> dependencyDescriptors = query(
-                "MATCH (pom:Pom)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)={pom} RETURN d", params).getColumn("d");
+                "MATCH (pom:Pom)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)=$pom RETURN d", params).getColumn("d");
 
         assertThat(dependencyDescriptors, hasSize(4));
 
@@ -437,7 +432,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     /**
      * Validates dependency existence. Fails if no dependency containing all
      * given fields exists.
-     * 
+     *
      * @param dependencyDescriptors
      *            Descriptors containing all dependencies.
      * @param dependency
@@ -483,7 +478,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         Map<String,Object> params = new HashMap<>();
         params.put("pom", pomDescriptor);
         List<MavenDependencyDescriptor> managedDependencyDescriptors = query(
-                "MATCH (pom)-[:MANAGES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)={pom} RETURN d", params).getColumn("d");
+                "MATCH (pom)-[:MANAGES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(pom)=$pom RETURN d", params).getColumn("d");
         List<Dependency> managedDependencies = getExpectedManagedParentDependencies();
         assertThat(managedDependencyDescriptors, hasSize(managedDependencies.size()));
 
@@ -553,7 +548,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
                 Map<String, Object> params = new HashMap<>();
                 params.put("profile", mavenProfileDescriptor);
                 List<MavenDependencyDescriptor> profileDeps = query(
-                        "MATCH (p:Maven:Profile)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(p)={profile} RETURN d", params).getColumn("d");
+                        "MATCH (p:Maven:Profile)-[:DECLARES_DEPENDENCY]->(d:Maven:Dependency) WHERE id(p)=$profile RETURN d", params).getColumn("d");
                 for (Dependency dependency : dependencies) {
                     verifyDependency(profileDeps, dependency);
                 }
