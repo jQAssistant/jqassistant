@@ -47,7 +47,7 @@ public class ScanIT extends AbstractCLIIT {
         store.start();
         Map<String, Object> params = new HashMap<>();
         params.put("fileName", "/META-INF");
-        String query = "match (f:File:Directory) where f.fileName={fileName} return count(f) as count";
+        String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         store.stop();
         assertThat(count, equalTo(1L));
@@ -160,7 +160,7 @@ public class ScanIT extends AbstractCLIIT {
     private boolean isTypeScanned(Store store, Class<?> type) {
         Map<String, Object> params = new HashMap<>();
         params.put("type", type.getName());
-        String query = "match (t:Type:Class) where t.fqn={type} return count(t) as count";
+        String query = "match (t:Type:Class) where t.fqn=$type return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         return count.longValue() == 1;
     }
@@ -177,7 +177,7 @@ public class ScanIT extends AbstractCLIIT {
     private boolean isFileScanned(Store store, File file) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", file.getAbsolutePath().replace("\\", "/"));
-        String query = "match (t:File) where t.fileName={name} return count(t) as count";
+        String query = "match (t:File) where t.fileName=$name return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         return count.longValue() == 1;
     }

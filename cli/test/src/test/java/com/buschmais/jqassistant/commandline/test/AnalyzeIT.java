@@ -138,7 +138,7 @@ public class AnalyzeIT extends AbstractCLIIT {
         store.beginTransaction();
         Map<String, Object> params = new HashMap<>();
         params.put("concept", concept);
-        Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id={concept} return count(c) as count", params);
+        Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params);
         assertThat(result.hasResult(), equalTo(true));
         Long count = result.getSingleResult().get("count", Long.class);
         store.commitTransaction();
