@@ -85,6 +85,6 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
      *            <code>true</code> if the dependency is optional.
      */
     @ResultOf
-    @Cypher("MATCH (artifact:Artifact),(dependency:Artifact) WHERE id(artifact)={this} and id(dependency)={dependency} MERGE (artifact)-[dependsOn:DEPENDS_ON{scope:$scope,optional:$optional}]->(dependency) RETURN dependsOn")
+    @Cypher("MATCH (artifact:Artifact),(dependency:Artifact) WHERE id(artifact)=$this and id(dependency)=$dependency MERGE (artifact)-[dependsOn:DEPENDS_ON{scope:$scope,optional:$optional}]->(dependency) RETURN dependsOn")
     void addDependency(@Parameter("dependency") ArtifactDescriptor dependency, @Parameter("scope") String scope, @Parameter("optional") boolean optional);
 }
