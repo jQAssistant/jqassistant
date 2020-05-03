@@ -161,6 +161,9 @@ Starts the integrated Neo4j web server.
 * <<cli:storeUri>>
 * <<cli:storeUsername>>
 * <<cli:storePassword>>
+* <<cli:storeEncryption>>
+* <<cli:storeTrustStrategy>>
+* <<cli:storeTrustCertificate>>
 
 ==== Common options
 
@@ -182,6 +185,18 @@ Starts the integrated Neo4j web server.
 [[cli:storePassword]]
 ===== -storePassword <password>
 * specifies the password for authentication against remote databases
+
+[[cli:storeEncryption]]
+===== -storeEncryption <true|false>
+* the encryption level for bolt connections
+
+[[cli:storeTrustStrategy]]
+===== -storeTrustStrategy <trustAllCertificates|trustCustomCaSignedCertificates|trustSystemCaSignedCertificates>
+* the trust strategy for bolt connections
+
+[[cli:storeTrustCertificate]]
+===== -storeTrustCertificate <file>
+* the file containing the custom CA certificate for trust strategy `trustCustomCaSignedCertificates`
 
 [[cli:groups]]
 ===== -groups <group1>,<group2>

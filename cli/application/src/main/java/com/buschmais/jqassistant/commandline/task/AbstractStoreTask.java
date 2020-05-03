@@ -26,6 +26,9 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_STORE_URI = "storeUri";
     protected static final String CMDLINE_OPTION_STORE_USERNAME = "storeUsername";
     protected static final String CMDLINE_OPTION_STORE_PASSWORD = "storePassword";
+    protected static final String CMDLINE_OPTION_STORE_ENCRYPTION = "storePassword";
+    protected static final String CMDLINE_OPTION_STORE_TRUST_STRATEGY = "storeTrustStrategy";
+    protected static final String CMDLINE_OPTION_STORE_TRUST_CERITFICATE = "storeTrustCertificate";
     protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
@@ -67,8 +70,11 @@ public abstract class AbstractStoreTask extends AbstractTask {
             }
             builder.username(getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
             builder.password(getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
+            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
+            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
+            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         } else {
-            String directoryName = OptionHelper.selectValue(DEFAULT_STORE_DIRECTORY, storeDirectory);
+            String directoryName = OptionHelper.coalesce(storeDirectory, DEFAULT_STORE_DIRECTORY);
             File directory = new File(directoryName);
             directory.getParentFile().mkdirs();
             builder.uri(directory.toURI());
@@ -82,13 +88,13 @@ public abstract class AbstractStoreTask extends AbstractTask {
         builder.connectorEnabled(isConnectorRequired());
 
         String embeddedListenAddress = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
-        builder.listenAddress(OptionHelper.selectValue(EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS, embeddedListenAddress));
+        builder.listenAddress(OptionHelper.coalesce(embeddedListenAddress, EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS));
 
         String httpPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
-        builder.httpPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT), httpPort)));
+        builder.httpPort(Integer.valueOf(OptionHelper.coalesce(httpPort, Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT))));
 
         String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
-        builder.boltPort(Integer.valueOf(OptionHelper.selectValue(Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT), boltPort)));
+        builder.boltPort(Integer.valueOf(OptionHelper.coalesce(boltPort, Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT))));
 
         return builder.build();
     }
@@ -102,16 +108,22 @@ public abstract class AbstractStoreTask extends AbstractTask {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_URI)
                 .withDescription("The URI of the Neo4j database, e.g. 'file:jqassistant/store' or 'bolt://localhost:7687'.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_URI));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_USERNAME).withDescription("The user name for connecting to Neo4j database.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_USERNAME).withDescription("The user name for bolt connections.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_USERNAME));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD).withDescription("The password for connecting to Neo4j database.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD).withDescription("The password for bolt connections.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_PASSWORD));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_ENCRYPTION).withDescription("The encryption level for bolt connections, may be true (default) or false.").hasArgs()
+            .create(CMDLINE_OPTION_STORE_ENCRYPTION));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_STRATEGY).withDescription("The trust strategy for bolt connections, may be trustAllCertificates, trustCustomCaSignedCertificates or trustSystemCaSignedCertificates.").hasArgs()
+            .create(CMDLINE_OPTION_STORE_TRUST_STRATEGY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_CERITFICATE).withDescription("The file containing the custom CA certificate for trust strategy trustCustomCaSignedCertificates.").hasArgs()
+            .create(CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS).withDescription("The listen address of the embedded server.").hasArgs()
-            .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
+                .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_HTTP_PORT).withDescription("The HTTP port of the embedded server.").hasArgs()
-            .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
+                .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bolt tport of the embedded server.").hasArgs()
-            .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
+                .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
         addTaskOptions(options);
         return options;
     }
