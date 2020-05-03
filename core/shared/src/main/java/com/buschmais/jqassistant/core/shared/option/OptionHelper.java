@@ -12,23 +12,22 @@ public final class OptionHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OptionHelper.class);
 
     /**
-     * Determine a value from given options.
+     * Determine the first non-null value from the given options.
      *
-     * @param defaultValue
-     *            The default (i.e. fallback) value.
-     * @param overrides
-     *            The option that override the default value, the first non-null value will be accepted.
+     * @param values
+     *            The option that override the default value, the first non-null
+     *            value will be accepted.
      * @param <T>
      *            The value type.
      * @return The value.
      */
-    public static <T> T selectValue(T defaultValue, T... overrides) {
-        for (T override : overrides) {
+    public static <T> T coalesce(T... values) {
+        for (T override : values) {
             if (override != null) {
                 return override;
             }
         }
-        return defaultValue;
+        return null;
     }
 
     /**
