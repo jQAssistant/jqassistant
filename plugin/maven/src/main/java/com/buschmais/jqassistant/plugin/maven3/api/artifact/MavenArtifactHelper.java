@@ -27,23 +27,14 @@ public final class MavenArtifactHelper {
      *            The coordinates.
      */
     public static void setCoordinates(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
-        artifactDescriptor.setGroup(coordinates.getGroup());
-        artifactDescriptor.setName(coordinates.getName());
-        artifactDescriptor.setVersion(coordinates.getVersion());
-        artifactDescriptor.setClassifier(coordinates.getClassifier());
-        artifactDescriptor.setType(coordinates.getType());
-    }
-
-    /**
-     * Set the fully qualified name of an artifact descriptor.
-     *
-     * @param artifactDescriptor
-     *            The artifact descriptor.
-     * @param coordinates
-     *            The coordinates.
-     */
-    public static void setId(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
-        artifactDescriptor.setFullQualifiedName(MavenArtifactHelper.getId(coordinates));
+        if (artifactDescriptor.getFullQualifiedName() == null) {
+            artifactDescriptor.setFullQualifiedName(MavenArtifactHelper.getId(coordinates));
+            artifactDescriptor.setGroup(coordinates.getGroup());
+            artifactDescriptor.setName(coordinates.getName());
+            artifactDescriptor.setVersion(coordinates.getVersion());
+            artifactDescriptor.setClassifier(coordinates.getClassifier());
+            artifactDescriptor.setType(coordinates.getType());
+        }
     }
 
     /**
@@ -77,7 +68,7 @@ public final class MavenArtifactHelper {
 
     /**
      * Determines if the given {@link Coordinates} represent a snapshot.
-     * 
+     *
      * @param coordinates
      *            The coordinates.
      * @return <code>true</code> if the {@link Coordinates} represent a snapshot.
@@ -89,11 +80,11 @@ public final class MavenArtifactHelper {
 
     /**
      * Determine the base version of given {@link Coordinates}.
-     * 
+     *
      * For releases the base version is the given version. If a snapshot version
      * contains a repository timestamp suffix then it will be replaced by
      * {@link #SNAPSHOT}.
-     * 
+     *
      * @param coordinates
      *            The coordinates.
      * @return The base version.

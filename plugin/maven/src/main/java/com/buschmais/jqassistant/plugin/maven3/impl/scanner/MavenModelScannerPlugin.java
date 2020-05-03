@@ -1,7 +1,12 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -12,17 +17,73 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
-import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.DependencyCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ModelCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ParentCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.PluginCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.model.BaseProfileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.ConfigurableDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependentDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.PluginDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.PomDeclaresDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDeclaresDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileManagesDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenRepositoryResolver;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
-import org.apache.maven.model.*;
+import org.apache.maven.model.Activation;
+import org.apache.maven.model.ActivationFile;
+import org.apache.maven.model.ActivationOS;
+import org.apache.maven.model.ActivationProperty;
+import org.apache.maven.model.BuildBase;
+import org.apache.maven.model.Contributor;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Developer;
+import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.License;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.ModelBase;
+import org.apache.maven.model.Organization;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.PluginManagement;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.Repository;
+import org.apache.maven.model.RepositoryPolicy;
+import org.apache.maven.model.Scm;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Scans Maven model instances.
@@ -283,8 +344,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             List<Dependency> dependencies, Class<D> dependsOnType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
         List<MavenDependencyDescriptor> dependencyDescriptors = new ArrayList<>(dependencies.size());
+        // initially collect all artifact descriptors (avoid write flushes to datastore)
+        Map<Dependency, MavenArtifactDescriptor> mavenArtifactDescriptors = dependencies.stream()
+                .collect(toMap(dependency -> dependency, dependency -> getMavenArtifactDescriptor(dependency, scannerContext)));
         for (Dependency dependency : dependencies) {
-            MavenArtifactDescriptor dependencyArtifactDescriptor = getMavenArtifactDescriptor(dependency, scannerContext);
+            MavenArtifactDescriptor dependencyArtifactDescriptor = mavenArtifactDescriptors.get(dependency);
             // Deprecated graph structure
             D dependsOnDescriptor = store.create(dependent, dependsOnType, dependencyArtifactDescriptor);
             dependsOnDescriptor.setOptional(dependency.isOptional());

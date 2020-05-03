@@ -26,7 +26,6 @@ public class MavenArtifactResolver implements ArtifactResolver {
             if (artifactDescriptor == null) {
                 artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, key);
                 MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
-                MavenArtifactHelper.setId(artifactDescriptor, coordinates);
             }
             return artifactDescriptor;
         });
