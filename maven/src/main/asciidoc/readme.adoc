@@ -103,6 +103,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <uri>file:target/jqassistant/store</uri>
                                 <username></username>
                                 <password></password>
+                                <encryption></encryption>
+                                <trustStrategy></trustStrategy>
+                                <trustCertificate></trustCertificate>
                                 <embedded>
                                   <listenAddress>localhost</listenAddress>
                                   <httpPort>7474</httpPort>
@@ -395,14 +398,20 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 [[store]]
 ===== store
 * specifies the configuration of the database to use
-* uri
+* uri (-Djqassistant.store.uri)
 ** URI of the database, supported URI schemes are
 ** 'file' for embedded databases, e.g. 'file:target/mystore'
-** 'bolt' (experimental) for connecting to a running Neo4j instance (3.x+), e.g. 'bolt://localhost:7687'
-* username
-** username ('bolt' connections only)
-* password
-** password ('bolt' connections only)
+** 'bolt' for connecting to a running Neo4j instance (3.x+), e.g. 'bolt://localhost:7687'
+* username (-Djqassistant.store.username)
+** the username 'bolt' connections
+* password (-Djqassistant.store.password)
+** the password for 'bolt' connections
+* encryption (-Djqassistant.store.encryption)
+** the encryption level for 'bolt' connections: `false` (default) or `true`
+* trustStrategy (-Djqassistant.store.trustStrategy)
+** the trust strategy for  'bolt' connections: `trustAllCertificates` (default), `trustCustomCaSignedCertificates` or `trustSystemCaSignedCertificates`
+* trustCertificate (-Djqassistant.store.trustCertificate)
+** the file containing the custom CA certificate for trust strategy `trustCustomCaSignedCertificates`
 * default: use embedded database at 'file:{rootModule}/target/jqassistant/store'
 * <<embedded>>
 

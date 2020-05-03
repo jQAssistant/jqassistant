@@ -4,7 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -16,7 +22,6 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
-import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
@@ -32,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
 
 import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
+import static com.buschmais.jqassistant.core.shared.option.OptionHelper.coalesce;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -57,6 +63,42 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "jqassistant.store.directory")
     protected File storeDirectory;
+
+    /**
+     * The store url.
+     */
+    @Parameter(property = "jqassistant.store.uri")
+    protected URI storeUri;
+
+    /**
+     * The store user name.
+     */
+    @Parameter(property = "jqassistant.store.username")
+    protected String storeUserName;
+
+    /**
+     * The store password.
+     */
+    @Parameter(property = "jqassistant.store.password")
+    protected String storePassword;
+
+    /**
+     * The store encryption.
+     */
+    @Parameter(property = "jqassistant.store.encryption")
+    protected String storeEncryption;
+
+    /**
+     * The store trust strategy.
+     */
+    @Parameter(property = "jqassistant.store.trustStragegy")
+    protected String storeTrustStrategy;
+
+    /**
+     * The store trust certificate.
+     */
+    @Parameter(property = "jqassistant.store.trustCertificate")
+    protected String storeTrustCertificate;
 
     /**
      * The store configuration.
@@ -429,19 +471,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
-        if (store.getUri() == null) {
-            File storeDirectory = OptionHelper.selectValue(new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY), this.storeDirectory);
-            storeDirectory.getParentFile().mkdirs();
-            URI uri = new File(storeDirectory, "/").toURI();
-            builder.uri(uri);
-        } else {
-            builder.uri(store.getUri());
-            builder.username(store.getUsername());
-            builder.password(store.getPassword());
-            builder.encryption(store.getEncryption());
-            builder.trustStrategy(store.getTrustStrategy());
-            builder.trustCertificate(store.getTrustCertificate());
-        }
+        File storeDirectory = coalesce(this.storeDirectory, new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY));
+        builder.uri(coalesce(storeUri, store.getUri(), new File(storeDirectory, "/").toURI()));
+        builder.username(coalesce(storeUserName, store.getUsername()));
+        builder.password(coalesce(storePassword, store.getPassword()));
+        builder.encryption(coalesce(storeEncryption, store.getEncryption()));
+        builder.trustStrategy(coalesce(storeTrustStrategy, store.getTrustStrategy()));
+        builder.trustCertificate(coalesce(storeTrustCertificate, store.getTrustCertificate()));
+
         builder.properties(store.getProperties());
         builder.embedded(getEmbeddedNeo4jConfiguration());
         StoreConfiguration storeConfiguration = builder.build();
@@ -456,9 +493,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
         EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
         builder.connectorEnabled(embedded.isConnectorEnabled() || isConnectorRequired());
-        builder.listenAddress(OptionHelper.selectValue(embedded.getListenAddress(), embeddedListenAddress));
-        builder.boltPort(OptionHelper.selectValue(embedded.getBoltPort(), embeddedBoltPort));
-        builder.httpPort(OptionHelper.selectValue(embedded.getHttpPort(), embeddedHttpPort));
+        builder.listenAddress(coalesce(embeddedListenAddress, embedded.getListenAddress()));
+        builder.boltPort(coalesce(embeddedBoltPort, embedded.getBoltPort()));
+        builder.httpPort(coalesce(embeddedHttpPort, embedded.getHttpPort()));
         return builder.build();
     }
 
