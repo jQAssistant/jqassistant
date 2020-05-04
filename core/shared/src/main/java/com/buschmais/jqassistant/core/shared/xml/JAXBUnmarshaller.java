@@ -115,11 +115,8 @@ public class JAXBUnmarshaller<X> {
 
         @Override
         public String getNamespaceURI() {
-            return map(super.getNamespaceURI());
+            return targetNamespace != null ? targetNamespace : super.getNamespaceURI();
         }
 
-        private String map(String documentNamespace) {
-            return targetNamespace != null ? targetNamespace : documentNamespace;
-        }
     }
 }
