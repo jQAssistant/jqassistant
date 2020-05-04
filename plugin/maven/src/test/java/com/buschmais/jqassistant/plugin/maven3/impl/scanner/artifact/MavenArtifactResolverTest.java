@@ -21,7 +21,12 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class MavenArtifactResolverTest {
@@ -50,7 +55,7 @@ public class MavenArtifactResolverTest {
         MavenArtifactDescriptor artifactDescriptor = resolver.resolve(new MavenArtifactCoordinates(artifact, false), scannerContext);
 
         verify(store).create(MavenArtifactDescriptor.class, "group:artifact:jar:classifier:1.0.0");
-        verify(artifactDescriptor).setFullQualifiedName("group:artifact:jar:classifier:1.0.0");
+        verify(artifactDescriptor, never()).setFullQualifiedName("group:artifact:jar:classifier:1.0.0");
         verify(artifactDescriptor).setGroup("group");
         verify(artifactDescriptor).setName("artifact");
         verify(artifactDescriptor).setVersion("1.0.0");
