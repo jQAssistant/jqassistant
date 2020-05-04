@@ -32,7 +32,6 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
     public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fileName = getFileName(coordinates);
         MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
-        // TODO do not set coordinates on existing descriptors
         MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
         return mavenArtifactDescriptor;
     }

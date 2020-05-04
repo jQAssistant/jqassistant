@@ -27,6 +27,7 @@ public final class MavenArtifactHelper {
      *            The coordinates.
      */
     public static void setCoordinates(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
+        artifactDescriptor.setFullQualifiedName(getId(coordinates));
         artifactDescriptor.setGroup(coordinates.getGroup());
         artifactDescriptor.setName(coordinates.getName());
         artifactDescriptor.setVersion(coordinates.getVersion());
