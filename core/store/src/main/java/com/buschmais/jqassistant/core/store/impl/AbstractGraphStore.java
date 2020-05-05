@@ -8,8 +8,12 @@ import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.xo.api.*;
+import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.ResultIterable;
+import com.buschmais.xo.api.ValidationMode;
+import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
@@ -44,7 +48,8 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start() {
         XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(storePluginRepository.getDescriptorTypes())
-                .validationMode(ValidationMode.NONE).mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+                .validationMode(ValidationMode.NONE).clearAfterCompletion(false)
+                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
         configure(builder, storeConfiguration);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
         initialize(xoManagerFactory);
