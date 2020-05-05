@@ -16,7 +16,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 public class MavenArtifactResolver implements ArtifactResolver {
 
-    private Cache<String, MavenArtifactDescriptor> cache = Caffeine.newBuilder().maximumSize(256).build();
+    private Cache<String, MavenArtifactDescriptor> cache = Caffeine.newBuilder().softValues().build();
 
     @Override
     public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {

@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import java.util.Collections;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -24,9 +23,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
+import static java.util.Collections.emptyMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class MavenModelScannerPluginTest {
@@ -52,10 +54,10 @@ public class MavenModelScannerPluginTest {
     public void setUp() {
         doReturn(context).when(scanner).getContext();
         doReturn(store).when(context).getStore();
-        doReturn(artifactResolver).when(context).peekOrDefault(eq(ArtifactResolver.class), any(ArtifactResolver.class));
+        doReturn(artifactResolver).when(context).peek(ArtifactResolver.class);
         plugin = new MavenModelScannerPlugin();
         plugin.initialize();
-        plugin.configure(context, Collections.emptyMap());
+        plugin.configure(context, emptyMap());
     }
 
     @AfterEach

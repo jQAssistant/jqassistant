@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -95,11 +96,14 @@ import static java.util.stream.Collectors.toMap;
  */
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
 
-    private ArtifactResolver defaultArtifactResolver;
+    /**
+     * Allow re-use of {@link MavenArtifactResolver} per store (for caching).
+     */
+    private Map<Store, ArtifactResolver> artifactResolvers = new WeakHashMap<>();
 
     @Override
     protected void configure() {
-        defaultArtifactResolver = new MavenArtifactResolver();
+        getScannerContext().push(ArtifactResolver.class, artifactResolvers.computeIfAbsent(getScannerContext().getStore(), s -> new MavenArtifactResolver()));
     }
 
     @Override
@@ -217,26 +221,9 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         pomDescriptor.setVersion(model.getVersion());
         pomDescriptor.setUrl(model.getUrl());
         Coordinates artifactCoordinates = new ModelCoordinates(model);
-        MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(artifactCoordinates, context);
+        MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
         pomDescriptor.getDescribes().add(artifact);
         return pomDescriptor;
-    }
-
-    /**
-     * Create the fully qualified name of the model (using packaging type "pom").
-     *
-     * @param model
-     *            The model.
-     * @return The fully qualified name.
-     */
-    private String getFullyQualifiedName(Model model) {
-        StringBuilder id = new StringBuilder();
-        id.append((model.getGroupId() == null) ? "[inherited]" : model.getGroupId());
-        id.append(":");
-        id.append(model.getArtifactId());
-        id.append(":pom:");
-        id.append((model.getVersion() == null) ? "[inherited]" : model.getVersion());
-        return id.toString();
     }
 
     /**
@@ -323,7 +310,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         dependentDescriptor.getDeclaresDependencies()
                 .addAll(getDependencies(dependentDescriptor, model.getDependencies(), declaresDependencyType, scannerContext));
         dependentDescriptor.getManagesDependencies()
-            .addAll(addManagedDependencies(dependentDescriptor, model.getDependencyManagement(), scannerContext, managesDependencyType));
+                .addAll(addManagedDependencies(dependentDescriptor, model.getDependencyManagement(), scannerContext, managesDependencyType));
     }
 
     /**
@@ -488,7 +475,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<MavenPluginDescriptor> pluginDescriptors = new ArrayList<>();
         for (Plugin plugin : plugins) {
             MavenPluginDescriptor mavenPluginDescriptor = store.create(MavenPluginDescriptor.class);
-            MavenArtifactDescriptor artifactDescriptor = getArtifactResolver(context).resolve(new PluginCoordinates(plugin), context);
+            MavenArtifactDescriptor artifactDescriptor = context.peek(ArtifactResolver.class).resolve(new PluginCoordinates(plugin), context);
             mavenPluginDescriptor.setArtifact(artifactDescriptor);
             mavenPluginDescriptor.setInherited(plugin.isInherited());
             mavenPluginDescriptor.getDeclaresDependencies()
@@ -498,19 +485,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             pluginDescriptors.add(mavenPluginDescriptor);
         }
         return pluginDescriptors;
-    }
-
-    /**
-     * Acquires the artifact resolver from the scanner context.
-     *
-     * @param context
-     *            The scanner context.
-     *
-     * @return The artifact resolver from the context or the default one if none is
-     *         available.
-     */
-    private ArtifactResolver getArtifactResolver(ScannerContext context) {
-        return context.peekOrDefault(ArtifactResolver.class, defaultArtifactResolver);
     }
 
     /**
@@ -545,7 +519,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     private void addParent(MavenPomDescriptor pomDescriptor, Model model, ScannerContext context) {
         Parent parent = model.getParent();
         if (null != parent) {
-            ArtifactResolver resolver = getArtifactResolver(context);
+            ArtifactResolver resolver = context.peek(ArtifactResolver.class);
             MavenArtifactDescriptor parentDescriptor = resolver.resolve(new ParentCoordinates(parent), context);
             pomDescriptor.setParent(parentDescriptor);
         }
@@ -615,7 +589,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             addModules(mavenProfileDescriptor, profile.getModules(), store);
             addPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
             addManagedPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
-            addDependencies(mavenProfileDescriptor, ProfileDeclaresDependencyDescriptor.class, ProfileManagesDependencyDescriptor.class, profile, scannerContext);
+            addDependencies(mavenProfileDescriptor, ProfileDeclaresDependencyDescriptor.class, ProfileManagesDependencyDescriptor.class, profile,
+                    scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
             addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
         }
@@ -677,7 +652,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      */
     private MavenArtifactDescriptor getMavenArtifactDescriptor(Dependency dependency, ScannerContext context) {
         DependencyCoordinates coordinates = new DependencyCoordinates(dependency);
-        return getArtifactResolver(context).resolve(coordinates, context);
+        return context.peek(ArtifactResolver.class).resolve(coordinates, context);
     }
 
     /**
