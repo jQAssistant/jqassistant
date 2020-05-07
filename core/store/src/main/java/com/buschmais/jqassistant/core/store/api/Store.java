@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.api;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -246,4 +247,20 @@ public interface Store {
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
 
+    /**
+     * Get or create a cached value.
+     *
+     * @param cacheKey
+     *            The cache key, identifying the type of cached descriptors.
+     * @param key
+     *            The key.
+     * @param function
+     *            The function to be used for computing the cached value.
+     * @param <K>
+     *            The key type.
+     * @param <V>
+     *            The value type.
+     * @return The value.
+     */
+    <K, V extends Descriptor> V get(String cacheKey, K key, Function<? super K, ? extends V> function);
 }

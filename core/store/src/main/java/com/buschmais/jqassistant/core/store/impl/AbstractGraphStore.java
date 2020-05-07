@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -17,6 +18,8 @@ import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +33,7 @@ public abstract class AbstractGraphStore implements Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
 
-    private static final int BATCH_LIMIT = 8192;
+    private Map<String, Cache<?, ? extends Descriptor>> caches = new HashMap<>();
 
     protected final StoreConfiguration storeConfiguration;
 
@@ -196,24 +199,30 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
-        long nodes;
-        long relations;
-        long totalNodes = 0;
-        long totalRelations = 0;
-        Map<String, Object> params = new HashMap<>();
-        params.put("limit", BATCH_LIMIT);
+        long totalRelations = reset("MATCH ()-[r]-() WITH r LIMIT 50000 DELETE r RETURN count(r) as relations", "relations");
+        long totalNodes = reset("MATCH (n) WITH n LIMIT 10000 DELETE n RETURN count(n) as nodes", "nodes");
+        LOGGER.info("Reset finished (removed " + totalNodes + " nodes, " + totalRelations + " relations).");
+    }
+
+    private long reset(String query, String countColumn) {
+        long totalCount = 0;
+        long count;
         do {
             beginTransaction();
-            Result.CompositeRowObject result = executeQuery(
-                    "MATCH (n) OPTIONAL MATCH (n)-[r]-() WITH n, count(r) as rels LIMIT $limit DETACH DELETE n RETURN count(n) as nodes, sum(rels) as relations",
-                    params).getSingleResult();
-            nodes = result.get("nodes", Long.class);
-            relations = result.get("relations", Long.class);
+            Result.CompositeRowObject result = executeQuery(query).getSingleResult();
+            count = result.get(countColumn, Long.class);
             commitTransaction();
-            totalNodes += nodes;
-            totalRelations += relations;
-        } while (nodes == BATCH_LIMIT);
-        LOGGER.info("Reset finished (removed " + totalNodes + " nodes, " + totalRelations + " relations).");
+        } while (count > 0);
+        return totalCount;
+    }
+
+    @Override
+    public <K, V extends Descriptor> V get(String cacheKey, K key, Function<? super K, ? extends V> function) {
+        return this.<K, V> getCache(cacheKey).get(key, function);
+    }
+
+    private <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey) {
+        return (Cache<K, V>) caches.computeIfAbsent(cacheKey, cKey -> Caffeine.newBuilder().softValues().build());
     }
 
     /**
