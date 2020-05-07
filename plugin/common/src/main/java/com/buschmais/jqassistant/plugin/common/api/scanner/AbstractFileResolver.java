@@ -6,9 +6,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
 /**
  * Abstract base class for {@link FileResolver}s.
  * <p>
@@ -16,7 +13,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  */
 public abstract class AbstractFileResolver implements FileResolver {
 
-    private Cache<String, FileDescriptor> cache = Caffeine.newBuilder().softValues().build();
+    private final String CACHE_KEY = AbstractFileResolver.class.getName();
 
     @Override
     public <D extends FileDescriptor> D require(String requiredPath, Class<D> type, ScannerContext context) {
@@ -67,7 +64,7 @@ public abstract class AbstractFileResolver implements FileResolver {
      * @return The {@link FileDescriptor}.
      */
     protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> resolveExisting, ScannerContext context) {
-        FileDescriptor descriptor = cache.get(path, p -> {
+        FileDescriptor descriptor = context.getStore().get(CACHE_KEY, path, p -> {
             FileDescriptor fileDescriptor = resolveExisting.apply(p);
             if (fileDescriptor != null) {
                 return fileDescriptor;
