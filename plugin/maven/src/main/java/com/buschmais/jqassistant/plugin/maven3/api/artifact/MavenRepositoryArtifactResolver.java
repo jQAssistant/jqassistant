@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 
+    private static final String CACHE_KEY = MavenRepositoryArtifactResolver.class.getName();
+
     private final String repositoryRoot;
 
     private final FileResolver fileResolver;
@@ -30,10 +32,13 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 
     @Override
     public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
-        String fileName = getFileName(coordinates);
-        MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
-        MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
-        return mavenArtifactDescriptor;
+        String fqn = MavenArtifactHelper.getId(coordinates);
+        return scannerContext.getStore().get(CACHE_KEY, fqn, key -> {
+            String fileName = getFileName(coordinates);
+            MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
+            MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
+            return mavenArtifactDescriptor;
+        });
     }
 
     private String getFileName(Coordinates coordinates) {

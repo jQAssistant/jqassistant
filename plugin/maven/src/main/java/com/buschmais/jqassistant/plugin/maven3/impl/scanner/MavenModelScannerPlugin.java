@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -96,14 +95,9 @@ import static java.util.stream.Collectors.toMap;
  */
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
 
-    /**
-     * Allow re-use of {@link MavenArtifactResolver} per store (for caching).
-     */
-    private Map<Store, ArtifactResolver> artifactResolvers = new WeakHashMap<>();
-
     @Override
     protected void configure() {
-        getScannerContext().push(ArtifactResolver.class, artifactResolvers.computeIfAbsent(getScannerContext().getStore(), s -> new MavenArtifactResolver()));
+        getScannerContext().push(ArtifactResolver.class, new MavenArtifactResolver());
     }
 
     @Override

@@ -11,17 +11,14 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
 public class MavenArtifactResolver implements ArtifactResolver {
 
-    private Cache<String, MavenArtifactDescriptor> cache = Caffeine.newBuilder().softValues().build();
+    private static final String CACHE_KEY = MavenArtifactResolver.class.getName();
 
     @Override
     public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
-        return cache.get(fqn, key -> {
+        return scannerContext.getStore().get(CACHE_KEY, fqn, key -> {
             MavenArtifactDescriptor artifactDescriptor = find(key, scannerContext);
             if (artifactDescriptor == null) {
                 artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, key);
