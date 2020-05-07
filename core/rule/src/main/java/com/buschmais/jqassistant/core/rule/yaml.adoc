@@ -57,7 +57,7 @@ definitions and `groups` can take a sequence with group definitions.
 
 |===
 
-.A rule document with one concept, one constraint and no group definitions
+.A rule document with one concept, one constraint and one group definition
 [source,yaml]
 ----
 concepts:
@@ -94,19 +94,14 @@ constraints:
         controller AS Controller, collect(other) AS InvalidDependencies
 
 groups:
+  - id: spring
+    includedConstraints:
+      - spring-component:ControllerMustOnlyDependOnServicesRepositories
+    includedConcepts:
+      - spring-boot:Application
 ----
 
-:rule-type: concept
-:rule-type-plural: concept
-:rule-type-default-severity: minor
-:rule-section-title: Concepts
-
-include::yaml-concept.adoc[]
-include::yaml-constraint.adoc[]
-
-:rule-type!:
-:rule-type-plural!:
-
+include::yaml-concepts-and-constraints.adoc[]
 include::yaml-groups.adoc[]
 include::yaml-examples.adoc[]
 
