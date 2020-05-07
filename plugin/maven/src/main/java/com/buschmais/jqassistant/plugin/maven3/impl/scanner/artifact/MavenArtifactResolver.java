@@ -20,10 +20,7 @@ public class MavenArtifactResolver implements ArtifactResolver {
         String fqn = MavenArtifactHelper.getId(coordinates);
         return scannerContext.getStore().get(CACHE_KEY, fqn, key -> {
             MavenArtifactDescriptor artifactDescriptor = find(key, scannerContext);
-            if (artifactDescriptor == null) {
-                artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, key);
-                MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
-            }
+            MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
             return artifactDescriptor;
         });
     }
@@ -31,7 +28,7 @@ public class MavenArtifactResolver implements ArtifactResolver {
     private MavenArtifactDescriptor find(String fqn, ScannerContext scannerContext) {
         Map<String, Object> params = new HashMap<>();
         params.put("fqn", fqn);
-        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MATCH (a:Maven:Artifact) WHERE a.fqn=$fqn RETURN a", params);
+        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MERGE (a:Maven:Artifact{fqn:$fqn}) RETURN a", params);
         return result.hasResult() ? result.getSingleResult().get("a", MavenArtifactDescriptor.class) : null;
     }
 }

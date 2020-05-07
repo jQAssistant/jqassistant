@@ -1,7 +1,13 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -12,7 +18,26 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 import org.junit.Assert;
@@ -22,7 +47,12 @@ import org.mockito.Mockito;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -72,26 +102,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(pomDescriptors, hasSize(1));
         MavenPomDescriptor pomDescriptor = pomDescriptors.get(0);
         assertThat(pomDescriptor.getUrl(), equalTo("https://github.com/buschmais/jqassistant"));
-        store.commitTransaction();
-    }
-
-
-    /**
-     * Verifies that dependencies between two artifacts defined by pom.xml files
-     * are resolved to one node.
-     *
-     */
-    @Test
-    public void pomDependencies() {
-        scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
-        scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
-        store.beginTransaction();
-        PomDeclaresDependencyDescriptor dependsOnDescriptor = store
-                .executeQuery("MATCH (:Maven:Pom:Xml:File{artifactId:'test2'})-[d:DECLARES_DEPENDENCY]->(:Maven:Artifact{name:'test1'}) RETURN d")
-                .getSingleResult().get("d", PomDeclaresDependencyDescriptor.class);
-        assertThat(dependsOnDescriptor, notNullValue());
-        assertThat(dependsOnDescriptor.isOptional(), equalTo(true));
-        assertThat(dependsOnDescriptor.getScope(), equalTo("runtime"));
         store.commitTransaction();
     }
 

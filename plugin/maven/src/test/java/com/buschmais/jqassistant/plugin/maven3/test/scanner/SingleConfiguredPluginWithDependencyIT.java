@@ -55,7 +55,7 @@ public class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT
     @Test
     public void dependencyOfPluginCanBeFound() {
         List<MavenArtifactDescriptor> dependencies =
-            query("MATCH (p:Maven:Plugin)-[:DECLARES_DEPENDENCY]->(d:Maven:Artifact) RETURN d").getColumn("d");
+            query("MATCH (p:Maven:Plugin)-[:DECLARES_DEPENDENCY]->(:Dependency)-[:TO_ARTIFACT]->(d:Maven:Artifact) RETURN d").getColumn("d");
 
         assertThat(dependencies, hasSize(1));
 

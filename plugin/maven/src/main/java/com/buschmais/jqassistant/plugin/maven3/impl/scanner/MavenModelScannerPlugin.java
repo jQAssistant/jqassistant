@@ -330,10 +330,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
                 .collect(toMap(dependency -> dependency, dependency -> getMavenArtifactDescriptor(dependency, scannerContext)));
         for (Dependency dependency : dependencies) {
             MavenArtifactDescriptor dependencyArtifactDescriptor = mavenArtifactDescriptors.get(dependency);
-            // Deprecated graph structure
-            D dependsOnDescriptor = store.create(dependent, dependsOnType, dependencyArtifactDescriptor);
-            dependsOnDescriptor.setOptional(dependency.isOptional());
-            dependsOnDescriptor.setScope(dependency.getScope());
             // New graph structure supporting exclusions
             MavenDependencyDescriptor dependencyDescriptor = store.create(MavenDependencyDescriptor.class);
             dependencyDescriptor.setToArtifact(dependencyArtifactDescriptor);
