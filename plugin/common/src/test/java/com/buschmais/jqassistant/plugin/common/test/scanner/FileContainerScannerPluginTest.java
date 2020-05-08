@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -33,7 +35,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FileContainerScannerPluginTest {
@@ -52,6 +57,8 @@ public class FileContainerScannerPluginTest {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         when(store.create(FileDescriptor.class)).thenReturn(mock(FileDescriptor.class));
+        doAnswer((Answer<FileDescriptor>) invocation -> ((Function<String, FileDescriptor>) invocation.getArgument(2)).apply(invocation.getArgument(1)))
+                .when(store).get(anyString(), anyString(), any(Function.class));
         Deque<FileResolver> fileResolvers = new LinkedList<>();
 
         Mockito.doAnswer(invocation -> {
@@ -62,16 +69,15 @@ public class FileContainerScannerPluginTest {
 
         when(context.peek(FileResolver.class)).then(invocation -> fileResolvers.peek());
 
-        when(scanner.scan(any(FileResource.class), anyString(), eq(DefaultScope.NONE))).thenAnswer(
-            invocation -> {
-                String path = (String) invocation.getArguments()[1];
-                if ("/reject".equals(path)) {
-                    return null;
-                }
-                FileResolver fileResolver = context.peek(FileResolver.class);
-                fileResolver.require("/D", FileDescriptor.class, context);
-                return fileResolver.match(path, FileDescriptor.class, context);
-            });
+        when(scanner.scan(any(FileResource.class), anyString(), eq(DefaultScope.NONE))).thenAnswer(invocation -> {
+            String path = (String) invocation.getArguments()[1];
+            if ("/reject".equals(path)) {
+                return null;
+            }
+            FileResolver fileResolver = context.peek(FileResolver.class);
+            fileResolver.require("/D", FileDescriptor.class, context);
+            return fileResolver.match(path, FileDescriptor.class, context);
+        });
     }
 
     @Test
@@ -102,8 +108,7 @@ public class FileContainerScannerPluginTest {
     @Test
     public void requires() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
-        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/",
-                                                                     DefaultScope.NONE, scanner);
+        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/", DefaultScope.NONE, scanner);
         assertThat(directoryDescriptor, notNullValue());
 
         verify(directoryDescriptor).setFileName("/");
@@ -121,8 +126,7 @@ public class FileContainerScannerPluginTest {
         assertThat(requires, equalTo(directoryDescriptor.getRequires()));
     }
 
-    private static class TestContainerScannerPlugin
-        extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
+    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
 
         private List<FileDescriptor> contains = new ArrayList<>();
 
