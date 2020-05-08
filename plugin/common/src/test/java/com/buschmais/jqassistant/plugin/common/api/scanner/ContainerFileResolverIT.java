@@ -15,7 +15,7 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
         store.beginTransaction();
         DirectoryDescriptor container = store.create(DirectoryDescriptor.class);
         container.setFileName("/");
-        ContainerFileResolver resolver = new ContainerFileResolver(container);
+        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), container);
 
         FileDescriptor required1 = resolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(required1.getFileName()).isEqualTo("/file");

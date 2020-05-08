@@ -19,14 +19,20 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContainerFileResolver.class);
 
-    private Map<String, FileDescriptor> requiredFiles;
-
-    private Map<String, FileDescriptor> containedFiles;
+    private static final String CACHE_KEY = ContainerFileResolver.class.getName();
 
     private FileContainerDescriptor fileContainerDescriptor;
 
-    public ContainerFileResolver(FileContainerDescriptor fileContainerDescriptor) {
+    private final ScannerContext scannerContext;
+
+    private final Map<String, FileDescriptor> requiredFiles;
+
+    private final Map<String, FileDescriptor> containedFiles;
+
+    public ContainerFileResolver(ScannerContext scannerContext, FileContainerDescriptor fileContainerDescriptor) {
+        super(CACHE_KEY);
         this.fileContainerDescriptor = fileContainerDescriptor;
+        this.scannerContext = scannerContext;
         this.containedFiles = getCache(fileContainerDescriptor.getContains());
         this.requiredFiles = getCache(fileContainerDescriptor.getRequires());
     }
@@ -58,6 +64,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
         createHierarchy();
         sync(fileContainerDescriptor.getRequires(), requiredFiles);
         sync(fileContainerDescriptor.getContains(), containedFiles);
+        scannerContext.getStore().invalidateCache(CACHE_KEY);
     }
 
     /**

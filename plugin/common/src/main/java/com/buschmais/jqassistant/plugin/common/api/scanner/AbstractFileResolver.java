@@ -13,7 +13,17 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
  */
 public abstract class AbstractFileResolver implements FileResolver {
 
-    private final String CACHE_KEY = AbstractFileResolver.class.getName();
+    private final String cacheKey;
+
+    /**
+     * Constructor.
+     *
+     * @param cacheKey
+     *            The cache key to use for the store.
+     */
+    protected AbstractFileResolver(String cacheKey) {
+        this.cacheKey = cacheKey;
+    }
 
     @Override
     public <D extends FileDescriptor> D require(String requiredPath, Class<D> type, ScannerContext context) {
@@ -64,7 +74,7 @@ public abstract class AbstractFileResolver implements FileResolver {
      * @return The {@link FileDescriptor}.
      */
     protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> resolveExisting, ScannerContext context) {
-        FileDescriptor descriptor = context.getStore().get(CACHE_KEY, path, p -> {
+        FileDescriptor descriptor = context.getStore().<String, FileDescriptor> getCache(cacheKey).get(path, p -> {
             FileDescriptor fileDescriptor = resolveExisting.apply(p);
             if (fileDescriptor != null) {
                 return fileDescriptor;

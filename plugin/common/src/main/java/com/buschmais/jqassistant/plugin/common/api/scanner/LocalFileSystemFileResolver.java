@@ -13,6 +13,10 @@ import com.buschmais.xo.api.Query.Result;
  */
 public class LocalFileSystemFileResolver extends AbstractFileResolver {
 
+    public LocalFileSystemFileResolver() {
+        super(LocalFileSystemFileResolver.class.getName());
+    }
+
     @Override
     public <D extends FileDescriptor> D require(String requiredPath, String containedPath, Class<D> type, ScannerContext context) {
         return resolve(requiredPath, type, context);

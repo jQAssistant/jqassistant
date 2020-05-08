@@ -40,8 +40,8 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             containerDescriptor.setFileName(containerPath);
         }
         LOGGER.info("Entering {}", containerPath);
-        ContainerFileResolver fileResolverStrategy = new ContainerFileResolver(containerDescriptor);
-        context.push(FileResolver.class, fileResolverStrategy);
+        ContainerFileResolver fileResolver = new ContainerFileResolver(scanner.getContext(), containerDescriptor);
+        context.push(FileResolver.class, fileResolver);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
@@ -52,7 +52,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     if (descriptor != null) {
-                        fileResolverStrategy.put(relativePath, descriptor);
+                        fileResolver.put(relativePath, descriptor);
                     }
                 }
             }
@@ -60,8 +60,8 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             leaveContainer(container, containerDescriptor, scanner.getContext());
             context.pop(FileResolver.class);
         }
-        fileResolverStrategy.flush();
-        LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, fileResolverStrategy.size(), stopwatch.elapsed(MILLISECONDS));
+        fileResolver.flush();
+        LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, fileResolver.size(), stopwatch.elapsed(MILLISECONDS));
         return containerDescriptor;
     }
 

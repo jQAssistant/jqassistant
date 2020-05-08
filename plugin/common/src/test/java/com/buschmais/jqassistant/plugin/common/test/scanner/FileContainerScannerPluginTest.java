@@ -21,11 +21,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,16 +53,20 @@ public class FileContainerScannerPluginTest {
     @Mock
     private Store store;
 
+    @Mock
+    private Cache cache;
+
     @BeforeEach
     public void stub() {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         when(store.create(FileDescriptor.class)).thenReturn(mock(FileDescriptor.class));
-        doAnswer((Answer<FileDescriptor>) invocation -> ((Function<String, FileDescriptor>) invocation.getArgument(2)).apply(invocation.getArgument(1)))
-                .when(store).get(anyString(), anyString(), any(Function.class));
+        doReturn(cache).when(store).getCache(anyString());
+        doAnswer((Answer<FileDescriptor>) invocation -> ((Function<String, FileDescriptor>) invocation.getArgument(1)).apply(invocation.getArgument(0)))
+                .when(cache).get(anyString(), any(Function.class));
         Deque<FileResolver> fileResolvers = new LinkedList<>();
 
-        Mockito.doAnswer(invocation -> {
+        doAnswer(invocation -> {
             FileResolver resolver = (FileResolver) invocation.getArguments()[1];
             fileResolvers.push(resolver);
             return null;
