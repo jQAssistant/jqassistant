@@ -43,7 +43,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     * 
+     *
      * @param classes
      *            The classes.
      */
@@ -53,7 +53,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     * 
+     *
      * @param outerClass
      *            The outer classes.
      * @param innerClassName
@@ -66,7 +66,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Loads an inner class.
-     * 
+     *
      * @param outerClass
      *            The out class.
      * @param innerClassName
@@ -82,7 +82,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     * 
+     *
      * @param artifactId
      *            The id of the containing artifact.
      * @param classes
@@ -128,7 +128,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Scans the a directory.
-     * 
+     *
      * @param artifactId
      *            The artifact to use.
      * @param directory
@@ -146,7 +146,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Executes the given scan operation.
-     * 
+     *
      * @param artifactId
      *            The artifact id of the artifact to push on the context.
      * @param operation
@@ -159,17 +159,17 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         artifact.setFullQualifiedName(artifactId);
         context.push(JavaArtifactFileDescriptor.class, artifact);
-        ContainerFileResolver fileResolverStrategy = new ContainerFileResolver(artifact);
-        context.push(FileResolver.class, fileResolverStrategy);
+        ContainerFileResolver containerFileResolver = new ContainerFileResolver(scanner.getContext(), artifact);
+        context.push(FileResolver.class, containerFileResolver);
 
         List<? extends FileDescriptor> descriptors = execute(artifact, operation, scanner);
         for (FileDescriptor descriptor : descriptors) {
-            fileResolverStrategy.put(descriptor.getFileName(), descriptor);
+            containerFileResolver.put(descriptor.getFileName(), descriptor);
         }
 
         context.pop(JavaArtifactFileDescriptor.class);
         context.pop(FileResolver.class);
-        fileResolverStrategy.flush();
+        containerFileResolver.flush();
         store.commitTransaction();
         return descriptors;
     }
@@ -191,7 +191,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
         /**
          * Perform the scan.
-         * 
+         *
          * @param artifact
          *            The artifact.
          * @param scanner
