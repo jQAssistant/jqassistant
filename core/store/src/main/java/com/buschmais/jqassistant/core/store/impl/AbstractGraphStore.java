@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -217,12 +216,13 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public <K, V extends Descriptor> V get(String cacheKey, K key, Function<? super K, ? extends V> function) {
-        return this.<K, V> getCache(cacheKey).get(key, function);
+    public <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey) {
+        return (Cache<K, V>) caches.computeIfAbsent(cacheKey, key -> Caffeine.newBuilder().softValues().build());
     }
 
-    private <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey) {
-        return (Cache<K, V>) caches.computeIfAbsent(cacheKey, cKey -> Caffeine.newBuilder().softValues().build());
+    @Override
+    public void invalidateCache(String cacheKey) {
+        caches.remove(cacheKey);
     }
 
     /**

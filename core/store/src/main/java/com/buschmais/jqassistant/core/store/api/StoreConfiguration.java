@@ -5,8 +5,13 @@ import java.util.Properties;
 
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Builder.Default;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -27,7 +32,8 @@ public class StoreConfiguration {
 
     private String password;
 
-    private String encryption;
+    @Builder.Default
+    private String encryption = "false";
 
     private String trustStrategy;
 

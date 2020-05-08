@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.store.api;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -10,6 +9,8 @@ import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import com.buschmais.xo.api.XOManager;
+
+import com.github.benmanes.caffeine.cache.Cache;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -248,19 +249,23 @@ public interface Store {
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
 
     /**
-     * Get or create a cached value.
+     * Get or create a {@link Cache} for the given key.
      *
      * @param cacheKey
-     *            The cache key, identifying the type of cached descriptors.
-     * @param key
-     *            The key.
-     * @param function
-     *            The function to be used for computing the cached value.
+     *            The cache key.
      * @param <K>
      *            The key type.
      * @param <V>
      *            The value type.
-     * @return The value.
+     * @return The {@link Cache}.
      */
-    <K, V extends Descriptor> V get(String cacheKey, K key, Function<? super K, ? extends V> function);
+    <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey);
+
+    /**
+     * Invalidate the {@link Cache} for the given key.
+     *
+     * @param cacheKey
+     *            The cache key.
+     */
+    void invalidateCache(String cacheKey);
 }
