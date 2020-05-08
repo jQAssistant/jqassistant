@@ -1,5 +1,4 @@
 .DS_Store
-target
 /.idea
 /.jqa-database
 *~
@@ -14,3 +13,8 @@ pom.xml.updatetorelease
 
 # Ignore temporary shell scripts used to script small tasks
 *.sh.ignore
+
+# Maven related files and directories
+target
+/.mvn
+
