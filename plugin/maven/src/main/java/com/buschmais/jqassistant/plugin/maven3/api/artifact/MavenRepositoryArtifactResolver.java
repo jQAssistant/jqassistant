@@ -33,7 +33,7 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
     @Override
     public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
-        return scannerContext.getStore().get(CACHE_KEY, fqn, key -> {
+        return scannerContext.getStore().<String, MavenArtifactFileDescriptor> getCache(CACHE_KEY).get(fqn, key -> {
             String fileName = getFileName(coordinates);
             MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
             MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);

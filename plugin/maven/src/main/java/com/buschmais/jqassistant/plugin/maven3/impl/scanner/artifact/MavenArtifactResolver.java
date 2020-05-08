@@ -18,7 +18,7 @@ public class MavenArtifactResolver implements ArtifactResolver {
     @Override
     public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
-        return scannerContext.getStore().get(CACHE_KEY, fqn, key -> {
+        return scannerContext.getStore().<String, MavenArtifactDescriptor> getCache(CACHE_KEY).get(fqn, key -> {
             MavenArtifactDescriptor artifactDescriptor = find(key, scannerContext);
             MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
             return artifactDescriptor;

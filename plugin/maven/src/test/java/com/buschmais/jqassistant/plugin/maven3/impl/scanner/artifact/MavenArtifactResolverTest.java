@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordin
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.xo.api.Query;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -34,6 +35,9 @@ public class MavenArtifactResolverTest {
     @Mock
     private Store store;
 
+    @Mock
+    private Cache cache;
+
     private MavenArtifactResolver resolver = new MavenArtifactResolver();
 
     @Test
@@ -46,8 +50,9 @@ public class MavenArtifactResolverTest {
         doReturn(mock(MavenArtifactDescriptor.class)).when(singleResult).get("a", MavenArtifactDescriptor.class);
         doReturn(singleResult).when(result).getSingleResult();
         doReturn(result).when(store).executeQuery(anyString(), anyMap());
-        doAnswer((Answer<MavenArtifactDescriptor>) invocation -> ((Function<String, MavenArtifactDescriptor>) invocation.getArgument(2))
-                .apply(invocation.getArgument(1))).when(store).get(anyString(), anyString(), any(Function.class));
+        doReturn(cache).when(store).getCache(anyString());
+        doAnswer((Answer<MavenArtifactDescriptor>) invocation -> ((Function<String, MavenArtifactDescriptor>) invocation.getArgument(1))
+                .apply(invocation.getArgument(0))).when(cache).get(anyString(), any(Function.class));
 
         MavenArtifactDescriptor artifactDescriptor = resolver.resolve(new MavenArtifactCoordinates(artifact, false), scannerContext);
 
