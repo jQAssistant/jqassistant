@@ -26,7 +26,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_STORE_URI = "storeUri";
     protected static final String CMDLINE_OPTION_STORE_USERNAME = "storeUsername";
     protected static final String CMDLINE_OPTION_STORE_PASSWORD = "storePassword";
-    protected static final String CMDLINE_OPTION_STORE_ENCRYPTION = "storePassword";
+    protected static final String CMDLINE_OPTION_STORE_ENCRYPTION = "storeEncryption";
     protected static final String CMDLINE_OPTION_STORE_TRUST_STRATEGY = "storeTrustStrategy";
     protected static final String CMDLINE_OPTION_STORE_TRUST_CERITFICATE = "storeTrustCertificate";
     protected static final String CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS = "embeddedListenAddress";
@@ -71,8 +71,8 @@ public abstract class AbstractStoreTask extends AbstractTask {
             builder.username(getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
             builder.password(getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
             builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
-            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
-            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
+            builder.trustStrategy(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
+            builder.trustCertificate(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         } else {
             String directoryName = OptionHelper.coalesce(storeDirectory, DEFAULT_STORE_DIRECTORY);
             File directory = new File(directoryName);
@@ -112,7 +112,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
                 .create(CMDLINE_OPTION_STORE_USERNAME));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD).withDescription("The password for bolt connections.").hasArgs()
                 .create(CMDLINE_OPTION_STORE_PASSWORD));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_ENCRYPTION).withDescription("The encryption level for bolt connections, may be true (default) or false.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_ENCRYPTION).withDescription("The encryption level for bolt connections, may be true or false (default).").hasArgs()
             .create(CMDLINE_OPTION_STORE_ENCRYPTION));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_STRATEGY).withDescription("The trust strategy for bolt connections, may be trustAllCertificates, trustCustomCaSignedCertificates or trustSystemCaSignedCertificates.").hasArgs()
             .create(CMDLINE_OPTION_STORE_TRUST_STRATEGY));
