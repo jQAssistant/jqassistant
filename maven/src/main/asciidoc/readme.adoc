@@ -103,13 +103,13 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <uri>file:target/jqassistant/store</uri>
                                 <username></username>
                                 <password></password>
-                                <encryption></encryption>
+                                <encryption>false</encryption>
                                 <trustStrategy></trustStrategy>
                                 <trustCertificate></trustCertificate>
                                 <embedded>
                                   <listenAddress>localhost</listenAddress>
                                   <httpPort>7474</httpPort>
-                                  <boltPort>7474</boltPort>
+                                  <boltPort>7687</boltPort>
                                 </embedded>
                             </store>
                             <storeLifecycle>REACTOR</storeLifecycle>
