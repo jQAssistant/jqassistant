@@ -93,7 +93,7 @@ public class CachingStoreProvider implements Disposable {
      */
     private void close(Store store) {
         StoreKey key = keysByStore.get(store);
-        LOGGER.info("Closing store in directory '" + key.getUri() + "'.");
+        LOGGER.info("Closing store '{}}'.", key.getUri());
         store.stop();
     }
 }
