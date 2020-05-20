@@ -229,7 +229,7 @@ A method parameter.
 | index      | The index of the parameter according to the method signature (starting with 0)
 |====
 
-.Properties of `:Java:Parameter`
+.Relations of `:Java:Parameter`
 [options="header"]
 |====
 | Name         | Target label(s)            | Cardinality | Description
