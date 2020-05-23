@@ -1,5 +1,7 @@
 = jQAssistant Manual
 
+image::https://github.com/jQAssistant/jqa-manual/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
+
 This repository contains the common parts of the jQAssistant 
 User Manual and its build structure.
 
