@@ -1,5 +1,7 @@
 = jQAssistant Commandline Tool
 
+image::https://github.com/jQAssistant/jqa-commandline-tool/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
+
 This is the https://www.jqassistant.org[jQAssistant^] Commandline Tool.
 It allows to execute jQAssistant from the commandline.
 
