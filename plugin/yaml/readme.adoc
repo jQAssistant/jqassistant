@@ -1,6 +1,8 @@
 
 = jQAssistant YAML 2 Plugin
 
+image::https://github.com/jQAssistant/jqa-yaml2-plugin/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
+
 This is the new http://yaml.org/[YAML^] Plugin of https://www.jqassistant.org[jQAssistant^].
 It enables jQAssistant to scan and to analyze YAML 1.2 documents.
 
