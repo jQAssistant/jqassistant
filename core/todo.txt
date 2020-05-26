@@ -1,5 +1,4 @@
 todo Add support for deprecated
-todo Write issue to issue an warning if an deprecated rule is executed
 todo Add Support for optional
 todo Change: All options of verification/aggregation are optional.
 todo ja, das ist so richtig!
