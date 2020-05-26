@@ -1,5 +1,7 @@
 = Overview
 
+image::https://github.com/jQAssistant/jqa-json-plugin/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
+
 This project hosts the https://jqassistant.org[jQAssistant^] JSON Plugin.
 This plugin allows jQAssistant to scan also
 http://www.rfc-editor.org/rfc/rfc7159.txt[RFC 7159^]
