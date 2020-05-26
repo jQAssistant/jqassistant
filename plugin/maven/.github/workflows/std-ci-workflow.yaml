@@ -24,10 +24,10 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
       - name: Build only
-        run: mvn -DskipTests -Djqassistant.skip clean install
+        run: mvn --batch-mode --no-transfer-progress -DskipTests -Djqassistant.skip clean install
       - name: Unit Testing
-        run: mvn -Djqassistant.skip clean install
+        run: mvn --batch-mode --no-transfer-progress -Djqassistant.skip clean install
       - name: Integration Testing
-        run: mvn -Djqassistant.skip -P IT clean install
+        run: mvn --batch-mode --no-transfer-progress -Djqassistant.skip -P IT clean install
       - name: Full Build
-        run: mvn -P IT -Djqassistant.skip=false clean install
+        run: mvn --no-transfer-progress -P IT -Djqassistant.skip=false clean install
