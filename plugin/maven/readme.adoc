@@ -1,5 +1,7 @@
 = jQAssistant Maven 3 Plugin
 
+image::https://github.com/jQAssistant/jqa-maven3-plugin/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
+
 This is the Maven 3 Plugin of https://www.jqassistant.org[jQAssistant^].
 It enables jQAssistant to scan and to analyze Maven 3 projects.
 
