@@ -29,6 +29,11 @@
         </license>
     </licenses>
 
+    <organization>
+        <name>jQAssistant Development Teeam</name>
+        <url>https://jqassistant.org/</url>
+    </organization>
+
     <scm>
         <connection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</developerConnection>
