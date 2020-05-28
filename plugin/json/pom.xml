@@ -15,6 +15,12 @@
     <name>jQAssistant JSON Plugin</name>
     <url>http://jqassistant.org/</url>
 
+    <organization>
+        <name>jQAssistant Development Team</name>
+        <url>https://jqassistant.org</url>
+    </organization>
+
+
     <scm>
         <connection>scm:git:git@github.com:jqassistant/jqa-json-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jqassistant/jqa-json-plugin.git</developerConnection>
