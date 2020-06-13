@@ -63,7 +63,7 @@
         <it.jqa.core.version>1.9.0-SNAPSHOT</it.jqa.core.version>
         <it.jqa.java-plugin.version>1.9.0-SNAPSHOT</it.jqa.java-plugin.version>
         <it.jqa.plugin-common.version>1.9.0-SNAPSHOT</it.jqa.plugin-common.version>
-        <it.jqa-tycho-plugin.version>1.8.0-SNAPSHOT</it.jqa-tycho-plugin.version>
+        <it.jqa-tycho-plugin.version>1.9.0-SNAPSHOT</it.jqa-tycho-plugin.version>
         <org.apache.maven_dependency-tree.version>3.0.1</org.apache.maven_dependency-tree.version>
     </properties>
 
