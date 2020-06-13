@@ -42,7 +42,7 @@
     </description>
 
     <properties>
-        <assertj-core.version>3.15.0</assertj-core.version>
+        <assertj-core.version>3.16.1</assertj-core.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.9.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-core-framework.version>1.9.0-SNAPSHOT</jqa-core-framework.version>
