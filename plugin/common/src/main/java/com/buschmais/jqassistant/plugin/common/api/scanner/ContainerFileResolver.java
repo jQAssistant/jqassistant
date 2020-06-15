@@ -30,7 +30,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
     private final Map<String, FileDescriptor> containedFiles;
 
     public ContainerFileResolver(ScannerContext scannerContext, FileContainerDescriptor fileContainerDescriptor) {
-        super(CACHE_KEY);
+        super(CACHE_KEY + "/" + fileContainerDescriptor.getId());
         this.fileContainerDescriptor = fileContainerDescriptor;
         this.scannerContext = scannerContext;
         this.containedFiles = getCache(fileContainerDescriptor.getContains());
