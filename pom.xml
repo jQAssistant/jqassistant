@@ -3,7 +3,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqa-uber-parent</artifactId>
-    <version>1.9.0-ALPHA2</version>
+    <version>1.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Ueber Parent</name>
