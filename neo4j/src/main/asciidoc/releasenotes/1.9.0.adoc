@@ -4,4 +4,4 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Neo4j Backend Version 1.9.0]
 
-- Upgraded to Neo4j 3.5.18
+- Upgraded to Neo4j 3.5.20
