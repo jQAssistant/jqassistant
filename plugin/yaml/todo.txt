@@ -1,2 +1,0 @@
-todo Track issue for SnakeYAML at https://bitbucket.org/asomov/snakeyaml-engine/issues/12/
-todo Move the index from an item to the relation

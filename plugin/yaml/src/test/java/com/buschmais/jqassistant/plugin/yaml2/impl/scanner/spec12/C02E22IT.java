@@ -14,7 +14,4 @@ class C02E22IT extends AbstractYAMLPluginIT {
     void scannerCanReadDocument() {
         readSourceDocument();
     }
-
-    /* Todo Write more specific tests */
-
 }

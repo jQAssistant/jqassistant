@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /* tag::doc[]
 
 [[yaml2document, Document]]
-==  A YAML Document
+== Document
 
 A single YAML document as specified in the {yamlSpec}#id2800132[YAML 1.2 specification^].
 A document can contain either a xref:yaml2scalar[scalar],
@@ -31,7 +31,7 @@ NCC-1701-D: Jean-Luc Picard
 
 tag::labeloverview[]
 
-ifdef::iov[| YAML Document]
+ifdef::iov[| <<yaml2document,Document>>]
 ifndef::iov[| Used labels]
 | `:Yaml:Document`
 

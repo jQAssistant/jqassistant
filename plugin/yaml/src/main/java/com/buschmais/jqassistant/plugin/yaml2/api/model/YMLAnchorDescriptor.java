@@ -6,7 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 /* tag::doc[]
 
 [[yaml2anchor]]
-== An Anchor
+== Anchor
 
 An anchor as specified in the {yamlSpec}#id2785586[YAML 1.2 specification],
 used to mark content in a YAML document for future reuse in the same document.

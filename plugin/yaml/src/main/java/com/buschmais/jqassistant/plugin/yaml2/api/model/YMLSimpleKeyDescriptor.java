@@ -22,7 +22,7 @@ of the YAML specification^].
 [source]
 ----
 simpleKey: "Value for a simple key"
-? - combined
+? - complex
   - key
 : "Value for a complex key"
 ----
@@ -33,7 +33,7 @@ simpleKey: "Value for a simple key"
 
 tag::labeloverview[]
 
-ifdef::iov[| YAML Map]
+ifdef::iov[| <<yaml2item,Simple Key>>]
 ifndef::iov[| Used labels]
 | `:Yaml:Key:Simple`
 

@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /* tag::doc[]
 
 [[yaml2sequence,Sequence]]
-==  A Sequence
+== Sequence
 
 A sequence as specified in the {yamlSpec}#id2759963[YAML 1.2 specification^].
 Each item of sequence xref:yaml2item[has an additional label `:Item`].

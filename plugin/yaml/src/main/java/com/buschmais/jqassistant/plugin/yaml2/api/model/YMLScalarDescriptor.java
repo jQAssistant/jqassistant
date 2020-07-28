@@ -6,7 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 /* tag::doc[]
 
 [[yaml2scalar,Scalar]]
-==  A Scalar
+== Scalar
 
 A scalar value as described in the {yamlSpec}#id2760844[YAML 1.2 specification^].
 

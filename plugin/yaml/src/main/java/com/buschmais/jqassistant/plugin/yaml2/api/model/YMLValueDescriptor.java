@@ -5,13 +5,13 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 /* tag::doc[]
 
 [[yaml2value]]
-== A value in a map
+== Map Value
 
 A value of a key-value pair in a map can be any valid YAML structure.
 The YAML 2 Plugin assigns each structure its standard labels, e.g.
 `:Yaml:Map` for a map used as value or `:Yaml:Scalar` to a simple
 scalar value like `Romulan Star Empire`. Any YAML structure
-used as value of a key-value pair is also labled with `:Value`.
+used as value of a key-value pair is also labeled with `:Value`.
 
 .Used Combination of Labels
 [cols="1h,2"]

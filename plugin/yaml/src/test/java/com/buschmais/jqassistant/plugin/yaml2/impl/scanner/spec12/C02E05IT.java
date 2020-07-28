@@ -45,8 +45,6 @@ class C02E05IT extends AbstractYAMLPluginIT {
 
         assertThat(documentDescriptor).hasSequences(1);
         assertThat(documentDescriptor).hasNoMaps();
-        // todo Check for scalars later
-
     }
 
     @Test

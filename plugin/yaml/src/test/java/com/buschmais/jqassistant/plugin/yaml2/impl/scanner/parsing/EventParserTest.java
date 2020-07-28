@@ -21,7 +21,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-// todo refactor this test class
 @DisplayName("Given a stream of parse events")
 @FixMethodOrder(MethodSorters.JVM)
 class EventParserTest {

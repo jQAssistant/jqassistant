@@ -9,8 +9,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /*
 tag::doc[]
-
-==  A YAML File
+[[yaml2file]]
+== File
 
 A file with the the extension `.yaml` or `.yml`, which can contain
 multiple xref:yaml2document[YAML documents].
@@ -21,7 +21,7 @@ multiple xref:yaml2document[YAML documents].
 
 tag::labeloverview[]
 
-ifdef::iov[| YAML File (`.yaml` or `.yml` extension)]
+ifdef::iov[| <<yaml2file,File>>]
 ifndef::iov[| Used labels]
 | `:Yaml:File`
 

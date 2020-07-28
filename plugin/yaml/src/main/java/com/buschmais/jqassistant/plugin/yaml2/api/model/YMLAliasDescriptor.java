@@ -6,7 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /* tag::doc[]
 
 [[yaml2alias, alias]]
-== An Alias
+== Alias
 
 An alias as specified in the {yamlSpec}#id2786196[YAML 1.2 specification^],
 used to reuse previously marked content in a document.

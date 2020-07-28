@@ -5,9 +5,9 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 /* tag::doc[]
 
 [[yaml2item]]
-== An Item in a Sequence
+== Sequence Item
 
-Each item of a sequence is also labled with `:Item`.
+Each item of a sequence is also labeled with `:Item`.
 
 .Used Combination of Labels
 [cols="1h,2"]
@@ -15,7 +15,7 @@ Each item of a sequence is also labled with `:Item`.
 
 tag::labeloverview[]
 
-ifdef::iov[| <<yaml2item,item>>]
+ifdef::iov[| <<yaml2item,Sequence Item>>]
 ifndef::iov[| Used labels]
 | `:Yaml:Item`
 

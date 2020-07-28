@@ -11,8 +11,6 @@ import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocume
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getSequences;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
-
-// todo finish this test!
 class C02E01IT extends AbstractYAMLPluginIT {
     private static String YAML_FILE = "/spec-examples/c2-e01-sequence-of-scalars.yaml";
 
@@ -51,8 +49,7 @@ class C02E01IT extends AbstractYAMLPluginIT {
 
         YMLDocumentDescriptor documentDescriptor = getDocuments(ymlFileDescriptor).getDocumentByParsePosition(0);
         YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequenceByParsePosition(0);
-        // todo enable the assert below if https://github.com/buschmais/extended-objects/issues/174 has been fixed
-        // assertThat(sequenceDescriptor).hasItems(3);
+        assertThat(sequenceDescriptor).hasItems(3);
         assertThat(sequenceDescriptor.getScalars()).isNotNull()
                                                    .isNotEmpty()
                                                    .hasSize(3);

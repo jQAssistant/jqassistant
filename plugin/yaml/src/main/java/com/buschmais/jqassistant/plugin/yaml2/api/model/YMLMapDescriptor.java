@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /* tag::doc[]
 
 [[yaml2map,Map]]
-==  A Map
+== Map
 
 A map as specified in the {yamlSpec}#id2759963[YAML 1.2 specification^]
 with a set of key-value pairs. The key of a key-value pair can be
@@ -30,14 +30,12 @@ height: 44
 
 tag::labeloverview[]
 
-ifdef::iov[| YAML Map]
+ifdef::iov[| <<yaml2map,Map>>]
 ifndef::iov[| Used labels]
 | `:Yaml:Map`
 
 end::labeloverview[]
 |===
-
-
 
 end::doc[] */
 @Label("Map")

@@ -35,7 +35,7 @@ simpleKey: "Value for a simple key"
 
 tag::labeloverview[]
 
-ifdef::iov[| Complex Key]
+ifdef::iov[| <<yaml2complexKey,Complex Key>>]
 ifndef::iov[| Used labels]
 | `:Yaml:Key:Complex`
 
