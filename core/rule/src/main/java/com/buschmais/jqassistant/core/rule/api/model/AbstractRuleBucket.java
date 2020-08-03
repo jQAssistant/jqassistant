@@ -1,19 +1,14 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 
 /**
  * Container to store {@link Rule Rules}.
  *
- * @param <T> Type of the rule stored in the bucket.
+ * @param <T>
+ *            Type of the rule stored in the bucket.
  * @see Rule
  */
 public abstract class AbstractRuleBucket<T extends AbstractRule> {
@@ -29,18 +24,17 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     }
 
     protected void add(T rule) throws RuleException {
-        if (rules.containsKey(rule.getId())) {
-            throw new RuleException("The " + getRuleTypeName() + " " + rule.getId() + " has already defined.");
-        } else {
-            rules.put(rule.getId(), rule);
+        T existingRule = rules.put(rule.getId(), rule);
+        if (existingRule != null) {
+            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already be defined in '"
+                    + existingRule.getSource().getId() + "'.");
         }
     }
 
     protected abstract String getRuleTypeName();
 
     /**
-     * Returns a unmodifiable collection of all rules contained
-     * in the bucket.
+     * Returns a unmodifiable collection of all rules contained in the bucket.
      *
      * @return Collection with all rules in the container.
      */
@@ -61,7 +55,8 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * Returns a rule of type {@code T} by its id.
      *
      * @return The rule with the requested id.
-     * @throws RuleException if the requested rule cannot be found.
+     * @throws RuleException
+     *             if the requested rule cannot be found.
      */
     public T getById(String id) throws RuleException {
         T rule = rules.get(id);
@@ -77,10 +72,12 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * Matches the rules in this bucket against the given pattern that might contain
      * wildcards, i.e. '*' and '?'.
      *
-     * @param pattern The pattern.
+     * @param pattern
+     *            The pattern.
      * @return The list of matching rules.
-     * @throws RuleException If the pattern did not contained any wildcard and the referenced
-     *                       rule is not contained in the bucket.
+     * @throws RuleException
+     *             If the pattern did not contained any wildcard and the referenced
+     *             rule is not contained in the bucket.
      */
     public List<T> match(String pattern) throws RuleException {
         List<T> matches = new ArrayList<>();

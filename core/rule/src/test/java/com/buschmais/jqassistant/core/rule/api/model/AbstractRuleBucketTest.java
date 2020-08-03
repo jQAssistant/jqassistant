@@ -2,17 +2,18 @@ package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.Set;
 
-import org.assertj.core.api.Assertions;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AbstractRuleBucketTest {
 
@@ -41,7 +42,7 @@ public class AbstractRuleBucketTest {
 
     @Test
     public void getConceptsIdsReturnsEmptySetIfThereAreNoConceptsInTheBucket() {
-        assertThat(bucket.getIds(), Matchers.<String> empty());
+        assertThat(bucket.getIds(), empty());
     }
 
     @Test
@@ -66,8 +67,7 @@ public class AbstractRuleBucketTest {
     public void getConceptIdsReturnsUnmodifiableSet() {
         Set<String> conceptIds = bucket.getIds();
 
-        Assertions.assertThatThrownBy(() -> conceptIds.add("a"))
-                  .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> conceptIds.add("a")).isInstanceOf(UnsupportedOperationException.class);
     }
 
     // --- All tests for size()
@@ -109,9 +109,8 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void getConceptThrowsExceptionIfConceptNotFoundInBucket() throws RuleException {
-        Assertions.assertThatThrownBy(() -> bucket.getById("foobar"))
-                  .isInstanceOf(RuleException.class);
+    public void getConceptThrowsExceptionIfConceptNotFoundInBucket() {
+        assertThatThrownBy(() -> bucket.getById("foobar")).isInstanceOf(RuleException.class);
     }
 
     // --- All tests for addConcepts
@@ -163,27 +162,26 @@ public class AbstractRuleBucketTest {
 
     @Test
     public void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws RuleException {
-        Concept first = mock(Concept.class);
         Concept a = mock(Concept.class);
-        Concept b = mock(Concept.class);
-        Concept c = mock(Concept.class);
-
-        when(first.getId()).thenReturn("a");
         when(a.getId()).thenReturn("a");
-        when(b.getId()).thenReturn("b");
-        when(c.getId()).thenReturn("c");
+        RuleSource sourceA = mock(RuleSource.class);
+        doReturn("Source A").when(sourceA).getId();
+        doReturn(sourceA).when(a).getSource();
+
+        Concept duplicate = mock(Concept.class);
+        when(duplicate.getId()).thenReturn("a");
+        RuleSource sourceDuplicate = mock(RuleSource.class);
+        doReturn("Source Duplicate").when(sourceDuplicate).getId();
+        doReturn(sourceDuplicate).when(duplicate).getSource();
 
         TestBucket existingBucket = new TestBucket();
-
         existingBucket.add(a);
-        existingBucket.add(b);
-        existingBucket.add(c);
 
         TestBucket newBucket = new TestBucket();
+        newBucket.add(duplicate);
 
-        newBucket.add(first);
-        Assertions.assertThatThrownBy(() -> newBucket.add(existingBucket))
-                  .isInstanceOf(RuleException.class);
+        assertThatThrownBy(() -> newBucket.add(existingBucket)).isInstanceOf(RuleException.class).hasMessageContaining("'Source A")
+                .hasMessageContaining("'Source Duplicate'");
     }
 
     @Test
