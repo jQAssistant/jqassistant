@@ -26,7 +26,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     protected void add(T rule) throws RuleException {
         T existingRule = rules.put(rule.getId(), rule);
         if (existingRule != null) {
-            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already be defined in '"
+            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already been defined in '"
                     + existingRule.getSource().getId() + "'.");
         }
     }
