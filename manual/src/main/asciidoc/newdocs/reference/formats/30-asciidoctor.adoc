@@ -1,5 +1,0 @@
-[#asciidoctor]
-=== Asciidoctor
-
-include::../../shared/to-be-written.adoc[]
-

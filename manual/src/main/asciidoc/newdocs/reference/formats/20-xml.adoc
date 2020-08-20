@@ -1,4 +1,0 @@
-[#xml]
-=== XML
-
-include::../../shared/to-be-written.adoc[]

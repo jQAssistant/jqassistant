@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
-        <artifactId>manual</artifactId>
+    <artifactId>manual</artifactId>
     <version>1.9.0-SNAPSHOT</version>
 
     <name>jQAssistant User Manual</name>
@@ -253,6 +253,13 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.buschmais.jqassistant.core</groupId>
+                                    <artifactId>rule</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
+                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>com.buschmais.jqassistant.plugin</groupId>
                                     <artifactId>graphql</artifactId>
