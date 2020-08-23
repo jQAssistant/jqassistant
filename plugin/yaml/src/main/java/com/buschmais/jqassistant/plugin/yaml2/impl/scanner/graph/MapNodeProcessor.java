@@ -10,20 +10,19 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.*;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toCollection;
 
-public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor> {
+class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor> {
 
     private final Store store;
     private final GraphGenerator generator;
-    private final AnchorProcessor anchorProcessor;
-    private final ReferenceNodeGetter refNodeGetter = new ReferenceNodeGetter();
-    private final AliasProcessor aliasProcessor;
+    private final AnchorHandler anchorHandler;
+    private final AliasLinker aliasLinker;
 
-    public MapNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor,
-                            AliasProcessor aliasProcessor) {
+    public MapNodeProcessor(Store store, GraphGenerator generator, AnchorHandler anchorHandler,
+                            AliasLinker aliasLinker) {
         this.store = store;
         this.generator = generator;
-        this.anchorProcessor = anchorProcessor;
-        this.aliasProcessor = aliasProcessor;
+        this.anchorHandler = anchorHandler;
+        this.aliasLinker = aliasLinker;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
         YMLMapDescriptor mapDescriptor = store.create(YMLMapDescriptor.class);
         node.getIndex().ifPresent(mapDescriptor::setIndex);
 
-        anchorProcessor.process(node, mapDescriptor, mode);
+        anchorHandler.handleAnchor(node, mapDescriptor, mode);
 
         Collection<AbstractTask> tasks = new TreeSet<>(comparingInt(AbstractTask::getTokenIndex));
         node.getSimpleKeys().stream().map(keyNode -> new SimpleKeyTask(keyNode, mapDescriptor, mode)).collect(toCollection(() -> tasks));
@@ -79,16 +78,16 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
                 simpleKeyDescriptor.setName(scalarNode.getScalarValue());
                 store.addDescriptorType(simpleKeyDescriptor, YMLAliasDescriptor.class);
                 mapDescriptor.getKeys().add(simpleKeyDescriptor);
-                aliasProcessor.createReferenceEdge(aliasKeyNode, simpleKeyDescriptor);
+                aliasLinker.linkToAnchor(aliasKeyNode, simpleKeyDescriptor);
 
                 BaseNode<?> value = aliasKeyNode.getValue();
                 Callback<YMLDescriptor> callback = simpleKeyDescriptor::setValue;
 
-                BaseNode<?> traverseRoot = value instanceof AliasNode
-                                           ? refNodeGetter.apply((AliasNode) value)
-                                           : aliasKeyNode.getValue();
-
-                generator.traverse(traverseRoot, callback, mode);
+                if (value instanceof AliasNode) {
+                    generator.traverse(value, callback, mode);
+                } else {
+                    generator.traverse(aliasKeyNode.getValue(), callback, mode);
+                }
             } else {
                 String message = "Key of alias key node is not a scalar node";
                 throw new IllegalStateException(message);
@@ -117,7 +116,8 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
             YMLSimpleKeyDescriptor keyDescriptor = store.create(YMLSimpleKeyDescriptor.class);
             keyDescriptor.setName(keyNode.getKeyName());
             mapDescriptor.getKeys().add(keyDescriptor);
-            anchorProcessor.process(keyNode, keyDescriptor, mode);
+            anchorHandler.handleAnchor(keyNode, keyDescriptor, mode);
+
             Callback<YMLDescriptor> addValueDescriptorCallback = descriptor -> {
                 store.addDescriptorType(descriptor, YMLValueDescriptor.class);
                 keyDescriptor.setValue(descriptor);
@@ -125,13 +125,13 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
 
             if (keyNode.getValue().getClass().isAssignableFrom(AliasNode.class)) {
                 AliasNode aliasNode = (AliasNode) keyNode.getValue();
-                BaseNode<?> referencedNode = refNodeGetter.apply(aliasNode);
+
                 Callback<YMLDescriptor> createReferenceCallback = descriptor -> {
                     addValueDescriptorCallback.created(descriptor);
-                    aliasProcessor.createReferenceEdge(aliasNode, descriptor);
+                    aliasLinker.linkToAnchor(aliasNode, descriptor);
                 };
 
-                generator.traverse(referencedNode, createReferenceCallback, GraphGenerator.Mode.REFERENCE);
+                generator.traverse(aliasNode, createReferenceCallback, GraphGenerator.Mode.REFERENCE);
             } else {
                 AbstractBaseNode valueNode = keyNode.getValue();
                 generator.traverse(valueNode, addValueDescriptorCallback, mode);
@@ -139,7 +139,6 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
 
             store.addDescriptorType(keyDescriptor.getValue(), YMLValueDescriptor.class);
         }
-
     }
 
 
@@ -159,6 +158,7 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
             YMLComplexKeyDescriptor keyDescriptor = store.create(YMLComplexKeyDescriptor.class);
 
             mapDescriptor.getComplexKeys().add(keyDescriptor);
+
             Callback<YMLDescriptor> addComplexKeyDescriptorCallback = key -> {
                 keyDescriptor.setKey(key);
                 store.addDescriptorType(keyDescriptor.getKey(), YMLComplexKeyValue.class);
@@ -169,7 +169,7 @@ public class MapNodeProcessor implements NodeProcessor<MapNode, YMLMapDescriptor
             };
 
             generator.traverse(this.keyNode.getKeyNode(), addComplexKeyDescriptorCallback, mode);
-            anchorProcessor.process(this.keyNode.getKeyNode(), keyDescriptor.getKey(), mode);
+            anchorHandler.handleAnchor(this.keyNode.getKeyNode(), keyDescriptor.getKey(), mode);
             generator.traverse(this.keyNode.getValue(), addValueKeyDescriptorCallback, mode);
         }
 

@@ -9,14 +9,16 @@ import java.util.stream.Stream;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AliasNode;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.SequenceNode;
 
-public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSequenceDescriptor> {
+import static com.buschmais.jqassistant.plugin.yaml2.impl.scanner.graph.GraphGenerator.Mode.REFERENCE;
+
+class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSequenceDescriptor> {
     private final Store store;
     private final GraphGenerator generator;
-    private final AliasProcessor aliasProcessor;
-    private final AnchorProcessor anchorProcessor;
-    private final ReferenceNodeGetter refNodeGetter = new ReferenceNodeGetter();
+    private final AliasLinker aliasLinker;
+    private final AnchorHandler anchorHandler;
 
     private static Comparator<YMLDescriptor> INDEX_COMPERATOR = (lhs, rhs) -> {
         Integer lhsIndex = ((YMLIndexable) lhs).getIndex();
@@ -26,12 +28,12 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
 
     private final Consumer<YMLDescriptor> addItemDescriptorHandler;
 
-    public SequenceNodeProcessor(Store store, GraphGenerator generator, AnchorProcessor anchorProcessor,
-                                 AliasProcessor aliasProcessor) {
+    public SequenceNodeProcessor(Store store, GraphGenerator generator, AnchorHandler anchorHandler,
+                                 AliasLinker aliasLinker) {
         this.store = store;
         this.generator = generator;
-        this.anchorProcessor = anchorProcessor;
-        this.aliasProcessor = aliasProcessor;
+        this.anchorHandler = anchorHandler;
+        this.aliasLinker = aliasLinker;
         this.addItemDescriptorHandler = descriptor -> store.addDescriptorType(descriptor, YMLItemDescriptor.class);
     }
 
@@ -40,7 +42,17 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
         YMLSequenceDescriptor sequenceDescriptor = store.create(YMLSequenceDescriptor.class);
         node.getIndex().ifPresent(sequenceDescriptor::setIndex);
 
-        anchorProcessor.process(node, sequenceDescriptor, mode);
+        Callback<YMLSequenceDescriptor> callbackForSequence = descriptor -> {
+            addItemDescriptorHandler.accept(descriptor);
+            sequenceDescriptor.getSequences().add(descriptor);
+        };
+
+        Callback<YMLMapDescriptor> callbackForMap = descriptor -> {
+            addItemDescriptorHandler.accept(descriptor);
+            sequenceDescriptor.getMaps().add(descriptor);
+        };
+
+        anchorHandler.handleAnchor(node, sequenceDescriptor, mode);
 
         node.getScalars().forEach(scalarNode -> {
             Callback<YMLScalarDescriptor> callbackForScalar = descriptor -> {
@@ -52,48 +64,9 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
             generator.traverse(scalarNode, callbackForScalar, mode);
         });
 
-        node.getMaps().forEach(mapNode -> {
-            Callback<YMLMapDescriptor> callbackForMap = descriptor -> {
-                addItemDescriptorHandler.accept(descriptor);
-                sequenceDescriptor.getMaps().add(descriptor);
-            };
-
-            generator.traverse(mapNode, callbackForMap, mode);
-        });
-
-        node.getSequences().forEach(seqNode -> {
-            Callback<YMLSequenceDescriptor> callbackForSequence = descriptor -> {
-                addItemDescriptorHandler.accept(descriptor);
-                sequenceDescriptor.getSequences().add(descriptor);
-            };
-
-            generator.traverse(seqNode, callbackForSequence, mode);
-        });
-
-        node.getAliases().forEach(aliasNode -> {
-            AbstractBaseNode referencedNode = refNodeGetter.apply(aliasNode);
-
-            Callback<YMLDescriptor> nodeProcessedCallback = descriptor -> {
-                YMLIndexable scalarDescriptor = (YMLIndexable) descriptor;
-                aliasNode.getIndex().ifPresent(scalarDescriptor::setIndex);
-                addItemDescriptorHandler.accept(descriptor);
-
-                if (descriptor instanceof YMLSequenceDescriptor) {
-                    sequenceDescriptor.getSequences().add((YMLSequenceDescriptor) descriptor);
-                } else if (descriptor instanceof YMLMapDescriptor) {
-                    sequenceDescriptor.getMaps().add((YMLMapDescriptor) descriptor);
-                } else if (descriptor instanceof YMLScalarDescriptor) {
-                    sequenceDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
-                } else {
-                    String message = "Unsupported descriptor type";
-                    throw new IllegalStateException(message);
-                }
-
-                aliasProcessor.createReferenceEdge(aliasNode, descriptor);
-            };
-
-            generator.traverse(referencedNode, nodeProcessedCallback, GraphGenerator.Mode.REFERENCE);
-        });
+        node.getMaps().forEach(mapNode -> generator.traverse(mapNode, callbackForMap, mode));
+        node.getSequences().forEach(seqNode -> generator.traverse(seqNode, callbackForSequence, mode));
+        node.getAliases().forEach(aliasNode -> generator.traverse(aliasNode, callbackForAliasNode(sequenceDescriptor, aliasNode), REFERENCE));
 
         Optional<? extends YMLDescriptor> first = findFirstSequenceItem(sequenceDescriptor);
         Optional<? extends YMLDescriptor> last = findLastSequenceItem(sequenceDescriptor);
@@ -102,6 +75,27 @@ public class SequenceNodeProcessor implements NodeProcessor<SequenceNode, YMLSeq
         first.ifPresent(descriptor -> store.addDescriptorType(descriptor, YMLFirstDescriptor.class));
 
         callback.created(sequenceDescriptor);
+    }
+
+    private Callback<YMLDescriptor> callbackForAliasNode(YMLSequenceDescriptor sequenceDescriptor, AliasNode aliasNode) {
+        return descriptor -> {
+            YMLIndexable scalarDescriptor = (YMLIndexable) descriptor;
+            aliasNode.getIndex().ifPresent(scalarDescriptor::setIndex);
+            addItemDescriptorHandler.accept(descriptor);
+
+            if (descriptor instanceof YMLSequenceDescriptor) {
+                sequenceDescriptor.getSequences().add((YMLSequenceDescriptor) descriptor);
+            } else if (descriptor instanceof YMLMapDescriptor) {
+                sequenceDescriptor.getMaps().add((YMLMapDescriptor) descriptor);
+            } else if (descriptor instanceof YMLScalarDescriptor) {
+                sequenceDescriptor.getScalars().add((YMLScalarDescriptor) descriptor);
+            } else {
+                String message = "Unsupported descriptor type";
+                throw new IllegalStateException(message);
+            }
+
+            aliasLinker.linkToAnchor(aliasNode, descriptor);
+        };
     }
 
     @Override

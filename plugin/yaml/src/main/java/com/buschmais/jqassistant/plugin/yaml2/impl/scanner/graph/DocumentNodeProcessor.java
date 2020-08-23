@@ -23,21 +23,13 @@ public class DocumentNodeProcessor
     public void process(DocumentNode node, Callback<YMLDocumentDescriptor> callback, GraphGenerator.Mode mode) {
         YMLDocumentDescriptor documentDescriptor = store.create(YMLDocumentDescriptor.class);
 
-        node.getSequences().forEach(sequenceNode -> {
-            Callback<YMLSequenceDescriptor> callbackForSeq = descriptor -> documentDescriptor.getSequences().add(descriptor);
+        Callback<YMLSequenceDescriptor> callbackForSeq = descriptor -> documentDescriptor.getSequences().add(descriptor);
+        Callback<YMLMapDescriptor> callbackForMaps = descriptor -> documentDescriptor.getMaps().add(descriptor);
+        Callback<YMLScalarDescriptor> callbackForScalars = descriptor -> documentDescriptor.getScalars().add(descriptor);
 
-            generator.traverse(sequenceNode, callbackForSeq, mode);
-        });
-
-        node.getMaps().forEach(mapNode -> {
-            Callback<YMLMapDescriptor> callbackForMaps = descriptor -> documentDescriptor.getMaps().add(descriptor);
-            generator.traverse(mapNode, callbackForMaps, mode);
-        });
-
-        node.getScalars().forEach(scalarNode -> {
-            Callback<YMLScalarDescriptor> calllbackForScalars = descriptor -> documentDescriptor.getScalars().add(descriptor);
-            generator.traverse(scalarNode, calllbackForScalars, mode);
-        });
+        node.getSequences().forEach(sequenceNode -> generator.traverse(sequenceNode, callbackForSeq, mode));
+        node.getMaps().forEach(mapNode -> generator.traverse(mapNode, callbackForMaps, mode));
+        node.getScalars().forEach(scalarNode -> generator.traverse(scalarNode, callbackForScalars, mode));
 
         callback.created(documentDescriptor);
     }

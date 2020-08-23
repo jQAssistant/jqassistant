@@ -134,8 +134,48 @@ public class AnchorIT extends AbstractYAMLPluginIT {
             assertThat(result).hasSize(1);
         }
 
+        @TestStore(type = TestStore.Type.MEMORY)
         @Test
-        void cypherAnchorOnSequenceItemResultsInThoChildSequences() {
+        void cypherAnchorOnSequenceItemResultsInToSequences() {
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
+
+            String cypherQuery = "MATCH (doc:Document:Yaml)--> " +
+                                 "      (fl:Yaml:Sequence)-[:HAS_ITEM]-> " +
+                                 "      (sl:Yaml:Sequence), " +
+                                 "      (alias:Yaml:Sequence:Item)-[rel]->(anchor:Yaml:Sequence:Item) " +
+                                 "RETURN sl, rel";
+
+            List<Object> sequences = query(cypherQuery).getColumn("sl");
+            List<Object> relations = query(cypherQuery).getColumn("rel");
+
+            assertThat(sequences).hasSize(2);
+        }
+
+        @TestStore(type = TestStore.Type.MEMORY)
+        @Test
+        void cypherAnchorOnSequenceItemResultsInCorrectSettingOfFirstAndLand() {
+            readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
+
+            String cypherQuery = "MATCH (alias:Yaml:Sequence:Item)-[rel]->(anchor:Yaml:Sequence:Item) " +
+                                 "RETURN type(rel) AS type," +
+                                 "       alias.index AS pos_alias, " +
+                                 "       anchor.index AS pos_anchor";
+
+            List<Object> types = query(cypherQuery).getColumn("type");
+            List<Object> posAlias = query(cypherQuery).getColumn("pos_alias");
+            List<Object> posAnchor = query(cypherQuery).getColumn("pos_anchor");
+
+
+            assertThat(types).hasSize(1);
+            assertThat(types).containsExactly("IS_ALIAS_FOR");
+            assertThat(posAlias).containsExactly(1);
+            assertThat(posAnchor).containsExactly(0);
+        }
+
+
+
+        @Test
+        void cypherAnchorOnSequenceItemResultsInTwoChildSequences() {
             readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
 
             String cypherQuery = "MATCH (d:Yaml:Document)-->(:Yaml:Sequence)" +
@@ -148,7 +188,7 @@ public class AnchorIT extends AbstractYAMLPluginIT {
         }
 
         @Test
-        void cypherAnchorOnSequenceItemResultsInThoChildMaps() {
+        void cypherAnchorOnSequenceItemResultsInTwoChildMaps() {
             readSourceDocument("/anchor/toplevel-sequence-anchor-on-map.yml");
 
             String cypherQuery = "MATCH (s:Sequence:Yaml)-->(m:Yaml:Map:Item) " +

@@ -5,14 +5,14 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.ScalarNode;
 
-public class ScalarNodeProcessor implements NodeProcessor<ScalarNode, YMLScalarDescriptor> {
+class ScalarNodeProcessor implements NodeProcessor<ScalarNode, YMLScalarDescriptor> {
 
     private final Store store;
-    private final AnchorProcessor anchorProcessor;
+    private final AnchorHandler anchorHandler;
 
-    public ScalarNodeProcessor(Store store, AnchorProcessor anchorProcessor) {
+    public ScalarNodeProcessor(Store store, AnchorHandler anchorHandler) {
         this.store = store;
-        this.anchorProcessor = anchorProcessor;
+        this.anchorHandler = anchorHandler;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class ScalarNodeProcessor implements NodeProcessor<ScalarNode, YMLScalarD
         scalarDescriptor.setValue(node.getScalarValue());
         node.getIndex().ifPresent(scalarDescriptor::setIndex);
 
-        anchorProcessor.process(node, scalarDescriptor, mode);
+        anchorHandler.handleAnchor(node, scalarDescriptor, mode);
 
         callback.created(scalarDescriptor);
     }

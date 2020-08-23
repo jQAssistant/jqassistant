@@ -51,8 +51,7 @@ class C02E10IT extends AbstractYAMLPluginIT {
     void cypherTheAnchorCanBeFoundViaTheNameOfTheAnchor() {
         readSourceDocument();
 
-        String cypherQuery = "MATCH (a:Anchor:Yaml {" +
-                             "anchorName: 'SS' }) " +
+        String cypherQuery = "MATCH (a:Anchor:Yaml {anchorName: 'SS' }) " +
                              "RETURN a";
 
         List<Object> result = query(cypherQuery).getColumn("a");

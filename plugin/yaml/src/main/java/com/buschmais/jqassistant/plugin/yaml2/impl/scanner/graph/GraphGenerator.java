@@ -39,34 +39,33 @@ public class GraphGenerator {
 
     public GraphGenerator(Store store) {
         AnchorCache anchorCache = new AnchorCache();
-        AliasProcessor aliasProcessor = new AliasProcessor(store, anchorCache);
-        AnchorProcessor anchorProcessor = new AnchorProcessor(store, anchorCache);
-        DocumentNodeProcessor documentNodeProcessor = new DocumentNodeProcessor(store, this);
-        SequenceNodeProcessor sequenceNodeProcessor = new SequenceNodeProcessor(store, this, anchorProcessor, aliasProcessor);
-        ScalarNodeProcessor scalarNodeProcessor = new ScalarNodeProcessor(store, anchorProcessor);
-        SimpleKeyNodeProcessor simpleKeyNodeProcessor = new SimpleKeyNodeProcessor(store, anchorProcessor);
-        MapNodeProcessor mapNodeProcessor = new MapNodeProcessor(store, this, anchorProcessor, aliasProcessor);
+        AliasLinker aliasLinker = new AliasLinker(store, anchorCache);
 
-        this.processors = Arrays.asList(documentNodeProcessor, sequenceNodeProcessor,
-                                        mapNodeProcessor, scalarNodeProcessor,
-                                        simpleKeyNodeProcessor);
+        AliasNodeProcessor aliasNodeProcessor = new AliasNodeProcessor(store, this, anchorCache);
+        AnchorHandler anchorHandler = new AnchorHandler(store, anchorCache);
+        DocumentNodeProcessor documentNodeProcessor = new DocumentNodeProcessor(store, this);
+        SequenceNodeProcessor sequenceNodeProcessor = new SequenceNodeProcessor(store, this, anchorHandler, aliasLinker);
+        ScalarNodeProcessor scalarNodeProcessor = new ScalarNodeProcessor(store, anchorHandler);
+        SimpleKeyNodeProcessor simpleKeyNodeProcessor = new SimpleKeyNodeProcessor(store, anchorHandler);
+        MapNodeProcessor mapNodeProcessor = new MapNodeProcessor(store, this, anchorHandler, aliasLinker);
+
+       this.processors = Arrays.asList(aliasNodeProcessor, documentNodeProcessor,
+                                       mapNodeProcessor, sequenceNodeProcessor,
+                                       scalarNodeProcessor, simpleKeyNodeProcessor);
     }
 
     public Collection<YMLDocumentDescriptor> generate(StreamNode root) {
         ArrayList<YMLDocumentDescriptor> result = new ArrayList<>(1);
+        Callback<YMLDocumentDescriptor> callback = result::add;
 
-        root.getDocuments().forEach(documentNode -> {
-            Callback<YMLDocumentDescriptor> callback = descriptor -> result.add((YMLDocumentDescriptor) descriptor);
-
-            traverse(documentNode, callback, Mode.STANDARD);
-        });
+        root.getDocuments().forEach(documentNode -> traverse(documentNode, callback, Mode.STANDARD));
 
         return result;
     }
 
     void traverse(AbstractBaseNode node, Callback<? extends YMLDescriptor> callback, Mode mode) {
         Supplier<IllegalStateException> exceptionSupplier = () -> {
-            String message = format("Failed to find process for node class '%s'",
+            String message = format("Failed to find processor for node class '%s'",
                                     node.getClass().getCanonicalName());
             return new IllegalStateException(message);
         };

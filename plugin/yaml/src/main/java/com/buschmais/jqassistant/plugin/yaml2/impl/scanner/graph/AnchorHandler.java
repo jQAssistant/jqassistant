@@ -7,17 +7,17 @@ import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AnchorSupport
 
 import org.snakeyaml.engine.v2.events.NodeEvent;
 
-class AnchorProcessor {
+class AnchorHandler {
 
     private final Store store;
     private AnchorCache anchorCache;
 
-    public AnchorProcessor(Store store, AnchorCache cache) {
+    public AnchorHandler(Store store, AnchorCache cache) {
         this.store = store;
         this.anchorCache = cache;
     }
 
-    public void process(AnchorSupport<? extends NodeEvent> node, YMLDescriptor descriptor, GraphGenerator.Mode mode) {
+    public void handleAnchor(AnchorSupport<? extends NodeEvent> node, YMLDescriptor descriptor, GraphGenerator.Mode mode) {
         boolean createAnchor = mode.isInStandardMode() && node.getAnchor().isPresent();
 
         if (createAnchor) {

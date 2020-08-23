@@ -5,13 +5,13 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.AbstractBaseNode;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.parsing.SimpleKeyNode;
 
-public class SimpleKeyNodeProcessor implements NodeProcessor<SimpleKeyNode, YMLScalarDescriptor> {
+class SimpleKeyNodeProcessor implements NodeProcessor<SimpleKeyNode, YMLScalarDescriptor> {
     private final Store store;
-    private final AnchorProcessor anchorProcessor;
+    private final AnchorHandler anchorHandler;
 
-    public SimpleKeyNodeProcessor(Store store, AnchorProcessor anchorProcessor) {
+    public SimpleKeyNodeProcessor(Store store, AnchorHandler anchorHandler) {
         this.store = store;
-        this.anchorProcessor = anchorProcessor;
+        this.anchorHandler = anchorHandler;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class SimpleKeyNodeProcessor implements NodeProcessor<SimpleKeyNode, YMLS
         YMLScalarDescriptor scalarDescriptor = store.create(YMLScalarDescriptor.class);
         scalarDescriptor.setValue(node.getKeyName());
 
-        anchorProcessor.process(node, scalarDescriptor, mode);
+        anchorHandler.handleAnchor(node, scalarDescriptor, mode);
 
         callback.created(scalarDescriptor);
     }

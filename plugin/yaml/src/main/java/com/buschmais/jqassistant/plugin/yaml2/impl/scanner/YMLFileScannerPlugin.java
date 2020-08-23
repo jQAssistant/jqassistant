@@ -58,11 +58,10 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             StreamNode streamNode = eventParser.parse(StreamSupport.stream(events.spliterator(), false));
             Store store = getScannerContext().getStore();
             GraphGenerator generator = new GraphGenerator(store);
-            Collection<YMLDocumentDescriptor> documents = generator.generate(streamNode);
 
-            documents.forEach(documentDescriptor -> {
-                yamlFileDescriptor.getDocuments().add(documentDescriptor);
-            });
+            Collection<YMLDocumentDescriptor> documents = generator.generate(streamNode);
+            documents.forEach(documentDescriptor -> yamlFileDescriptor.getDocuments().add(documentDescriptor));
+
             yamlFileDescriptor.setValid(true);
         } catch (GraphGenerationFailedException | YamlEngineException e) {
             LOGGER.warn("YAML file '{}' seems to be invalid and will be marked as invalid. Result graph might be incorrect.", path);
