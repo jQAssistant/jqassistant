@@ -46,30 +46,30 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java:MethodInheritedFrom">
-        <description>Creates a relationship INHERITS between two "Method" labeled nodes if a method is inherited from a super type.
+    <concept id="java:MemberInheritedFrom">
+        <description>Creates a relationship INHERITS between two "Member" labeled nodes if a member is inherited from a super type.
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:DECLARES]->(method:Method),
-              (superType:Type)-[:DECLARES]->(superMethod:Method),
+              (type:Java:Type)-[:DECLARES]->(member:Member),
+              (superType:Java:Type)-[:DECLARES]->(superMember:Member),
               path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
               type <> superType
-              and not exists(method.name)
-              and exists(superMethod.name)
-              and method.signature = superMethod.signature
-              and superMethod.visibility <> "private"
+              and not exists(member.name)
+              and exists(superMember.name)
+              and member.signature = superMember.signature
+              and superMember.visibility <> "private"
             WITH
-              type, method, superType, superMethod, length(path) as depth
+              type, member, superType, superMember, length(path) as depth
             ORDER BY
               depth asc
             WITH
-              method, head(collect(superMethod)) as inheritedMethod
+              member, head(collect(superMember)) as inheritedMember
             MERGE
-              (method)-[:INHERITED_FROM]->(inheritedMethod)
+              (member)-[:INHERITED_FROM]->(inheritedMember)
             RETURN
-              count(*) as InheritedMethods
+              count(*) as InheritedMembers
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -77,7 +77,7 @@
     </concept>
 
     <concept id="java:MethodOverrides">
-        <requiresConcept refId="java:MethodInheritedFrom"/>
+        <requiresConcept refId="java:MemberInheritedFrom"/>
         <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
         </description>
         <cypher><![CDATA[
@@ -111,7 +111,7 @@
 
     <concept id="java:VirtualInvokes">
         <requiresConcept refId="java:MethodOverrides"/>
-        <requiresConcept refId="java:MethodInheritedFrom"/>
+        <requiresConcept refId="java:MemberInheritedFrom"/>
         <description>Propagates INVOKES relationships as VIRTUAL_INVOKES to non-abstract methods within the inheritance
             hierarchy, i.e. identifying potential methods that could be invoked.
         </description>
@@ -331,6 +331,32 @@
               (method)-[:DECLARES_LAMBDA]->(lambda)
             RETURN
               method, collect(lambda)
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PostConstruct">
+        <description>Labels methods annotated `@javax.annotation.PostConstruct` with 'PostConstruct'.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (postConstruct:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"javax.annotation.PostConstruct"})
+            SET
+              postConstruct:PostConstruct
+            RETURN
+              postConstruct as PostConstruct
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PreDestroy">
+        <description>Labels methods annotated `@javax.annotation.PreDestroy` with 'PreDestroy'.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (preDestroy:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"javax.annotation.PreDestroy"})
+            SET
+              preDestroy:PreDestroy
+            RETURN
+              preDestroy as PreDestroy
         ]]></cypher>
     </concept>
 

@@ -1,5 +1,6 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Java Plugin 1.9.0]
 
+- added concepts `java:PostConstruct` and `java:PreDestroy`
 - improved concept `java:VirtualInvokes` to identify all potential non-abstract methods within the inheritance hierarchy that could be invoked
 - upgraded to ASM 8.0 to support scanning of Java 14 bytecode
