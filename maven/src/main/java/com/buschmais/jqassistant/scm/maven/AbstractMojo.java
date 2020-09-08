@@ -91,7 +91,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The store trust strategy.
      */
-    @Parameter(property = "jqassistant.store.trustStragegy")
+    @Parameter(property = "jqassistant.store.trustStrategy")
     protected String storeTrustStrategy;
 
     /**
