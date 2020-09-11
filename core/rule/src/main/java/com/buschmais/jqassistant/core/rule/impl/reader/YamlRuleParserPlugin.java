@@ -22,9 +22,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
 
-/* todo check if the naming is consistent (*Block for YAML structures)
- *
- */
 public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private static JsonSchemaValidator validator;
 
@@ -139,15 +136,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         throws RuleException {
 
         String id = (String)map.get(ID);
-        // todo computeIfAbsend ersetzen
         List<Map<String, String>> concepts = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_CONCEPTS,
                                                                                              key -> emptyList());
-        // todo computeIfAbsend ersetzen
         List<Map<String, String>> constraints = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS,
                                                                                                 key -> emptyList());
-        // todo computeIfAbsend ersetzen
-        //List<Map<String, String>> groups = getMapByKey(map, INCLUDES_GROUPS);
-
 
         List<Map<String, String>> groups = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_GROUPS,
                                                                                            key -> emptyList());
@@ -339,7 +331,6 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean hasParameters = map.containsKey(REQUIRES_PARAMETERS);
 
         if (hasParameters) {
-            // todo computeIfAbsend ersetzen
             List<Map<String, Object>> list = (List<Map<String, Object>>) map.computeIfAbsent(REQUIRES_PARAMETERS,
                                                                                              key -> emptyList());
             parameters = new HashMap<>();

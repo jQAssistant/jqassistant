@@ -3,3 +3,6 @@
 //
 
 === Examples
+
+
+// See https://github.com/jQAssistant/jqa-core-framework/issues/54

@@ -24,8 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-// todo haben wir einen Test für ein Concept / Constraint mit dem Keyword severity, aber ohne wert?
-
 class YamlRuleParserPluginTest {
     /*
     ** This class contains quite a log of tests. Therefore the test cases are group
@@ -468,8 +466,6 @@ class YamlRuleParserPluginTest {
             assertThat(constraints).hasSize(1);
             assertThat(constraints).containsKey("referenced_constraint");
             assertThat(constraints.get("referenced_constraint")).isEqualTo(Severity.INFO);
-
-            // todo Prüfen, ob das so richtig ist
             assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(RuleConfiguration.DEFAULT.getDefaultConstraintSeverity());
         }
 
@@ -671,7 +667,6 @@ class YamlRuleParserPluginTest {
         }
     }
 
-    // todo Sind wir uns einig Unicode für .java-Dateien zu verwenden
     @Nested
     class I18N {
         @Test

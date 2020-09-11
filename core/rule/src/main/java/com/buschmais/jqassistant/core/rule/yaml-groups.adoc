@@ -64,6 +64,4 @@ A group in a YAML rule document is represented as a map of keys.
 | Specifies if the rule or group is optional or not. Possible values are `true`
   and `false`. The default value is `false`.
 
-// todo Where did we document what optional means?
-
 |===
