@@ -1,7 +1,5 @@
 = jQAssistant Plugin Common
 
-image::https://github.com/jQAssistant/jqa-plugin-common/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
-
 This is the base library with common functionality for
 all plugins of https://www.jqassistant.org[jQAssistant^].
 
