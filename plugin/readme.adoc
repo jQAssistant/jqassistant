@@ -1,6 +1,4 @@
 = jQAssistant Plugin Parent
 
-image::https://github.com/jQAssistant/jqa-plugin-parent/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
-
 Common Maven parent POM for all plugins of jQAssistant.
 
