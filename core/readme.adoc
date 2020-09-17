@@ -1,7 +1,5 @@
 = jQAssistant Core Framework
 
-image::https://github.com/jQAssistant/jqa-core-framework/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
-
 The jQAssistant Core Framework provides the functionality
 of jQAssistant which is used by all depending projects
 as the plugins of jQAssistant.
