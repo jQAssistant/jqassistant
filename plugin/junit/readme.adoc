@@ -1,7 +1,5 @@
 = jQAssistant Java Plugin
 
-image::https://github.com/jQAssistant/jqa-junit-plugin/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
-
 This is the http://www.junit.org[JUnit^] Plugin of https://www.jqassistant.org[jQAssistant^].
 It enables jQAssistant to scan and to analyze JUnit related
 artifacts like:
