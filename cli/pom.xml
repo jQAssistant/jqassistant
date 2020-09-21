@@ -178,12 +178,7 @@
                         </scanInclude>
                     </scanIncludes>
                     <groups>
-                        <!--
-                         ! See https://github.com/buschmais/jqa-commandline-tool/issues/1
-                         ! for details.
-                         ! <group>jqa-legal</group>
-                         !-->
-                        <!--<group>jqa-legal</group>-->
+                        <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
                         <group>jqa-maven-dependency-constraints</group>
                         <group>jqa-project-layout</group>
