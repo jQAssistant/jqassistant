@@ -1,7 +1,5 @@
 = jQAssistant Plugin for Maven
 
-image::https://github.com/jQAssistant/jqa-maven-plugin/workflows/jQA%20Standard%20CI%20Build/badge.svg[jQA Standard CI Build]
-
 This is the https://www.jqassistant.org[jQAssistant^] Plugin for Maven.
 It allows to execute jQAssistant during a Maven build.
 
