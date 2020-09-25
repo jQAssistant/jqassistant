@@ -74,7 +74,7 @@ as root module by setting the configuration option <<useExecutionRootAsProjectRo
 
 The jQAssistant Maven plugin must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
 
-.Setup of the jQAssistant Maven plugin including supported configuration options.
+.Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
 [source,xml]
 ----
 <project ...>
