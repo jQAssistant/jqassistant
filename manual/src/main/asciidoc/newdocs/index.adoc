@@ -1,5 +1,0 @@
-= jQAssistant User Documention Central
-
-== <<userguide.adoc#,jQAssistant Userguide>>
-
-== <<reference.adoc#,jQAssistant Reference>>

@@ -101,16 +101,29 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>overview</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
+                            <backend>xhtml5</backend>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>userguide</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/asciidoc/newdocs/userguide</sourceDirectory>
+                            <sourceDirectory>src/main/asciidoc/userguide</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
                             <outputDirectory>${project.build.directory}/generated-docs/userguide</outputDirectory>
                             <backend>xhtml5</backend>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
                             <attributes>
                                 <toc>left</toc>
                                 <docRoot>${sourcedoc.directory}</docRoot>
@@ -124,9 +137,9 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/asciidoc/newdocs/reference</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-docs/reference</outputDirectory>
+                            <sourceDirectory>src/main/asciidoc/reference</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/generated-docs/reference</outputDirectory>
                             <attributes>
                                 <toc>left</toc>
                                 <docRoot>${sourcedoc.directory}</docRoot>
@@ -142,12 +155,13 @@
                         </goals>
                         <configuration>
                             <attributes>
+                                <toc>auto</toc>
                                 <stylesheet>../jqassistant.css</stylesheet>
                                 <docRoot>${asciidoc.directory}</docRoot>
                             </attributes>
                             <sourceDirectory>src/main/asciidoc/manual</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-docs/manual</outputDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/generated-docs/manual</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/asciidoc</directory>
@@ -171,8 +185,11 @@
                                 <docRoot>/${asciidoc.directory}</docRoot>
                             </attributes>
                             <sourceDirectory>src/main/asciidoc/releasenotes-overview</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-docs/releasenotes-overview</outputDirectory>
                             <sourceDocumentName>release-notes.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/generated-docs/releasenotes-overview</outputDirectory>
+
+
+                            <!-- todo #7 Wozu brauche ich das? -->
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/asciidoc</directory>
@@ -189,7 +206,6 @@
                     <backend>xhtml5</backend>
                     <sourceHighlighter>coderay</sourceHighlighter>
                     <attributes>
-                        <toc>auto</toc>
                         <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
                         <!--

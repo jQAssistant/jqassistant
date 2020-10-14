@@ -1,0 +1,27 @@
+= jQAssistant User Documentation Central
+
+[abstract]
+jQAssistant's documentation is currently in an transition phase from
+the well-known user manual to a new structure with a separate user guide,
+which comes along a reference for jQAssistant. +
+Both, the user guide and the reference for jQAssistant, are work in progress.
+
+[discreate]
+== <<userguide/index.adoc#,jQAssistant User Guide>>
+
+The user guide will guide you through the features provided by
+jQAssistant with a clear on focus on the practial use of jQAssistant.
+If you are looking for a detailed reference on all usage and configuration
+options, then you should have a look at the jQAssistant reference.
+
+[discreate]
+== <<reference/index.adoc#,jQAssistant Reference>>
+
+The reference provides detailed information on all possible configuration
+options and features of jQAssistant and its plugins.
+
+== <<manual/index.adoc#,User Manual>>
+
+**The user manual provides a comprehensive overview on jQAssistant up to
+version 1.8.0.** New content for later versions will be added to the
+user guide and the jQAssistant reference.

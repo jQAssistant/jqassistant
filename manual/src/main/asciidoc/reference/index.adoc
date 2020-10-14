@@ -1,0 +1,136 @@
+= jQAssistant Reference
+
+:tip-caption: 💡
+:sectnums:
+
+include::{docRoot}/com/buschmais/jqassistant/core/rule/index.adoc[leveloffset=+1]
+
+//
+// Include here the documentation of the plugins for jQA
+//
+
+== AsciiDoc Report Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#asciidoc-report-plugin, Asciidoc Report Plugin>>
+of the jQAssistant Manual available.
+
+== CDI Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#cdi-plugin,CDI Plugin>>
+of the jQAssistant Manual available.
+
+== EJB 3 Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#ejb-plugin, EJB 3 Plugin>>
+of the jQAssistant Manual available.
+
+== GraphML Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#graphml-plugin, GraphML Plugin>>
+of the jQAssistant Manual available.
+
+include::{docRoot}/com/buschmais/jqassistant/plugin/graphql/api/model/index.adoc[leveloffset=+1]
+
+
+== Java Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#java-plugin,Java Plugin>>
+of the jQAssistant Manual available.
+
+== Java EE 6 Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#javaee-plugin,Java EE 6 Plugin>>
+of the jQAssistant Manual available.
+
+== JAX-RS Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#jaxrs-plugin,JAX-RS Plugin>>
+of the jQAssistant Manual available.
+
+== JPA 2 Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#jpa2-plugin,JPA 2 Plugin>>
+of the jQAssistant Manual available.
+
+== JSON Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#json-plugin,JSON Plugin>>
+of the jQAssistant Manual available.
+
+== JUnit Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#junit-plugin,JUnit Plugin>>
+of the jQAssistant Manual available.
+
+== Maven 2 Repository Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#m2repo-plugin,Maven 2 Repository Plugin>>
+of the jQAssistant Manual available.
+
+== Maven 3 Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#maven3-plugin,Maven 3 Plugin>>
+of the jQAssistant Manual available.
+
+== OSGi Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#osgi-plugin,OSGi Plugin>>
+of the jQAssistant Manual available.
+
+== RDBMS Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#rdbms-plugin,RDBMS Plugin>>
+of the jQAssistant Manual available.
+
+== Spring Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#spring-plugin,Spring Plugin>>
+of the jQAssistant Manual available.
+
+== TestNG Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#testng-plugin,TestNG Plugin>>
+of the jQAssistant Manual available.
+
+== Tycho Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#tycho-plugin,Tycho Plugin>>
+of the jQAssistant Manual available.
+
+== XML Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#xml-plugin,XML Plugin>>
+of the jQAssistant Manual available.
+
+== YAML Plugin
+
+The documentation of this plugin is still only the section
+<<../manual/index.html#yaml-plugin,YAML Plugin>>
+of the jQAssistant Manual available.
+
+include::{docRoot}/com/buschmais/jqassistant/plugin/yaml2/api/model/index.adoc[leveloffset=+1]
+
+
+//
+// Include here all appendixes
+//
+include::{docRoot}/com/buschmais/jqassistant/core/rule/yaml-schema.adoc[]
+
