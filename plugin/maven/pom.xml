@@ -46,6 +46,7 @@
         <jqa-xml-plugin.version>1.9.0-SNAPSHOT</jqa-xml-plugin.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_dependency-tree.version>3.0.1</org.apache.maven_dependency-tree.version>
+        <asciidoctor.toplevelid>maven3-plugin</asciidoctor.toplevelid>
     </properties>
 
     <dependencies>
