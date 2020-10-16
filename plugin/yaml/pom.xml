@@ -40,6 +40,7 @@
     <properties>
         <jqa-plugin-common.version>1.9.0-SNAPSHOT</jqa-plugin-common.version>
         <snakeyaml.version>2.1</snakeyaml.version>
+        <asciidoctor.toplevelid>yaml2-plugin</asciidoctor.toplevelid>
     </properties>
 
     <build>
