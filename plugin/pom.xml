@@ -213,6 +213,10 @@
                                     </fileMappers>
                                     <parameters>
                                         <parameter>
+                                            <name>toplevelid</name>
+                                            <value>${asciidoctor.toplevelid}</value>
+                                        </parameter>
+                                        <parameter>
                                             <name>groupId</name>
                                             <value>${project.groupId}</value>
                                         </parameter>
