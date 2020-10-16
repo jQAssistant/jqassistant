@@ -43,6 +43,7 @@
         <jqa-java-plugin.version>1.9.0-SNAPSHOT</jqa-java-plugin.version>
         <jqa-xml-plugin.version>1.9.0-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.9.0-SNAPSHOT</jqa-plugin-common.version>
+        <asciidoctor.toplevelid>junit-plugin</asciidoctor.toplevelid>
     </properties>
 
     <dependencies>
