@@ -76,7 +76,6 @@
                             <xml.file.include>/META-INF/jqassistant-plugin.xml</xml.file.include>
                         </scanProperties>
                         <groups>
-                            <group>jqa-github-integration</group>
                             <group>jqa-legal</group>
                             <group>jqa-maven-constraints</group>
                             <group>jqa-maven-dependency-constraints</group>
