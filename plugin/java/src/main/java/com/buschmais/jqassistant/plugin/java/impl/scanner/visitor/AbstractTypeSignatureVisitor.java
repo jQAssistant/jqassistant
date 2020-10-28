@@ -37,10 +37,6 @@ public abstract class AbstractTypeSignatureVisitor extends SignatureVisitor {
         this.visitorHelper = visitorHelper;
     }
 
-    protected VisitorHelper getVisitorHelper() {
-        return visitorHelper;
-    }
-
     @Override
     public void visitClassType(String name) {
         resolvedTypeDescriptor = visitorHelper.resolveType(SignatureHelper.getObjectType(name), containingType).getTypeDescriptor();
