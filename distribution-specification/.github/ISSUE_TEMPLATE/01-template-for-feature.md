@@ -9,14 +9,14 @@ assignees: ''
 _This hint can be removed_
 **We are happy, what you are going to send us your feature request. Please try to fillout as many sections as good as you can. If you can't provide us any information for a particular section, that is not problem. It is more important to us, to know more about our users and their needs. Even if this template looks very formal, we aren't.** 
 
-### Feature Descripion
+### Feature Description
  _Remove this hint: Provide here a short description of the feature you would like to see. Try to use the form of a user story. See https://en.wikipedia.org/wiki/User_story._
  
 I, as...
 would like...
 to that...
 
-### Addtional information on the requested Feature
+### Additional information on the requested Feature
 _Remove this hint: Feel free to let us know what ever you wan't :wink:_
 
 ### How to Test
