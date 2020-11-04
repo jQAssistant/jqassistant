@@ -6,16 +6,16 @@ labels: type:bug
 assignees: ''
 ---
 
-_Remove this thint:_
+_Remove this hint:_
 **We are happy, to know about the problems you have while using jQAssistant. Sometimes we learn 
 more about us and our projects from the bugs you find. Please try to fillout as many sections as good as you can. 
 If you can't provide us any information for a particular section, that is not problem.
 Even if this template looks very formal, we aren't.** 
 
-### Bug description
+### Bug Description
 
 
-### Expected behaviour
+### Expected Behaviour
 _Remove this hint: What did you actual expect from jQAssistant?_
 
 ### Your Environment
