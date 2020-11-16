@@ -468,6 +468,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>graphql</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
@@ -560,6 +567,13 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>yaml</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>yaml2</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
