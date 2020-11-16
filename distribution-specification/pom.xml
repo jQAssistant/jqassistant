@@ -82,6 +82,7 @@
         <jqa-rdbms-plugin.version>1.9.0-SNAPSHOT</jqa-rdbms-plugin.version>
         <jqa-spring-plugin.version>1.9.0-SNAPSHOT</jqa-spring-plugin.version>
         <jqa-yaml-plugin.version>1.9.0-SNAPSHOT</jqa-yaml-plugin.version>
+        <jqa-yaml2-plugin.version>1.9.0-SNAPSHOT</jqa-yaml2-plugin.version>
         <jqa-testng-plugin.version>1.9.0-SNAPSHOT</jqa-testng-plugin.version>
         <jqa-tycho-plugin.version>1.9.0-SNAPSHOT</jqa-tycho-plugin.version>
         <jqa-xml-plugin.version>1.9.0-SNAPSHOT</jqa-xml-plugin.version>
@@ -216,6 +217,25 @@
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>yaml</artifactId>
                 <version>${jqa-yaml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>yaml2</artifactId>
+                <version>${jqa-yaml2-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>yaml2</artifactId>
+                <version>${jqa-yaml2-plugin.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
