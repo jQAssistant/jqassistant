@@ -522,7 +522,10 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>yaml</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>yaml2</artifactId>
+        </dependency>
         <!--
          ! I M P O R T A N T
          !
