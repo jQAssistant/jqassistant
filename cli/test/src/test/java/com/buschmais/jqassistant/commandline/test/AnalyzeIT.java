@@ -76,11 +76,11 @@ public class AnalyzeIT extends AbstractCLIIT {
      */
     @TestTemplate
     public void constraintWarnOnSeverity() throws IOException, InterruptedException {
-        String[] args = new String[]{"analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT,
-                                     "-warnOnSeverity", "major", "-failOnSeverity", "critical"};
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "major", "-failOnSeverity",
+                "critical" };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode(), equalTo(0));
-        withStore(getDefaultStoreDirectory(), store ->  verifyConcepts(store, TEST_CONCEPT));
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
         List<String> console = executionResult.getErrorConsole();
         assertThat(console, hasItem(containsString("Test constraint."))); // The description
         assertThat(console, hasItem(containsString(TEST_CONSTRAINT)));
@@ -109,6 +109,13 @@ public class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDir.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(2));
         withStore(customStoreDir, store -> verifyConcepts(store, TEST_CONCEPT));
+    }
+
+    @TestTemplate
+    public void createReportArchive() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-createReportArchive" };
+        assertThat(execute(args).getExitCode(), equalTo(2));
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     /**

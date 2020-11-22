@@ -107,6 +107,8 @@ Executes an analysis.
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
 * -ruleParameters
 ** specifies the path to a property file defining values for parameters declared by rules
+* -createReportArchive
+** Create a ZIP file `report/jqassistant-report.zip` containing the generated reports
 
 [[cli:available-rules]]
 ==== available-rules

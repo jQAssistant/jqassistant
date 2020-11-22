@@ -4,5 +4,6 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Commandline Tool 1.9.0]
 
+* Added command line option `createReportArchive` to the analyze task for creating a ZIP archive containing the generated reports
 * Added command line options `storeEncryption`, `storeTrustStrategy` and `storeTrustCertificate` to control encryption for bolt connections to a Neo4j database
 
