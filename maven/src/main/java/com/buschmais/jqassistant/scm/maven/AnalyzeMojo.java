@@ -1,11 +1,13 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.File;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
@@ -21,10 +23,12 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, configurator = "custom")
 public class AnalyzeMojo extends AbstractProjectMojo {
+
+    public static final String JQASSISTANT_REPORT_CLASSIFIER = "jqassistant-report";
 
     private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
 
@@ -67,8 +73,22 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Parameter(property = "jqassistant.reportTypes")
     private Set<String> reportTypes;
 
+    /**
+     * Defines the properties for report plugins.
+     */
     @Parameter(property = "jqassistant.reportProperties")
     private Map<String, Object> reportProperties;
+
+    /**
+     * If `true` a ZIP file `jqassistant-report.zip` containing the generated
+     * reports is created in the folder `target/jqassistant` of the root module and
+     * attached using the classifier `jqassistant-report`.
+     */
+    @Parameter(property = "jqassistant.attachReportArchive")
+    private boolean attachReportArchive = false;
+
+    @Component
+    private MavenProjectHelper mavenProjectHelper;
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -91,16 +111,21 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, Object> properties = getReportProperties();
-        Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
+        Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext,
+                properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getRuleInterpreterPlugins(Collections.<String, Object>emptyMap()), inMemoryReportPlugin, logger);
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository()
+                    .getRuleInterpreterPlugins(Collections.<String, Object> emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
+        }
+        if (attachReportArchive) {
+            attachReportArchive(rootModule, reportContext);
         }
         ReportHelper reportHelper = new ReportHelper(logger);
         store.beginTransaction();
@@ -108,6 +133,22 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             verifyAnalysisResults(inMemoryReportPlugin, reportHelper, effectiveFailOnSeverity);
         } finally {
             store.commitTransaction();
+        }
+    }
+
+    private void attachReportArchive(MavenProject rootModule, ReportContext reportContext) throws MojoExecutionException {
+        File reportArchive;
+        try {
+            reportArchive = reportContext.createReportArchive();
+        } catch (ReportException e) {
+            throw new MojoExecutionException("Cannot attach report artifact.", e);
+        }
+        logger.info("Created report archive {}.", reportArchive);
+        mavenProjectHelper.attachArtifact(rootModule, "zip", JQASSISTANT_REPORT_CLASSIFIER, reportArchive);
+        if (!currentProject.equals(rootModule)) {
+            logger.info(
+                    "Report archive has been attached to module '{}:{}:{}'. Use 'installAtEnd' (maven-install-plugin) or 'deployAtEnd' (maven-deploy-plugin) to ensure deployment to local or remote repositories.",
+                    rootModule.getGroupId(), rootModule.getArtifactId(), rootModule.getVersion());
         }
     }
 

@@ -4,6 +4,7 @@
 ifndef::jqa-in-manual[== Version 1.9.0]
 ifdef::jqa-in-manual[== Plugin for Maven 1.9.0]
 
+* Added configuration setting `createReportArchive` to the analyze goal for creating a ZIP archive containing the generated reports
 * Added store configuration options `encryption`, `trustStrategy` and `trustCertificate` to control encryption for bolt connections to a Neo4j database
 * Fixed a race condition for Maven builds running in multiple threads (e.g. `-T4`)
 

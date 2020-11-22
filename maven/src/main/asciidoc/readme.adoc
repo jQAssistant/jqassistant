@@ -171,6 +171,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                     ${project.build.directory}/customReport.txt
                                 </customReport.fileName>
                             </reportProperties>
+                            <attachReportArchive>false</attachReportArchive>
                             <xmlReportFile>${project.build.directory}/jqassistant/jqassistant-report.xml</xmlReportFile>
                             -->
 
@@ -342,6 +343,16 @@ Executes an analysis.
 ** default 'false'
 * ruleParameters
 ** The values for rules that require parameters
+* reportProperties
+** The properties to be passed to report plugins
+* attachReportArchive
+** If `true` a ZIP file `jqassistant-report.zip` containing the generated reports is created in the folder
+   `target/jqassistant` of the root module and attached using the classifier `jqassistant-report`.
+
+NOTE: If for a multi-module project the report archive shall be installed into the local repository the https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven Install Plugin]
+      must be configured to use `installAtEnd`.
+      In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
+
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
