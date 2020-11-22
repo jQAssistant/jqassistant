@@ -1,13 +1,23 @@
 package com.buschmais.jqassistant.core.report.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import lombok.AllArgsConstructor;
@@ -82,6 +92,30 @@ public class ReportContextImpl implements ReportContext {
             reports.put(rule.getId(), ruleReports);
         }
         return ruleReports;
+    }
+
+    @Override
+    public File createReportArchive() throws ReportException {
+        File reportArchive = new File(outputDirectory, JQASSISTANT_REPORT_ARCHIVE);
+        if (reportArchive.exists() && !reportArchive.delete()) {
+            throw new ReportException("Cannot delete existing report archive " + reportArchive.getAbsolutePath());
+        }
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(reportArchive))) {
+            Path reportPath = reportDirectory.toPath();
+            Files.walkFileTree(reportPath, new SimpleFileVisitor<Path>() {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (!file.toFile().equals(reportArchive)) {
+                        zos.putNextEntry(new ZipEntry(reportPath.relativize(file).toString().replace('\\', '/')));
+                        Files.copy(file, zos);
+                        zos.closeEntry();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new ReportException("Cannot create report archive " + reportArchive.getAbsolutePath(), e);
+        }
+        return reportArchive;
     }
 
     @Getter

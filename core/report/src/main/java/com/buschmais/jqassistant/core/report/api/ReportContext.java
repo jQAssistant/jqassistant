@@ -11,8 +11,9 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
  */
 public interface ReportContext {
 
-    String REPORT_DIRECTORY = "report";
+    String JQASSISTANT_REPORT_ARCHIVE = "jqassistant-report.zip";
 
+    String REPORT_DIRECTORY = "report";
 
     /**
      * Return the directory relative to the directory where report files shall be
@@ -59,6 +60,13 @@ public interface ReportContext {
      *             If a problem occurs.
      */
     <E extends ExecutableRule<?>> List<Report<?>> getReports(E rule);
+
+    /**
+     * Creates an archive containing the reports as a ZIP {@link File}.
+     *
+     * @return The archive {@link File}.
+     */
+    File createReportArchive() throws ReportException;
 
     /**
      * Defines supported report types.
