@@ -1,6 +1,7 @@
 
 = jQAssistant Maven 3 Plugin Release Notes
 
+include::1.10.0.adoc[]
 include::1.9.0.adoc[]
 include::1.8.0.adoc[]
 include::1.7.0.adoc[]
