@@ -51,9 +51,8 @@
         <org.asciidoctor.version>1.5.8.1</org.asciidoctor.version>
         <org.asciidoctor-plugin.version>1.5.8</org.asciidoctor-plugin.version>
         <org.asciidoctorj-diagram.version>1.5.18</org.asciidoctorj-diagram.version>
-        <org.asciidoctorj-pdf.version>1.5.0-beta.8</org.asciidoctorj-pdf.version>
         <net.sourceforge.plantuml.version>1.2020.16</net.sourceforge.plantuml.version>
-        <org.jruby.version>9.2.5.0</org.jruby.version>
+        <org.jruby.version>9.2.13.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>2.23.4</org.mockito.version>
         <snakeyaml-engine.version>2.0</snakeyaml-engine.version>
@@ -151,17 +150,6 @@
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctorj-diagram</artifactId>
                 <version>${org.asciidoctorj-diagram.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctorj-pdf</artifactId>
-                <version>${org.asciidoctorj-pdf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.snakeyaml</groupId>
