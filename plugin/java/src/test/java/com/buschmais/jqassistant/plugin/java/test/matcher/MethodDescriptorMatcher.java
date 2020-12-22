@@ -15,7 +15,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
 
     /**
      * Constructor.
-     * 
+     *
      * @param signature
      *            The expected signature.
      */
@@ -25,7 +25,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
 
     /**
      * Return a {@link MethodDescriptorMatcher}.
-     * 
+     *
      * @param type
      *            The class containing the expected method.
      * @param method
@@ -40,14 +40,14 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
 
     /**
      * Return a {@link MethodDescriptorMatcher}.
-     * 
+     *
      * @param method
      *            The expected method.
      * @return The {@link MethodDescriptorMatcher}.
      */
     public static Matcher<? super MethodDescriptor> methodDescriptor(Method method) {
         StringBuilder signature = new StringBuilder();
-        signature.append(method.getReturnType().getCanonicalName());
+        signature.append(method.getReturnType().getTypeName());
         signature.append(' ');
         signature.append(method.getName());
         signature.append('(');
@@ -56,7 +56,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
             if (parameterCount > 0) {
                 signature.append(',');
             }
-            signature.append(parameterType.getCanonicalName());
+            signature.append(parameterType.getTypeName());
             parameterCount++;
         }
         signature.append(')');
@@ -65,7 +65,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
 
     /**
      * Return a {@link MethodDescriptorMatcher} for constructors.
-     * 
+     *
      * @param type
      *            The class containing the expected constructor.
      * @param parameterTypes
@@ -78,7 +78,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
 
     /**
      * Return a {@link MethodDescriptorMatcher} for constructors.
-     * 
+     *
      * @param constructor
      *            The expected constructor.
      * @return The {@link MethodDescriptorMatcher}.
@@ -94,7 +94,7 @@ public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<Met
             if (parameterCount > 0) {
                 signature.append(',');
             }
-            signature.append(parameterType.getCanonicalName());
+            signature.append(parameterType.getName());
             parameterCount++;
         }
         signature.append(')');

@@ -13,17 +13,17 @@ public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<Fiel
 
     /**
      * Constructor.
-     * 
+     *
      * @param field
      *            The expected field.
      */
     protected FieldDescriptorMatcher(Field field) {
-        super(FieldDescriptor.class, field, field.getType().getCanonicalName() + " " + field.getName());
+        super(FieldDescriptor.class, field, field.getType().getTypeName() + " " + field.getName());
     }
 
     /**
      * Return a {@link FieldDescriptorMatcher}.
-     * 
+     *
      * @param type
      *            The class containing the expected field.
      * @param field
@@ -36,7 +36,7 @@ public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<Fiel
 
     /**
      * Return a {@link FieldDescriptorMatcher}.
-     * 
+     *
      * @param field
      *            The expected field.
      * @return The {@link FieldDescriptorMatcher}.
@@ -47,7 +47,7 @@ public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<Fiel
 
     /**
      * Return a {@link FieldDescriptorMatcher} for an enumeration value.
-     * 
+     *
      * @param enumeration
      *            The expected enumeration.
      * @return The {@link FieldDescriptorMatcher}.
