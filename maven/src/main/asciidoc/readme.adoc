@@ -87,8 +87,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                 <version>@{project.version}</version>
                 <executions>
                     <execution>
-                        <!-- The id "cli-default" is used to allow execution of the goals with the given configuration from the command line -->
-                        <id>cli-default</id>
+                        <!-- The id "default-cli" is used to allow execution of the goals with the given configuration from the command line -->
+                        <id>default-cli</id>
                         <goals>
                             <goal>scan</goal>
                             <goal>analyze</goal>
@@ -127,7 +127,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                     <scope>java:classpath</scope>
                                 </scanInclude>
                                 <scanInclude>
-                                    <url>https://repo1.maven.org/maven2</path>
+                                    <url>https://repo1.maven.org/maven2</url>
                                     <scope>maven:repository</scope>
                                 </scanInclude>
                             </scanIncludes>
@@ -150,7 +150,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <groups>
                                 <group>default</group>
                             </groups>
-                            <ruleParameter>
+                            <ruleParameters>
                                 <myRuleParameter>com.buschmais</myRuleParameter>
                             </ruleParameters>
                             <rule>
