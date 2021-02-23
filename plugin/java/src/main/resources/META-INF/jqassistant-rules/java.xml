@@ -360,4 +360,16 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:PackageAnnotatedBy">
+        <description>Propagates the annotations from the package-info.java to the package node.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p:Package)-[:CONTAINS]->(t:Type{sourceFileName: "package-info.java"}),
+              (t)-[:ANNOTATED_BY]->(a:Annotation)
+            MERGE
+              (p)-[:ANNOTATED_BY]->(a)
+            RETURN p
+        ]]></cypher>
+    </concept>
+
 </jqassistant-rules>
