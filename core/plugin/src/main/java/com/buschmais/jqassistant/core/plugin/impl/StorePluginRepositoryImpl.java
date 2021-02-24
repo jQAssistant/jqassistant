@@ -59,16 +59,4 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
         return types;
     }
 
-    private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) {
-        List<Class<?>> types = new ArrayList<>();
-        for (JqassistantPlugin plugin : plugins) {
-            ClassListType modelTypes = plugin.getModel();
-            if (modelTypes != null) {
-                for (String typeName : modelTypes.getClazz()) {
-                    types.add(getType(typeName));
-                }
-            }
-        }
-        return types;
-    }
 }
