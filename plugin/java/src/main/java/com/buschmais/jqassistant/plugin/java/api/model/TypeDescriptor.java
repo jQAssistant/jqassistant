@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor;
+import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
@@ -57,4 +61,7 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
     @Incoming
     List<TypeDependsOnDescriptor> getDependents();
 
+    @ResultOf
+    @Cypher("MATCH (type:Java:Type) WHERE id(type)=$this MERGE (type)-[:DECLARES_TYPE_PARAMETER]->(typeParameter:Java:ByteCode:TypeParameter{name:$name}) RETURN typeParameter")
+    TypeParameterDescriptor resolveTypeParameter(@Parameter("name") String name);
 }

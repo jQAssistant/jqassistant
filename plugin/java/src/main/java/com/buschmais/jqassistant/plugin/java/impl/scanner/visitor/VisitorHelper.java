@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
@@ -19,7 +20,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class VisitorHelper {
 
-    public static final int ASM_OPCODES= Opcodes.ASM8;
+    public static final int ASM_OPCODES = Opcodes.ASM8;
 
     /**
      * The name of constructor methods.
@@ -255,5 +256,9 @@ public class VisitorHelper {
                 dependsOnDescriptor.setWeight(weight);
             }
         }
+    }
+
+    public TypeParameterDescriptor resolveTypeParameter(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, String name) {
+        return cachedType.getTypeDescriptor().resolveTypeParameter(name);
     }
 }

@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
-
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericMembers;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.dependson.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,72 +13,72 @@ import static org.junit.Assert.assertThat;
 public class GenericsIT extends AbstractJavaPluginIT {
 
     @Test
-    public void genericType() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class);
+    public void genericType() throws NoSuchMethodException {
+        scanClasses(GenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (g:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
         assertThat(query("MATCH (g:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
+                hasItem(constructorDescriptor(GenericType.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void boundGenericType() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.BoundGenericType.class);
+    public void boundGenericType() throws NoSuchMethodException {
+        scanClasses(BoundGenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (b:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
         assertThat(query("MATCH (b:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.BoundGenericType.class)));
+                hasItem(constructorDescriptor(BoundGenericType.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void nestedGenericType() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericType.class);
+    public void nestedGenericType() throws NoSuchMethodException {
+        scanClasses(NestedGenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
         assertThat(query("MATCH (n:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericType.class)));
+                hasItem(constructorDescriptor(NestedGenericType.class)));
         assertThat(query("MATCH (n:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"),
-                hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
+                hasItem(typeDescriptor(GenericType.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void nestedGenericMethod() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericMethod.class);
+    public void nestedGenericMethod() throws NoSuchMethodException {
+        scanClasses(NestedGenericMethod.class);
         store.beginTransaction();
         assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
         assertThat(query("MATCH (n:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericMethod.class)));
+                hasItem(constructorDescriptor(NestedGenericMethod.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void extendsGenericClass() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ExtendsGenericClass.class);
+    public void extendsGenericClass() throws NoSuchMethodException {
+        scanClasses(ExtendsGenericClass.class);
         store.beginTransaction();
         assertThat(query("MATCH (e:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"),
-                hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
+                hasItem(typeDescriptor(GenericType.class)));
         assertThat(query("MATCH (e:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
         assertThat(query("MATCH (e:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ExtendsGenericClass.class)));
+                hasItem(constructorDescriptor(ExtendsGenericClass.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void implementsGenericInterface() throws IOException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGenericInterface.class);
+    public void implementsGenericInterface() throws NoSuchMethodException {
+        scanClasses(ImplementsGenericInterface.class);
         store.beginTransaction();
         assertThat(query("MATCH (igi:Type)-[:IMPLEMENTS]->(i) RETURN i").getColumn("i"), hasItem(typeDescriptor(Iterable.class)));
         assertThat(query("MATCH (igi:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
         assertThat(query("MATCH (igi:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
-                hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGenericInterface.class)));
+                hasItem(constructorDescriptor(ImplementsGenericInterface.class)));
         store.commitTransaction();
     }
 
     @Test
-    public void genericMembers() throws IOException {
+    public void genericMembers() {
         scanClasses(GenericMembers.class);
         store.beginTransaction();
         TestResult result = query("MATCH (gm:Type)-[:DEPENDS_ON]->(tv) RETURN tv");

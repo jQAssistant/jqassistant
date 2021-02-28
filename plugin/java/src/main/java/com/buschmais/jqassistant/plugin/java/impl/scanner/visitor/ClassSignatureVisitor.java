@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -14,11 +15,23 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
 
-    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper, DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
+    private int typeParameterIndex = 0;
+
+    private TypeParameterDescriptor typeParameterDescriptor;
+
+    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper,
+            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(VisitorHelper.ASM_OPCODES);
         this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;
         this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
+    }
+
+    @Override
+    public void visitFormalTypeParameter(String name) {
+        this.typeParameterDescriptor = visitorHelper.resolveTypeParameter(cachedType, name);
+        this.typeParameterDescriptor.setIndex(typeParameterIndex);
+        this.typeParameterIndex++;
     }
 
     @Override

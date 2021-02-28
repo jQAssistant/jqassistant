@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics;
+package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.dependson;
 
 import java.util.List;
 import java.util.Set;

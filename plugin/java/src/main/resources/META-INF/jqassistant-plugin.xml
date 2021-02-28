@@ -29,6 +29,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor</class>
     </model>
     <scope>
         <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
