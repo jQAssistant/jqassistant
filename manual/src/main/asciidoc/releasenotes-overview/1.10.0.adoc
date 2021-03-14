@@ -1,0 +1,43 @@
+// This sets the default value for the docRoot attribute for editing the
+// files in the IDE. However, the effective value is set at build time
+// by the Maven Plugin and might differ from this value.
+// Oliver B. Fischer, 2020-02-01
+:docRoot: ../../../../target/asciidoc-modules-documentation
+
+== jQAssistant 1.10.0
+
+=== Changes to the Plugins
+
+include::{docRoot}/com.buschmais.jqassistant.plugin/asciidoc-report/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/cdi/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/ejb3/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/graphml/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/graphql/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/java/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/jpa2/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/junit/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/jaxrs/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/javaee6/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/json/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/m2repo/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/maven3/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/osgi/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/rdbms/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/spring/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/testng/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/tycho/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/xml/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/yaml/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.plugin/yaml2/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+
+=== Changes to the Commandline Tool and Plugin for Maven
+
+include::{docRoot}/com.buschmais.jqassistant/jqassistant-maven-plugin/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.cli/parent/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+
+=== Changes to Common Modules
+
+include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.core/parent/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.neo4jserver/parent/asciidoc/releasenotes/1.10.0.adoc[leveloffset=2]
+
