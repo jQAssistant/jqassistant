@@ -4,7 +4,7 @@
 ifndef::jqa-in-manual[== Version 1.10.0]
 ifdef::jqa-in-manual[== Core Framework 1.10.0]
 
-* No changes in this version.
+* A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
 
 
 

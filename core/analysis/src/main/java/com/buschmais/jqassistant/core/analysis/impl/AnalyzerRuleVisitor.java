@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
@@ -19,6 +20,8 @@ import com.buschmais.jqassistant.core.rule.api.model.Group;
 import com.buschmais.jqassistant.core.rule.api.model.Parameter;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -130,13 +133,31 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         }
         for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
             if (languagePlugin.accepts(executableRule)) {
-                Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
+                Result<T> result = execute(executableRule, severity, ruleParameters, languagePlugin);
                 if (result != null) {
                     return result;
                 }
             }
         }
         throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
+    }
+
+    private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,
+            RuleInterpreterPlugin languagePlugin) throws RuleException {
+        StopWatch stopWatch = StopWatch.createStarted();
+        try {
+            Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
+            if (result != null) {
+                return result;
+            }
+        } finally {
+            stopWatch.stop();
+            long ruleExecutionTime = stopWatch.getTime(TimeUnit.SECONDS);
+            if (ruleExecutionTime > configuration.getWarnOnRuleExecutionTimeSeconds()) {
+                analyzerContext.getLogger().warn("Execution of rule defined in '{}' took {} seconds.", executableRule.getSource().getId(), ruleExecutionTime);
+            }
+        }
+        return null;
     }
 
     private Map<String, Object> getRuleParameters(ExecutableRule executableRule) throws RuleException {
