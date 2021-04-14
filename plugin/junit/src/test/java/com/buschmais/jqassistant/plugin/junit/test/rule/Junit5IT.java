@@ -29,6 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -447,7 +448,8 @@ public class Junit5IT extends AbstractJunitIT {
         // Oliver B. Fischer, 2019-02-20
         assertThat(methods.size()).isGreaterThanOrEqualTo(109);
         assertThat(methods, hasItems(methodDescriptor(Assertions.class, "assertTrue", boolean.class),
-                                     methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class)));
+                                     methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class),
+                                     methodDescriptor(Assertions.class, "assertThrows", Class.class, Executable.class)));
         store.commitTransaction();
     }
 
