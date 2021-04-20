@@ -96,7 +96,7 @@
         <maven.install.version>3.0.0-M1</maven.install.version>
         <maven.jar.version>3.1.1</maven.jar.version>
         <maven.javadoc.version>3.0.1</maven.javadoc.version>
-        <maven.jaxb2-plugin.version>0.9.1</maven.jaxb2-plugin.version>
+        <maven.jaxb2-plugin.version>0.14.0</maven.jaxb2-plugin.version>
 
         <!--
          ! This two properties controls on which severity of constraint
