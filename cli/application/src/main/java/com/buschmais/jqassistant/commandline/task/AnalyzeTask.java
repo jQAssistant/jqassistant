@@ -62,7 +62,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
 
-        ReportContext reportContext = new ReportContextImpl(reportDirectory, reportDirectory);
+        ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
