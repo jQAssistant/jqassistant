@@ -108,7 +108,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
-        ReportContext reportContext = new ReportContextImpl(ProjectResolver.getOutputDirectory(rootModule));
+        ReportContext reportContext = new ReportContextImpl(store, ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, Object> properties = getReportProperties();
         Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext,
