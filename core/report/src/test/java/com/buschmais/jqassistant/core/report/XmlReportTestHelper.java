@@ -20,6 +20,9 @@ import com.buschmais.jqassistant.core.rule.api.model.Group;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
+import com.buschmais.jqassistant.core.store.api.Store;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Provides functionality for XML report tests.
@@ -30,10 +33,17 @@ public final class XmlReportTestHelper {
     public static final String C2 = "c2";
     public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
 
+    private final XmlReportPlugin xmlReportWriter;
+
     /**
      * Constructor.
      */
-    private XmlReportTestHelper() {
+    XmlReportTestHelper() {
+        xmlReportWriter = new XmlReportPlugin();
+        xmlReportWriter.initialize();
+        File reportDirectory = new File("target/test");
+        reportDirectory.mkdirs();
+        xmlReportWriter.configure(new ReportContextImpl(mock(Store.class), reportDirectory), Collections.EMPTY_MAP);
     }
 
     /**
@@ -43,12 +53,10 @@ public final class XmlReportTestHelper {
      * @throws ReportException
      *             If the test fails.
      */
-    public static File createXmlReport() throws ReportException {
-        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
+    public File createXmlReport() throws ReportException {
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("my:concept").description("My concept description").severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION)
-                .report(Report.builder().primaryColumn("c2").build()).build();
+                .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION).report(Report.builder().primaryColumn("c2").build()).build();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = Group.builder().id("default").description("My group").concepts(concepts).build();
@@ -65,8 +73,7 @@ public final class XmlReportTestHelper {
         return xmlReportWriter.getXmlReportFile();
     }
 
-    public static File createXmlWithUmlauts(String description) throws ReportException {
-        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
+    public File createXmlWithUmlauts(String description) throws ReportException {
         xmlReportWriter.begin();
         Concept concept = Concept.builder().id("mein:Konzept").description(description).severity(Severity.MAJOR).executable(new CypherExecutable("match..."))
                 .verification(ROW_COUNT_VERIFICATION).report(Report.builder().primaryColumn("c2").build()).build();
@@ -93,10 +100,8 @@ public final class XmlReportTestHelper {
      * @throws ReportException
      *             If the test fails.
      */
-    public static File createXmlReportWithConstraints() throws ReportException {
-        XmlReportPlugin xmlReportWriter = getXmlReportWriter();
+    public File createXmlReportWithConstraints() throws ReportException {
         xmlReportWriter.begin();
-
         Constraint constraint = Constraint.builder().id("my:Constraint").description("My constraint description").severity(Severity.BLOCKER)
                 .executable(new CypherExecutable("match...")).verification(ROW_COUNT_VERIFICATION).report(Report.builder().build()).build();
         Map<String, Severity> constraints = new HashMap<>();
@@ -113,15 +118,6 @@ public final class XmlReportTestHelper {
         xmlReportWriter.endGroup();
         xmlReportWriter.end();
         return xmlReportWriter.getXmlReportFile();
-    }
-
-    private static XmlReportPlugin getXmlReportWriter() {
-        XmlReportPlugin xmlReportWriter = new XmlReportPlugin();
-        xmlReportWriter.initialize();
-        File reportDirectory = new File("target/test");
-        reportDirectory.mkdirs();
-        xmlReportWriter.configure(new ReportContextImpl(reportDirectory), Collections.EMPTY_MAP);
-        return xmlReportWriter;
     }
 
     private static Map<String, Object> createRow() {

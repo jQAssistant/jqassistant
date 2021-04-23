@@ -12,11 +12,13 @@ import java.util.zip.ZipInputStream;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class ReportContextImplTest {
 
@@ -24,7 +26,7 @@ class ReportContextImplTest {
     void archiveReports() throws IOException, ReportException {
         // given
         File reportDirectory = new File("target/report");
-        ReportContextImpl reportContext = new ReportContextImpl(reportDirectory, reportDirectory);
+        ReportContext reportContext = new ReportContextImpl(mock(Store.class), reportDirectory, reportDirectory);
         File file = new File(reportContext.getReportDirectory("test-plugin"), "test-report.txt");
         try (FileWriter fileWriter = new FileWriter(file)) {
             IOUtils.write("Test", fileWriter);

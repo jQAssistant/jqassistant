@@ -5,6 +5,7 @@ ifndef::jqa-in-manual[== Version 1.10.0]
 ifdef::jqa-in-manual[== Core Framework 1.10.0]
 
 * A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
+* The store is now available for custom report plugins via `ReportContext#getStore()`
 
 
 
