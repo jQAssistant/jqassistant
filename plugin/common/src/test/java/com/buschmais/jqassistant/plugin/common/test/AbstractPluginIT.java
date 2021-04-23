@@ -36,6 +36,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -126,13 +127,38 @@ public abstract class AbstractPluginIT {
 
     private void initializeAnalyzer() {
         this.reportContext = new ReportContextImpl(outputDirectory);
-        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(emptyMap()));
-        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(getReportPlugins(getReportProperties())));
+        AnalyzerConfiguration configuration = getAnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
+    /**
+     * Return the properties for the scanner, to be overwritten by sub-classes.
+     */
+    protected Map<String, Object> getScannerProperties() {
+        return emptyMap();
+    }
+
+    /**
+     * Return the properties for the scanner, to be overwritten by sub-classes.
+     */
+    protected AnalyzerConfiguration getAnalyzerConfiguration() {
+        return new AnalyzerConfiguration();
+    }
+
+    /**
+     * Return the report properties, to be overwritten by sub-classes.
+     */
+    protected Map<String, Object> getReportProperties() {
+        return emptyMap();
+    }
+
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
-        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap());
+        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(getRuleInterpreterProperties());
+    }
+
+    protected Map<String, Object> getRuleInterpreterProperties() {
+        return emptyMap();
     }
 
     /**
@@ -193,7 +219,7 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(emptyMap());
+        return getScanner(getScannerProperties());
     }
 
     /**
@@ -367,10 +393,20 @@ public abstract class AbstractPluginIT {
         analyzer.execute(ruleSet, ruleSelection, parameters);
     }
 
+    /**
+     * @deprecated Override {@link #getReportProperties()} to configure plugins.
+     */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 11)
     protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
         return getReportPlugins(reportContext, properties);
     }
 
+    /**
+     * @deprecated Override {@link #getReportProperties()} to configure plugins.
+     */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 11)
     protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
         return pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
     }
