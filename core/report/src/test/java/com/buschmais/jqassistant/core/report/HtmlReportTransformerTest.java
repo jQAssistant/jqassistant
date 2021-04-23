@@ -25,7 +25,7 @@ public class HtmlReportTransformerTest {
 
     @Test
     public void transform() throws ReportException, ReportTransformerException, FileNotFoundException {
-        File xmlReport = XmlReportTestHelper.createXmlReport();
+        File xmlReport = new XmlReportTestHelper().createXmlReport();
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(new FileReader(xmlReport));
         StringWriter htmlWriter = new StringWriter();
