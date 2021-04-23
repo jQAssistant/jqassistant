@@ -10,8 +10,10 @@ import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
 
 /**
  * Abstract base class for {@link ReportPlugin} unit tests.
@@ -19,6 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class AbstractReportPluginTest {
 
     protected final ReportPlugin plugin;
+
+    @Mock
+    protected Store store;
 
     protected ReportContext reportContext;
 
@@ -30,7 +35,7 @@ public abstract class AbstractReportPluginTest {
     public final void setUp() throws ReportException {
         plugin.initialize();
         File outputDirectory = new File("target/test");
-        reportContext = new ReportContextImpl(outputDirectory);
+        reportContext = new ReportContextImpl(store, outputDirectory);
     }
 
     protected final void apply(Constraint constraint, Result.Status status) throws ReportException {

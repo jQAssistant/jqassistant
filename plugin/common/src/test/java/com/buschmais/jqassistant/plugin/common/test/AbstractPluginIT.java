@@ -126,7 +126,7 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeAnalyzer() {
-        this.reportContext = new ReportContextImpl(outputDirectory);
+        this.reportContext = new ReportContextImpl(store, outputDirectory);
         this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(getReportPlugins(getReportProperties())));
         AnalyzerConfiguration configuration = getAnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
