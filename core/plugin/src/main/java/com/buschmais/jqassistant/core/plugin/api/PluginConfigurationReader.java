@@ -10,7 +10,7 @@ import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 public interface PluginConfigurationReader {
 
     String PLUGIN_RESOURCE = "META-INF/jqassistant-plugin.xml";
-    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/xsd/jqassistant-plugin-v1.8.xsd";
+    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/plugin/xsd/jqassistant-plugin-v1.10.xsd";
 
     /**
      * Return the class loader used to resolve plugins.

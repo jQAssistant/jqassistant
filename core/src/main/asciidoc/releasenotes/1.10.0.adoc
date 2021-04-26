@@ -6,6 +6,29 @@ ifdef::jqa-in-manual[== Core Framework 1.10.0]
 
 * A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
 * The store is now available for custom report plugins via `ReportContext#getStore()`
+* The XML Schema description for plugins for jQAssistant has been
+  updated and is now available in version 1.10.
+  Please update your existing plugins
+  by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.1`
+  as namespace for your plugin descriptors.
+* Starting with this version, it is recommended to assign a unique
+  id to each plugin. In later version of jQAssistant, this id
+  can be used to refer to its plugin in the upcomming new
+  configuration mechanism. +
+   +
+  A possible plugin descriptor could look like this:
+
+[source, xml]
+----
+  <jpd:jqassistant-plugin
+        xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10
+                            https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
+        name="myPlugin" id="myorganisation.myplugin">
+  </jpd:jqassistant-plugin>
+----
+
 
 
 
