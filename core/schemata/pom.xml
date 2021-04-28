@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.buschmais.jqassistant.core</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.10.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.buschmais.jqassistant.core</groupId>
+    <artifactId>schemata</artifactId>
+    <name>jQassistant Core Schemata</name>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>${maven.jaxb2-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemas>
+                                <schema>
+                                    <fileset>
+                                        <directory>${project.basedir}/src/main/resources/META-INF/plugin/xsd</directory>
+                                        <includes>
+                                            <include>jqassistant-plugin-v1.10.xsd</include>
+                                        </includes>
+                                    </fileset>
+                                </schema>
+                                <schema>
+                                    <fileset>
+                                        <directory>${project.basedir}/src/main/resources/META-INF/report/xsd</directory>
+                                    </fileset>
+                                </schema>
+                                <schema>
+                                    <fileset>
+                                        <directory>${project.basedir}/src/main/resources/META-INF/rule/xsd</directory>
+                                    </fileset>
+                                </schema>
+                            </schemas>
+
+                            <!-- Provide namespace in each generated class to avoid problems loading this information from package-info.java on Java 11 and newer -->
+                            <packageLevelAnnotations>false</packageLevelAnnotations>
+                            <args>
+                                <arg>-mark-generated</arg>
+                                <arg>-Xdefault-value</arg>
+                                <arg>-Xno-comment</arg>
+                            </args>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-default-value</artifactId>
+                                    <version>1.1</version>
+                                </plugin>
+                                <!--
+                                 ! This is a custom plugin which suppresses the generation
+                                 ! of JavaDoc descriptions. We this as our JavaDoc is written
+                                 ! in Asciidoctor and the JAXB 2 plugin generated the standard
+                                 ! JavaDoc descriptions.
+                                 ! Oliver B. Fischer, 2016-12-26
+                                 !-->
+                                <plugin>
+                                    <groupId>com.buschmais.x2j.nocomment</groupId>
+                                    <artifactId>nocomment-plugin</artifactId>
+                                    <version>0.1</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

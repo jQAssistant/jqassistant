@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://schema.jqassistant.org/plugin/v1.10"
+           targetNamespace="http://schema.jqassistant.org/plugin/v1.10"
+           elementFormDefault="qualified">
+
+    <xs:element name="jqassistant-plugin">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="model" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="function" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="procedure" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="scope" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="scanner" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="rules" type="tns:RulesType" minOccurs="0"/>
+                <xs:element name="ruleParser" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="ruleInterpreter" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="report" type="tns:IdClassListType" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+
+            <!--
+             ! In a later version of jQAssistant, the id attribute will
+             ! be mandatory.
+             ! Oliver B. Fischer, 2021-04-22
+             !-->
+            <xs:attribute name="id" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        The id attribute of a plugin contains the unique identifier
+                        of the plugin, which is used by jQAssistant
+                        to refer to the plugin during the configuration of jQAssistant.
+
+                        The id of a plugin must be unique among all plugins jQAssistant
+                        loads during the startup. Therefore it is recommended
+                        to use the first characters of the id for a namespace
+                        similar prefix followed by a dot.
+
+                        For example, all plugins provided by jQAssitant
+                        itself, will use the prefix "jqa.".
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[a-z][a-z0-9\.]+"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ClassListType">
+        <xs:sequence>
+            <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdClassListType">
+        <xs:sequence>
+            <xs:element name="class" type="tns:IdClassType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RulesType">
+        <xs:sequence>
+            <xs:element name="resource" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdClassType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>
