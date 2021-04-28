@@ -1,4 +1,4 @@
-<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.8" name="Test">
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10" name="Test">
     <description>Test plugin.</description>
     <scope>
         <class>com.buschmais.jqassistant.core.plugin.impl.TestScope</class>

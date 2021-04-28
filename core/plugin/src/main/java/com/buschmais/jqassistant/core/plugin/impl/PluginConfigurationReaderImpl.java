@@ -24,7 +24,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
     private static final Schema SCHEMA = XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE);
-    private static final String NAMESPACE = "http://schema.jqassistant.org/plugin/v1.8";
+    private static final String NAMESPACE = "http://schema.jqassistant.org/plugin/v1.10";
 
     private final ClassLoader pluginClassLoader;
 

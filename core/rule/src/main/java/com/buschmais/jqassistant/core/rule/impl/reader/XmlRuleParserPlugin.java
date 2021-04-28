@@ -22,7 +22,7 @@ import org.jqassistant.schema.rule.v1.*;
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final String NAMESPACE_RULE_1_8 = "http://schema.jqassistant.org/rule/v1.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rule-v1.8.xsd";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v1.8.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 

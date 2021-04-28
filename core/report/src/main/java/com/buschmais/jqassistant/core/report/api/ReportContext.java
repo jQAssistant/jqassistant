@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Defines the interface for the report context.
@@ -14,6 +15,11 @@ public interface ReportContext {
     String JQASSISTANT_REPORT_ARCHIVE = "jqassistant-report.zip";
 
     String REPORT_DIRECTORY = "report";
+
+    /**
+     * Return the {@link Store}.
+     */
+    Store getStore();
 
     /**
      * Return the directory relative to the directory where report files shall be

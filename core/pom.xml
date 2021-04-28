@@ -324,6 +324,7 @@
     </build>
 
     <modules>
+        <module>schemata</module>
         <module>shared</module>
         <module>rule</module>
         <module>report</module>

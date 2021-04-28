@@ -19,6 +19,7 @@ import java.util.zip.ZipOutputStream;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,8 @@ public class ReportContextImpl implements ReportContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportContextImpl.class);
 
+    private final Store store;
+
     private final File outputDirectory;
 
     private final File reportDirectory;
@@ -45,22 +48,32 @@ public class ReportContextImpl implements ReportContext {
     /**
      * Constructor.
      *
+     * @param store
+     *            The {@link Store};
      * @param outputDirectory
      *            The output directory.
      */
-    public ReportContextImpl(File outputDirectory) {
-        this(outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
+    public ReportContextImpl(Store store, File outputDirectory) {
+        this(store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
     }
 
     /**
      * Constructor.
      *
+     * @param store
+     *            The {@link Store};
      * @param outputDirectory
      *            The output directory.
      */
-    public ReportContextImpl(File outputDirectory, File reportDirectory) {
+    public ReportContextImpl(Store store, File outputDirectory, File reportDirectory) {
+        this.store = store;
         this.outputDirectory = outputDirectory;
         this.reportDirectory = reportDirectory;
+    }
+
+    @Override
+    public Store getStore() {
+        return store;
     }
 
     @Override
