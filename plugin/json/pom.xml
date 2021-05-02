@@ -42,7 +42,7 @@
     </licenses>
 
     <properties>
-        <org.antlr.version>4.7.2</org.antlr.version>
+        <org.antlr.version>4.9.2</org.antlr.version>
         <jqa-plugin-common.version>1.10.0-SNAPSHOT</jqa-plugin-common.version>
         <jqa-java-plugin.version>1.10.0-SNAPSHOT</jqa-java-plugin.version>
 
