@@ -8,12 +8,8 @@ import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.xo.api.Example;
+import com.buschmais.xo.api.*;
 import com.buschmais.xo.api.Query.Result;
-import com.buschmais.xo.api.ResultIterable;
-import com.buschmais.xo.api.ValidationMode;
-import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 
@@ -210,6 +206,7 @@ public abstract class AbstractGraphStore implements Store {
             beginTransaction();
             Result.CompositeRowObject result = executeQuery(query).getSingleResult();
             count = result.get(countColumn, Long.class);
+            totalCount = totalCount + count;
             commitTransaction();
         } while (count > 0);
         return totalCount;
