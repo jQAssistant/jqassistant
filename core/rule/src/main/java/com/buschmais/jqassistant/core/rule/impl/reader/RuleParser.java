@@ -27,19 +27,19 @@ public class RuleParser {
     public RuleSet parse(List<? extends RuleSource> sources) throws RuleException {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         for (RuleSource source : sources) {
-            boolean accepted = false;
-            for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
-                if (ruleParserPlugin.accepts(source)) {
-                    accepted = true;
-                    ruleParserPlugin.parse(source, ruleSetBuilder);
-                }
-            }
-
-            if (!accepted) {
-                logger.warn("Rule source with id '{}' has not been processed by any rule parser. " +
-                            "Contained rules are not available to jQAssistant.", source.getId());
-            }
+            parse(source, ruleSetBuilder);
         }
         return ruleSetBuilder.getRuleSet();
+    }
+
+    private void parse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
+        for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
+            if (ruleParserPlugin.accepts(source)) {
+                logger.debug("Parsing rule source with id '{}' using '{}'.", source.getId(), ruleParserPlugin);
+                ruleParserPlugin.parse(source, ruleSetBuilder);
+                return;
+            }
+        }
+        logger.debug("Rule source with id '{}' has not been accepted by any rule parser.", source.getId());
     }
 }
