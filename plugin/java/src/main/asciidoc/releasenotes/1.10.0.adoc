@@ -1,4 +1,10 @@
 ifndef::jqa-in-manual[== Version 1.10.0]
 ifdef::jqa-in-manual[== Java Plugin 1.10.0]
 
-* No changes in this version.
+* Added a `reason` attribute to `@jQASuppress` to allow human-readable description for the suppression, e.g.
++
+[source,java]
+----
+@jQASuppress(value = "my-rules:SuppressedRule", reason = "This rule does not apply here.")
+public class MyClass { }
+----
