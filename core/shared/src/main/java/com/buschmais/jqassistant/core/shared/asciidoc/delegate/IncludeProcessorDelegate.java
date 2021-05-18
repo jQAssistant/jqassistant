@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.shared.asciidoc.delegate;
 
 import java.util.Map;
 
-import org.asciidoctor.ast.DocumentRuby;
+import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.PreprocessorReader;
 
@@ -20,7 +20,7 @@ class IncludeProcessorDelegate extends IncludeProcessor {
     }
 
     @Override
-    public void process(DocumentRuby document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
+    public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
         if (delegate != null) {
             delegate.process(document, reader, target, attributes);
         }

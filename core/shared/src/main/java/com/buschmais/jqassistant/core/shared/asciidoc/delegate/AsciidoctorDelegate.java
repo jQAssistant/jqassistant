@@ -13,7 +13,6 @@ import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.DocumentHeader;
-import org.asciidoctor.ast.StructuredDocument;
 import org.asciidoctor.converter.JavaConverterRegistry;
 import org.asciidoctor.extension.ExtensionGroup;
 import org.asciidoctor.extension.JavaExtensionRegistry;
@@ -113,13 +112,28 @@ public class AsciidoctorDelegate implements Asciidoctor {
     }
 
     @Override
+    public <T> T convert(String s, Map<String, Object> map, Class<T> aClass) {
+        return delegate.convert(s, map, aClass);
+    }
+
+    @Override
     public String convert(String content, Options options) {
         return delegate.convert(content, options);
     }
 
     @Override
+    public <T> T convert(String s, Options options, Class<T> aClass) {
+        return delegate.convert(s, options, aClass);
+    }
+
+    @Override
     public String convert(String content, OptionsBuilder options) {
         return delegate.convert(content, options);
+    }
+
+    @Override
+    public <T> T convert(String s, OptionsBuilder optionsBuilder, Class<T> aClass) {
+        return delegate.convert(s, optionsBuilder, aClass);
     }
 
     @Override
@@ -143,13 +157,28 @@ public class AsciidoctorDelegate implements Asciidoctor {
     }
 
     @Override
+    public <T> T convertFile(File file, Map<String, Object> map, Class<T> aClass) {
+        return delegate.convertFile(file, map, aClass);
+    }
+
+    @Override
     public String convertFile(File filename, Options options) {
         return delegate.convertFile(filename, options);
     }
 
     @Override
+    public <T> T convertFile(File file, Options options, Class<T> aClass) {
+        return delegate.convertFile(file, options, aClass);
+    }
+
+    @Override
     public String convertFile(File filename, OptionsBuilder options) {
         return delegate.convertFile(filename, options);
+    }
+
+    @Override
+    public <T> T convertFile(File file, OptionsBuilder optionsBuilder, Class<T> aClass) {
+        return delegate.convertFile(file, optionsBuilder, aClass);
     }
 
     @Override
@@ -180,21 +209,6 @@ public class AsciidoctorDelegate implements Asciidoctor {
     @Override
     public String[] convertFiles(Collection<File> asciidoctorFiles, OptionsBuilder options) {
         return delegate.convertFiles(asciidoctorFiles, options);
-    }
-
-    @Override
-    public StructuredDocument readDocumentStructure(File filename, Map<String, Object> options) {
-        return delegate.readDocumentStructure(filename, options);
-    }
-
-    @Override
-    public StructuredDocument readDocumentStructure(String content, Map<String, Object> options) {
-        return delegate.readDocumentStructure(content, options);
-    }
-
-    @Override
-    public StructuredDocument readDocumentStructure(Reader contentReader, Map<String, Object> options) {
-        return delegate.readDocumentStructure(contentReader, options);
     }
 
     @Override
