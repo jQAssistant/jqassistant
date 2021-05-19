@@ -18,11 +18,12 @@ import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.asciidoctor.ast.AbstractBlock;
+import org.asciidoctor.ast.DescriptionListEntry;
 import org.asciidoctor.ast.Document;
-import org.asciidoctor.ast.DocumentRuby;
+import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.JavaExtensionRegistry;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -31,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.asciidoctor.AttributesBuilder.attributes;
-import static org.asciidoctor.OptionsBuilder.options;
 
 /**
  * @author mh
@@ -75,8 +74,6 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Asciidoctor asciidoctor = null;
 
-    private Treeprocessor treeprocessor;
-
     private File tempDir;
 
     @Override
@@ -113,10 +110,11 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
-        OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
-                .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
-        getAsciidoctor().load(content, optionsBuilder.asMap());
-        extractRules(source, singletonList(treeprocessor.getDocument()), ruleSetBuilder);
+        org.asciidoctor.Attributes attributes = org.asciidoctor.Attributes.builder()
+                .attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true).build();
+        OptionsBuilder optionsBuilder = Options.builder().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir).attributes(attributes);
+        Document document = getAsciidoctor().load(content, optionsBuilder.build());
+        extractRules(source, singletonList(document), ruleSetBuilder);
     }
 
     /**
@@ -128,10 +126,8 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     private Asciidoctor getAsciidoctor() {
         if (asciidoctor == null) {
             asciidoctor = AsciidoctorFactory.getAsciidoctor();
-            treeprocessor = new Treeprocessor();
             IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
             JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-            extensionRegistry.treeprocessor(treeprocessor);
             extensionRegistry.includeProcessor(includeProcessor);
         }
         return asciidoctor;
@@ -150,22 +146,24 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      *            The {@link RuleSetBuilder}.
      */
     private void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
-        for (Object element : blocks) {
-            if (element instanceof AbstractBlock) {
-                AbstractBlock block = (AbstractBlock) element;
-                if (EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
-                    extractExecutableRule(ruleSource, block, builder);
-                } else if (GROUP.equals(block.getRole())) {
-                    extractGroup(ruleSource, block, builder);
+        if (blocks != null) {
+            for (Object element : blocks) {
+                if (element instanceof StructuralNode && !(element instanceof DescriptionListEntry)) {
+                    StructuralNode block = (StructuralNode) element;
+                    if (EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
+                        extractExecutableRule(ruleSource, block, builder);
+                    } else if (GROUP.equals(block.getRole())) {
+                        extractGroup(ruleSource, block, builder);
+                    }
+                    extractRules(ruleSource, block.getBlocks(), builder);
+                } else if (element instanceof Collection<?>) {
+                    extractRules(ruleSource, (Collection<?>) element, builder);
                 }
-                extractRules(ruleSource, block.getBlocks(), builder);
-            } else if (element instanceof Collection<?>) {
-                extractRules(ruleSource, (Collection<?>) element, builder);
             }
         }
     }
 
-    private void extractExecutableRule(RuleSource ruleSource, AbstractBlock executableRuleBlock, RuleSetBuilder builder) throws RuleException {
+    private void extractExecutableRule(RuleSource ruleSource, StructuralNode executableRuleBlock, RuleSetBuilder builder) throws RuleException {
         Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
         String id = executableRuleBlock.id();
         if (id == null) {
@@ -175,7 +173,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         if (description == null) {
             LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
         }
-        Map<String, Boolean> required = getRequiresConcepts(ruleSource, id, attributes);
+        Map<String, Boolean> required = getRequiresConcepts(attributes);
         Map<String, Parameter> parameters = getParameters(attributes.getString(REQUIRES_PARAMETERS));
         Executable<?> executable = getExecutable(executableRuleBlock, attributes);
         if (executable != null) {
@@ -195,7 +193,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         }
     }
 
-    private Executable<?> getExecutable(AbstractBlock block, Attributes attributes) {
+    private Executable<?> getExecutable(StructuralNode block, Attributes attributes) {
         String language;
         if (SOURCE.equals(block.getStyle())) {
             language = attributes.getString(LANGUAGE);
@@ -210,10 +208,10 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
             language = block.getStyle();
             if (language == null) {
                 // PlantUML extension
-                language = (String) block.getAttributes().get(1);
+                language = (String) block.getAttributes().get("1");
             }
             if (language != null) {
-                return new SourceExecutable<>(language.toLowerCase(), block, AbstractBlock.class);
+                return new SourceExecutable<>(language.toLowerCase(), block, StructuralNode.class);
             } else {
                 LOGGER.warn("Cannot determine language for '" + block + "'.");
             }
@@ -237,18 +235,12 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     /**
      * Evaluates required concepts of a rule.
      *
-     * @param ruleSource
-     *            The rule source.
      * @param attributes
      *            The attributes of an asciidoc rule block
-     * @param id
-     *            The id.
      * @return A map where the keys represent the ids of required concepts and the
      *         values if they are optional.
-     * @throws RuleException
-     *             If the dependencies cannot be evaluated.
      */
-    private Map<String, Boolean> getRequiresConcepts(RuleSource ruleSource, String id, Attributes attributes) throws RuleException {
+    private Map<String, Boolean> getRequiresConcepts(Attributes attributes) {
         Map<String, String> requiresDeclarations = getReferences(attributes, REQUIRES_CONCEPTS);
         Map<String, Boolean> required = new HashMap<>();
         for (Map.Entry<String, String> requiresEntry : requiresDeclarations.entrySet()) {
@@ -260,7 +252,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         return required;
     }
 
-    private void extractGroup(RuleSource ruleSource, AbstractBlock groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
+    private void extractGroup(RuleSource ruleSource, StructuralNode groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
         Attributes attributes = new Attributes(groupBlock.getAttributes());
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
@@ -350,7 +342,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      *            The content part.
      * @return The report.
      */
-    private Report getReport(AbstractBlock part) {
+    private Report getReport(StructuralNode part) {
         Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
         Object reportType = part.getAttributes().get(REPORT_TYPE);
         Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
@@ -373,7 +365,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      *            The attribute name.
      * @return The properties.
      */
-    private Properties parseProperties(AbstractBlock part, String attributeName) {
+    private Properties parseProperties(StructuralNode part, String attributeName) {
         Properties properties = new Properties();
         Object attribute = part.getAttributes().get(attributeName);
         if (attribute == null) {
@@ -441,27 +433,6 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     /**
-     * Used to retrieve the "raw" document.
-     */
-    private class Treeprocessor extends org.asciidoctor.extension.Treeprocessor {
-
-        private Document document;
-
-        public Treeprocessor() {
-        }
-
-        @Override
-        public Document process(Document document) {
-            this.document = document;
-            return document;
-        }
-
-        public Document getDocument() {
-            return document;
-        }
-    }
-
-    /**
      * Include processor that ignores all included files.
      */
     private class IgnoreIncludeProcessor extends IncludeProcessor {
@@ -472,7 +443,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         @Override
-        public void process(DocumentRuby document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
+        public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
             LOGGER.debug("Skipping included file '{}'.", target);
         }
 

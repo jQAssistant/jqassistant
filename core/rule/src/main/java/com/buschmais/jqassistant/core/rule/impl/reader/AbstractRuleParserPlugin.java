@@ -10,11 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Baseclass with common fuctionality which could by used for every implementation
- * of {@link RuleParserPlugin}.
+ * Baseclass with common fuctionality which could by used for every
+ * implementation of {@link RuleParserPlugin}.
  */
 public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
-
 
     private RuleConfiguration ruleConfiguration;
 
@@ -62,25 +61,18 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String ID = "id";
     protected static final String REF_ID = "refId";
 
-
-
     @Override
     public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
         LOGGER.debug("Reading rules from '{}'.", ruleSource.getId());
 
         try {
             doParse(ruleSource, ruleSetBuilder);
-        } catch (RuleException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IllegalStateException("An unhandled exception occured while reading " +
-                                            "rules from '" +
-                                            ruleSource.getId() + "'", e);
+        } catch (RuntimeException e) {
+            throw new RuleException("An unhandled exception occurred while reading rules from '" + ruleSource.getId() + "'", e);
         }
     }
 
-    protected abstract void doParse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder)
-        throws RuleException;
+    protected abstract void doParse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException;
 
     @Override
     public void configure(RuleConfiguration ruleConfiguration) {

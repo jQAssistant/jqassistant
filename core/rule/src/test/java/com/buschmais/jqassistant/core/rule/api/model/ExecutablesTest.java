@@ -7,14 +7,11 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 
 import net.sourceforge.plantuml.png.MetadataTag;
-import org.asciidoctor.ast.AbstractBlock;
+import org.asciidoctor.ast.StructuralNode;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExecutablesTest {
@@ -28,14 +25,14 @@ public class ExecutablesTest {
     public void asciidoc() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
         verifyRuleset(ruleSet);
-        verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, AbstractBlock.class, "table");
+        verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, StructuralNode.class, "table");
     }
 
     @Test
     public void plantuml() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
-        Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, AbstractBlock.class, "plantuml");
-        AbstractBlock abstractBlock = (AbstractBlock) concept.getExecutable().getSource();
+        Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, StructuralNode.class, "plantuml");
+        StructuralNode abstractBlock = (StructuralNode) concept.getExecutable().getSource();
         String imagesDirectoryAttribute = (String) abstractBlock.getDocument().getAttributes().get(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR);
         assertThat(imagesDirectoryAttribute, notNullValue());
         File imagesOutDir = new File(imagesDirectoryAttribute);

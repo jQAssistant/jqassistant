@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -210,7 +206,8 @@ public class CompositeReportPlugin implements ReportPlugin {
             for (String type : selection) {
                 ReportPlugin candidate = this.selectableReportPlugins.get(type);
                 if (candidate == null) {
-                    throw new ReportException("Unknown report selection '" + type + "' selected for '" + rule + "'");
+                    throw new ReportException(
+                            "Unknown report type '" + type + "' selected for '" + rule + "'. Valid report types are " + this.selectedReportPlugins.keySet());
                 }
                 reportPlugins.put(type, candidate);
             }
