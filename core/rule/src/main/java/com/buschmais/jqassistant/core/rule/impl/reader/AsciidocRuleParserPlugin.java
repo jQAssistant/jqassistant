@@ -18,8 +18,10 @@ import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.asciidoctor.ast.DescriptionListEntry;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.IncludeProcessor;
@@ -30,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.asciidoctor.AttributesBuilder.attributes;
-import static org.asciidoctor.OptionsBuilder.options;
 
 /**
  * @author mh
@@ -74,8 +74,6 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Asciidoctor asciidoctor = null;
 
-    private Treeprocessor treeprocessor;
-
     private File tempDir;
 
     @Override
@@ -112,10 +110,11 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
-        OptionsBuilder optionsBuilder = options().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir)
-                .attributes(attributes().attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true));
-        getAsciidoctor().load(content, optionsBuilder.asMap());
-        extractRules(source, singletonList(treeprocessor.getDocument()), ruleSetBuilder);
+        org.asciidoctor.Attributes attributes = org.asciidoctor.Attributes.builder()
+                .attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true).build();
+        OptionsBuilder optionsBuilder = Options.builder().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir).attributes(attributes);
+        Document document = getAsciidoctor().load(content, optionsBuilder.build());
+        extractRules(source, singletonList(document), ruleSetBuilder);
     }
 
     /**
@@ -127,10 +126,8 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     private Asciidoctor getAsciidoctor() {
         if (asciidoctor == null) {
             asciidoctor = AsciidoctorFactory.getAsciidoctor();
-            treeprocessor = new Treeprocessor();
             IgnoreIncludeProcessor includeProcessor = new IgnoreIncludeProcessor();
             JavaExtensionRegistry extensionRegistry = asciidoctor.javaExtensionRegistry();
-            extensionRegistry.treeprocessor(treeprocessor);
             extensionRegistry.includeProcessor(includeProcessor);
         }
         return asciidoctor;
@@ -149,9 +146,9 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      *            The {@link RuleSetBuilder}.
      */
     private void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
-        if (blocks!=null) {
+        if (blocks != null) {
             for (Object element : blocks) {
-                if (element instanceof StructuralNode) {
+                if (element instanceof StructuralNode && !(element instanceof DescriptionListEntry)) {
                     StructuralNode block = (StructuralNode) element;
                     if (EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
                         extractExecutableRule(ruleSource, block, builder);
@@ -432,27 +429,6 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
                 return value.toString();
             }
             return defaultValue;
-        }
-    }
-
-    /**
-     * Used to retrieve the "raw" document.
-     */
-    private class Treeprocessor extends org.asciidoctor.extension.Treeprocessor {
-
-        private Document document;
-
-        public Treeprocessor() {
-        }
-
-        @Override
-        public Document process(Document document) {
-            this.document = document;
-            return document;
-        }
-
-        public Document getDocument() {
-            return document;
         }
     }
 

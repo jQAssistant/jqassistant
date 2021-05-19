@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.DirectoryWalker;
 import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.Document;
@@ -18,6 +17,7 @@ import org.asciidoctor.extension.ExtensionGroup;
 import org.asciidoctor.extension.JavaExtensionRegistry;
 import org.asciidoctor.extension.RubyExtensionRegistry;
 import org.asciidoctor.log.LogHandler;
+import org.asciidoctor.syntaxhighlighter.SyntaxHighlighterRegistry;
 
 /**
  * A delegate the replaces {@link #javaExtensionRegistry()} to fix classloading
@@ -29,81 +29,6 @@ public class AsciidoctorDelegate implements Asciidoctor {
 
     public AsciidoctorDelegate(Asciidoctor delegate) {
         this.delegate = delegate;
-    }
-
-    @Override
-    public String render(String content, Map<String, Object> options) {
-        return delegate.render(content, options);
-    }
-
-    @Override
-    public String render(String content, Options options) {
-        return delegate.render(content, options);
-    }
-
-    @Override
-    public String render(String content, OptionsBuilder options) {
-        return delegate.render(content, options);
-    }
-
-    @Override
-    public void render(Reader contentReader, Writer rendererWriter, Map<String, Object> options) throws IOException {
-        delegate.render(contentReader, rendererWriter, options);
-    }
-
-    @Override
-    public void render(Reader contentReader, Writer rendererWriter, Options options) throws IOException {
-        delegate.render(contentReader, rendererWriter, options);
-    }
-
-    @Override
-    public void render(Reader contentReader, Writer rendererWriter, OptionsBuilder options) throws IOException {
-        delegate.render(contentReader, rendererWriter, options);
-    }
-
-    @Override
-    public String renderFile(File filename, Map<String, Object> options) {
-        return delegate.renderFile(filename, options);
-    }
-
-    @Override
-    public String renderFile(File filename, Options options) {
-        return delegate.renderFile(filename, options);
-    }
-
-    @Override
-    public String renderFile(File filename, OptionsBuilder options) {
-        return delegate.renderFile(filename, options);
-    }
-
-    @Override
-    public String[] renderDirectory(DirectoryWalker directoryWalker, Map<String, Object> options) {
-        return delegate.renderDirectory(directoryWalker, options);
-    }
-
-    @Override
-    public String[] renderDirectory(DirectoryWalker directoryWalker, Options options) {
-        return delegate.renderDirectory(directoryWalker, options);
-    }
-
-    @Override
-    public String[] renderDirectory(DirectoryWalker directoryWalker, OptionsBuilder options) {
-        return delegate.renderDirectory(directoryWalker, options);
-    }
-
-    @Override
-    public String[] renderFiles(Collection<File> asciidoctorFiles, Map<String, Object> options) {
-        return delegate.renderFiles(asciidoctorFiles, options);
-    }
-
-    @Override
-    public String[] renderFiles(Collection<File> asciidoctorFiles, Options options) {
-        return delegate.renderFiles(asciidoctorFiles, options);
-    }
-
-    @Override
-    public String[] renderFiles(Collection<File> asciidoctorFiles, OptionsBuilder options) {
-        return delegate.renderFiles(asciidoctorFiles, options);
     }
 
     @Override
@@ -182,18 +107,18 @@ public class AsciidoctorDelegate implements Asciidoctor {
     }
 
     @Override
-    public String[] convertDirectory(DirectoryWalker directoryWalker, Map<String, Object> options) {
-        return delegate.convertDirectory(directoryWalker, options);
+    public String[] convertDirectory(Iterable<File> iterable, Map<String, Object> map) {
+        return delegate.convertDirectory(iterable, map);
     }
 
     @Override
-    public String[] convertDirectory(DirectoryWalker directoryWalker, Options options) {
-        return delegate.convertDirectory(directoryWalker, options);
+    public String[] convertDirectory(Iterable<File> iterable, Options options) {
+        return delegate.convertDirectory(iterable, options);
     }
 
     @Override
-    public String[] convertDirectory(DirectoryWalker directoryWalker, OptionsBuilder options) {
-        return delegate.convertDirectory(directoryWalker, options);
+    public String[] convertDirectory(Iterable<File> iterable, OptionsBuilder optionsBuilder) {
+        return delegate.convertDirectory(iterable, optionsBuilder);
     }
 
     @Override
@@ -252,6 +177,11 @@ public class AsciidoctorDelegate implements Asciidoctor {
     }
 
     @Override
+    public SyntaxHighlighterRegistry syntaxHighlighterRegistry() {
+        return new SyntaxHighlighterRegistryDelegate(delegate.syntaxHighlighterRegistry());
+    }
+
+    @Override
     public ExtensionGroup createGroup() {
         return delegate.createGroup();
     }
@@ -282,7 +212,17 @@ public class AsciidoctorDelegate implements Asciidoctor {
     }
 
     @Override
+    public Document load(String s, Options options) {
+        return delegate.load(s, options);
+    }
+
+    @Override
     public Document loadFile(File file, Map<String, Object> options) {
+        return delegate.loadFile(file, options);
+    }
+
+    @Override
+    public Document loadFile(File file, Options options) {
         return delegate.loadFile(file, options);
     }
 

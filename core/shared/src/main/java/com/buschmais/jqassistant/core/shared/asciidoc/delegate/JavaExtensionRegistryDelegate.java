@@ -167,8 +167,20 @@ class JavaExtensionRegistryDelegate implements JavaExtensionRegistry {
     }
 
     @Override
+    public JavaExtensionRegistry blockMacro(String s, BlockMacroProcessor blockMacroProcessor) {
+        delegate.blockMacro(s, blockMacroProcessor);
+        return this;
+    }
+
+    @Override
     public JavaExtensionRegistry inlineMacro(InlineMacroProcessor inlineMacroProcessor) {
         delegate.inlineMacro(new InlineMacroProcessorDelegate(inlineMacroProcessor));
+        return this;
+    }
+
+    @Override
+    public JavaExtensionRegistry inlineMacro(String s, InlineMacroProcessor inlineMacroProcessor) {
+        delegate.inlineMacro(s, inlineMacroProcessor);
         return this;
     }
 
