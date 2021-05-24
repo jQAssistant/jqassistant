@@ -2,7 +2,9 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.DeclaresTypeParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -15,9 +17,9 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
 
-    private int typeParameterIndex = 0;
+    private int currentTypeParameterIndex = 0;
 
-    private TypeParameterDescriptor typeParameterDescriptor;
+    private TypeVariableDescriptor currentTypeParameter;
 
     protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper,
             DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
@@ -29,9 +31,12 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     @Override
     public void visitFormalTypeParameter(String name) {
-        this.typeParameterDescriptor = visitorHelper.resolveTypeParameter(cachedType, name);
-        this.typeParameterDescriptor.setIndex(typeParameterIndex);
-        this.typeParameterIndex++;
+        GenericDeclarationDescriptor genericDeclaration = visitorHelper.getStore().addDescriptorType(cachedType.getTypeDescriptor(),
+                GenericDeclarationDescriptor.class);
+        DeclaresTypeParameterDescriptor declaresTypeParameter = genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
+        this.currentTypeParameter = declaresTypeParameter.getTypeVariable();
+        this.currentTypeParameter.setName(name);
+        this.currentTypeParameterIndex++;
     }
 
     @Override

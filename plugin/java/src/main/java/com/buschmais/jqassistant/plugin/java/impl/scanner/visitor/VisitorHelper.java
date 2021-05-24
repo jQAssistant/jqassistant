@@ -3,11 +3,11 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
@@ -27,9 +27,9 @@ public class VisitorHelper {
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
-    private ScannerContext scannerContext;
+    private final ScannerContext scannerContext;
 
-    private ClassModelConfiguration classModelConfiguration;
+    private final ClassModelConfiguration classModelConfiguration;
 
     /**
      * Constructor.
@@ -41,6 +41,10 @@ public class VisitorHelper {
     public VisitorHelper(ScannerContext scannerContext, ClassModelConfiguration classModelConfiguration) {
         this.scannerContext = scannerContext;
         this.classModelConfiguration = classModelConfiguration;
+    }
+
+    public Store getStore() {
+        return scannerContext.getStore();
     }
 
     ClassModelConfiguration getClassModelConfiguration() {
@@ -256,9 +260,5 @@ public class VisitorHelper {
                 dependsOnDescriptor.setWeight(weight);
             }
         }
-    }
-
-    public TypeParameterDescriptor resolveTypeParameter(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, String name) {
-        return cachedType.getTypeDescriptor().resolveTypeParameter(name);
     }
 }
