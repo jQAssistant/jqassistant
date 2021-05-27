@@ -1,11 +1,13 @@
-package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
+package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.DeclaresTypeParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.AbstractTypeSignatureVisitor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.DependentTypeSignatureVisitor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -21,7 +23,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     private TypeVariableDescriptor currentTypeParameter;
 
-    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper,
+    public ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper,
             DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
         super(VisitorHelper.ASM_OPCODES);
         this.cachedType = cachedType;
@@ -33,20 +35,19 @@ public class ClassSignatureVisitor extends SignatureVisitor {
     public void visitFormalTypeParameter(String name) {
         GenericDeclarationDescriptor genericDeclaration = visitorHelper.getStore().addDescriptorType(cachedType.getTypeDescriptor(),
                 GenericDeclarationDescriptor.class);
-        DeclaresTypeParameterDescriptor declaresTypeParameter = genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
-        this.currentTypeParameter = declaresTypeParameter.getTypeVariable();
+        this.currentTypeParameter = genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
         this.currentTypeParameter.setName(name);
         this.currentTypeParameterIndex++;
     }
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return dependentTypeSignatureVisitor;
+        return new TypeVariableVisitor(currentTypeParameter, visitorHelper, cachedType);
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return dependentTypeSignatureVisitor;
+        return new TypeVariableVisitor(currentTypeParameter, visitorHelper, cachedType);
     }
 
     @Override

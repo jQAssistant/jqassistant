@@ -4,10 +4,11 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("GenericArrayType")
-public interface GenericArrayTypeDescriptor extends GenericTypeDescriptor {
+public interface GenericArrayTypeDescriptor extends BoundDescriptor {
 
     @Relation("HAS_COMPONENT_TYPE")
-    GenericTypeDescriptor getComponentType();
+    BoundDescriptor getComponentType();
 
-    void setComponentType(GenericTypeDescriptor componentType);
+    void setComponentType(BoundDescriptor componentType);
+
 }

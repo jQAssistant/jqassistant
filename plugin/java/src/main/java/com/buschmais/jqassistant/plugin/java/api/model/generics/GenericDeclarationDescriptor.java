@@ -22,7 +22,7 @@ public interface GenericDeclarationDescriptor extends JavaByteCodeDescriptor, De
 
     @ResultOf
     @Cypher("MATCH (declaration:GenericDeclaration) WHERE id(declaration)=$this " + //
-            "MERGE (declaration)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER{index:$index}]->(typeParameter:Java:ByteCode:GenericType:TypeVariable) " + //
-            "RETURN declaresTypeParameter")
-    DeclaresTypeParameterDescriptor resolveTypeParameter(@Parameter("index") int index);
+            "MERGE (declaration)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER{index:$index}]->(typeParameter:Java:ByteCode:Bound:TypeVariable) " + //
+            "RETURN typeParameter")
+    TypeVariableDescriptor resolveTypeParameter(@Parameter("index") int index);
 }

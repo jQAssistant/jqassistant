@@ -6,11 +6,11 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("WildcardType")
-public interface WildcardTypeDescriptor extends GenericTypeDescriptor {
+public interface WildcardTypeDescriptor extends BoundDescriptor {
 
     @Relation("HAS_UPPER_BOUND")
-    List<GenericTypeDescriptor> getUpperBounds();
+    List<BoundDescriptor> getUpperBounds();
 
     @Relation("HAS_LOWER_BOUND")
-    List<GenericTypeDescriptor> getLowerBounds();
+    List<BoundDescriptor> getLowerBounds();
 }

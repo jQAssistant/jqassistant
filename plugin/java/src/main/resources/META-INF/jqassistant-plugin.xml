@@ -35,6 +35,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</class>
     </model>
     <scope>
         <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
