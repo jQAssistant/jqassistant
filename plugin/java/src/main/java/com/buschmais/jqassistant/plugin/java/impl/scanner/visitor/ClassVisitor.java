@@ -19,7 +19,6 @@ import org.objectweb.asm.signature.SignatureReader;
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
-    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private FileDescriptor fileDescriptor;
     private VisitorHelper visitorHelper;
 
@@ -51,7 +50,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
         String fullQualifiedName = SignatureHelper.getObjectType(name);
         cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, javaType);
-        dependentTypeSignatureVisitor = new DependentTypeSignatureVisitor(cachedType, visitorHelper);
         ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
         classFileDescriptor.setByteCodeVersion(version);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
@@ -124,13 +122,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 parameterDescriptor.setType(typeDescriptor);
             }
         } else {
-            new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper, dependentTypeSignatureVisitor));
+            new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
             TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
-            methodDescriptor.getDeclaredThrowables().add(exceptionType);
+            methodDescriptor.getThrows().add(exceptionType);
         }
-        return new MethodVisitor(cachedType, methodDescriptor, visitorHelper, dependentTypeSignatureVisitor);
+        return new MethodVisitor(cachedType, methodDescriptor, visitorHelper);
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {

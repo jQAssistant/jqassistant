@@ -4,15 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
-    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
     private int syntheticParameters = 0;
     private int cyclomaticComplexity = 1;
     private Integer lineNumber = null;
@@ -37,13 +37,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private Integer lastLineNumber = null;
     private Set<Integer> effectiveLines = new HashSet<>();
 
-    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper,
-            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
+    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
-        this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
     }
 
     @Override
@@ -114,21 +112,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
                 TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), containingType).getTypeDescriptor();
                 variableDescriptor.setType(type);
             } else {
-                new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor(containingType, visitorHelper) {
-
+                new SignatureReader(signature).accept(new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, containingType) {
                     @Override
-                    public SignatureVisitor visitArrayType() {
-                        return dependentTypeSignatureVisitor;
-                    }
-
-                    @Override
-                    public SignatureVisitor visitTypeArgument(char wildcard) {
-                        return dependentTypeSignatureVisitor;
-                    }
-
-                    @Override
-                    public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                        variableDescriptor.setType(resolvedTypeDescriptor);
+                    protected void apply(BoundDescriptor bound) {
+                        variableDescriptor.setType(bound.getRawType());
+                        variableDescriptor.setGenericType(bound);
                     }
                 });
             }

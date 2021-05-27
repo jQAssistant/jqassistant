@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
@@ -36,6 +37,16 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
 
     void setReturns(TypeDescriptor returns);
 
+    /**
+     * Return the generic return type of this method.
+     *
+     * @return The generic return type.
+     */
+    @Relation("RETURNS_GENERIC")
+    BoundDescriptor getReturnsGeneric();
+
+    void setReturnsGeneric(BoundDescriptor returnsGeneric);
+
     @Relation("HAS_DEFAULT")
     ValueDescriptor<?> getHasDefault();
 
@@ -47,7 +58,15 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
      * @return The declared throwables.
      */
     @Relation("THROWS")
-    List<TypeDescriptor> getDeclaredThrowables();
+    List<TypeDescriptor> getThrows();
+
+    /**
+     * Return all declared generic throwables of this method.
+     *
+     * @return The declared generic throwables.
+     */
+    @Relation("THROWS_GENERIC")
+    List<BoundDescriptor> getThrowsGeneric();
 
     /**
      * Return all read accesses to fields this method performs.
