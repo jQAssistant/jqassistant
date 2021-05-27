@@ -2,15 +2,16 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.ClassSignatureVisitor;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * A class visitor implementation.
@@ -67,7 +68,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 classFileDescriptor.getInterfaces().add(interfaceType);
             }
         } else {
-            new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper, dependentTypeSignatureVisitor));
+            new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
         }
     }
 
@@ -82,25 +83,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType).getTypeDescriptor();
             fieldDescriptor.setType(type);
         } else {
-            new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
+            new SignatureReader(signature).accept(new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, cachedType) {
                 @Override
-                public SignatureVisitor visitArrayType() {
-                    return dependentTypeSignatureVisitor;
-                }
-
-                @Override
-                public SignatureVisitor visitTypeArgument(char wildcard) {
-                    return dependentTypeSignatureVisitor;
-                }
-
-                @Override
-                public SignatureVisitor visitSuperclass() {
-                    return this;
-                }
-
-                @Override
-                public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                    fieldDescriptor.setType(resolvedTypeDescriptor);
+                protected void apply(BoundDescriptor bound) {
+                    fieldDescriptor.setType(bound.getRawType());
+                    fieldDescriptor.setGenericType(bound);
                 }
             });
         }

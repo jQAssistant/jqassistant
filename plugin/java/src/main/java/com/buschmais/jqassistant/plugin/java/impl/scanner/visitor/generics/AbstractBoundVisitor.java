@@ -16,7 +16,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * @param <T>
  *            The type of the target {@link BoundDescriptor}.
  */
-abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends SignatureVisitor {
+public abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends SignatureVisitor {
 
     protected final VisitorHelper visitorHelper;
 
@@ -31,7 +31,7 @@ abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends Signature
 
     private int currentTypeParameterIndex = 0;
 
-    AbstractBoundVisitor(T boundTarget, VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
+    public AbstractBoundVisitor(T boundTarget, VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
         super(VisitorHelper.ASM_OPCODES);
         this.boundTarget = boundTarget;
         this.visitorHelper = visitorHelper;

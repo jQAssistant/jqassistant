@@ -1,12 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.AbstractTypeSignatureVisitor;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.DependentTypeSignatureVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -17,18 +15,14 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     private VisitorHelper visitorHelper;
 
-    private DependentTypeSignatureVisitor dependentTypeSignatureVisitor;
-
     private int currentTypeParameterIndex = 0;
 
     private TypeVariableDescriptor currentTypeParameter;
 
-    public ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper,
-            DependentTypeSignatureVisitor dependentTypeSignatureVisitor) {
+    public ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
         this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;
-        this.dependentTypeSignatureVisitor = dependentTypeSignatureVisitor;
     }
 
     @Override
@@ -52,48 +46,25 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
+        return new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, cachedType) {
             @Override
-            public SignatureVisitor visitArrayType() {
-                return dependentTypeSignatureVisitor;
+            protected void apply(BoundDescriptor bound) {
+                ClassFileDescriptor typeDescriptor = cachedType.getTypeDescriptor();
+                typeDescriptor.setSuperClass(bound.getRawType());
+                typeDescriptor.setGenericSuperClass(bound);
             }
-
-            @Override
-            public SignatureVisitor visitTypeArgument(char wildcard) {
-                return dependentTypeSignatureVisitor;
-            }
-
-            @Override
-            public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                cachedType.getTypeDescriptor().setSuperClass(resolvedTypeDescriptor);
-            }
-
         };
     }
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new AbstractTypeSignatureVisitor(cachedType, visitorHelper) {
-
+        return new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, cachedType) {
             @Override
-            public SignatureVisitor visitArrayType() {
-                return dependentTypeSignatureVisitor;
-            }
-
-            @Override
-            public SignatureVisitor visitTypeArgument(char wildcard) {
-                return dependentTypeSignatureVisitor;
-            }
-
-            @Override
-            public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                cachedType.getTypeDescriptor().getInterfaces().add(resolvedTypeDescriptor);
+            protected void apply(BoundDescriptor bound) {
+                ClassFileDescriptor typeDescriptor = cachedType.getTypeDescriptor();
+                typeDescriptor.getInterfaces().add(bound.getRawType());
+                typeDescriptor.getGenericInterfaces().add(bound);
             }
         };
-    }
-
-    @Override
-    public SignatureVisitor visitTypeArgument(char wildcard) {
-        throw new UnsupportedOperationException("Method is not implemented.");
     }
 }

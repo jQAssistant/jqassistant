@@ -1,0 +1,46 @@
+@startuml
+
+class Class
+class Method
+class Field
+
+interface Type
+interface TypeVariable {
+  name
+}
+interface GenericArrayType
+interface ParameterizedType
+interface WildcardType
+
+interface GenericDeclaration
+
+Type <|.. Class
+Type <|.. GenericArrayType
+Type <|.. ParameterizedType
+Type <|.. WildcardType
+Type <|.. TypeVariable
+
+GenericDeclaration <|.. Class
+GenericDeclaration <|.. Method
+
+GenericArrayType   -- Type : componentType
+
+ParameterizedType  -- "0..*" Type : actualTypeArguments
+ParameterizedType  -- "1"    Type : rawType
+ParameterizedType  -- "1"    Type : ownerType
+
+WildcardType -- "0..*" Type : upperBounds
+WildcardType -- "0..*" Type : lowerBounds
+
+TypeVariable       -- "0..*" Type            : bounds
+
+GenericDeclaration -- "0..*" TypeVariable : typeParameters
+
+Method -- "1" Type : genericReturnType
+Method -- "0..*" Type : genericParameterTypes
+Method -- "1" Type : genericExceptionTypes
+
+Field -- "1" Type : genericType
+
+@enduml
+

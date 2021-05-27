@@ -5,8 +5,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.BoundClassTypeParameter;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.UnboundClassTypeParameters;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +32,23 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void boundClassTypeParameters() {
         evaluate("typeParameters", ((Class<?>) BoundClassTypeParameter.class).getTypeParameters(), 0);
         scanClasses(BoundClassTypeParameter.class);
+    }
+
+    @Test
+    void implementsGeneric() {
+        evaluate("genericInterfaces", ImplementsGeneric.class.getGenericInterfaces(), 0);
+        scanClasses(ImplementsGeneric.class);
+    }
+
+    @Test
+    void extendsGeneric() {
+        evaluate("genericSuperClass", ExtendsGeneric.class.getGenericSuperclass(), 0);
+        scanClasses(ExtendsGeneric.class);
+    }
+
+    @Test
+    void genericFieldWithParameterizedType() {
+        scanClasses(GenericField.class);
     }
 
     private void evaluate(String prefix, Type[] types, int level) {
