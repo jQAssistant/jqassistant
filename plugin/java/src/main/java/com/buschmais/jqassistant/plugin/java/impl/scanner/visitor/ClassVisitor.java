@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.ClassSignatureVisitor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.MethodSignatureVisitor;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -81,7 +82,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType).getTypeDescriptor();
             fieldDescriptor.setType(type);
         } else {
-            new SignatureReader(signature).accept(new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, cachedType) {
+            new SignatureReader(signature).accept(new AbstractBoundVisitor(visitorHelper, cachedType) {
                 @Override
                 protected void apply(BoundDescriptor bound) {
                     fieldDescriptor.setType(bound.getRawType());

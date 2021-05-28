@@ -115,7 +115,7 @@ public class VisitorHelper {
         return methodDescriptor;
     }
 
-    ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
+    public ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
         ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
         parameterDescriptor.setIndex(index);
         methodDescriptor.getParameters().add(parameterDescriptor);

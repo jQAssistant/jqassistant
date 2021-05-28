@@ -112,7 +112,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
                 TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), containingType).getTypeDescriptor();
                 variableDescriptor.setType(type);
             } else {
-                new SignatureReader(signature).accept(new AbstractBoundVisitor<BoundDescriptor>(null, visitorHelper, containingType) {
+                new SignatureReader(signature).accept(new AbstractBoundVisitor( visitorHelper, containingType) {
                     @Override
                     protected void apply(BoundDescriptor bound) {
                         variableDescriptor.setType(bound.getRawType());

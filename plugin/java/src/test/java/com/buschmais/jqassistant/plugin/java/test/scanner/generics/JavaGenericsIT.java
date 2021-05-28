@@ -51,6 +51,12 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         scanClasses(GenericField.class);
     }
 
+    @Test
+    @TestStore(type= TestStore.Type.REMOTE)
+    void genericMethodWithParameterizedType() {
+        scanClasses(GenericMethod.class);
+    }
+
     private void evaluate(String prefix, Type[] types, int level) {
         evaluate(prefix, asList(types), level);
     }

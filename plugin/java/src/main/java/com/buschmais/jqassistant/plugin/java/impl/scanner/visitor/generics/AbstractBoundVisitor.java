@@ -10,20 +10,11 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
- * Abstract signature visitor class to determine bounds of a target
- * {@link BoundDescriptor}.
- *
- * @param <T>
- *            The type of the target {@link BoundDescriptor}.
+ * Abstract signature visitor class to determine generic bounds.
  */
-public abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends SignatureVisitor {
+public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     protected final VisitorHelper visitorHelper;
-
-    /**
-     * The {@link BoundDescriptor} that is the target to add bounds added.
-     */
-    protected final T boundTarget;
 
     private final TypeCache.CachedType<? extends ClassFileDescriptor> containingType;
 
@@ -31,9 +22,8 @@ public abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends Si
 
     private int currentTypeParameterIndex = 0;
 
-    public AbstractBoundVisitor(T boundTarget, VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
+    public AbstractBoundVisitor(VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
         super(VisitorHelper.ASM_OPCODES);
-        this.boundTarget = boundTarget;
         this.visitorHelper = visitorHelper;
         this.containingType = containingType;
     }
@@ -42,54 +32,78 @@ public abstract class AbstractBoundVisitor<T extends BoundDescriptor> extends Si
     // visitTypeArgument* ( visitInnerClassType visitTypeArgument* )* visitEnd )
 
     @Override
-    public void visitBaseType(char descriptor) {
+    public final void visitBaseType(char descriptor) {
         // TODO check if this is the right way to determine the primitive type
         createBound(Type.getType(Character.toString(descriptor)).toString());
     }
 
     @Override
-    public void visitClassType(String name) {
+    public final void visitClassType(String name) {
         createBound(SignatureHelper.getObjectType(name));
     }
 
     @Override
-    public void visitInnerClassType(String name) {
+    public final void visitInnerClassType(String name) {
         createBound(SignatureHelper.getObjectType(name));
     }
 
-    private void createBound(String rawType) {
+    private final void createBound(String rawType) {
         current = visitorHelper.getStore().create(BoundDescriptor.class);
         current.setRawType(visitorHelper.resolveType(rawType, containingType).getTypeDescriptor());
         apply(current);
     }
 
     @Override
-    public void visitTypeVariable(String name) {
+    public final void visitTypeVariable(String name) {
         // TODO resolve type variables from declaring method, type or outer type
     }
 
     @Override
-    public SignatureVisitor visitArrayType() {
+    public final SignatureVisitor visitArrayType() {
         GenericArrayTypeDescriptor genericArrayType = visitorHelper.getStore().create(GenericArrayTypeDescriptor.class);
         apply(genericArrayType);
-        return new GenericArrayTypeVisitor(genericArrayType, visitorHelper, containingType);
+        return new AbstractBoundVisitor(visitorHelper, containingType) {
+            @Override
+            protected void apply(BoundDescriptor bound) {
+                genericArrayType.setComponentType(bound);
+            }
+        };
     }
 
     @Override
-    public void visitTypeArgument() {
+    public final void visitTypeArgument() {
     }
 
     @Override
-    public SignatureVisitor visitTypeArgument(char wildcard) {
+    public final SignatureVisitor visitTypeArgument(char wildcard) {
         ParameterizedTypeDescriptor parameterizedType = visitorHelper.getStore().addDescriptorType(current, ParameterizedTypeDescriptor.class);
         if (wildcard == INSTANCEOF) {
-            return new ParameterizedTypeVisitor(parameterizedType, currentTypeParameterIndex++, visitorHelper, containingType);
+            return new AbstractBoundVisitor(visitorHelper, containingType) {
+                @Override
+                protected void apply(BoundDescriptor bound) {
+                    HasActualTypeArgumentDescriptor hasActualTypeArgument = visitorHelper.getStore().create(parameterizedType,
+                            HasActualTypeArgumentDescriptor.class, bound);
+                    hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
+                }
+            };
         } else {
             WildcardTypeDescriptor wildcardType = visitorHelper.getStore().create(WildcardTypeDescriptor.class);
             HasActualTypeArgumentDescriptor hasActualTypeArgument = visitorHelper.getStore().create(parameterizedType, HasActualTypeArgumentDescriptor.class,
                     wildcardType);
             hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
-            return new WildcardTypeVisitor(wildcardType, wildcard, visitorHelper, containingType);
+            return new AbstractBoundVisitor(visitorHelper, containingType) {
+                @Override
+                protected void apply(BoundDescriptor bound) {
+                    switch (wildcard) {
+                    case EXTENDS:
+                        wildcardType.getUpperBounds().add(bound);
+                        break;
+                    case SUPER:
+                        wildcardType.getLowerBounds().add(bound);
+                        break;
+                    }
+                }
+            };
         }
     }
 
