@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.buschmais.xo.api.Query.Result;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Verifies command line analysis.
