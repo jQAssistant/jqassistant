@@ -9,11 +9,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
@@ -30,8 +26,8 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.Assert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class JUnitReportPluginTest extends AbstractReportPluginTest {

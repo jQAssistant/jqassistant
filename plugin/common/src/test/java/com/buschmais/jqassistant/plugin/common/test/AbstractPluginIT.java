@@ -184,7 +184,7 @@ public abstract class AbstractPluginIT {
         case REMOTE:
             storeConfigurationBuilder.uri(new URI("bolt://localhost:7687"));
             storeConfigurationBuilder.encryption("NONE");
-            storeConfigurationBuilder.username("neo4j").password("admin");
+            storeConfigurationBuilder.username("neo4j").password("jqassistant");
             Properties properties = new Properties();
             properties.put("neo4j.remote.statement.log.level", "info");
             storeConfigurationBuilder.properties(properties);
