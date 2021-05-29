@@ -18,8 +18,8 @@ import org.neo4j.server.web.WebServer;
 
 import static java.lang.System.lineSeparator;
 import static javax.ws.rs.core.MediaType.TEXT_HTML_TYPE;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class StaticContentResourceTest {
