@@ -17,7 +17,7 @@ ifdef::jqa-in-manual[== Core Framework 1.10.0]
   configuration mechanism. +
    +
   A possible plugin descriptor could look like this:
-
++
 [source, xml]
 ----
   <jpd:jqassistant-plugin
@@ -28,7 +28,6 @@ ifdef::jqa-in-manual[== Core Framework 1.10.0]
         name="myPlugin" id="myorganisation.myplugin">
   </jpd:jqassistant-plugin>
 ----
-
-
-
-
+* Upgraded bundled AsciidoctorJ to 2.5.1
++
+NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. Migration is straight-forward and described https://docs.asciidoctor.org/asciidoctorj/latest/guides/extension-migration-guide-16-to-20/[here^].
