@@ -12,13 +12,13 @@ import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      */

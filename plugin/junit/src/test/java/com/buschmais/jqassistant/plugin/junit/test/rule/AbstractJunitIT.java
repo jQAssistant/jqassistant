@@ -8,8 +8,8 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 
 abstract class AbstractJunitIT extends AbstractJavaPluginIT {
     /**

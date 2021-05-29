@@ -8,20 +8,8 @@ import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.ParamterizedTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.ParentTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.RepeatedTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.StandardTest;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.TagTestClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.TestTemplateClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.MultipleTagAnnotation;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.MultipleTagAnnotationClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.MultipleTagAnnotationTest;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.SingleTagAnnotation;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.SingleTagAnnotationClass;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.SingleTagAnnotationTest;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.annotations.*;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.AbstractJunit5Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example;
 
@@ -35,13 +23,9 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescripto
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.lang.Boolean.FALSE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertThat;
 
 public class Junit5IT extends AbstractJunitIT {
 

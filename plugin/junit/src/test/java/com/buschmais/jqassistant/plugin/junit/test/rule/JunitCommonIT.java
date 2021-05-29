@@ -31,9 +31,9 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
 
 public class JunitCommonIT extends AbstractJunitIT {
 

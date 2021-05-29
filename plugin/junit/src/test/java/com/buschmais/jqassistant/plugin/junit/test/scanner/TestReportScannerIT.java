@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestReportScannerIT extends AbstractJavaPluginIT {
 
