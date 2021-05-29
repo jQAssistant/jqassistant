@@ -121,7 +121,6 @@
               (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
             WHERE NOT (                                     // exclude...
               exists(overridingMethod.abstract)             // ...abstract methods
-              or (method)-[:OVERRIDES]->(invokedMethod)     // ...super calls to overridden methods
               or (overridingMethod)-[:INHERITED_FROM]->()   // ...inherited methods
             )
             WITH
