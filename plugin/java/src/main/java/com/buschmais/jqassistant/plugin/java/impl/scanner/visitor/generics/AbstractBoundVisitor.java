@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -13,6 +16,8 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * Abstract signature visitor class to determine generic bounds.
  */
 public abstract class AbstractBoundVisitor extends SignatureVisitor {
+
+    private static final String DEFAULT_RAW_TYPE_BOUND = "java.lang.Object";
 
     protected final VisitorHelper visitorHelper;
 
@@ -55,7 +60,8 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     @Override
     public final void visitTypeVariable(String name) {
-        // TODO resolve type variables from declaring method, type or outer type
+        TypeVariableDescriptor typeVariable = visitorHelper.getTypeVariableResolver().resolve(name, containingType.getTypeDescriptor());
+        apply(typeVariable);
     }
 
     @Override
@@ -64,7 +70,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         apply(genericArrayType);
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 genericArrayType.setComponentType(bound);
             }
         };
@@ -80,7 +86,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         if (wildcard == INSTANCEOF) {
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
-                protected void apply(BoundDescriptor bound) {
+                protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                     HasActualTypeArgumentDescriptor hasActualTypeArgument = visitorHelper.getStore().create(parameterizedType,
                             HasActualTypeArgumentDescriptor.class, bound);
                     hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
@@ -93,7 +99,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
             hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
-                protected void apply(BoundDescriptor bound) {
+                protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                     switch (wildcard) {
                     case EXTENDS:
                         wildcardType.getUpperBounds().add(bound);
@@ -107,6 +113,52 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         }
     }
 
-    protected abstract void apply(BoundDescriptor bound);
+    private void apply(BoundDescriptor bound) {
+        TypeDescriptor rawType = getRawTypeBound(bound);
+
+        apply(rawType != null ? rawType : visitorHelper.resolveType(DEFAULT_RAW_TYPE_BOUND, containingType).getTypeDescriptor(), bound);
+    }
+
+    /**
+     * Determine the raw type bound for a {@link BoundDescriptor}.
+     *
+     * @param bound
+     *            The {@link BoundDescriptor}.
+     * @return The raw type bound (optional).
+     */
+    private TypeDescriptor getRawTypeBound(BoundDescriptor bound) {
+        if (bound instanceof ParameterizedTypeDescriptor) {
+            ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) bound;
+            return parameterizedType.getRawType();
+        }
+        if (bound instanceof TypeVariableDescriptor) {
+            TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
+            return getUniqueRawTypeBound(typeVariable.getBounds());
+        } else if (bound instanceof WildcardTypeDescriptor) {
+            WildcardTypeDescriptor wildcardType = (WildcardTypeDescriptor) bound;
+            List<BoundDescriptor> lowerBounds = wildcardType.getLowerBounds();
+            List<BoundDescriptor> upperBounds = wildcardType.getUpperBounds();
+            if (lowerBounds.size() == 1) {
+                return getUniqueRawTypeBound(lowerBounds);
+            } else if (upperBounds.size() == 1) {
+                return getUniqueRawTypeBound(upperBounds);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return a raw bound from a list of {@link BoundDescriptor}s if it is
+     * non-ambiguous.
+     *
+     * @param bounds
+     *            The {@link BoundDescriptor}.
+     * @return The raw bound or <code>null</code> if it is ambiguous.
+     */
+    private TypeDescriptor getUniqueRawTypeBound(List<BoundDescriptor> bounds) {
+        return bounds.size() == 1 ? bounds.stream().findFirst().get().getRawType() : null;
+    }
+
+    protected abstract void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound);
 
 }

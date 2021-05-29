@@ -84,8 +84,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         } else {
             new SignatureReader(signature).accept(new AbstractBoundVisitor(visitorHelper, cachedType) {
                 @Override
-                protected void apply(BoundDescriptor bound) {
-                    fieldDescriptor.setType(bound.getRawType());
+                protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                    fieldDescriptor.setType(rawTypeBound);
                     fieldDescriptor.setGenericType(bound);
                 }
             });

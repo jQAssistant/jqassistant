@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.TypeVariableResolver;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
@@ -31,16 +32,20 @@ public class VisitorHelper {
 
     private final ClassModelConfiguration classModelConfiguration;
 
+    private final TypeVariableResolver typeVariableResolver;
+
     /**
      * Constructor.
      *
      * @param scannerContext
      *            The scanner context
      * @param classModelConfiguration
+     *            The {@link ClassModelConfiguration}.
      */
     public VisitorHelper(ScannerContext scannerContext, ClassModelConfiguration classModelConfiguration) {
         this.scannerContext = scannerContext;
         this.classModelConfiguration = classModelConfiguration;
+        this.typeVariableResolver = new TypeVariableResolver();
     }
 
     public Store getStore() {
@@ -49,6 +54,10 @@ public class VisitorHelper {
 
     ClassModelConfiguration getClassModelConfiguration() {
         return classModelConfiguration;
+    }
+
+    public TypeVariableResolver getTypeVariableResolver() {
+        return typeVariableResolver;
     }
 
     /*

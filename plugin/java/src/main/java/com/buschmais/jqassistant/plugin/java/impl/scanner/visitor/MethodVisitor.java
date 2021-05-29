@@ -114,8 +114,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             } else {
                 new SignatureReader(signature).accept(new AbstractBoundVisitor( visitorHelper, containingType) {
                     @Override
-                    protected void apply(BoundDescriptor bound) {
-                        variableDescriptor.setType(bound.getRawType());
+                    protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                        variableDescriptor.setType(rawTypeBound);
                         variableDescriptor.setGenericType(bound);
                     }
                 });

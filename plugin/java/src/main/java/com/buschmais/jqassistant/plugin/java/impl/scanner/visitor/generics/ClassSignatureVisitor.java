@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
@@ -17,8 +18,8 @@ public class ClassSignatureVisitor extends AbstractGenericDeclarationVisitor<Cla
     public SignatureVisitor visitSuperclass() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
-                descriptor.setSuperClass(bound.getRawType());
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                descriptor.setSuperClass(rawTypeBound);
                 descriptor.setGenericSuperClass(bound);
             }
         };
@@ -28,8 +29,8 @@ public class ClassSignatureVisitor extends AbstractGenericDeclarationVisitor<Cla
     public SignatureVisitor visitInterface() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
-                descriptor.getInterfaces().add(bound.getRawType());
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                descriptor.getInterfaces().add(rawTypeBound);
                 descriptor.getGenericInterfaces().add(bound);
             }
         };

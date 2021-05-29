@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
@@ -25,8 +26,8 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
         parameterIndex++;
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
-                parameterDescriptor.setType(bound.getRawType());
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                parameterDescriptor.setType(rawTypeBound);
                 parameterDescriptor.setGenericType(bound);
             }
         };
@@ -36,8 +37,8 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
     public SignatureVisitor visitReturnType() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
-                descriptor.setReturns(bound.getRawType());
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                descriptor.setReturns(rawTypeBound);
                 descriptor.setReturnsGeneric(bound);
             }
         };
@@ -47,8 +48,8 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
     public SignatureVisitor visitExceptionType() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
-                descriptor.getThrows().add(bound.getRawType());
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
+                descriptor.getThrows().add(rawTypeBound);
                 descriptor.getThrowsGeneric().add(bound);
             }
         };

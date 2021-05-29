@@ -98,9 +98,6 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
     @Incoming
     List<InvokesDescriptor> getInvokedBy();
 
-    @Declares
-    List<VariableDescriptor> getVariables();
-
     /**
      * Return <code>true</code> if this method is native.
      *
@@ -123,7 +120,7 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
     List<TypeDescriptor> getDeclaredInnerClasses();
 
     @Declares
-    List<FieldDescriptor> getFields();
+    List<VariableDescriptor> getVariables();
 
     /**
      * Return the first line number of the method.

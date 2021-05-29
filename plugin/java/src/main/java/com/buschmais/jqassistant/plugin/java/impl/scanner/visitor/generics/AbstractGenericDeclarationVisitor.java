@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
@@ -17,6 +18,8 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     protected final TypeCache.CachedType containingType;
 
+    protected GenericDeclarationDescriptor genericDeclaration;
+
     private int currentTypeParameterIndex = 0;
 
     private TypeVariableDescriptor currentTypeParameter;
@@ -30,17 +33,21 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     @Override
     public final void visitFormalTypeParameter(String name) {
-        GenericDeclarationDescriptor genericDeclaration = visitorHelper.getStore().addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
-        this.currentTypeParameter = genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
+        if (this.genericDeclaration == null) {
+            this.genericDeclaration = visitorHelper.getStore().addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
+            visitorHelper.getTypeVariableResolver().push(genericDeclaration);
+        }
+        this.currentTypeParameter = this.genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
         this.currentTypeParameter.setName(name);
         this.currentTypeParameterIndex++;
+        visitorHelper.getTypeVariableResolver().declare(this.currentTypeParameter);
     }
 
     @Override
     public final SignatureVisitor visitClassBound() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.getBounds().add(bound);
             }
         };
@@ -50,10 +57,16 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
     public final SignatureVisitor visitInterfaceBound() {
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
-            protected void apply(BoundDescriptor bound) {
+            protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.getBounds().add(bound);
             }
         };
     }
 
+    @Override
+    public void visitEnd() {
+        if (this.genericDeclaration != null) {
+            visitorHelper.getTypeVariableResolver().pop();
+        }
+    }
 }
