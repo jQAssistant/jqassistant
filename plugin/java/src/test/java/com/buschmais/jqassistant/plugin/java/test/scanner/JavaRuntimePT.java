@@ -28,7 +28,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
      *             If scanning fails.
      */
     @Test
-    @TestStore(type = TestStore.Type.REMOTE)
+    @TestStore(type = TestStore.Type.FILE)
     public void javaRuntime01Scan() throws Exception {
         String javaHome = System.getProperty("java.home");
         assumeNotNull("java.home is not set.", javaHome);

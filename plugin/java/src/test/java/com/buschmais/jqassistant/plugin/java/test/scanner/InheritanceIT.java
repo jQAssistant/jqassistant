@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class InheritanceIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of interface hierarchies.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws NoSuchMethodException

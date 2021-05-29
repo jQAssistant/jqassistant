@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.lifecycleannotation.
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LifecycleAnnotationIT extends AbstractJavaPluginIT {
 

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Contains tests regarding manifest files.
@@ -21,7 +21,7 @@ public class ManifestFileIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that manifest files are scanned.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      */
