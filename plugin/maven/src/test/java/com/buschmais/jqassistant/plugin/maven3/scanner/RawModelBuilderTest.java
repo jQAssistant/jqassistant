@@ -10,7 +10,7 @@ import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RawModelBuilderTest {
 
