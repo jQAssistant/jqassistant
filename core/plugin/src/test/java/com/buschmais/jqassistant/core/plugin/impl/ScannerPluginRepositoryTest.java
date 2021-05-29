@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ScannerPluginRepositoryTest {
 

@@ -15,8 +15,8 @@ import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
 
 /**
  * Verifies the functionality of the HTML report transformer.

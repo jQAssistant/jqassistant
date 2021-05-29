@@ -19,7 +19,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAIL
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class AggregationVerificationStrategyTest {
