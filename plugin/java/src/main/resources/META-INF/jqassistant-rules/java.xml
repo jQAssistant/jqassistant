@@ -84,10 +84,9 @@
             MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (superType:Type)-[:DECLARES]->(superMethod:Method),
-              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
+              path=(type)-[:EXTENDS|IMPLEMENTS*]->(superType)
             WHERE
-              type <> superType
-              and method.signature = superMethod.signature
+              method.signature = superMethod.signature
               and superMethod.visibility <> "private"
               and not (
                 (method)-[:INHERITED_FROM]->(:Method)
@@ -142,8 +141,8 @@
               (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
               (dependent:Type)-[:DEPENDS_ON]->(superType)
             WHERE NOT (
-              (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
-              or superType.fqn = "java.lang.Object"
+              superType.fqn = "java.lang.Object"
+              or (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
             )
             MERGE
               (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
