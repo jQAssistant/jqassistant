@@ -55,8 +55,7 @@
               (superType:Java:Type)-[:DECLARES]->(superMember:Member),
               path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
-              type <> superType
-              and not exists(member.name)
+              not exists(member.name)
               and exists(superMember.name)
               and member.signature = superMember.signature
               and superMember.visibility <> "private"
