@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.fieldvalue.FieldVa
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Contains test which verify correct scanning static field values.

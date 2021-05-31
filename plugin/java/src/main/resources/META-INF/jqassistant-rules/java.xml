@@ -55,8 +55,7 @@
               (superType:Java:Type)-[:DECLARES]->(superMember:Member),
               path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
-              type <> superType
-              and not exists(member.name)
+              not exists(member.name)
               and exists(superMember.name)
               and member.signature = superMember.signature
               and superMember.visibility <> "private"
@@ -84,10 +83,9 @@
             MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (superType:Type)-[:DECLARES]->(superMethod:Method),
-              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
+              path=(type)-[:EXTENDS|IMPLEMENTS*]->(superType)
             WHERE
-              type <> superType
-              and method.signature = superMethod.signature
+              method.signature = superMethod.signature
               and superMethod.visibility <> "private"
               and not (
                 (method)-[:INHERITED_FROM]->(:Method)
@@ -121,7 +119,6 @@
               (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
             WHERE NOT (                                     // exclude...
               exists(overridingMethod.abstract)             // ...abstract methods
-              or (method)-[:OVERRIDES]->(invokedMethod)     // ...super calls to overridden methods
               or (overridingMethod)-[:INHERITED_FROM]->()   // ...inherited methods
             )
             WITH
@@ -143,8 +140,8 @@
               (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
               (dependent:Type)-[:DEPENDS_ON]->(superType)
             WHERE NOT (
-              (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
-              or superType.fqn = "java.lang.Object"
+              superType.fqn = "java.lang.Object"
+              or (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
             )
             MERGE
               (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
@@ -357,6 +354,18 @@
               preDestroy:PreDestroy
             RETURN
               preDestroy as PreDestroy
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PackageAnnotatedBy">
+        <description>Propagates the annotations from the package-info.java to the package node.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p:Package)-[:CONTAINS]->(t:Type{sourceFileName: "package-info.java"}),
+              (t)-[:ANNOTATED_BY]->(a:Annotation)
+            MERGE
+              (p)-[:ANNOTATED_BY]->(a)
+            RETURN p
         ]]></cypher>
     </concept>
 

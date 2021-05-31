@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Contains test on relations between outer and inner classes.
@@ -21,7 +21,7 @@ public class NestedInnerClassesIT extends AbstractJavaPluginIT {
 
     /**
      * Scans an outer class.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */

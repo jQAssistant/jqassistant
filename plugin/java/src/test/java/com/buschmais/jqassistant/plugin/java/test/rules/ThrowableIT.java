@@ -4,14 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelError;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelRuntimeException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelThrowable;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelError;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelRuntimeException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelThrowable;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the concepts java:Throwable, java:Error, java:Exception and

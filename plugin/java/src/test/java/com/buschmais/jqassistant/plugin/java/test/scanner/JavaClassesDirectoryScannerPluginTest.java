@@ -20,11 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class JavaClassesDirectoryScannerPluginTest {
@@ -57,7 +54,7 @@ public class JavaClassesDirectoryScannerPluginTest {
     /**
      * Verify that the plugin creates a new artifact if none exists in the
      * context.
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */
@@ -79,7 +76,7 @@ public class JavaClassesDirectoryScannerPluginTest {
     /**
      * Verify that the plugin re-uses an existing artifact which exists in the
      * context (e.g. for dependency resolution).
-     * 
+     *
      * @throws IOException
      *             If the test fails.
      */

@@ -24,9 +24,9 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding service loader descriptors.

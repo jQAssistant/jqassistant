@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding property files.
@@ -24,7 +24,7 @@ public class PropertyFileIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that property files are scanned.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      */
