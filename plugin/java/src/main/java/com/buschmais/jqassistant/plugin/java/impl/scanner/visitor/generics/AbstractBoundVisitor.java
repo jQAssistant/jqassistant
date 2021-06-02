@@ -52,10 +52,11 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         createBound(SignatureHelper.getObjectType(name));
     }
 
-    private final void createBound(String rawType) {
+    private final void createBound(String rawTypeName) {
         current = visitorHelper.getStore().create(BoundDescriptor.class);
-        current.setRawType(visitorHelper.resolveType(rawType, containingType).getTypeDescriptor());
-        apply(current);
+        TypeDescriptor rawType = visitorHelper.resolveType(rawTypeName, containingType).getTypeDescriptor();
+        current.setRawType(rawType);
+        apply(rawType, current);
     }
 
     @Override
@@ -115,7 +116,6 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     private void apply(BoundDescriptor bound) {
         TypeDescriptor rawType = getRawTypeBound(bound);
-
         apply(rawType != null ? rawType : visitorHelper.resolveType(DEFAULT_RAW_TYPE_BOUND, containingType).getTypeDescriptor(), bound);
     }
 
