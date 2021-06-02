@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Provides structures for type parameters on outer and inner classes.
- *
- * @param <X>
- * @param <Y>
  */
-public class GenericTypeDeclarations<X, Y> {
+public class GenericTypeDeclarations<X, Y extends Serializable & List<String>> {
 
     private X x;
 

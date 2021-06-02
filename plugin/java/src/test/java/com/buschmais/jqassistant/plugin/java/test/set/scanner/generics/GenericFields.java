@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics;
 import java.util.List;
 import java.util.Map;
 
-public class GenericFields<X>{
+public class GenericFields<X> {
 
     private X typeVariable;
 
@@ -16,6 +16,5 @@ public class GenericFields<X>{
     private List<? super X> lowerBoundWildcard;
 
     private List<?> unboundWildcard;
-
 
 }

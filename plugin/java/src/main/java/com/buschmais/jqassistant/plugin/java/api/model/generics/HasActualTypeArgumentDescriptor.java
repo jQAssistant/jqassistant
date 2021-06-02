@@ -13,5 +13,5 @@ public interface HasActualTypeArgumentDescriptor extends IndexTemplate, Descript
     ParameterizedTypeDescriptor getParameterizedType();
 
     @Incoming
-    BoundDescriptor getGenericType();
+    BoundDescriptor getTypeArgument();
 }
