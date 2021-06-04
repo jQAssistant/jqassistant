@@ -9,7 +9,7 @@ public class GenericFields<X> {
 
     private Map<String, X> parameterizedType;
 
-    private List<List<X>> nestedParameterizedType;
+    private List<List<String>> nestedParameterizedType;
 
     private List<? extends X> upperBoundWildcard;
 

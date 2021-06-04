@@ -4,11 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
@@ -83,12 +79,14 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     @Override
     public final void visitTypeArgument() {
-        System.out.println("test");
+        ParameterizedTypeDescriptor parameterizedType = getParameterizedType();
+        WildcardTypeDescriptor wildcardType = visitorHelper.getStore().create(WildcardTypeDescriptor.class);
+        addActualArgumentType(parameterizedType, wildcardType);
     }
 
     @Override
     public final SignatureVisitor visitTypeArgument(char wildcard) {
-        ParameterizedTypeDescriptor parameterizedType = visitorHelper.getStore().addDescriptorType(current, ParameterizedTypeDescriptor.class);
+        ParameterizedTypeDescriptor parameterizedType = getParameterizedType();
         if (wildcard == INSTANCEOF) {
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
@@ -113,6 +111,10 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
                 }
             };
         }
+    }
+
+    private ParameterizedTypeDescriptor getParameterizedType() {
+        return visitorHelper.getStore().addDescriptorType(current, ParameterizedTypeDescriptor.class);
     }
 
     private void addActualArgumentType(ParameterizedTypeDescriptor parameterizedType, BoundDescriptor argumentType) {
