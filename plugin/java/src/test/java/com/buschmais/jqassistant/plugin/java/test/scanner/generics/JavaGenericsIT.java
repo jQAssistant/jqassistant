@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner.generics;
 
 import java.io.Serializable;
-import java.lang.reflect.*;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.AbstractList;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +64,30 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
+    void innerClassTypeParameters() {
+        scanClasses(GenericTypeDeclarations.Inner.class);
+        store.beginTransaction();
+        List<TypeVariableDescriptor> declaredTypeParameters = query(
+                "MATCH (:Type:GenericDeclaration{name:'GenericTypeDeclarations$Inner'})-[declares:DECLARES_TYPE_PARAMETER]->(typeParameter:Java:ByteCode:Bound:TypeVariable) "
+                        + //
+                        "RETURN typeParameter ORDER BY declares.index").getColumn("typeParameter");
+        assertThat(declaredTypeParameters).hasSize(1);
+        TypeVariableDescriptor x = declaredTypeParameters.get(0);
+        assertThat(x.getName().equals("X"));
+        List<BoundDescriptor> xBounds = x.getBounds();
+        assertThat(xBounds.size()).isEqualTo(1);
+        assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
+        List<TypeVariableDescriptor> requiredTypeParameters = query(
+                "MATCH (:Type:GenericDeclaration{name:'GenericTypeDeclarations$Inner'})-[declares:REQUIRES_TYPE_PARAMETER]->(typeParameter:Java:ByteCode:Bound:TypeVariable) "
+                        + //
+                        "RETURN typeParameter").getColumn("typeParameter");
+        assertThat(requiredTypeParameters).hasSize(1);
+        TypeVariableDescriptor y = declaredTypeParameters.get(0);
+        assertThat(y.getName().equals("Y"));
+        store.commitTransaction();
+    }
+
+    @Test
     void implementsGeneric() {
         evaluate("genericInterfaces", ImplementsGeneric.class.getGenericInterfaces(), 0);
         scanClasses(ImplementsGeneric.class);
@@ -105,7 +133,6 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    @TestStore(type = TestStore.Type.REMOTE)
     @Test
     void fieldOfParameterizedType() {
         scanClasses(GenericFields.class);

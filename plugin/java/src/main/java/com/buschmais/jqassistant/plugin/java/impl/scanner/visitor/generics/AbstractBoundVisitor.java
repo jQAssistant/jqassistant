@@ -4,7 +4,11 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
@@ -79,6 +83,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     @Override
     public final void visitTypeArgument() {
+        System.out.println("test");
     }
 
     @Override
@@ -88,16 +93,12 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
                 protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
-                    HasActualTypeArgumentDescriptor hasActualTypeArgument = visitorHelper.getStore().create(parameterizedType,
-                            HasActualTypeArgumentDescriptor.class, bound);
-                    hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
+                    addActualArgumentType(parameterizedType, bound);
                 }
             };
         } else {
             WildcardTypeDescriptor wildcardType = visitorHelper.getStore().create(WildcardTypeDescriptor.class);
-            HasActualTypeArgumentDescriptor hasActualTypeArgument = visitorHelper.getStore().create(parameterizedType, HasActualTypeArgumentDescriptor.class,
-                    wildcardType);
-            hasActualTypeArgument.setIndex(currentTypeParameterIndex++);
+            addActualArgumentType(parameterizedType, wildcardType);
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
                 protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
@@ -112,6 +113,10 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
                 }
             };
         }
+    }
+
+    private void addActualArgumentType(ParameterizedTypeDescriptor parameterizedType, BoundDescriptor argumentType) {
+        parameterizedType.addActualTypeArgument(currentTypeParameterIndex++, argumentType);
     }
 
     private void apply(BoundDescriptor bound) {
