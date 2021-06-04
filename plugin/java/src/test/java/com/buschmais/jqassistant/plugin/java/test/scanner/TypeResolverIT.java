@@ -20,7 +20,11 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class TypeResolverIT extends AbstractJavaPluginIT {
@@ -41,7 +45,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn=$artifact return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
-        assertThat(testResult.getColumn("t"), allOf(not(hasItem(typeDescriptor(A.class))), not(hasItem(typeDescriptor(B.class)))));
+        List<Object> types = testResult.getColumn("t");
+        assertThat(types, not(hasItem(typeDescriptor(A.class))));
+        assertThat(types, not(hasItem(typeDescriptor(B.class))));
         store.commitTransaction();
     }
 
@@ -61,7 +67,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn=$artifact return t",
                 MapBuilder.<String, Object> create("artifact", "a1").get());
-        assertThat(testResult.getColumn("t"), allOf(not(hasItem(typeDescriptor(A.class))), not(hasItem(typeDescriptor(B.class)))));
+        List<Object> types = testResult.getColumn("t");
+        assertThat(types, not(hasItem(typeDescriptor(A.class))));
+        assertThat(types, not(hasItem(typeDescriptor(B.class))));
         store.commitTransaction();
     }
 
