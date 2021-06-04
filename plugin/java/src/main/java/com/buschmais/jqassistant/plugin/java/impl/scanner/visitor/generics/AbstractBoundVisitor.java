@@ -33,9 +33,6 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         this.containingType = containingType;
     }
 
-    // visitBaseType | visitTypeVariable | visitArrayType | ( visitClassType
-    // visitTypeArgument* ( visitInnerClassType visitTypeArgument* )* visitEnd )
-
     @Override
     public final void visitBaseType(char descriptor) {
         // TODO check if this is the right way to determine the primitive type

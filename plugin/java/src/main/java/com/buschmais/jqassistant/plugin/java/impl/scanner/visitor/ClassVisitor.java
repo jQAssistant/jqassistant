@@ -122,12 +122,12 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
                 parameterDescriptor.setType(typeDescriptor);
             }
+            for (int i = 0; exceptions != null && i < exceptions.length; i++) {
+                TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
+                methodDescriptor.getThrows().add(exceptionType);
+            }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper));
-        }
-        for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
-            methodDescriptor.getThrows().add(exceptionType);
         }
         return new MethodVisitor(cachedType, methodDescriptor, visitorHelper);
     }

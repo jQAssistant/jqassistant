@@ -7,6 +7,8 @@ public class GenericFields<X> {
 
     private X typeVariable;
 
+    private X[] arrayOfTypeVariable;
+
     private Map<String, X> parameterizedType;
 
     private List<List<String>> nestedParameterizedType;

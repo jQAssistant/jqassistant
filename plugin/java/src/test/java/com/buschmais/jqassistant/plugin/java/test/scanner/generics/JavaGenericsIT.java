@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner.generics;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.AbstractList;
@@ -7,19 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ExtendsGeneric;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericFields;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericTypeDeclarations;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGeneric;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -124,10 +122,21 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfTypeVariable() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("typeVariable");
+        FieldDescriptor field = getMember("GenericFields", "typeVariable");
         assertThat(field.getType()).is(matching(typeDescriptor(Object.class)));
-        BoundDescriptor genericType = field.getGenericType();
-        verifyTypeVariable(genericType, "X", typeDescriptor(GenericFields.class));
+        verifyTypeVariable(field.getGenericType(), "X", typeDescriptor(GenericFields.class), Object.class);
+        store.commitTransaction();
+    }
+
+    @Test
+    void fieldOfArrayOfTypeVariable() {
+        scanClasses(GenericFields.class);
+        store.beginTransaction();
+        FieldDescriptor field = getMember("GenericFields", "arrayOfTypeVariable");
+        assertThat(field.getType()).is(matching(typeDescriptor(Object.class)));
+        BoundDescriptor bound = field.getGenericType();
+        assertThat(bound).isInstanceOf(GenericArrayTypeDescriptor.class);
+        verifyTypeVariable(((GenericArrayTypeDescriptor) bound).getComponentType(), "X", typeDescriptor(GenericFields.class), Object.class);
         store.commitTransaction();
     }
 
@@ -135,7 +144,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfParameterizedType() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("parameterizedType");
+        FieldDescriptor field = getMember("GenericFields", "parameterizedType");
         assertThat(field.getType()).is(matching(typeDescriptor(Map.class)));
         BoundDescriptor genericType = field.getGenericType();
         assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
@@ -143,7 +152,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(Map.class)));
         Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 2);
         assertThat(typeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
-        verifyTypeVariable(typeArguments.get(1), "X", typeDescriptor(GenericFields.class));
+        verifyTypeVariable(typeArguments.get(1), "X", typeDescriptor(GenericFields.class), Object.class);
         store.commitTransaction();
     }
 
@@ -151,7 +160,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfNestedParameterizedType() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("nestedParameterizedType");
+        FieldDescriptor field = getMember("GenericFields", "nestedParameterizedType");
         assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
         BoundDescriptor genericType = field.getGenericType();
         assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
@@ -172,7 +181,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfUpperBoundWildcard() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("upperBoundWildcard");
+        FieldDescriptor field = getMember("GenericFields", "upperBoundWildcard");
         assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
         BoundDescriptor genericType = field.getGenericType();
         WildcardTypeDescriptor wildcardType = getListOfWildcard(genericType);
@@ -185,7 +194,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfLowerBoundWildcard() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("lowerBoundWildcard");
+        FieldDescriptor field = getMember("GenericFields", "lowerBoundWildcard");
         assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
         BoundDescriptor genericType = field.getGenericType();
         WildcardTypeDescriptor wildcardType = getListOfWildcard(genericType);
@@ -198,7 +207,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     void fieldOfUnboundWildcard() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        FieldDescriptor field = getField("unboundWildcard");
+        FieldDescriptor field = getMember("GenericFields", "unboundWildcard");
         assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
         BoundDescriptor genericType = field.getGenericType();
         WildcardTypeDescriptor wildcardType = getListOfWildcard(genericType);
@@ -207,12 +216,60 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    private FieldDescriptor getField(String fieldName) {
-        Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("fieldName", fieldName).build();
-        List<FieldDescriptor> fields = query("MATCH (:Type{name:'GenericFields'})-[:DECLARES]->(field:Java:ByteCode:Field{name:$fieldName}) RETURN field",
-                parameters).getColumn("field");
-        assertThat(fields).hasSize(1);
-        return fields.get(0);
+    @Test
+    void genericParameter() {
+        scanClasses(GenericMethods.class);
+        store.beginTransaction();
+        MethodDescriptor genericParameter = getMember("GenericMethods", "genericParameter");
+        List<ParameterDescriptor> parameters = genericParameter.getParameters();
+        assertThat(parameters).hasSize(1);
+        ParameterDescriptor parameter = parameters.get(0);
+        assertThat(parameter.getIndex()).isEqualTo(0);
+        assertThat(parameter.getType()).is(matching(typeDescriptor(Object.class)));
+        verifyTypeVariable(parameter.getGenericType(), "X", typeDescriptor(GenericMethods.class), Object.class);
+        store.commitTransaction();
+    }
+
+    @Test
+    void genericReturnType() {
+        scanClasses(GenericMethods.class);
+        store.beginTransaction();
+        MethodDescriptor genericReturnType = getMember("GenericMethods", "genericReturnType");
+        assertThat(genericReturnType.getReturns()).is(matching(typeDescriptor(Object.class)));
+        verifyTypeVariable(genericReturnType.getReturnsGeneric(), "X", typeDescriptor(GenericMethods.class), Object.class);
+        store.commitTransaction();
+    }
+
+    @Test
+    void genericException() throws NoSuchMethodException {
+        scanClasses(GenericMethods.class);
+        store.beginTransaction();
+        MethodDescriptor genericException = getMember("GenericMethods", "genericException");
+        List<TypeDescriptor> throwsExceptions = genericException.getThrows();
+        assertThat(throwsExceptions).hasSize(1);
+        assertThat(throwsExceptions.get(0)).is(matching(typeDescriptor(IOException.class)));
+        List<BoundDescriptor> throwsGenericExceptions = genericException.getThrowsGeneric();
+        assertThat(throwsGenericExceptions).hasSize(1);
+        verifyTypeVariable(throwsGenericExceptions.get(0), "E", methodDescriptor(GenericMethods.class, "genericException"), IOException.class);
+        store.commitTransaction();
+    }
+
+    @Test
+    void overwriteTypeParameter() throws NoSuchMethodException {
+        scanClasses(GenericMethods.class);
+        store.beginTransaction();
+        MethodDescriptor overwriteTypeParameter = getMember("GenericMethods", "overwriteTypeParameter");
+        assertThat(overwriteTypeParameter.getReturns()).is(matching(typeDescriptor(Object.class)));
+        verifyTypeVariable(overwriteTypeParameter.getReturnsGeneric(), "X", methodDescriptor(GenericMethods.class, "overwriteTypeParameter"), Object.class);
+        store.commitTransaction();
+    }
+
+    private <T extends MemberDescriptor> T getMember(String typeName, String memberName) {
+        Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", typeName).entry("memberName", memberName).build();
+        List<T> members = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(member:Java:ByteCode:Member{name:$memberName}) RETURN member", parameters)
+                .getColumn("member");
+        assertThat(members).hasSize(1);
+        return members.get(0);
     }
 
     private WildcardTypeDescriptor getListOfWildcard(BoundDescriptor genericType) {
@@ -233,11 +290,12 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(typeVariable.getName()).isEqualTo("X");
     }
 
-    private void verifyTypeVariable(BoundDescriptor bound, String expectedName, Matcher<?> declaredBy) {
+    private void verifyTypeVariable(BoundDescriptor bound, String expectedName, Matcher<?> declaredBy, Class<?> expectedRawType) {
         assertThat(bound).isNotNull().isInstanceOf(TypeVariableDescriptor.class);
         TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
         assertThat(typeVariable.getName()).isEqualTo(expectedName);
         assertThat(typeVariable.getDeclaredBy().getGenericDeclaration()).is(matching(declaredBy));
+        assertThat(typeVariable.getRawType()).is(matching(typeDescriptor(expectedRawType)));
     }
 
     private Map<Integer, BoundDescriptor> getActualTypeArguments(ParameterizedTypeDescriptor parameterizedType, int expectedTypeArgumentCount) {
