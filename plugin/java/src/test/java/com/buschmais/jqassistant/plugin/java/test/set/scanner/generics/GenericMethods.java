@@ -18,4 +18,8 @@ public class GenericMethods<X> {
         return null;
     }
 
+    void genericVariable() {
+        X x = null;
+    }
+
 }

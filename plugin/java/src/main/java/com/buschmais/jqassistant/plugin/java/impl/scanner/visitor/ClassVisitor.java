@@ -51,6 +51,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
         String fullQualifiedName = SignatureHelper.getObjectType(name);
         cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, javaType);
+        visitorHelper.getTypeVariableResolver().push();
         ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
         classFileDescriptor.setByteCodeVersion(version);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
@@ -104,6 +105,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, SignatureHelper.getMethodSignature(name, desc));
+        visitorHelper.getTypeVariableResolver().push();
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT)) {
@@ -122,12 +124,12 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
                 parameterDescriptor.setType(typeDescriptor);
             }
-            for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-                TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
-                methodDescriptor.getThrows().add(exceptionType);
-            }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper));
+        }
+        for (int i = 0; exceptions != null && i < exceptions.length; i++) {
+            TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
+            methodDescriptor.getThrows().add(exceptionType);
         }
         return new MethodVisitor(cachedType, methodDescriptor, visitorHelper);
     }
@@ -193,6 +195,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visitEnd() {
         visitorHelper.storeDependencies(cachedType);
+        visitorHelper.getTypeVariableResolver().pop();
     }
 
     /**

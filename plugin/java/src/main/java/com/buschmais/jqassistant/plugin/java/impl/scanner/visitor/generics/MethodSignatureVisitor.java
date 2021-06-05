@@ -49,7 +49,7 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
         return new AbstractBoundVisitor(visitorHelper, containingType) {
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
-                descriptor.getThrows().add(rawTypeBound);
+                // raw type not added here, already done by class visitor
                 descriptor.getThrowsGeneric().add(bound);
             }
         };

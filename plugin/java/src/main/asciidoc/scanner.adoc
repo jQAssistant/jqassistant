@@ -102,14 +102,16 @@ A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum` or `:Ann
 .Relations of `:Java:Type`
 [options="header"]
 |====
-| Name         | Target label(s)            | Cardinality | Description
-| DECLARES     | <<:Java:Type>>             | 0..n        | Declares an inner type of the type
-| DECLARES     | <<:Java:Method>>           | 0..n        | Declares a method of the type
-| DECLARES     | <<:Java:Field>>            | 0..n        | Declares a field of the type
-| EXTENDS      | <<:Java:Type>>             | 0..1        | References a type this type extends from
-| IMPLEMENTS   | <<:Java:Type>>             | 0..1        | References an "Interface" type this type implements
-| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the type
-| DEPENDS_ON   | <<:Java:Type>>             | 0..n        | References a type which this type depends on (i.e. every reference to another class)
+| Name               | Target label(s)            | Cardinality | Description
+| DECLARES           | <<:Java:Type>>             | 0..n        | Declares an inner type of the type
+| DECLARES           | <<:Java:Method>>           | 0..n        | Declares a method of the type
+| DECLARES           | <<:Java:Field>>            | 0..n        | Declares a field of the type
+| EXTENDS            | <<:Java:Type>>             | 0..1        | References a type this type extends from
+| EXTENDS_GENERIC    | <<:Java:Bound>>            | 0..1        | References a generic type this type extends from
+| IMPLEMENTS         | <<:Java:Type>>             | 0..1        | References an interface type this type implements
+| IMPLEMENTS_GENERIC | <<:Java:Bound>>            | 0..1        | References a generic interface type this type implements
+| ANNOTATED_BY       | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the type
+| DEPENDS_ON         | <<:Java:Type>>             | 0..n        | References a type which this type depends on (i.e. every reference to another class)
 |====
 
 *NOTE* Types which are referenced by scanned classes but have not been scanned themselves
@@ -166,10 +168,11 @@ A field declared in a Java type.
 .Relations of `:Java:Field`
 [options="header"]
 |====
-| Name         | Target label(s)            | Cardinality | Description
-| OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the field
-| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the field
-| HAS          | <<:Java:Value>>            | 0..1        | References the primitive value which is used for initialzing the field
+| Name            | Target label(s)            | Cardinality | Description
+| OF_TYPE         | <<:Java:Type>>             | 1           | References the type of the field
+| OF_GENERIC_TYPE | <<:Java:Bound>>            | 0..1        | References the generic type of the field
+| ANNOTATED_BY    | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the field
+| HAS             | <<:Java:Value>>            | 0..1        | References the primitive value which is used for initializing the field
 |====
 
 *NOTE* Fields which are referenced by scanned classes but have not been scanned
@@ -200,15 +203,17 @@ A method declared in a Java type.
 .Relations of `:Java:Method`
 [options="header"]
 |====
-| Name         | Target label(s)            | Cardinality | Description
-| HAS          | <<:Java:Parameter>>        | 0..n        | References a parameter of the method
-| THROWS       | <<:Java:Type>>             | 0..n        | References the exception type thrown by the method
-| RETURNS      | <<:Java:Type>>             | 0..n        | References the return type of the method
-| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the method declaration
-| READS        | <<:Java:Field>>            | 0..n        | References a field which is read by the method
-| WRITES       | <<:Java:Field>>            | 0..n        | References a field which is written by the method
-| INVOKES      | <<:Java:Method>>           | 0..n        | References a method which is invoked by the method
-| DECLARES     | <<:Java:Variable>>         | 0..n        | References a variable method which is declared by the method
+| Name            | Target label(s)            | Cardinality | Description
+| HAS             | <<:Java:Parameter>>        | 0..n        | References a parameter of the method
+| THROWS          | <<:Java:Type>>             | 0..n        | References the exception types thrown by the method
+| THROWS_GENERIC  | <<:Java:Bound>>            | 0..n        | References the generic exception types thrown by the method
+| RETURNS         | <<:Java:Type>>             | 0..n        | References the return type of the method
+| RETURNS_GENERIC | <<:Java:Bound>>            | 0..n        | References the generic return type of the method
+| ANNOTATED_BY    | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the method declaration
+| READS           | <<:Java:Field>>            | 0..n        | References a field which is read by the method
+| WRITES          | <<:Java:Field>>            | 0..n        | References a field which is written by the method
+| INVOKES         | <<:Java:Method>>           | 0..n        | References a method which is invoked by the method
+| DECLARES        | <<:Java:Variable>>         | 0..n        | References a variable method which is declared by the method
 |====
 
 *NOTE* Methods which are referenced by scanned classes but have not been
@@ -232,9 +237,10 @@ A method parameter.
 .Relations of `:Java:Parameter`
 [options="header"]
 |====
-| Name         | Target label(s)            | Cardinality | Description
-| OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the parameter
-| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
+| Name            | Target label(s)            | Cardinality | Description
+| OF_TYPE         | <<:Java:Type>>             | 1           | References the type of the parameter
+| OF_GENERIC_TYPE | <<:Java:Bound>>            | 0..1        | References the generic type of the parameter
+| ANNOTATED_BY    | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
 |====
 
 [[:Java:Variable]]
@@ -247,6 +253,14 @@ A variable declared in a method.
 | Name       | Description
 | name       | The variable name, e.g. `i`
 | signature  | The raw signature of the variable, e.g. `int i`, `java.lang.String name`
+|====
+
+.Relations of `:Java:Variable`
+[options="header"]
+|====
+| Name            | Target label(s)            | Cardinality | Description
+| OF_TYPE         | <<:Java:Type>>             | 1           | References the type of the variable
+| OF_GENERIC_TYPE | <<:Java:Bound>>            | 0..1        | References the generic type of the variable
 |====
 
 [[:Java:Value]]
@@ -317,7 +331,90 @@ Represents an array value, i.e. a node referencing value nodes.
 | CONTAINS | <<:Java:Value>>      | 0..n        | References a value contained in the array
 |====
 
+[[:Java:Bound]]
+=== Nodes labeled with `:Java:Bound`
+Represent a bound of a generic type.
 
+A bound can be further classified by the following labels:
+
+* <<:Java:Bound:TypeVariable,:TypeVariable>>
+* <<:Java:Bound:ParameterizedType,:ParameterizedType>>
+* <<:Java:Bound:WildcardType,:WildcardType>>
+* <<:Java:Bound:GenericArrayType,:ArrayType>>
+
+.Relations of `:Java:Bound`
+[options="header"]
+|====
+| Name        | Target label(s)      | Cardinality | Description
+| OF_RAW_TYPE | <<:Java:Type>>       | 0..1        | References the raw type, e.g. `java.util.List` for a parameterized type `java.util.List<String>`.
+|====
+
+[[:Java:Bound:TypeVariable]]
+=== Nodes labeled with `:Java:Bound:TypeVariable`
+Represents a type variable, e.g.
+
+* `X` in `public class<X> {}`
+* `X` in `java.util.List<X>`
+
+.Relations of `:Java:Bound:TypeVariable`
+[options="header"]
+|====
+| Name        | Target label(s)      | Cardinality | Description
+| HAS_BOUND   | <<:Java:Bound,:Java:Bound>>      | 0..1        | References the bound of the type variable.
+|====
+
+[[:Java:Bound:ParameterizedType]]
+=== Nodes labeled with `:Java:Bound:ParameterizedType`
+Represents a parameterized type, e.g.
+
+* `java.util.List<X>`
+* `java.util.List<?>`
+* `java.util.List<String>`
+
+.Relations of `:Java:Bound:ParameterizedType`
+[options="header"]
+|====
+| Name                      | Target label(s) | Cardinality | Description
+| HAS_ACTUAL_TYPE_ARGUMENT  | <<:Java:Bound,:Java:Bound>> | 1..*        | References the type arguments, e.g. `X` (<<:Java:Bound:TypeVariable,:TypeVariable>>), `?` (<<:Java:Bound:WildcardType,:WildcardType>>) or  `String` (<<:Java:Bound,:Bound>>)
+|====
+
+.Properties of `:HAS_ACTUAL_TYPE_ARGUMENT`
+[options="header"]
+|====
+| Name  | Description
+| index | The index of the type argument, starting with 0
+|====
+
+[[:Java:Bound:WildcardType]]
+=== Nodes labeled with `Java:Bound:WildcardType`
+Represents a wildcard type, e.g. `?` in
+
+* `java.util.List<?>` for an unbound wildcard
+* `java.util.List<? extends X>` for a wildcard with an upper bound `X`
+* `java.util.List<? super X>` for a wildcard with a lower bound `X`
+
+.Relations of `:Java:Bound:WildcardType`
+[options="header"]
+|====
+| Name             | Target label(s) | Cardinality | Description
+| HAS_UPPER_BOUND  | <<:Java:Bound,:Java:Bound>> | 0..*        | References the upper bounds of this wildcard type (e.g. `? extends X`)
+| HAS_LOWER_BOUND  | <<:Java:Bound,:Java:Bound>> | 0..*        | References the lower bounds of this wildcard type (e.g. `? extends X`)
+|====
+
+NOTE: There can be either upper or lower bounds. An unbound wildcard has neither upper nor lower bounds.
+
+[[:Java:Bound:GenericArrayType]]
+=== Nodes labeled with `Java:Bound:GenericArrayType`
+Represents a generic array type, i.e.
+
+* `[]` in `java.util.List<java.util.List[]>`
+
+.Relations of `:Java:Bound:GenericArrayType`
+[options="header"]
+|====
+| Name                 | Target label(s) | Cardinality | Description
+| HAS_COMPONENT_TYPE   | <<:Java:Bound,:Java:Bound>> | 1           | References the bound of the component type.
+|====
 
 [[ManifestFileScanner]]
 == Manifest File Scanner
@@ -361,7 +458,7 @@ A manifest entry.
 |====
 | Name  | Description
 | name  | The name of the entry, e.g. `Main-Class`
-| value | The value of the entry, e.g. `com.buschmais.jqassistant.scm.cli.Main`
+| value | The value of the entry, e.g. `com.buschmais.jqassistant.commandline.Main`
 |====
 
 

@@ -264,6 +264,19 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    void genericVariable() {
+        scanClasses(GenericMethods.class);
+        store.beginTransaction();
+        MethodDescriptor genericVariable = getMember("GenericMethods", "genericVariable");
+        List<VariableDescriptor> variables = genericVariable.getVariables();
+        assertThat(variables).hasSize(1);
+        VariableDescriptor x = variables.get(0);
+        assertThat(x.getType()).is(matching(typeDescriptor(Object.class)));
+        verifyTypeVariable(x.getGenericType(), "X", typeDescriptor(GenericMethods.class), Object.class);
+        store.commitTransaction();
+    }
+
     private <T extends MemberDescriptor> T getMember(String typeName, String memberName) {
         Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", typeName).entry("memberName", memberName).build();
         List<T> members = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(member:Java:ByteCode:Member{name:$memberName}) RETURN member", parameters)

@@ -172,5 +172,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         if (!effectiveLines.isEmpty()) {
             methodDescriptor.setEffectiveLineCount(effectiveLines.size());
         }
+        visitorHelper.getTypeVariableResolver().pop();
     }
 }

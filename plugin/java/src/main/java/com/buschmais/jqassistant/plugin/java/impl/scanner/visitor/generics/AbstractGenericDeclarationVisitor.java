@@ -35,7 +35,6 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
     public final void visitFormalTypeParameter(String name) {
         if (this.genericDeclaration == null) {
             this.genericDeclaration = visitorHelper.getStore().addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
-            visitorHelper.getTypeVariableResolver().push(genericDeclaration);
         }
         this.currentTypeParameter = this.genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
         this.currentTypeParameter.setName(name);
@@ -63,12 +62,5 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
                 currentTypeParameter.getBounds().add(bound);
             }
         };
-    }
-
-    @Override
-    public void visitEnd() {
-        if (this.genericDeclaration != null) {
-            visitorHelper.getTypeVariableResolver().pop();
-        }
     }
 }

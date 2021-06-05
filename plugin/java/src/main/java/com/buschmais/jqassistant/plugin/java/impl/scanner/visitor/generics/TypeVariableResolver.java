@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 import java.util.*;
 
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,8 @@ public class TypeVariableResolver {
 
     private final Deque<TypeVariableDeclarations> typeVariableDeclarations = new LinkedList<>();
 
-    public void push(GenericDeclarationDescriptor genericDeclaration) {
-        typeVariableDeclarations.offerFirst(new TypeVariableDeclarations(genericDeclaration));
+    public void push() {
+        typeVariableDeclarations.offerFirst(new TypeVariableDeclarations());
     }
 
     public void pop() {
@@ -21,7 +20,7 @@ public class TypeVariableResolver {
     }
 
     public void declare(TypeVariableDescriptor typeVariable) {
-        typeVariableDeclarations.peek().put(typeVariable);
+        typeVariableDeclarations.getFirst().put(typeVariable);
     }
 
     public TypeVariableDescriptor resolve(String name, TypeDescriptor containingType) {
@@ -36,8 +35,6 @@ public class TypeVariableResolver {
 
     @RequiredArgsConstructor
     private static class TypeVariableDeclarations {
-
-        private final GenericDeclarationDescriptor genericDeclarations;
 
         private final Map<String, TypeVariableDescriptor> typeVariables = new HashMap<>();
 
