@@ -35,8 +35,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     @Override
     public final void visitBaseType(char descriptor) {
-        // TODO check if this is the right way to determine the primitive type
-        createBound(Type.getType(Character.toString(descriptor)).toString());
+        createBound(Type.getType(Character.toString(descriptor)).getClassName());
     }
 
     @Override

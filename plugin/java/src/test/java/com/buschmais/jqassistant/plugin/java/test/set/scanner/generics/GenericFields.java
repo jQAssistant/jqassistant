@@ -19,4 +19,5 @@ public class GenericFields<X> {
 
     private List<?> unboundWildcard;
 
+    private List<boolean[]> arrayOfPrimitive;
 }

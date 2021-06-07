@@ -141,6 +141,24 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
+    void fieldOfArrayOfPrimitive() {
+        scanClasses(GenericFields.class);
+        store.beginTransaction();
+        FieldDescriptor field = getMember("GenericFields", "arrayOfPrimitive");
+        assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
+        BoundDescriptor bound = field.getGenericType();
+        assertThat(bound).isInstanceOf(ParameterizedTypeDescriptor.class);
+        ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) bound;
+        List<HasActualTypeArgumentDescriptor> actualTypeArguments = parameterizedType.getActualTypeArguments();
+        assertThat(actualTypeArguments).hasSize(1);
+        BoundDescriptor typeArgument = actualTypeArguments.get(0).getTypeArgument();
+        assertThat(typeArgument).isInstanceOf(GenericArrayTypeDescriptor.class);
+        BoundDescriptor componentType = ((GenericArrayTypeDescriptor) typeArgument).getComponentType();
+        assertThat(componentType.getRawType()).is(matching(typeDescriptor(boolean.class)));
+        store.commitTransaction();
+    }
+
+    @Test
     void fieldOfParameterizedType() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
