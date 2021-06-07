@@ -1,6 +1,7 @@
 ifndef::jqa-in-manual[== Version 1.10.0]
 ifdef::jqa-in-manual[== Java Plugin 1.10.0]
 
+* Add support for generic types, e.g. `(:Field)-[OF_GENERIC_TYPE]->(:ParameterizedType)`
 * Added a `reason` attribute to `@jQASuppress` to allow human-readable description for the suppression, e.g.
 +
 [source,java]
