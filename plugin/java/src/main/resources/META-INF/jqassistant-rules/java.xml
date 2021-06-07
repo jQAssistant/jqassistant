@@ -40,6 +40,10 @@
               type
             MATCH
               (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
+            WITH
+              type, collect(distinct superType) as superTypes
+            UNWIND
+              superTypes as superType
             MERGE
               (superType)-[:ASSIGNABLE_FROM]->(type)
             RETURN type AS AssignableType, superType AS AssignableFrom
@@ -144,6 +148,10 @@
               superType.fqn = "java.lang.Object"
               or (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
             )
+            WITH
+              dependent, collect(distinct type) as types
+            UNWIND
+              types as type
             MERGE
               (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
             RETURN
