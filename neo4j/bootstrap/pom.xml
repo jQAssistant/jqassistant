@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
         <artifactId>parent</artifactId>
-        <version>1.10.0-ALPHA1</version>
+        <version>1.10.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>bootstrap</artifactId>
