@@ -9,7 +9,7 @@ import java.util.Queue;
 import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.xo.api.CompositeObject;
-import com.buschmais.xo.spi.reflection.AnnotatedType;
+import com.buschmais.xo.api.metadata.reflection.AnnotatedType;
 
 /**
  * Provides utility functionality for creating reports.
