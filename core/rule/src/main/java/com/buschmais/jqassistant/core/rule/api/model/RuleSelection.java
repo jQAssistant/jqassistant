@@ -18,13 +18,13 @@ public class RuleSelection {
     private static final String GROUP_DEFAULT = "default";
 
     @Singular
-    private Set<String> conceptIds = new LinkedHashSet<>();
+    private Set<String> conceptIds;
 
     @Singular
-    private Set<String> constraintIds = new LinkedHashSet<>();
+    private Set<String> constraintIds;
 
     @Singular
-    private Set<String> groupIds = new LinkedHashSet<>();
+    private Set<String> groupIds;
 
     public static RuleSelection select(RuleSet ruleSet, List<String> groupIds, List<String> constraintIds, List<String> conceptIds) {
         if (groupIds.isEmpty() && conceptIds.isEmpty() && constraintIds.isEmpty() && ruleSet.getGroupsBucket().getIds().contains(GROUP_DEFAULT)) {

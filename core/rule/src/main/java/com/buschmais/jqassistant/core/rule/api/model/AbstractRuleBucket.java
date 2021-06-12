@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
  * @see Rule
  */
 public abstract class AbstractRuleBucket<T extends AbstractRule> {
+
     private TreeMap<String, T> rules = new TreeMap<>();
 
     /**
@@ -94,8 +95,8 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     }
 
     public <B extends AbstractRuleBucket<T>> void add(B bucket) throws RuleException {
-        for (String conceptId : bucket.getIds()) {
-            T rule = bucket.getById(conceptId);
+        for (String ruleId : bucket.getIds()) {
+            T rule = bucket.getById(ruleId);
             add(rule);
         }
     }

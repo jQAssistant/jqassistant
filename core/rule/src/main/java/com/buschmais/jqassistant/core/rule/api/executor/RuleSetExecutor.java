@@ -178,6 +178,7 @@ public class RuleSetExecutor {
         Boolean result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
+            applyProvidedConcepts(ruleSet, concept, executionStack);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
                 result = ruleVisitor.visitConcept(concept, severity);
             } else {
@@ -188,6 +189,13 @@ public class RuleSetExecutor {
             executedConcepts.put(concept, result);
         }
         return result;
+    }
+
+    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+        Set<Concept> providedConcepts = ruleSet.getConceptBucket().getProvidedConcepts(concept.getId());
+        for (Concept providedConcept : providedConcepts) {
+            applyConcept(ruleSet, providedConcept, providedConcept.getSeverity(), stack);
+        }
     }
 
     private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {
