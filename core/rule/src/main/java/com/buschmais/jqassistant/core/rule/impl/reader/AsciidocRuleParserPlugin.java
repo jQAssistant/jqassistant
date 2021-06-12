@@ -54,6 +54,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     private static final String INCLUDES_CONSTRAINTS = "includesConstraints";
 
     private static final String SEVERITY = "severity";
+    private static final String PROVIDES_CONCEPTS = "providesConcepts";
     private static final String REQUIRES_CONCEPTS = "requiresConcepts";
     private static final String REQUIRES_PARAMETERS = "requiresParameters";
     private static final String REPORT_TYPE = "reportType";
@@ -180,9 +181,11 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
             Verification verification = getVerification(attributes);
             Report report = getReport(executableRuleBlock);
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
+                Map<String, String> providesConcepts = getReferences(attributes, PROVIDES_CONCEPTS);
                 Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConceptSeverity());
-                Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable).requiresConcepts(required)
-                        .parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
+                Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable)
+                        .providesConcepts(providesConcepts.keySet()).requiresConcepts(required).parameters(parameters).verification(verification).report(report)
+                        .ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
                 Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConstraintSeverity());
@@ -246,7 +249,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         for (Map.Entry<String, String> requiresEntry : requiresDeclarations.entrySet()) {
             String conceptId = requiresEntry.getKey();
             String dependencyAttribute = requiresEntry.getValue();
-            Boolean optional = dependencyAttribute != null ? OPTIONAL.equals(dependencyAttribute.toLowerCase()) : null;
+            Boolean optional = dependencyAttribute != null ? OPTIONAL.equalsIgnoreCase(dependencyAttribute) : null;
             required.put(conceptId, optional);
         }
         return required;

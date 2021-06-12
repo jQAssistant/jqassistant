@@ -26,6 +26,12 @@ public class Concept extends AbstractExecutableRule {
         protected ConceptBuilder getThis() {
             return this;
         }
+
+        public ConceptBuilder providesConcepts(Set<String> requiresConcepts) {
+            Concept r = build();
+            r.providesConcepts.addAll(requiresConcepts);
+            return this;
+        }
     }
 
     public static ConceptBuilder builder() {
