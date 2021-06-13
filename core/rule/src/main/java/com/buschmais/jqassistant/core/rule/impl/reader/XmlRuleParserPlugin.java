@@ -21,8 +21,8 @@ import org.jqassistant.schema.rule.v1.*;
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE_1_8 = "http://schema.jqassistant.org/rule/v1.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v1.8.xsd";
+    private static final String NAMESPACE_RULE_1_10 = "http://schema.jqassistant.org/rule/v1.10";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v1.10.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -30,7 +30,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     @Override
     public void initialize() {
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE_1_8);
+        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE_1_10);
     }
 
     @Override

@@ -178,7 +178,7 @@ public class RuleSetExecutor {
         Boolean result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
-            applyProvidedConcepts(ruleSet, concept, executionStack);
+            applyProvidedConcepts(ruleSet, concept, severity, executionStack);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
                 result = ruleVisitor.visitConcept(concept, severity);
             } else {
@@ -191,10 +191,22 @@ public class RuleSetExecutor {
         return result;
     }
 
-    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+    /**
+     * Executes all concepts that provide to the given base concept applying its severity.
+     *
+     * @param ruleSet
+     *            The {@link RuleSet}.
+     * @param concept
+     *            The base {@link Concept}.
+     * @param stack
+     *            The current execution stack.
+     * @throws RuleException
+     *             If execution fails.
+     */
+    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Severity severity, Set<Concept> stack) throws RuleException {
         Set<Concept> providedConcepts = ruleSet.getConceptBucket().getProvidedConcepts(concept.getId());
         for (Concept providedConcept : providedConcepts) {
-            applyConcept(ruleSet, providedConcept, providedConcept.getSeverity(), stack);
+            applyConcept(ruleSet, providedConcept, severity, stack);
         }
     }
 

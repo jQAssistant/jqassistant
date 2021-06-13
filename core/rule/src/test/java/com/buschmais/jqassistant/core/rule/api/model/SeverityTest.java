@@ -23,7 +23,7 @@ public class SeverityTest {
     }
 
     @Test
-    public void unknownSeverity() throws RuleException {
+    public void unknownSeverity() {
         assertThatThrownBy(() -> Severity.fromValue("foo")).isInstanceOf(RuleException.class);
     }
 
