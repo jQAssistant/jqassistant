@@ -4,6 +4,59 @@
 ifndef::jqa-in-manual[== Version 1.10.0]
 ifdef::jqa-in-manual[== Core Framework 1.10.0]
 
+* Concepts may provide to existing concepts to extend them, e.g. a pre-defined concept `java:GeneratedType` which is required by other rules (e.g. Spring related constraints) can be extended by a project specific concept `my-project:GeneratedType`:
++
+[source,xml]
+----
+<!-- pre-defined concept, e.g. from the Java plugin -->
+<concept id="java:GeneratedType">
+  <cypher><![CDATA[
+    MATCH
+      (a:Artifact)-[:CONTAINS]->(generated:Java:Type:Generated)
+    RETURN
+      a as Artifact, count(generated) as GeneratedTypes
+    ]]></cypher>
+</concept>
+
+<!-- project specific concept providing to the pre-defined concept -->
+<concept id="my-project:GeneratedType">
+  <cypher><![CDATA[
+    MATCH
+      (generated:Java:Type)
+    WHERE
+      generated.fqn starts with "com.acme.generated"
+    SET
+      generated:Generated
+    RETURN
+      count(generated) as GeneratedTypes
+    ]]></cypher>
+  <providesConcept refId="java:GeneratedType"/>
+</concept>
+----
++
+Provided concepts may be used in Asciidoc and YAML files as well:
++
+[source,asciidoc]
+....
+[[my-project:GeneratedType]]
+[source,cypher,role=concept,providesConcepts="java:GeneratedType"]
+----
+  MATCH
+    ...
+----
+....
++
+[source,yaml]
+----
+concepts:
+  - id: my-project:GeneratedType
+    providesConcepts:
+      - refId: java:GeneratedType
+    source: |
+      MATCH
+        ...
+----
+
 * A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
 * The store is now available for custom report plugins via `ReportContext#getStore()`
 * The XML Schema description for plugins for jQAssistant has been
