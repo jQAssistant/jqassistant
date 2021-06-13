@@ -16,6 +16,8 @@ import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
 import org.jqassistant.schema.rule.v1.*;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * A {@link RuleParserPlugin} implementation.
  */
@@ -105,13 +107,15 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConceptSeverity());
-        List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
+        List<OptionalReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
+        List<ReferenceType> providesConcept = referenceableType.getProvidesConcept();
+        Set<String> providesConcepts = providesConcept.stream().map(referenceType -> referenceType.getRefId()).collect(toSet());
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
         return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
+                .parameters(parameters).providesConcepts(providesConcepts).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
     }
 
     /**
@@ -145,7 +149,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConstraintSeverity());
-        List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
+        List<OptionalReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
@@ -190,9 +194,9 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         return null;
     }
 
-    private Map<String, Boolean> getRequiresConcepts(List<? extends ReferenceType> referenceTypes) {
+    private Map<String, Boolean> getRequiresConcepts(List<? extends OptionalReferenceType> referenceTypes) {
         Map<String, Boolean> references = new HashMap<>();
-        for (ReferenceType referenceType : referenceTypes) {
+        for (OptionalReferenceType referenceType : referenceTypes) {
             references.put(referenceType.getRefId(), referenceType.isOptional());
         }
         return references;

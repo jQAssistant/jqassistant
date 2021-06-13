@@ -20,7 +20,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptySet;
 
 class JsonSchemaValidator {
-    private static final String JSON_SCHEMA_1_8 = "/META-INF/rule/jsonschema/jqassistant-rule-v1.8.schema.json";
+    private static final String JSON_SCHEMA_1_10 = "/META-INF/rule/jsonschema/jqassistant-rule-v1.10.schema.json";
     private final ObjectMapper mapper;
     private  JsonSchema schema;
 
@@ -31,10 +31,10 @@ class JsonSchemaValidator {
                                                            .objectMapper(mapper)
                                                            .build();
 
-        try (InputStream inputStream = JsonSchemaValidator.class.getResourceAsStream(JSON_SCHEMA_1_8)) {
+        try (InputStream inputStream = JsonSchemaValidator.class.getResourceAsStream(JSON_SCHEMA_1_10)) {
             schema = schemaFactory.getSchema(inputStream);
         } catch (IOException e) {
-            String message = format("Failed to load schema from %s", JSON_SCHEMA_1_8);
+            String message = format("Failed to load schema from %s", JSON_SCHEMA_1_10);
             throw new RuleException(message);
         }
     }

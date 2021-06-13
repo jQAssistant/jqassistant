@@ -108,7 +108,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 (List<Map<String, Object>>) ofNullable(documentMap.get(CONCEPTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
-                this.processExecutableRule(executableRule, context, conceptRuleConsumer, Concept.builder());
+                Concept.ConceptBuilder builder = Concept.builder();
+                Set<String> provided = this.extractProvidedConcepts(executableRule);
+                builder.providesConcepts(provided);
+                this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder);
             }
         }
 
@@ -323,6 +326,23 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         return Collections.unmodifiableMap(requiredConcepts);
+    }
+
+    private Set<String> extractProvidedConcepts(Map<String, Object> map) {
+        Set<String> providedConcepts = new HashSet<>();
+
+        boolean hasProvidesSection = map.containsKey(PROVIDES_CONCEPTS);
+
+        if (hasProvidesSection) {
+            List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(PROVIDES_CONCEPTS);
+            for (Map<String, Object> required : list) {
+                String refIdVal = (String) required.get(REF_ID);
+                providedConcepts.add(refIdVal);
+            }
+
+        }
+
+        return Collections.unmodifiableSet(providedConcepts);
     }
 
     private Map<String, Parameter> extractParameters(Map<String, Object> map) {

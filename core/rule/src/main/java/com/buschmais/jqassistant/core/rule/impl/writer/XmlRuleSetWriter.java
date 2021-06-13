@@ -107,6 +107,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             conceptType.setSeverity(getSeverity(concept.getSeverity(), ruleConfiguration.getDefaultConceptSeverity()));
             writeExecutable(conceptType, concept);
             writeRequiredConcepts(concept, conceptType);
+            writeProvidedConcepts(concept, conceptType);
             rules.getConceptOrConstraintOrGroup().add(conceptType);
         }
     }
@@ -125,10 +126,18 @@ public class XmlRuleSetWriter implements RuleSetWriter {
 
     private void writeRequiredConcepts(ExecutableRule<?> rule, ExecutableRuleType ruleType) {
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
-            ReferenceType conceptReferenceType = new ReferenceType();
+            OptionalReferenceType conceptReferenceType = new OptionalReferenceType();
             conceptReferenceType.setRefId(entry.getKey());
             conceptReferenceType.setOptional(entry.getValue());
             ruleType.getRequiresConcept().add(conceptReferenceType);
+        }
+    }
+
+    private void writeProvidedConcepts(Concept concept, ConceptType conceptType) {
+        for (String refId : concept.getProvidesConcepts()) {
+            ReferenceType conceptReferenceType = new ReferenceType();
+            conceptReferenceType.setRefId(refId);
+            conceptType.getProvidesConcept().add(conceptReferenceType);
         }
     }
 

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://schema.jqassistant.org/rule/v1.10"
+           targetNamespace="http://schema.jqassistant.org/rule/v1.10"
+           elementFormDefault="qualified">
+
+    <xs:element name="jqassistant-rules">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="concept" type="tns:conceptType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="tns:constraintType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                <xs:element name="group" type="tns:groupType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="referenceableType" abstract="true">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="sourceType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="language" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="parameterType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="tns:parameterTypes" use="required"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:simpleType name="parameterTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="char"/>
+            <xs:enumeration value="byte"/>
+            <xs:enumeration value="short"/>
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="String"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="propertyType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="severityEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="blocker"/>
+            <xs:enumeration value="critical"/>
+            <xs:enumeration value="major"/>
+            <xs:enumeration value="minor"/>
+            <xs:enumeration value="info"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="referenceType">
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="optionalReferenceType">
+        <xs:complexContent>
+            <xs:extension base="tns:referenceType">
+                <xs:attribute name="optional" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="includedReferenceType">
+        <xs:complexContent>
+            <xs:extension base="tns:referenceType">
+                <xs:attribute name="severity" type="tns:severityEnumType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="verificationType">
+        <xs:choice>
+            <xs:element name="rowCount" type="tns:rowCountVerificationType"/>
+            <xs:element name="aggregation" type="tns:aggregationVerificationType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="rowCountVerificationType">
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:complexType name="aggregationVerificationType">
+        <xs:attribute name="column" type="xs:string"/>
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:complexType name="severityRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:referenceableType">
+                <xs:attribute name="severity" type="tns:severityEnumType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="executableRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:severityRuleType">
+                <xs:sequence>
+                    <xs:element name="requiresConcept" type="tns:optionalReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="requiresParameter" type="tns:parameterType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="description" type="xs:string" minOccurs="0"/>
+                    <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+                    <xs:choice>
+                        <xs:element name="source" type="tns:sourceType"/>
+                        <xs:element name="cypher" type="xs:string"/>
+                        <xs:element name="script" type="tns:sourceType"/>
+                    </xs:choice>
+                    <xs:element name="verify" type="tns:verificationType" minOccurs="0"/>
+                    <xs:element name="report" type="tns:reportType" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="conceptType">
+        <xs:complexContent>
+            <xs:extension base="tns:executableRuleType">
+                <xs:sequence>
+                    <xs:element name="providesConcept" type="tns:referenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="constraintType">
+        <xs:complexContent>
+            <xs:extension base="tns:executableRuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="groupType">
+        <xs:complexContent>
+            <xs:extension base="tns:severityRuleType">
+                <xs:sequence>
+                    <xs:element name="includeConcept" type="tns:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="includeConstraint" type="tns:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="includeGroup" type="tns:includedReferenceType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="reportType">
+        <xs:sequence>
+            <xs:element name="property" type="tns:propertyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="primaryColumn" type="xs:string"/>
+    </xs:complexType>
+
+</xs:schema>

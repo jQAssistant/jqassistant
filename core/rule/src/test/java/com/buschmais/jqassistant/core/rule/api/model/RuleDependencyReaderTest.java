@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 /**
  * Verifies reading dependency information by rule set readers
@@ -38,6 +39,9 @@ public class RuleDependencyReaderTest {
         assertThat(conceptWithMixedDependencies.getRequiresConcepts().get("test:Concept1"), equalTo(true));
         assertThat(conceptWithMixedDependencies.getRequiresConcepts().get("test:Concept2"), equalTo(false));
         assertThat(conceptWithMixedDependencies.getRequiresConcepts().get("test:Concept3"), equalTo(null));
+        Concept providingConcept = ruleSet.getConceptBucket().getById("test:ProvidingConcept");
+        assertThat(providingConcept.getProvidesConcepts(), hasItem("test:Concept1"));
+        assertThat(providingConcept.getProvidesConcepts(), hasItem("test:Concept2"));
         // Constraints
         Constraint constraintWithOptionalDependency = ruleSet.getConstraintBucket().getById("test:ConstraintWithOptionalDependency");
         assertThat(constraintWithOptionalDependency, notNullValue());

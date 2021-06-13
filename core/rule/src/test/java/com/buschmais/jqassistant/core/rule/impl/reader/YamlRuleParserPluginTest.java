@@ -314,6 +314,18 @@ class YamlRuleParserPluginTest {
                 .hasMessageMatching(messageRegex)
                 .isExactlyInstanceOf(RuleException.class);
         }
+
+        @Test
+        void oneConceptProvidesConcepts() throws RuleException {
+            RuleSet ruleSet = readRuleSet("/yaml/concept-provides-concepts.yaml");
+
+            assertThat(ruleSet.getConceptBucket().getById("test:ProvidingConcept")).isNotNull();
+
+            Concept concept = ruleSet.getConceptBucket().getById("test:ProvidingConcept");
+
+            assertThat(concept.getProvidesConcepts()).containsExactlyInAnyOrder("test:Concept1", "test:Concept2");
+
+        }
     }
 
 

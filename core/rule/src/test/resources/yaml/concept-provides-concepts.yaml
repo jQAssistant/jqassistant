@@ -1,0 +1,13 @@
+---
+concepts:
+  - id: test:ProvidingConcept
+    description: Test Concept1.
+    providesConcepts:
+      - refId: test:Concept1
+      - refId: test:Concept2
+    source: |
+      match
+        (n)
+      return
+        n
+

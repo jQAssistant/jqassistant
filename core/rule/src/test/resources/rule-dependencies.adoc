@@ -130,3 +130,16 @@ limit
   {limit}
 ----
 
+[[test:ProvidingConcept]]
+.Test concept extending `test:Concept1` and `test:Concept2`.
+[source,cypher,role=concept,providesConcepts="test:Concept1,test:Concept2"]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
