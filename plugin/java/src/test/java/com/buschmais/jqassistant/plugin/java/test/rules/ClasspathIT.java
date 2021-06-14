@@ -270,6 +270,26 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the concept "classpath:resolveOfRawType".
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveOfRawType() throws Exception {
+        scanClassesAndApply("classpath:ResolveOfRawType");
+        store.beginTransaction();
+        Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("f", "genericType").put("a", "a")
+                .get();
+        List<TypeDescriptor> parameterTypes = query(
+                "MATCH (dependentType:Type)-[:DECLARES]->(f:Field)-[:OF_GENERIC_TYPE]->(:ParameterizedType)-[:HAS_ACTUAL_TYPE_ARGUMENT]->(:Bound)-[:OF_RAW_TYPE{resolved:true}]->(t:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn=$dependentType and f.name=$f and a.fqn=$a RETURN t",
+                params).getColumn("t");
+        assertThat(parameterTypes.size(), equalTo(1));
+        assertThat(parameterTypes, hasItems(typeDescriptor(ClassType.class)));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies the concept "classpath:resolveValue".
      *
      * @throws IOException
@@ -316,6 +336,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         verifyAllLineNumbers(reads, greaterThan(0));
         store.commitTransaction();
     }
+
     /**
      * Verifies the concept "classpath:resolveReads".
      *
@@ -362,8 +383,10 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         verifyAllLineNumbers(writes, greaterThan(0));
         store.commitTransaction();
     }
+
     /**
-     * Verifies the concept "classpath:resolveWrites" without line number information.
+     * Verifies the concept "classpath:resolveWrites" without line number
+     * information.
      *
      * @throws IOException
      *             If the test fails.
@@ -410,7 +433,8 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveInvokes" without line number information.
+     * Verifies the concept "classpath:resolveInvokes" without line number
+     * information.
      *
      * @throws IOException
      *             If the test fails.
@@ -435,7 +459,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     private void verifyAllLineNumbers(List<? extends LineNumberDescriptor> lineNumberDescriptors, Matcher<? super Integer> lineNumberMatcher) {
-        for (LineNumberDescriptor lineNumberDescriptor: lineNumberDescriptors) {
+        for (LineNumberDescriptor lineNumberDescriptor : lineNumberDescriptors) {
             assertThat(lineNumberDescriptor.getLineNumber(), lineNumberMatcher);
         }
     }

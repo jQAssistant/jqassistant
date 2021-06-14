@@ -231,6 +231,27 @@
         </verify>
     </concept>
 
+    <concept id="classpath:ResolveOfRawType">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description>Propagates "OF_RAW_TYPE" relations between generic bounds and types to their resolved types with a
+            property "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (b:Bound)-[ofRawType:OF_RAW_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (b)-[ofRawType1:OF_RAW_TYPE]->(t)
+            SET
+              ofRawType1=ofRawType,
+              ofRawType1.resolved=true
+            RETURN
+              count(ofRawType1) as ResolvedRawTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
     <concept id="classpath:ResolveValue">
         <requiresConcept refId="classpath:ResolveType"/>
         <requiresConcept refId="classpath:ResolveMember"/>
@@ -331,6 +352,7 @@
         <requiresConcept refId="classpath:ResolveReturns"/>
         <requiresConcept refId="classpath:ResolveParameterType"/>
         <requiresConcept refId="classpath:ResolveAnnotationType"/>
+        <requiresConcept refId="classpath:ResolveOfRawType"/>
         <requiresConcept refId="classpath:ResolveValue"/>
         <requiresConcept refId="classpath:ResolveReads"/>
         <requiresConcept refId="classpath:ResolveWrites"/>
