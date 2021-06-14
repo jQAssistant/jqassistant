@@ -37,7 +37,13 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         store.beginTransaction();
         getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
-        applyConcept("java:VirtualInvokes");
+        // applyConcept("java:VirtualInvokes");
+        applyConcept("java:VirtualDependsOn");
     }
 
+    @Test
+    @TestStore(type = TestStore.Type.FILE, reset = false)
+    public void virtualDependsOn() throws Exception {
+        applyConcept("java:VirtualDependsOn");
+    }
 }

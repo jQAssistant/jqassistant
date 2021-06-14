@@ -2,6 +2,7 @@
                                name="Java">
     <description>Provides concepts related to the JavaRuntime Test</description>
     <rules>
+        <resource>generated.xml</resource>
         <resource>javaruntime.xml</resource>
         <resource>suppress.xml</resource>
     </rules>

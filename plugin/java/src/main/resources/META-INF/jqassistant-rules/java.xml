@@ -378,4 +378,21 @@
         ]]></cypher>
     </concept>
 
+
+    <concept id="java:GeneratedType" severity="minor">
+        <description>Reports the count of types labeled with `Generated`, grouped by containing artifact.</description>
+        <cypher><![CDATA[
+            MATCH
+              (artifact:Artifact)-[:CONTAINS]->(generatedType:Java:Type:Generated)
+            RETURN
+              artifact as Artifact, count(generatedType) as GeneratedTypes
+            ORDER BY
+              GeneratedTypes desc
+        ]]></cypher>
+        <verify>
+            <aggregation column="GeneratedTypes"/>
+        </verify>
+    </concept>
+
 </jqassistant-rules>
+
