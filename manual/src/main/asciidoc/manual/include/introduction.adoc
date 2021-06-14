@@ -36,9 +36,9 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 https://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -60,8 +60,24 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
         ]]></cypher>
     </concept>
 
+    <concept id="my-rules:MyProvidingConcept">
+        <providesConcept refId="java:GeneratedType"/>
+        <description>A human readable description of the concept.</description>
+        <cypher><![CDATA[
+            MATCH
+              ...
+            WHERE
+              ...
+            SET
+              type:Generated
+            RETURN
+              ...
+        ]]></cypher>
+    </concept>
+
     <constraint id="my-rules:MyConstraint" severity="blocker">
         <requiresConcept refId="my-rules:MyConcept" />
+        <requiresConcept refId="java:GeneratedType" />
         <description>A human readable description of the constraint.</description>
         <cypher><![CDATA[
             MATCH
@@ -110,9 +126,23 @@ RETURN
   ...
 ----
 
+[[my-rules:MyProvidingConcept]]
+.A human readable description of the concept.
+[source,cypher,role=concept,providesConcepts="java:GeneratedType"]
+----
+MATCH
+  ...
+WHERE
+  ...
+SET
+  type:Generated
+RETURN
+  ...
+----
+
 [[my-rules:MyGroup]]
 .A human readable description of the group.
-[role=group,includesConstraints="my-rules:MyConstraint(minor)"]
+[role=group,includesConstraints="my-rules:MyConstraint(minor),java:GeneratedType"]
 == My Group
 ....
 
@@ -164,33 +194,24 @@ A constraint can depend on one or more concepts and usually is referenced by one
 NOTE: If a constraint returns a result jQAssistant will report an error including the provided description and information about the returned elements. This
 information shall help the developer to understand and fix the problem.
 
-==== Explicit And Implicit Rule Dependencies
+==== Rule Dependencies
 
-As shown in the snippets above concepts or constraints may define dependencies to other concepts using the XML attribute `requiresConcept` or Asciidoc attribute `requiresConcepts`.
-jQAssistant will ensure that these rules are executed in the right order.
+As shown in the snippets above concepts or constraints may define dependencies to other concepts. There are two approaches:
 
-There are situations where dependencies between rules cannot be specified explicitly.
-This is especially the case if a constraint is provided by a plugin that relies on the presence of a specific label.
-A project specific concept can provide this but it would not be possible to add it to the required concepts of the constraint.
-In this case the concept may be included within a group that also includes the constraint directly or indirectly within another group.
-jQAssistant will execute the rules within a group in the following order:
+`requiresConcept` (XML) or `requiresConcepts` (Asciidoc):: A rule explicitly requires another concept to be executed before.
+`providesConcept` (XML) or `providesConcepts` (Asciidoc):: A concept extends another concept by adding the same labels or relationships.
 
-1. Concepts
-2. Groups (including recursively their concepts, groups and constraints)
-3. Constraints
+The rules are referenced by their ids. jQAssistant will ensure that these rules are executed in the correct order.
 
-The approach of relying on the described execution order for rules to manage dependencies between them is limited as
-an explicitly dependency might change this order, e.g.:
+Usually dependencies are expressed using `requiresConcept(s)`, e.g. a constraint requires one or more specific concepts.
+These concepts again might require other concepts.
 
-* a project specific group is defined, including
-** a concept that adds a label "Injectable"
-** a group  provided by a plugin (e.g. Spring)
-* the referenced plugin group includes a concept "InjectionPoint" that implicitly relies on the label "Bean"
+There may be situation where pre-defined constraints and required concepts are defined within a plugin.
+In this case it can become necessary to extend such concepts with project-specific concepts, e.g. to work with generated code:
 
-The setup works under the condition that no other concept (e.g. included in the project specific group) explicitly requires "InjectionPoint".
-
-TIP: For the mentioned reason it is recommend to use explicitly required dependencies between rules if possible.
-If implicit dependencies cannot be avoided then the requiring and providing rules should be included within a single group hierarchy.
+* Constraints defined by the Spring plugin delivered with jQAssisatnt verify correct usage of dependency injection
+* These constraints exclude all Java types labeled with `:Type:Generated` and therefore require the concept `java:GeneratedType` which is defined by the Java plugin
+* This concept may be extended by project specific concepts adding labels `:Type:Generated` and declaring the provided concept `java:GeneratedType` using `providesConcept(s)`
 
 ==== Severity Of Rules
 
