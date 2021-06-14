@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.generated.Generated;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.generated.NotGenerated;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +22,8 @@ public class GeneratedTypeIT extends AbstractJavaPluginIT {
 
     @Test
     public void generatedTypes() throws Exception {
-        scanClasses(Generated.class);
-        assertThat(applyConcept("test:GeneratedType").getStatus()).isEqualTo(SUCCESS);
-        Result<Concept> result = applyConcept("java:GeneratedType");
+        scanClasses(Generated.class, NotGenerated.class);
+        Result<Concept> result = applyConcept("java:GeneratedType"); // implicitly executes concept "test:GeneratedType"
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows).hasSize(1);

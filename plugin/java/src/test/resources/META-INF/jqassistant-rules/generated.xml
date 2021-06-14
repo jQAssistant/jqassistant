@@ -5,7 +5,7 @@
         <description>Provide generated types by extending the concept "java:GeneratedType".</description>
         <cypher><![CDATA[
         MATCH
-          (a:Artifact)-[:CONTAINS]->(t:Type)
+          (a:Artifact)-[:CONTAINS]->(t:Type{fqn:"com.buschmais.jqassistant.plugin.java.test.set.rules.generated.Generated"})
         SET
           t:Generated
         RETURN
