@@ -101,21 +101,69 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
                 .build();
     }
 
-    private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
-        String description = referenceableType.getDescription();
-        Executable executable = createExecutable(referenceableType);
-        Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
-        SeverityEnumType severityType = referenceableType.getSeverity();
+    private Concept createConcept(String id, RuleSource ruleSource, ConceptType conceptType) throws RuleException {
+        String description = conceptType.getDescription();
+        Executable executable = createExecutable(conceptType, conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
+        Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
+        SeverityEnumType severityType = conceptType.getSeverity();
         Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConceptSeverity());
-        List<OptionalReferenceType> requiresConcept = referenceableType.getRequiresConcept();
+        List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
-        List<ReferenceType> providesConcept = referenceableType.getProvidesConcept();
+        List<ReferenceType> providesConcept = conceptType.getProvidesConcept();
         Set<String> providesConcepts = providesConcept.stream().map(referenceType -> referenceType.getRefId()).collect(toSet());
-        String deprecated = referenceableType.getDeprecated();
-        Verification verification = getVerification(referenceableType.getVerify());
-        Report report = getReport(referenceableType.getReport());
+        String deprecated = conceptType.getDeprecated();
+        Verification verification = getVerification(conceptType.getVerify());
+        Report report = getReport(conceptType.getReport());
         return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
                 .parameters(parameters).providesConcepts(providesConcepts).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
+    }
+
+    private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType constraintType) throws RuleException {
+        Executable<?> executable = createExecutable(constraintType, constraintType.getSource(), constraintType.getCypher(), constraintType.getScript());
+        String description = constraintType.getDescription();
+        Map<String, Parameter> parameters = getRequiredParameters(constraintType.getRequiresParameter());
+        SeverityEnumType severityType = constraintType.getSeverity();
+        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConstraintSeverity());
+        List<OptionalReferenceType> requiresConcept = constraintType.getRequiresConcept();
+        Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
+        String deprecated = constraintType.getDeprecated();
+        Verification verification = getVerification(constraintType.getVerify());
+        Report report = getReport(constraintType.getReport());
+        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
+                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
+    }
+
+    private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, String cypher, SourceType scriptType) throws RuleException {
+        if (source != null) {
+            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
+        }
+        // for compatibility
+        if (cypher != null) {
+            return new CypherExecutable(cypher);
+        }
+        if (scriptType != null) {
+            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
+        }
+        throw new RuleException("Cannot determine executable for " + severityRuleType.getId());
+    }
+
+    /**
+     * Read the verification definition.
+     */
+    private Verification getVerification(VerificationType verificationType) throws RuleException {
+        if (verificationType != null) {
+            RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
+            AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
+            if (aggregationVerificationType != null) {
+                return AggregationVerification.builder().column(aggregationVerificationType.getColumn()).min(aggregationVerificationType.getMin())
+                        .max(aggregationVerificationType.getMax()).build();
+            } else if (rowCountVerificationType != null) {
+                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
+            } else {
+                throw new RuleException("Unsupported verification " + verificationType);
+            }
+        }
+        return null;
     }
 
     /**
@@ -141,57 +189,6 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             reportBuilder.selectedTypes(Report.selectTypes(type));
         }
         return reportBuilder.build();
-    }
-
-    private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {
-        Executable<?> executable = createExecutable(referenceableType);
-        String description = referenceableType.getDescription();
-        Map<String, Parameter> parameters = getRequiredParameters(referenceableType.getRequiresParameter());
-        SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConstraintSeverity());
-        List<OptionalReferenceType> requiresConcept = referenceableType.getRequiresConcept();
-        Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
-        String deprecated = referenceableType.getDeprecated();
-        Verification verification = getVerification(referenceableType.getVerify());
-        Report report = getReport(referenceableType.getReport());
-        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
-    }
-
-    private Executable<?> createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
-        SourceType source = executableRuleType.getSource();
-        if (source != null) {
-            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
-        }
-        // for compatibility
-        String cypher = executableRuleType.getCypher();
-        if (cypher != null) {
-            return new CypherExecutable(cypher);
-        }
-        SourceType scriptType = executableRuleType.getScript();
-        if (scriptType != null) {
-            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
-        }
-        throw new RuleException("Cannot determine executable for " + executableRuleType.getId());
-    }
-
-    /**
-     * Read the verification definition.
-     */
-    private Verification getVerification(VerificationType verificationType) throws RuleException {
-        if (verificationType != null) {
-            RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
-            AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
-            if (aggregationVerificationType != null) {
-                return AggregationVerification.builder().column(aggregationVerificationType.getColumn()).min(aggregationVerificationType.getMin())
-                        .max(aggregationVerificationType.getMax()).build();
-            } else if (rowCountVerificationType != null) {
-                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
-            } else {
-                throw new RuleException("Unsupported verification " + verificationType);
-            }
-        }
-        return null;
     }
 
     private Map<String, Boolean> getRequiresConcepts(List<? extends OptionalReferenceType> referenceTypes) {

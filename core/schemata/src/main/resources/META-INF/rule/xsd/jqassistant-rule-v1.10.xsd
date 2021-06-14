@@ -113,34 +113,31 @@
     </xs:complexType>
 
 
-    <xs:complexType name="executableRuleType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="tns:severityRuleType">
-                <xs:sequence>
-                    <xs:element name="requiresConcept" type="tns:optionalReferenceType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:element name="requiresParameter" type="tns:parameterType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:element name="description" type="xs:string" minOccurs="0"/>
-                    <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
-                    <xs:choice>
-                        <xs:element name="source" type="tns:sourceType"/>
-                        <xs:element name="cypher" type="xs:string"/>
-                        <xs:element name="script" type="tns:sourceType"/>
-                    </xs:choice>
-                    <xs:element name="verify" type="tns:verificationType" minOccurs="0"/>
-                    <xs:element name="report" type="tns:reportType" minOccurs="0"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
+    <xs:group name="executableRuleType">
+        <xs:sequence>
+            <xs:element name="requiresConcept" type="tns:optionalReferenceType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+            <xs:element name="requiresParameter" type="tns:parameterType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="source" type="tns:sourceType"/>
+                <xs:element name="cypher" type="xs:string"/>
+                <xs:element name="script" type="tns:sourceType"/>
+            </xs:choice>
+            <xs:element name="verify" type="tns:verificationType" minOccurs="0"/>
+            <xs:element name="report" type="tns:reportType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:group>
 
     <xs:complexType name="conceptType">
         <xs:complexContent>
-            <xs:extension base="tns:executableRuleType">
+            <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
                     <xs:element name="providesConcept" type="tns:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
+                    <xs:group ref="tns:executableRuleType"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -148,7 +145,11 @@
 
     <xs:complexType name="constraintType">
         <xs:complexContent>
-            <xs:extension base="tns:executableRuleType"/>
+            <xs:extension base="tns:severityRuleType">
+                <xs:sequence>
+                    <xs:group ref="tns:executableRuleType"/>
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

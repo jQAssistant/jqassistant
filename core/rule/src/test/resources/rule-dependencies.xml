@@ -137,6 +137,8 @@
     </constraint>
 
     <concept id="test:ProvidingConcept">
+        <providesConcept refId="test:Concept1"/>
+        <providesConcept refId="test:Concept2"/>
         <description>Test concept extending test:Concept1.</description>
         <cypher><![CDATA[
             match
@@ -144,8 +146,6 @@
             return
               n
         ]]></cypher>
-        <providesConcept refId="test:Concept1"/>
-        <providesConcept refId="test:Concept2"/>
     </concept>
 
 </jqassistant-rules>

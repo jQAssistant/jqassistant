@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.rule.impl.writer;
 
 import java.io.Writer;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -21,6 +22,8 @@ import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import org.jqassistant.schema.rule.v1.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
@@ -105,8 +108,8 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
             conceptType.setSeverity(getSeverity(concept.getSeverity(), ruleConfiguration.getDefaultConceptSeverity()));
-            writeExecutable(conceptType, concept);
-            writeRequiredConcepts(concept, conceptType);
+            conceptType.setSource(writeExecutable(concept));
+            conceptType.getRequiresConcept().addAll(writeRequiredConcepts(concept));
             writeProvidedConcepts(concept, conceptType);
             rules.getConceptOrConstraintOrGroup().add(conceptType);
         }
@@ -118,19 +121,19 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
             constraintType.setSeverity(getSeverity(constraint.getSeverity(), ruleConfiguration.getDefaultConstraintSeverity()));
-            writeExecutable(constraintType, constraint);
-            writeRequiredConcepts(constraint, constraintType);
+            constraintType.setSource(writeExecutable(constraint));
+            constraintType.getRequiresConcept().addAll(writeRequiredConcepts(constraint));
             rules.getConceptOrConstraintOrGroup().add(constraintType);
         }
     }
 
-    private void writeRequiredConcepts(ExecutableRule<?> rule, ExecutableRuleType ruleType) {
-        for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
+    private List<OptionalReferenceType> writeRequiredConcepts(ExecutableRule<?> rule) {
+        return rule.getRequiresConcepts().entrySet().stream().map(entry -> {
             OptionalReferenceType conceptReferenceType = new OptionalReferenceType();
             conceptReferenceType.setRefId(entry.getKey());
             conceptReferenceType.setOptional(entry.getValue());
-            ruleType.getRequiresConcept().add(conceptReferenceType);
-        }
+            return conceptReferenceType;
+        }).collect(toList());
     }
 
     private void writeProvidedConcepts(Concept concept, ConceptType conceptType) {
@@ -141,12 +144,12 @@ public class XmlRuleSetWriter implements RuleSetWriter {
         }
     }
 
-    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) {
+    private SourceType writeExecutable(ExecutableRule executableRule) {
         Executable<?> executable = executableRule.getExecutable();
         SourceType sourceType = new SourceType();
         sourceType.setLanguage(executable.getLanguage());
         sourceType.setValue(executable.getSource().toString());
-        executableRuleType.setSource(sourceType);
+        return sourceType;
     }
 
     /**
