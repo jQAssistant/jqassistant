@@ -136,7 +136,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         }
         if (bound instanceof TypeVariableDescriptor) {
             TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
-            return getUniqueRawTypeBound(typeVariable.getBounds());
+            return getUniqueRawTypeBound(typeVariable.getUpperBounds());
         } else if (bound instanceof WildcardTypeDescriptor) {
             WildcardTypeDescriptor wildcardType = (WildcardTypeDescriptor) bound;
             List<BoundDescriptor> lowerBounds = wildcardType.getLowerBounds();

@@ -376,8 +376,8 @@ Represents a type variable, e.g.
 .Relations of `:Java:Bound:TypeVariable`
 [options="header"]
 |====
-| Name        | Target label(s)             | Cardinality | Description
-| HAS_BOUND   | <<:Java:Bound,:Java:Bound>> | 0..1        | References the bound of the type variable.
+| Name            | Target label(s)             | Cardinality | Description
+| HAS_UPPER_BOUND | <<:Java:Bound,:Java:Bound>> | 0..1        | References the upper bounds of the type variable.
 |====
 
 NOTE: `TypeVariable` nodes are declared by <<:Java:Type,:Java:Type>> or <<:Java:Method,:Java:Method>> nodes using `:DECLARES_TYPE_PARAMETER` relations. In this case the declaring nodes have an additional label `:GenericDeclaration`.

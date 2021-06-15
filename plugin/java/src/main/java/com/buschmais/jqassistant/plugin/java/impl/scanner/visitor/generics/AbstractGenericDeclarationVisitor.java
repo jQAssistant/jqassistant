@@ -48,7 +48,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);
-                currentTypeParameter.getBounds().add(bound);
+                currentTypeParameter.getUpperBounds().add(bound);
             }
         };
     }
@@ -59,7 +59,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);
-                currentTypeParameter.getBounds().add(bound);
+                currentTypeParameter.getUpperBounds().add(bound);
             }
         };
     }

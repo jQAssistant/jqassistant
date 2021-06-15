@@ -14,7 +14,7 @@ public interface TypeVariableDescriptor extends BoundDescriptor, NamedDescriptor
     @Relation
     DeclaresTypeParameterDescriptor getDeclaredBy();
 
-    @Relation("HAS_BOUND")
-    List<BoundDescriptor> getBounds();
+    @Relation("HAS_UPPER_BOUND")
+    List<BoundDescriptor> getUpperBounds();
 
 }

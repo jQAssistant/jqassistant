@@ -43,12 +43,12 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(typeParameters).hasSize(2);
         TypeVariableDescriptor x = typeParameters.get(0);
         assertThat(x.getName().equals("X"));
-        List<BoundDescriptor> xBounds = x.getBounds();
+        List<BoundDescriptor> xBounds = x.getUpperBounds();
         assertThat(xBounds.size()).isEqualTo(1);
         assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
         TypeVariableDescriptor y = typeParameters.get(1);
         assertThat(y.getName().equals("Y"));
-        List<BoundDescriptor> yBounds = y.getBounds();
+        List<BoundDescriptor> yBounds = y.getUpperBounds();
         assertThat(yBounds).hasSize(2);
         List<TypeDescriptor> rawYBounds = yBounds.stream().map(bound -> bound.getRawType()).collect(toList());
         assertThat(rawYBounds).is(matching(hasItems(typeDescriptor(Serializable.class), typeDescriptor(List.class))));
@@ -66,7 +66,7 @@ public class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(declaredTypeParameters).hasSize(1);
         TypeVariableDescriptor x = declaredTypeParameters.get(0);
         assertThat(x.getName().equals("X"));
-        List<BoundDescriptor> xBounds = x.getBounds();
+        List<BoundDescriptor> xBounds = x.getUpperBounds();
         assertThat(xBounds.size()).isEqualTo(1);
         assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
         List<TypeVariableDescriptor> requiredTypeParameters = query(
