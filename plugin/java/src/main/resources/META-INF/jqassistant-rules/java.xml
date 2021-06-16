@@ -28,7 +28,8 @@
     </concept>
 
     <concept id="java:TypeAssignableFrom">
-        <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable from the other (i.e. a super class or
+        <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable
+            from the other (i.e. a super class or
             interface).
         </description>
         <cypher><![CDATA[
@@ -51,7 +52,8 @@
     </concept>
 
     <concept id="java:MemberInheritedFrom">
-        <description>Creates a relationship INHERITS between two "Member" labeled nodes if a member is inherited from a super type.
+        <description>Creates a relationship INHERITS between two "Member" labeled nodes if a member is inherited from a
+            super type.
         </description>
         <cypher><![CDATA[
             MATCH
@@ -82,7 +84,8 @@
 
     <concept id="java:MethodOverrides">
         <requiresConcept refId="java:MemberInheritedFrom"/>
-        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type.
         </description>
         <cypher><![CDATA[
             MATCH
@@ -139,7 +142,9 @@
     </concept>
 
     <concept id="java:VirtualDependsOn">
-        <description>Propagates DEPENDS_ON relationships as VIRTUAL_DEPENDS_ON to types that extend or implement the referenced type.</description>
+        <description>Propagates DEPENDS_ON relationships as VIRTUAL_DEPENDS_ON to types that extend or implement the
+            referenced type.
+        </description>
         <cypher><![CDATA[
             MATCH
               (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
@@ -158,12 +163,13 @@
               count(virtualDependsOn) AS VirtualDependsOn
         ]]></cypher>
         <verify>
-           <aggregation/>
+            <aggregation/>
         </verify>
     </concept>
 
     <concept id="java:MethodOverloads">
-        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
+        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another
+            one from the same type (i.e. the
             methods have the same name but not the same signature).
         </description>
         <cypher><![CDATA[
@@ -181,7 +187,9 @@
     </concept>
 
     <concept id="java:Deprecated">
-        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with "Deprecated".</description>
+        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters)
+            with "Deprecated".
+        </description>
         <cypher><![CDATA[
             MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Type)
@@ -251,7 +259,8 @@
     </concept>
 
     <concept id="java:JavaVersion">
-        <description>Set a human readable property "javaVersion" on a class file based on its byte code version.</description>
+        <description>Set a human readable property "javaVersion" on a class file based on its byte code version.
+        </description>
         <cypher><![CDATA[
             MATCH
               (:Artifact)-[:CONTAINS]->(type:Java:Type)
@@ -391,6 +400,28 @@
         ]]></cypher>
         <verify>
             <aggregation column="GeneratedTypes"/>
+        </verify>
+    </concept>
+
+    <concept id="java:InnerTypeParameterDeclaredByOuterType">
+        <description>Creates a `DECLARED_BY` relation of a type parameter required by an inner to type to its
+            declaration by an outer type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (inner:Java:Type)-[requires:REQUIRES_TYPE_PARAMETER]->(requiredTypeParameter:TypeVariable),
+              (outer:Java:Type)-[declares:DECLARES_TYPE_PARAMETER]->(declaredTypeParameter:TypeVariable),
+              shortestPath((outer)-[:DECLARES*]->(inner))
+            WHERE
+              outer <> inner
+              and declaredTypeParameter.name = requiredTypeParameter.name
+            MERGE
+              (requiredTypeParameter)-[declaredBy:DECLARED_BY]->(declaredTypeParameter)
+            RETURN
+              count(declaredBy) as OuterTypeDeclarations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
         </verify>
     </concept>
 
