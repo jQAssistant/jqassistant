@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.asciidoc.AsciidoctorFactory;
+import com.buschmais.jqassistant.core.shared.asciidoc.DocumentParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -21,7 +22,6 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.asciidoctor.ast.DescriptionListEntry;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.IncludeProcessor;
@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 /**
  * @author mh
@@ -42,12 +41,6 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidocRuleParserPlugin.class);
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
-
-    private static final String CONCEPT = "concept";
-    private static final String CONSTRAINT = "constraint";
-    private static final String GROUP = "group";
-
-    private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList(CONCEPT, CONSTRAINT));
 
     private static final String INCLUDES_GROUPS = "includesGroups";
     private static final String INCLUDES_CONCEPTS = "includesConcepts";
@@ -115,7 +108,9 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
                 .attribute(AsciidoctorFactory.ATTRIBUTE_IMAGES_OUT_DIR, tempDir.getAbsolutePath()).experimental(true).build();
         OptionsBuilder optionsBuilder = Options.builder().mkDirs(true).safe(SafeMode.UNSAFE).baseDir(tempDir).attributes(attributes);
         Document document = getAsciidoctor().load(content, optionsBuilder.build());
-        extractRules(source, singletonList(document), ruleSetBuilder);
+        DocumentParser documentParser = new DocumentParser();
+        DocumentParser.Result result = documentParser.parse(document);
+        extractRules(source, result, ruleSetBuilder);
     }
 
     /**
@@ -138,29 +133,22 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      * Find all content parts representing source code listings with a role that
      * represents a rule.
      *
-     *
      * @param ruleSource
      *            The rule source.
-     * @param blocks
-     *            The content parts of the document.
+     * @param result
+     *            The result from the {@link DocumentParser}.
      * @param builder
      *            The {@link RuleSetBuilder}.
      */
-    private void extractRules(RuleSource ruleSource, Collection<?> blocks, RuleSetBuilder builder) throws RuleException {
-        if (blocks != null) {
-            for (Object element : blocks) {
-                if (element instanceof StructuralNode && !(element instanceof DescriptionListEntry)) {
-                    StructuralNode block = (StructuralNode) element;
-                    if (EXECUTABLE_RULE_TYPES.contains(block.getRole())) {
-                        extractExecutableRule(ruleSource, block, builder);
-                    } else if (GROUP.equals(block.getRole())) {
-                        extractGroup(ruleSource, block, builder);
-                    }
-                    extractRules(ruleSource, block.getBlocks(), builder);
-                } else if (element instanceof Collection<?>) {
-                    extractRules(ruleSource, (Collection<?>) element, builder);
-                }
-            }
+    private void extractRules(RuleSource ruleSource, DocumentParser.Result result, RuleSetBuilder builder) throws RuleException {
+        for (StructuralNode value : result.getConcepts().values()) {
+            extractExecutableRule(ruleSource, value, builder);
+        }
+        for (StructuralNode value : result.getConstraints().values()) {
+            extractExecutableRule(ruleSource, value, builder);
+        }
+        for (StructuralNode value : result.getGroups().values()) {
+            extractGroup(ruleSource, value, builder);
         }
     }
 
