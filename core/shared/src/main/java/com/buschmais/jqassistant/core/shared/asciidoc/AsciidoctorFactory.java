@@ -4,7 +4,6 @@ import com.buschmais.jqassistant.core.shared.asciidoc.delegate.AsciidoctorDelega
 
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.log.LogHandler;
-import org.asciidoctor.log.LogRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +19,28 @@ public class AsciidoctorFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciidoctorFactory.class);
 
+    private static final String ASCIIDOCTOR_LOG_FORMAT = "{}";
+
+    public static final LogHandler LOG_HANDLER = logRecord -> {
+
+        String message = logRecord.getMessage();
+        switch (logRecord.getSeverity()) {
+        case FATAL:
+        case ERROR:
+            LOGGER.error(ASCIIDOCTOR_LOG_FORMAT, message);
+            break;
+        case WARN:
+            LOGGER.warn(ASCIIDOCTOR_LOG_FORMAT, message);
+            break;
+        case DEBUG:
+            LOGGER.debug(ASCIIDOCTOR_LOG_FORMAT, message);
+            break;
+        default:
+            LOGGER.info(ASCIIDOCTOR_LOG_FORMAT, message);
+            break;
+        }
+    };
+
     /**
      * Private constructor.
      */
@@ -34,12 +55,8 @@ public class AsciidoctorFactory {
     public static Asciidoctor getAsciidoctor() {
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.requireLibrary(ASCIIDOCTOR_DIAGRAM);
-        asciidoctor.registerLogHandler(new LogHandler() {
-            @Override
-            public void log(LogRecord logRecord) {
-                System.out.println(logRecord.getCursor() + " " + logRecord.getSeverity() + " " + logRecord.getMessage() + " " + logRecord.getSourceFileName());
-            }
-        });
+        asciidoctor.registerLogHandler(LOG_HANDLER);
+
         LOGGER.debug("Loaded Asciidoctor {}");
         // The delegate is used to fix classloading issues if the CLI plugin classloader
         // is used for adding extensions. Simply passing the required CL to
