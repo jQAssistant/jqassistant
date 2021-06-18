@@ -425,5 +425,25 @@
         </verify>
     </concept>
 
+    <concept id="java:TypeArgumentDeclaredByTypeParameter">
+        <description>Creates a `DECLARED_BY` relation between a type argument of a parameterized type to the according type parameter of the declaring type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (parameterizedType:ParameterizedType)-[:OF_RAW_TYPE]->(rawType:Type),
+              (parameterizedType)-[hasActualTypeArgument:HAS_ACTUAL_TYPE_ARGUMENT]->(typeArgument),
+              (rawType)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER]->(typeParameter)
+            WHERE
+              hasActualTypeArgument.index = declaresTypeParameter.index
+            MERGE
+              (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            RETURN
+              count(*) as TypeParameterDeclarations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
 </jqassistant-rules>
 
