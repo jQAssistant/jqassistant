@@ -4,7 +4,8 @@ We splitted jQAssistant in multiple single repositories to be able to
 build a better and more flexible build an release infrastructure 
 then we had before.
 
-NOTE: Want to raise an issue? If possible try to go to the affected repository. If not - do it here, we'll take care about it!
+NOTE: Want to raise an issue? If possible try to go to the affected repository. If not, please raise
+      it in our https://github.com/jQAssistant/jQA-Idea-Hub[Idea Hub].
 
 Want to get started? Here are some links to help you:
 
