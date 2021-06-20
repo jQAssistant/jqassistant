@@ -1,4 +1,4 @@
-# jQAssistant Master Repository
+= Former jQAssistant Master Repository
 
 We splitted jQAssistant in multiple single repositories to be able to 
 build a better and more flexible build an release infrastructure 
