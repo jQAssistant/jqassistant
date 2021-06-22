@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.cli</groupId>
         <artifactId>parent</artifactId>
-        <version>1.10.0-SNAPSHOT</version>
+        <version>1.10.0-RC1</version>
     </parent>
     <artifactId>jqassistant-commandline-neo4jv3</artifactId>
     <groupId>com.buschmais.jqassistant.cli</groupId>
