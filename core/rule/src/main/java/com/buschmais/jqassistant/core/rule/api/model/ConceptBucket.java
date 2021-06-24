@@ -15,6 +15,9 @@ import static java.util.Collections.emptySet;
  */
 public class ConceptBucket extends AbstractRuleBucket<Concept> {
 
+    /**
+     * Contains the concepts (as values) that are provided for a concept id (key).
+     */
     private Map<String, Set<Concept>> providedConcepts = new HashMap();
 
     @Override
