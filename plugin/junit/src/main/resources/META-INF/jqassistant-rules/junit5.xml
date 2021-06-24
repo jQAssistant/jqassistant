@@ -418,7 +418,7 @@
               (assertType:Type)-[:DECLARES]->(assertMethod)
             WHERE
               assertType.fqn = 'org.junit.jupiter.api.Assertions'
-              and assertMethod.signature =~ 'void assert.*'
+              and assertMethod.signature CONTAINS ' assert'
             SET
               assertMethod:Junit5:Assert
             RETURN
