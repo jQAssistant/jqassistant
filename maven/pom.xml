@@ -136,6 +136,7 @@
                                 <include>singlemodule/*/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>tycho/*/pom.xml</include>
+                                <include>list-plugins/pom.xml</include>
                                 <include>plugin/pom.xml</include>
                                 <include>yaml/*/pom.xml</include>
                             </pomIncludes>
@@ -177,7 +178,6 @@
                             <additionalOption>-Xdoclint:none</additionalOption>
                             <additionalOption>--base-dir ${project.basedir}</additionalOption>
                         </additionalOptions>
-                        <source>1.7</source>
                         <doclet>org.asciidoctor.Asciidoclet</doclet>
                         <docletArtifact>
                             <groupId>org.asciidoctor</groupId>

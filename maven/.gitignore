@@ -3,7 +3,6 @@
 *.ipr
 *~
 *.log
-*.ignore.sh
 .DS_Store
 pom.xml.versionsBackup
 .java-version
@@ -14,7 +13,7 @@ pom.xml.updatetorelease
 pom.xml.updatetonextdevversion
 
 # Ignore temporary shell scripts used to script small tasks
-*.sh.ignore
+*.ignore.sh
 
 # Maven related files and directories
 target
