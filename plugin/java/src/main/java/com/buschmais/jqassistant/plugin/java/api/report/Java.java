@@ -10,15 +10,7 @@ import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 /**
  * Defines the language elements for "Java".
@@ -44,11 +36,6 @@ public @interface Java {
                     public String getSourceFile(PackageDescriptor descriptor) {
                         return descriptor.getFileName();
                     }
-
-                    @Override
-                    public Integer getLineNumber(PackageDescriptor descriptor) {
-                        return null;
-                    }
                 };
             }
         },
@@ -64,11 +51,6 @@ public @interface Java {
                     @Override
                     public String getSourceFile(ClassFileDescriptor descriptor) {
                         return descriptor.getFileName();
-                    }
-
-                    @Override
-                    public Integer getLineNumber(ClassFileDescriptor descriptor) {
-                        return null;
                     }
                 };
             }
@@ -223,23 +205,7 @@ public @interface Java {
                 TypeDescriptor declaringType = descriptor.getDeclaringType();
                 return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
             }
-
-            @Override
-            public Integer getLineNumber(MemberDescriptor descriptor) {
-                return null;
-            }
         }
 
-        /**
-         * Returns the file name of the given descriptor if it extends
-         * {@link com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor} .
-         *
-         * @param descriptor
-         *            The descriptor.
-         * @return The
-         */
-        private static String getFileName(Descriptor descriptor) {
-            return descriptor instanceof FileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
-        }
     }
 }
