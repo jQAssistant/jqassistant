@@ -1,5 +1,6 @@
 = jQAssistant Common Plugin Release Notes
 
+include::1.11.0.adoc[]
 include::1.10.0.adoc[]
 include::1.9.0.adoc[]
 include::1.8.0.adoc[]

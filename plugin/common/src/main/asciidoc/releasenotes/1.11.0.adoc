@@ -1,0 +1,5 @@
+ifndef::jqa-in-manual[== Version 1.11.0]
+ifdef::jqa-in-manual[== Common Plugin 1.11.0]
+
+* No changes in this version.
+
