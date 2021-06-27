@@ -30,22 +30,7 @@ public @interface Generic {
         Named {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<NamedDescriptor>() {
-                    @Override
-                    public String getName(NamedDescriptor descriptor) {
-                        return descriptor.getName();
-                    }
-
-                    @Override
-                    public String getSourceFile(NamedDescriptor descriptor) {
-                        return null;
-                    }
-
-                    @Override
-                    public Integer getLineNumber(NamedDescriptor descriptor) {
-                        return null;
-                    }
-                };
+                return (SourceProvider<NamedDescriptor>) descriptor -> descriptor.getName();
             }
         },
 
@@ -64,11 +49,6 @@ public @interface Generic {
                     @Override
                     public String getSourceFile(ArtifactFileDescriptor descriptor) {
                         return descriptor.getFileName();
-                    }
-
-                    @Override
-                    public Integer getLineNumber(ArtifactFileDescriptor descriptor) {
-                        return null;
                     }
                 };
             }
