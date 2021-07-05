@@ -32,6 +32,8 @@ public class StoreFactory {
         case "memory":
             return new EmbeddedGraphStore(configuration, storePluginRepository);
         case "bolt":
+        case "neo4j":
+        case "neo4j+s":
             return new RemoteGraphStore(configuration, storePluginRepository);
         default:
             throw new IllegalArgumentException("Cannot determine store type from URI '" + uri + "'.");
