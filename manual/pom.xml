@@ -56,11 +56,6 @@
                     <artifactId>jqassistant-maven-plugin</artifactId>
                     <configuration>
                         <failOnSeverity>minor</failOnSeverity>
-                        <scanIncludes>
-                            <scanInclude>
-                                <path>${project.basedir}</path>
-                            </scanInclude>
-                        </scanIncludes>
                         <groups>
                             <group>jqa-legal</group>
                             <group>jqa-maven-constraints</group>
