@@ -1,4 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.4]
-ifdef::jqa-in-manual[== XML Plugin 1.4]
-
-- Fixed an NPE https://github.com/buschmais/jqa-xml-plugin/issues/5[issue] while scanning XML documents using Bolt protocol

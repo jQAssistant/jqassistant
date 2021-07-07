@@ -1,7 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.2]
-ifdef::jqa-in-manual[== XML Plugin 1.2]
-
-- Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.xml`
-  to `com.buschmais.jqassistant.plugin:xml`.
-- Added file pattern support (`xml.file.include` and `xml.file.exclude`) for specifying XML
-  documents without a native scanner plugin.
