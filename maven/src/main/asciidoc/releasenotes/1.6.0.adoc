@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.6.0]
-ifdef::jqa-in-manual[== Plugin for Maven 1.6.0]
-
-* Removed deprecated system property `jqassistant.server.address` and replaced it by `jqassistant.embedded.listen_address`
-* Removed deprecated system property `jqassistant.server.port` and replaced it by `jqassistant.embedded.httpPort`
