@@ -94,11 +94,6 @@
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <configuration>
-                    <scanIncludes>
-                        <scanInclude>
-                            <path>${project.basedir}</path>
-                        </scanInclude>
-                    </scanIncludes>
                     <groups>
                         <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
