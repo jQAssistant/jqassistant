@@ -1,7 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.5.0]
-ifdef::jqa-in-manual[== Maven 3 Plugin 1.5.0]
-
-* The Maven project scanner adds a label `Main` to the main artifact (e.g. classes compiled from `src/main/java`) and `Test` to the test artifact ((e.g. classes compiled from `src/test/java`)

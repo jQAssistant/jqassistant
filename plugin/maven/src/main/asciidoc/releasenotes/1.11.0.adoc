@@ -1,5 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.11.0]
-ifdef::jqa-in-manual[== Maven 3 Plugin 1.11.0]
-
-* No changes in this version.
-
