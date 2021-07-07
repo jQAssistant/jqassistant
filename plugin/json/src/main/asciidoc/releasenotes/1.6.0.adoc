@@ -1,9 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.6.0]
-ifdef::jqa-in-manual[== JSON Plugin 1.6.0]
-
-- Fixed https://github.com/buschmais/jqa-json-plugin/issues/8[Cope with null scalar values in arrays^].
-  This ugly bug could prevent jQAssistant to scan projects with JSON files.
-  
