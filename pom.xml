@@ -155,9 +155,23 @@
                          ! To not configure failOnSeverity and warnOnSeverity
                          ! directly. Please control these parameters via
                          ! the user properties set in the properties section
-                         ! of the Ueber Parant of jQAssistant.
+                         ! of the Ueber Parent of jQAssistant.
                          ! Oliver B. Fischer, 2017-06-07
                          !-->
+                        <scanIncludes>
+                            <scanInclude>
+                                <path>${project.basedir}/readme.adoc</path>
+                            </scanInclude>
+                            <scanInclude>
+                                <path>${project.basedir}/src/main/asciidoc</path>
+                            </scanInclude>
+                            <scanInclude>
+                                <path>${project.basedir}/.editorconfig</path>
+                            </scanInclude>
+                            <scanInclude>
+                                <path>${project.basedir}/LICENSE</path>
+                            </scanInclude>
+                        </scanIncludes>
                     </configuration>
                 </plugin>
                 <plugin>
