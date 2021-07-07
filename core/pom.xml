@@ -252,11 +252,6 @@
                      ! of the Ueber Parant of jQAssistant.
                      ! Oliver B. Fischer, 2017-06-07
                      !-->
-                    <scanIncludes>
-                        <scanInclude>
-                            <path>${project.basedir}</path>
-                        </scanInclude>
-                    </scanIncludes>
                     <groups>
                         <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
