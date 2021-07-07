@@ -1,9 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.7.0]
-ifdef::jqa-in-manual[== Manual 1.7.0]
-
-* Removed Neo4j V2 distribution
-* Fixed a problem that the Spring plugin section of the manual was missing
-

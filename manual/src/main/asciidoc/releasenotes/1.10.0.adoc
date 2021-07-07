@@ -1,7 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.10.0]
-ifdef::jqa-in-manual[== Manual 1.10.0]
-
-No changes.

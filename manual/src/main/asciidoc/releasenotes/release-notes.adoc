@@ -1,10 +1,11 @@
 
-= jQAssistant Manual Release Notes
+= Manual
 
-include::1.11.0.adoc[]
-include::1.10.0.adoc[]
-include::1.9.0.adoc[]
-include::1.8.0.adoc[]
-include::1.7.0.adoc[]
+== 1.7.0
+
+* Removed Neo4j V2 distribution
+* Fixed a problem that the Spring plugin section of the manual was missing
+
+
 
 
