@@ -1,8 +1,10 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.10.0]
-ifdef::jqa-in-manual[== Core Framework 1.10.0]
+= Core Framework
+
+== 1.11.0
+
+* Added support for `neo4j://` and `neo4j+s://` protocols for connecting to remote Neo4j (cluster) instances
+
+== 1.10.0
 
 * Concepts may provide to existing concepts to extend them, e.g. a pre-defined concept `java:GeneratedType` which is required by other rules (e.g. Spring related constraints) can be extended by a project specific concept `my-project:GeneratedType`:
 +
@@ -84,3 +86,54 @@ concepts:
 * Upgraded bundled AsciidoctorJ to 2.5.1
 +
 NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. Migration is straight-forward and described https://docs.asciidoctor.org/asciidoctorj/latest/guides/extension-migration-guide-16-to-20/[here^].
+
+== 1.9.0
+
+* Fixed an issue for loading jQAssistant plugins on JDK 11
+
+== 1.8.0
+
+* Fixed a StackOverflowError if a concepts requires itself, e.g. by using wildcards (see https://github.com/jQAssistant/jqa-core-framework/issues/29[issue])
+* Changed the namespace for the XML schemas of rule, plugin and report descriptors and provided schema locations that can be resolved by editors/IDEs (see https://github.com/jQAssistant/jqa-core-framework/issues/32[issue])
+* Changes for plugin developers:
+** Moved package `com.buschmais.jqassistant.core.analysis.api.rule` to `com.buschmais.jqassistant.rule.api.model`
+** Moved package `com.buschmais.jqassistant.core.analysis.api.report` to `com.buschmais.jqassistant.report.api.model`
+** Plugins using classes from these packages just need to adopt their imports, no other changes have been applied
+* Upgraded to XO 1.0.0
+** The release comes with a https://github.com/buschmais/extended-objects/issues/173[change] that possibly breaks existing plugin implementations: property related annotations (e.g. `@Property`, `@Relationship`) must be placed on Getters, an error will be reported at startup if such annotation is found on a Setter.
+* Removed APOC and Graph Algorithms libraries
+
+== 1.7.0
+
+* Removed deprecated class `com.buschmais.jqassistant.core.report.api.AbstractReportPlugin`, report plugins must
+  be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
+* A warning will now be logged if there is no rule source parser who is able to
+  read and parse the rule source.
+* Fixed an issue where plugins could not register Asciidoctor extensions when used within the CLI
+
+== 1.5.0
+
+* Allow wildcards `*` and `?` for referencing rules to be included in a group or required concepts
+* Added `builder()` method to `com.buschmais.jqassistant.core.analysis.api.Result` to ease instance creation in script rules.
+
+== 1.4.0
+
+* Fixed a problem of parsing AsciiDoc files containing definition lists
+* API change (breaking): Added `ReportContext` as 1st parameter to `ReportPlugin#initialize`
+
+== 1.3.0
+
+* Upgraded backend to support remote connections using Bolt protocol to existing Neo4j 3.x+ installations
+* Upgraded embedded Neo4j database to 2.3.10
+* Raised default severity for concepts to MINOR and constraints to MAJOR
+* Added support for default severities for groups, concepts and rules
+* Added `min` and `max` attributes to verification strategies for rule results
+
+== 1.2.0
+
+* Upgraded to Neo4j 2.3.8.
+* Added support for array properties in reports (e.g. HTML).
+* Added support for rule parameters.
+
+
+

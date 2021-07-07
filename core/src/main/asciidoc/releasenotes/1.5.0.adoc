@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.5.0]
-ifdef::jqa-in-manual[== Core Framework 1.5.0]
-
-- Allow wildcards `*` and `?` for referencing rules to be included in a group or required concepts
-- Added `builder()` method to `com.buschmais.jqassistant.core.analysis.api.Result` to ease instance creation in script rules.

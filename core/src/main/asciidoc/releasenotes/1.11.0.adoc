@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.11.0]
-ifdef::jqa-in-manual[== Core Framework 1.11.0]
-
-* No changes in this version.
-
