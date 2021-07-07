@@ -66,11 +66,6 @@
                          ! of the Ueber Parant of jQAssistant.
                          ! Oliver B. Fischer, 2017-06-07
                          !-->
-                        <scanIncludes>
-                            <scanInclude>
-                                <path>${project.basedir}</path>
-                            </scanInclude>
-                        </scanIncludes>
                         <scanProperties>
                             <xml.file.include>/META-INF/jqassistant-plugin.xml</xml.file.include>
                         </scanProperties>
