@@ -1,7 +1,7 @@
-<jpd:jqassistant-plugin xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
-                        name="Java" id="jqa.plugin.java">
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
+                    name="Java" id="jqa.plugin.java">
     <description>Provides scanner for Java elements (e.g. packages, classes, manifest and property files) and rules for
         common language concepts (e.g. Deprecation), dependencies and metrics.
     </description>
@@ -58,4 +58,4 @@
         <resource>dependency.xml</resource>
         <resource>classpath.xml</resource>
     </rules>
-</jpd:jqassistant-plugin>
+</jqassistant-plugin>
