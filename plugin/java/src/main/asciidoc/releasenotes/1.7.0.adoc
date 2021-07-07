@@ -1,7 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.7.0]
-ifdef::jqa-in-manual[== Java Plugin 1.7.0]
-
-* Added annotation `@jQAsuppress` to allow suppression of annotated Java elements from rule results (similar to `@java.lang.SuppressWarnings`).
-* Added support for scanning Java 13 bytecode (upgraded ASM to 7.1)
-
-

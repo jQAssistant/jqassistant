@@ -1,0 +1,70 @@
+
+= Java Plugin
+
+== 1.10.0
+
+* Add support for generic types, e.g. `(:Field)-[OF_GENERIC_TYPE]->(:ParameterizedType)`
+* Added concept `java:GeneratedType` which can be extended by project specific concepts using `providesConcept`
+* Added a `reason` attribute to `@jQASuppress` to allow human-readable description for the suppression, e.g.
++
+[source,java]
+----
+@jQASuppress(value = "my-rules:SuppressedRule", reason = "This rule does not apply here.")
+public class MyClass { }
+----
+
+== 1.9.0
+
+* added concepts `java:PostConstruct` and `java:PreDestroy`
+* improved concept `java:VirtualInvokes` to identify all potential non-abstract methods within the inheritance hierarchy that could be invoked
+* upgraded to ASM 8.0 to support scanning of Java 14 bytecode
+
+== 1.8.0
+
+* Added concept `java:VirtualDependsOn` providing `VIRTUAL_DEPENDS_ON` relations based on `DEPENDS_ON` relations to super classes
+* Added concept `java:VirtualInvokes` providing `VIRTUAL_INVOKES` relations representing virtual invocations
+* Deprecated concept `java:InvokesOverriddenMethod` as it creates`INVOKES` relations that may be ambiguous (replaced by `VIRTUAL_INVOKES`)
+* Type members (i.e. fields and methods) are now reported only using their signature.
+Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething()`
+* Migrated the following concepts from the `Java 8` plugin into this plugin:
+** `java8:FunctionalInterface` -> `java:FunctionalInterface`
+** `java8:DefaultMethod` -> `java:DefaultMethod`
+** `java8:LambdaMethod` -> `java:LambdaMethod`
+
+== 1.7.0
+
+* Added annotation `@jQAsuppress` to allow suppression of annotated Java elements from rule results (similar to `@java.lang.SuppressWarnings`).
+* Added support for scanning Java 13 bytecode (upgraded ASM to 7.1)
+
+== 1.6.0
+
+* Upgraded Java bytecode parser to ASM 7.0 for supporting Java 11 bytecode
+
+== 1.4
+
+* Added support for method variables in Java class scanner, i.e. `(:Method)-[:DECLARES]->(:Variable)`.
+* Added support for XML based Property files. See
+  https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
+* Added label 'ByteCode' for Java class elements (types, methods, fields, etc.)
+* Added support for Java 10
+
+== 1.3
+
+* Added `firstLineNumber`, `lastLineNumber` and `effectiveLineCount` attributes to `:Method` nodes
+* Deprecated concept `classpath:ResolveDependency` and replaced it by `classpath:ResolveDependsOn`
+* `classpath:ResolveDependsOn` propagates `weight` attribute of `DEPENDS_ON` relations
+
+== 1.2
+
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.java`
+  to `com.buschmais.jqassistant.plugin:java`.
+* Added attribute `weight` to `DEPENDS_ON` relations between types
+* Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and
+  their inner classes.
+* Annotation nodes are now also labeled with `Java`.
+* Fixed a bug with where type resolution created multiple nodes when scanning directories with
+  `java:classpath` scope.
+* Added constant values for fields.
+* Added `DECLARES` relations between methods and their declared anonymous inner
+  classes: `(:Method)-[:DECLARES]\->(:Type)`.
+

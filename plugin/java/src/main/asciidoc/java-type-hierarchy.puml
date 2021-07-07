@@ -4,7 +4,7 @@ class Class
 class Method
 class Field
 
-interface Type
+interface Bound
 interface TypeVariable {
   name
 }
@@ -14,33 +14,33 @@ interface WildcardType
 
 interface GenericDeclaration
 
-Type <|.. Class
-Type <|.. GenericArrayType
-Type <|.. ParameterizedType
-Type <|.. WildcardType
-Type <|.. TypeVariable
+Bound <|.. Class
+Bound <|.. GenericArrayType
+Bound <|.. ParameterizedType
+Bound <|.. WildcardType
+Bound <|.. TypeVariable
 
 GenericDeclaration <|.. Class
 GenericDeclaration <|.. Method
 
-GenericArrayType   -- Type : componentType
+GenericArrayType   -- Bound : componentType
 
-ParameterizedType  -- "0..*" Type : actualTypeArguments
-ParameterizedType  -- "1"    Type : rawType
-ParameterizedType  -- "1"    Type : ownerType
+ParameterizedType  -- "0..*" Bound : actualTypeArguments
+ParameterizedType  -- "1"    Bound : rawType
+ParameterizedType  -- "1"    Bound : ownerType
 
-WildcardType -- "0..*" Type : upperBounds
-WildcardType -- "0..*" Type : lowerBounds
+WildcardType -- "0..*" Bound : upperBounds
+WildcardType -- "0..*" Bound : lowerBounds
 
-TypeVariable       -- "0..*" Type            : bounds
+TypeVariable       -- "0..*" Bound            : upperBounds
 
 GenericDeclaration -- "0..*" TypeVariable : typeParameters
 
-Method -- "1" Type : genericReturnType
-Method -- "0..*" Type : genericParameterTypes
-Method -- "1" Type : genericExceptionTypes
+Method -- "1" Bound : genericReturnType
+Method -- "0..*" Bound : genericParameterTypes
+Method -- "1" Bound : genericExceptionTypes
 
-Field -- "1" Type : genericType
+Field -- "1" Bound : genericType
 
 @enduml
 
