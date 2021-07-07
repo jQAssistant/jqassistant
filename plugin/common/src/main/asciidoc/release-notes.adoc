@@ -1,0 +1,25 @@
+
+= Common Plugin
+
+== 1.5.0
+
+* Removed additional label `Container` for directories, archives and artifacts as it was ambiguous.
+
+== 1.4
+
+* Added a plugin that creates JUnit reports about all executed rules
+* Added a plugin that creates CSV reports is a concept or constraints selects "csv" as report type
+
+== 1.3
+
+* Only internal changes.
+
+== 1.2
+
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.common`
+  to `com.buschmais.jqassistant.plugin:common`.
+* Added support for using file patterns (`file.include` and `file.exclude`) for scanner plugins.
+
+
+
+

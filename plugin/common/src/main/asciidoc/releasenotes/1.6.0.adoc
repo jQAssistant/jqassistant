@@ -1,7 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.6.0]
-ifdef::jqa-in-manual[== Common Plugin 1.6.0]
-
-@Dirk: Can you please add some notes on your changes?

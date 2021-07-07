@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.3]
-ifdef::jqa-in-manual[== Common Plugin 1.3]
-
-- Only internal changes.
-

@@ -1,9 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.4]
-ifdef::jqa-in-manual[== Common Plugin 1.4]
-
-* Added a plugin that creates JUnit reports about all executed rules
-* Added a plugin that creates CSV reports is a concept or constraints selects "csv" as report type
-

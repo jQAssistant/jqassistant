@@ -1,7 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.5.0]
-ifdef::jqa-in-manual[== Common Plugin 1.5.0]
-
-- Removed additional label `Container` for directories, archives and artifacts as it was ambiguous.
