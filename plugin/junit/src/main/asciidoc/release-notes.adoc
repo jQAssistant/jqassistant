@@ -1,5 +1,12 @@
-ifndef::jqa-in-manual[== Version 1.4]
-ifdef::jqa-in-manual[== JUnit Plugin 1.4]
+
+= JUnit Plugin
+
+== 1.10.0
+
+* Added support for additional assert methods to concept `junit5:AssertMethod`.
+** The concept now matches all methods in `org.junit.jupiter.api.Assertions` starting with `assert`, thus now supports `assertThrows` and `assertTimeout*`.
+
+== 1.4
 
 === Support for Junit 5 added
 
@@ -14,6 +21,16 @@ https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugi
   of added support for JUnit 5.
 * Renamed `junit4:TestMethodWithoutAssertion` to `junit:TestMethodWithoutAssertion`
   because of added support for JUnit 5.
+
+== 1.3
+
+* Only internal changes.
+
+== 1.2
+
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.junit`
+  to `com.buschmais.jqassistant.plugin:junit`.
+* No functional changes since version 1.1.3.
 
 
 

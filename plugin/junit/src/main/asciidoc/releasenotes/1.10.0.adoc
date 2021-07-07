@@ -1,7 +1,0 @@
-ifndef::jqa-in-manual[== Version 1.10.0]
-ifdef::jqa-in-manual[== JUnit Plugin 1.10.0]
-
-=== Updated concepts
-
-* Added support for additional assert methods to concept `junit5:AssertMethod`.
-** The concept now matches all methods in `org.junit.jupiter.api.Assertions` starting with `assert`, thus now supports `assertThrows` and `assertTimeout*`.
