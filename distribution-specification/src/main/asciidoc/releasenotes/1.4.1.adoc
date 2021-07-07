@@ -1,4 +1,0 @@
-== jQAssistant Distribution Specification Version 1.4.1
-
-No Changes.
-

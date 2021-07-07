@@ -1,3 +1,0 @@
-== jQAssistant Distribution Specification Version 1.3.0
-
-- Included the jQAssistant JSON Plugin.
