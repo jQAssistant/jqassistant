@@ -1,9 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.4.0]
-ifdef::jqa-in-manual[== Neo4j Backend Version 1.4.0]
-
-- Upgraded to Neo4j 2.3.12 and 3.4.0
-- Added https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher for Neo4j] 3.4.0.1
-

@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.5.0]
-ifdef::jqa-in-manual[== Neo4j Backend Version 1.5.0]
-
-- Upgraded to Neo4j 3.4.8 and APOC 3.4.0.3
-

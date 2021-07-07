@@ -1,8 +1,0 @@
-//
-//
-//
-ifndef::jqa-in-manual[== Version 1.3.0]
-ifdef::jqa-in-manual[== Neo4j Backend Version 1.3.0]
-
-- Prepared support for Neo4j 3.x
-
