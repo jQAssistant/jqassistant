@@ -1,6 +1,10 @@
 
 = Java Plugin
 
+== 1.11.0
+
+* Upgraded to ASM 9.2 to support the scan of Java 18 bytecode
+
 == 1.10.0
 
 * Add support for generic types, e.g. `(:Field)-[OF_GENERIC_TYPE]->(:ParameterizedType)`

@@ -18,7 +18,7 @@
     <properties>
         <jqa-xml-plugin.version>1.11.0-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>1.11.0-SNAPSHOT</jqa-plugin-common.version>
-        <org.ow2.asm.version>9.1</org.ow2.asm.version>
+        <org.ow2.asm.version>9.2</org.ow2.asm.version>
         <asciidoctor.toplevelid>java-plugin</asciidoctor.toplevelid>
     </properties>
 
