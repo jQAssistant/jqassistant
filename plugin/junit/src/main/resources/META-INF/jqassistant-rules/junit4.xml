@@ -161,4 +161,17 @@
       ]]></cypher>
     </concept>
 
+    <concept id="junit4:InnerTestClass">
+        <requiresConcept refId="junit4:TestClass" />
+        <description>Labels inner types of types labeled with "Test" with "Test" and "Inner".</description>
+        <cypher><![CDATA[
+            MATCH
+                (source:Type:Junit4:Test)-[:DECLARES]->(target:Type)
+            SET
+                target:Junit4:Test:Inner
+            RETURN
+                target
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>

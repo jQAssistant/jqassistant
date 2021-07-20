@@ -244,4 +244,17 @@ public class Junit4IT extends AbstractJunitIT {
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, anEmptyMap());
     }
+
+    /**
+     * Verifies the concept "junit4:InnerTestClass"
+     */
+    @Test
+    public void innerTestClass() throws RuleException {
+        scanClasses(TestClass.class);
+        Result result = applyConcept("junit4:InnerTestClass");
+        assertThat(result.getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        assertThat(query("MATCH (c:Type:Junit4:Test:Inner) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.InnerTestClass.class)));
+        store.commitTransaction();
+    }
 }

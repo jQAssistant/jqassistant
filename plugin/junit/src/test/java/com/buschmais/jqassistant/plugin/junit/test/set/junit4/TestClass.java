@@ -31,4 +31,7 @@ public class TestClass {
     public static void afterClass() {
     }
 
+    public class InnerTestClass {
+    }
+
 }
