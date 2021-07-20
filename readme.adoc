@@ -1,7 +1,6 @@
 = jQAssistant Aggregator Repository
 
-jQAssistant has been splitted into multiple repositories to be able to
-build a better and more flexible build an release infrastructure.
+jQAssistant has been splitted into multiple repositories to allow more flexible releases.
 
 NOTE: Want to raise an issue? If possible try to go to the affected repository. If not, please raise
       it in our https://github.com/jQAssistant/jQA-Idea-Hub[Idea Hub].
