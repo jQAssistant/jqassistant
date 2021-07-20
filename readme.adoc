@@ -1,8 +1,7 @@
-= Former jQAssistant Master Repository
+= jQAssistant Aggregator Repository
 
-We splitted jQAssistant in multiple single repositories to be able to 
-build a better and more flexible build an release infrastructure 
-then we had before.
+jQAssistant has been splitted into multiple repositories to be able to
+build a better and more flexible build an release infrastructure.
 
 NOTE: Want to raise an issue? If possible try to go to the affected repository. If not, please raise
       it in our https://github.com/jQAssistant/jQA-Idea-Hub[Idea Hub].
@@ -28,7 +27,6 @@ The table below lists the repositories jQAssistant is made of.
 | EJB 3 Plugin              | https://github.com/jqassistant/jqa-ejb3-plugin[^]
 | GraphML Plugin            | https://github.com/jqassistant/jqa-graphml-plugin[^]
 | Java Plugin               | https://github.com/jqassistant/jqa-java-plugin[^]
-| Java 8 Plugin             | https://github.com/jqassistant/jqa-java8-plugin[^]
 | Java EE 6 Plugin          | https://github.com/jqassistant/jqa-javaee6-plugin[^]
 | JAX RS Plugin             | https://github.com/jqassistant/jqa-jaxrs-plugin[^]
 | JPA 2 Plugin              | https://github.com/jqassistant/jqa-jpa2-plugin[^]
@@ -47,3 +45,5 @@ The table below lists the repositories jQAssistant is made of.
 | YAML Plugin               | https://github.com/jqassistant/jqa-yaml-plugin[^]
 | YAML 2 Plugin             | https://github.com/jqassistant/jqa-yaml2-plugin[^]
 |===
+
+TIP: For convenience reasons the repositories are aggregated as sub-modules in this Git repository. You can clone it using `git clone --recursive https://githhub.com/jQAssistant/jQAssistant.git`.
