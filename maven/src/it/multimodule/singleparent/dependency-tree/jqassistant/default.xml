@@ -22,7 +22,7 @@
             <![CDATA[
                 MATCH
                   (:Maven:Project)-[:CREATES]->(artifact:Artifact),
-                  shortestPath((artifact)-[:DEPENDS_ON*]->(dependency:Artifact))
+                  shortestPath((artifact)-[:DEPENDS_ON*]->(dependency:Jar:Artifact)) // verify the dependency is actually scanned and visible as Jar
                 WHERE
                   dependency.name = "spring-core" // indirect dependency
                 RETURN

@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
@@ -31,6 +34,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Runs analysis according to the defined rules.
@@ -119,7 +124,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository()
-                    .getRuleInterpreterPlugins(Collections.<String, Object> emptyMap()), inMemoryReportPlugin, logger);
+                    .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
