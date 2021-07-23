@@ -4,9 +4,9 @@ import com.buschmais.jqassistant.plugin.common.api.report.Generic;
 
 /**
  * Describes an artifact as a file.
- * 
+ *
  * @author Herklotz
  */
 @Generic(Generic.GenericLanguageElement.ArtifactFile)
-public interface ArtifactFileDescriptor extends ArtifactDescriptor, FileDescriptor, FileContainerDescriptor {
+public interface ArtifactFileDescriptor extends ArtifactDescriptor, FileDescriptor {
 }
