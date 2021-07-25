@@ -52,7 +52,7 @@
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
-        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.2.2</maven-invoker-plugin.version>
 
         <!--
          ! Properties used for the IT with the Maven Invoker Plugin.
@@ -190,7 +190,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     </configuration>
@@ -213,7 +213,7 @@
                 <plugin>
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-component-metadata</artifactId>
-                    <version>1.5.5</version>
+                    <version>2.1.0</version>
                     <executions>
                         <execution>
                             <goals>
