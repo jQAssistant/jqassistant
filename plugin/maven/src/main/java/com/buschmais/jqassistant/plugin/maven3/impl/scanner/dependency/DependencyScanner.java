@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
@@ -49,7 +50,7 @@ public class DependencyScanner {
             ArtifactFilter dependencyFilter, Scanner scanner) {
         Map<Artifact, Set<Artifact>> dependencies = resolveDependencyGraph(rootNode, mainDescriptor, testDescriptor, scanner.getContext());
         if (scanDependencies) {
-            scanArtifacts(rootNode, dependencies, dependencyFilter, scanner);
+            scanDependencyArtifacts(rootNode, dependencies, dependencyFilter, scanner);
         }
     }
 
@@ -58,7 +59,7 @@ public class DependencyScanner {
         return graphResolver.resolve(rootNode, mainDescriptor, testDescriptor, context);
     }
 
-    private void scanArtifacts(DependencyNode rootNode, Map<Artifact, Set<Artifact>> dependencies, ArtifactFilter dependencyFilter, Scanner scanner) {
+    private void scanDependencyArtifacts(DependencyNode rootNode, Map<Artifact, Set<Artifact>> dependencies, ArtifactFilter dependencyFilter, Scanner scanner) {
         List<Artifact> artifacts = DependencyResolver.newInstance(dependencies.keySet(), artifact -> dependencies.getOrDefault(artifact, emptySet())).resolve();
         ArtifactResolver artifactResolver = scanner.getContext().peek(ArtifactResolver.class);
         for (Artifact artifact : artifacts) {
@@ -66,8 +67,11 @@ public class DependencyScanner {
             // by the current module and will be scanned separately.
             if (!artifact.equals(rootNode.getArtifact()) && dependencyFilter.match(artifact)) {
                 File artifactFile = artifact.getFile();
-                MavenArtifactDescriptor artifactDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), scanner.getContext());
-                if (artifactFile != null && !(artifactDescriptor instanceof FileContainerDescriptor)) {
+                FileDescriptor fileDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), FileDescriptor.class,
+                        scanner.getContext());
+                // The dependency might have been scanned before within another module, so check
+                // if it is not yet a FileContainerDescriptor (directory, JAR, etc.)
+                if (artifactFile != null && !(fileDescriptor instanceof FileContainerDescriptor)) {
                     scanner.scan(artifactFile, artifactFile.getAbsolutePath(), DefaultScope.NONE);
                 }
             }

@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
     }
 
     @Override
-    public MavenArtifactFileDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
+    public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
         return scannerContext.getStore().<String, MavenArtifactFileDescriptor> getCache(CACHE_KEY).get(fqn, key -> {
             String fileName = getFileName(coordinates);
