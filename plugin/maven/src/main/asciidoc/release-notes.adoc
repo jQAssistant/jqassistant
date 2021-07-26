@@ -1,6 +1,10 @@
 
 = Maven 3 Plugin
 
+== 1.11.0
+
+* Fixed a problem where scanning dependencies either skipped artifacts (if specified in dependency management) or scanned them multiple times
+
 == 1.9.0
 
 * Removed deprecated graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)`, it has been replaced by a model supporting exclusions:
