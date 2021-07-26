@@ -1,7 +1,7 @@
 <jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
-                    name="JUnit" id="jqa.plugin.junit">
+                    name="jQAssistant JUnit Plugin" id="jqa.plugin.junit">
     <description>Provides scanner for JUnit test reports and rules (e.g. for test classes/methods and ignored tests).</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</class>
