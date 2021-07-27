@@ -1,7 +1,7 @@
 
 = Java Plugin
 
-== 1.11.0
+== 1.10.1
 
 * Upgraded to ASM 9.2 to support the scan of Java 18 bytecode
 
