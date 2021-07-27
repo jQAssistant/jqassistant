@@ -1,7 +1,7 @@
 
 = Maven 3 Plugin
 
-== 1.11.0
+== 1.10.1
 
 * Fixed a problem where scanning dependencies either skipped artifacts (if specified in dependency management) or scanned them multiple times
 
