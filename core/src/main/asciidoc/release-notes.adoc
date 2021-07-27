@@ -1,6 +1,6 @@
 = Core Framework
 
-== 1.11.0
+== 1.10.1
 
 * Added support for `neo4j://` and `neo4j+s://` protocols for connecting to remote Neo4j (cluster) instances
 
