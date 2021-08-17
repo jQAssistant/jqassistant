@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class FileRuleSourceTest extends AbstractRuleSourceTest {
 
     @Test
@@ -15,4 +17,8 @@ public class FileRuleSourceTest extends AbstractRuleSourceTest {
         return FileRuleSource.getRuleSources(new File(resource.getPath()));
     }
 
+    @Test
+    void nonExistingRulesDirectory() throws IOException {
+        assertThat(FileRuleSource.getRuleSources(new File("non-existing-directory"))).isEmpty();
+    }
 }
