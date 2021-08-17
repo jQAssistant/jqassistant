@@ -1,65 +1,74 @@
 package com.buschmais.jqassistant.core.rule.api.source;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.io.DirectoryWalker;
+import java.util.Optional;
 
 /**
  * A rule source which is provided from a file.
  */
 public class FileRuleSource extends RuleSource {
 
-    private File file;
+    private final File directory;
 
-    public FileRuleSource(File file) {
-        this.file = file;
+    private final String relativePath;
+
+    private final File file;
+
+    public FileRuleSource(File directory, String relativePath) {
+        this.directory = directory;
+        this.relativePath = relativePath.replace('\\', '/');
+        this.file = new File(directory, relativePath);
     }
 
     @Override
     public String getId() {
-        return file.getAbsolutePath();
+        return this.file.getAbsolutePath();
     }
 
     @Override
-    public URL getURL() throws MalformedURLException  {
-        return this.file.toURI().toURL();
+    public URL getURL() throws MalformedURLException {
+        return this.file.getAbsoluteFile().toURI().toURL();
+    }
+
+    @Override
+    public Optional<File> getDirectory() {
+        return Optional.of(directory);
+    }
+
+    @Override
+    public String getRelativePath() {
+        return this.relativePath;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new FileInputStream(file);
+        return new BufferedInputStream(new FileInputStream(file));
     }
 
     public static List<RuleSource> getRuleSources(File rulesDirectory) throws IOException {
-        final List<File> ruleFiles = new ArrayList<>();
-        new DirectoryWalker<File>() {
-            @Override
-            protected void handleFile(File file, int depth, Collection<File> results) {
-                if (file.isFile()) {
-                    results.add(file);
-                }
-            }
-
-            public void scan(File directory) throws IOException {
-                super.walk(directory, ruleFiles);
-            }
-        }.scan(rulesDirectory);
-
         List<RuleSource> ruleSources = new LinkedList<>();
+        Files.walkFileTree(rulesDirectory.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                String relativePath = rulesDirectory.toPath().relativize(path).toString();
+                ruleSources.add(new FileRuleSource(rulesDirectory, relativePath));
+                return FileVisitResult.CONTINUE;
+            }
 
-        for (File ruleFile : ruleFiles) {
-            ruleSources.add(new FileRuleSource(ruleFile));
-        }
-
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                return FileVisitResult.CONTINUE;
+            }
+        });
         return ruleSources;
     }
 

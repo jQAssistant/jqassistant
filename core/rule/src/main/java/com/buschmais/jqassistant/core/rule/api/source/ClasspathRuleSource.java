@@ -1,20 +1,24 @@
 package com.buschmais.jqassistant.core.rule.api.source;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * A rule source which is provided from a classpath resource.
  */
 public class ClasspathRuleSource extends RuleSource {
 
-    private ClassLoader classLoader;
-    private String resource;
+    private final ClassLoader classLoader;
+    private final String resource;
+    private final String relativePath;
 
-    public ClasspathRuleSource(ClassLoader classLoader, String resource) {
+    public ClasspathRuleSource(ClassLoader classLoader, String resource, String relativePath) {
         this.classLoader = classLoader;
         this.resource = resource;
+        this.relativePath = relativePath;
     }
 
     @Override
@@ -25,6 +29,16 @@ public class ClasspathRuleSource extends RuleSource {
     @Override
     public URL getURL() {
         return getClassLoader().getResource(resource);
+    }
+
+    @Override
+    public Optional<File> getDirectory() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String getRelativePath() {
+        return relativePath;
     }
 
     @Override

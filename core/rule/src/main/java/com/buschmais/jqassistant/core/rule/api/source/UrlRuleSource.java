@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.core.rule.api.source;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * A rule source which is provided from an URL.
@@ -23,6 +25,16 @@ public class UrlRuleSource extends RuleSource {
     @Override
     public URL getURL() {
         return this.url;
+    }
+
+    @Override
+    public Optional<File> getDirectory() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String getRelativePath() {
+        return url.getPath();
     }
 
     @Override

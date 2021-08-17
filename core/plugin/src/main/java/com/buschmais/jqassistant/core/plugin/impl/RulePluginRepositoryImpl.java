@@ -91,9 +91,9 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
         for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
-                for (String resource : rulesType.getResource()) {
-                    String resourceName = RULE_RESOURCE_PATH + resource;
-                    sources.add(new ClasspathRuleSource(classLoader, resourceName));
+                for (String relativePath : rulesType.getResource()) {
+                    String resource = RULE_RESOURCE_PATH + relativePath;
+                    sources.add(new ClasspathRuleSource(classLoader, resource, relativePath));
                 }
             }
         }

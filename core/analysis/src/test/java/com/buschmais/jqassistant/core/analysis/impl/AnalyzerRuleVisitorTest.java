@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AnalyzerRuleVisitorTest {
 
-    private static final String RULESOURCE = "test.xml";
+    private static final FileRuleSource FILE_RULE_SOURCE = new FileRuleSource(new File("."), "test.xml");
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
     private static final String PARAMETER_WITH_DEFAULT = "withDefault";
     private static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
@@ -247,7 +247,7 @@ public class AnalyzerRuleVisitorTest {
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
-            assertThat(message, containsString(RULESOURCE));
+            assertThat(message, containsString("test.xml"));
         }
     }
 
@@ -259,7 +259,7 @@ public class AnalyzerRuleVisitorTest {
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Report report = Report.builder().primaryColumn("primaryColumn").build();
-        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE))).severity(Severity.MINOR)
+        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(FILE_RULE_SOURCE).severity(Severity.MINOR)
                 .executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
     }
 
@@ -271,7 +271,7 @@ public class AnalyzerRuleVisitorTest {
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
         Report report = Report.builder().primaryColumn("primaryColumn").build();
-        return Constraint.builder().id("test:Constraint").description("Test Constraint").ruleSource(new FileRuleSource(new File(RULESOURCE)))
+        return Constraint.builder().id("test:Constraint").description("Test Constraint").ruleSource(FILE_RULE_SOURCE)
                 .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
     }
 

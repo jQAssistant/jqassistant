@@ -5,7 +5,6 @@ import java.io.File;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
-import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,18 +16,15 @@ public class RuleParserTest {
 
     @Test
     public void testReadCompoundSources() throws Exception {
+        File rulesDirectory = new File(RuleParserTest.class.getResource("/").getPath());
         RuleParser ruleParser = new RuleParser(RuleSetTestHelper.getDefaultRuleParserPlugins(RuleConfiguration.DEFAULT));
-        File adocFile = ClasspathResource.getFile("/junit-without-assert.adoc");
-        File xmlFile = ClasspathResource.getFile("/test-concepts.xml");
-        RuleSet ruleSet = ruleParser.parse(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
+        RuleSet ruleSet = ruleParser
+                .parse(asList(new FileRuleSource(rulesDirectory, "junit-without-assert.adoc"), new FileRuleSource(rulesDirectory, "test-concepts.xml")));
         assertThat(ruleSet.getConceptBucket().size(), equalTo(3));
         assertThat(ruleSet.getConstraintBucket().size(), equalTo(2));
 
-        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder("junit4:TestClassOrMethod",
-                                                                           "junit4:AssertMethod",
-                                                                           "java:Throwable"));
-        assertThat(ruleSet.getConstraintBucket().getIds(), containsInAnyOrder("junit4:TestMethodWithoutAssertion",
-                                                                              "example:ConstructorOfDateMustNotBeUsed"));
+        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable"));
+        assertThat(ruleSet.getConstraintBucket().getIds(), containsInAnyOrder("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed"));
 
         assertThat(ruleSet.getGroupsBucket().size(), equalTo(1));
 
