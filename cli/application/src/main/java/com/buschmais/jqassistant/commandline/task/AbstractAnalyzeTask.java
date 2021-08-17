@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
@@ -95,7 +98,6 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
-        LOGGER.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         try {
             return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
