@@ -12,9 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+import static java.util.Collections.emptyList;
+
 /**
  * A rule source which is provided from a file.
  */
+@Slf4j
 public class FileRuleSource extends RuleSource {
 
     private final File directory;
@@ -55,6 +60,11 @@ public class FileRuleSource extends RuleSource {
     }
 
     public static List<RuleSource> getRuleSources(File rulesDirectory) throws IOException {
+        if (!rulesDirectory.exists()) {
+            log.debug("Rules directory {} does not exist, skipping.", rulesDirectory.getAbsolutePath());
+            return emptyList();
+        }
+        log.info("Reading rules from directory {}.", rulesDirectory.getAbsolutePath());
         List<RuleSource> ruleSources = new LinkedList<>();
         Files.walkFileTree(rulesDirectory.toPath(), new SimpleFileVisitor<Path>() {
             @Override
