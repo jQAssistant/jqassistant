@@ -61,10 +61,10 @@ public class FileRuleSource extends RuleSource {
 
     public static List<RuleSource> getRuleSources(File rulesDirectory) throws IOException {
         if (!rulesDirectory.exists()) {
-            log.info("Rules directory {} does not exist, skipping.", rulesDirectory.getAbsolutePath());
+            log.info("Rules directory '{}' does not exist, skipping.", rulesDirectory.getAbsolutePath());
             return emptyList();
         }
-        log.info("Reading rules from directory {}.", rulesDirectory.getAbsolutePath());
+        log.info("Reading rules from directory '{}'.", rulesDirectory.getAbsolutePath());
         List<RuleSource> ruleSources = new LinkedList<>();
         Files.walkFileTree(rulesDirectory.toPath(), new SimpleFileVisitor<Path>() {
             @Override
