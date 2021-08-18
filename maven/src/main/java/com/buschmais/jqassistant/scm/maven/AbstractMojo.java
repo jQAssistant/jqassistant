@@ -4,13 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -366,7 +360,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
-        getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         try {
             return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
