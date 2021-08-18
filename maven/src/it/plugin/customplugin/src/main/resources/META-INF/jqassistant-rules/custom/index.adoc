@@ -1,0 +1,20 @@
+= Re-usable Report
+
+== Summary
+
+include::jQA:Summary[]
+
+[[custom]]
+[role=group,includesConcepts="custom:*"]
+== Default
+
+[[custom:ClassDiagram]]
+[source,cypher,role=concept,reportType="plantuml-class-diagram"]
+.Classes contained in the main artifacts
+----
+MATCH
+  (:Main:Artifact)-[:CONTAINS]->(type:Type)
+RETURN
+  type
+----
+

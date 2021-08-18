@@ -1,5 +1,8 @@
 assert !new File(basedir, 'site/target/customReport.txt.1').exists()
 assert new File(basedir, 'site/target/customReport.txt.2').exists()
+// Asciidoc report from  plugin
+assert new File(basedir, 'site/target/jqassistant/report/asciidoc/custom/index.html').exists()
+assert new File(basedir, 'site/target/jqassistant/report/plantuml/custom_ClassDiagram.svg').exists()
 
 def reportFile = new File(basedir, 'site/target/jqassistant/jqassistant-report.xml')
 assert reportFile.exists()

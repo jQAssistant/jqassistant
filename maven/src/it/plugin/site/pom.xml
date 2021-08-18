@@ -14,6 +14,12 @@
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
                 <configuration>
+                    <groups>
+                        <!-- rules located in the folder jqassistant within this module -->
+                        <group>default</group>
+                        <!-- rules provided by the plugin, to be reported with Asciidoc -->
+                        <group>custom</group>
+                    </groups>
                     <scanProperties>
                         <custom.scan.value>testValue</custom.scan.value>
                     </scanProperties>
