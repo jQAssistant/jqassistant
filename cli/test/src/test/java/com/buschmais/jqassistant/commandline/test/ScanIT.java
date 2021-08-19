@@ -16,10 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies command line scanning.
@@ -33,7 +30,7 @@ class ScanIT extends AbstractCLIIT {
     public void classFromDirectory() throws IOException, InterruptedException {
         String directory = ScanIT.class.getResource("/").getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
     }
 
@@ -41,7 +38,7 @@ class ScanIT extends AbstractCLIIT {
     void files() throws IOException, InterruptedException {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
 
         Store store = getStore(getDefaultStoreDirectory());
         store.start();
@@ -50,18 +47,18 @@ class ScanIT extends AbstractCLIIT {
         String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         store.stop();
-        assertThat(count, equalTo(1L));
+        assertThat(count).isEqualTo(1L);
     }
 
     @TestTemplate
     void pluginClassLoader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
         Store store = getStore(getDefaultStoreDirectory());
         store.start();
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
-        assertThat("Expecting one beans.xml descriptor.", count, equalTo(1l));
+        assertThat(count).describedAs("Expecting one beans.xml descriptor.").isEqualTo(1L);
         store.stop();
     }
 
@@ -70,9 +67,9 @@ class ScanIT extends AbstractCLIIT {
         URL file = getResource(AnalyzeIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-reset" };
         ExecutionResult executionResult = execute(args2);
-        assertThat(executionResult.getExitCode(), equalTo(0));
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
-        assertThat(console, hasItem(containsString("Resetting store.")));
+        assertThat(console).anyMatch(item -> item.contains("Resetting store"));
         withStore(getDefaultStoreDirectory(), store -> {
             verifyFilesScanned(store, new File(file.getFile()));
         });
@@ -84,7 +81,7 @@ class ScanIT extends AbstractCLIIT {
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath() };
-        assertThat(execute(args2).getExitCode(), equalTo(0));
+        assertThat(execute(args2).getExitCode()).isEqualTo(0);
         withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
@@ -94,7 +91,7 @@ class ScanIT extends AbstractCLIIT {
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-storeUri", directory.toURI().toString() };
-        assertThat(execute(args2).getExitCode(), equalTo(0));
+        assertThat(execute(args2).getExitCode()).isEqualTo(0);
         withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
@@ -112,7 +109,7 @@ class ScanIT extends AbstractCLIIT {
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath(), "-storeUri", directory.toURI().toString() };
-        assertThat(execute(args2).getExitCode(), equalTo(1));
+        assertThat(execute(args2).getExitCode()).isEqualTo(1);
         withStore(directory, store -> verifyFilesNotScanned(store, new File(file.getFile())));
     }
 
@@ -142,7 +139,7 @@ class ScanIT extends AbstractCLIIT {
     private <T> T executeQuery(Store store, String query, Map<String, Object> params, String resultColumn, Class<T> resultType) {
         store.beginTransaction();
         Result<CompositeRowObject> result = store.executeQuery(query, params);
-        assertThat(result.hasResult(), equalTo(true));
+        assertThat(result.hasResult()).isTrue();
         T value = result.getSingleResult().get(resultColumn, resultType);
         store.commitTransaction();
         return value;
@@ -162,7 +159,7 @@ class ScanIT extends AbstractCLIIT {
         params.put("type", type.getName());
         String query = "match (t:Type:Class) where t.fqn=$type return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
-        return count.longValue() == 1;
+        return count == 1;
     }
 
     /**
@@ -179,7 +176,7 @@ class ScanIT extends AbstractCLIIT {
         params.put("name", file.getAbsolutePath().replace("\\", "/"));
         String query = "match (t:File) where t.fileName=$name return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
-        return count.longValue() == 1;
+        return count == 1;
     }
 
     /**
@@ -192,7 +189,7 @@ class ScanIT extends AbstractCLIIT {
      */
     private void verifyFilesNotScanned(Store store, File... files) {
         for (File file : files) {
-            assertThat("Expecting no result for " + file, isFileScanned(store, file), equalTo(false));
+            assertThat(isFileScanned(store, file)).describedAs("Expecting no result for %s", file).isFalse();
         }
     }
 
@@ -206,7 +203,7 @@ class ScanIT extends AbstractCLIIT {
      */
     private void verifyTypesScanned(Store store, Class<?>... types) {
         for (Class<?> type : types) {
-            assertThat("Expecting a result for " + type.getName(), isTypeScanned(store, type), equalTo(true));
+            assertThat(isTypeScanned(store, type)).describedAs("Expecting a result for %s", type.getName()).isTrue();
         }
     }
 
@@ -220,7 +217,7 @@ class ScanIT extends AbstractCLIIT {
      */
     private void verifyFilesScanned(Store store, File... files) {
         for (File file : files) {
-            assertThat("Expecting a result for " + file, isFileScanned(store, file), equalTo(true));
+            assertThat(isFileScanned(store, file)).describedAs("Expecting a result for %s", file).isTrue();
         }
     }
 }

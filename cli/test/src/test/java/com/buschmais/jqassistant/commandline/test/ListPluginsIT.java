@@ -9,26 +9,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies command line listing of available rules.
+ * Verifies, that commandline supports the list-plugins command
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-class HelpIT extends AbstractCLIIT {
+class ListPluginsIT extends AbstractCLIIT {
 
     @TestTemplate
-    void runWithoutTask() throws IOException, InterruptedException {
-        verify(new String[0]);
-    }
-
-    @TestTemplate
-    void helpOption() throws IOException, InterruptedException {
-        verify(new String[] { "-help}" });
+    void supportsListingOfPlugins() throws IOException, InterruptedException {
+        verify(new String[] { "list-plugins" });
     }
 
     private void verify(String[] args) throws IOException, InterruptedException {
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(1);
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getStandardConsole();
-        assertThat(console).anyMatch(item -> item.contains("usage: com.buschmais.jqassistant.commandline.Main <task> [options]"));
+        assertThat(console).anyMatch(item -> item.contains("jQAssistant GraphML Plugin (jqa.plugin.graphml)"));
+        assertThat(console).anyMatch(item -> item.contains("jQAssistant RDBMS Plugin (jqa.plugin.rdbms)"));
     }
-
 }

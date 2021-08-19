@@ -10,14 +10,13 @@ import com.buschmais.jqassistant.commandline.TaskFactory;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +54,7 @@ class MainTest {
         ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);
         verify(task).initialize(any(PluginRepository.class), propertiesCaptor.capture());
         Map properties = propertiesCaptor.getValue();
-        assertThat(properties.get("testKey"), CoreMatchers.<Object> equalTo(expectedValue));
+        assertThat(properties.get("testKey")).isEqualTo(expectedValue);
     }
 
 }

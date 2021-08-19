@@ -45,7 +45,7 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            DefaultTaskFactoryImpl taskFactory = new DefaultTaskFactoryImpl();
+            TaskFactory taskFactory = new DefaultTaskFactoryImpl();
             new Main(taskFactory).run(args);
         } catch (CliExecutionException e) {
             String message = getErrorMessage(e);

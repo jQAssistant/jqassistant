@@ -6,11 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies command line listing of effective rules.
@@ -23,12 +19,12 @@ class EffectiveRulesIT extends AbstractCLIIT {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory };
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode(), equalTo(0));
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
-        assertThat(console, hasItem(containsString(TEST_CONCEPT)));
-        assertThat(console, hasItem(containsString(TEST_CONSTRAINT)));
-        assertThat(console, not(hasItem(containsString(CUSTOM_TEST_CONCEPT))));
-        assertThat(console, not(hasItem(containsString("junit4:TestMethod"))));
+        assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
+        assertThat(console).anyMatch(item -> item.contains(TEST_CONSTRAINT));
+        assertThat(console).noneMatch(item -> item.contains(CUSTOM_TEST_CONCEPT));
+        assertThat(console).noneMatch(item -> item.contains("junit4:TestMethod"));
     }
 
     @TestTemplate
@@ -36,12 +32,12 @@ class EffectiveRulesIT extends AbstractCLIIT {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-groups", CUSTOM_GROUP };
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode(), equalTo(0));
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
-        assertThat(console, hasItem(containsString(TEST_CONCEPT)));
-        assertThat(console, hasItem(containsString(TEST_CONSTRAINT)));
-        assertThat(console, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
-        assertThat(console, not(hasItem(containsString("junit4:TestMethod"))));
+        assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
+        assertThat(console).anyMatch(item -> item.contains(TEST_CONSTRAINT));
+        assertThat(console).anyMatch(item -> item.contains(CUSTOM_TEST_CONCEPT));
+        assertThat(console).noneMatch(item -> item.contains("junit4:TestMethod"));
     }
 
     @TestTemplate
@@ -49,8 +45,9 @@ class EffectiveRulesIT extends AbstractCLIIT {
         String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-concepts", "junit4:TestMethod" };
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode(), equalTo(0));
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
+
         List<String> console = executionResult.getErrorConsole();
-        assertThat(console, hasItem(containsString("junit4:TestMethod")));
+        assertThat(console).anyMatch(item -> item.contains("junit4:TestMethod"));
     }
 }

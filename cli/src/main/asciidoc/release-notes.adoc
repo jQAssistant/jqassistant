@@ -1,6 +1,12 @@
 
 = Commandline Tool
 
+== 1.11.0
+
+* Added new commandline task `list-plugins`. This task lists all plugins
+  known to jQAssistant. Useful to see which plugins are active during the
+  scan, analyze, and report phase of jQAssistant.
+
 == 1.9.0
 
 * Added command line option `createReportArchive` to the analyze task for creating a ZIP archive containing the generated reports

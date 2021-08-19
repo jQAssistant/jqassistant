@@ -13,7 +13,7 @@ pom.xml.updatetorelease
 pom.xml.updatetonextdevversion
 
 # Shell scripts to ignore
-*.sh.ignore
+*.ignore.sh
 
 # Maven related files and directories
 target

@@ -46,23 +46,35 @@ public class DefaultTaskFactoryImpl implements TaskFactory {
      */
     private enum DefaultTask {
         /**
+         * List all available plugins
+         */
+        LIST_PLUGINS {
+            @Override
+            public Task getTask() {
+                return new ListPluginsTask();
+            }
+        },
+
+        /**
          * Scan.
          */
         SCAN {
             @Override
             public Task getTask() {
-                return new com.buschmais.jqassistant.commandline.task.ScanTask();
+                return new ScanTask();
             }
         },
+
         /**
          * Available scopes.
          */
         AVAILABLE_SCOPES {
             @Override
             public Task getTask() {
-                return new com.buschmais.jqassistant.commandline.task.AvailableScopesTask();
+                return new AvailableScopesTask();
             }
         },
+
         /**
          * Server.
          */
@@ -72,15 +84,17 @@ public class DefaultTaskFactoryImpl implements TaskFactory {
                 return new ServerTask();
             }
         },
+
         /**
          * Available rules.
          */
         AVAILABLE_RULES {
             @Override
             public Task getTask() {
-                return new com.buschmais.jqassistant.commandline.task.AvailableRulesTask();
+                return new AvailableRulesTask();
             }
         },
+
         /**
          * Available rules.
          */
@@ -90,24 +104,27 @@ public class DefaultTaskFactoryImpl implements TaskFactory {
                 return new EffectiveRulesTask();
             }
         },
+
         /**
          * Analyze.
          */
         ANALYZE {
             @Override
             public Task getTask() {
-                return new com.buschmais.jqassistant.commandline.task.AnalyzeTask();
+                return new AnalyzeTask();
             }
         },
+
         /**
          * Reset.
          */
         RESET {
             @Override
             public Task getTask() {
-                return new com.buschmais.jqassistant.commandline.task.ResetTask();
+                return new ResetTask();
             }
         },
+
         /**
          * Report.
          */
@@ -124,6 +141,5 @@ public class DefaultTaskFactoryImpl implements TaskFactory {
          * @return The task instance.
          */
         public abstract Task getTask();
-
     }
 }
