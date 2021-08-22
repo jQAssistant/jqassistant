@@ -10,9 +10,7 @@ public class ClasspathRuleSourceTest extends AbstractRuleSourceTest {
     @Override
     protected List<RuleSource> getRuleSources() {
         return Stream.of("rules.xml", "index.adoc", "readme.md", "subdirectory/rules.xml")
-                .map(relativePath -> new ClasspathRuleSource(ClasspathRuleSourceTest.class.getClassLoader(), "META-INF/jqassistant-rules/" + relativePath,
-                        relativePath))
-                .collect(toList());
+                .map(relativePath -> new ClasspathRuleSource(ClasspathRuleSourceTest.class.getClassLoader(), relativePath)).collect(toList());
     }
 
 }

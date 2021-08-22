@@ -24,11 +24,6 @@ import org.jqassistant.schema.plugin.v1.RulesType;
  */
 public class RulePluginRepositoryImpl extends AbstractPluginRepository implements RulePluginRepository {
 
-    /**
-     * The resource path where to load rule files from.
-     */
-    private static final String RULE_RESOURCE_PATH = "META-INF/jqassistant-rules/";
-
     private final ClassLoader classLoader;
 
     private final List<RuleSource> sources;
@@ -92,8 +87,7 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
                 for (String relativePath : rulesType.getResource()) {
-                    String resource = RULE_RESOURCE_PATH + relativePath;
-                    sources.add(new ClasspathRuleSource(classLoader, resource, relativePath));
+                    sources.add(new ClasspathRuleSource(classLoader, relativePath));
                 }
             }
         }

@@ -11,14 +11,20 @@ import java.util.Optional;
  */
 public class ClasspathRuleSource extends RuleSource {
 
+    /**
+     * The resource path where to load rule files from.
+     */
+    public static final String RULE_RESOURCE_PATH = "META-INF/jqassistant-rules";
+
     private final ClassLoader classLoader;
     private final String resource;
     private final String relativePath;
 
-    public ClasspathRuleSource(ClassLoader classLoader, String resource, String relativePath) {
+    public ClasspathRuleSource(ClassLoader classLoader, String relativePath) {
         this.classLoader = classLoader;
-        this.resource = resource;
         this.relativePath = relativePath;
+        this.resource = RULE_RESOURCE_PATH + "/" + relativePath;
+
     }
 
     @Override
