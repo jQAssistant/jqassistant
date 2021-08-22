@@ -113,11 +113,11 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 </embedded>
                             </store>
                             <storeLifecycle>REACTOR</storeLifecycle>
-                            <resetStore>true</resetStore>
                              -->
 
                         <!-- Scan -->
                             <!--
+                            <reset>true</reset>
                             <scanIncludes>
                                 <scanInclude>
                                     <path>config</path>
@@ -271,7 +271,7 @@ gathered information in the database.
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
 * <<storeLifecycle>>
-* resetStore (-Djqassistant.store.reset)
+* reset (-Djqassistant.store.reset)
 ** indicates whether the store shall be reset (i.e. cleaned up) before scanning
 ** default: 'true'
 * scanIncludes
