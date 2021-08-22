@@ -1,0 +1,11 @@
+[[custom:ComponentDiagram]]
+[source,cypher,role=concept,reportType="plantuml-component-diagram"]
+.Component Diagram
+----
+MATCH
+  (:Project)-[:CREATES]->(artifact:Artifact)
+OPTIONAL MATCH
+  (artifact)-[dependsOn:DEPENDS_ON]->(dependency:Artifact)
+RETURN
+  *
+----

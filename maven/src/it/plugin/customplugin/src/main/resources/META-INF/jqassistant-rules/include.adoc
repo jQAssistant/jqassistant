@@ -1,0 +1,11 @@
+[[custom:CSVReport]]
+[source,cypher,role=concept,reportType="csv"]
+.CSV report
+----
+MATCH
+  (:Project)-[:CREATES]->(artifact:Artifact)
+OPTIONAL MATCH
+  (artifact)-[dependsOn:DEPENDS_ON]->(dependency:Artifact)
+RETURN
+  artifact.fqn as Dependent, dependency.fqn as Dependencies
+----

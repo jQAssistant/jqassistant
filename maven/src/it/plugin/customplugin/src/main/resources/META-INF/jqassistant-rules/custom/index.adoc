@@ -1,4 +1,4 @@
-= Re-usable Report
+= Custom
 
 == Summary
 
@@ -10,7 +10,7 @@ include::jQA:Summary[]
 
 [[custom:ClassDiagram]]
 [source,cypher,role=concept,reportType="plantuml-class-diagram"]
-.Classes contained in the main artifacts
+.Class Diagram
 ----
 MATCH
   (:Main:Artifact)-[:CONTAINS]->(type:Type)
@@ -18,3 +18,10 @@ RETURN
   type
 ----
 
+== Relative Include
+
+include::include.adoc[]
+
+== Absolute Include
+
+include::/include.adoc[]
