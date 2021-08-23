@@ -9,12 +9,15 @@ import java.util.*;
 import javax.xml.validation.Schema;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
 import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.String.format;
 
 /**
  * Plugin reader implementation.
@@ -62,7 +65,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      *            The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
-    private JqassistantPlugin readPlugin(URL pluginUrl) {
+    protected JqassistantPlugin readPlugin(URL pluginUrl) {
         try (InputStream inputStream = new BufferedInputStream(pluginUrl.openStream())) {
             return jaxbUnmarshaller.unmarshal(inputStream);
         } catch (IOException e) {
@@ -80,24 +83,43 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     public List<JqassistantPlugin> getPlugins() {
         if (this.plugins == null) {
             LOGGER.info("Scanning for jQAssistant plugins...");
-            final Enumeration<URL> resources;
-            try {
-                resources = pluginClassLoader.getResources(PLUGIN_RESOURCE);
-            } catch (IOException e) {
-                throw new IllegalStateException("Cannot get plugin resources.", e);
-            }
+
+            PluginIdGenerator idGenerator = new PluginIdGenerator();
+            TreeSet<String> ids = new TreeSet<>();
+            Enumeration<URL> resources = getPluginClassLoaderResources();
             this.plugins = new ArrayList<>();
+
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 LOGGER.debug("Reading plugin descriptor from '{}'.", url);
-                this.plugins.add(readPlugin(url));
+                JqassistantPlugin plugin = idGenerator.apply(readPlugin(url));
+
+                if (ids.contains(plugin.getId())) {
+                    JqassistantPlugin loadedPlugin = plugins.stream().filter(p -> p.getId().equals(plugin.getId()))
+                                                            .findFirst().get();
+                    String message = format("Unable to load plugin '%s' with id '%s', as the same id is used by " +
+                                     "plugin '%s'", plugin.getName(), plugin.getId(), loadedPlugin.getName());
+
+                    LOGGER.error(message);
+                    throw new PluginRepositoryException(message);
+                }
+
+                LOGGER.info("Loaded plugin '{}' with id '{}'", plugin.getName(),
+                            plugin.getId());
+                ids.add(plugin.getId());
+                plugins.add(plugin);
             }
-            SortedSet<String> pluginNames = new TreeSet<>();
-            for (JqassistantPlugin plugin : plugins) {
-                pluginNames.add(plugin.getName());
-            }
-            LOGGER.info("{}.", pluginNames);
         }
-        return this.plugins;
+
+        return plugins;
+    }
+
+    protected Enumeration<URL> getPluginClassLoaderResources() {
+        try {
+            return pluginClassLoader.getResources(PLUGIN_RESOURCE);
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot get plugin resources.", e);
+        }
+
     }
 }

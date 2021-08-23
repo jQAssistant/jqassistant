@@ -17,7 +17,7 @@ public interface PluginConfigurationReader {
      *
      * @return The class loader.
      */
-    ClassLoader getClassLoader();
+    ClassLoader     getClassLoader();
 
     /**
      * Return the list of detected plugins.

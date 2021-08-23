@@ -1,11 +1,18 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * The plugin repository.
@@ -45,15 +52,10 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     @Override
     public void destroy() {
-        if (scannerPluginRepository != null) {
-            this.scannerPluginRepository.destroy();
-        }
-        if (rulePluginRepository != null) {
-            this.rulePluginRepository.destroy();
-        }
-        if (analyzerPluginRepository != null) {
-            this.analyzerPluginRepository.destroy();
-        }
+        ofNullable(scannerPluginRepository).ifPresent(ScannerPluginRepository::destroy);
+        ofNullable(rulePluginRepository).ifPresent(RulePluginRepository::destroy);
+        ofNullable(analyzerPluginRepository).ifPresent(AnalyzerPluginRepository::destroy);
+        ofNullable(storePluginRepository).ifPresent(StorePluginRepository::destroy);
     }
 
     @Override
@@ -79,6 +81,20 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public ClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    @Override
+    public Collection<PluginInfo> getPluginOverview() {
+        ArrayList<PluginInfo> infos = new ArrayList<>();
+
+        pluginConfigurationReader.getPlugins().forEach(plugin -> {
+            String id = plugin.getId();
+            String name = plugin.getName();
+            PluginInfo info = new PluginInfoImpl(id, name);
+            infos.add(info);
+        });
+
+        return Collections.unmodifiableCollection(infos);
     }
 
 }

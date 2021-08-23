@@ -1,7 +1,9 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4"
-                               name="Core Report">
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
+                    name="jQAssistant Core Report Plugin" id="jqa.core.report.plugin">
     <description>Core Report</description>
     <report>
         <class id="xml">com.buschmais.jqassistant.core.report.impl.XmlReportPlugin</class>
     </report>
-</jqa-plugin:jqassistant-plugin>
+</jqassistant-plugin>
