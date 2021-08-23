@@ -10,26 +10,26 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SeverityConfigurationConverterTest {
+class SeverityConfigurationConverterTest {
 
     private SeverityConfigurationConverter converter = new SeverityConfigurationConverter();
 
     @Test
-    public void canConvertReturnsTrueForSeverity() {
+    void canConvertReturnsTrueForSeverity() {
         boolean result = converter.canConvert(Severity.class);
 
         assertThat(result, equalTo(true));
     }
 
     @Test
-    public void canConvertReturnsFalseForString() {
+    void canConvertReturnsFalseForString() {
         boolean result = converter.canConvert(String.class);
 
         assertThat(result, equalTo(false));
     }
 
     @Test
-    public void fromStringSucceedsForStringRepresentationOfSeverity() throws ComponentConfigurationException {
+    void fromStringSucceedsForStringRepresentationOfSeverity() throws ComponentConfigurationException {
         Severity result = (Severity) converter.fromString(Severity.BLOCKER.name());
 
         assertThat(result, CoreMatchers.notNullValue());
@@ -37,7 +37,7 @@ public class SeverityConfigurationConverterTest {
     }
 
     @Test
-    public void fromStringSucceedsForLowercaseStringRepresentationOfSeverity() throws ComponentConfigurationException {
+    void fromStringSucceedsForLowercaseStringRepresentationOfSeverity() throws ComponentConfigurationException {
         Severity result = (Severity) converter.fromString(Severity.BLOCKER.name().toLowerCase());
 
         assertThat(result, CoreMatchers.notNullValue());
@@ -45,7 +45,7 @@ public class SeverityConfigurationConverterTest {
     }
 
     @Test
-    public void fromStringFailsForIllegalValue() {
+    void fromStringFailsForIllegalValue() {
         Assertions.assertThatThrownBy(() -> converter.fromString("OLIVER"))
                   .isInstanceOf(ComponentConfigurationException.class);
     }

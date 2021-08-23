@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class StoreLifeCycleConverterTest {
+class StoreLifeCycleConverterTest {
     private StoreLifeCycleConverter converter = new StoreLifeCycleConverter();
 
     @Test
-    public void canConvertReturnsTrueForStoreLifecycle() {
+    void canConvertReturnsTrueForStoreLifecycle() {
         boolean result = converter.canConvert(StoreLifecycle.class);
 
         assertThat(result, equalTo(true));
@@ -28,7 +28,7 @@ public class StoreLifeCycleConverterTest {
     }
 
     @Test
-    public void fromStringSucceedsForStringRepresentation() throws Exception {
+    void fromStringSucceedsForStringRepresentation() throws Exception {
         StoreLifecycle result = (StoreLifecycle) converter.fromString(StoreLifecycle.MODULE.name());
 
         assertThat(result, CoreMatchers.notNullValue());
@@ -36,7 +36,7 @@ public class StoreLifeCycleConverterTest {
     }
 
     @Test
-    public void fromStringSucceedsForLowercaseStringRepresentationOfSeverity() throws Exception {
+    void fromStringSucceedsForLowercaseStringRepresentationOfSeverity() throws Exception {
         StoreLifecycle result = (StoreLifecycle) converter.fromString(StoreLifecycle.MODULE.name().toLowerCase());
 
         assertThat(result, CoreMatchers.notNullValue());
@@ -44,7 +44,7 @@ public class StoreLifeCycleConverterTest {
     }
 
     @Test
-    public void fromStringFailsForIllegalValue() throws ComponentConfigurationException {
+    void fromStringFailsForIllegalValue() throws ComponentConfigurationException {
         Assertions.assertThatThrownBy(() ->converter.fromString("OLIVER"))
                   .isInstanceOf(ComponentConfigurationException.class);
     }
