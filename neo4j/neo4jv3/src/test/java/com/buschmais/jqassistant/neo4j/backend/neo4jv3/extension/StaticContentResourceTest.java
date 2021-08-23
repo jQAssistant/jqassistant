@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StaticContentResourceTest {
+class StaticContentResourceTest {
 
     private static final MediaType TEXT_CSS_TYPE = new MediaType("text", "css");
 
@@ -35,33 +35,33 @@ public class StaticContentResourceTest {
     private StaticContentResource staticContentResource;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         staticContentResource = new StaticContentResource(configuration, server);
     }
 
     @Test
-    public void htmlResource() throws IOException {
+    void htmlResource() throws IOException {
         Response response = staticContentResource.file("/test/other.html");
 
         verifyIndexResponse(response, "<h1>Other</h1>" + lineSeparator(), TEXT_HTML_TYPE);
     }
 
     @Test
-    public void cssResource() throws IOException {
+    void cssResource() throws IOException {
         Response response = staticContentResource.file("/test/styles.css");
 
         verifyIndexResponse(response, "/* Styles */" + lineSeparator(), TEXT_CSS_TYPE);
     }
 
     @Test
-    public void indexFromFolderWithTrailingSlash() throws IOException {
+    void indexFromFolderWithTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test/");
 
         verifyIndexResponse(response, "<h1>Index</h1>" + lineSeparator(), TEXT_HTML_TYPE);
     }
 
     @Test
-    public void indexFromFolderWithoutTrailingSlash() throws IOException {
+    void indexFromFolderWithoutTrailingSlash() throws IOException {
         Response response = staticContentResource.file("/test");
 
         verifyIndexResponse(response, "<h1>Index</h1>" + lineSeparator(), TEXT_HTML_TYPE);
@@ -79,7 +79,7 @@ public class StaticContentResourceTest {
     }
 
     @Test
-    public void nonExistingResource() throws IOException {
+    void nonExistingResource() throws IOException {
         Response response = staticContentResource.file("/nonExistingResource.png");
 
         assertThat(response.getStatus(), equalTo(Response.Status.NOT_FOUND.getStatusCode()));
