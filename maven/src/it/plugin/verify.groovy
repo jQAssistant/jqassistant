@@ -11,6 +11,7 @@ assert asciidocReport.contains('<a href="../../csv/custom_CSVReport.csv"')
 assert new File(basedir, 'site/target/jqassistant/report/plantuml/custom_ClassDiagram.svg').exists()
 assert new File(basedir, 'site/target/jqassistant/report/plantuml/custom_ComponentDiagram.svg').exists()
 assert new File(basedir, 'site/target/jqassistant/report/csv/custom_CSVReport.csv').exists()
+assert new File(basedir, 'site/target/jqassistant/report/asciidoc/custom-embedded-plantuml.svg').exists()
 
 // XML report
 def reportFile = new File(basedir, 'site/target/jqassistant/jqassistant-report.xml')
