@@ -3,13 +3,12 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
-public class ComplexKeyIT extends AbstractYAMLPluginIT {
+class ComplexKeyIT extends AbstractYAMLPluginIT {
 
     @Test
     void cypherAScalarCanBeUsedAsKeyValueForAComplexKey() {

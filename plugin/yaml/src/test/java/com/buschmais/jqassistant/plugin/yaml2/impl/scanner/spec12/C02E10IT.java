@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 

@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.anchor;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnchorAndAliasIT extends AbstractYAMLPluginIT {
+class AnchorAndAliasIT extends AbstractYAMLPluginIT {
     @Test
     void cypherRelationBetweenAliasAndAnchorIsCorrectForFirstAlias() {
         readSourceDocument("/anchor/map-with-alias.yml");

@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ValidityOfYAMLDocumentsIT extends AbstractYAMLPluginIT {
+class ValidityOfYAMLDocumentsIT extends AbstractYAMLPluginIT {
 
     @BeforeEach
     void startTransaction() {

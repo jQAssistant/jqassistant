@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 

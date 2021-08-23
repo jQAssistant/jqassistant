@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.anchor;
 
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AliasIT extends AbstractYAMLPluginIT {
+class AliasIT extends AbstractYAMLPluginIT {
     @Test
     void cypherAnchorForScalar() {
         readSourceDocument("/anchor/toplevel-sequence-anchor-on-scalar.yml");

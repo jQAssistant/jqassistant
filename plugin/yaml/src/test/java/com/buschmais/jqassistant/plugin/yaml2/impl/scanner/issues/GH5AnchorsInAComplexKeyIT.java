@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.issues;
 
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GH5AnchorsInAComplexKeyIT extends AbstractYAMLPluginIT {
+class GH5AnchorsInAComplexKeyIT extends AbstractYAMLPluginIT {
 
     @TestStore(reset = false, type = TestStore.Type.MEMORY)
     @Test

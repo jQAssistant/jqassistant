@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 

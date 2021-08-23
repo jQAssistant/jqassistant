@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

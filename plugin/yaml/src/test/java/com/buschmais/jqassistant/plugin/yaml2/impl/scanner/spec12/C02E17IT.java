@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

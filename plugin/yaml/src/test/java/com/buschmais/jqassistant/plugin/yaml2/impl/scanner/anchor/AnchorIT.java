@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.anchor;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12.AbstractYAMLPluginIT;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.*;
 import static com.buschmais.jqassistant.plugin.yaml2.helper.YMLPluginAssertions.assertThat;
 
-public class AnchorIT extends AbstractYAMLPluginIT {
+class AnchorIT extends AbstractYAMLPluginIT {
 
     @Nested
     class TopLevelMap {

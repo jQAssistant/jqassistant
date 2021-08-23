@@ -1,10 +1,9 @@
-package com.buschmais.jqassistant.plugin.yaml2.impl.scanner.spec12;
+package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import java.io.File;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
-import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,7 @@ public abstract class AbstractYAMLPluginIT extends AbstractPluginIT {
         return getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
     }
 
-    YMLFileDescriptor readSourceDocument() {
+    protected YMLFileDescriptor readSourceDocument() {
         String sourceFile = getSourceYAMLFile();
         return readSourceDocument(sourceFile);
     }

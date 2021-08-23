@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor;
+import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
 import org.junit.jupiter.api.Test;
 
