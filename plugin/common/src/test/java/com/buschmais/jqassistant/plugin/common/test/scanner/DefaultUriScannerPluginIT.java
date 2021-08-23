@@ -18,14 +18,14 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * Verifies file/directory scanning.
  */
-public class DefaultUriScannerPluginIT extends AbstractPluginIT {
+class DefaultUriScannerPluginIT extends AbstractPluginIT {
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
      *
      */
     @Test
-    public void fileUri() throws URISyntaxException {
+    void fileUri() throws URISyntaxException {
         store.beginTransaction();
         URL resource = DefaultUriScannerPluginIT.class.getResource("/");
         URI uri = resource.toURI();

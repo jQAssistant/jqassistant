@@ -26,7 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
-public class URLScannerPluginTest {
+class URLScannerPluginTest {
 
     private UrlScannerPlugin plugin = new UrlScannerPlugin();
 
@@ -34,12 +34,12 @@ public class URLScannerPluginTest {
     private Scanner scanner;
 
     @BeforeAll
-    public static void registerURLHandler() {
+    static void registerURLHandler() {
         URL.setURLStreamHandlerFactory(new TestURLStreamHandlerFactory());
     }
 
     @Test
-    public void urls() throws IOException {
+    void urls() throws IOException {
         scan("test:/path", "test:/path");
         scan("test://myhost", "test://myhost");
         scan("test://myhost:8080", "test://myhost:8080");
@@ -49,7 +49,7 @@ public class URLScannerPluginTest {
     }
 
     @Test
-    public void authentication() throws IOException {
+    void authentication() throws IOException {
         FileResource fileResource = scan("test://user:secret@myhost:8080/path?value1=test1&value2=test2#anchor",
                 "test://myhost:8080/path?value1=test1&value2=test2#anchor");
         String content = IOUtils.toString(fileResource.createStream());

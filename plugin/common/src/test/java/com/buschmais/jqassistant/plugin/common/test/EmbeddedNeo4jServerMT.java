@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Manual test to start a server.
  */
-public class EmbeddedNeo4jServerMT extends AbstractEmbeddedNeo4jServerIT {
+class EmbeddedNeo4jServerMT extends AbstractEmbeddedNeo4jServerIT {
 
     @Test
-    public void server() throws IOException {
+    void server() throws IOException {
         System.out.println("Hit Enter to continue.");
         System.in.read();
     }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FilePatternMatcherTest {
+class FilePatternMatcherTest {
 
     private FilePatternMatcher filePatternMatcher;
 
@@ -22,7 +22,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void excludeSingleFilePattern() throws IOException {
+    void excludeSingleFilePattern() throws IOException {
         configure(null, "*.xml");
         assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
         assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
@@ -30,7 +30,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void includeAndExcludeSingleFilePatterns() throws IOException {
+    void includeAndExcludeSingleFilePatterns() throws IOException {
         configure("test.*", "*.xml");
         assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
         assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
@@ -38,7 +38,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void includeMultipleFilePatterns() throws IOException {
+    void includeMultipleFilePatterns() throws IOException {
         configure("*.xml, *.xsd", null);
         assertThat(filePatternMatcher.accepts("test.xml"), equalTo(true));
         assertThat(filePatternMatcher.accepts("test.xsd"), equalTo(true));
@@ -46,7 +46,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void excludeMultipleFilePatterns() throws IOException {
+    void excludeMultipleFilePatterns() throws IOException {
         configure(null, "*.xml, *.xsd");
         assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
         assertThat(filePatternMatcher.accepts("test.xsd"), equalTo(false));
@@ -54,7 +54,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void includeAndExcludeMultipleFilePatterns() throws IOException {
+    void includeAndExcludeMultipleFilePatterns() throws IOException {
         configure("test1.*,test2.*", "*.xml, *.xsd");
         assertThat(filePatternMatcher.accepts("test1.xml"), equalTo(false));
         assertThat(filePatternMatcher.accepts("test2.xml"), equalTo(false));
@@ -66,7 +66,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void includeMultipleFilePatternsWithFolder() throws IOException {
+    void includeMultipleFilePatternsWithFolder() throws IOException {
         configure("/META-INF/*.xml,/WEB-INF/*.xml", null);
         assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(true));
         assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml"), equalTo(true));
@@ -75,7 +75,7 @@ public class FilePatternMatcherTest {
     }
 
     @Test
-    public void excludeMultipleFilePatternsWithFolder() throws IOException {
+    void excludeMultipleFilePatternsWithFolder() throws IOException {
         configure(null, "/META-INF/*.xml,/WEB-INF/*.xml");
         assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(false));
         assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml"), equalTo(false));

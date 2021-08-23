@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Verifies file/directory scanning.
  */
-public class FileScannerIT extends AbstractPluginIT {
+class FileScannerIT extends AbstractPluginIT {
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
@@ -31,7 +31,7 @@ public class FileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void customDirectory() throws IOException {
+    void customDirectory() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
@@ -53,7 +53,7 @@ public class FileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void directoryContainsChildren() throws IOException {
+    void directoryContainsChildren() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);

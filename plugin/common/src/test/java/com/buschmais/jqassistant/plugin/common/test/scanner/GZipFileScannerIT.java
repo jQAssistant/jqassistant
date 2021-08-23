@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Verifies scanning of gzipped files.
  */
-public class GZipFileScannerIT extends AbstractPluginIT {
+class GZipFileScannerIT extends AbstractPluginIT {
 
     /**
      * Scan a GZipped zip file.
@@ -32,7 +32,7 @@ public class GZipFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void gzippedTextFile() throws IOException {
+    void gzippedTextFile() throws IOException {
         store.beginTransaction();
         File gzFile = File.createTempFile("test", ".txt.gz");
         gzFile.deleteOnExit();
@@ -60,7 +60,7 @@ public class GZipFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void gzippedZipFile() throws IOException {
+    void gzippedZipFile() throws IOException {
         store.beginTransaction();
         File zipFile = File.createTempFile("test", ".zip");
         zipFile.deleteOnExit();

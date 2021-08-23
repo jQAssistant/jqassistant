@@ -22,15 +22,15 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies scanning of TAR arichves.
  */
-public class TarScannerIT extends AbstractPluginIT {
+class TarScannerIT extends AbstractPluginIT {
 
     @Test
-    public void tarFile() throws Exception {
+    void tarFile() throws Exception {
         test(FileResourceStrategy.File);
     }
 
     @Test
-    public void tarUrl() throws Exception {
+    void tarUrl() throws Exception {
         test(FileResourceStrategy.Url);
     }
 

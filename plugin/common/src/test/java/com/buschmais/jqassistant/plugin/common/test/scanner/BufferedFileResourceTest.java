@@ -13,17 +13,17 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BufferedFileResourceTest {
+class BufferedFileResourceTest {
 
     private static final String stream = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     @Test
-    public void reUseBuffer() throws IOException {
+    void reUseBuffer() throws IOException {
         readAndVerify(stream.length());
     }
 
     @Test
-    public void exhaustBuffer() throws IOException {
+    void exhaustBuffer() throws IOException {
         readAndVerify(5);
     }
 

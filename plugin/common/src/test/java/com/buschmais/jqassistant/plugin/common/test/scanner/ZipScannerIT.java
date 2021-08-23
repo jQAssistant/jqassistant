@@ -22,20 +22,20 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies scanning of ZIP arichves.
  */
-public class ZipScannerIT extends AbstractPluginIT {
+class ZipScannerIT extends AbstractPluginIT {
 
     @Test
-    public void zipFile() throws Exception {
+    void zipFile() throws Exception {
         test(FileResourceStrategy.File);
     }
 
     @Test
-    public void zipUrl() throws Exception {
+    void zipUrl() throws Exception {
         test(FileResourceStrategy.Url);
     }
 
     @Test
-    public void invalidZip() throws Exception {
+    void invalidZip() throws Exception {
         File archive = File.createTempFile("test", ".zip");
         archive.deleteOnExit();
         store.beginTransaction();
