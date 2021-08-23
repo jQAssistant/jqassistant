@@ -16,10 +16,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-public class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
+class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         File rootDirectory = getClassesDirectory(SingleConfiguredPluginIT.class);
         File projectDirectory = new File(rootDirectory, "plugin/single-configured-plugin");
         scanClassPathDirectory(projectDirectory);
@@ -28,14 +28,14 @@ public class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
     @Test
-    public void declaredPluginCanBeFoundThroughRelationShip() {
+    void declaredPluginCanBeFoundThroughRelationShip() {
         // There should be one declared plugin
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom)-[:USES_PLUGIN]->(n:Maven:Plugin) RETURN n").getColumn("n");
@@ -44,7 +44,7 @@ public class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void declaredPluginCanBeFound() throws Exception {
+    void declaredPluginCanBeFound() throws Exception {
         // There should be one Maven Project
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
@@ -60,7 +60,7 @@ public class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void allPropertiesOfTheDeclaredPluginAreFound() {
+    void allPropertiesOfTheDeclaredPluginAreFound() {
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
 

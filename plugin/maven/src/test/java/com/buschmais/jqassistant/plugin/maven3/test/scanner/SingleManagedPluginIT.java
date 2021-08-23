@@ -15,10 +15,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-public class SingleManagedPluginIT extends AbstractJavaPluginIT {
+class SingleManagedPluginIT extends AbstractJavaPluginIT {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         File rootDirectory = getClassesDirectory(SingleManagedPluginIT.class);
         File projectDirectory = new File(rootDirectory, "plugin/single-managed-plugin");
         scanClassPathDirectory(projectDirectory);
@@ -27,14 +27,14 @@ public class SingleManagedPluginIT extends AbstractJavaPluginIT {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
     @Test
-    public void managedPluginCanBeFoundThroughRelationShip() {
+    void managedPluginCanBeFoundThroughRelationShip() {
         // There should be one Maven Project
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");

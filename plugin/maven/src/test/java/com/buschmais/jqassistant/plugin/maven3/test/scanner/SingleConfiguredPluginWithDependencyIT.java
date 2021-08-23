@@ -18,10 +18,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 
-public class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT {
+class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         File rootDirectory = getClassesDirectory(SingleConfiguredPluginWithDependencyIT.class);
         File projectDirectory = new File(rootDirectory, "plugin/with-one-dependency");
         scanClassPathDirectory(projectDirectory);
@@ -30,14 +30,14 @@ public class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
     @Test
-    public void configuredPluginCanBeFound() throws Exception {
+    void configuredPluginCanBeFound() throws Exception {
         // There should be one Maven Project
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
@@ -53,7 +53,7 @@ public class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT
     }
 
     @Test
-    public void dependencyOfPluginCanBeFound() {
+    void dependencyOfPluginCanBeFound() {
         List<MavenArtifactDescriptor> dependencies =
             query("MATCH (p:Maven:Plugin)-[:DECLARES_DEPENDENCY]->(:Dependency)-[:TO_ARTIFACT]->(d:Maven:Artifact) RETURN d").getColumn("d");
 

@@ -26,7 +26,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GraphResolverTest {
+class GraphResolverTest {
 
     @Mock
     private ArtifactResolver artifactResolver;
@@ -39,7 +39,7 @@ public class GraphResolverTest {
     private GraphResolver graphResolver;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         doAnswer(i -> {
             Coordinates coordinates = (Coordinates) i.getArguments()[0];
             String fqn = MavenArtifactHelper.getId(coordinates);
@@ -54,7 +54,7 @@ public class GraphResolverTest {
     }
 
     @Test
-    public void resolve() {
+    void resolve() {
         DependencyNode mainNode = getDependencyNode(null, "main", Artifact.SCOPE_COMPILE);
         DependencyNode directDependencyNode = getDependencyNode(mainNode, "direct-dependency", Artifact.SCOPE_COMPILE);
         DependencyNode transitiveDependencyNode = getDependencyNode(directDependencyNode, "transitive-dependency", Artifact.SCOPE_COMPILE);

@@ -17,13 +17,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.doReturn;
 
-public class MavenPomFileScannerPluginTest {
+class MavenPomFileScannerPluginTest {
     private static final Answer NOT_MOCKED_ANSWER = new MethodNotMockedAnswer();
 
     private static final Scope DUMMY_SCOPE = new DummyScope();
 
     @Test
-    public void acceptAcceptsFilesWithExtensionDotPom() throws Exception {
+    void acceptAcceptsFilesWithExtensionDotPom() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream("<bla><a></a></bla>".getBytes(StandardCharsets.UTF_8));
@@ -40,7 +40,7 @@ public class MavenPomFileScannerPluginTest {
     }
 
     @Test
-    public void acceptAcceptsFilesWithNamePomDotXML() throws Exception {
+    void acceptAcceptsFilesWithNamePomDotXML() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream("<bla><a></a></bla>".getBytes(StandardCharsets.UTF_8));
@@ -57,7 +57,7 @@ public class MavenPomFileScannerPluginTest {
     }
 
     @Test
-    public void acceptRefusesFileWithNonXMLExtension() throws Exception {
+    void acceptRefusesFileWithNonXMLExtension() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream("<project><a></a></project>".getBytes(StandardCharsets.UTF_8));
@@ -74,7 +74,7 @@ public class MavenPomFileScannerPluginTest {
     }
 
     @Test
-    public void acceptChecksAcceptsWithRootTagProjectIfExtensionIsXMLAndNonStandardName() throws Exception {
+    void acceptChecksAcceptsWithRootTagProjectIfExtensionIsXMLAndNonStandardName() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream("<project><a></a></project>".getBytes(StandardCharsets.UTF_8));
@@ -91,7 +91,7 @@ public class MavenPomFileScannerPluginTest {
     }
 
     @Test
-    public void acceptChecksRefusesWithDifferentRootTagfExtensionIsXMLAndNonStandardName() throws Exception {
+    void acceptChecksRefusesWithDifferentRootTagfExtensionIsXMLAndNonStandardName() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream("<root><a></a></root>".getBytes(StandardCharsets.UTF_8));

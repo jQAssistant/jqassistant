@@ -17,10 +17,10 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAIL
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class Maven3IT extends AbstractPluginIT {
+class Maven3IT extends AbstractPluginIT {
 
     @Test
-    public void hierarchicalParentModuleRelation() throws Exception {
+    void hierarchicalParentModuleRelation() throws Exception {
         store.beginTransaction();
         MavenProjectDirectoryDescriptor parent = store.create(MavenProjectDirectoryDescriptor.class);
         MavenProjectDirectoryDescriptor module1 = store.create(MavenProjectDirectoryDescriptor.class);

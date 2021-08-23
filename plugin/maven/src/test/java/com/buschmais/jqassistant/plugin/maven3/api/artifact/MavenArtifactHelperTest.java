@@ -10,10 +10,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class MavenArtifactHelperTest {
+class MavenArtifactHelperTest {
 
     @Test
-    public void baseVersion() {
+    void baseVersion() {
         verifyBaseVersion("0.5.0", "0.5.0");
         verifyBaseVersion("0.5.0-SNAPSHOT", "0.5.0-SNAPSHOT");
         verifyBaseVersion("0.5.0-20141126.194537-53", "0.5.0-SNAPSHOT");
@@ -26,7 +26,7 @@ public class MavenArtifactHelperTest {
     }
 
     @Test
-    public void snapshot() {
+    void snapshot() {
         verifySnapshot("0.5.0", false);
         verifySnapshot("0.5.0-SNAPSHOT", true);
         verifySnapshot("0.5.0-20141126.194537-53", true);

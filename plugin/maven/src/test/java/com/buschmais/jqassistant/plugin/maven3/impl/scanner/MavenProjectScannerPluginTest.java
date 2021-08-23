@@ -53,7 +53,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MavenProjectScannerPluginTest {
+class MavenProjectScannerPluginTest {
 
     @Mock
     private Store store;
@@ -83,12 +83,12 @@ public class MavenProjectScannerPluginTest {
     private ArgumentCaptor<ArtifactFilter> artifactFilterCaptor;
 
     @Test
-    public void scan() throws DependencyGraphBuilderException {
+    void scan() throws DependencyGraphBuilderException {
         scanAndVerify(new HashMap<>(), false);
     }
 
     @Test
-    public void scanDependencies() throws DependencyGraphBuilderException {
+    void scanDependencies() throws DependencyGraphBuilderException {
         Map<String, Object> properties = new HashMap<>();
         properties.put("maven3.dependencies.scan", "true");
         properties.put("maven3.dependencies.includes", "included");

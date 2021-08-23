@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class MavenArtifactResolverTest {
+class MavenArtifactResolverTest {
 
     @Mock
     private ScannerContext scannerContext;
@@ -41,7 +41,7 @@ public class MavenArtifactResolverTest {
     private MavenArtifactResolver resolver = new MavenArtifactResolver();
 
     @Test
-    public void resolveArtifact() {
+    void resolveArtifact() {
         DefaultArtifact artifact = new DefaultArtifact("group", "artifact", "1.0.0", Artifact.SCOPE_COMPILE, "jar", "classifier", new DefaultArtifactHandler());
         doReturn(store).when(scannerContext).getStore();
         Query.Result result = mock(Query.Result.class);

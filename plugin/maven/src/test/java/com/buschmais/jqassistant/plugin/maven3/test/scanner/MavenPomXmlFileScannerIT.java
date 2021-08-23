@@ -27,14 +27,14 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
+class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Scans and tests pom.xml files.
      *
      */
     @Test
-    public void artifactResolver() {
+    void artifactResolver() {
         final File directory = getClassesDirectory(MavenPomXmlFileScannerIT.class);
         final ArtifactResolver artifactResolverSpy = Mockito.spy(new MavenArtifactResolver());
         execute(ARTIFACT_ID, (artifact, scanner) -> {
@@ -56,7 +56,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void pomModel() {
+    void pomModel() {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
         store.beginTransaction();
         validateParentPom();
@@ -65,7 +65,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void urlOfTheProjectHomeIsAvailableAsProperty() {
+    void urlOfTheProjectHomeIsAvailableAsProperty() {
         scanClassPathResource(DefaultScope.NONE, "/pom.xml");
         store.beginTransaction();
         List<MavenPomDescriptor> pomDescriptors = query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
@@ -80,7 +80,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * {@link MavenDependencyDescriptor} providing {@link MavenExcludesDescriptor}.
      */
     @Test
-    public void pomDependenciesWithExclusion() {
+    void pomDependenciesWithExclusion() {
         scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
         scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
         store.beginTransaction();
@@ -101,7 +101,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName() {
+    void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName() {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
 
         store.beginTransaction();
@@ -117,7 +117,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void invalidPomFile() {
+    void invalidPomFile() {
         scanClassPathResource(JavaScope.CLASSPATH,"/invalid/pom.xml");
         store.beginTransaction();
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
@@ -127,7 +127,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void organizationInPomFile() {
+    void organizationInPomFile() {
         scanClassPathResource(JavaScope.CLASSPATH,"/with-organization/pom.xml");
         store.beginTransaction();
         List<MavenOrganizationDescriptor> organisationDescriptors = query("MATCH (o:Organization:Maven) RETURN o").getColumn("o");
@@ -143,7 +143,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void relationBetweenPOMAndOrganisationWorks() {
+    void relationBetweenPOMAndOrganisationWorks() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-organization/pom.xml");
         store.beginTransaction();
         List<MavenOrganizationDescriptor> organisationDescriptors =
@@ -160,7 +160,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void minimalRepositoryInPOM() {
+    void minimalRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/1/pom.xml");
 
         store.beginTransaction();
@@ -190,7 +190,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void disabledReleasesForRepositoryInPOM() {
+    void disabledReleasesForRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/2/pom.xml");
 
         store.beginTransaction();
@@ -220,7 +220,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void disabledSnapshotsForRepositoryInPOM() {
+    void disabledSnapshotsForRepositoryInPOM() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/3/pom.xml");
 
         store.beginTransaction();
@@ -250,7 +250,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void minimalRepositoryInProfile() {
+    void minimalRepositoryInProfile() {
         scanClassPathResource(JavaScope.CLASSPATH, "/repository/4/pom.xml");
 
         store.beginTransaction();
@@ -286,7 +286,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * added to the model.
      */
     @Test
-    public void allDevelopersAreFound() {
+    void allDevelopersAreFound() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
 
         store.beginTransaction();
@@ -332,7 +332,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * added to the model.
      */
     @Test
-    public void allContributorsAreFound() {
+    void allContributorsAreFound() {
         scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
 
         store.beginTransaction();

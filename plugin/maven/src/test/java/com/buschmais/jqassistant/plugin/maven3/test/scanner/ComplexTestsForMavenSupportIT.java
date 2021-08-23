@@ -17,17 +17,17 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
-public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
+class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
     @AfterEach
-    public void commitTransaction() {
+    void commitTransaction() {
         // @todo Check if there is an open TX. There is some support on the current master for this.
         // Oliver B. Fischer, 2016-03-01
         store.commitTransaction();
     }
 
     @BeforeEach
-    public void scanDirectoryWithTestData() throws Exception {
+    void scanDirectoryWithTestData() throws Exception {
         File rootDir = getClassesDirectory(ComplexTestsForMavenSupportIT.class);
         File scanRoot = new File(rootDir, "project-with-idea-config");
 
@@ -36,7 +36,7 @@ public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
     @Disabled
     @Test
-    public void shouldFind8Files() throws Exception {
+    void shouldFind8Files() throws Exception {
         store.beginTransaction();
 
         List<FileDescriptor> files = query("MATCH (f:File) RETURN f").getColumn("f");
@@ -48,7 +48,7 @@ public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void shouldFind2Directories() throws Exception {
+    void shouldFind2Directories() throws Exception {
         store.beginTransaction();
 
         List<DirectoryDescriptor> directories = query("MATCH (d:Directory) RETURN d").getColumn("d");
@@ -57,7 +57,7 @@ public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void shouldFindOneMavenPOM() throws Exception {
+    void shouldFindOneMavenPOM() throws Exception {
         store.beginTransaction();
 
         List<FileDescriptor> directories = query("MATCH (x:Maven:Pom:Xml) RETURN x").getColumn("x");
@@ -68,7 +68,7 @@ public class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void shouldFind1XMLFile() throws Exception {
+    void shouldFind1XMLFile() throws Exception {
         store.beginTransaction();
 
         /*

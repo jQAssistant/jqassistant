@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class RawModelBuilderTest {
+class RawModelBuilderTest {
 
     private RawModelBuilder rawModelBuilder = new RawModelBuilder();
 
@@ -26,7 +26,7 @@ public class RawModelBuilderTest {
     }
 
     @Test
-    public void invalidModel() throws IOException {
+    void invalidModel() throws IOException {
         File pom = getPOMFile("/invalid/pom-with-duplicate-tag.xml");
         assertThat(rawModelBuilder.getModel(pom), nullValue());
     }

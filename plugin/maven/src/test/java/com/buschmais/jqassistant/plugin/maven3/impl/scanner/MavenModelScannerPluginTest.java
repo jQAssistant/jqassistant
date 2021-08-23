@@ -31,7 +31,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class MavenModelScannerPluginTest {
+class MavenModelScannerPluginTest {
 
     @Mock
     private Scanner scanner;
@@ -51,7 +51,7 @@ public class MavenModelScannerPluginTest {
     private MavenModelScannerPlugin plugin;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         doReturn(context).when(scanner).getContext();
         doReturn(store).when(context).getStore();
         doReturn(artifactResolver).when(context).peek(ArtifactResolver.class);
@@ -61,20 +61,20 @@ public class MavenModelScannerPluginTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         plugin.destroy();
 
     }
 
     @Test
-    public void model() {
+    void model() {
         Model model = stubModel();
         MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
         verify(store, never()).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class);
     }
 
     @Test
-    public void effectiveModel() {
+    void effectiveModel() {
         Model model = new EffectiveModel(stubModel());
         MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
         verify(store).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class);

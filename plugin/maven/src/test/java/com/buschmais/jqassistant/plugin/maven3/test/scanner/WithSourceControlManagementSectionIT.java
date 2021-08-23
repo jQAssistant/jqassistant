@@ -15,9 +15,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
+class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         File rootDirectory = getClassesDirectory(SingleConfiguredPluginIT.class);
         File projectDirectory = new File(rootDirectory, "scm/with");
         scanClassPathDirectory(projectDirectory);
@@ -26,7 +26,7 @@ public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
@@ -34,7 +34,7 @@ public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
 
     // precondition
     @Test
-    public void pomIsFound() {
+    void pomIsFound() {
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
 
@@ -42,7 +42,7 @@ public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void scmInformationArePartOfTheGraphModel() {
+    void scmInformationArePartOfTheGraphModel() {
         List<MavenScmDescriptor> scmDescriptors =
             query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getColumn("s");
 
@@ -50,7 +50,7 @@ public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void scmInformationCanBeFoundViaLabel() {
+    void scmInformationCanBeFoundViaLabel() {
         List<MavenScmDescriptor> scmDescriptors =
             query("MATCH (s:Maven:Scm) RETURN s").getColumn("s");
 
@@ -58,7 +58,7 @@ public class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void propertiesOfScmInformationAreSet() {
+    void propertiesOfScmInformationAreSet() {
         List<MavenScmDescriptor> scmDescriptors =
             query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getColumn("s");
 

@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasSize;
 
-public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
+class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     @BeforeEach
     public void setUp() throws Exception {
         File rootDirectory = getClassesDirectory(WithoutSourceControlManagementSectionIT.class);
@@ -26,7 +26,7 @@ public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginI
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
@@ -34,7 +34,7 @@ public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginI
 
     // precondition
     @Test
-    public void pomIsFound() {
+    void pomIsFound() {
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
 
@@ -42,7 +42,7 @@ public class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginI
     }
 
     @Test
-    public void scmInformationisNotPresentAsItIsNotExisting() {
+    void scmInformationisNotPresentAsItIsNotExisting() {
 
         List<Map<String, Object>> rows = query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getRows();
 
