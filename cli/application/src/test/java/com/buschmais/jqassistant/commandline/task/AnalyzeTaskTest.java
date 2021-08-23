@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class AnalyzeTaskTest {
+class AnalyzeTaskTest {
 
     @Mock
     private PluginRepository pluginRepository;
@@ -42,7 +42,7 @@ public class AnalyzeTaskTest {
     private RulePluginRepository rulePluginRepository;
 
     @BeforeEach
-    public void before() {
+    void before() {
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
@@ -50,7 +50,7 @@ public class AnalyzeTaskTest {
     }
 
     @Test
-    public void loadPlugins() throws CliExecutionException, RuleException {
+    void loadPlugins() throws CliExecutionException, RuleException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
         Map<String, Object> pluginProperties = new HashMap<>();
         analyzeTask.initialize(pluginRepository, pluginProperties);

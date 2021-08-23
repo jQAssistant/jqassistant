@@ -15,15 +15,15 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Verifies command line listing of available rules.
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-public class HelpIT extends AbstractCLIIT {
+class HelpIT extends AbstractCLIIT {
 
     @TestTemplate
-    public void runWithoutTask() throws IOException, InterruptedException {
+    void runWithoutTask() throws IOException, InterruptedException {
         verify(new String[0]);
     }
 
     @TestTemplate
-    public void helpOption() throws IOException, InterruptedException {
+    void helpOption() throws IOException, InterruptedException {
         verify(new String[] { "-help}" });
     }
 

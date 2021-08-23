@@ -16,10 +16,10 @@ import static org.hamcrest.Matchers.equalTo;
  * Verifies command line reporting.
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-public class ReportIT extends com.buschmais.jqassistant.commandline.test.AbstractCLIIT {
+class ReportIT extends com.buschmais.jqassistant.commandline.test.AbstractCLIIT {
 
     @TestTemplate
-    public void report() throws IOException, InterruptedException {
+    void report() throws IOException, InterruptedException {
         String rulesDirectory = ReportIT.class.getResource("/rules").getFile();
         String[] args1 = new String[] { "analyze", "report", "-r", rulesDirectory, "-concepts", "default:TestConcept" };
         assertThat(execute(args1).getExitCode(), equalTo(0));

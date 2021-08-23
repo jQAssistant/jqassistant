@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Verifies command line analysis.
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-public class AnalyzeIT extends AbstractCLIIT {
+class AnalyzeIT extends AbstractCLIIT {
 
     @TestTemplate
     public void defaultGroup() throws IOException, InterruptedException {
@@ -39,21 +39,21 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void constraint() throws IOException, InterruptedException {
+    void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
         assertThat(execute(args).getExitCode(), equalTo(2));
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @TestTemplate
-    public void concept() throws IOException, InterruptedException {
+    void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
         assertThat(execute(args).getExitCode(), equalTo(0));
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
     @TestTemplate
-    public void conceptWithParameter() throws IOException, InterruptedException {
+    void conceptWithParameter() throws IOException, InterruptedException {
         File ruleParameters = new File(AnalyzeIT.class.getResource("/ruleparameters.properties").getPath());
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER, "-ruleParameters",
                 ruleParameters.getAbsolutePath() };
@@ -62,7 +62,7 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void constraintFailOnSeverity() throws IOException, InterruptedException {
+    void constraintFailOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
         assertThat(execute(args).getExitCode(), equalTo(2));
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
@@ -75,7 +75,7 @@ public class AnalyzeIT extends AbstractCLIIT {
      * @throws InterruptedException
      */
     @TestTemplate
-    public void constraintWarnOnSeverity() throws IOException, InterruptedException {
+    void constraintWarnOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "major", "-failOnSeverity",
                 "critical" };
         ExecutionResult executionResult = execute(args);
@@ -88,7 +88,7 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void defaultConstraintSeverity() throws IOException, InterruptedException {
+    void defaultConstraintSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "minor",
                 "-defaultConstraintSeverity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(0));
@@ -96,14 +96,14 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void defaultGroupSeverity() throws IOException, InterruptedException {
+    void defaultGroupSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-failOnSeverity", "minor", "-defaultGroupSeverity", "info" };
         assertThat(execute(args).getExitCode(), equalTo(0));
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @TestTemplate
-    public void storeDirectory() throws IOException, InterruptedException {
+    void storeDirectory() throws IOException, InterruptedException {
         File customStoreDir = new File(getWorkingDirectory(), "customStore");
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDir.getAbsolutePath() };
@@ -112,7 +112,7 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void createReportArchive() throws IOException, InterruptedException {
+    void createReportArchive() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-createReportArchive" };
         assertThat(execute(args).getExitCode(), equalTo(2));
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));

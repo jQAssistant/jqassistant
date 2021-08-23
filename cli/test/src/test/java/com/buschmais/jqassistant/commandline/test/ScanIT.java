@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Verifies command line scanning.
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-public class ScanIT extends AbstractCLIIT {
+class ScanIT extends AbstractCLIIT {
 
     private static final String CLASSPATH_SCOPE_SUFFIX = "java:classpath::";
 
@@ -38,7 +38,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void files() throws IOException, InterruptedException {
+    void files() throws IOException, InterruptedException {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
         assertThat(execute(args).getExitCode(), equalTo(0));
@@ -54,7 +54,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void pluginClassLoader() throws IOException, InterruptedException {
+    void pluginClassLoader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
         assertThat(execute(args).getExitCode(), equalTo(0));
@@ -66,7 +66,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void reset() throws IOException, InterruptedException {
+    void reset() throws IOException, InterruptedException {
         URL file = getResource(AnalyzeIT.class);
         String[] args2 = new String[] { "scan", "-f", file.getFile(), "-reset" };
         ExecutionResult executionResult = execute(args2);
@@ -79,7 +79,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void storeDirectory() throws IOException, InterruptedException {
+    void storeDirectory() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
@@ -89,7 +89,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void storeUri() throws IOException, InterruptedException {
+    void storeUri() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store2");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
@@ -107,7 +107,7 @@ public class ScanIT extends AbstractCLIIT {
      *             If execution is interrupted.
      */
     @TestTemplate
-    public void storeUriAndDirectory() throws IOException, InterruptedException {
+    void storeUriAndDirectory() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store1");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);

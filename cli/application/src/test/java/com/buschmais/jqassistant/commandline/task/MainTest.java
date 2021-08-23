@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
  * Verifies functionality of the main class.
  */
 @ExtendWith(MockitoExtension.class)
-public class MainTest {
+class MainTest {
 
     @Mock
     private TaskFactory taskFactory;
@@ -35,7 +35,7 @@ public class MainTest {
     private Task task;
 
     @Test
-    public void defaultPluginProperties() throws CliExecutionException {
+    void defaultPluginProperties() throws CliExecutionException {
         when(taskFactory.fromName("test")).thenReturn(task);
         Main main = new Main(taskFactory);
         main.run(new String[] { "test" });
@@ -43,7 +43,7 @@ public class MainTest {
     }
 
     @Test
-    public void alternativePluginProperties() throws CliExecutionException {
+    void alternativePluginProperties() throws CliExecutionException {
         when(taskFactory.fromName("test")).thenReturn(task);
         File propertyFile = ClasspathResource.getFile(MainTest.class, "/jqassistant-alternative.properties");
         Main main = new Main(taskFactory);

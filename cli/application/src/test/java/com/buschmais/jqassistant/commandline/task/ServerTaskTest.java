@@ -20,7 +20,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ServerTaskTest {
+class ServerTaskTest {
 
     @Mock
     PluginRepository pluginRepository;
@@ -32,21 +32,21 @@ public class ServerTaskTest {
     private EmbeddedNeo4jServer server;
 
     @BeforeEach
-    public final void setUp() {
+    final void setUp() {
         doReturn(server).when(store).getServer();
     }
 
     private ServerTask serverTask = new ServerTask();
 
     @Test
-    public void daemon() throws CliExecutionException, ParseException {
+    void daemon() throws CliExecutionException, ParseException {
         startServer("-daemon");
 
         verify(server).start();
     }
 
     @Test
-    public void standalone() throws CliExecutionException, ParseException {
+    void standalone() throws CliExecutionException, ParseException {
         String data = "\r\n";
         InputStream stdin = System.in;
         try {

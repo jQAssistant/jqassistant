@@ -17,10 +17,10 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Verifies command line listing of available rules.
  */
 @ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
-public class AvailableRulesIT extends AbstractCLIIT {
+class AvailableRulesIT extends AbstractCLIIT {
 
     @TestTemplate
-    public void listUsingRuleDirectory() throws IOException, InterruptedException {
+    void listUsingRuleDirectory() throws IOException, InterruptedException {
         String rulesDirectory = AvailableRulesIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "available-rules", "-r", rulesDirectory };
         ExecutionResult executionResult = execute(args);
@@ -33,7 +33,7 @@ public class AvailableRulesIT extends AbstractCLIIT {
     }
 
     @TestTemplate
-    public void listUsingRulesUrl() throws IOException, InterruptedException {
+    void listUsingRulesUrl() throws IOException, InterruptedException {
         URL rulesUrl = AvailableRulesIT.class.getResource("/rules/custom.adoc");
         String[] args = new String[] { "available-rules", "-rulesUrl", rulesUrl.toString() };
         ExecutionResult executionResult = execute(args);
