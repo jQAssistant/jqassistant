@@ -17,15 +17,15 @@ import static com.buschmais.jqassistant.plugin.json.impl.parsing.generated.JSONL
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class JQAssistantJSONLexerTest {
-    public static Stream<Arguments> data() {
+class JQAssistantJSONLexerTest {
+    static Stream<Arguments> data() {
         return Stream.of(arguments("[]", new String[]{"[", "]"}, new Integer[] {T__4, T__5}),
                          arguments("[\"VALUE\"]", new String[]{"[", "VALUE", "]"}, new Integer[]{T__4, STRING, T__5}));
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void lexerOutput(String input, String[] expectedTokens, Integer[] exptectedTypeIds) {
+    void lexerOutput(String input, String[] expectedTokens, Integer[] exptectedTypeIds) {
         JSONLexer lexer = new JQAssistantJSONLexer(CharStreams.fromString(input), "/not/given");
 
         List<? extends Token> foundTokens = lexer.getAllTokens();

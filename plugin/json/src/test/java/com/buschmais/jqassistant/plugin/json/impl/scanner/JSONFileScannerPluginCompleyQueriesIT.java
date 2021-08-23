@@ -15,22 +15,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
+class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @BeforeEach
-    public void startTransaction() {
+    void startTransaction() {
         store.beginTransaction();
     }
 
     @AfterEach
-    public void commitTransaction() {
+    void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
     @Test
-    public void scanReturnsFileDescriptorWithCorrectFileName() {
+    void scanReturnsFileDescriptorWithCorrectFileName() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
@@ -45,7 +45,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithOneKeyValuePair() {
+    void scanReturnsObjectWithOneKeyValuePair() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/object-one-key-value-pair.json");
 
@@ -65,7 +65,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithTwoKeyValuePairs() {
+    void scanReturnsObjectWithTwoKeyValuePairs() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/object-two-key-value-pairs.json");
 
@@ -82,7 +82,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithThreeKeysWithTrueFalseAndNullValue() {
+    void scanReturnsObjectWithThreeKeysWithTrueFalseAndNullValue() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
@@ -102,7 +102,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
 
     @Test
-    public void scanReturnsObjectThereOneValueIsNull() {
+    void scanReturnsObjectThereOneValueIsNull() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
@@ -120,7 +120,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
 
     @Test
-    public void scanReturnsSingleInteger() {
+    void scanReturnsSingleInteger() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                                  "/probes/valid/single-int.json");
 
@@ -142,7 +142,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
     }
 
     @Test
-    public void rootObjectIsNotAValueOthersAre() {
+    void rootObjectIsNotAValueOthersAre() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                 "/probes/valid/object-with-object-empty.json");
 
@@ -167,7 +167,7 @@ public class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
     }
 
     @Test
-    public void rootArrayIsNotAValueOthersAre() {
+    void rootArrayIsNotAValueOthersAre() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
                 "/probes/valid/array-of-arrays.json");
 

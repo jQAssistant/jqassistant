@@ -10,15 +10,15 @@ import org.antlr.v4.runtime.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class JQAssistantJSONParserHandlingOfValidJSONFilesTest {
+class JQAssistantJSONParserHandlingOfValidJSONFilesTest {
 
-    public static Stream<String> data() {
+    static Stream<String> data() {
         return DataProvider.validOwnExamples();
     }
 
     @MethodSource("data")
     @ParameterizedTest
-    public void canParseValidJSONFile(String pathToJSONFile) throws Exception {
+    void canParseValidJSONFile(String pathToJSONFile) throws Exception {
         try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {
             JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), pathToJSONFile);
             JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), pathToJSONFile);

@@ -17,15 +17,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JQAssistantJSONParserHandlingOfInvalidJSONFilesTest {
+class JQAssistantJSONParserHandlingOfInvalidJSONFilesTest {
 
-    public static Stream<String> data() {
+    static Stream<String> data() {
         return DataProvider.invalidOwnExamples();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void parserRecognizesAInvalidJSONFile(String pathToJSONFile) {
+    void parserRecognizesAInvalidJSONFile(String pathToJSONFile) {
         IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
         ThrowableAssert.ThrowingCallable shouldRaiseThrowable = () -> {
             try (InputStream inputStream = getClass().getResourceAsStream(pathToJSONFile)) {

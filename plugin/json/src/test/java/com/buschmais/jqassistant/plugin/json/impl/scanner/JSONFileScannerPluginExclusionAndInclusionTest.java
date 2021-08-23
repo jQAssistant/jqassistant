@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class JSONFileScannerPluginExclusionAndInclusionTest {
+class JSONFileScannerPluginExclusionAndInclusionTest {
 
     @Mock
     private ScannerContext context;
@@ -27,7 +27,7 @@ public class JSONFileScannerPluginExclusionAndInclusionTest {
     private JSONFileScannerPlugin scannerPlugin = new JSONFileScannerPlugin();
 
     @Test
-    public void noFilePattern() throws IOException {
+    void noFilePattern() throws IOException {
         configure(null, null);
 
         assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isFalse();
@@ -35,7 +35,7 @@ public class JSONFileScannerPluginExclusionAndInclusionTest {
     }
 
     @Test
-    public void includeFilePattern() throws IOException {
+    void includeFilePattern() throws IOException {
         configure("*.json", null);
 
         assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isFalse();
@@ -43,7 +43,7 @@ public class JSONFileScannerPluginExclusionAndInclusionTest {
     }
 
     @Test
-    public void includeAndExcludeFilePattern() throws IOException {
+    void includeAndExcludeFilePattern() throws IOException {
         configure("test.*", "*.json");
 
         assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isTrue();
@@ -51,7 +51,7 @@ public class JSONFileScannerPluginExclusionAndInclusionTest {
     }
 
     @Test
-    public void includeWithDirectoryPart() throws Exception {
+    void includeWithDirectoryPart() throws Exception {
         configure("*/data/test.*", null);
 
         assertThat(scannerPlugin.accepts(fileResource, "test/data/test.txt", DefaultScope.NONE)).isTrue();
@@ -59,7 +59,7 @@ public class JSONFileScannerPluginExclusionAndInclusionTest {
     }
 
     @Test
-    public void excludeWithDirectoryPart() throws Exception {
+    void excludeWithDirectoryPart() throws Exception {
         configure(null, "*/data/test.*");
 
         assertThat(scannerPlugin.accepts(fileResource, "test/data/test.txt", DefaultScope.NONE)).isFalse();

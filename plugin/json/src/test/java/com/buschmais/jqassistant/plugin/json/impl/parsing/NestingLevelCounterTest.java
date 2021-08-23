@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class NestingLevelCounterTest {
+class NestingLevelCounterTest {
 
     @Test
-    public void enterIncreasesTheLevel() {
+    void enterIncreasesTheLevel() {
         NestingLevelCounter c = new NestingLevelCounter(1_0000);
 
         assertThat(c.level()).isEqualTo(0);
@@ -19,7 +19,7 @@ public class NestingLevelCounterTest {
     }
 
     @Test
-    public void leaveDecreasesTheLevel() {
+    void leaveDecreasesTheLevel() {
         NestingLevelCounter c = new NestingLevelCounter(1_0000);
 
         c.enter();
@@ -32,7 +32,7 @@ public class NestingLevelCounterTest {
     }
 
     @Test
-    public void counterThrowsExceptionIfLevelHasBeenReached() {
+    void counterThrowsExceptionIfLevelHasBeenReached() {
         NestingLevelCounter c = new NestingLevelCounter(1);
 
         assertThatThrownBy(() -> c.enter().check()).isInstanceOf(IllegalStateException.class);

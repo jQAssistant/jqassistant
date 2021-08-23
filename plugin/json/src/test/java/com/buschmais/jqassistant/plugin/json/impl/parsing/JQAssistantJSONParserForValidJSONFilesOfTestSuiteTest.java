@@ -14,15 +14,15 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class JQAssistantJSONParserForValidJSONFilesOfTestSuiteTest {
+class JQAssistantJSONParserForValidJSONFilesOfTestSuiteTest {
 
-    public static Stream<File> data() throws URISyntaxException {
+    static Stream<File> data() throws URISyntaxException {
         return DataProvider.validFilesOfJSONParsingTestSuite();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canParseAValidJSONFileOfTheTestSuite(File jsonFile) throws Exception {
+    void canParseAValidJSONFileOfTheTestSuite(File jsonFile) throws Exception {
         try (InputStream inputStream = Files.newInputStream(jsonFile.toPath())) {
             JSONLexer l = new JQAssistantJSONLexer(CharStreams.fromStream(inputStream), "/not/given");
             JSONParser p = new JQAssistantJSONParser(new CommonTokenStream(l), "/not/given");

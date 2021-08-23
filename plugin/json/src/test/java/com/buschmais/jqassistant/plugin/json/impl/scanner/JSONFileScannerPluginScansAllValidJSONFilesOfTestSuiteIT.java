@@ -17,27 +17,27 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JSONFileScannerPluginScansAllValidJSONFilesOfTestSuiteIT extends AbstractPluginIT {
+class JSONFileScannerPluginScansAllValidJSONFilesOfTestSuiteIT extends AbstractPluginIT {
 
     @BeforeEach
-    public void startTransaction() {
+    void startTransaction() {
         store.beginTransaction();
     }
 
     @AfterEach
-    public void commitTransaction() {
+    void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
-    public static Stream<File> data() throws URISyntaxException {
+    static Stream<File> data() throws URISyntaxException {
         return DataProvider.validFilesOfJSONParsingTestSuite();
     }
 
     @MethodSource("data")
     @ParameterizedTest
-    public void scannerScansAValidFileOfTheTestSuite(File pathToJSONFile) {
+    void scannerScansAValidFileOfTheTestSuite(File pathToJSONFile) {
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(pathToJSONFile, pathToJSONFile.getAbsolutePath(), null);
 

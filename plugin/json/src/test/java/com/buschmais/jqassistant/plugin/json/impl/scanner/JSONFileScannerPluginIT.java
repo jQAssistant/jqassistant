@@ -21,15 +21,15 @@ import org.junit.jupiter.api.Test;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JSONFileScannerPluginIT extends AbstractPluginIT {
+class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @BeforeEach
-    public void startTransaction() {
+    void startTransaction() {
         store.beginTransaction();
     }
 
     @AfterEach
-    public void commitTransaction() {
+    void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
@@ -37,7 +37,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
 
 
     @Test
-    public void scanReturnsFileDescriptorWithCorrectFileName() {
+    void scanReturnsFileDescriptorWithCorrectFileName() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/true-false-null.json");
 
@@ -52,7 +52,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithOneKeyValuePair() {
+    void scanReturnsObjectWithOneKeyValuePair() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-one-key-value-pair.json");
 
@@ -79,7 +79,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithTwoKeyValuePairs() {
+    void scanReturnsObjectWithTwoKeyValuePairs() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-two-key-value-pairs.json");
 
@@ -108,7 +108,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithTrueFalseAndNullValue() {
+    void scanReturnsObjectWithTrueFalseAndNullValue() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/true-false-null.json");
 
@@ -145,7 +145,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsEmptyArray() {
+    void scanReturnsEmptyArray() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/array-empty.json");
 
@@ -166,7 +166,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsArrayWithOneValue() {
+    void scanReturnsArrayWithOneValue() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/array-one-value.json");
 
@@ -193,7 +193,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithEmptyArray() {
+    void scanReturnsObjectWithEmptyArray() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-array-empty.json");
 
@@ -222,7 +222,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithObject() {
+    void scanReturnsObjectWithObject() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-object-empty.json");
 
@@ -252,7 +252,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scannerCanHandleBlockCommentInObject() {
+    void scannerCanHandleBlockCommentInObject() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/block-comment-in-object.json");
 
@@ -277,7 +277,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test()
-    public void scannerCanHandleEmptyFile() {
+    void scannerCanHandleEmptyFile() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/invalid/empty-file.json");
 
@@ -288,7 +288,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void parserCopesWithInvalidJSONFile() throws Exception {
+    void parserCopesWithInvalidJSONFile() throws Exception {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/invalid/json-file-as-template.json");
 
@@ -299,7 +299,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void parserHandlesLineCommentAfterObjectCorrectly() {
+    void parserHandlesLineCommentAfterObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/line-comment-after-object.json");
 
@@ -332,7 +332,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void parserHandlesLineCommentBeforeObjectCorrectly() {
+    void parserHandlesLineCommentBeforeObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/line-comment-before-object.json");
 
@@ -365,7 +365,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void parserHandlesLineCommentInObjectCorrectly() {
+    void parserHandlesLineCommentInObjectCorrectly() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/line-comment-in-object.json");
 
@@ -398,7 +398,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithArrayOfTwoElements() {
+    void scanReturnsObjectWithArrayOfTwoElements() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-array-two-elements.json");
 
@@ -433,7 +433,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithAnArray() {
+    void scanReturnsObjectWithAnArray() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-array.json");
 
@@ -469,7 +469,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithOneNumber() {
+    void scanReturnsObjectWithOneNumber() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-number.json");
 
@@ -496,7 +496,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithMultipleNumbers() {
+    void scanReturnsObjectWithMultipleNumbers() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-numbers.json");
 
@@ -534,7 +534,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsObjectWithObjects() {
+    void scanReturnsObjectWithObjects() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/object-with-objects.json");
 
@@ -570,7 +570,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsValueWithQuotationMark() {
+    void scanReturnsValueWithQuotationMark() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/string-value-with-quote-mark.json");
 
@@ -599,7 +599,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsValueWithEscapeSequences() {
+    void scanReturnsValueWithEscapeSequences() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/string-value-with-possible-escape-sequences.json");
 
@@ -631,7 +631,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void scanReturnsCorrectedUnicodeString() {
+    void scanReturnsCorrectedUnicodeString() {
         File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
                                  "/probes/valid/string-value-with-unicode-signs.json");
 
@@ -675,7 +675,7 @@ public class JSONFileScannerPluginIT extends AbstractPluginIT {
         return result;
     }
 
-    public void assertThatNumberIsEqual(Number actual, Number expected) {
+    void assertThatNumberIsEqual(Number actual, Number expected) {
         BigDecimal left = new BigDecimal(actual.doubleValue());
         BigDecimal right = new BigDecimal(expected.doubleValue());
 

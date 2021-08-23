@@ -19,16 +19,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteTest {
+class JQAssistantJSONParserForInvalidJSONFilesOfTestSuiteTest {
     private IsNPECausedByANTLRIssue746Predicate antlrPredicate = new IsNPECausedByANTLRIssue746Predicate();
 
-    public static Stream<File> data() throws Exception {
+    static Stream<File> data() throws Exception {
         return DataProvider.invalidFilesOfJSONParsingTestSuite();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void failsOnParsingAnInvalidJSONFileOfTheTestSuite(File jsonFile) {
+    void failsOnParsingAnInvalidJSONFileOfTheTestSuite(File jsonFile) {
         class ANTLRRecognisedErrorNotFailedToReportItProperly extends Exception {
         }
 
