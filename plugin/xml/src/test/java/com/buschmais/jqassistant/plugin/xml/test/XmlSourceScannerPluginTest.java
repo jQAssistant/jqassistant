@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class XmlSourceScannerPluginTest {
+class XmlSourceScannerPluginTest {
 
     @Mock
     private Scanner scanner;
@@ -52,7 +52,7 @@ public class XmlSourceScannerPluginTest {
     private Map<XmlElementDescriptor, XmlElementDescriptor> parents = new HashMap<>();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         doReturn(scannerContext).when(scanner).getContext();
         doReturn(documentDescriptor).when(scannerContext).peek(XmlDocumentDescriptor.class);
         doReturn(store).when(scannerContext).getStore();
@@ -77,7 +77,7 @@ public class XmlSourceScannerPluginTest {
     }
 
     @Test
-    public void parentRelation() throws IOException {
+    void parentRelation() throws IOException {
         XmlSourceScannerPlugin scannerPlugin = new XmlSourceScannerPlugin();
         scannerPlugin.initialize();
         XmlDocumentDescriptor documentDescriptor = scannerPlugin.scan(
