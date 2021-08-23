@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-public class ClasspathRuleSourceTest extends AbstractRuleSourceTest {
+class ClasspathRuleSourceTest extends AbstractRuleSourceTest {
 
     @Override
     protected List<RuleSource> getRuleSources() {

@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
-public class SeverityTest {
+class SeverityTest {
 
     @Test
     public void getSeverityFromName() throws RuleException {
@@ -28,12 +28,12 @@ public class SeverityTest {
     }
 
     @Test
-    public void noSeverity() throws RuleException {
+    void noSeverity() throws RuleException {
         assertThat(Severity.fromValue(null), nullValue());
     }
 
     @Test
-    public void lowerCaseSeverity() throws RuleException {
+    void lowerCaseSeverity() throws RuleException {
         String value = Severity.INFO.name();
 
         Severity result = Severity.fromValue(value);
@@ -42,7 +42,7 @@ public class SeverityTest {
     }
 
     @Test
-    public void asciidocSeverity() throws Exception {
+    void asciidocSeverity() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", RuleConfiguration.DEFAULT);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
@@ -51,7 +51,7 @@ public class SeverityTest {
     }
 
     @Test
-    public void xmlSeverity() throws Exception {
+    void xmlSeverity() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", RuleConfiguration.DEFAULT);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
@@ -77,7 +77,7 @@ public class SeverityTest {
     }
 
     @Test
-    public void asciidocDefaultSeverity() throws RuleException {
+    void asciidocDefaultSeverity() throws RuleException {
         RuleConfiguration ruleConfiguration = RuleConfiguration.builder().defaultConceptSeverity(Severity.CRITICAL).defaultConstraintSeverity(Severity.CRITICAL)
                 .defaultGroupSeverity(Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", ruleConfiguration);
@@ -85,7 +85,7 @@ public class SeverityTest {
     }
 
     @Test
-    public void xmlDefaultSeverity() throws RuleException {
+    void xmlDefaultSeverity() throws RuleException {
         RuleConfiguration ruleConfiguration = RuleConfiguration.builder().defaultConceptSeverity(Severity.CRITICAL).defaultConstraintSeverity(Severity.CRITICAL)
                 .defaultGroupSeverity(Severity.CRITICAL).build();
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", ruleConfiguration);
@@ -104,14 +104,14 @@ public class SeverityTest {
     }
 
     @Test
-    public void xmlRuleDefaultSeverity() throws RuleException {
+    void xmlRuleDefaultSeverity() throws RuleException {
         RuleConfiguration ruleConfiguration = RuleConfiguration.builder().build();
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", ruleConfiguration);
         verifyRuleDefaultSeverity(ruleSet);
     }
 
     @Test
-    public void asciidocRuleDefaultSeverity() throws RuleException {
+    void asciidocRuleDefaultSeverity() throws RuleException {
         RuleConfiguration ruleConfiguration = RuleConfiguration.builder().build();
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", ruleConfiguration);
         verifyRuleDefaultSeverity(ruleSet);

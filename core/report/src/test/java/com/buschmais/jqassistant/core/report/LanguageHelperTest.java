@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-public class LanguageHelperTest {
+class LanguageHelperTest {
 
     @Test
     public void resolveNameFromDescriptorWithLanguageElement() {
@@ -24,13 +24,13 @@ public class LanguageHelperTest {
     }
 
     @Test
-    public void resolveNameFromDerivedDescriptor() {
+    void resolveNameFromDerivedDescriptor() {
         DerivedTestDescriptor derivedTestDescriptor = Mockito.mock(DerivedTestDescriptor.class);
         resolveName(derivedTestDescriptor, TestLanguageElement.TestElement);
     }
 
     @Test
-    public void resolveNameFromDerivedDescriptorWithLanguageElement() {
+    void resolveNameFromDerivedDescriptorWithLanguageElement() {
         DerivedTestDescriptorWithLanguageElement derivedTestDescriptor = Mockito.mock(DerivedTestDescriptorWithLanguageElement.class);
         resolveName(derivedTestDescriptor, TestLanguageElement.DerivedTestElement);
     }

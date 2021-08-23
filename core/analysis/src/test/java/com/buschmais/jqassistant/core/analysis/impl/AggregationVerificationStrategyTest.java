@@ -22,9 +22,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class AggregationVerificationStrategyTest {
+class AggregationVerificationStrategyTest {
 
-    public static final List<String> COLUMN_NAMES = asList("c0", "c1");
+    static final List<String> COLUMN_NAMES = asList("c0", "c1");
 
     @Mock
     private Concept concept;
@@ -37,7 +37,7 @@ public class AggregationVerificationStrategyTest {
     private AggregationVerificationStrategy strategy = new AggregationVerificationStrategy();
 
     @Test
-    public void defaultConcept() throws RuleException {
+    void defaultConcept() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -51,7 +51,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void min() throws RuleException {
+    void min() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().min(1).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -65,7 +65,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void max() throws RuleException {
+    void max() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().max(0).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -79,7 +79,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void minMax() throws RuleException {
+    void minMax() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().min(1).max(1).build();
         result = asList(createRow(0), createRow(0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -99,7 +99,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void colum() throws RuleException {
+    void colum() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().column("c1").build();
         result = asList(createRow(0, 1), createRow(0, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -107,7 +107,7 @@ public class AggregationVerificationStrategyTest {
     }
 
     @Test
-    public void emptyResult() throws RuleException {
+    void emptyResult() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder().build();
         result = Collections.emptyList();
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));

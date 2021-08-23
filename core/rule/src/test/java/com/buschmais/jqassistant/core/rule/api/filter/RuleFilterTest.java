@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RuleFilterTest {
+class RuleFilterTest {
 
     private RuleFilter ruleFilter = RuleFilter.getInstance();
 
     @Test
-    public void filter() {
+    void filter() {
         Set<String> rules = new HashSet<>();
         rules.add("foo");
         rules.add("bar");
@@ -24,7 +24,7 @@ public class RuleFilterTest {
     }
 
     @Test
-    public void negation() {
+    void negation() {
         Set<String> rules = new HashSet<>();
         rules.add("foo");
         rules.add("bar");

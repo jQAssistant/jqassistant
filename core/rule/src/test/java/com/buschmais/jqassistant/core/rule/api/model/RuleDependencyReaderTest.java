@@ -12,16 +12,16 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies reading dependency information by rule set readers
  */
-public class RuleDependencyReaderTest {
+class RuleDependencyReaderTest {
 
     @Test
-    public void asciidoc() throws RuleException {
+    void asciidoc() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.adoc", RuleConfiguration.DEFAULT);
         verifyRules(ruleSet);
     }
 
     @Test
-    public void xml() throws RuleException {
+    void xml() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.xml", RuleConfiguration.DEFAULT);
         verifyRules(ruleSet);
     }

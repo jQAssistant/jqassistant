@@ -17,10 +17,10 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class XmlRuleParserPluginTest {
+class XmlRuleParserPluginTest {
 
     @Test
-    public void readScriptRule() throws Exception {
+    void readScriptRule() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml", RuleConfiguration.DEFAULT);
         ConceptBucket conceptBucket = ruleSet.getConceptBucket();
         assertThat(conceptBucket.size(), equalTo(2));
@@ -41,7 +41,7 @@ public class XmlRuleParserPluginTest {
     }
 
     @Test
-    public void ruleParameters() throws Exception {
+    void ruleParameters() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml", RuleConfiguration.DEFAULT);
         Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
@@ -67,7 +67,7 @@ public class XmlRuleParserPluginTest {
     }
 
     @Test
-    public void testReadUrlSource() throws Exception {
+    void testReadUrlSource() throws Exception {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
         RuleParserPlugin reader = new XmlRuleParserPlugin();
@@ -88,7 +88,7 @@ public class XmlRuleParserPluginTest {
     }
 
     @Test
-    public void ruleSchema_1_8() throws RuleException {
+    void ruleSchema_1_8() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", RuleConfiguration.DEFAULT);
         Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
         assertThat(conceptIds.size(), equalTo(1));

@@ -14,22 +14,22 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ExecutablesTest {
+class ExecutablesTest {
 
     @Test
-    public void xml() throws Exception {
+    void xml() throws Exception {
         verifyRuleset(RuleSetTestHelper.readRuleSet("/executables.xml", RuleConfiguration.DEFAULT));
     }
 
     @Test
-    public void asciidoc() throws Exception {
+    void asciidoc() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
         verifyRuleset(ruleSet);
         verifyConceptExecutable(ruleSet, "test:Table", SourceExecutable.class, StructuralNode.class, "table");
     }
 
     @Test
-    public void plantuml() throws Exception {
+    void plantuml() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/executables.adoc", RuleConfiguration.DEFAULT);
         Concept concept = verifyConceptExecutable(ruleSet, "test:PlantUML", SourceExecutable.class, StructuralNode.class, "plantuml");
         StructuralNode abstractBlock = (StructuralNode) concept.getExecutable().getSource();

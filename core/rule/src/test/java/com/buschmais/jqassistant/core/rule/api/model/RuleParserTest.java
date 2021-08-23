@@ -12,10 +12,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class RuleParserTest {
+class RuleParserTest {
 
     @Test
-    public void testReadCompoundSources() throws Exception {
+    void testReadCompoundSources() throws Exception {
         File rulesDirectory = new File(RuleParserTest.class.getResource("/").getPath());
         RuleParser ruleParser = new RuleParser(RuleSetTestHelper.getDefaultRuleParserPlugins(RuleConfiguration.DEFAULT));
         RuleSet ruleSet = ruleParser

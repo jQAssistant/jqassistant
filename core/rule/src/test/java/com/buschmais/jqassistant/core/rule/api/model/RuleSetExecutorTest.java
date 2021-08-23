@@ -22,7 +22,7 @@ import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RuleSetExecutorTest {
+class RuleSetExecutorTest {
 
     @Mock
     private RuleVisitor visitor;
@@ -37,7 +37,7 @@ public class RuleSetExecutorTest {
     private Constraint overriddenConstraint;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         configuration = new RuleSetExecutorConfiguration();
         ruleExecutor = new RuleSetExecutor(visitor, configuration);
         defaultConcept = Concept.builder().id("concept:Default").severity(Severity.MAJOR).build();
@@ -47,7 +47,7 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void defaultGroupSeverity() throws RuleException {
+    void defaultGroupSeverity() throws RuleException {
         Group group = Group.builder().id("group").concept(defaultConcept.getId(), null).concept(overriddenConcept.getId(), CRITICAL)
                 .constraint(defaultConstraint.getId(), null).constraint(overriddenConstraint.getId(), CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
@@ -65,7 +65,7 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void overriddenGroupSeverity() throws RuleException {
+    void overriddenGroupSeverity() throws RuleException {
         Group group = Group.builder().id("group").severity(Severity.BLOCKER).concept(defaultConcept.getId(), null).concept(overriddenConcept.getId(), CRITICAL)
                 .constraint(defaultConstraint.getId(), null).constraint(overriddenConstraint.getId(), CRITICAL).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConstraint(defaultConstraint)
@@ -83,38 +83,38 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void optionalFailingConceptDependencies() throws RuleException {
+    void optionalFailingConceptDependencies() throws RuleException {
         verifyRequiredConcepts(true, false, times(1), never());
     }
 
     @Test
-    public void defaultOptionalFailingConceptDependencies() throws RuleException {
+    void defaultOptionalFailingConceptDependencies() throws RuleException {
         verifyRequiredConcepts(null, false, times(1), never());
     }
 
     @Test
-    public void requiredFailingConceptDependencies() throws RuleException {
+    void requiredFailingConceptDependencies() throws RuleException {
         verifyRequiredConcepts(false, false, never(), times(1));
     }
 
     @Test
-    public void defaultRequiredFailingConceptDependencies() throws RuleException {
+    void defaultRequiredFailingConceptDependencies() throws RuleException {
         configuration.setRequiredConceptsAreOptionalByDefault(false);
         verifyRequiredConcepts(null, false, never(), times(1));
     }
 
     @Test
-    public void requiredSuccessfulConceptDependencies() throws RuleException {
+    void requiredSuccessfulConceptDependencies() throws RuleException {
         verifyRequiredConcepts(false, true, times(1), never());
     }
 
     @Test
-    public void optionalSuccessfulConceptDependencies() throws RuleException {
+    void optionalSuccessfulConceptDependencies() throws RuleException {
         verifyRequiredConcepts(true, true, times(1), never());
     }
 
     @Test
-    public void executionOrder() throws RuleException {
+    void executionOrder() throws RuleException {
         Concept nestedConcept1 = Concept.builder().id("concept:Nested1").build();
         Concept nestedConcept2 = Concept.builder().id("concept:Nested2").build();
         Constraint nestetConstraint = Constraint.builder().id("constraint:Nested").build();
@@ -150,7 +150,7 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void wildcards() throws RuleException {
+    void wildcards() throws RuleException {
         Concept requiredConcept1 = Concept.builder().id("concept:Required1").build();
         Concept requiredConcept2 = Concept.builder().id("concept:Required2").build();
         Map<String, Boolean> requiresConcepts1 = new HashMap<>();
@@ -188,7 +188,7 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void conceptRequiresItselfByWildcard() throws RuleException {
+    void conceptRequiresItselfByWildcard() throws RuleException {
         Concept requiredConcept = Concept.builder().id("concept:RequiredConcept").requiresConcepts(emptyMap()).build();
         Map<String, Boolean> requiredConcepts = new HashMap<>();
         requiredConcepts.put("concept:*", null); // matches both DependentConcept and RequiredConcept
@@ -230,7 +230,7 @@ public class RuleSetExecutorTest {
     }
 
     @Test
-    public void providedConcepts() throws RuleException {
+    void providedConcepts() throws RuleException {
         Concept baseConcept = Concept.builder().id("concept:BaseConcept").severity(CRITICAL).requiresConcepts(emptyMap()).build();
         Set<String> providedConcepts = new HashSet<>();
         providedConcepts.add("concept:BaseConcept");

@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
  * Verifies the functionality of {@link ScannerContextImpl}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ScannerContextImplTest {
+class ScannerContextImplTest {
 
     public static final File OUTPUT_DIRECTORY = new File(".");
 
@@ -29,18 +29,18 @@ public class ScannerContextImplTest {
     private ScannerContextImpl scannerContext;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
     }
 
     @Test
-    public void peekNonExistingValue() {
+    void peekNonExistingValue() {
 
         assertThatThrownBy(() -> scannerContext.peek(String.class)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    public void peekExistingValues() {
+    void peekExistingValues() {
         scannerContext.push(String.class, "Foo");
         assertThat(scannerContext.peek(String.class), equalTo("Foo"));
         scannerContext.push(String.class, "Bar");
@@ -57,7 +57,7 @@ public class ScannerContextImplTest {
     }
 
     @Test
-    public void peekDefaultValues() {
+    void peekDefaultValues() {
         assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Bar"));
         scannerContext.push(String.class, "Foo");
         assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Foo"));
@@ -66,7 +66,7 @@ public class ScannerContextImplTest {
     }
 
     @Test
-    public void dataDirectory() {
+    void dataDirectory() {
         File test = scannerContext.getDataDirectory("test");
         assertThat(test.getAbsoluteFile(), equalTo(new File(OUTPUT_DIRECTORY, "data/test").getAbsoluteFile()));
     }

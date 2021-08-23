@@ -26,13 +26,13 @@ import static org.mockito.Mockito.mock;
 /**
  * Verifies plugin repository related functionality.
  */
-public class PluginRepositoryTest {
+class PluginRepositoryTest {
 
     /**
      * Verifies that properties are loaded and passed to plugins.
      */
     @Test
-    public void pluginProperties() {
+    void pluginProperties() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryTest.class.getClassLoader());
         Map<String, Object> properties = new HashMap<>();
         properties.put("testKey", "testValue");
@@ -46,7 +46,7 @@ public class PluginRepositoryTest {
     }
 
     @Test
-    public void repositories() {
+    void repositories() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryTest.class.getClassLoader());
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();

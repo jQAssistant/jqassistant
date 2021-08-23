@@ -15,7 +15,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class AsciidocRuleParserPluginTest {
+class AsciidocRuleParserPluginTest {
 
     @Test
     public void cypherRules() throws Exception {
@@ -58,7 +58,7 @@ public class AsciidocRuleParserPluginTest {
     }
 
     @Test
-    public void scriptRules() throws Exception {
+    void scriptRules() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.adoc", RuleConfiguration.DEFAULT);
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertThat(concepts.size(), equalTo(1));
@@ -79,7 +79,7 @@ public class AsciidocRuleParserPluginTest {
     }
 
     @Test
-    public void groups() throws Exception {
+    void groups() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/group.adoc", RuleConfiguration.DEFAULT);
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
@@ -103,7 +103,7 @@ public class AsciidocRuleParserPluginTest {
     }
 
     @Test
-    public void brokenRules() throws Exception {
+    void brokenRules() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/broken-rules.adoc", RuleConfiguration.DEFAULT);
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:MissingDescription"));
 
@@ -117,7 +117,7 @@ public class AsciidocRuleParserPluginTest {
     }
 
     @Test
-    public void ruleParameters() throws Exception {
+    void ruleParameters() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.adoc", RuleConfiguration.DEFAULT);
         Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
@@ -132,14 +132,14 @@ public class AsciidocRuleParserPluginTest {
     }
 
     @Test
-    public void documentAsGroup() throws RuleException {
+    void documentAsGroup() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/document-as-group.adoc", RuleConfiguration.DEFAULT);
         Group documentGroup = ruleSet.getGroupsBucket().getById("documentGroup");
         assertThat(documentGroup.getId(), equalTo("documentGroup"));
     }
 
     @Test
-    public void definitionList() throws RuleException {
+    void definitionList() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/definition-list.adoc", RuleConfiguration.DEFAULT);
         Group testGroup = ruleSet.getGroupsBucket().getById("test:Default");
         assertThat(testGroup.getId(), equalTo("test:Default"));

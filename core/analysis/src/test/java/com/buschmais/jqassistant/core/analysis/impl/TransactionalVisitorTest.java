@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class TransactionalVisitorTest {
+class TransactionalVisitorTest {
 
     @Mock
     private RuleVisitor delegate;
@@ -39,7 +39,7 @@ public class TransactionalVisitorTest {
     private TransactionalRuleVisitor visitor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         visitor = new TransactionalRuleVisitor(delegate, store);
         doAnswer(invocation -> activeTransaction = true).when(store).beginTransaction();
         doAnswer(invocation -> activeTransaction = false).when(store).commitTransaction();
@@ -48,7 +48,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void beforeRules() throws RuleException {
+    void beforeRules() throws RuleException {
         visitor.beforeRules();
 
         verify(delegate).beforeRules();
@@ -56,7 +56,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void afterRules() throws RuleException {
+    void afterRules() throws RuleException {
         visitor.afterRules();
 
         verify(delegate).afterRules();
@@ -64,7 +64,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void beforeGroup() throws RuleException {
+    void beforeGroup() throws RuleException {
         Group group = mock(Group.class);
 
         visitor.beforeGroup(group, MAJOR);
@@ -74,7 +74,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void afterGroup() throws RuleException {
+    void afterGroup() throws RuleException {
         Group group = mock(Group.class);
 
         visitor.afterGroup(group);
@@ -84,7 +84,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void visitConcept() throws RuleException {
+    void visitConcept() throws RuleException {
         Concept concept = mock(Concept.class);
 
         visitor.visitConcept(concept, MINOR);
@@ -94,7 +94,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void skipConcept() throws RuleException {
+    void skipConcept() throws RuleException {
         Concept concept = mock(Concept.class);
 
         visitor.skipConcept(concept, MINOR);
@@ -104,7 +104,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void visitConstraint() throws RuleException {
+    void visitConstraint() throws RuleException {
         Constraint constraint = mock(Constraint.class);
 
         visitor.visitConstraint(constraint, MINOR);
@@ -114,7 +114,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void skipConstraint() throws RuleException {
+    void skipConstraint() throws RuleException {
         Constraint constraint = mock(Constraint.class);
 
         visitor.skipConstraint(constraint, MAJOR);
@@ -124,7 +124,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void ruleException() throws RuleException {
+    void ruleException() throws RuleException {
         Constraint constraint = mock(Constraint.class);
         doThrow(new RuleException("Test")).when(delegate).visitConstraint(constraint, MAJOR);
 
@@ -138,7 +138,7 @@ public class TransactionalVisitorTest {
     }
 
     @Test
-    public void runtimeException() throws RuleException {
+    void runtimeException() throws RuleException {
         Constraint constraint = mock(Constraint.class);
         doThrow(new NullPointerException()).when(delegate).visitConstraint(constraint, MAJOR);
 

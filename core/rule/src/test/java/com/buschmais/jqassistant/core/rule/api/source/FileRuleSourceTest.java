@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FileRuleSourceTest extends AbstractRuleSourceTest {
+class FileRuleSourceTest extends AbstractRuleSourceTest {
 
     @Test
     protected List<RuleSource> getRuleSources() throws IOException {

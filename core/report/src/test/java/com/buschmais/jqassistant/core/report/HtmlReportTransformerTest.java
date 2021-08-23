@@ -21,10 +21,10 @@ import static org.hamcrest.Matchers.containsString;
 /**
  * Verifies the functionality of the HTML report transformer.
  */
-public class HtmlReportTransformerTest {
+class HtmlReportTransformerTest {
 
     @Test
-    public void transform() throws ReportException, ReportTransformerException, FileNotFoundException {
+    void transform() throws ReportException, ReportTransformerException, FileNotFoundException {
         File xmlReport = new XmlReportTestHelper().createXmlReport();
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(new FileReader(xmlReport));

@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +21,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RowCountVerificationStrategyTest {
+class RowCountVerificationStrategyTest {
 
-    public static final List<String> COLUMN_NAMES = Arrays.asList("a");
+    static final List<String> COLUMN_NAMES = Collections.singletonList("a");
 
     @Mock
     private Concept concept;
@@ -37,7 +37,7 @@ public class RowCountVerificationStrategyTest {
     private RowCountVerificationStrategy strategy = new RowCountVerificationStrategy();
 
     @Test
-    public void defaultConfiguration() throws RuleException {
+    void defaultConfiguration() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -48,7 +48,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void min() throws RuleException {
+    void min() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().min(1).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
@@ -59,7 +59,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void max() throws RuleException {
+    void max() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().max(0).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
@@ -70,7 +70,7 @@ public class RowCountVerificationStrategyTest {
     }
 
     @Test
-    public void minMax() throws RuleException {
+    void minMax() throws RuleException {
         RowCountVerification rowCountVerification = RowCountVerification.builder().min(1).max(1).build();
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));

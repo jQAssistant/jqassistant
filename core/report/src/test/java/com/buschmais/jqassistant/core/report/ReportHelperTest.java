@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class ReportHelperTest {
+class ReportHelperTest {
 
     @Mock
     private Logger logger;
@@ -55,7 +55,7 @@ public class ReportHelperTest {
     private ReportHelper reportHelper;
 
     @BeforeEach
-    public void before() {
+    void before() {
         reportHelper = new ReportHelper(logger);
         debugMessages = new ArrayList<>();
         warnMessages = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void successfulConcept() {
+    void successfulConcept() {
         Result<Concept> conceptResult = mockResult("test:concept", Concept.class, Result.Status.SUCCESS, Severity.MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:concept", conceptResult);
@@ -79,7 +79,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void failedConcepts() {
+    void failedConcepts() {
         Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.FAILURE, Severity.INFO);
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR);
         Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
@@ -96,7 +96,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void failedConceptsWithOverriddenSeverity() {
+    void failedConceptsWithOverriddenSeverity() {
         Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR);
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR);
         Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR, Severity.CRITICAL);
@@ -113,7 +113,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void validatedConstraint() {
+    void validatedConstraint() {
         Result<Constraint> constraintResult = mockResult("test:concept", Constraint.class, Result.Status.SUCCESS, Severity.MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:concept", constraintResult);
@@ -126,7 +126,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void failedConstraints() {
+    void failedConstraints() {
         Map<String, Object> infoRow = new HashMap<>();
         infoRow.put("InfoElement", "InfoValue");
         Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.FAILURE, Severity.INFO,
@@ -154,7 +154,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void failedConstraintsWithOverriddenSeverity() {
+    void failedConstraintsWithOverriddenSeverity() {
         Map<String, Object> infoRow = new HashMap<>();
         infoRow.put("InfoElement", "InfoValue");
         Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR,
@@ -183,7 +183,7 @@ public class ReportHelperTest {
     }
 
     @Test
-    public void label() {
+    void label() {
         TestDescriptorWithLanguageElement descriptorWithLabel = mock(TestDescriptorWithLanguageElement.class);
         when(descriptorWithLabel.getValue()).thenReturn("value");
         assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));

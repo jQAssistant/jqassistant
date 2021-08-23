@@ -31,7 +31,7 @@ import static org.mockito.Mockito.any;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class ScannerImplTest {
+class ScannerImplTest {
 
     private static final File OUTPUT_DIRECTORY = new File(".");
 
@@ -54,7 +54,7 @@ public class ScannerImplTest {
     private ScannerConfiguration configuration;
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         configuration = new ScannerConfiguration();
         // Plugin
         doReturn(String.class).when(scannerPlugin).getType();
@@ -85,7 +85,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void resolveScope() {
+    void resolveScope() {
         ScannerContext scannerContext = mock(ScannerContext.class);
         Scanner scanner = new ScannerImpl(new ScannerConfiguration(), emptyMap(), scannerContext, scannerPluginRepository);
         Assert.assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
@@ -94,7 +94,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void acceptReturnTrueIfPluginAcceptsResource() throws IOException {
+    void acceptReturnTrueIfPluginAcceptsResource() throws IOException {
         Properties resource = mock(Properties.class);
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
@@ -107,7 +107,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void acceptReturnFalseIfPluginRefusesResource() throws IOException {
+    void acceptReturnFalseIfPluginRefusesResource() throws IOException {
         Properties resource = mock(Properties.class);
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
@@ -120,7 +120,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void failOnError() throws IOException {
+    void failOnError() throws IOException {
         Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
         try {
@@ -138,7 +138,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void continueOnError() throws IOException {
+    void continueOnError() throws IOException {
         configuration.setContinueOnError(true);
         Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
@@ -159,7 +159,7 @@ public class ScannerImplTest {
     }
 
     @Test
-    public void continueOnErrorDuringCommit() {
+    void continueOnErrorDuringCommit() {
         doThrow(new IllegalStateException("Exception during commit")).when(store).commitTransaction();
         configuration.setContinueOnError(true);
         Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
@@ -187,7 +187,7 @@ public class ScannerImplTest {
      * </ul>
      */
     @Test
-    public void pluginPipeline() {
+    void pluginPipeline() {
         Store store = mock(Store.class);
         ScannerContext scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
         when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {

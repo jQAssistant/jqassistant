@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public abstract class AbstractRuleSourceTest {
+abstract class AbstractRuleSourceTest {
 
     @Test
     void classpathRuleSource() throws IOException {

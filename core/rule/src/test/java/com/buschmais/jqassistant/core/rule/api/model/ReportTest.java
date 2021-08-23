@@ -15,10 +15,10 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 /**
  * Verifies reading the report part of rules.
  */
-public class ReportTest {
+class ReportTest {
 
     @Test
-    public void reportBuilder() {
+    void reportBuilder() {
         Report emptyReport = Report.builder().build();
         assertThat(emptyReport.getPrimaryColumn(), nullValue());
         assertThat(emptyReport.getSelectedTypes(), nullValue());
@@ -40,13 +40,13 @@ public class ReportTest {
     }
 
     @Test
-    public void asciidocReport() throws Exception {
+    void asciidocReport() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc", RuleConfiguration.DEFAULT);
         verifyReport(ruleSet);
     }
 
     @Test
-    public void xmlReport() throws Exception {
+    void xmlReport() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml", RuleConfiguration.DEFAULT);
         verifyReport(ruleSet);
     }

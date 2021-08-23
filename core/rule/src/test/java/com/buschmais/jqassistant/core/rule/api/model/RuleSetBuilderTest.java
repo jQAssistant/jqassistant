@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Verifies functionality of the rule set builder.
  */
-public class RuleSetBuilderTest {
+class RuleSetBuilderTest {
 
     @Test
-    public void duplicateRules() throws RuleException {
+    void duplicateRules() throws RuleException {
         RuleSource ruleSource = new FileRuleSource(new File("."), "test.xml");
         // Concepts
 

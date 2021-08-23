@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-public class AbstractRuleBucketTest {
+class AbstractRuleBucketTest {
 
     private TestBucket bucket = new TestBucket();
 
@@ -41,12 +41,12 @@ public class AbstractRuleBucketTest {
     // --- All tests for getIds()
 
     @Test
-    public void getConceptsIdsReturnsEmptySetIfThereAreNoConceptsInTheBucket() {
+    void getConceptsIdsReturnsEmptySetIfThereAreNoConceptsInTheBucket() {
         assertThat(bucket.getIds(), empty());
     }
 
     @Test
-    public void getConceptIdsReturnsAllIdsOfAllConceptsInBucket() throws RuleException {
+    void getConceptIdsReturnsAllIdsOfAllConceptsInBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -64,7 +64,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void getConceptIdsReturnsUnmodifiableSet() {
+    void getConceptIdsReturnsUnmodifiableSet() {
         Set<String> conceptIds = bucket.getIds();
 
         assertThatThrownBy(() -> conceptIds.add("a")).isInstanceOf(UnsupportedOperationException.class);
@@ -73,12 +73,12 @@ public class AbstractRuleBucketTest {
     // --- All tests for size()
 
     @Test
-    public void sizeOfBucketIsZeroIfThereAreNotConcepts() {
+    void sizeOfBucketIsZeroIfThereAreNotConcepts() {
         assertThat(bucket.size()).isEqualTo(0);
     }
 
     @Test
-    public void sizeOfBucketIsEqualNumberOfConceptsInBucket() throws RuleException {
+    void sizeOfBucketIsEqualNumberOfConceptsInBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -97,7 +97,7 @@ public class AbstractRuleBucketTest {
     // --- All tests for getConcept()
 
     @Test
-    public void getConceptReturnsExistingConceptInBucket() throws RuleException {
+    void getConceptReturnsExistingConceptInBucket() throws RuleException {
         Concept a = mock(Concept.class);
 
         when(a.getId()).thenReturn("a");
@@ -109,14 +109,14 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void getConceptThrowsExceptionIfConceptNotFoundInBucket() {
+    void getConceptThrowsExceptionIfConceptNotFoundInBucket() {
         assertThatThrownBy(() -> bucket.getById("foobar")).isInstanceOf(RuleException.class);
     }
 
     // --- All tests for addConcepts
 
     @Test()
-    public void addConceptsAddsAllConcepts() throws RuleException {
+    void addConceptsAddsAllConcepts() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -140,7 +140,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void addConceptsCopesWithEmptyBucket() throws RuleException {
+    void addConceptsCopesWithEmptyBucket() throws RuleException {
         Concept a = mock(Concept.class);
         Concept b = mock(Concept.class);
         Concept c = mock(Concept.class);
@@ -161,7 +161,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws RuleException {
+    void addWithCollectionFailIfAConceptIdIsSameConceptIdIsAlreadyInBucket() throws RuleException {
         Concept a = mock(Concept.class);
         when(a.getId()).thenReturn("a");
         RuleSource sourceA = mock(RuleSource.class);
@@ -185,7 +185,7 @@ public class AbstractRuleBucketTest {
     }
 
     @Test
-    public void match() throws RuleException {
+    void match() throws RuleException {
         Concept c1 = mock(Concept.class);
         Concept c2 = mock(Concept.class);
         Concept c3 = mock(Concept.class);

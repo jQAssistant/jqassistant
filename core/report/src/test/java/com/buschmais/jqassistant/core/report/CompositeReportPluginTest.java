@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class CompositeReportPluginTest {
+class CompositeReportPluginTest {
 
     @Mock
     ReportPlugin reportPlugin1;
@@ -62,7 +62,7 @@ public class CompositeReportPluginTest {
     private CompositeReportPlugin compositeReportPlugin;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Map<String, ReportPlugin> reportPlugins = new HashMap<>();
         reportPlugins.put("plugin1", new DefaultReportPlugin(reportPlugin1));
         reportPlugins.put("plugin2", new DefaultReportPlugin(reportPlugin2));
@@ -73,7 +73,7 @@ public class CompositeReportPluginTest {
     }
 
     @Test
-    public void noSelection() throws ReportException {
+    void noSelection() throws ReportException {
         Concept concept = getRule(Concept.class);
         Constraint constraint = getRule(Constraint.class);
 
@@ -87,7 +87,7 @@ public class CompositeReportPluginTest {
     }
 
     @Test
-    public void selectOneWriter() throws ReportException {
+    void selectOneWriter() throws ReportException {
         Concept concept = getRule(Concept.class, "selectablePlugin1");
         Constraint constraint = getRule(Constraint.class, "selectablePlugin1");
 
@@ -101,7 +101,7 @@ public class CompositeReportPluginTest {
     }
 
     @Test
-    public void selectMultiplePlugins() throws ReportException {
+    void selectMultiplePlugins() throws ReportException {
         Concept concept = getRule(Concept.class, "selectablePlugin1", "selectablePlugin2");
         Constraint constraint = getRule(Constraint.class, "selectablePlugin1", "selectablePlugin2");
 

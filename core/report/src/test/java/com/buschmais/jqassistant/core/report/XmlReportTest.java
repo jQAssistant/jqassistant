@@ -23,12 +23,12 @@ import org.xml.sax.SAXException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class XmlReportTest {
+class XmlReportTest {
 
     private XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
     @Test
-    public void writeAndReadReport() throws JAXBException, SAXException, ReportException, IOException {
+    void writeAndReadReport() throws JAXBException, SAXException, ReportException, IOException {
         File xmlReport = xmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report).isNotNull();
@@ -70,7 +70,7 @@ public class XmlReportTest {
     }
 
     @Test
-    public void testReportWithConstraint() throws JAXBException, SAXException, ReportException, IOException {
+    void testReportWithConstraint() throws JAXBException, SAXException, ReportException, IOException {
         File xmlReport = xmlReportTestHelper.createXmlReportWithConstraints();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
@@ -91,7 +91,7 @@ public class XmlReportTest {
     }
 
     @Test
-    public void reportEncoding() throws ReportException, JAXBException, SAXException, IOException {
+    void reportEncoding() throws ReportException, JAXBException, SAXException, IOException {
         String description = "ÄÖÜß";
         File xmlReport = xmlReportTestHelper.createXmlWithUmlauts(description);
         JqassistantReport jqassistantReport = readReport(xmlReport);

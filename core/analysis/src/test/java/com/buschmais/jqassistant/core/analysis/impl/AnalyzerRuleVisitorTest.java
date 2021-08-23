@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-public class AnalyzerRuleVisitorTest {
+class AnalyzerRuleVisitorTest {
 
     private static final FileRuleSource FILE_RULE_SOURCE = new FileRuleSource(new File("."), "test.xml");
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
@@ -77,7 +77,7 @@ public class AnalyzerRuleVisitorTest {
     private Map<String, String> ruleParameters;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         statement = "match (n) return n";
         concept = createConcept(statement);
         constraint = createConstraint(statement);
@@ -105,7 +105,7 @@ public class AnalyzerRuleVisitorTest {
      *             If the test fails.
      */
     @Test
-    public void columnOrder() throws RuleException {
+    void columnOrder() throws RuleException {
         analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
@@ -119,7 +119,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void executeConcept() throws RuleException {
+    void executeConcept() throws RuleException {
         doReturn(Result.Status.SUCCESS).when(analyzerContext).verify(eq(concept), anyList(), anyList());
 
         boolean visitConcept = analyzerRuleVisitor.visitConcept(concept, Severity.MAJOR);
@@ -143,7 +143,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void skipConcept() throws RuleException {
+    void skipConcept() throws RuleException {
         analyzerRuleVisitor.skipConcept(concept, Severity.MAJOR);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
@@ -159,7 +159,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void executeConstraint() throws RuleException {
+    void executeConstraint() throws RuleException {
         doReturn(Result.Status.FAILURE).when(analyzerContext).verify(eq(constraint), anyList(), anyList());
 
         analyzerRuleVisitor.visitConstraint(constraint, Severity.BLOCKER);
@@ -180,7 +180,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void skipConstraint() throws RuleException {
+    void skipConstraint() throws RuleException {
         analyzerRuleVisitor.skipConstraint(constraint, Severity.BLOCKER);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
@@ -195,7 +195,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void skipAppliedConcept() throws RuleException {
+    void skipAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
 
         analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
@@ -207,7 +207,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void executeAppliedConcept() throws RuleException {
+    void executeAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
         when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
 
@@ -218,7 +218,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void missingParameter() {
+    void missingParameter() {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
@@ -235,7 +235,7 @@ public class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    public void ruleSourceInErrorMessage() {
+    void ruleSourceInErrorMessage() {
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         when(store.executeQuery(eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));

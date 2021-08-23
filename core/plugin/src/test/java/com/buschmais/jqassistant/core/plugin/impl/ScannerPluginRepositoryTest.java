@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ScannerPluginRepositoryTest {
+class ScannerPluginRepositoryTest {
 
     @Test
-    public void scopes() {
+    void scopes() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         ScannerPluginRepository repository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         assertThat(repository.getScope("test:foo"), Matchers.equalTo(TestScope.FOO));

@@ -11,16 +11,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 
-public class VerificationTest {
+class VerificationTest {
 
     @Test
-    public void adoc() throws RuleException {
+    void adoc() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", RuleConfiguration.DEFAULT);
         verifyRuleSet(ruleSet);
     }
 
     @Test
-    public void xml() throws RuleException {
+    void xml() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", RuleConfiguration.DEFAULT);
         verifyRuleSet(ruleSet);
     }
