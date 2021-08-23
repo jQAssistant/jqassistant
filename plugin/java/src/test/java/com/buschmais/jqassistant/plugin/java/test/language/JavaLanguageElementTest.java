@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JavaLanguageElementTest {
+class JavaLanguageElementTest {
 
     // ReadField WriteField Constructor
 
@@ -26,7 +26,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void typeName() {
+    void typeName() {
         ClassFileDescriptor descriptor = mock(ClassFileDescriptor.class);
         when(descriptor.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         SourceProvider<ClassFileDescriptor> sourceProvider = Type.getSourceProvider();
@@ -35,7 +35,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void fieldName() {
+    void fieldName() {
         FieldDescriptor descriptor = mock(FieldDescriptor.class);
         when(descriptor.getSignature()).thenReturn("int value");
         SourceProvider<FieldDescriptor> sourceProvider = Field.getSourceProvider();
@@ -44,7 +44,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void readFieldName() {
+    void readFieldName() {
         MethodDescriptor method = mock(MethodDescriptor.class);
         ReadsDescriptor descriptor = mock(ReadsDescriptor.class);
         when(descriptor.getMethod()).thenReturn(method);
@@ -56,7 +56,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void writeFieldName() {
+    void writeFieldName() {
         MethodDescriptor method = mock(MethodDescriptor.class);
         WritesDescriptor descriptor = mock(WritesDescriptor.class);
         when(descriptor.getMethod()).thenReturn(method);
@@ -68,7 +68,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void methodName() {
+    void methodName() {
         MethodDescriptor descriptor = mock(MethodDescriptor.class);
         when(descriptor.getSignature()).thenReturn("int getValue()");
         SourceProvider<MethodDescriptor> sourceProvider = Method.getSourceProvider();
@@ -77,7 +77,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void variableName() {
+    void variableName() {
         ClassFileDescriptor type = mock(ClassFileDescriptor.class);
         MethodDescriptor method = mock(MethodDescriptor.class);
         VariableDescriptor variable = mock(VariableDescriptor.class);
@@ -96,7 +96,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void methodInvocationName() {
+    void methodInvocationName() {
         MethodDescriptor method = mock(MethodDescriptor.class);
         InvokesDescriptor descriptor = mock(InvokesDescriptor.class);
         when(descriptor.getInvokingMethod()).thenReturn(method);
@@ -108,7 +108,7 @@ public class JavaLanguageElementTest {
     }
 
     @Test
-    public void typeDependsOnName() {
+    void typeDependsOnName() {
         TypeDescriptor dependent = mock(TypeDescriptor.class);
         when(dependent.getName()).thenReturn("A");
         TypeDescriptor dependency = mock(TypeDescriptor.class);

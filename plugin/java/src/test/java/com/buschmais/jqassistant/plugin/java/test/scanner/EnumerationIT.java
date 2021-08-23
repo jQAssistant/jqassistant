@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.hasItems;
 /**
  * Contains test which verify correct scanning of constructors.
  */
-public class EnumerationIT extends AbstractJavaPluginIT {
+class EnumerationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link EnumerationType}.
@@ -28,7 +28,7 @@ public class EnumerationIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void implicitDefaultConstructor() throws IOException, NoSuchMethodException, NoSuchFieldException {
+    void implicitDefaultConstructor() throws IOException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(EnumerationType.class);
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Enum) RETURN e").getColumn("e"), hasItem(typeDescriptor(EnumerationType.class)));

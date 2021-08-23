@@ -16,10 +16,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CyclomaticComplexityIT extends AbstractJavaPluginIT {
+class CyclomaticComplexityIT extends AbstractJavaPluginIT {
 
     @Test
-    public void cyclomaticComplexity() throws IOException {
+    void cyclomaticComplexity() throws IOException {
         Map<String, Integer> expectedComplexities = new HashMap<>();
         expectedComplexities.put("<init>", valueOf(1));
         expectedComplexities.put("ifStatement", valueOf(2));

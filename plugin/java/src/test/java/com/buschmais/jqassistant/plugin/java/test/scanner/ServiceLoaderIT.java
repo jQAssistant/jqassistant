@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -31,10 +30,10 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Contains tests regarding service loader descriptors.
  */
-public class ServiceLoaderIT extends AbstractJavaPluginIT {
+class ServiceLoaderIT extends AbstractJavaPluginIT {
 
     @BeforeEach
-    public void verifyServiceLoader() {
+    void verifyServiceLoader() {
         ServiceLoader<Service> services = ServiceLoader.load(Service.class);
         assertThat(services, hasItem(any(ServiceImpl.class)));
         assertThat(services, hasItem(any(OuterClass.InnerClassServiceImpl.class)));
@@ -43,11 +42,9 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
     /**
      * Verifies that service loader descriptor files are scanned.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    public void resolvableServiceImplementation() throws IOException {
+    void resolvableServiceImplementation() {
         scanClasses(Service.class, ServiceImpl.class, OuterClass.InnerClassServiceImpl.class);
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
         verifyServiceLoaderDescriptor();
@@ -56,11 +53,9 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
     /**
      * Verifies that service loader descriptor files are scanned.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    public void unresolvableServiceImplementation() throws IOException {
+    void unresolvableServiceImplementation() {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
         verifyServiceLoaderDescriptor();
     }
@@ -68,11 +63,9 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
     /**
      * Verifies that any files not representing service descriptors are ignored.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    public void invalidDescriptor() throws IOException {
+    void invalidDescriptor() {
         File file = getClassesDirectory(ServiceLoaderIT.class);
         final File propsFile = new File(file, "META-INF/test.properties");
         final String path = "META-INF/services/test.properties";
@@ -81,7 +74,7 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
         execute(artifactDescriptor, new ScanClassPathOperation() {
             @Override
             public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                return singletonList(scanner.<File, FileDescriptor>scan(propsFile, path, JavaScope.CLASSPATH));
+                return singletonList(scanner.scan(propsFile, path, JavaScope.CLASSPATH));
             }
         }, getScanner());
         List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:Properties:File) RETURN s").getColumn("s");

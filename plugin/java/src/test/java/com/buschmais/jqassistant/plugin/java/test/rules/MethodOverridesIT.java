@@ -30,11 +30,11 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 /**
  * Tests for the concept java:MethodOverrides.
  */
-public class MethodOverridesIT extends AbstractJavaPluginIT {
+class MethodOverridesIT extends AbstractJavaPluginIT {
 
     @MethodSource("parameters")
     @ParameterizedTest
-    public void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
+    void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
         scanClasses(ClientType.class, InterfaceType.class, AbstractClassType.class, SubClassType.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

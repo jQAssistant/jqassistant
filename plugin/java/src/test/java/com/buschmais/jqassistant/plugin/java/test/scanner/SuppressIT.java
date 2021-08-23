@@ -18,10 +18,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class SuppressIT extends AbstractJavaPluginIT {
+class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
-    public void suppressAnnotationMustNotBeScanned() throws RuleException {
+    void suppressAnnotationMustNotBeScanned() throws RuleException {
         scanClasses(Suppress.class);
         Result<Constraint> constraintResult = validateConstraint("suppress:SuppressAnnotationMustNotBeScanned");
         assertThat(constraintResult.getStatus(), equalTo(SUCCESS));
@@ -31,22 +31,22 @@ public class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void suppressedClass() throws RuleException {
+    void suppressedClass() throws RuleException {
         verifySuppress("suppress:Class", "suppress:SuppressedClass", "class");
     }
 
     @Test
-    public void suppressedField() throws RuleException {
+    void suppressedField() throws RuleException {
         verifySuppress("suppress:Field", "suppress:SuppressedField", "field");
     }
 
     @Test
-    public void suppressedMethod() throws RuleException {
+    void suppressedMethod() throws RuleException {
         verifySuppress("suppress:Method", "suppress:SuppressedMethod", "method");
     }
 
     @Test
-    public void suppressedMethodInPrimaryColumn() throws RuleException {
+    void suppressedMethodInPrimaryColumn() throws RuleException {
         verifySuppress("suppress:MethodInPrimaryColumn", "suppress:SuppressedMethodInPrimaryColumn", "method");
     }
 

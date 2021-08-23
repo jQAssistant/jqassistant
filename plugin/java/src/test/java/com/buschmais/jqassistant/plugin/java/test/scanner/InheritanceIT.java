@@ -12,7 +12,7 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class InheritanceIT extends AbstractJavaPluginIT {
+class InheritanceIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of interface hierarchies.
@@ -23,7 +23,7 @@ public class InheritanceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void interfaces() throws IOException, NoSuchMethodException, NoSuchFieldException {
+    void interfaces() throws IOException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(SuperInterface.class, SubInterface.class);
         store.beginTransaction();
         assertThat(query("MATCH (sub:Type:Interface)-[:IMPLEMENTS]->(super:Type:Interface) RETURN sub").getColumn("sub"),

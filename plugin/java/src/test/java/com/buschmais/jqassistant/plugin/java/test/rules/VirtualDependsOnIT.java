@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Tests for the concept java:VirtualDependsOn.
  */
-public class VirtualDependsOnIT extends AbstractJavaPluginIT {
+class VirtualDependsOnIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:VirtualDependsOn" for a class implementing an
@@ -27,7 +27,7 @@ public class VirtualDependsOnIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void invokeInterfaceMethod() throws Exception {
+    void invokeInterfaceMethod() throws Exception {
         scanClasses(ClassType.class, InterfaceType.class, InterfaceTypeClient.class);
         assertThat(applyConcept("java:VirtualDependsOn").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -45,7 +45,7 @@ public class VirtualDependsOnIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void invokeClassMethod() throws Exception {
+    void invokeClassMethod() throws Exception {
         scanClasses(ClassType.class, SubClassType.class, ClassTypeClient.class);
         assertThat(applyConcept("java:VirtualDependsOn").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

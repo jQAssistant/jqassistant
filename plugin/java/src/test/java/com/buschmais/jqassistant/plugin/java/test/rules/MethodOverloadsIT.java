@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Tests for the concept java:MethodOverloads.
  */
-public class MethodOverloadsIT extends AbstractJavaPluginIT {
+class MethodOverloadsIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:MethodOverloads".
@@ -26,7 +26,7 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void methodOverloads() throws Exception {
+    void methodOverloads() throws Exception {
         scanClasses(InterfaceType.class);
         assertThat(applyConcept("java:MethodOverloads").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -61,7 +61,7 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void methodOverloadsUnique() throws Exception {
+    void methodOverloadsUnique() throws Exception {
         scanClasses(InterfaceType.class);
         store.beginTransaction();
         // create existing relations with and without properties

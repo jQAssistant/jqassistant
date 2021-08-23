@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests for the concept java:GeneratedType.
  */
-public class GeneratedTypeIT extends AbstractJavaPluginIT {
+class GeneratedTypeIT extends AbstractJavaPluginIT {
 
     @Test
-    public void generatedTypes() throws Exception {
+    void generatedTypes() throws Exception {
         scanClasses(Generated.class, NotGenerated.class);
         Result<Concept> result = applyConcept("java:GeneratedType"); // implicitly executes concept "test:GeneratedType"
         assertThat(result.getStatus()).isEqualTo(SUCCESS);

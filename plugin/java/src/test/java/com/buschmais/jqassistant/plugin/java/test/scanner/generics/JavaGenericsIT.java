@@ -30,7 +30,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
  * Verifies scanning of Java generic types.
  */
 @Slf4j
-public class JavaGenericsIT extends AbstractJavaPluginIT {
+class JavaGenericsIT extends AbstractJavaPluginIT {
 
     @Test
     void outerClassTypeParameters() {

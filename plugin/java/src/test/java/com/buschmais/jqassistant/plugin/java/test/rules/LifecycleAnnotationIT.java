@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LifecycleAnnotationIT extends AbstractJavaPluginIT {
+class LifecycleAnnotationIT extends AbstractJavaPluginIT {
 
     @Test
-    public void postConstruct() throws NoSuchMethodException, RuleException {
+    void postConstruct() throws NoSuchMethodException, RuleException {
         scanClasses(ManagedResource.class);
         applyConcept("java:PostConstruct");
         store.beginTransaction();
@@ -22,7 +22,7 @@ public class LifecycleAnnotationIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void preDestroy() throws NoSuchMethodException, RuleException {
+    void preDestroy() throws NoSuchMethodException, RuleException {
         scanClasses(ManagedResource.class);
         applyConcept("java:PreDestroy");
         store.beginTransaction();

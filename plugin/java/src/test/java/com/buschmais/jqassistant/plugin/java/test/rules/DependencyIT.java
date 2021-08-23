@@ -40,7 +40,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Tests for the dependency concepts and result.
  */
-public class DependencyIT extends AbstractJavaPluginIT {
+class DependencyIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "dependency:Type".
@@ -49,7 +49,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void types() throws IOException {
+    void types() throws IOException {
         scanClasses(DependentType.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
@@ -94,7 +94,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void weight() throws IOException {
+    void weight() throws IOException {
         scanClasses(DependentType.class);
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("t1", DependentType.class.getName()).put("t2", LocalVariable.class.getName()).get();
@@ -107,7 +107,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void weightDisabled() throws IOException {
+    void weightDisabled() throws IOException {
         Map<String, Object> pluginConfig = MapBuilder.<String, Object> create(ClassFileScannerPlugin.PROPERTY_TYPE_DEPENDS_ON_WEIGHT, "false").get();
         File classesDirectory = getClassesDirectory(DependencyIT.class);
         store.beginTransaction();
@@ -124,7 +124,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void packages() throws Exception {
+    void packages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
         assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
@@ -145,7 +145,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void artifacts() throws Exception {
+    void artifacts() throws Exception {
         store.beginTransaction();
         JavaArtifactFileDescriptor a = getArtifactDescriptor("a");
         JavaArtifactFileDescriptor b = getArtifactDescriptor("b");
@@ -179,7 +179,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void packageCycles() throws Exception {
+    void packageCycles() throws Exception {
         scanClassPathDirectory(getClassesDirectory(A.class));
         assertThat(validateConstraint("dependency:PackageCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -203,7 +203,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void artifactCycles() throws Exception {
+    void artifactCycles() throws Exception {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         assertThat(validateConstraint("dependency:ArtifactCycles").getStatus(), equalTo(FAILURE));

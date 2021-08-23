@@ -10,10 +10,10 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class GenericsIT extends AbstractJavaPluginIT {
+class GenericsIT extends AbstractJavaPluginIT {
 
     @Test
-    public void genericType() throws NoSuchMethodException {
+    void genericType() throws NoSuchMethodException {
         scanClasses(GenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (g:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
@@ -23,7 +23,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void boundGenericType() throws NoSuchMethodException {
+    void boundGenericType() throws NoSuchMethodException {
         scanClasses(BoundGenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (b:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
@@ -33,7 +33,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void nestedGenericType() throws NoSuchMethodException {
+    void nestedGenericType() throws NoSuchMethodException {
         scanClasses(NestedGenericType.class);
         store.beginTransaction();
         assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
@@ -45,7 +45,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void nestedGenericMethod() throws NoSuchMethodException {
+    void nestedGenericMethod() throws NoSuchMethodException {
         scanClasses(NestedGenericMethod.class);
         store.beginTransaction();
         assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
@@ -55,7 +55,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void extendsGenericClass() throws NoSuchMethodException {
+    void extendsGenericClass() throws NoSuchMethodException {
         scanClasses(ExtendsGenericClass.class);
         store.beginTransaction();
         assertThat(query("MATCH (e:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"),
@@ -67,7 +67,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void implementsGenericInterface() throws NoSuchMethodException {
+    void implementsGenericInterface() throws NoSuchMethodException {
         scanClasses(ImplementsGenericInterface.class);
         store.beginTransaction();
         assertThat(query("MATCH (igi:Type)-[:IMPLEMENTS]->(i) RETURN i").getColumn("i"), hasItem(typeDescriptor(Iterable.class)));
@@ -78,7 +78,7 @@ public class GenericsIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void genericMembers() {
+    void genericMembers() {
         scanClasses(GenericMembers.class);
         store.beginTransaction();
         TestResult result = query("MATCH (gm:Type)-[:DEPENDS_ON]->(tv) RETURN tv");

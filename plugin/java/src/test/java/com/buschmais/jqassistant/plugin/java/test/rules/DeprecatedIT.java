@@ -18,7 +18,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Tests for the concept java:Deprecated.
  */
 @SuppressWarnings("deprecation")
-public class DeprecatedIT extends AbstractJavaPluginIT {
+class DeprecatedIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:Deprecated".
@@ -27,7 +27,7 @@ public class DeprecatedIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void deprecated() throws Exception {
+    void deprecated() throws Exception {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
         scanClassPathResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");

@@ -18,13 +18,13 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Tests for the concept java:PackageAnnotatedBy.
  */
-public class PackageAnnotatedByIT extends AbstractJavaPluginIT {
+class PackageAnnotatedByIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:PackageAnnotatedBy".
      */
     @Test
-    public void packageAnnotatedBy() throws Exception {
+    void packageAnnotatedBy() throws Exception {
         scanClassesAndPackages(PackageClass.class);
         Result<Concept> result = applyConcept("java:PackageAnnotatedBy");
         assertThat(result.getStatus(), equalTo(SUCCESS));

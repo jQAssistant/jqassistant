@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class InnerTypeIT extends AbstractJavaPluginIT {
+class InnerTypeIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:InnerType".
@@ -25,7 +25,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerType() throws RuleException, ClassNotFoundException {
+    void innerType() throws RuleException, ClassNotFoundException {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
         assertThat(applyConcept("java:InnerType").getStatus(), equalTo(SUCCESS));
@@ -43,7 +43,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void anonymousInnerTypes() throws RuleException, ClassNotFoundException {
+    void anonymousInnerTypes() throws RuleException, ClassNotFoundException {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
         assertThat(applyConcept("java:AnonymousInnerType").getStatus(), Matchers.equalTo(SUCCESS));

@@ -14,10 +14,10 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
-public class ArrayIT extends AbstractJavaPluginIT {
+class ArrayIT extends AbstractJavaPluginIT {
 
     @Test
-    public void field() throws ReflectiveOperationException {
+    void field() throws ReflectiveOperationException {
         scanClasses(Array.class);
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<String, Object>();

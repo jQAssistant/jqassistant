@@ -13,10 +13,10 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class VisibilityIT extends AbstractJavaPluginIT {
+class VisibilityIT extends AbstractJavaPluginIT {
 
     @Test
-    public void publicModifier() throws IOException, NoSuchFieldException, NoSuchMethodException {
+    void publicModifier() throws IOException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(Public.class);
         store.beginTransaction();
         assertThat(query("MATCH (t:Type) WHERE t.visibility='public' RETURN t").getColumn("t"), hasItem(typeDescriptor(Public.class)));
@@ -26,7 +26,7 @@ public class VisibilityIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void protectedModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
+    void protectedModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
         Class<?> innerClass = getInnerClass(Public.class, "Protected");
         scanClasses(innerClass);
         store.beginTransaction();
@@ -37,7 +37,7 @@ public class VisibilityIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void defaultModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
+    void defaultModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
         Class<?> innerClass = getInnerClass(Public.class, "Default");
         scanClasses(innerClass);
         store.beginTransaction();
@@ -48,7 +48,7 @@ public class VisibilityIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void privateModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
+    void privateModifier() throws IOException, NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
         Class<?> innerClass = getInnerClass(Public.class, "Private");
         scanClasses(innerClass);
         store.beginTransaction();

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 
-public class JavaRuntimePT extends AbstractJavaPluginIT {
+class JavaRuntimePT extends AbstractJavaPluginIT {
 
     /**
      * The list of primitive types.
@@ -29,7 +29,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
      */
     @Test
     @TestStore(type = TestStore.Type.FILE)
-    public void javaRuntime01Scan() throws Exception {
+    void javaRuntime01Scan() throws Exception {
         String javaHome = System.getProperty("java.home");
         assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
@@ -43,7 +43,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
 
     @Test
     @TestStore(type = TestStore.Type.FILE, reset = false)
-    public void virtualDependsOn() throws Exception {
+    void virtualDependsOn() throws Exception {
         applyConcept("java:VirtualDependsOn");
     }
 }

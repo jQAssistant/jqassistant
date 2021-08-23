@@ -17,10 +17,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
-public class PojoIT extends AbstractJavaPluginIT {
+class PojoIT extends AbstractJavaPluginIT {
 
     @Test
-    public void attributes() {
+    void attributes() {
         scanClasses(Pojo.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
@@ -43,7 +43,7 @@ public class PojoIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void lineNumbers() {
+    void lineNumbers() {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<int[]> lines = query("MATCH (:Method{name:'hashCode'})-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
@@ -66,7 +66,7 @@ public class PojoIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void variables() {
+    void variables() {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<VariableDescriptor> variables = query("MATCH (:Java:ByteCode:Method{name:'equals'})-[:DECLARES]->(v:Java:ByteCode:Variable) return v")

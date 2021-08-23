@@ -29,14 +29,14 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
  * Contains test which verify correct scanning of annotations and annotated
  * types.
  */
-public class AnnotationIT extends AbstractJavaPluginIT {
+class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on class level.
      *
      */
     @Test
-    public void annotatedClass() throws NoSuchFieldException {
+    void annotatedClass() throws NoSuchFieldException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class, Enumeration.class);
         // verify annotation type
         store.beginTransaction();
@@ -66,7 +66,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void annotatedMethod() throws ReflectiveOperationException {
+    void annotatedMethod() throws ReflectiveOperationException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method level
         store.beginTransaction();
@@ -89,7 +89,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void annotatedMethodParameter() throws ReflectiveOperationException {
+    void annotatedMethodParameter() throws ReflectiveOperationException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type on method parameter level
         store.beginTransaction();
@@ -113,7 +113,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void annotatedField() throws NoSuchFieldException {
+    void annotatedField() throws NoSuchFieldException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
@@ -136,7 +136,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void annotationDefaultValues() throws NoSuchFieldException {
+    void annotationDefaultValues() throws NoSuchFieldException {
         scanClasses(AnnotationWithDefaultValue.class);
         store.beginTransaction();
         assertThat(query("MATCH (t:Type:Annotation) RETURN t").getColumn("t"), hasItem(typeDescriptor(AnnotationWithDefaultValue.class)));
@@ -158,7 +158,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void innerClass() throws NoSuchMethodException {
+    void innerClass() throws NoSuchMethodException {
         scanClasses(AnnotatedType.GenericInnerAnnotatedType.class, Annotation.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (c:Constructor)-[:HAS]->(:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(Type:Annotation) RETURN c");

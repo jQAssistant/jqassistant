@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class TypeResolverIT extends AbstractJavaPluginIT {
+class TypeResolverIT extends AbstractJavaPluginIT {
 
     /**
      * Verify scanning dependent types in one artifact where the dependent type is
@@ -57,7 +57,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void dependencyTypeFirst() {
+    void dependencyTypeFirst() {
         scanClasses("a1", A.class);
         scanClasses("a1", B.class);
         store.beginTransaction();
@@ -78,7 +78,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void dependentArtifacts() {
+    void dependentArtifacts() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -114,7 +114,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void transitiveDependentArtifacts() {
+    void transitiveDependentArtifacts() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -145,7 +145,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void independentArtifacts() {
+    void independentArtifacts() {
         scanClasses("a1", A.class);
         scanClasses("a2", B.class);
         store.beginTransaction();
@@ -174,7 +174,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void duplicateType() {
+    void duplicateType() {
         scanClasses("a1", A.class);
         scanClasses("a2", A.class);
         store.beginTransaction();
@@ -190,7 +190,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void ambiguousDependencies() {
+    void ambiguousDependencies() {
         store.beginTransaction();
         JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
         JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
@@ -217,7 +217,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     /**
      */
     @Test
-    public void duplicateTypeInSameArtifact() {
+    void duplicateTypeInSameArtifact() {
         File directory = getClassesDirectory(A.class);
         final String resource = "/" + A.class.getName().replace(".", "/") + ".class";
         final File file = new File(directory, resource);

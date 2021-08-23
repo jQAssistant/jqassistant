@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Tests for the concept java:DefaultMethod.
  */
-public class DefaultMethodIT extends AbstractJavaPluginIT {
+class DefaultMethodIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:DefaultMethod".
@@ -23,7 +23,7 @@ public class DefaultMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void defaultMethod() throws Exception {
+    void defaultMethod() throws Exception {
         scanClasses(DefaultMethod.class);
         assertThat(applyConcept("java:DefaultMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

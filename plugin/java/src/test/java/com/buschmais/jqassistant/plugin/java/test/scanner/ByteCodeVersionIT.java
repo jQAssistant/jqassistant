@@ -17,10 +17,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Verifies functionality related to byte code and java versions.
  */
-public class ByteCodeVersionIT extends AbstractJavaPluginIT {
+class ByteCodeVersionIT extends AbstractJavaPluginIT {
 
     @Test
-    public void byteCodeVersion() throws IOException {
+    void byteCodeVersion() throws IOException {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' RETURN t").getColumn("t");
@@ -32,7 +32,7 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void javaVersion() throws Exception {
+    void javaVersion() throws Exception {
         scanClasses(Pojo.class);
         assertThat(applyConcept("java:JavaVersion").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

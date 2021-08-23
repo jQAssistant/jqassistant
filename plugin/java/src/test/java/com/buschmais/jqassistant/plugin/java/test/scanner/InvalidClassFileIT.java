@@ -25,10 +25,10 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * Verifies graceful handling of invalid class files.
  */
-public class InvalidClassFileIT extends AbstractJavaPluginIT {
+class InvalidClassFileIT extends AbstractJavaPluginIT {
 
     @Test
-    public void classFileWithHeaderOnly() throws IOException {
+    void classFileWithHeaderOnly() throws IOException {
         final String path = "/com.buschmais.Test.class";
         final FileResource fileResource = new AbstractFileResource() {
             @Override
@@ -55,7 +55,7 @@ public class InvalidClassFileIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void validClass() throws IOException {
+    void validClass() throws IOException {
         scanClasses(InvalidClassFileIT.class);
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors = query("MATCH (c:Class:File) RETURN c").getColumn("c");

@@ -15,14 +15,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Contains test which verify correct scanning static field values.
  */
-public class FieldValueIT extends AbstractJavaPluginIT {
+class FieldValueIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on class level.
      *
      */
     @Test
-    public void fieldValues() {
+    void fieldValues() {
         scanClasses(FieldValue.class);
         store.beginTransaction();
         assertThat(getFieldValue("stringValue", String.class), equalTo("StringValue"));

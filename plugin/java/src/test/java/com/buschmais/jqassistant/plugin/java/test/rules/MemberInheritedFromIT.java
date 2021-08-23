@@ -31,11 +31,11 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 /**
  * Tests for the concept java:MemberInheritedFrom.
  */
-public class MemberInheritedFromIT extends AbstractJavaPluginIT {
+class MemberInheritedFromIT extends AbstractJavaPluginIT {
 
     @MethodSource("memberParameters")
     @ParameterizedTest
-    public void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MemberDescriptor>> memberDescriptorMatchers) throws RuleException {
+    void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MemberDescriptor>> memberDescriptorMatchers) throws RuleException {
         scanClasses(ClientType.class, InterfaceType.class, AbstractClassType.class, SubClassType.class);
         assertThat(applyConcept("java:MemberInheritedFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

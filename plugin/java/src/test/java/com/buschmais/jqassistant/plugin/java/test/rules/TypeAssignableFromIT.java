@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.hasItems;
 /**
  * Tests for the concept java:TypeAssignableFrom.
  */
-public class TypeAssignableFromIT extends AbstractJavaPluginIT {
+class TypeAssignableFromIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:AssignableFrom".
@@ -28,7 +28,7 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void assignableFrom() throws RuleException {
+    void assignableFrom() throws RuleException {
         scanClasses(SubClassType.class, AbstractClassType.class, InterfaceType.class);
         assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -46,7 +46,7 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void assignableFromUnique() throws RuleException {
+    void assignableFromUnique() throws RuleException {
         scanClasses(AbstractClassType.class);
         store.beginTransaction();
         // create existing relations with and without properties

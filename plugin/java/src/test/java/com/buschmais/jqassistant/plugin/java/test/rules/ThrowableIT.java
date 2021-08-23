@@ -23,7 +23,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 public class ThrowableIT extends AbstractJavaPluginIT {
 
     @BeforeEach
-    public void scan() throws IOException {
+    void scan() throws IOException {
         scanClasses(FirstLevelThrowable.class, SecondLevelThrowable.class, FirstLevelError.class,
                     SecondLevelError.class, FirstLevelException.class, SecondLevelException.class,
                     FirstLevelRuntimeException.class, SecondLevelRuntimeException.class);
@@ -36,7 +36,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void throwable() throws Exception {
+    void throwable() throws Exception {
         assertThat(applyConcept("java:Throwable").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Throwable) RETURN element").getColumn("element");
@@ -53,7 +53,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void error() throws Exception {
+    void error() throws Exception {
         assertThat(applyConcept("java:Error").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Error) RETURN element").getColumn("element");
@@ -70,7 +70,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void exception() throws Exception {
+    void exception() throws Exception {
         assertThat(applyConcept("java:Exception").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Exception) RETURN element").getColumn("element");
@@ -87,7 +87,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void runtimeException() throws Exception {
+    void runtimeException() throws Exception {
         assertThat(applyConcept("java:RuntimeException").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:RuntimeException) RETURN element").getColumn("element");

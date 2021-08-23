@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Contains test on relations between outer and inner classes.
  */
-public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
+class AnonymousInnerClassIT extends AbstractJavaPluginIT {
 
     private static final String INNERCLASS_NAME = AnonymousInnerClass.class.getName() + "$1";
 
@@ -43,7 +43,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
+    void innerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanInnerClass(AnonymousInnerClass.class, "1");
         assertOuterClassContainsInnerClass();
     }
@@ -55,7 +55,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void outerAndInnerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
+    void outerAndInnerClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanClasses(AnonymousInnerClass.class);
         scanInnerClass(AnonymousInnerClass.class, "1");
         assertOuterClassContainsInnerClass();
@@ -68,7 +68,7 @@ public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerAndOuterClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
+    void innerAndOuterClass() throws IOException, ClassNotFoundException, NoSuchMethodException {
         scanInnerClass(AnonymousInnerClass.class, "1");
         scanClasses(AnonymousInnerClass.class);
         assertOuterClassContainsInnerClass();

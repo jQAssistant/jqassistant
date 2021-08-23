@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.hasItems;
 /**
  * Contains test which verify correct scanning of constructors.
  */
-public class ConstructorIT extends AbstractJavaPluginIT {
+class ConstructorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link ImplicitDefaultConstructor}.
@@ -23,7 +23,7 @@ public class ConstructorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void implicitDefaultConstructor() throws NoSuchMethodException {
+    void implicitDefaultConstructor() throws NoSuchMethodException {
         scanClasses(ImplicitDefaultConstructor.class);
         store.beginTransaction();
         assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
@@ -38,7 +38,7 @@ public class ConstructorIT extends AbstractJavaPluginIT {
      */
 
     @Test
-    public void overloadedConstructors() throws NoSuchMethodException {
+    void overloadedConstructors() throws NoSuchMethodException {
         scanClasses(OverloadedConstructor.class);
         store.beginTransaction();
         assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"),

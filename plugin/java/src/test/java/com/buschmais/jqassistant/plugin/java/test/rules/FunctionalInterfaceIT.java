@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 /**
  * Tests for the concept java:FunctionalInterface.
  */
-public class FunctionalInterfaceIT extends AbstractJavaPluginIT {
+class FunctionalInterfaceIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:FunctionalInterface".
@@ -26,7 +26,7 @@ public class FunctionalInterfaceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void functionalInterface() throws Exception {
+    void functionalInterface() throws Exception {
         scanClasses(FunctionalInterface.class, MarkerInterface.class, NonFunctionalInterface.class, FunctionalInterfaceWithoutAnnotation.class);
         assertThat(applyConcept("java:FunctionalInterface").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

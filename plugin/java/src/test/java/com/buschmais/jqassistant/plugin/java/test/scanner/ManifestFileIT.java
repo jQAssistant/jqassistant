@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Contains tests regarding manifest files.
  */
-public class ManifestFileIT extends AbstractJavaPluginIT {
+class ManifestFileIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that manifest files are scanned.
@@ -26,7 +26,7 @@ public class ManifestFileIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void manifestFile() throws IOException {
+    void manifestFile() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         store.beginTransaction();
         List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:Manifest:File) RETURN mf").getColumn("mf");

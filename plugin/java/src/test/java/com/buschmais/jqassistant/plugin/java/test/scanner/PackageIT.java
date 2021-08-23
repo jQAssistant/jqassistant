@@ -18,7 +18,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Contains tests regarding packages.
  */
-public class PackageIT extends AbstractJavaPluginIT {
+class PackageIT extends AbstractJavaPluginIT {
 
     private static final String EMPTY_PACKAGE = "com.buschmais.jqassistant.plugin.java.test.set.scanner.empty";
 
@@ -28,7 +28,7 @@ public class PackageIT extends AbstractJavaPluginIT {
      *
      */
     @Test
-    public void artifactContainsPackages() {
+    void artifactContainsPackages() {
         scanClassPathDirectory(getClassesDirectory(Pojo.class));
         store.beginTransaction();
         // Assert that all packages of Pojo.class are contained in the artifact

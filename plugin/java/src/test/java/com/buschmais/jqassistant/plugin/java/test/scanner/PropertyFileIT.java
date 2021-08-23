@@ -20,7 +20,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Contains tests regarding property files.
  */
-public class PropertyFileIT extends AbstractJavaPluginIT {
+class PropertyFileIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that property files are scanned.
@@ -29,7 +29,7 @@ public class PropertyFileIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void propertyFile() throws IOException {
+    void propertyFile() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/test.properties");
         store.beginTransaction();
         List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
@@ -48,7 +48,7 @@ public class PropertyFileIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void invalidPropertyFile() throws IOException {
+    void invalidPropertyFile() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/invalid.properties");
         store.beginTransaction();
         List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");

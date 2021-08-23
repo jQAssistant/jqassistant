@@ -17,7 +17,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCC
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.HamcrestCondition.matching;
 
-public class TypeParameterIT extends AbstractJavaPluginIT {
+class TypeParameterIT extends AbstractJavaPluginIT {
 
     @Test
     void innerTypeParameterDeclaredByOuterType() throws RuleException {

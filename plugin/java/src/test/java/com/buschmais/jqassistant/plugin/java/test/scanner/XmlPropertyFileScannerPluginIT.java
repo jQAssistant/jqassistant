@@ -19,17 +19,17 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDes
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
-public class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
+class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
 
     @AfterEach
-    public void commitTransaction() {
+    void commitTransaction() {
         if (store.hasActiveTransaction()) {
             store.commitTransaction();
         }
     }
 
     @Test
-    public void emptyPropertiesFileDoesNotHaveProperties() throws IOException {
+    void emptyPropertiesFileDoesNotHaveProperties() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH, "/set/scanner/propertyfiles/properties-empty.xml");
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors =
@@ -43,7 +43,7 @@ public class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void propertiesFileHasProperties() throws IOException {
+    void propertiesFileHasProperties() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH, "/set/scanner/propertyfiles/properties-2-props.xml");
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors =

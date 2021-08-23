@@ -30,11 +30,11 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 /**
  * Tests for the concept java:VirtualInvokes.
  */
-public class VirtualInvokesIT extends AbstractJavaPluginIT {
+class VirtualInvokesIT extends AbstractJavaPluginIT {
 
     @MethodSource("parameters")
     @ParameterizedTest
-    public void virtualInvokes(String clientMethodName, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
+    void virtualInvokes(String clientMethodName, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
         scanClasses(InterfaceType.class, AbstractClassType.class, SubClassType.class, ClientType.class);
         assertThat(applyConcept("java:VirtualInvokes").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

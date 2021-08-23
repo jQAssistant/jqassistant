@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class LambdaMethodIT extends AbstractJavaPluginIT {
+class LambdaMethodIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:LambdaMethod".
@@ -23,7 +23,7 @@ public class LambdaMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void lambdaMethod() throws Exception {
+    void lambdaMethod() throws Exception {
         scanClasses(LambdaMethod.class);
 
         assertThat(applyConcept("java:LambdaMethod").getStatus(), equalTo(SUCCESS));
