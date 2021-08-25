@@ -48,7 +48,7 @@
         <jqa-neo4jbackend.version>1.11.0-SNAPSHOT</jqa-neo4jbackend.version>
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
-        <org.asciidoctor.version>2.5.1</org.asciidoctor.version>
+        <org.asciidoctor.version>2.5.2</org.asciidoctor.version>
         <org.asciidoctorj-diagram.version>2.1.2</org.asciidoctorj-diagram.version>
         <net.sourceforge.plantuml.version>1.2021.6</net.sourceforge.plantuml.version>
         <org.jruby.version>9.2.17.0</org.jruby.version>
