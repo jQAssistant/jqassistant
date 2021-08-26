@@ -4,18 +4,30 @@
 
 ==== Requirements
 - Java Development Kit 8 or later
-- the environment variable JQASSISTANT_OPTS should be set to adjust memory settings
-
+- the environment variable JQASSISTANT_OPTS can be used to provide JVM arguments:
++
 [source]
 .Windows
 ----
 set JQASSISTANT_OPTS=-Xmx1024M
 ----
-
++
 [source]
 .Linux
 ----
 export JQASSISTANT_OPTS=-Xmx1024M
+----
+
+- the following JVM parameters are required if `Java 16` or later is used as runtime environment:
++
+.Windows
+----
+set JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+----
++
+.Linux
+----
+export JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
 ----
 
 ==== Installation
@@ -72,19 +84,40 @@ LIMIT 20
 ==== Requirements
 - Maven 3.5 or later
 - Java Development Kit 8 or later
-- the environment variable MAVEN_OPTS must be set to adjust memory settings
-
+- the environment variable MAVEN_OPTS can be used to provide JVM arguments
++
 [source]
 .Windows
 ----
 set MAVEN_OPTS=-Xmx1024M
 ----
-
++
 [source]
 .Linux
 ----
 export MAVEN_OPTS=-Xmx1024M
 ----
+
+- the following JVM parameters are required if `Java 16` or later is used as runtime environment:
++
+.Windows
+----
+set MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+----
++
+.Linux
+----
+export MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+----
++
+An alternative option is to place these settings into a file `.mvn/jvm.config` in the root Maven module:
++
+[source]
+.mvn/jvm.config
+----
+--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+----
+
 
 ==== Add the plugin
 
