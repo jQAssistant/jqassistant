@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.11.0-RC-1</version>
+        <version>1.11.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>manual</artifactId>
-    <version>1.11.0-RC-1</version>
+    <version>1.11.0-SNAPSHOT</version>
 
     <name>jQAssistant User Manual</name>
     <url>http://jqassistant.org/</url>
@@ -40,8 +40,8 @@
     </description>
 
     <properties>
-        <jqa-own-constraints.version>1.11.0-RC-1</jqa-own-constraints.version>
-        <jqa-distribution-spec.version>1.11.0-RC-1</jqa-distribution-spec.version>
+        <jqa-own-constraints.version>1.11.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-distribution-spec.version>1.11.0-SNAPSHOT</jqa-distribution-spec.version>
         <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
         <sourcedoc.directory>${project.build.directory}/asciidoc-modules-documentation</sourcedoc.directory>
         <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
