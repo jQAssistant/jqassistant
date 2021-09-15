@@ -194,22 +194,23 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
-        long totalRelations = reset("MATCH ()-[r]-() WITH r LIMIT 50000 DELETE r RETURN count(r) as relations", "relations");
-        long totalNodes = reset("MATCH (n) WITH n LIMIT 10000 DELETE n RETURN count(n) as nodes", "nodes");
-        LOGGER.info("Reset finished (removed " + totalNodes + " nodes, " + totalRelations + " relations).");
-    }
-
-    private long reset(String query, String countColumn) {
-        long totalCount = 0;
-        long count;
+        Map<String, Object> params = new HashMap<>();
+        params.put("batchSize", 100000);
+        long totalNodes = 0;
+        long nodes;
         do {
             beginTransaction();
-            Result.CompositeRowObject result = executeQuery(query).getSingleResult();
-            count = result.get(countColumn, Long.class);
-            totalCount = totalCount + count;
+            Result.CompositeRowObject result = executeQuery("MATCH (n) " + //
+                    "OPTIONAL MATCH (n)-[r]-() " + //
+                    "WITH n, r " + //
+                    "LIMIT $batchSize " + //
+                    "DETACH DELETE n " + //
+                    "RETURN count(distinct n) as nodes", params).getSingleResult();
+            nodes = result.get("nodes", Long.class);
+            totalNodes = totalNodes + nodes;
             commitTransaction();
-        } while (count > 0);
-        return totalCount;
+        } while (nodes > 0);
+        LOGGER.info("Reset finished (removed {} nodes).", totalNodes);
     }
 
     @Override
