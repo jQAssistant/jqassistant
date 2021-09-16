@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -198,6 +201,7 @@ public abstract class AbstractGraphStore implements Store {
         params.put("batchSize", 100000);
         long totalNodes = 0;
         long nodes;
+        Instant start = Instant.now();
         do {
             beginTransaction();
             Result.CompositeRowObject result = executeQuery("MATCH (n) " + //
@@ -210,7 +214,8 @@ public abstract class AbstractGraphStore implements Store {
             totalNodes = totalNodes + nodes;
             commitTransaction();
         } while (nodes > 0);
-        LOGGER.info("Reset finished (removed {} nodes).", totalNodes);
+        Instant end = Instant.now();
+        LOGGER.info("Reset finished (removed {} nodes, duration: {}s).", totalNodes, Duration.between(start, end).get(ChronoUnit.SECONDS));
     }
 
     @Override
