@@ -198,7 +198,7 @@ public abstract class AbstractGraphStore implements Store {
     public void reset() {
         LOGGER.info("Resetting store.");
         Map<String, Object> params = new HashMap<>();
-        params.put("batchSize", 100000);
+        params.put("batchSize", 65536);
         long totalNodes = 0;
         long nodes;
         Instant start = Instant.now();
@@ -208,8 +208,9 @@ public abstract class AbstractGraphStore implements Store {
                     "OPTIONAL MATCH (n)-[r]-() " + //
                     "WITH n, r " + //
                     "LIMIT $batchSize " + //
+                    "WITH distinct n " + //
                     "DETACH DELETE n " + //
-                    "RETURN count(distinct n) as nodes", params).getSingleResult();
+                    "RETURN count(n) as nodes", params).getSingleResult();
             nodes = result.get("nodes", Long.class);
             totalNodes = totalNodes + nodes;
             commitTransaction();
