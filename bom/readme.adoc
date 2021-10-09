@@ -1,0 +1,43 @@
+= jQAssistant Bill of Materials
+
+This is the Bill of Materials (BOM) of jQAssistant with all standard dependencies used by jQAssistant during runtime.
+Using this BOM should help to ease the management of dependencies of plugins written for jQAssitant.
+
+== Provided Dependencies
+
+Currently, the BOM provides the following managed dependencies:
+
+* `com.buschmais.xo:xo.api`
+* `com.buschmais.xo:xo.neo4j.api`
+* `com.buschmais.xo:xo.impl`
+* `com.buschmais.xo:xo.neo4j.remote`
+* `com.buschmais.xo:xo.spi`
+* `com.github.ben-manes.caffeine:caffeine`
+* `com.google.guava:guava`
+* `org.projectlombok`
+* `org.slf4j:slf4j-api`
+* `org.slf4j:jcl-over-slf4j`
+* `org.slf4j:slf4j-simple`
+
+Please check the POM of the BOM for the used scope and for the version of each dependency.
+
+== Usage of the BOM
+
+To be able to use the managed dependencies provided by the BOM, the section for managed dependencies must contain an entry for BOM similar to this one:
+
+[source,xml,linenums,subs="+quotes"]]
+----
+<dependencyManagement>
+    <dependency>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>bom</artifactId>
+        <version>_version_of_the_bom_</version>
+        <scope>import</scope>
+        <type>pom</type>
+    </dependency>
+</dependencyManagement>
+----
+
+== Using a BOM with Apache Maven
+
+More information on using a BOM with Apache Maven can be found in the section https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#bill-of-materials-bom-poms[Bill of Materials (BOM) POMs^] in the guide https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html[Introduction to the Dependency Mechanism^].
