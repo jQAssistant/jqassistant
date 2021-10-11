@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -18,6 +19,8 @@ import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
+import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 
@@ -38,7 +41,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     public static final String ENCODING = "UTF-8";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v1.8";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v1.11";
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -159,9 +162,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 public void run() throws XMLStreamException {
                     xmlStreamWriter.writeStartElement(elementName);
                     xmlStreamWriter.writeAttribute("id", rule.getId());
-                    xmlStreamWriter.writeStartElement("description");
-                    xmlStreamWriter.writeCharacters(rule.getDescription());
-                    xmlStreamWriter.writeEndElement(); // description
+                    writeElementWithCharacters("description", rule.getDescription());
                     if (!result.isEmpty()) {
                         xmlStreamWriter.writeStartElement("result");
                         xmlStreamWriter.writeStartElement("columns");
@@ -218,9 +219,7 @@ public class XmlReportPlugin implements ReportPlugin {
      *             If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
-        xmlStreamWriter.writeStartElement("status");
-        xmlStreamWriter.writeCharacters(status.name().toLowerCase());
-        xmlStreamWriter.writeEndElement();
+        writeElementWithCharacters("status", status.name().toLowerCase());
     }
 
     /**
@@ -250,11 +249,17 @@ public class XmlReportPlugin implements ReportPlugin {
                 stringValue = sourceProvider.getName(descriptor);
                 String sourceFile = sourceProvider.getSourceFile(descriptor);
                 Integer lineNumber = sourceProvider.getLineNumber(descriptor);
-                if (sourceFile != null) {
+                Optional<FileLocation> sourceLocation = sourceProvider.getSourceLocation(descriptor);
+                if (sourceFile != null || sourceLocation.isPresent()) {
                     xmlStreamWriter.writeStartElement("source");
-                    xmlStreamWriter.writeAttribute("name", sourceFile);
+                    if (sourceFile != null) {
+                        xmlStreamWriter.writeAttribute("name", sourceFile);
+                    }
                     if (lineNumber != null) {
                         xmlStreamWriter.writeAttribute("line", lineNumber.toString());
+                    }
+                    if (sourceLocation.isPresent()) {
+                        writeSourceLocation(sourceLocation.get());
                     }
                     xmlStreamWriter.writeEndElement(); // sourceFile
                 }
@@ -262,10 +267,48 @@ public class XmlReportPlugin implements ReportPlugin {
         } else if (value != null) {
             stringValue = ReportHelper.getLabel(value);
         }
-        xmlStreamWriter.writeStartElement("value");
-        xmlStreamWriter.writeCharacters(stringValue);
-        xmlStreamWriter.writeEndElement(); // value
+        writeElementWithCharacters("value", stringValue);
         xmlStreamWriter.writeEndElement(); // column
+    }
+
+    private void writeSourceLocation(FileLocation sourceLocation) throws XMLStreamException {
+        xmlStreamWriter.writeAttribute("fileName", sourceLocation.getFileName());
+        writeOptionalIntegerAttribute("startLine", sourceLocation.getStartLine());
+        writeOptionalIntegerAttribute("endLine", sourceLocation.getEndLine());
+        writeParentLocation(sourceLocation.getParent());
+    }
+
+    private void writeParentLocation(Optional<ArtifactLocation> optionalArtifactLocation) throws XMLStreamException {
+        if (optionalArtifactLocation.isPresent()) {
+            ArtifactLocation artifactLocation = optionalArtifactLocation.get();
+            xmlStreamWriter.writeStartElement("parent");
+            xmlStreamWriter.writeAttribute("fileName", artifactLocation.getFileName());
+            writeOptionalStringAttribute("group", artifactLocation.getGroup());
+            writeOptionalStringAttribute("name", artifactLocation.getName());
+            writeOptionalStringAttribute("type", artifactLocation.getType());
+            writeOptionalStringAttribute("version", artifactLocation.getVersion());
+            writeOptionalStringAttribute("classifier", artifactLocation.getClassifier());
+            writeParentLocation(artifactLocation.getParent());
+            xmlStreamWriter.writeEndElement();
+        }
+    }
+
+    private void writeElementWithCharacters(String element, String text) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement(element);
+        xmlStreamWriter.writeCharacters(text);
+        xmlStreamWriter.writeEndElement();
+    }
+
+    private void writeOptionalIntegerAttribute(String attribute, Optional<Integer> value) throws XMLStreamException {
+        if (value.isPresent()) {
+            xmlStreamWriter.writeAttribute(attribute, value.get().toString());
+        }
+    }
+
+    private void writeOptionalStringAttribute(String attribute, Optional<String> value) throws XMLStreamException {
+        if (value.isPresent()) {
+            xmlStreamWriter.writeAttribute(attribute, value.get());
+        }
     }
 
     /**
@@ -277,9 +320,7 @@ public class XmlReportPlugin implements ReportPlugin {
      *             If writing fails.
      */
     private void writeDuration(long beginTime) throws XMLStreamException {
-        xmlStreamWriter.writeStartElement("duration");
-        xmlStreamWriter.writeCharacters(Long.toString(System.currentTimeMillis() - beginTime));
-        xmlStreamWriter.writeEndElement(); // duration
+        writeElementWithCharacters("duration", Long.toString(System.currentTimeMillis() - beginTime));
     }
 
     /**

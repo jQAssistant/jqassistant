@@ -1,6 +1,12 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import java.util.Optional;
+
+import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.xo.api.CompositeObject;
+
+import static java.util.Optional.empty;
 
 /**
  * Defines a provider which allows looking up source code information from
@@ -22,8 +28,22 @@ public interface SourceProvider<D extends CompositeObject> {
      *            The descriptor.
      * @return The name of the resource.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 1, minor = 12)
     default String getSourceFile(D descriptor) {
         return null;
+    }
+
+    /**
+     * Return the {@link FileLocation} for a {@link CompositeObject}.
+     *
+     * @param descriptor
+     *            The {@link CompositeObject}
+     * @return The {@link FileLocation} or <code>null</code> if it cannot be
+     *         determined.
+     */
+    default Optional<FileLocation> getSourceLocation(D descriptor) {
+        return empty();
     }
 
     /**

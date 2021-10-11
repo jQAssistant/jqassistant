@@ -62,9 +62,12 @@ class XmlReportTest {
                 assertThat(column.getElement().getLanguage()).isEqualTo("TestLanguage");
                 assertThat(column.getElement().getValue()).isEqualTo("TestElement");
                 assertThat(column.getValue()).isEqualTo("descriptorValue");
-                SourceType source = column.getSource();
+                SourceLocationType source = column.getSource();
+                assertThat(source.getFileName()).isEqualTo("Test.java");
                 assertThat(source.getName()).isEqualTo("Test.java");
                 assertThat(source.getLine()).isEqualTo(1);
+                assertThat(source.getStartLine()).isEqualTo(1);
+                assertThat(source.getEndLine()).isEqualTo(2);
             }
         }
     }
@@ -110,7 +113,7 @@ class XmlReportTest {
 
     private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/report/xsd/jqassistant-report-v1.8.xsd")));
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/report/xsd/jqassistant-report-v1.11.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportPlugin.ENCODING));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
