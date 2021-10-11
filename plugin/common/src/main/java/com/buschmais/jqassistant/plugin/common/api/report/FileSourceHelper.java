@@ -20,11 +20,15 @@ import static lombok.AccessLevel.PRIVATE;
 public class FileSourceHelper {
 
     public static Optional<FileLocation> getSourceLocation(FileDescriptor descriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
-        FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder().fileName(descriptor.getFileName());
-        fileLocationBuilder.startLine(startLine);
-        fileLocationBuilder.endLine(endLine);
-        fileLocationBuilder.parent(getParentLocation(descriptor));
-        return of(fileLocationBuilder.build());
+        String fileName = descriptor.getFileName();
+        if (fileName != null) {
+            FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder().fileName(fileName);
+            fileLocationBuilder.startLine(startLine);
+            fileLocationBuilder.endLine(endLine);
+            fileLocationBuilder.parent(getParentLocation(descriptor));
+            return of(fileLocationBuilder.build());
+        }
+        return empty();
     }
 
     public static Optional<ArtifactLocation> getParentLocation(FileDescriptor descriptor) {
