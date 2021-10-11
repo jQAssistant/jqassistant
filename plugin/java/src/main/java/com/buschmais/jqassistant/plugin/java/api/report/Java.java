@@ -4,13 +4,18 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
+import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.report.FileSourceHelper;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Defines the language elements for "Java".
@@ -25,7 +30,7 @@ public @interface Java {
     enum JavaLanguageElement implements LanguageElement {
         Package {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<PackageDescriptor> getSourceProvider() {
                 return new SourceProvider<PackageDescriptor>() {
                     @Override
                     public String getName(PackageDescriptor descriptor) {
@@ -36,12 +41,17 @@ public @interface Java {
                     public String getSourceFile(PackageDescriptor descriptor) {
                         return descriptor.getFileName();
                     }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(PackageDescriptor descriptor) {
+                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                    }
                 };
             }
         },
         Type {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<ClassFileDescriptor> getSourceProvider() {
                 return new SourceProvider<ClassFileDescriptor>() {
                     @Override
                     public String getName(ClassFileDescriptor descriptor) {
@@ -50,20 +60,25 @@ public @interface Java {
 
                     @Override
                     public String getSourceFile(ClassFileDescriptor descriptor) {
-                        return descriptor.getFileName();
+                        return TypeSourceHelper.getSourceFile(descriptor);
+                    }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(ClassFileDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor);
                     }
                 };
             }
         },
         Field {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceProvider();
+            public SourceProvider<FieldDescriptor> getSourceProvider() {
+                return new FieldSourceProvider();
             }
         },
         Variable {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<VariableDescriptor> getSourceProvider() {
                 return new SourceProvider<VariableDescriptor>() {
 
                     @Override
@@ -73,98 +88,111 @@ public @interface Java {
 
                     @Override
                     public String getSourceFile(VariableDescriptor descriptor) {
-                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? ((ClassFileDescriptor) declaringType).getFileName() : null;
+                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
                     }
 
                     @Override
-                    public Integer getLineNumber(VariableDescriptor descriptor) {
-                        return descriptor.getMethod().getFirstLineNumber();
+                    public Optional<FileLocation> getSourceLocation(VariableDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType());
                     }
+
                 };
             }
         },
         ReadField {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<ReadsDescriptor> getSourceProvider() {
                 return new SourceProvider<ReadsDescriptor>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getMethod()) + ", line " + descriptor.getLineNumber();
+                        return descriptor.getMethod().getSignature() + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
                     public String getSourceFile(ReadsDescriptor descriptor) {
-                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
+                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
                     }
 
                     @Override
                     public Integer getLineNumber(ReadsDescriptor descriptor) {
                         return descriptor.getLineNumber();
                     }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(ReadsDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType(), descriptor.getLineNumber());
+                    }
                 };
             }
         },
         WriteField {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<WritesDescriptor> getSourceProvider() {
                 return new SourceProvider<WritesDescriptor>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getMethod()) + ", line " + descriptor.getLineNumber();
+                        return descriptor.getMethod().getSignature() + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
                     public String getSourceFile(WritesDescriptor descriptor) {
-                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
+                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
                     }
 
                     @Override
                     public Integer getLineNumber(WritesDescriptor descriptor) {
                         return descriptor.getLineNumber();
                     }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(WritesDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType(), descriptor.getLineNumber());
+                    }
+
                 };
             }
         },
         Method {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceProvider();
+            public SourceProvider<MethodDescriptor> getSourceProvider() {
+                return new MethodSourceProvider();
             }
         },
         Constructor {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceProvider();
+                return new MethodSourceProvider();
             }
         },
         MethodInvocation {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<InvokesDescriptor> getSourceProvider() {
                 return new SourceProvider<InvokesDescriptor>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getInvokingMethod()) + ", line " + descriptor.getLineNumber();
+                        return descriptor.getInvokingMethod().getSignature() + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
                     public String getSourceFile(InvokesDescriptor descriptor) {
-                        TypeDescriptor declaringType = descriptor.getInvokingMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
+                        return TypeSourceHelper.getSourceFile(descriptor.getInvokingMethod().getDeclaringType());
                     }
 
                     @Override
                     public Integer getLineNumber(InvokesDescriptor descriptor) {
                         return descriptor.getLineNumber();
                     }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(InvokesDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getInvokingMethod().getDeclaringType(), descriptor.getLineNumber());
+                    }
                 };
             }
         },
         TypeDepdendency {
             @Override
-            public SourceProvider<? extends Descriptor> getSourceProvider() {
+            public SourceProvider<TypeDependsOnDescriptor> getSourceProvider() {
                 return new SourceProvider<TypeDependsOnDescriptor>() {
                     @Override
                     public String getName(TypeDependsOnDescriptor descriptor) {
@@ -173,13 +201,12 @@ public @interface Java {
 
                     @Override
                     public String getSourceFile(TypeDependsOnDescriptor descriptor) {
-                        TypeDescriptor dependent = descriptor.getDependent();
-                        return dependent instanceof ClassFileDescriptor ? ((FileDescriptor) dependent).getFileName() : null;
+                        return TypeSourceHelper.getSourceFile(descriptor.getDependent());
                     }
 
                     @Override
-                    public Integer getLineNumber(TypeDependsOnDescriptor descriptor) {
-                        return 0;
+                    public Optional<FileLocation> getSourceLocation(TypeDependsOnDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent());
                     }
                 };
             }
@@ -191,21 +218,44 @@ public @interface Java {
         }
 
         /**
-         * {@link com.buschmais.jqassistant.core.report.api.SourceProvider}
-         * implementation for type members.
+         * {@link SourceProvider} implementation for type members.
          */
-        private static class MemberSourceProvider implements SourceProvider<MemberDescriptor> {
+        private abstract static class MemberSourceProvider<D extends MemberDescriptor> implements SourceProvider<D> {
             @Override
-            public String getName(MemberDescriptor descriptor) {
+            public String getName(D descriptor) {
                 return descriptor.getSignature();
             }
 
             @Override
-            public String getSourceFile(MemberDescriptor descriptor) {
-                TypeDescriptor declaringType = descriptor.getDeclaringType();
-                return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
+            public String getSourceFile(D descriptor) {
+                return TypeSourceHelper.getSourceFile(descriptor.getDeclaringType());
             }
+
         }
 
+        /**
+         * {@link SourceProvider} implementation for {@link FieldDescriptor}s.
+         */
+        private static class FieldSourceProvider extends MemberSourceProvider<FieldDescriptor> {
+
+            @Override
+            public Optional<FileLocation> getSourceLocation(FieldDescriptor descriptor) {
+                return TypeSourceHelper.getSourceLocation(descriptor.getDeclaringType());
+            }
+
+        }
+
+        /**
+         * {@link SourceProvider} implementation for {@link MethodDescriptor}s.
+         */
+        private static class MethodSourceProvider extends MemberSourceProvider<MethodDescriptor> {
+
+            @Override
+            public Optional<FileLocation> getSourceLocation(MethodDescriptor descriptor) {
+                return TypeSourceHelper.getSourceLocation(descriptor.getDeclaringType(), ofNullable(descriptor.getFirstLineNumber()),
+                        ofNullable(descriptor.getLastLineNumber()));
+            }
+
+        }
     }
 }
