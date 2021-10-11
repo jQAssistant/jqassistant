@@ -36,17 +36,18 @@ public class TypeSourceHelper {
     static Optional<FileLocation> getSourceLocation(TypeDescriptor typeDescriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
         if (typeDescriptor instanceof ClassFileDescriptor) {
             ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) typeDescriptor;
-            FileLocation.FileLocationBuilder fileLocationBuilder = FileLocation.builder();
             for (FileDescriptor parent : classFileDescriptor.getParents()) {
                 if (parent instanceof PackageDescriptor) {
+                    // File location can only safely built if a parent package exists.
                     PackageDescriptor packageDescriptor = (PackageDescriptor) parent;
+                    FileLocation.FileLocationBuilder fileLocationBuilder = FileLocation.builder();
+                    fileLocationBuilder.parent(FileSourceHelper.getParentLocation(classFileDescriptor));
                     fileLocationBuilder.fileName(packageDescriptor.getFileName() + "/" + classFileDescriptor.getSourceFileName());
+                    fileLocationBuilder.startLine(startLine);
+                    fileLocationBuilder.endLine(endLine);
+                    return of(fileLocationBuilder.build());
                 }
             }
-            fileLocationBuilder.parent(FileSourceHelper.getParentLocation(classFileDescriptor));
-            fileLocationBuilder.startLine(startLine);
-            fileLocationBuilder.endLine(endLine);
-            return of(fileLocationBuilder.build());
         }
         return empty();
     }
