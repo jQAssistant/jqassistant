@@ -4,13 +4,18 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
+import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
+
+import static java.util.Optional.empty;
 
 /**
  * Defines generic language elements.
@@ -29,8 +34,34 @@ public @interface Generic {
          */
         Named {
             @Override
+            public SourceProvider<NamedDescriptor> getSourceProvider() {
+                return descriptor -> descriptor.getName();
+            }
+        },
+
+        /**
+         * Files.
+         */
+        File {
+            @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return (SourceProvider<NamedDescriptor>) descriptor -> descriptor.getName();
+                return new SourceProvider<FileDescriptor>() {
+
+                    @Override
+                    public String getName(FileDescriptor descriptor) {
+                        return descriptor.getFileName();
+                    }
+
+                    @Override
+                    public String getSourceFile(FileDescriptor descriptor) {
+                        return descriptor.getFileName();
+                    }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(FileDescriptor descriptor) {
+                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                    }
+                };
             }
         },
 
@@ -50,6 +81,11 @@ public @interface Generic {
                     public String getSourceFile(ArtifactFileDescriptor descriptor) {
                         return descriptor.getFileName();
                     }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(ArtifactFileDescriptor descriptor) {
+                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                    }
                 };
             }
         };
@@ -58,5 +94,7 @@ public @interface Generic {
         public String getLanguage() {
             return "Generic";
         }
+
     }
+
 }
