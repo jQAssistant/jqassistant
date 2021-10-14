@@ -25,11 +25,13 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of {@link ReportPlugin} which writes the results of an
  * analysis to an XML file.
  */
+@Slf4j
 @Default
 public class XmlReportPlugin implements ReportPlugin {
 
@@ -205,9 +207,16 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private String getPrimaryColumn(ExecutableRule rule, List<String> columnNames) {
+        if(columnNames == null || columnNames.isEmpty()) {
+            return null;
+        }
         String primaryColumn = rule.getReport().getPrimaryColumn();
-        if (primaryColumn == null && columnNames != null && !columnNames.isEmpty()) {
+        if (primaryColumn == null) {
             primaryColumn = columnNames.get(0);
+        }
+        if (!columnNames.contains(primaryColumn)) {
+            log.warn("Rule '{}' defines primary column '{}' which is not contained in the result. Available columns: {}.", rule, primaryColumn,
+                    columnNames);
         }
         return primaryColumn;
     }
