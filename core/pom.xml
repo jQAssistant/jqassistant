@@ -40,7 +40,7 @@
     </scm>
 
     <properties>
-        <assertj.version>3.9.1</assertj.version>
+        <assertj.version>3.21.0</assertj.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jackson.version>2.10.1</jackson.version>
         <jqa-asciidoctor-utilities.version>1.11.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
