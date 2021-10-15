@@ -96,7 +96,7 @@
         <maven.failsafe.version>3.0.0-M4</maven.failsafe.version>
         <maven.install.version>3.0.0-M1</maven.install.version>
         <maven.jar.version>3.1.1</maven.jar.version>
-        <maven.javadoc.version>3.0.1</maven.javadoc.version>
+        <maven.javadoc.version>3.3.1</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.14.0</maven.jaxb2-plugin.version>
 
         <!--
