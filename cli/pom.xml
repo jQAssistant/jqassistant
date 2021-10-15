@@ -48,7 +48,7 @@
         <junit.version>5.5.0-M1</junit.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
-        <assertj-core.version>3.20.2</assertj-core.version>
+        <assertj-core.version>3.21.0</assertj-core.version>
         <mockito.version>2.23.4</mockito.version>
     </properties>
 
