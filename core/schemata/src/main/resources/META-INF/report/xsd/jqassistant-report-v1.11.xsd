@@ -93,6 +93,7 @@
             <xs:element name="column" type="tns:ColumnHeaderType" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="count" type="xs:int" use="required"/>
+        <xs:attribute name="primary" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="ColumnHeaderType">
