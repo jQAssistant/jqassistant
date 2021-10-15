@@ -33,9 +33,23 @@ public @interface Generic {
          * Named elements.
          */
         Named {
+
             @Override
             public SourceProvider<NamedDescriptor> getSourceProvider() {
-                return descriptor -> descriptor.getName();
+                return new SourceProvider<NamedDescriptor>() {
+                    @Override
+                    public String getName(NamedDescriptor descriptor) {
+                        return descriptor.getName();
+                    }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(NamedDescriptor descriptor) {
+                        if (descriptor instanceof FileDescriptor) {
+                            return FileSourceHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty());
+                        }
+                        return empty();
+                    }
+                };
             }
         },
 

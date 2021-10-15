@@ -4,11 +4,22 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.ArtifactFile;
 import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.File;
+import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.Named;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 public class GenericLanguageElementTest extends AbstractLanguageElementTest {
+
+    @Test
+    void namedElement() {
+        ArtifactFileDescriptor descriptor = mock(ArtifactFileDescriptor.class);
+        doReturn("test").when(descriptor).getName();
+        doReturn("/test.txt").when(descriptor).getFileName();
+        doReturn(newHashSet(getArtifactFileDescriptor())).when(descriptor).getParents();
+
+        verify(descriptor, Named, "test", "/test.txt");
+    }
 
     @Test
     void fileElement() {
