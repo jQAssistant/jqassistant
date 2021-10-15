@@ -88,6 +88,8 @@ class XmlReportTest {
         ResultType result = ruleType.getResult();
         assertThat(result).isNotNull();
         ColumnsHeaderType columnsHeader = result.getColumns();
+        assertThat(columnsHeader.getCount()).isEqualTo(2);
+        assertThat(columnsHeader.getPrimary()).isEqualTo("c1");
         List<ColumnHeaderType> columnHeaders = columnsHeader.getColumn();
         verifyColumnHeader(columnHeaders.get(0), "c1", true);
         verifyColumnHeader(columnHeaders.get(1), "c2", false);
