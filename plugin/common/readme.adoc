@@ -1,6 +1,6 @@
 = jQAssistant Plugin Common
 
 This is the base library with common functionality for
-all plugins of https://www.jqassistant.org[jQAssistant^].
+all plugins of https://jqassistant.org[jQAssistant^].
 
-For more information on jQAssistant see https://www.jqassistant.org[^].
+For more information on jQAssistant see https://jqassistant.org[^].
