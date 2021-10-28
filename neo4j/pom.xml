@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.11.0</version>
+        <version>1.12.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
     <artifactId>parent</artifactId>
-    <version>1.11.0</version>
+    <version>1.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Embedded Neo4j Server Parent</name>
@@ -22,8 +22,8 @@
 
     <properties>
         <checkstyle.version>8.29</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.11.0</jqa-asciidoctor-utilities.version>
-        <jqa-own-constraints.version>1.11.0</jqa-own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
         <org.mockito.version>2.24.0</org.mockito.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
     </properties>
