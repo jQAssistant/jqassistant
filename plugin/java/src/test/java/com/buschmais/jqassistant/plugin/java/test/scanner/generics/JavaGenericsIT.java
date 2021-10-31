@@ -325,7 +325,7 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(bound).isNotNull().isInstanceOf(TypeVariableDescriptor.class);
         TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
         assertThat(typeVariable.getName()).isEqualTo(expectedName);
-        assertThat(typeVariable.getDeclaredBy().getGenericDeclaration()).is(matching(declaredBy));
+        assertThat(typeVariable.getDeclaredBy()).is(matching(declaredBy));
         assertThat(typeVariable.getRawType()).is(matching(typeDescriptor(expectedRawType)));
     }
 

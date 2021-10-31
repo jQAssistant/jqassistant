@@ -11,8 +11,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 public interface TypeVariableDescriptor extends BoundDescriptor, NamedDescriptor {
 
     @Incoming
-    @Relation
-    DeclaresTypeParameterDescriptor getDeclaredBy();
+    @Relation("DECLARES_TYPE_PARAMETER")
+    GenericDeclarationDescriptor getDeclaredBy();
 
     @Relation("HAS_UPPER_BOUND")
     List<BoundDescriptor> getUpperBounds();
