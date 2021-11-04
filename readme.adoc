@@ -45,4 +45,4 @@ The table below lists the repositories jQAssistant is made of.
 | YAML 2 Plugin             | https://github.com/jqassistant/jqa-yaml2-plugin[^]
 |===
 
-TIP: For convenience reasons the repositories are aggregated as sub-modules in this Git repository. You can clone it using `git clone --recursive https://githhub.com/jQAssistant/jQAssistant.git`.
+TIP: For convenience reasons the repositories are aggregated as sub-modules in this Git repository. You can clone it using `git clone --recursive https://github.com/jQAssistant/jQAssistant.git`.
