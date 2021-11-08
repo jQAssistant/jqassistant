@@ -57,7 +57,7 @@ public class AnalyzerContextImpl implements AnalyzerContext {
     public <T extends ExecutableRule<?>> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows) throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
-            getLogger().debug("Using default verification for '{}'." + executable);
+            getLogger().debug("Using default verification for '{}'.", executable);
             verification = DEFAULT_VERIFICATION;
         }
         return verify(executable, columnNames, rows, verification);
