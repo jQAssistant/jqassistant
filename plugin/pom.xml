@@ -170,7 +170,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
                             <includeTypes>xsl</includeTypes>
-                            <includeClassifiers>rules2asciidoc,plugin2asciidoc</includeClassifiers>
+                            <includeClassifiers>rules,plugin,concept-summary,constraint-summary</includeClassifiers>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
@@ -189,13 +189,14 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <transformationSets>
+                                <!-- Plugin -->
                                 <transformationSet>
                                     <dir>src/main/resources/META-INF</dir>
                                     <includes>
                                         <include>jqassistant-plugin.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-plugin2asciidoc.xsl
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-plugin.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -219,27 +220,56 @@
                                         </parameter>
                                     </parameters>
                                 </transformationSet>
+                                <!-- Rules -->
                                 <transformationSet>
-                                    <dir>src/main/resources/META-INF/</dir>
+                                    <dir>src/main/resources/META-INF</dir>
                                     <includes>
-                                        <include>jqassistant-plugin.xml</include>
+                                        <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-rules2asciidoc.xsl
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-rules.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
                                         <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^jqassistant-plugin\.xml$</pattern>
-                                            <replacement>concepts-and-constraints.adoc</replacement>
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1.adoc</replacement>
                                         </fileMapper>
                                     </fileMappers>
-                                    <parameters>
-                                        <parameter>
-                                            <name>dirOfRules</name>
-                                            <value>file:///${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
-                                        </parameter>
-                                    </parameters>
+                                </transformationSet>
+                                <!-- Concept Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-concept-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-concept-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                                <!-- Constraint Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-constraint-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-constraint-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
                                 </transformationSet>
                             </transformationSets>
                         </configuration>
@@ -525,7 +555,7 @@
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>asciidoctor-utilities</artifactId>
             <type>xsl</type>
-            <classifier>plugin2asciidoc</classifier>
+            <classifier>plugin</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -533,7 +563,23 @@
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>asciidoctor-utilities</artifactId>
             <type>xsl</type>
-            <classifier>rules2asciidoc</classifier>
+            <classifier>rules</classifier>
+            <version>${jqa-asciidoctor-utilities.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>xsl</type>
+            <classifier>concept-summary</classifier>
+            <version>${jqa-asciidoctor-utilities.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>xsl</type>
+            <classifier>constraint-summary</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
             <scope>provided</scope>
         </dependency>
