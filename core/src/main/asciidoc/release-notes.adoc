@@ -1,5 +1,8 @@
 = Core Framework
 
+== 1.11.1
+* Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
+
 == 1.11.0
 * Added more specific source locations to jQAssistant XML report for improving integration with tools like SonarQube.
 +

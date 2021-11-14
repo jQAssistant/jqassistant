@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.io.File;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
@@ -37,7 +38,7 @@ class ExecutablesTest {
         assertThat(imagesDirectoryAttribute, notNullValue());
         File imagesOutDir = new File(imagesDirectoryAttribute);
         assertThat(imagesOutDir.exists(), equalTo(true));
-        String fileName = (String) abstractBlock.getAttr("target");
+        String fileName = (String) abstractBlock.getAttributes().get("target");
         assertThat(fileName, notNullValue());
         File diagramFile = new File(imagesOutDir, fileName);
         assertThat("Expected file " + diagramFile + " does not exist.", diagramFile.exists(), equalTo(true));
@@ -65,6 +66,9 @@ class ExecutablesTest {
         assertThat(concept.getId(), executable, CoreMatchers.<Executable>instanceOf(type));
         assertThat(concept.getId(), executable.getSource(), instanceOf(expectedSourceType));
         assertThat(concept.getId(), executable.getLanguage(), equalTo(expectedLanguage));
+        Map<String, Boolean> requiresConcepts = concept.getRequiresConcepts();
+        assertThat(requiresConcepts, notNullValue());
+        assertThat(requiresConcepts.containsKey("test:RequiredConcept"), equalTo(true));
         return concept;
     }
 
@@ -72,6 +76,9 @@ class ExecutablesTest {
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertThat(constraint, notNullValue());
         assertThat(constraint.getExecutable(), CoreMatchers.<Executable>instanceOf(type));
+        Map<String, Boolean> requiresConcepts = constraint.getRequiresConcepts();
+        assertThat(requiresConcepts, notNullValue());
+        assertThat(requiresConcepts.containsKey("test:RequiredConcept"), equalTo(true));
         return constraint;
     }
 

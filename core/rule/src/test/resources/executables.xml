@@ -1,6 +1,9 @@
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
     <concept id="test:CypherConcept">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <cypher><![CDATA[
             Cypher Concept
@@ -8,6 +11,7 @@
     </concept>
 
     <concept id="test:ScriptConcept">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <script language="javascript"><![CDATA[
             Script Concept
@@ -15,6 +19,7 @@
     </concept>
 
     <concept id="test:SourceConcept">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <source language="cypher"><![CDATA[
           Source Concept
@@ -22,6 +27,7 @@
     </concept>
 
     <concept id="test:SourceConceptUpperCase">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <source language="CYPHER"><![CDATA[
           Source Concept (upper case)
@@ -30,6 +36,7 @@
 
 
     <constraint id="test:CypherConstraint">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <cypher><![CDATA[
             Cypher Constraint
@@ -37,6 +44,7 @@
     </constraint>
 
     <constraint id="test:ScriptConstraint">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <script language="javascript"><![CDATA[
             Script Constraint
@@ -44,6 +52,7 @@
     </constraint>
 
     <constraint id="test:SourceConstraint">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <source language="cypher"><![CDATA[
             Source Constraint
@@ -51,10 +60,11 @@
     </constraint>
 
     <constraint id="test:SourceConstraintUpperCase">
+        <requiresConcept refId="test:RequiredConcept"/>
         <description></description>
         <source language="CYPHER"><![CDATA[
             Source Constraint (upper case)
         ]]></source>
     </constraint>
 
-</jqa:jqassistant-rules>
+</jqassistant-rules>
