@@ -170,7 +170,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
                             <includeTypes>xsl</includeTypes>
-                            <includeClassifiers>rules,plugin,concept-summary,constraint-summary</includeClassifiers>
+                            <includeClassifiers>plugin,rules,group-summary,constraint-summary,concept-summary</includeClassifiers>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
@@ -237,20 +237,20 @@
                                         </fileMapper>
                                     </fileMappers>
                                 </transformationSet>
-                                <!-- Concept Summary -->
+                                <!-- Group Summary -->
                                 <transformationSet>
                                     <dir>src/main/resources/META-INF</dir>
                                     <includes>
                                         <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-concept-summary.xsl
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-group-summary.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
                                         <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                             <pattern>^(.*)$</pattern>
-                                            <replacement>$1-concept-summary.adoc</replacement>
+                                            <replacement>$1-group-summary.adoc</replacement>
                                         </fileMapper>
                                     </fileMappers>
                                 </transformationSet>
@@ -268,6 +268,23 @@
                                         <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                             <pattern>^(.*)$</pattern>
                                             <replacement>$1-constraint-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                                <!-- Concept Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-concept-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-concept-summary.adoc</replacement>
                                         </fileMapper>
                                     </fileMappers>
                                 </transformationSet>
@@ -571,7 +588,7 @@
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>asciidoctor-utilities</artifactId>
             <type>xsl</type>
-            <classifier>concept-summary</classifier>
+            <classifier>group-summary</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -580,6 +597,14 @@
             <artifactId>asciidoctor-utilities</artifactId>
             <type>xsl</type>
             <classifier>constraint-summary</classifier>
+            <version>${jqa-asciidoctor-utilities.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>xsl</type>
+            <classifier>concept-summary</classifier>
             <version>${jqa-asciidoctor-utilities.version}</version>
             <scope>provided</scope>
         </dependency>
