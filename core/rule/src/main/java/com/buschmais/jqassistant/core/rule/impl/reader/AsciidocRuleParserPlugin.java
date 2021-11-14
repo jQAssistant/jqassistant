@@ -22,6 +22,7 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.asciidoctor.ast.ContentNode;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.IncludeProcessor;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author mh
@@ -153,8 +155,8 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private void extractExecutableRule(RuleSource ruleSource, StructuralNode executableRuleBlock, RuleSetBuilder builder) throws RuleException {
-        Attributes attributes = new Attributes(executableRuleBlock.getAttributes());
-        String id = executableRuleBlock.id();
+        Attributes attributes = new Attributes(executableRuleBlock);
+        String id = executableRuleBlock.getId();
         if (id == null) {
             throw new RuleException("An id attribute is required for the rule '" + executableRuleBlock + "' (i.e. '[[rule:id]]' is required.");
         }
@@ -199,7 +201,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
             language = block.getStyle();
             if (language == null) {
                 // PlantUML extension
-                language = (String) block.getAttributes().get("1");
+                language = attributes.getString("1");
             }
             if (language != null) {
                 return new SourceExecutable<>(language.toLowerCase(), block, StructuralNode.class);
@@ -244,7 +246,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private void extractGroup(RuleSource ruleSource, StructuralNode groupBlock, RuleSetBuilder ruleSetBuilder) throws RuleException {
-        Attributes attributes = new Attributes(groupBlock.getAttributes());
+        Attributes attributes = new Attributes(groupBlock);
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
@@ -334,15 +336,16 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      * @return The report.
      */
     private Report getReport(StructuralNode part) {
-        Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
-        Object reportType = part.getAttributes().get(REPORT_TYPE);
+        Attributes attributes = new Attributes(part);
+        String primaryReportColum = attributes.getString(PRIMARY_REPORT_COLUM);
+        String reportType = attributes.getString(REPORT_TYPE);
         Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
         Report.ReportBuilder reportBuilder = Report.builder();
         if (reportType != null) {
-            reportBuilder.selectedTypes(Report.selectTypes(reportType.toString()));
+            reportBuilder.selectedTypes(Report.selectTypes(reportType));
         }
         if (primaryReportColum != null) {
-            reportBuilder.primaryColumn(primaryReportColum.toString());
+            reportBuilder.primaryColumn(primaryReportColum);
         }
         return reportBuilder.properties(reportProperties).build();
     }
@@ -358,11 +361,11 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      */
     private Properties parseProperties(StructuralNode part, String attributeName) {
         Properties properties = new Properties();
-        Object attribute = part.getAttributes().get(attributeName);
+        String attribute = new Attributes(part).getString(attributeName);
         if (attribute == null) {
             return properties;
         }
-        Scanner propertiesScanner = new Scanner(attribute.toString());
+        Scanner propertiesScanner = new Scanner(attribute);
         propertiesScanner.useDelimiter(";");
         while (propertiesScanner.hasNext()) {
             String next = propertiesScanner.next().trim();
@@ -398,12 +401,13 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
 
         private final Map<String, Object> attributes;
 
-        private Attributes(Map<String, Object> attributes) {
-            this.attributes = attributes;
+        private Attributes(ContentNode contentNode) {
+            // Create a copy of the attributes with lower-case keys
+            this.attributes = contentNode.getAttributes().entrySet().stream().collect(toMap(entry -> entry.getKey().toLowerCase(), entry -> entry.getValue()));
         }
 
         private Integer getInt(String key) {
-            Object value = attributes.get(key);
+            Object value = attributes.get(key.toLowerCase());
             if (value != null) {
                 return Integer.valueOf(value.toString());
             }
@@ -415,12 +419,13 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         private String getString(String key, String defaultValue) {
-            Object value = attributes.get(key);
+            Object value = attributes.get(key.toLowerCase());
             if (value != null) {
                 return value.toString();
             }
             return defaultValue;
         }
+
     }
 
     /**

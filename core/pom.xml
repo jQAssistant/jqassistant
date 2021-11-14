@@ -49,7 +49,7 @@
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <org.asciidoctor.version>2.5.2</org.asciidoctor.version>
-        <org.asciidoctorj-diagram.version>2.1.2</org.asciidoctorj-diagram.version>
+        <org.asciidoctorj-diagram.version>2.2.1</org.asciidoctorj-diagram.version>
         <net.sourceforge.plantuml.version>1.2021.6</net.sourceforge.plantuml.version>
         <org.jruby.version>9.2.20.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>

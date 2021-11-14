@@ -3,47 +3,47 @@
 == Cypher And Script Rules
 
 [[test:CypherConcept]]
-[source,cypher,role=concept]
+[source,cypher,role=concept,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
 
 [[test:ScriptConcept]]
-[source,javascript,role=concept]
+[source,javascript,role=concept,requiresConcepts="test:RequiredConcept"]
 ----
 ----
 
 [[test:SourceConcept]]
-[source,cypher,role=concept]
+[source,cypher,role=concept,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
 
 [[test:SourceConceptUpperCase]]
-[source,CYPHER,role=concept]
+[source,CYPHER,role=concept,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
 
 [[test:CypherConstraint]]
-[source,cypher,role=constraint]
+[source,cypher,role=constraint,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
 
 [[test:ScriptConstraint]]
-[source,javascript,role=constraint]
+[source,javascript,role=constraint,requiresConcepts="test:RequiredConcept"]
 ----
 ----
 
 [[test:SourceConstraint]]
-[source,cypher,role=constraint]
+[source,cypher,role=constraint,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
 
 [[test:SourceConstraintUpperCase]]
-[source,CYPHER,role=constraint]
+[source,CYPHER,role=constraint,requiresConcepts="test:RequiredConcept"]
 ----
 MATCH (n) RETURN n
 ----
@@ -51,7 +51,7 @@ MATCH (n) RETURN n
 == Asciidoc
 
 [[test:Table]]
-[options="header",role=concept]
+[options="header",role=concept,requiresConcepts="test:RequiredConcept"]
 |===
 | Header
 | Content
@@ -60,7 +60,7 @@ MATCH (n) RETURN n
 == PlantUML
 
 [[test:PlantUML]]
-[plantuml,role=concept]
+[plantuml,role=concept,requiresConcepts="test:RequiredConcept"]
 ----
 @startuml
 [artifactId:xo.impl] as impl <<:Maven:Project>>
