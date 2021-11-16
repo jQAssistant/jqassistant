@@ -14,7 +14,7 @@ NOTE: The tests of our JSON plugin use the JSON files provided by
       created as an appendix to the article
       http://seriot.ch/parsing_json.php[Parsing JSON is a Minefield^].
 
-==== Limitations
+=== Limitations
 
 The JSON scanner is able to process the majority of valid and invalid
 JSON documents. However it can have problems with invalid JSON documents
