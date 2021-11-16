@@ -44,7 +44,6 @@
         <jqa-distribution-spec.version>1.12.0-SNAPSHOT</jqa-distribution-spec.version>
         <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
         <sourcedoc.directory>${project.build.directory}/asciidoc-modules-documentation</sourcedoc.directory>
-        <org.asciidoctor-plugin.version>1.5.7</org.asciidoctor-plugin.version>
     </properties>
 
 
