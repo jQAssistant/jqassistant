@@ -41,7 +41,6 @@
 
     <properties>
         <jqa-plugin-common.version>1.12.0-SNAPSHOT</jqa-plugin-common.version>
-        <asciidoctor.toplevelid>xml-plugin</asciidoctor.toplevelid>
     </properties>
 
     <build>
