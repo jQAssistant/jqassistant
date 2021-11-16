@@ -42,7 +42,6 @@
     <properties>
         <commons-compress.version>1.19</commons-compress.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
-        <asciidoctor.toplevelid>plugin-common</asciidoctor.toplevelid>
     </properties>
 
     <build>
