@@ -162,16 +162,22 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-asciidoc-stylesheets</id>
+                        <id>unpack-asciidoc-stylesheets</id>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <phase>process-sources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
-                            <includeTypes>xsl</includeTypes>
-                            <includeClassifiers>plugin,rules,group-summary,constraint-summary,concept-summary</includeClassifiers>
-                            <stripVersion>true</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.buschmais.jqassistant</groupId>
+                                    <artifactId>asciidoctor-utilities</artifactId>
+                                    <type>zip</type>
+                                    <classifier>xsl</classifier>
+                                    <version>${jqa-asciidoctor-utilities.version}</version>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -196,7 +202,7 @@
                                         <include>jqassistant-plugin.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-plugin.xsl
+                                        ${project.build.directory}/xml2asciidoc/plugin.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -206,10 +212,6 @@
                                         </fileMapper>
                                     </fileMappers>
                                     <parameters>
-                                        <parameter>
-                                            <name>toplevelid</name>
-                                            <value>${asciidoctor.toplevelid}</value>
-                                        </parameter>
                                         <parameter>
                                             <name>groupId</name>
                                             <value>${project.groupId}</value>
@@ -227,7 +229,7 @@
                                         <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-rules.xsl
+                                        ${project.build.directory}/xml2asciidoc/rules.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -244,7 +246,7 @@
                                         <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-group-summary.xsl
+                                        ${project.build.directory}/xml2asciidoc/group-summary.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -261,7 +263,7 @@
                                         <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-constraint-summary.xsl
+                                        ${project.build.directory}/xml2asciidoc/constraint-summary.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -278,7 +280,7 @@
                                         <include>jqassistant-rules/*.xml</include>
                                     </includes>
                                     <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-concept-summary.xsl
+                                        ${project.build.directory}/xml2asciidoc/concept-summary.xsl
                                     </stylesheet>
                                     <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                     <fileMappers>
@@ -546,68 +548,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!--
-         ! I M P O R T A N T
-         !
-         ! The declaration of this dependency is required as Maven if
-         ! not able to download declared dependencies of plugins.
-         ! Oliver B. Fischer, 2017-04-11
-         ! todo Check if this hack is still required
-         !
-         ! Try the following to check if this is still required
-         ! - Go to the locel repository of one of the plugins of jQAssistant
-         ! - mvn - - version
-         ! - Remove the dependency com.buschmais.jqassistant:asciidoctor-utilities
-         ! - mvn -Dmaven.repo.local=<somepath> clean install
-         !-->
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <!-- The scope must be provided otherwise it will be part of the distribution -->
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <type>xsl</type>
-            <classifier>plugin</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <type>xsl</type>
-            <classifier>rules</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <type>xsl</type>
-            <classifier>group-summary</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <type>xsl</type>
-            <classifier>constraint-summary</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <type>xsl</type>
-            <classifier>concept-summary</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
