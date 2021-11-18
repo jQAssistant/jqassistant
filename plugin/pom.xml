@@ -548,6 +548,15 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>zip</type>
+            <classifier>xsl</classifier>
+            <version>${jqa-asciidoctor-utilities.version}</version>
+            <!-- The scope must be provided otherwise it will be part of the distribution -->
+            <scope>provided</scope>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
