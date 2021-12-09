@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
