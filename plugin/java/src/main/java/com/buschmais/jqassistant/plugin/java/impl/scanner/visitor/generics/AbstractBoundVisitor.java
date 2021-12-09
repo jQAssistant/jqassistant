@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
@@ -25,7 +27,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     private BoundDescriptor current;
 
-    private int currentTypeParameterIndex = 0;
+    private List<BoundDescriptor> actualTypeArguments = new ArrayList<>();
 
     public AbstractBoundVisitor(VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
         super(VisitorHelper.ASM_OPCODES);
@@ -75,24 +77,22 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     @Override
     public final void visitTypeArgument() {
-        ParameterizedTypeDescriptor parameterizedType = getParameterizedType();
         WildcardTypeDescriptor wildcardType = visitorHelper.getStore().create(WildcardTypeDescriptor.class);
-        addActualArgumentType(parameterizedType, wildcardType);
+        addActualArgumentType(wildcardType);
     }
 
     @Override
     public final SignatureVisitor visitTypeArgument(char wildcard) {
-        ParameterizedTypeDescriptor parameterizedType = getParameterizedType();
         if (wildcard == INSTANCEOF) {
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
                 protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
-                    addActualArgumentType(parameterizedType, bound);
+                    addActualArgumentType(bound);
                 }
             };
         } else {
             WildcardTypeDescriptor wildcardType = visitorHelper.getStore().create(WildcardTypeDescriptor.class);
-            addActualArgumentType(parameterizedType, wildcardType);
+            addActualArgumentType(wildcardType);
             return new AbstractBoundVisitor(visitorHelper, containingType) {
                 @Override
                 protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
@@ -109,12 +109,8 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         }
     }
 
-    private ParameterizedTypeDescriptor getParameterizedType() {
-        return visitorHelper.getStore().addDescriptorType(current, ParameterizedTypeDescriptor.class);
-    }
-
-    private void addActualArgumentType(ParameterizedTypeDescriptor parameterizedType, BoundDescriptor argumentType) {
-        parameterizedType.addActualTypeArgument(currentTypeParameterIndex++, argumentType);
+    private void addActualArgumentType(BoundDescriptor argumentType) {
+        actualTypeArguments.add(argumentType);
     }
 
     private void apply(BoundDescriptor bound) {
@@ -126,7 +122,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
      * Determine the raw type bound for a {@link BoundDescriptor}.
      *
      * @param bound
-     *            The {@link BoundDescriptor}.
+     *     The {@link BoundDescriptor}.
      * @return The raw type bound (optional).
      */
     private TypeDescriptor getRawTypeBound(BoundDescriptor bound) {
@@ -150,12 +146,26 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
         return null;
     }
 
+    @Override
+    public final void visitEnd() {
+        if (actualTypeArguments != null) {
+            Store store = visitorHelper.getStore();
+            ParameterizedTypeDescriptor parameterizedType = store.addDescriptorType(current, ParameterizedTypeDescriptor.class);
+            int index = 0;
+            for (BoundDescriptor actualTypeArgument : actualTypeArguments) {
+                HasActualTypeArgumentDescriptor hasActualTypeArgument = store.create(parameterizedType, HasActualTypeArgumentDescriptor.class,
+                    actualTypeArgument);
+                hasActualTypeArgument.setIndex(index++);
+            }
+        }
+    }
+
     /**
      * Return a raw bound from a list of {@link BoundDescriptor}s if it is
      * non-ambiguous.
      *
      * @param bounds
-     *            The {@link BoundDescriptor}.
+     *     The {@link BoundDescriptor}.
      * @return The raw bound or <code>null</code> if it is ambiguous.
      */
     private TypeDescriptor getUniqueRawTypeBound(List<BoundDescriptor> bounds) {
