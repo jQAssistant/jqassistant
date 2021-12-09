@@ -1,12 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Provides methods for delegating method invocations to delegates.
@@ -25,7 +24,7 @@ class Delegator<D> {
      * @param consumer
      *     The Consumer.
      */
-    void delegateToConsumer(Consumer<D> consumer) {
+    void accept(Consumer<D> consumer) {
         for (D delegate : delegates) {
             if (delegate != null) {
                 consumer.accept(delegate);
@@ -42,8 +41,17 @@ class Delegator<D> {
      *     The expected return type.
      * @return A {@link List} of returned values, may include <code>null</code> values.
      */
-    <T> List<T> delegateToFunction(Function<D, T> function) {
-        return delegates.stream().map(delegate -> function.apply(delegate)).collect(toList());
+    <T> List<T> apply(Function<D, T> function) {
+        List<T> list = new ArrayList<>(delegates.size());
+        for (D delegate : delegates) {
+            if (delegate != null) {
+                T value = function.apply(delegate);
+                list.add(value);
+            } else {
+                list.add(null);
+            }
+        }
+        return list;
     }
 
 }

@@ -17,26 +17,26 @@ public class DelegatingAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visit(String name, Object value) {
-        delegator.delegateToConsumer(visitor -> visitor.visit(name, value));
+        delegator.accept(visitor -> visitor.visit(name, value));
     }
 
     @Override
     public void visitEnum(String name, String descriptor, String value) {
-        delegator.delegateToConsumer(visitor -> visitor.visitEnum(name, descriptor, value));
+        delegator.accept(visitor -> visitor.visitEnum(name, descriptor, value));
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(String name, String descriptor) {
-        return new DelegatingAnnotationVisitor(delegator.delegateToFunction(visitor -> visitor.visitAnnotation(name, descriptor)));
+        return new DelegatingAnnotationVisitor(delegator.apply(visitor -> visitor.visitAnnotation(name, descriptor)));
     }
 
     @Override
     public AnnotationVisitor visitArray(String name) {
-        return new DelegatingAnnotationVisitor(delegator.delegateToFunction(visitor -> visitor.visitArray(name)));
+        return new DelegatingAnnotationVisitor(delegator.apply(visitor -> visitor.visitArray(name)));
     }
 
     @Override
     public void visitEnd() {
-        delegator.delegateToConsumer(visitor -> visitor.visitEnd());
+        delegator.accept(visitor -> visitor.visitEnd());
     }
 }
