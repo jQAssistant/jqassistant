@@ -31,11 +31,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
     private int syntheticParameters = 0;
-    private int cyclomaticComplexity = 1;
     private Integer lineNumber = null;
-    private Integer firstLineNumber = null;
-    private Integer lastLineNumber = null;
-    private Set<Integer> effectiveLines = new HashSet<>();
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
@@ -144,34 +140,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        if (this.lineNumber == null) {
-            this.firstLineNumber = line;
-            this.lastLineNumber = line;
-        } else {
-            this.firstLineNumber = Math.min(line, this.firstLineNumber);
-            this.lastLineNumber = Math.max(line, this.lastLineNumber);
-        }
         this.lineNumber = line;
-        this.effectiveLines.add(line);
-    }
-
-    @Override
-    public void visitJumpInsn(int opcode, Label label) {
-        cyclomaticComplexity++;
     }
 
     @Override
     public void visitEnd() {
-        methodDescriptor.setCyclomaticComplexity(cyclomaticComplexity);
-        if (firstLineNumber != null) {
-            methodDescriptor.setFirstLineNumber(firstLineNumber);
-        }
-        if (lastLineNumber != null) {
-            methodDescriptor.setLastLineNumber(lastLineNumber);
-        }
-        if (!effectiveLines.isEmpty()) {
-            methodDescriptor.setEffectiveLineCount(effectiveLines.size());
-        }
         visitorHelper.getTypeVariableResolver().pop();
     }
 }

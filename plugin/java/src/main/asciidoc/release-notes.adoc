@@ -1,6 +1,10 @@
 
 = Java Plugin
 
+== 1.12.0
+
+* Improved calculation of cyclomatic complexity for Java class methods
+
 == 1.10.1
 
 * Upgraded to ASM 9.2 to support the scan of Java 18 bytecode

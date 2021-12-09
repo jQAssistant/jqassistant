@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate.DelegatingMethodVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.ClassSignatureVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.MethodSignatureVisitor;
@@ -13,6 +14,8 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
+
+import static java.util.Arrays.asList;
 
 /**
  * A class visitor implementation.
@@ -27,9 +30,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * Constructor.
      *
      * @param fileDescriptor
-     *            The file descriptor to be migrated to a type descriptor.
+     *     The file descriptor to be migrated to a type descriptor.
      * @param visitorHelper
-     *            The visitor helper.
+     *     The visitor helper.
      */
     public ClassVisitor(FileDescriptor fileDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
@@ -103,7 +106,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
+    public org.objectweb.asm.MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
+        final String[] exceptions) {
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, SignatureHelper.getMethodSignature(name, desc));
         visitorHelper.getTypeVariableResolver().push();
         methodDescriptor.setName(name);
@@ -131,7 +135,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType).getTypeDescriptor();
             methodDescriptor.getThrows().add(exceptionType);
         }
-        return new MethodVisitor(cachedType, methodDescriptor, visitorHelper);
+        return new DelegatingMethodVisitor(asList(new MethodVisitor(cachedType, methodDescriptor, visitorHelper), new MethodLoCVisitor(methodDescriptor),
+            new MethodComplexityVisitor(methodDescriptor)));
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
@@ -202,11 +207,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * Checks whether the value contains the flag.
      *
      * @param value
-     *            the value
+     *     the value
      * @param flag
-     *            the flag
+     *     the flag
      * @return <code>true</code> if (value & flag) == flag, otherwise
-     *         <code>false</code>.
+     * <code>false</code>.
      */
     private boolean hasFlag(int value, int flag) {
         return (value & flag) == flag;
@@ -216,7 +221,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * Returns the AccessModifier for the flag pattern.
      *
      * @param flags
-     *            the flags
+     *     the flags
      * @return the AccessModifier
      */
     private VisibilityModifier getVisibility(int flags) {
@@ -235,7 +240,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * Determine the types label to be applied to a class node.
      *
      * @param flags
-     *            The access flags.
+     *     The access flags.
      * @return The types label.
      */
     private Class<? extends ClassFileDescriptor> getJavaType(int flags) {
