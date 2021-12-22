@@ -193,7 +193,6 @@
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-component-metadata</artifactId>
                     <version>2.1.0</version>
-                    <!--
                     <executions>
                         <execution>
                             <goals>
@@ -201,7 +200,6 @@
                             </goals>
                         </execution>
                     </executions>
-                    -->
                 </plugin>
 
                 <plugin>
