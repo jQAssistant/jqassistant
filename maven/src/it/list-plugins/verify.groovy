@@ -2,7 +2,7 @@ def buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert buildLog.getText().contains("""jQAssistant CDI Plugin (jqa.plugin.cdi)""")
-assert buildLog.getText().contains("""jQAssistant Asciidoc Report Plugin (jqa.plugin.asciidocreport)""")
+assert buildLog.getText().contains("""jQAssistant AsciiDoc Report Plugin (jqa.plugin.asciidocreport)""")
 assert buildLog.getText().contains("""jQAssistant CDI Plugin (jqa.plugin.cdi)""")
 assert buildLog.getText().contains("""jQAssistant Common Plugin (jqa.plugin.common)""")
 assert buildLog.getText().contains("""jQAssistant Core Analysis Plugin (jqa.core.analysis.plugin)""")
