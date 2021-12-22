@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -18,8 +18,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 /**
  * Exports the database as a file containing cypher statements.
  */
-@Mojo(name = "export-database", threadSafe = true,
-      configurator = "custom")
+@Mojo(name = "export-database", threadSafe = true, configurator = "custom")
 public class ExportDatabaseMojo extends AbstractProjectMojo {
 
     private static final String EXPORT_FILE = "jqassistant.cypher";
@@ -44,11 +43,10 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         File file = ProjectResolver.getOutputFile(rootModule, exportFile, EXPORT_FILE);
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
-        EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
         store.beginTransaction();
         try {
-            GraphDatabaseService databaseService = graphStore.getServer().getGraphDatabaseService();
-            SubGraph graph = DatabaseSubGraph.from(databaseService);
+            GraphDatabaseService graphDatabaseService = store.getXOManager().getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+            SubGraph graph = DatabaseSubGraph.from(graphDatabaseService);
             new SubGraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot export database.", e);
