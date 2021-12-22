@@ -58,7 +58,7 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
         Config defaults = Config.defaults(opts);
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
         final GraphDatabaseDependencies graphDatabaseDependencies = GraphDatabaseDependencies.newDependencies().userLogProvider(logProvider);
-        GraphFactory graphFactory = (config, dependencies) -> (GraphDatabaseFacade) graphDatabaseService;
+        GraphFactory graphFactory = (config, dependencies) -> (GraphDatabaseFacade) embeddedDatastore.getGraphDatabaseService();
         communityNeoServer = new CommunityNeoServer(defaults, graphFactory, graphDatabaseDependencies);
         communityNeoServer.start();
     }
@@ -70,7 +70,8 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
     @Override
     protected void initialize(Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
-        Procedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver().resolveDependency(Procedures.class, ONLY);
+        Procedures procedures = ((GraphDatabaseAPI) embeddedDatastore.getGraphDatabaseService()).getDependencyResolver()
+            .resolveDependency(Procedures.class, ONLY);
         for (Class<?> procedureType : procedureTypes) {
             try {
                 LOGGER.debug("Registering procedure class " + procedureType.getName());
