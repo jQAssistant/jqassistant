@@ -2,7 +2,11 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
-<concept id="junit5:TestMethod">
+    <group id="junit5:Default">
+        <includeConstraint refId="junit5:AssertionMustProvideMessage"/>
+    </group>
+
+    <concept id="junit5:TestMethod">
         <description>
             Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
             labels them with "Test" and "Junit5".
@@ -428,6 +432,21 @@
             ]]></cypher>
     </concept>
 
-
+    <constraint id="junit5:AssertionMustProvideMessage">
+        <requiresConcept refId="junit5:AssertMethod"/>
+        <description>All assertions must provide a message.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Type)-[:DECLARES]->(testMethod:Method),
+              (testMethod)-[invocation:INVOKES]->(assertMethod:Junit5:Assert:Method)
+            WHERE
+              NOT assertMethod.signature =~ 'void assert.*\\(.*java.lang.String\\)' AND
+              NOT assertMethod.signature =~ 'void assert.*\\(.*java.util.function.Supplier\\)'
+            RETURN
+              invocation AS Invocation,
+              testType AS DeclaringType,
+              testMethod AS Method
+        ]]></cypher>
+    </constraint>
 
 </jqassistant-rules>

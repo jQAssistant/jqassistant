@@ -135,33 +135,9 @@ public class JunitCommonIT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
-        assertThat(constraintViolations, aMapWithSize(3));
+        assertThat(constraintViolations, aMapWithSize(2));
         assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage",
-                                                           "junit:AssertionMustProvideMessage",
                                                            "junit:TestMethodWithoutAssertion"));
-    }
-
-    /**
-     * Verifies the constraint "junit:AssertionMustProvideMessage".
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void assertionMustProvideMessage() throws Exception {
-        scanClasses(Assertions4Junit4.class);
-        assertThat(validateConstraint("junit:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
-        store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
-        Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
-        List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
-        store.commitTransaction();
     }
 
     /**

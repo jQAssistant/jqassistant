@@ -3,7 +3,6 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
 <group id="junit:Default">
-        <includeConstraint refId="junit:AssertionMustProvideMessage"/>
         <includeConstraint refId="junit:IgnoreWithoutMessage"/>
         <includeConstraint refId="junit:TestMethodWithoutAssertion"/>
     </group>
@@ -63,22 +62,6 @@
             RETURN
               e AS IgnoreWithoutMessage
 
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="junit:AssertionMustProvideMessage">
-        <requiresConcept refId="junit4:AssertMethod"/>
-        <description>All assertions must provide a message.</description>
-        <cypher><![CDATA[
-            MATCH
-              (testType:Type)-[:DECLARES]->(testMethod:Method),
-              (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
-            WHERE
-              NOT assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
-            RETURN
-              invocation AS Invocation,
-              testType AS DeclaringType,
-              testMethod AS Method
         ]]></cypher>
     </constraint>
 
