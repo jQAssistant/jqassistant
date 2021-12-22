@@ -50,7 +50,7 @@
         <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
-        <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
+        <org.apache.maven.reporting_version>3.0.0</org.apache.maven.reporting_version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <maven-invoker-plugin.version>3.2.2</maven-invoker-plugin.version>
 
@@ -77,12 +77,6 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                         <artifactId>neo4jv3</artifactId>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${org.neo4j_3x.version}</version>
-                        <scope>compile</scope>
                     </dependency>
                 </dependencies>
         </profile>
@@ -194,26 +188,12 @@
                     <configuration>
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>mojo-descriptor</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>descriptor</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>help-goal</id>
-                            <goals>
-                                <goal>helpmojo</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-component-metadata</artifactId>
                     <version>2.1.0</version>
+                    <!--
                     <executions>
                         <execution>
                             <goals>
@@ -221,6 +201,7 @@
                             </goals>
                         </execution>
                     </executions>
+                    -->
                 </plugin>
 
                 <plugin>
