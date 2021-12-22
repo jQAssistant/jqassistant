@@ -10,16 +10,13 @@ import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
-import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
+import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -39,7 +36,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     /**
      * Constructor.
      *
-     * @param configuration The configuration.
+     * @param configuration
+     *     The configuration.
      */
     public EmbeddedGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
         super(configuration, storePluginRepository);
@@ -66,11 +64,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected void initialize(XOManagerFactory xoManagerFactory) {
         this.server = serverFactory.getServer();
         LOGGER.info("Initializing embedded Neo4j server " + server.getVersion());
-        try (XOManager xoManager = xoManagerFactory.createXOManager()) {
-            GraphDatabaseService graphDatabaseService = xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
-            server.initialize(graphDatabaseService, embeddedNeo4jConfiguration, storePluginRepository.getProcedureTypes(),
-                    storePluginRepository.getFunctionTypes());
-        }
+        EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
+        server.initialize(embeddedDatastore, embeddedNeo4jConfiguration, storePluginRepository.getProcedureTypes(), storePluginRepository.getFunctionTypes());
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
