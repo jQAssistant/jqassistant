@@ -591,13 +591,6 @@
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.embedded</artifactId>
                 <version>${com.buschmais.xo.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <!-- provided by the selected Neo4j 2.x/3.x backend -->
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
