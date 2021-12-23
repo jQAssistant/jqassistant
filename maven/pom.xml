@@ -557,6 +557,13 @@
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-impl</artifactId>
             <version>${org.apache.maven.reporting_version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- conflicts with httpcore from m2repo-plugin -->
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
