@@ -26,7 +26,6 @@ public class ResetMojo extends AbstractModuleMojo {
 
     @Override
     protected void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Resetting store.");
         store.reset();
     }
 
