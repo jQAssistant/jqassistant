@@ -64,7 +64,7 @@
         <it.jqa.java-plugin.version>1.12.0-SNAPSHOT</it.jqa.java-plugin.version>
         <it.jqa.plugin-common.version>1.12.0-SNAPSHOT</it.jqa.plugin-common.version>
         <it.jqa-tycho-plugin.version>1.12.0-SNAPSHOT</it.jqa-tycho-plugin.version>
-        <org.apache.maven_dependency-tree.version>3.0.1</org.apache.maven_dependency-tree.version>
+        <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
     </properties>
 
     <profiles>
@@ -562,6 +562,10 @@
                     <!-- conflicts with httpcore from m2repo-plugin -->
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
