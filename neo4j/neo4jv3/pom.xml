@@ -44,7 +44,15 @@
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <!-- for determining mime types -->
         <dependency>
