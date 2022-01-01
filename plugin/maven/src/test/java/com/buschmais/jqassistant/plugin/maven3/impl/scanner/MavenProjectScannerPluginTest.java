@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.Dependenc
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
@@ -60,6 +61,9 @@ class MavenProjectScannerPluginTest {
 
     @Mock
     private MavenSession mavenSession;
+
+    @Mock
+    private ArtifactRepository localRepository;
 
     @Mock
     private MavenArtifactResolver mavenArtifactResolver;
@@ -158,8 +162,8 @@ class MavenProjectScannerPluginTest {
         JavaClassesDirectoryDescriptor mainClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
         MavenTestArtifactDescriptor testArtifactDescriptor = mock(MavenTestArtifactDescriptor.class);
         JavaClassesDirectoryDescriptor testClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
-        ArgumentMatcher<Coordinates> mainArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact")
-                && a.getType().equals("jar");
+        ArgumentMatcher<Coordinates> mainArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact") && a.getType()
+            .equals("jar");
         doReturn(mainArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(mainArtifactCoordinatesMatcher), eq(scannerContext));
         when(scanner.scan(any(File.class), eq("target/classes"), eq(CLASSPATH))).thenReturn(mainClassesDirectory);
         when(store.addDescriptorType(mainArtifactDescriptor, MavenMainArtifactDescriptor.class)).thenReturn(mainArtifactDescriptor);
@@ -167,8 +171,8 @@ class MavenProjectScannerPluginTest {
 
         // test classes directory
         when(scanner.scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH))).thenReturn(testClassesDirectory);
-        ArgumentMatcher<Coordinates> testArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact")
-                && a.getType().equals("test-jar");
+        ArgumentMatcher<Coordinates> testArtifactCoordinatesMatcher = a -> a.getGroup().equals("group") && a.getName().equals("artifact") && a.getType()
+            .equals("test-jar");
         doReturn(testArtifactDescriptor).when(mavenArtifactResolver).resolve(argThat(testArtifactCoordinatesMatcher), eq(scannerContext));
         when(store.addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class)).thenReturn(testClassesDirectory);
         when(store.addDescriptorType(testArtifactDescriptor, MavenTestArtifactDescriptor.class)).thenReturn(testArtifactDescriptor);
@@ -190,6 +194,7 @@ class MavenProjectScannerPluginTest {
         ProjectBuildingRequest projectBuildingRequest = mock(ProjectBuildingRequest.class);
         doReturn(repositorySystemSession).when(projectBuildingRequest).getRepositorySession();
         doReturn(projectBuildingRequest).when(mavenSession).getProjectBuildingRequest();
+        doReturn(localRepository).when(mavenSession).getLocalRepository();
 
         when(scannerContext.peek(MavenSession.class)).thenReturn(mavenSession);
         when(scannerContext.getStore()).thenReturn(store);
@@ -225,7 +230,7 @@ class MavenProjectScannerPluginTest {
 
         verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
         verify(dependencyScanner).evaluate(eq(dependencyNode), eq(mainArtifactDescriptor), eq(testArtifactDescriptor), eq(expectedDependenciesScan),
-                artifactFilterCaptor.capture(), eq(scanner));
+            artifactFilterCaptor.capture(), eq(localRepository), eq(scanner));
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 

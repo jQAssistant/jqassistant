@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 import static java.util.Collections.emptySet;
@@ -36,39 +37,40 @@ public class DependencyScanner {
      * Scan the resolved dependencies of the project.
      *
      * @param rootNode
-     *            The root node of the dependency tree.
+     *     The root node of the dependency tree.
      * @param mainDescriptor
-     *            The {@link MavenArtifactDescriptor} representing the main
-     *            artifact.
+     *     The {@link MavenArtifactDescriptor} representing the main
+     *     artifact.
      * @param testDescriptor
-     *            The {@link MavenArtifactDescriptor} representing the test
-     *            artifact.
+     *     The {@link MavenArtifactDescriptor} representing the test
+     *     artifact.
      * @param scanner
-     *            The Scanner.
+     *     The Scanner.
      */
     public void evaluate(DependencyNode rootNode, MavenArtifactDescriptor mainDescriptor, MavenArtifactDescriptor testDescriptor, boolean scanDependencies,
-            ArtifactFilter dependencyFilter, Scanner scanner) {
+        ArtifactFilter dependencyFilter, ArtifactRepository localRepository, Scanner scanner) {
         Map<Artifact, Set<Artifact>> dependencies = resolveDependencyGraph(rootNode, mainDescriptor, testDescriptor, scanner.getContext());
         if (scanDependencies) {
-            scanDependencyArtifacts(rootNode, dependencies, dependencyFilter, scanner);
+            scanDependencyArtifacts(rootNode, dependencies, dependencyFilter, localRepository, scanner);
         }
     }
 
     private Map<Artifact, Set<Artifact>> resolveDependencyGraph(DependencyNode rootNode, MavenArtifactDescriptor mainDescriptor,
-            MavenArtifactDescriptor testDescriptor, ScannerContext context) {
+        MavenArtifactDescriptor testDescriptor, ScannerContext context) {
         return graphResolver.resolve(rootNode, mainDescriptor, testDescriptor, context);
     }
 
-    private void scanDependencyArtifacts(DependencyNode rootNode, Map<Artifact, Set<Artifact>> dependencies, ArtifactFilter dependencyFilter, Scanner scanner) {
+    private void scanDependencyArtifacts(DependencyNode rootNode, Map<Artifact, Set<Artifact>> dependencies, ArtifactFilter dependencyFilter,
+        ArtifactRepository localRepository, Scanner scanner) {
         List<Artifact> artifacts = DependencyResolver.newInstance(dependencies.keySet(), artifact -> dependencies.getOrDefault(artifact, emptySet())).resolve();
         ArtifactResolver artifactResolver = scanner.getContext().peek(ArtifactResolver.class);
         for (Artifact artifact : artifacts) {
             // scan only dependencies, the root node represents the artifact to be created
             // by the current module and will be scanned separately.
             if (!artifact.equals(rootNode.getArtifact()) && dependencyFilter.match(artifact)) {
-                File artifactFile = artifact.getFile();
+                File artifactFile = localRepository.find(artifact).getFile();
                 FileDescriptor fileDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), FileDescriptor.class,
-                        scanner.getContext());
+                    scanner.getContext());
                 // The dependency might have been scanned before within another module, so check
                 // if it is not yet a FileContainerDescriptor (directory, JAR, etc.)
                 if (artifactFile != null && !(fileDescriptor instanceof FileContainerDescriptor)) {
