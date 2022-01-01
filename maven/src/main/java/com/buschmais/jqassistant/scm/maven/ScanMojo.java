@@ -28,10 +28,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 
+import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
+
 /**
  * Scans the the output directory and test output directory.
  */
-@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, threadSafe = true, configurator = "custom")
+@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, requiresDependencyResolution = TEST, threadSafe = true, configurator = "custom")
 public class ScanMojo extends AbstractModuleMojo {
 
     /**
@@ -119,14 +121,14 @@ public class ScanMojo extends AbstractModuleMojo {
      * Validate the given configuration.
      *
      * @throws MojoExecutionException
-     *             If the validation fails.
+     *     If the validation fails.
      */
     private void validate() throws MojoExecutionException {
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
                 if (scanInclude.getPath() != null && scanInclude.getUrl() != null) {
                     throw new MojoExecutionException(
-                            "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
+                        "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
                 }
             }
         }
