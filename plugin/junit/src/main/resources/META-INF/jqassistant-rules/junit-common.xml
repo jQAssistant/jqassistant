@@ -69,6 +69,7 @@
     <constraint id="junit:AssertionMustProvideMessage">
         <requiresConcept refId="junit4:AssertMethod"/>
         <description>All assertions must provide a message.</description>
+        <deprecated>This constraint has been replaced by "junit4:AssertionMustProvideMessage" and "junit5:AssertionMustProvideMessage".</deprecated>
         <cypher><![CDATA[
             MATCH
               (testType:Type)-[:DECLARES]->(testMethod:Method),

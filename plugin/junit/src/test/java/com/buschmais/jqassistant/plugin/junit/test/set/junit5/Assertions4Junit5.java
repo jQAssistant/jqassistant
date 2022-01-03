@@ -17,6 +17,11 @@ public class Assertions4Junit5 {
         assertTrue(true);
     }
 
+    @Test
+    public void assertWithMessageSupplier() {
+        assertTrue(() -> true, () -> "S");
+    }
+
     @RepeatedTest(21)
     public void assertWithMessage() {
         assertTrue(() -> true, "Condition must be true");

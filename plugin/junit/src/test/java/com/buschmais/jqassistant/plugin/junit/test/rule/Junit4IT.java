@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +18,14 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -242,7 +248,8 @@ public class Junit4IT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
-        assertThat(constraintViolations, anEmptyMap());
+        assertThat(constraintViolations.size(), equalTo(1));
+        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage"));
     }
 
     /**
@@ -255,6 +262,29 @@ public class Junit4IT extends AbstractJunitIT {
         assertThat(result.getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (c:Type:Junit4:Test:Inner) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.InnerTestClass.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "junit4:AssertionMustProvideMessage".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void assertionMustProvideMessage() throws Exception {
+        scanClasses(Assertions4Junit4.class);
+        assertThat(validateConstraint("junit4:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(1));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
 }

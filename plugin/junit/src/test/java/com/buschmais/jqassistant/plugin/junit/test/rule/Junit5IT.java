@@ -1,10 +1,14 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
@@ -19,11 +23,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.lang.Boolean.FALSE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -437,5 +445,30 @@ public class Junit5IT extends AbstractJunitIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verifies the constraint "junit5:AssertionMustProvideMessage".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void assertionMustProvideMessage() throws Exception {
+        scanClasses(Assertions4Junit5.class);
+        assertThat(validateConstraint("junit5:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit5:AssertionMustProvideMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(3));
+        assertThat(rows.stream().map(r -> (MethodDescriptor) r.get("Method")).collect(Collectors.toList()), containsInAnyOrder(
+            methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage"),
+            methodDescriptor(Assertions4Junit5.class, "testWithAssertion"),
+            methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn")));
+        store.commitTransaction();
+    }
 
 }
