@@ -3,7 +3,7 @@
 
 == 1.12.0
 
-* The constraint `junit:AssertionMustProvideMessage` has been removed from `junit:Default`
+* The constraint `junit:AssertionMustProvideMessage` in `junit:Default` has been deprecated
 ** The new rule `junit4:AssertionMustProvideMessage` in `junit4:Default` replaces it for jUnit 4
 ** The new rule `junit5:AssertionMustProvideMessage` in `junit5:Default` replaces it for jUnit 5
 
