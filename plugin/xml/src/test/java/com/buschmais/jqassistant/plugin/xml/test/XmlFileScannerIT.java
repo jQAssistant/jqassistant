@@ -31,7 +31,7 @@ class XmlFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    void validXmlSource() throws IOException {
+    void validXmlSource() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         Source source = new StreamSource(xmlFile);
@@ -49,7 +49,7 @@ class XmlFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    void validXmlFile() throws IOException {
+    void validXmlFile() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         XmlFileDescriptor xmlFileDescriptor = getXmlFileScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
@@ -96,15 +96,15 @@ class XmlFileScannerIT extends AbstractPluginIT {
         XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
         assertThat(childElementAttribute.getName(), equalTo("attribute1"));
         List<XmlTextDescriptor> childElementTexts = childElement.getCharacters();
-        assertThat(childElementTexts.size(), equalTo(1));
+        assertThat(childElementTexts.size(), equalTo(1)); // non-coalescing StAX reports multiple text events, ensure it's activated
         XmlTextDescriptor childElementText = childElementTexts.get(0);
-        assertThat(childElementText.getValue(), equalTo("Child Text"));
-        assertThat(childElementText.getLineNumber(), equalTo(5));
+        assertThat(childElementText.getValue(), equalTo("Child\nText\nOn\nMultiple\nLines"));
+        assertThat(childElementText.getLineNumber(), equalTo(9));
     }
 
     private void verifyExtraElement(XmlElementDescriptor childElement) {
         assertThat(childElement.getDeclaredNamespaces().size(), equalTo(1));
-        assertThat(childElement.getLineNumber(), equalTo(6));
+        assertThat(childElement.getLineNumber(), equalTo(10));
         XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
         assertThat(extraNamespace.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/extra"));
         assertThat(extraNamespace.getPrefix(), equalTo("extra"));
@@ -114,13 +114,13 @@ class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(extraChildElements.size(), equalTo(1));
         XmlElementDescriptor extraChildElement = extraChildElements.get(0);
         assertThat(extraChildElement.getName(), equalTo("ExtraChildElement"));
-        assertThat(extraChildElement.getLineNumber(), equalTo(7));
+        assertThat(extraChildElement.getLineNumber(), equalTo(11));
         assertThat(extraChildElement.getNamespaceDeclaration(), equalTo(extraNamespace));
         List<XmlTextDescriptor> extraChildElementTexts = extraChildElement.getCharacters();
         assertThat(extraChildElementTexts.size(), equalTo(1));
         XmlTextDescriptor extraChildElementText = extraChildElementTexts.get(0);
-        assertThat(extraChildElementText.getValue(), equalTo("Extra Child Text"));
-        assertThat(extraChildElementText.getLineNumber(), equalTo(7));
+        assertThat(extraChildElementText.getValue(), equalTo("Extra\nChild\nText\nOn\nMultiple\nLines"));
+        assertThat(extraChildElementText.getLineNumber(), equalTo(17));
         List<XmlAttributeDescriptor> extraChildElementAttributes = extraChildElement.getAttributes();
         assertThat(extraChildElementAttributes.size(), equalTo(1));
         XmlAttributeDescriptor extraChildElementAttribute = extraChildElementAttributes.get(0);
@@ -129,27 +129,27 @@ class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     private void verifyMixedParentElement(XmlElementDescriptor childElement) {
-        assertThat(childElement.getLineNumber(), equalTo(9));
+        assertThat(childElement.getLineNumber(), equalTo(19));
         XmlDescriptor mixedChildElement1 = childElement.getFirstChild();
         assertThat(mixedChildElement1, notNullValue());
         assertThat(mixedChildElement1, instanceOf(XmlElementDescriptor.class));
         assertThat(((XmlElementDescriptor) mixedChildElement1).getName(), equalTo("MixedChildElement1"));
-        assertThat(((XmlElementDescriptor) mixedChildElement1).getLineNumber(), equalTo(10));
+        assertThat(((XmlElementDescriptor) mixedChildElement1).getLineNumber(), equalTo(20));
         XmlDescriptor mixedChildText = ((XmlElementDescriptor) mixedChildElement1).getNextSibling();
         assertThat(mixedChildText, notNullValue());
         assertThat(mixedChildText, instanceOf(XmlTextDescriptor.class));
         assertThat(((XmlTextDescriptor) mixedChildText).getValue(), equalTo("Mixed Parent Text"));
-        assertThat(((XmlTextDescriptor) mixedChildText).getLineNumber(), equalTo(12));
+        assertThat(((XmlTextDescriptor) mixedChildText).getLineNumber(), equalTo(22));
         XmlDescriptor mixedChildElement2 = ((XmlTextDescriptor) mixedChildText).getNextSibling();
         assertThat(mixedChildElement2, notNullValue());
         assertThat(mixedChildElement2, instanceOf(XmlElementDescriptor.class));
         assertThat(((XmlElementDescriptor) mixedChildElement2).getName(), equalTo("MixedChildElement2"));
-        assertThat(((XmlElementDescriptor) mixedChildElement2).getLineNumber(), equalTo(12));
+        assertThat(((XmlElementDescriptor) mixedChildElement2).getLineNumber(), equalTo(22));
         assertThat(childElement.getLastChild(), equalTo(mixedChildElement2));
     }
 
     @Test
-    void invalidDocument() throws IOException {
+    void invalidDocument() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
         Scanner scanner = getXmlFileScanner();
@@ -165,7 +165,7 @@ class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     @Test
-    void schemaDocument() throws IOException {
+    void schemaDocument() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/testSchema.xsd");
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);

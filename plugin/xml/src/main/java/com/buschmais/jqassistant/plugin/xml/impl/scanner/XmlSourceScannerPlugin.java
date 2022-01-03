@@ -17,9 +17,10 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor> {
 
@@ -31,6 +32,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     public void initialize() {
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        inputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
     }
 
     @Override
@@ -122,7 +124,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             XmlNamespaceDescriptor namespaceDescriptor = store.create(XmlNamespaceDescriptor.class);
             String prefix = streamReader.getNamespacePrefix(i);
             String uri = streamReader.getNamespaceURI(i);
-            if (!Strings.isNullOrEmpty(prefix)) {
+            if (isNotEmpty(prefix)) {
                 namespaceDescriptor.setPrefix(prefix);
                 namespaceMappings.put(prefix, namespaceDescriptor);
             }
@@ -147,7 +149,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             Map<String, XmlNamespaceDescriptor> namespaceMappings) {
         for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
             String prefix = streamReader.getNamespacePrefix(i);
-            if (!Strings.isNullOrEmpty(prefix)) {
+            if (isNotEmpty(prefix)) {
                 namespaceMappings.remove(prefix);
             }
         }
@@ -159,7 +161,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             int start = streamReader.getTextStart();
             int length = streamReader.getTextLength();
             String text = new String(streamReader.getTextCharacters(), start, length).trim();
-            if (!Strings.isNullOrEmpty(text)) {
+            if (isNotEmpty(text)) {
                 T textDescriptor = store.create(type);
                 textDescriptor.setValue(text);
                 textDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
@@ -172,7 +174,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
 
     private void setName(OfNamespaceDescriptor ofNamespaceDescriptor, String localName, String prefix, Map<String, XmlNamespaceDescriptor> namespaceMappings) {
         ofNamespaceDescriptor.setName(localName);
-        if (!Strings.isNullOrEmpty(prefix)) {
+        if (isNotEmpty(prefix)) {
             XmlNamespaceDescriptor namespaceDescriptor = namespaceMappings.get(prefix);
             ofNamespaceDescriptor.setNamespaceDeclaration(namespaceDescriptor);
         }

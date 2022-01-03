@@ -1,6 +1,10 @@
 
 = XML Plugin
 
+== 1.12.0
+
+* Activated coalescing for XML parsing to prevent splitted text elements
+
 == 1.5.0
 
 * Added property `lineNumber` to `:Xml:Document`, `:Xml:Element`,
