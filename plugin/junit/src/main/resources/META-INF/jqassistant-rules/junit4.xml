@@ -4,6 +4,8 @@
 
     <group id="junit4:Default">
         <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
+        <includeConstraint refId="junit4:NonJUnit4TestMethod"/>
+        <includeConstraint refId="junit4:UsageOfJUnit5TestApi"/>
     </group>
 
     <concept id="junit4:TestMethod">
@@ -191,6 +193,42 @@
               testType AS DeclaringType,
               testMethod AS Method
         ]]></cypher>
+    </constraint>
+
+    <constraint id="junit4:NonJUnit4TestMethod">
+        <requiresConcept refId="junit3:TestMethod"/>
+        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <description>Only the jUnit 4-test annotation must be used to identify test methods in a jUnit 4-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method)
+            WHERE
+              m:Junit3 OR m:Junit5
+            RETURN
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
+    <constraint id="junit4:UsageOfJUnit5TestApi">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <requiresConcept refId="junit5:AssertMethod"/>
+        <description>Only the jUnit 4-test api must be used in a jUnit 4-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method),
+              (m)-[:INVOKES*..3]->(:Junit5:Assert:Method)
+            RETURN DISTINCT
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
     </constraint>
 
 </jqassistant-rules>

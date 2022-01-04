@@ -4,6 +4,8 @@
 
     <group id="junit5:Default">
         <includeConstraint refId="junit5:AssertionMustProvideMessage"/>
+        <includeConstraint refId="junit5:NonJUnit5TestMethod"/>
+        <includeConstraint refId="junit5:UsageOfJUnit4TestApi"/>
     </group>
 
     <concept id="junit5:TestMethod">
@@ -447,6 +449,40 @@
               testType AS DeclaringType,
               testMethod AS Method
         ]]></cypher>
+    </constraint>
+
+    <constraint id="junit5:NonJUnit5TestMethod">
+        <requiresConcept refId="junit3:TestMethod"/>
+        <requiresConcept refId="junit4:TestMethod"/>
+        <description>Only the jUnit 5-test annotation must be used to identify test methods in a jUnit 5-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method)
+            WHERE
+              m:Junit3 OR m:Junit4
+            RETURN
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
+    <constraint id="junit5:UsageOfJUnit4TestApi">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="junit5:RepeatedTestMethod"/>
+        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>Only the jUnit 5-test api must be used in a jUnit 5-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method),
+              (m)-[:INVOKES*..3]->(:Junit4:Assert:Method)
+            RETURN DISTINCT
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
     </constraint>
 
 </jqassistant-rules>

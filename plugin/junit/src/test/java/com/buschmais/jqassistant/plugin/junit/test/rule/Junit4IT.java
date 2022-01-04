@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
@@ -14,6 +15,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -248,8 +250,11 @@ public class Junit4IT extends AbstractJunitIT {
     public void defaultGroup() throws RuleException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
-        assertThat(constraintViolations.size(), equalTo(1));
-        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage"));
+        assertThat(constraintViolations.size(), equalTo(3));
+        assertThat(constraintViolations.keySet(), hasItems(
+            "junit4:AssertionMustProvideMessage",
+            "junit4:NonJUnit4TestMethod",
+            "junit4:UsageOfJUnit5TestApi"));
     }
 
     /**
@@ -287,4 +292,61 @@ public class Junit4IT extends AbstractJunitIT {
         assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
+
+    /**
+     * Verifies the constraint "junit4:NonJUnit4TestMethod".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void nonJUnit4TestMethod() throws Exception {
+        scanClasses(Assertions4Junit5.class);
+        Result<Constraint> result = validateConstraint("junit4:NonJUnit4TestMethod");
+        assertThat(result.getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.get("TestMethod")).collect(Collectors.toList());
+        assertThat(rows.size(), equalTo(9));
+        assertThat(rows, containsInAnyOrder(
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
+                is(methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class)),
+                is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "junit4:UsageOfJUnit5TestApi".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void usageOfJUnit5TestApi() throws Exception {
+        scanClasses(Assertions4Junit5.class);
+        Result<Constraint> result = validateConstraint("junit4:UsageOfJUnit5TestApi");
+        assertThat(result.getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.get("TestMethod")).collect(Collectors.toList());
+        assertThat(rows.size(), equalTo(6));
+        assertThat(rows, containsInAnyOrder(
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
+                is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
+                is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
+        store.commitTransaction();
+    }
+
+
 }
