@@ -205,9 +205,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     protected MavenPomDescriptor createMavenPomDescriptor(Model model, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenPomDescriptor pomDescriptor = context.peek(MavenPomDescriptor.class);
-        if (model instanceof EffectiveModel) {
-            context.getStore().addDescriptorType(pomDescriptor, EffectiveDescriptor.class);
-        }
         pomDescriptor.setName(model.getName());
         pomDescriptor.setGroupId(model.getGroupId());
         pomDescriptor.setArtifactId(model.getArtifactId());
@@ -217,6 +214,9 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
         pomDescriptor.getDescribes().add(artifact);
+        if (model instanceof EffectiveModel) {
+            return context.getStore().addDescriptorType(pomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
+        }
         return pomDescriptor;
     }
 

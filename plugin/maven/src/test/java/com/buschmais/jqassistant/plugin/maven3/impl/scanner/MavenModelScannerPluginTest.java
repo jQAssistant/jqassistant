@@ -25,10 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Collections.emptyMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MavenModelScannerPluginTest {
@@ -67,17 +64,18 @@ class MavenModelScannerPluginTest {
     }
 
     @Test
-    void model() {
+    void rawModel() {
         Model model = stubModel();
         MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
-        verify(store, never()).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class);
+        verify(store, never()).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
     }
 
     @Test
     void effectiveModel() {
         Model model = new EffectiveModel(stubModel());
+        doAnswer(a -> a.getArgument(0)).when(store).addDescriptorType(any(MavenPomDescriptor.class), eq(EffectiveDescriptor.class), eq(MavenPomDescriptor.class));
         MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
-        verify(store).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class);
+        verify(store).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
     }
 
     private Model stubModel() {
