@@ -1,5 +1,8 @@
 = Core Framework
 
+== 1.12.0
+* Removed deprecated source locations from XML report
+
 == 1.11.1
 * Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
 * Upgraded to PlantUML 1.2021.8 and JRuby 9.2.20.0 (the latter should reduce the time for loading Asciidoc files on Windows systems)

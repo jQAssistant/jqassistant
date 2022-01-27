@@ -37,16 +37,6 @@ public @interface TestLanguage {
                 }
 
                 @Override
-                public String getSourceFile(TestDescriptorWithLanguageElement descriptor) {
-                    return "Test.java";
-                }
-
-                @Override
-                public Integer getLineNumber(TestDescriptorWithLanguageElement descriptor) {
-                    return 1;
-                }
-
-                @Override
                 public Optional<FileLocation> getSourceLocation(TestDescriptorWithLanguageElement descriptor) {
                     ArtifactLocation parent = ArtifactLocation.builder().fileName("test.jar").group(of("groupId")).name(of("artifactId")).type(of("jar"))
                             .classifier(of("jdk8")).version(of("1.0.0")).build();

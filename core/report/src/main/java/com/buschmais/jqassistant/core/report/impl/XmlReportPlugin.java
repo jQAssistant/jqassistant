@@ -257,7 +257,7 @@ public class XmlReportPlugin implements ReportPlugin {
     private void writeColumn(String columnName, Object value) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
-        String stringValue = null;
+        String label = null;
         if (value instanceof CompositeObject) {
             CompositeObject descriptor = (CompositeObject) value;
             LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
@@ -267,28 +267,18 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeCharacters(elementValue.name());
                 xmlStreamWriter.writeEndElement(); // element
                 SourceProvider sourceProvider = elementValue.getSourceProvider();
-                stringValue = sourceProvider.getName(descriptor);
-                String sourceFile = sourceProvider.getSourceFile(descriptor);
-                Integer lineNumber = sourceProvider.getLineNumber(descriptor);
+                label = sourceProvider.getName(descriptor);
                 Optional<FileLocation> sourceLocation = sourceProvider.getSourceLocation(descriptor);
-                if (sourceFile != null || sourceLocation.isPresent()) {
+                if (sourceLocation.isPresent()) {
                     xmlStreamWriter.writeStartElement("source");
-                    if (sourceFile != null) {
-                        xmlStreamWriter.writeAttribute("name", sourceFile);
-                    }
-                    if (lineNumber != null) {
-                        xmlStreamWriter.writeAttribute("line", lineNumber.toString());
-                    }
-                    if (sourceLocation.isPresent()) {
-                        writeSourceLocation(sourceLocation.get());
-                    }
+                    writeSourceLocation(sourceLocation.get());
                     xmlStreamWriter.writeEndElement(); // sourceFile
                 }
             }
         } else if (value != null) {
-            stringValue = ReportHelper.getLabel(value);
+            label = ReportHelper.getLabel(value);
         }
-        writeElementWithCharacters("value", stringValue);
+        writeElementWithCharacters("value", label);
         xmlStreamWriter.writeEndElement(); // column
     }
 

@@ -64,8 +64,6 @@ class XmlReportTest {
                 assertThat(column.getValue()).isEqualTo("descriptorValue");
                 SourceLocationType source = column.getSource();
                 assertThat(source.getFileName()).isEqualTo("Test.java");
-                assertThat(source.getName()).isEqualTo("Test.java");
-                assertThat(source.getLine()).isEqualTo(1);
                 assertThat(source.getStartLine()).isEqualTo(1);
                 assertThat(source.getEndLine()).isEqualTo(2);
             }
