@@ -38,11 +38,6 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSourceFile(PackageDescriptor descriptor) {
-                        return descriptor.getFileName();
-                    }
-
-                    @Override
                     public Optional<FileLocation> getSourceLocation(PackageDescriptor descriptor) {
                         return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
                     }
@@ -56,11 +51,6 @@ public @interface Java {
                     @Override
                     public String getName(ClassFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
-                    }
-
-                    @Override
-                    public String getSourceFile(ClassFileDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor);
                     }
 
                     @Override
@@ -87,11 +77,6 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSourceFile(VariableDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
-                    }
-
-                    @Override
                     public Optional<FileLocation> getSourceLocation(VariableDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType());
                     }
@@ -109,16 +94,6 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSourceFile(ReadsDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
-                    }
-
-                    @Override
-                    public Integer getLineNumber(ReadsDescriptor descriptor) {
-                        return descriptor.getLineNumber();
-                    }
-
-                    @Override
                     public Optional<FileLocation> getSourceLocation(ReadsDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType(), descriptor.getLineNumber());
                     }
@@ -132,16 +107,6 @@ public @interface Java {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
                         return descriptor.getMethod().getSignature() + ", line " + descriptor.getLineNumber();
-                    }
-
-                    @Override
-                    public String getSourceFile(WritesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor.getMethod().getDeclaringType());
-                    }
-
-                    @Override
-                    public Integer getLineNumber(WritesDescriptor descriptor) {
-                        return descriptor.getLineNumber();
                     }
 
                     @Override
@@ -174,16 +139,6 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSourceFile(InvokesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor.getInvokingMethod().getDeclaringType());
-                    }
-
-                    @Override
-                    public Integer getLineNumber(InvokesDescriptor descriptor) {
-                        return descriptor.getLineNumber();
-                    }
-
-                    @Override
                     public Optional<FileLocation> getSourceLocation(InvokesDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor.getInvokingMethod().getDeclaringType(), descriptor.getLineNumber());
                     }
@@ -197,11 +152,6 @@ public @interface Java {
                     @Override
                     public String getName(TypeDependsOnDescriptor descriptor) {
                         return descriptor.getDependent().getName() + "->" + descriptor.getDependency().getName();
-                    }
-
-                    @Override
-                    public String getSourceFile(TypeDependsOnDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceFile(descriptor.getDependent());
                     }
 
                     @Override
@@ -224,11 +174,6 @@ public @interface Java {
             @Override
             public String getName(D descriptor) {
                 return descriptor.getSignature();
-            }
-
-            @Override
-            public String getSourceFile(D descriptor) {
-                return TypeSourceHelper.getSourceFile(descriptor.getDeclaringType());
             }
 
         }

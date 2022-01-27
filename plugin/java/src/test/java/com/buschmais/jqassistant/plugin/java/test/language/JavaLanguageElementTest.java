@@ -25,7 +25,6 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
 
         SourceProvider<PackageDescriptor> sourceProvider = Package.getSourceProvider();
         assertThat(sourceProvider.getName(descriptor), equalTo("com.buschmais"));
-        assertThat(sourceProvider.getSourceFile(descriptor), equalTo("/com/buschmais"));
 
         verify(descriptor, Package, "com.buschmais", "/com/buschmais");
     }
