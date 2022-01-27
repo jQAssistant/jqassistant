@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin;
 
 import org.junit.jupiter.api.Test;
@@ -50,8 +50,8 @@ class XmlFileScannerTest {
     }
 
     private void configure(String includes, String excludes) {
-        Map<String, Object> properties = MapBuilder.<String, Object> create(XmlFileScannerPlugin.PROPERTY_INCLUDE, includes)
-                .put(XmlFileScannerPlugin.PROPERTY_EXCLUDE, excludes).get();
+        Map<String, Object> properties = MapBuilder.<String, Object>builder().entry(XmlFileScannerPlugin.PROPERTY_INCLUDE, includes)
+            .entry(XmlFileScannerPlugin.PROPERTY_EXCLUDE, excludes).build();
         scannerPlugin.configure(context, properties);
     }
 }

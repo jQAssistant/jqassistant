@@ -9,8 +9,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
@@ -159,7 +159,7 @@ class XmlFileScannerIT extends AbstractPluginIT {
     }
 
     private Scanner getXmlFileScanner() {
-        Map<String, Object> properties = MapBuilder.<String, Object> create("xml.file.include", "*.xml").get();
+        Map<String, Object> properties = MapBuilder.<String, Object> builder().entry("xml.file.include", "*.xml").build();
         return getScanner(properties);
     }
 
