@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,8 +68,8 @@ class JSONFileScannerPluginExclusionAndInclusionTest {
 
     private void configure(String inclusionPattern, String exclusionPattern) {
         Map<String, Object> properties =
-            MapBuilder.<String, Object>create(JSONFileScannerPlugin.PROPERTY_INCLUDE, inclusionPattern)
-                .put(JSONFileScannerPlugin.PROPERTY_EXCLUDE, exclusionPattern).get();
+            MapBuilder.<String, Object>builder().entry(JSONFileScannerPlugin.PROPERTY_INCLUDE, inclusionPattern)
+                .entry(JSONFileScannerPlugin.PROPERTY_EXCLUDE, exclusionPattern).build();
 
         scannerPlugin.configure(context, properties);
     }
