@@ -9,8 +9,8 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
@@ -45,11 +45,9 @@ class DependencyIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "dependency:Type".
      *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    void types() throws IOException {
+    void types() {
         scanClasses(DependentType.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
@@ -94,10 +92,10 @@ class DependencyIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void weight() throws IOException {
+    void weight() {
         scanClasses(DependentType.class);
         store.beginTransaction();
-        Map<String, Object> params = MapBuilder.<String, Object> create("t1", DependentType.class.getName()).put("t2", LocalVariable.class.getName()).get();
+        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("t1", DependentType.class.getName()).entry("t2", LocalVariable.class.getName()).build();
         List<Map<String, Object>> rows = query("MATCH (t1:Type)-[d:DEPENDS_ON]->(t2:Type) WHERE t1.fqn=$t1 and t2.fqn=$t2 RETURN d", params).getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
@@ -107,8 +105,8 @@ class DependencyIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void weightDisabled() throws IOException {
-        Map<String, Object> pluginConfig = MapBuilder.<String, Object> create(ClassFileScannerPlugin.PROPERTY_TYPE_DEPENDS_ON_WEIGHT, "false").get();
+    void weightDisabled() {
+        Map<String, Object> pluginConfig = MapBuilder.<String, Object> builder().entry(ClassFileScannerPlugin.PROPERTY_TYPE_DEPENDS_ON_WEIGHT, "false").build();
         File classesDirectory = getClassesDirectory(DependencyIT.class);
         store.beginTransaction();
         getScanner(pluginConfig).scan(classesDirectory, "/", JavaScope.CLASSPATH);

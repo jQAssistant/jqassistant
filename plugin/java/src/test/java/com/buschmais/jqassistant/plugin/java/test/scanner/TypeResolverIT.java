@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -20,11 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 class TypeResolverIT extends AbstractJavaPluginIT {
@@ -40,11 +36,11 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a1", A.class);
         store.beginTransaction();
         TestResult testResult = query("match (a:Artifact)-[:CONTAINS]->(t:Type) where a.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         assertThat(testResult.getRows().size(), equalTo(2));
         assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         List<Object> types = testResult.getColumn("t");
         assertThat(types, not(hasItem(typeDescriptor(A.class))));
         assertThat(types, not(hasItem(typeDescriptor(B.class))));
@@ -62,11 +58,11 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a1", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (a:Artifact)-[:CONTAINS]->(t:Type) where a.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         assertThat(testResult.getRows().size(), equalTo(2));
         assertThat(testResult.getColumn("t"), hasItems(typeDescriptor(A.class), typeDescriptor(B.class)));
         testResult = query("match (a:Artifact)-[:REQUIRES]->(t:Type) where a.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         List<Object> types = testResult.getColumn("t");
         assertThat(types, not(hasItem(typeDescriptor(A.class))));
         assertThat(types, not(hasItem(typeDescriptor(B.class))));
@@ -88,20 +84,20 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a2", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(A.class)));
         testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a2").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a2").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(B.class)));
         testResult = query(
                 "match (artifact2:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)<-[:CONTAINS]-(artifact1:Artifact) where artifact1.fqn=$a1 and artifact2.fqn=$a2 and b.fqn=$b return a",
-                MapBuilder.<String, Object> create("b", B.class.getName()).put("a1", "a1").put("a2", "a2").get());
+                MapBuilder.<String, Object> builder().entry("b", B.class.getName()).entry("a1", "a1").entry("a2", "a2").build());
         assertThat(testResult.getColumn("a"), hasItem(typeDescriptor(A.class)));
         // java.lang.Object is only required by artifact A1
         testResult = query("match (a:Artifact)-[:REQUIRES]->(o:Type) where o.fqn=$object return a",
-                MapBuilder.<String, Object> create("object", Object.class.getName()).get());
+                MapBuilder.<String, Object> builder().entry("object", Object.class.getName()).build());
         List<JavaArtifactFileDescriptor> objects = testResult.getColumn("a");
         assertThat(objects.size(), equalTo(1));
         assertThat(objects.get(0), equalTo(a1));
@@ -126,16 +122,16 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a3", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(A.class)));
         testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a3").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a3").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(B.class)));
         testResult = query(
                 "match (artifact3:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)<-[:CONTAINS]-(artifact1:Artifact) where artifact1.fqn=$a1 and artifact3.fqn=$a3 and b.fqn=$b return a",
-                MapBuilder.<String, Object> create("b", B.class.getName()).put("a1", "a1").put("a3", "a3").get());
+                MapBuilder.<String, Object> builder().entry("b", B.class.getName()).entry("a1", "a1").entry("a3", "a3").build());
         assertThat(testResult.getColumn("a"), hasItem(typeDescriptor(A.class)));
         store.commitTransaction();
     }
@@ -150,19 +146,19 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a2", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a1").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a1").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(A.class)));
         testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn=$artifact return t",
-                MapBuilder.<String, Object> create("artifact", "a2").get());
+                MapBuilder.<String, Object> builder().entry("artifact", "a2").build());
         assertThat(testResult.getRows().size(), equalTo(1));
         assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(B.class)));
         testResult = query(
                 "match (artifact2:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)<-[:CONTAINS]-(artifact1:Artifact) where artifact1.fqn=$a1 and artifact2.fqn=$a2 and b.fqn=$b return a",
-                MapBuilder.<String, Object> create("b", B.class.getName()).put("a1", "a1").put("a2", "a2").get());
+                MapBuilder.<String, Object> builder().entry("b", B.class.getName()).entry("a1", "a1").entry("a2", "a2").build());
         assertThat(testResult.getRows().size(), equalTo(0));
         testResult = query("match (artifact:Artifact)-[:REQUIRES]->(a:Type) where a.fqn=$a return artifact",
-                MapBuilder.<String, Object> create("a", A.class.getName()).get());
+                MapBuilder.<String, Object> builder().entry("a", A.class.getName()).build());
         assertThat(testResult.getRows().size(), equalTo(1));
         ArtifactFileDescriptor a = (ArtifactFileDescriptor) testResult.getColumn("artifact").get(0);
         assertThat(a.getFullQualifiedName(), equalTo("a2"));
@@ -179,7 +175,7 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a2", A.class);
         store.beginTransaction();
         TestResult testResult = query("match (:Artifact)-[:CONTAINS]->(t:Type) where t.fqn=$t return t",
-                MapBuilder.<String, Object> create("t", A.class.getName()).get());
+                MapBuilder.<String, Object> builder().entry("t", A.class.getName()).build());
         assertThat(testResult.getRows().size(), equalTo(2));
         store.commitTransaction();
     }
@@ -203,11 +199,11 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         scanClasses("a3", B.class);
         store.beginTransaction();
         TestResult testResult = query("match (:Artifact)-[:CONTAINS]->(t:Type) where t.fqn=$t return t",
-                MapBuilder.<String, Object> create("t", A.class.getName()).get());
+                MapBuilder.<String, Object> builder().entry("t", A.class.getName()).build());
         assertThat(testResult.getRows().size(), equalTo(2));
         testResult = query(
                 "match (artifact3:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)-[:CONTAINS]-(otherArtifact:Artifact) where b.fqn=$b return otherArtifact",
-                MapBuilder.<String, Object> create("a", A.class.getName()).put("b", B.class.getName()).get());
+                MapBuilder.<String, Object> builder().entry("a", A.class.getName()).entry("b", B.class.getName()).build());
         assertThat(testResult.getRows().size(), equalTo(1));
         JavaArtifactFileDescriptor otherArtifact = (JavaArtifactFileDescriptor) testResult.getColumn("otherArtifact").get(0);
         assertThat(otherArtifact, anyOf(equalTo(a1), equalTo(a2)));

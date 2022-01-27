@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.fieldvalue.FieldValue;
 
@@ -31,7 +31,7 @@ class FieldValueIT extends AbstractJavaPluginIT {
     }
 
     private <V> V getFieldValue(String fieldName, Class<V> type) {
-        Map<String, Object> params = MapBuilder.<String, Object> create("fieldName", fieldName).get();
+        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("fieldName", fieldName).build();
         TestResult testResult = query("MATCH (:Type)-[:DECLARES]->(f:Field)-[:HAS]->(v:Value:Primitive) WHERE f.name=$fieldName RETURN v.value as value",
                 params);
         List<Map<String, Object>> rows = testResult.getRows();
