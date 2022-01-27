@@ -36,7 +36,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -127,7 +126,8 @@ public abstract class AbstractPluginIT {
 
     private void initializeAnalyzer() {
         this.reportContext = new ReportContextImpl(store, outputDirectory);
-        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(getReportPlugins(getReportProperties())));
+        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, getReportProperties());
+        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         AnalyzerConfiguration configuration = getAnalyzerConfiguration();
         analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
@@ -391,24 +391,6 @@ public abstract class AbstractPluginIT {
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertThat(group).describedAs("The request group cannot be found: " + id).isNotNull();
         analyzer.execute(ruleSet, ruleSelection, parameters);
-    }
-
-    /**
-     * @deprecated Override {@link #getReportProperties()} to configure plugins.
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 11)
-    protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
-        return getReportPlugins(reportContext, properties);
-    }
-
-    /**
-     * @deprecated Override {@link #getReportProperties()} to configure plugins.
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 11)
-    protected Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
-        return pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, properties);
     }
 
     @Retention(RetentionPolicy.RUNTIME)
