@@ -8,7 +8,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
@@ -27,7 +27,8 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 
 /**
  * Tests for JUnit4 concepts.
@@ -99,7 +100,7 @@ public class Junit4IT extends AbstractJunitIT {
         scanClasses(TestSuite.class, TestClass.class);
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        Map<String, Object> params = MapBuilder.<String, Object>create("testClass", TestClass.class.getName()).get();
+        Map<String, Object> params = MapBuilder.<String, Object>builder().entry("testClass", TestClass.class.getName()).build();
         List<Object> suites =
                 query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn=$testClass RETURN s", params)
                         .getColumn("s");
@@ -117,7 +118,7 @@ public class Junit4IT extends AbstractJunitIT {
      */
     @Test
     public void suiteClassUnique() throws Exception {
-        Map<String, Object> params = MapBuilder.<String, Object> create("testClass", TestClass.class.getName()).put("suiteClass", TestSuite.class.getName()).get();
+        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("testClass", TestClass.class.getName()).entry("suiteClass", TestSuite.class.getName()).build();
     	scanClasses(TestSuite.class, TestClass.class);
         store.beginTransaction();
         // create existing relation with property

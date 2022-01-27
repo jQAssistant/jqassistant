@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDetailDescriptor;
@@ -31,7 +31,7 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
         String testReportFile = "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml";
         scanClassPathResource(JunitScope.TESTREPORTS, testReportFile);
         store.beginTransaction();
-        Map<String, Object> params = MapBuilder.<String, Object>create().put("fileName", testReportFile).get();
+        Map<String, Object> params = MapBuilder.<String, Object>builder().entry("fileName", testReportFile).build();
         List<FileDescriptor> fileDescriptors =
                 query("MATCH (suite:JUnit:File) where suite.fileName=$fileName RETURN suite", params).getColumn
                         ("suite");
