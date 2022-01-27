@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.report.api.graph.model.Relationship;
 import com.buschmais.jqassistant.core.report.api.graph.model.SubGraph;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jNode;
@@ -164,11 +163,5 @@ public class SubGraphFactory {
                 parent.getSubGraphs().put(identifiable.getId(), (SubGraph) identifiable);
             }
         }
-    }
-
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 10)
-    public <I extends Identifiable> I convert(Object value) throws ReportException {
-        return toIdentifiable(value);
     }
 }
