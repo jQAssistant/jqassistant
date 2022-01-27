@@ -8,13 +8,12 @@ import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import org.apache.maven.model.Model;
 
 /**
  * Descriptor for a POM.
- * 
+ *
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
@@ -23,7 +22,7 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
 
     /**
      * Get the artifacts which are described by this POM.
-     * 
+     *
      * @return The described artifacts.
      */
     @Relation("DESCRIBES")
@@ -39,7 +38,7 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
 
     /**
      * Set the parent POM.
-     * 
+     *
      * @param parent
      *            The parent POM.
      */
@@ -47,7 +46,7 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
 
     /**
      * Get referenced licenses.
-     * 
+     *
      * @return The licenses.
      */
     @Relation("USES_LICENSE")
@@ -79,26 +78,11 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
 
     /**
      * Get profile information.
-     * 
+     *
      * @return The profiles.
      */
     @Relation("HAS_PROFILE")
     List<MavenProfileDescriptor> getProfiles();
-
-    @Outgoing
-    List<PomDeclaresDependencyDescriptor> getDependencies();
-
-    /**
-     * Get default dependency information for projects that inherit from this one.
-     * The dependencies in this section are not immediately resolved. Instead, when
-     * a POM derived from this one declares a dependency described by a matching
-     * groupId and artifactId, the version and other values from this section are
-     * used for that dependency if they were not already specified.
-     * 
-     * @return The managed dependencies.
-     */
-    @Outgoing
-    List<PomManagesDependencyDescriptor> getManagedDependencies();
 
     /**
      * Gets the organization behind the project.

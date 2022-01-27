@@ -403,7 +403,7 @@ class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         }
 
         assertThat(pomDescriptor.getProperties(), empty());
-        assertThat(pomDescriptor.getManagedDependencies(), empty());
+        assertThat(pomDescriptor.getManagesDependencies(), empty());
         assertThat(pomDescriptor.getManagedPlugins(), empty());
         assertThat(pomDescriptor.getPlugins(), empty());
         assertThat(pomDescriptor.getModules(), empty());
@@ -466,7 +466,7 @@ class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
             verifyDependency(managedDependencyDescriptors, dependency);
         }
 
-        assertThat(pomDescriptor.getDependencies(), empty());
+        assertThat(pomDescriptor.getDeclaresDependencies(), empty());
 
         // properties
         List<PropertyDescriptor> propertyDescriptors = pomDescriptor.getProperties();

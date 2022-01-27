@@ -5,13 +5,12 @@ import java.util.List;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import org.apache.maven.model.Plugin;
 
 /**
  * Descriptor for references build plugins.
- * 
+ *
  * @see Plugin
  * @author ronald.kunzmann@buschmais.com
  *
@@ -27,16 +26,16 @@ public interface MavenPluginDescriptor extends MavenDependentDescriptor, MavenDe
 
     /**
      * Get whether any configuration should be propagated to child POMs.
-     * 
+     *
      * @return true, if configuration should be propagated to child POMs.
      */
     @Property("inherited")
     boolean isInherited();
 
     /**
-     * 
+     *
      * Set whether any configuration should be propagated to child POMs.
-     * 
+     *
      * @param inherited
      *            true, if configuration should be propagated to child POMs.
      */
@@ -44,13 +43,10 @@ public interface MavenPluginDescriptor extends MavenDependentDescriptor, MavenDe
 
     /**
      * Get plugin executions.
-     * 
+     *
      * @return The plugin executions.
      */
     @Relation("HAS_EXECUTION")
     List<MavenPluginExecutionDescriptor> getExecutions();
-
-    @Outgoing
-    List<PluginDependsOnDescriptor> getDependencies();
 
 }
