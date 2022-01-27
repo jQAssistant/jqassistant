@@ -67,11 +67,6 @@ public @interface Generic {
                     }
 
                     @Override
-                    public String getSourceFile(FileDescriptor descriptor) {
-                        return descriptor.getFileName();
-                    }
-
-                    @Override
                     public Optional<FileLocation> getSourceLocation(FileDescriptor descriptor) {
                         return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
                     }
@@ -89,11 +84,6 @@ public @interface Generic {
                     @Override
                     public String getName(ArtifactFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName() != null ? descriptor.getFullQualifiedName() : descriptor.getFileName();
-                    }
-
-                    @Override
-                    public String getSourceFile(ArtifactFileDescriptor descriptor) {
-                        return descriptor.getFileName();
                     }
 
                     @Override
