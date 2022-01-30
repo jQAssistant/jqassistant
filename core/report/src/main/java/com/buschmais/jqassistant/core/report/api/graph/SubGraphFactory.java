@@ -145,7 +145,7 @@ public class SubGraphFactory {
             if (value instanceof Iterable<?>) {
                 Iterable<?> values = (Iterable<?>) value;
                 for (Object singleValue : values) {
-                    addIdentifiableToGraph(parent, toIdentifiable(singleValue));
+                    addToValueGraph(parent, singleValue);
                 }
             } else {
                 addIdentifiableToGraph(parent, toIdentifiable(value));

@@ -68,8 +68,8 @@ public class SubGraphFactoryTest {
     public void collectionOfNodesAndCollectionOfRelationships() throws ReportException {
         MapBuilder<String, Object> builder = MapBuilder.builder();
 
-        builder.entry("nodes", asList(getNeo4jNode(1l), getNeo4jNode(2l)));
-        builder.entry("relations", asList(getNeo4jRelationship(1l, "TEST"), getNeo4jRelationship(2l, "TEST")));
+        builder.entry("nodes", asList(asList(getNeo4jNode(1l), getNeo4jNode(2l))));
+        builder.entry("relations", asList(asList(getNeo4jRelationship(1l, "TEST"), getNeo4jRelationship(2l, "TEST"))));
         Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
 
         SubGraph graph = factory.createSubGraph(result);
