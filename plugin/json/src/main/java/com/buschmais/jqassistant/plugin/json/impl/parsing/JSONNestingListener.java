@@ -12,7 +12,7 @@ public class JSONNestingListener extends JSONBaseListener {
     }
 
     @Override
-    public void exitArrayElements(JSONParser.ArrayElementsContext ctx) {
+    public void exitArray(JSONParser.ArrayContext ctx) {
         nestingCounter.leave();
     }
 
