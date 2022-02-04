@@ -3,6 +3,8 @@
 == 1.12.0
 * Removed deprecated source locations from XML report
 * Fixed an issue where diagram reports (e.g. GraphML) failed with an exception (`"Element type not supported:"`)
+* Upgrade to PlantUML 1.2022.1
+* Add support for Elk layout mechanism for use in PlantUML diagrams
 
 == 1.11.1
 * Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
