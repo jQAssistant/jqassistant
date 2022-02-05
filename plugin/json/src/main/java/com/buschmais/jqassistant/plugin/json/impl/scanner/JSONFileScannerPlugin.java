@@ -99,7 +99,8 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             // to help the user to identify non-parseable files
             jsonFileDescriptor.setValid(true);
         } catch (RecoverableParsingException | RecognitionException | IllegalStateException e) {
-            LOGGER.warn("JSON file '{}' seems to be invalid and will be marked as invalid. Result graph might be incorrect.", path);
+            LOGGER.warn("JSON file '{}' seems to be invalid and will be marked as invalid. Result graph might be "
+                + "incorrect: {}", path, e);
         } catch (NullPointerException e) {
             // todo Get rid of this strange error handling
             /*
