@@ -81,12 +81,12 @@
   <testcase name="repeatedTest" classname="repeatedTest()" time="0"/>
   <testcase name="failure" classname="com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example" time="0.009">
     <failure message="Failure" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Failure
-	at com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example.failure(Junit5Example.java:27)
+    at com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example.failure(Junit5Example.java:27)
 </failure>
   </testcase>
   <testcase name="error" classname="com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example" time="0">
     <error type="java.lang.UnsupportedOperationException">java.lang.UnsupportedOperationException
-	at com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example.error(Junit5Example.java:32)
+    at com.buschmais.jqassistant.plugin.junit.test.set.junit5.report.Junit5Example.error(Junit5Example.java:32)
 </error>
   </testcase>
   <testcase name="parameterizedTest" classname="parameterizedTest(String)" time="0.018"/>

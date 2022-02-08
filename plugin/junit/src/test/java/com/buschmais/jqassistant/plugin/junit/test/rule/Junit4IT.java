@@ -119,7 +119,7 @@ public class Junit4IT extends AbstractJunitIT {
     @Test
     public void suiteClassUnique() throws Exception {
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("testClass", TestClass.class.getName()).entry("suiteClass", TestSuite.class.getName()).build();
-    	scanClasses(TestSuite.class, TestClass.class);
+        scanClasses(TestSuite.class, TestClass.class);
         store.beginTransaction();
         // create existing relation with property
         assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn=$suiteClass AND c.fqn=$testClass MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r", params).getColumn("r").size(), equalTo(1));
