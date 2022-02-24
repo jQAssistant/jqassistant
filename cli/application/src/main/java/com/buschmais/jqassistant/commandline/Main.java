@@ -10,6 +10,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -364,7 +365,7 @@ public class Main {
                     throw new CliExecutionException("Cannot read plugin directory.", e);
                 }
                 LOGGER.debug("Using plugin URLs: " + urls);
-                return new com.buschmais.jqassistant.commandline.PluginClassLoader(urls, parentClassLoader);
+                return new PluginClassLoader(urls, parentClassLoader);
             }
         }
         return parentClassLoader;
