@@ -116,14 +116,14 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportContext reportContext = new ReportContextImpl(store, ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, Object> properties = getReportProperties();
-        Map<String, ReportPlugin> reportPlugins = pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext,
+        Map<String, ReportPlugin> reportPlugins = getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext,
                 properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepositoryProvider.getPluginRepository().getAnalyzerPluginRepository()
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, getPluginRepository().getAnalyzerPluginRepository()
                     .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection, ruleParameters);
         } catch (RuleException e) {

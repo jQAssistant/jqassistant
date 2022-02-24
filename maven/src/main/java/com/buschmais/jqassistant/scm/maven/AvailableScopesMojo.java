@@ -35,7 +35,7 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) {
         getLog().info("Available scopes for '" + rootModule.getName() + "'.");
         ScopeHelper scopeHelper = new ScopeHelper(logger);
-        ScannerPluginRepository scannerPluginRepository = pluginRepositoryProvider.getPluginRepository().getScannerPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
         scopeHelper.printScopes(scannerPluginRepository.getScopes());
     }
 }

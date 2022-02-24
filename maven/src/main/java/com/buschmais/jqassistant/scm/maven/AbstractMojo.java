@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
@@ -20,8 +21,10 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
+import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -29,9 +32,13 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
 
 import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
 import static com.buschmais.jqassistant.core.shared.option.OptionHelper.coalesce;
+import static java.util.Optional.empty;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -193,6 +200,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
 
     /**
+     * The Maven Session.
+     */
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
+
+    /**
      * The Maven project.
      */
     @Parameter(property = "project")
@@ -210,20 +223,33 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "mojoExecution")
     protected MojoExecution execution;
 
-    @Component
-    protected PluginRepositoryProvider pluginRepositoryProvider;
-
     /**
      * The Maven runtime information.
      */
     @Component
     private RuntimeInformation runtimeInformation;
 
+    @Component
+    private ConfigurationProvider configurationProvider;
+
+    @Component
+    private PluginRepositoryProvider pluginRepositoryProvider;
+
     /**
      * The store repository.
      */
     @Component
     private CachingStoreProvider cachingStoreProvider;
+
+    @Component
+    private RepositorySystem repositorySystem;
+
+    @Parameter( defaultValue = "${repositorySystemSession}", readonly = true, required = true )
+    private RepositorySystemSession repositorySystemSession;
+
+    @Parameter( defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true )
+    private List<RemoteRepository> repositories;
+
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -281,7 +307,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected final RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
-        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
         if (rulesUrl != null) {
             getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
             sources.add(new UrlRuleSource(rulesUrl));
@@ -293,12 +318,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                     addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
                 }
             }
-            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
+            List<RuleSource> ruleSources = getPluginRepository().getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(getRuleConfiguration());
+            ruleParserPlugins = getPluginRepository().getRulePluginRepository().getRuleParserPlugins(getRuleConfiguration());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);
         }
@@ -428,8 +453,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private Store getStore(MavenProject rootModule) throws MojoExecutionException {
         StoreConfiguration configuration = getStoreConfiguration(rootModule);
-        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
-        Object existingStore = cachingStoreProvider.getStore(configuration, pluginRepository);
+        Object existingStore = cachingStoreProvider.getStore(configuration, getPluginRepository());
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                     "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
@@ -493,6 +517,27 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
+     * Retrieve the runtime configuration.
+     * <p>
+     * The configuration directory is assumed to be located within the execution root of the Maven session.
+     *
+     * @return The {@link Configuration}.
+     */
+    protected Configuration getConfiguration() {
+        File workingDirectory = new File(session.getExecutionRootDirectory());
+        return configurationProvider.getConfiguration(workingDirectory, empty());
+    }
+
+    /**
+     * Retrieve the {@link PluginRepository}.
+     *
+     * @return the {@link PluginRepository}.
+     */
+    protected PluginRepository getPluginRepository() {
+        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, getConfiguration().plugins());
+    }
+
+    /**
      * Defines an operation to execute on an initialized store instance.
      */
     protected interface StoreOperation {
@@ -510,4 +555,5 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
          */
         void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException;
     }
+
 }

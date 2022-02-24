@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.maven.plugins.annotations.Mojo;
@@ -31,8 +30,7 @@ public class ListPluginsMojo extends AbstractProjectMojo {
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) {
         getLog().info("Available plugins for '" + rootModule.getName() + "'.");
 
-        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
-        List<PluginInfo> sortedInfos = pluginRepository.getPluginOverview().stream()
+        List<PluginInfo> sortedInfos = getPluginRepository().getPluginOverview().stream()
                                                        .sorted(PluginInfo.NAME_COMPARATOR)
                                                        .collect(Collectors.toList());
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -61,9 +60,6 @@ public class ScanMojo extends AbstractModuleMojo {
     @Parameter(property = "jqassistant.store.reset")
     protected boolean reset = true;
 
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
-
     @Component(hint = "default")
     private DependencyGraphBuilder dependencyGraphBuilder;
 
@@ -96,8 +92,7 @@ public class ScanMojo extends AbstractModuleMojo {
         validate();
         ScannerConfiguration configuration = new ScannerConfiguration();
         configuration.setContinueOnError(continueOnError);
-        PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository();
-        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
         Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
 
