@@ -358,6 +358,7 @@
         <module>scanner</module>
         <module>store</module>
         <module>plugin</module>
+        <module>configuration</module>
     </modules>
 
     <repositories>

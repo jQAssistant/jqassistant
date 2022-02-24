@@ -1,0 +1,10 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant.core
+      artifact-id: minimal-test-plugin
+      version: 1.0.0
+    - group-id: com.buschmais.jqassistant.core
+      artifact-id: full-test-plugin
+      type: jqp
+      version: 1.0.0
+      active: false

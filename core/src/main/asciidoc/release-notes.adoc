@@ -1,6 +1,8 @@
 = Core Framework
 
 == 1.12.0
+* Added support for configuration via YAML files, environment variables and system properties based on Eclipse Microprofile config mechanism
+* Added support for plugin provisioning based on a given configuration via Maven repositories (including dependency resolution)
 * Removed deprecated source locations from XML report
 * Fixed an issue where diagram reports (e.g. GraphML) failed with an exception (`"Element type not supported:"`)
 * Upgrade to PlantUML 1.2022.1
