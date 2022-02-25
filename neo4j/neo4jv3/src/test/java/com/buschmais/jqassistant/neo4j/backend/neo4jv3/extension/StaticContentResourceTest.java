@@ -2,11 +2,13 @@ package com.buschmais.jqassistant.neo4j.backend.neo4jv3.extension;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,9 +36,11 @@ class StaticContentResourceTest {
 
     private StaticContentResource staticContentResource;
 
+    private TracingClassLoader classLoader = new TracingClassLoader();
+
     @BeforeEach
     void setUp() {
-        staticContentResource = new StaticContentResource(configuration, server);
+        staticContentResource = new StaticContentResource(configuration, server, classLoader);
     }
 
     @Test
@@ -44,6 +48,7 @@ class StaticContentResourceTest {
         Response response = staticContentResource.file("/test/other.html");
 
         verifyIndexResponse(response, "<h1>Other</h1>" + lineSeparator(), TEXT_HTML_TYPE);
+        assertThat("ClassLoader must be used to resolve resource.", classLoader.getLastResource().getPath(), endsWith("/test/other.html"));
     }
 
     @Test
@@ -83,5 +88,18 @@ class StaticContentResourceTest {
         Response response = staticContentResource.file("/nonExistingResource.png");
 
         assertThat(response.getStatus(), equalTo(Response.Status.NOT_FOUND.getStatusCode()));
+    }
+
+    @Getter
+    private static class TracingClassLoader extends ClassLoader {
+
+        private URL lastResource;
+
+        @Override
+        public URL getResource(String name) {
+            URL resource = super.getResource(name);
+            this.lastResource = resource;
+            return resource;
+        }
     }
 }

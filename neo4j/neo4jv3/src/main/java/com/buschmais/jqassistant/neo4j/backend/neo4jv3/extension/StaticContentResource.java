@@ -41,8 +41,11 @@ public class StaticContentResource {
 
     private static final Cache<String, Optional<StaticResource>> RESOURCE_CACHE = Caffeine.newBuilder().maximumSize(256).build();
 
-    public StaticContentResource(@Context Config configuration, @Context WebServer server) {
+    private ClassLoader classLoader;
+
+    public StaticContentResource(@Context Config configuration, @Context WebServer server, @Context ClassLoader classLoader) {
         LOGGER.debug("Initializing, serving static content from classpath resources located '{}'.", CONTENT_PATH);
+        this.classLoader = classLoader;
     }
 
     @GET
@@ -64,7 +67,7 @@ public class StaticContentResource {
      * Resolves the given path to a {@link StaticResource}.
      *
      * @param path
-     *            The path.
+     *     The path.
      * @return An {@link Optional} of a {@link StaticResource}.
      */
     private Optional<StaticResource> resolveFileOrDirectoryResource(String path) {
@@ -82,9 +85,8 @@ public class StaticContentResource {
     }
 
     private Optional<StaticResource> resolve(String resource) {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        LOGGER.debug("Resolving resource {} using context class loader {}.", resource, contextClassLoader);
-        URL url = contextClassLoader.getResource(CONTENT_PATH + resource);
+        LOGGER.debug("Resolving resource {} using context class loader {}.", resource, classLoader);
+        URL url = classLoader.getResource(CONTENT_PATH + resource);
         if (url == null) {
             LOGGER.debug("No classpath resource found for '{}'.", resource);
             return Optional.empty();

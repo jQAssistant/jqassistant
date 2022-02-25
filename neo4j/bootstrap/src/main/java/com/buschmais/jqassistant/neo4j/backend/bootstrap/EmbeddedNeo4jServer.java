@@ -12,7 +12,7 @@ public interface EmbeddedNeo4jServer {
 
     String getVersion();
 
-    void initialize(EmbeddedDatastore embeddedDatastore, EmbeddedNeo4jConfiguration configuration, Collection<Class<?>> procedureTypes,
+    void initialize(EmbeddedDatastore embeddedDatastore, EmbeddedNeo4jConfiguration configuration, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes);
 
     void start();

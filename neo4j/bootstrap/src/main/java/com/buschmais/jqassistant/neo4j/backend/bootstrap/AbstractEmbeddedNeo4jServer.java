@@ -13,11 +13,14 @@ public abstract class AbstractEmbeddedNeo4jServer implements EmbeddedNeo4jServer
 
     protected EmbeddedNeo4jConfiguration embeddedNeo4jConfiguration;
 
+    protected ClassLoader classLoader;
+
     @Override
-    public final void initialize(EmbeddedDatastore embeddedDatastore, EmbeddedNeo4jConfiguration configuration, Collection<Class<?>> procedureTypes,
+    public final void initialize(EmbeddedDatastore embeddedDatastore, EmbeddedNeo4jConfiguration configuration, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes) {
         this.embeddedDatastore = embeddedDatastore;
         this.embeddedNeo4jConfiguration = configuration;
+        this.classLoader = classLoader;
         initialize(procedureTypes, functionTypes);
     }
 

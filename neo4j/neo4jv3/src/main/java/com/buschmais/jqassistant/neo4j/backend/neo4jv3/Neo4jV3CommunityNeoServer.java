@@ -17,10 +17,12 @@ import org.neo4j.logging.FormattedLogProvider;
 import org.neo4j.logging.Level;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.database.GraphFactory;
+import org.neo4j.server.database.InjectableProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.neo4j.graphdb.DependencyResolver.SelectionStrategy.ONLY;
+import static org.neo4j.server.database.InjectableProvider.providerForSingleton;
 
 public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
 
@@ -59,7 +61,15 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
         FormattedLogProvider logProvider = FormattedLogProvider.withDefaultLogLevel(Level.INFO).toOutputStream(System.out);
         final GraphDatabaseDependencies graphDatabaseDependencies = GraphDatabaseDependencies.newDependencies().userLogProvider(logProvider);
         GraphFactory graphFactory = (config, dependencies) -> (GraphDatabaseFacade) embeddedDatastore.getGraphDatabaseService();
-        communityNeoServer = new CommunityNeoServer(defaults, graphFactory, graphDatabaseDependencies);
+        communityNeoServer = new CommunityNeoServer(defaults, graphFactory, graphDatabaseDependencies) {
+            @Override
+            protected Collection<InjectableProvider<?>> createDefaultInjectables() {
+                Collection<InjectableProvider<?>> injectables = super.createDefaultInjectables();
+                // Add the classloader as injectable for resolving additional static resources from plugins
+                injectables.add(providerForSingleton(classLoader, ClassLoader.class));
+                return injectables;
+            }
+        };
         communityNeoServer.start();
     }
 
