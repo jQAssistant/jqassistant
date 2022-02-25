@@ -65,7 +65,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         this.server = serverFactory.getServer();
         LOGGER.info("Initializing embedded Neo4j server " + server.getVersion());
         EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
-        server.initialize(embeddedDatastore, embeddedNeo4jConfiguration, storePluginRepository.getProcedureTypes(), storePluginRepository.getFunctionTypes());
+        server.initialize(embeddedDatastore, embeddedNeo4jConfiguration, storePluginRepository.getClassLoader(), storePluginRepository.getProcedureTypes(),
+            storePluginRepository.getFunctionTypes());
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {

@@ -21,7 +21,7 @@ public abstract class AbstractPluginRepository {
     /*
      * The class loader to use for loading classes and resources.
      */
-    private final ClassLoader classLoader;
+    protected final ClassLoader classLoader;
 
     /**
      * Constructor.

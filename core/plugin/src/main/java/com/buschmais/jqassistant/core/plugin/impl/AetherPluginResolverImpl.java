@@ -10,12 +10,15 @@ import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
@@ -28,6 +31,7 @@ import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 /**
  * Implementation of a {@link PluginResolver} based on Eclipse Aether.
  */
+@Slf4j
 @RequiredArgsConstructor
 public class AetherPluginResolverImpl implements PluginResolver {
 
@@ -40,14 +44,17 @@ public class AetherPluginResolverImpl implements PluginResolver {
     @Override
     public PluginClassLoader createClassLoader(ClassLoader parent, List<Plugin> plugins) {
         List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
-        List<URL> files = resolvePlugins(requiredPlugins);
-        return new PluginClassLoader(files, parent);
+        DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
+        return new PluginClassLoader(getDependencyURLs(dependencyResult), parent);
     }
 
-    private List<URL> resolvePlugins(List<Dependency> dependencies) {
+    private DependencyResult resolvePlugins(List<Dependency> dependencies) {
         DependencyFilter classpathFilter = DependencyFilterUtils.classpathFilter(RUNTIME);
         DependencyResult dependencyResult = resolveDependencies(classpathFilter, dependencies);
-        return getDependencyURLs(dependencyResult);
+        if (log.isDebugEnabled()) {
+            logDependencyTree(dependencyResult.getRoot(), 0);
+        }
+        return dependencyResult;
     }
 
     private List<Dependency> getRequiredPluginDependencies(List<Plugin> plugins) {
@@ -69,6 +76,20 @@ public class AetherPluginResolverImpl implements PluginResolver {
             return repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
         } catch (DependencyResolutionException e) {
             throw new PluginRepositoryException("Cannot resolve plugin dependencies", e);
+        }
+    }
+
+    private void logDependencyTree(DependencyNode node, int indent) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            builder.append(' ');
+        }
+        Artifact artifact = node.getArtifact();
+        if (artifact != null) {
+            log.info("{}{}", builder, artifact);
+        }
+        for (DependencyNode child : node.getChildren()) {
+            logDependencyTree(child, indent + 2);
         }
     }
 

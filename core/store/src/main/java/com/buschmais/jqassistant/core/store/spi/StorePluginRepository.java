@@ -9,6 +9,8 @@ import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
  */
 public interface StorePluginRepository extends LifecycleAware  {
 
+    ClassLoader getClassLoader();
+
     /**
      * Return the instances of the configured descriptor mappers.
      *

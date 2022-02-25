@@ -32,6 +32,11 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
     }
 
     @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
     public List<Class<?>> getDescriptorTypes() {
         return descriptorTypes;
     }
