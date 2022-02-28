@@ -1,0 +1,8 @@
+jqassistant:
+  scan:
+    continue-on-error: true
+    reset: true
+    include:
+      - java:classpath::~/my-project/build/classes
+    properties:
+      m2repo.artifacts.scan: true

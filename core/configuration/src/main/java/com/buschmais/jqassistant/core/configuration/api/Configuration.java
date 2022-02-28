@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.configuration.api;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 
 import io.smallrye.config.ConfigMapping;
 
@@ -19,4 +20,10 @@ public interface Configuration {
      */
     List<Plugin> plugins();
 
+    /**
+     * The {@link Scan} configuration.
+     *
+     * @return The {@link Scan} configuration.
+     */
+    Scan scan();
 }

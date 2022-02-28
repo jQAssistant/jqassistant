@@ -10,7 +10,7 @@ import io.smallrye.config.WithDefault;
 @Description("The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version. Furthermore a plugin can be declared as active or inactive.")
 public interface Plugin {
 
-    @Description("Activate the plugin (default: true).")
+    @Description("Activate the plugin.")
     @WithDefault("true")
     boolean active();
 
@@ -23,11 +23,11 @@ public interface Plugin {
     @Description("The artifactId of the plugin.")
     List<String> artifactId();
 
-    @Description("The type (extension) of the plugin (default: jar).")
+    @Description("The type (extension) of the plugin.")
     @WithDefault("jar")
     String type();
 
-    @Description("The version of the plugin (default: jar).")
+    @Description("The version of the plugin.")
     String version();
 
 }

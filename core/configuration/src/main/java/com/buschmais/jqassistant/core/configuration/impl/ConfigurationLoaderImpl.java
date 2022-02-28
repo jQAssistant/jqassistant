@@ -3,10 +3,12 @@ package com.buschmais.jqassistant.core.configuration.impl;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
@@ -17,6 +19,8 @@ import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -25,6 +29,9 @@ import static java.util.stream.Collectors.toList;
  */
 @Slf4j
 public class ConfigurationLoaderImpl implements ConfigurationLoader {
+
+    public static final String YAML = ".yaml";
+    public static final String YML = ".yml";
 
     @Override
     public Configuration load(File configurationDirectory, ConfigSource... configSources) {
@@ -45,12 +52,24 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     }
 
     private List<Path> getConfigurationFiles(File configurationDirectory) {
-        try (Stream<Path> list = Files.list(configurationDirectory.toPath())) {
-            return list.collect(toList());
+        List<Path> configurationFiles = new ArrayList<>();
+        try {
+            walkFileTree(configurationDirectory.toPath(), new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    String fileName = file.toFile().getName();
+                    if (fileName.endsWith(YAML) || fileName.endsWith(YML)) {
+                        configurationFiles.add(file);
+                    }
+                    return CONTINUE;
+                }
+
+            });
         } catch (IOException e) {
             log.warn("Cannot list files in configuration directory " + configurationDirectory, e);
         }
-        return null;
+        return configurationFiles;
     }
 
     private List<ConfigSource> getYamlConfigSources(List<Path> configurationFiles) {
