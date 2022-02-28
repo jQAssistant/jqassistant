@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,15 +47,16 @@ class ScannerImplTest {
     @Mock
     private ScannerPluginRepository scannerPluginRepository;
 
+    @Mock
+    private Scan configuration;
+
     private ScannerContext context;
 
     private boolean transaction = false;
 
-    private ScannerConfiguration configuration;
 
     @BeforeEach
     void setup() throws IOException {
-        configuration = new ScannerConfiguration();
         // Plugin
         doReturn(String.class).when(scannerPlugin).getType();
         when(scannerPlugin.accepts(anyString(), anyString(), eq(scope))).thenReturn(true);
@@ -86,11 +87,10 @@ class ScannerImplTest {
 
     @Test
     void resolveScope() {
-        ScannerContext scannerContext = mock(ScannerContext.class);
-        Scanner scanner = new ScannerImpl(new ScannerConfiguration(), emptyMap(), scannerContext, scannerPluginRepository);
-        Assert.assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
-        Assert.assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
-        Assert.assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
+        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
+        assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
+        assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
     }
 
     @Test
@@ -139,7 +139,7 @@ class ScannerImplTest {
 
     @Test
     void continueOnError() throws IOException {
-        configuration.setContinueOnError(true);
+        doReturn(true).when(configuration).continueOnError();
         Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
 
@@ -161,7 +161,7 @@ class ScannerImplTest {
     @Test
     void continueOnErrorDuringCommit() {
         doThrow(new IllegalStateException("Exception during commit")).when(store).commitTransaction();
-        configuration.setContinueOnError(true);
+        doReturn(true).when(configuration).continueOnError();
         Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
 
         scanner.scan("test1", "test1", scope);
@@ -203,7 +203,7 @@ class ScannerImplTest {
         scannerPlugins.put("DependentTestScanner", new DependentTestItemScannerPlugin());
         scannerPlugins.put("NestedTestScanner", new NestedTestItemScannerPlugin());
         doReturn(scannerPlugins).when(scannerPluginRepository).getScannerPlugins(scannerContext, emptyMap());
-        Scanner scanner = new ScannerImpl(new ScannerConfiguration(), emptyMap(), scannerContext, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, emptyMap(), scannerContext, scannerPluginRepository);
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 

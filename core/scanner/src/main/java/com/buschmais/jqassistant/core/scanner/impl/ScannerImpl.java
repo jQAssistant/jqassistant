@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -23,7 +24,7 @@ public class ScannerImpl implements Scanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerImpl.class);
 
-    private final ScannerConfiguration configuration;
+    private final Scan configuration;
 
     private final ScannerContext scannerContext;
 
@@ -45,7 +46,7 @@ public class ScannerImpl implements Scanner {
      * @param scannerPluginRepository
  *            The {@link ScannerPluginRepository}.
      */
-    public ScannerImpl(ScannerConfiguration configuration, Map<String, Object> pluginProperties, ScannerContext scannerContext,
+    public ScannerImpl(Scan configuration, Map<String, Object> pluginProperties, ScannerContext scannerContext,
             ScannerPluginRepository scannerPluginRepository) {
         this.configuration = configuration;
         this.scannerContext = scannerContext;
@@ -92,8 +93,8 @@ public class ScannerImpl implements Scanner {
                 store.rollbackTransaction();
             }
             String message = "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='"
-                    + pipeline + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.isContinueOnError() + ").";
-            if (configuration.isContinueOnError()) {
+                    + pipeline + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.continueOnError() + ").";
+            if (configuration.continueOnError()) {
                 LOGGER.error(message, e);
                 LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
             } else {
