@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
@@ -73,11 +73,23 @@ public class ScanMojo extends AbstractModuleMojo {
         return false;
     }
 
+    @Override
+    protected void addConfigurationProperties(Map<String, String> properties) {
+        properties.put(Scan.PREFIX + "." + Scan.CONTINUE_ON_ERROR, Boolean.toString(continueOnError));
+        properties.put(Scan.PREFIX + "." + Scan.RESET, Boolean.toString(reset));
+        for (Map.Entry<String, Object> entry : scanProperties.entrySet()) {
+            properties.put(Scan.PREFIX + "." + Scan.PROPERTIES + "." + entry.getKey(), entry.getValue().toString());
+        }
+    }
+
     /**
      * Return the plugin properties.
      *
+     * @deprecated to be replaced by {@link #addConfigurationProperties(Map)}
+     *
      * @return The plugin properties.
      */
+    @Deprecated
     protected Map<String, Object> getPluginProperties() {
         Map<String, Object> properties = new HashMap<>();
         if (scanProperties != null) {
@@ -90,11 +102,9 @@ public class ScanMojo extends AbstractModuleMojo {
     @Override
     public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException {
         validate();
-        ScannerConfiguration configuration = new ScannerConfiguration();
-        configuration.setContinueOnError(continueOnError);
         ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
-        Scanner scanner = new ScannerImpl(configuration, getPluginProperties(), scannerContext, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(getConfiguration().scan(), getPluginProperties(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest().getRepositorySession().getLocalRepository().getBasedir();
         FileResolver fileResolver = scannerContext.peek(FileResolver.class);

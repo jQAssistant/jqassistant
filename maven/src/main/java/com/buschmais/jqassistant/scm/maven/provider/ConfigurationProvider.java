@@ -8,10 +8,11 @@ import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
  * Provides the runtime {@link Configuration} for jQAssistant within a Maven reactor.
- *
+ * <p>
  * Declared as to allow caching the config.
  */
 @Component(role = ConfigurationProvider.class, instantiationStrategy = "singleton")
@@ -19,11 +20,11 @@ public class ConfigurationProvider {
 
     private Configuration configuration;
 
-    public synchronized Configuration getConfiguration(File workingDirectory, Optional<File> configurationDirectory) {
+    public synchronized Configuration getConfiguration(File workingDirectory, Optional<File> configurationDirectory, ConfigSource... configSources) {
         if (configuration == null) {
             ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
-            this.configuration = configurationLoader.load(
-                configurationDirectory.orElse(configurationLoader.getDefaultConfigurationDirectory(workingDirectory)));
+            File effectiveConfigurationDirectory = configurationDirectory.orElse(configurationLoader.getDefaultConfigurationDirectory(workingDirectory));
+            this.configuration = configurationLoader.load(effectiveConfigurationDirectory, configSources);
         }
         return configuration;
     }

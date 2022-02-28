@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
+import io.smallrye.config.PropertiesConfigSource;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -524,8 +525,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return The {@link Configuration}.
      */
     protected Configuration getConfiguration() {
+        Map<String, String> properties = new HashMap<>();
+        addConfigurationProperties(properties);
+        PropertiesConfigSource mojoConfigSource = new PropertiesConfigSource(properties, "MojoConfigSource", 110);
         File workingDirectory = new File(session.getExecutionRootDirectory());
-        return configurationProvider.getConfiguration(workingDirectory, empty());
+        return configurationProvider.getConfiguration(workingDirectory, empty(), mojoConfigSource);
+    }
+
+    /**
+     * Method to be overridden by sub-classes to add configuration properties.
+     *
+     * @param properties
+     *     The configuration properties.
+     */
+    protected void addConfigurationProperties(Map<String, String> properties) {
     }
 
     /**
