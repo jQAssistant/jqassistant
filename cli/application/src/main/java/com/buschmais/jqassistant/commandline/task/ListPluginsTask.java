@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 
 /**
@@ -11,7 +12,7 @@ import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
  */
 public class ListPluginsTask extends AbstractTask {
     @Override
-    public void run() {
+    public void run(Configuration configuration) {
         Comparator<PluginInfo> comparator = PluginInfo.NAME_COMPARATOR;
 
         List<PluginInfo> sortedInfos = pluginRepository.getPluginOverview().stream()

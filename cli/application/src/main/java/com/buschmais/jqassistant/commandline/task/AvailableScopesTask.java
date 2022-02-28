@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -14,7 +15,7 @@ public class AvailableScopesTask extends AbstractAnalyzeTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableScopesTask.class);
 
     @Override
-    protected void executeTask(Store store) {
+    protected void executeTask(Configuration configuration, Store store) {
         ScopeHelper scopeHelper = new ScopeHelper(LOGGER);
         scopeHelper.printScopes(pluginRepository.getScannerPluginRepository().getScopes());
     }

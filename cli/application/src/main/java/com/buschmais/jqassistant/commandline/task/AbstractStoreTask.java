@@ -5,9 +5,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -41,13 +43,13 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected StoreConfiguration storeConfiguration;
 
     @Override
-    public void run() throws CliExecutionException {
+    public void run(Configuration configuration) throws CliExecutionException {
         final Store store = getStore();
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
             store.start();
-            executeTask(store);
+            executeTask(configuration, store);
         } finally {
             store.stop();
             Thread.currentThread().setContextClassLoader(oldClassLoader);
@@ -55,7 +57,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     }
 
     @Override
-    public final void withStandardOptions(CommandLine options) throws CliConfigurationException {
+    public final void withStandardOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         String storeUri = getOptionValue(options, CMDLINE_OPTION_STORE_URI);
         String storeDirectory = getOptionValue(options, CMDLINE_OPTION_S);
@@ -141,6 +143,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     protected abstract boolean isConnectorRequired();
 
-    protected abstract void executeTask(final Store store) throws CliExecutionException;
+    protected abstract void executeTask(Configuration configuration, final Store store) throws CliExecutionException;
 
 }

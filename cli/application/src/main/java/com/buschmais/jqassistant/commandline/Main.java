@@ -10,12 +10,16 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
+import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
+import io.smallrye.config.PropertiesConfigSource;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,25 +187,36 @@ public class Main {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
             System.exit(1);
         }
+        Map<String, String> configurationProperties = new HashMap<>();
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
+            try {
+                task.withStandardOptions(commandLine, configurationProperties);
+                task.withOptions(commandLine, configurationProperties);
+            } catch (CliConfigurationException e) {
+                printUsage(options, e.getMessage());
+                System.exit(1);
+            }
             if (task == null) {
                 printUsage(options, "Unknown task " + taskName);
             }
             tasks.add(task);
         }
-        Map<String, Object> properties = readProperties(commandLine);
+        PropertiesConfigSource taskConfigSource = new PropertiesConfigSource(configurationProperties, "TaskConfigSource", 110);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
+        Configuration configuration = configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(new File(".")), taskConfigSource);
         PluginRepository pluginRepository = getPluginRepository();
-        executeTasks(tasks, options, commandLine, pluginRepository, properties);
+        Map<String, Object> properties = readProperties(commandLine);
+        executeTasks(tasks, configuration, pluginRepository, properties);
     }
 
-    private void executeTasks(List<Task> tasks, Options options, CommandLine commandLine, PluginRepository pluginRepository, Map<String, Object> properties)
-            throws CliExecutionException {
+    private void executeTasks(List<Task> tasks, Configuration configuration, PluginRepository pluginRepository,
+        Map<String, Object> properties) throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
-                executeTask(task, options, commandLine, pluginRepository, properties);
+                executeTask(task, configuration, pluginRepository, properties);
             }
         } finally {
             pluginRepository.destroy();
@@ -233,26 +248,17 @@ public class Main {
      * Executes a task.
      *
      * @param task
-     *            The task.
-     * @param option
-     *            The option.
-     * @param commandLine
-     *            The command line.
+     *     The task.
+     * @param configuration
+     *     The {@link Configuration}-
      * @param properties
-     *            The plugin properties
+     *     The plugin properties
      * @throws IOException
      */
-    private void executeTask(Task task, Options option, CommandLine commandLine, PluginRepository pluginRepository,
-            Map<String, Object> properties) throws CliExecutionException {
-        try {
-            task.withStandardOptions(commandLine);
-            task.withOptions(commandLine);
-        } catch (CliConfigurationException e) {
-            printUsage(option, e.getMessage());
-            System.exit(1);
-        }
+    private void executeTask(Task task, Configuration configuration, PluginRepository pluginRepository,
+        Map<String, Object> properties) throws CliExecutionException {
         task.initialize(pluginRepository, properties);
-        task.run();
+        task.run(configuration);
     }
 
     /**

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -23,7 +25,10 @@ import static org.mockito.Mockito.verify;
 class ServerTaskTest {
 
     @Mock
-    PluginRepository pluginRepository;
+    private Configuration configuration;
+
+    @Mock
+    private PluginRepository pluginRepository;
 
     @Mock
     private EmbeddedGraphStore store;
@@ -70,8 +75,8 @@ class ServerTaskTest {
         CommandLine commandLine = parser.parse(options, arguments);
 
         serverTask.initialize(pluginRepository, new HashMap<>());
-        serverTask.withOptions(commandLine);
-        serverTask.executeTask(store);
+        serverTask.withOptions(commandLine, emptyMap());
+        serverTask.executeTask(configuration, store);
     }
 
 }

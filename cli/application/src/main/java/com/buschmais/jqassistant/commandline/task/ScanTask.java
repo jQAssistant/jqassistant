@@ -3,12 +3,17 @@ package com.buschmais.jqassistant.commandline.task;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -18,6 +23,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.emptyList;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -37,8 +44,6 @@ public class ScanTask extends AbstractStoreTask {
 
     private List<ScopeHelper.ScopedResource> files = null;
     private List<ScopeHelper.ScopedResource> urls = null;
-    private boolean reset = false;
-    private boolean continueOnError = false;
 
     @Override
     protected boolean isConnectorRequired() {
@@ -61,9 +66,9 @@ public class ScanTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void executeTask(Store store) throws CliExecutionException {
+    protected void executeTask(Configuration configuration, Store store) throws CliExecutionException {
         ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
-        if (reset) {
+        if (configuration.scan().reset()) {
             store.reset();
         }
         for (ScopeHelper.ScopedResource scopedResource : files) {
@@ -74,36 +79,34 @@ public class ScanTask extends AbstractStoreTask {
             if (!file.exists()) {
                 LOGGER.info(absolutePath + "' does not exist, skipping scan.");
             } else {
-                scan(scannerContext, file, file.getAbsolutePath(), scopeName);
+                scan(configuration, scannerContext, file, file.getAbsolutePath(), scopeName);
             }
         }
         for (ScopeHelper.ScopedResource scopedResource : urls) {
             String uri = scopedResource.getResource();
             String scopeName = scopedResource.getScopeName();
             try {
-                scan(scannerContext, new URI(uri), uri, scopeName);
+                scan(configuration, scannerContext, new URI(uri), uri, scopeName);
             } catch (URISyntaxException e) {
                 throw new CliConfigurationException("Cannot parse URI " + uri, e);
             }
         }
     }
 
-    private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName) {
-        ScannerConfiguration configuration = new ScannerConfiguration();
-        configuration.setContinueOnError(continueOnError);
-        Scanner scanner = new ScannerImpl(configuration, pluginProperties, scannerContext, pluginRepository.getScannerPluginRepository());
+    private <T> void scan(Configuration configuration, ScannerContext scannerContext, T element, String path, String scopeName) {
+        Scanner scanner = new ScannerImpl(configuration.scan(), pluginProperties, scannerContext, pluginRepository.getScannerPluginRepository());
         Scope scope = scanner.resolveScope(scopeName);
         scanner.scan(element, path, scope);
     }
 
     @Override
-    public void withOptions(final CommandLine options) throws CliConfigurationException {
-        files = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.emptyList()));
-        urls = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList()));
+    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
+        files = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_FILES, emptyList()));
+        urls = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_URLS, emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
-        reset = options.hasOption(CMDLINE_OPTION_RESET);
-        continueOnError = options.hasOption(CMDLINE_OPTION_CONTINUEONERROR);
+        configurationProperties.put(Scan.PREFIX + "." + Scan.RESET, Boolean.toString(options.hasOption(CMDLINE_OPTION_RESET)));
+        configurationProperties.put(Scan.PREFIX + "." + Scan.CONTINUE_ON_ERROR, Boolean.toString(options.hasOption(CMDLINE_OPTION_CONTINUEONERROR)));
     }
 }

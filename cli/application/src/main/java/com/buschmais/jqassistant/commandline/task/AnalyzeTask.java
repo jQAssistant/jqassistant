@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -57,7 +58,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private boolean createReportArchive;
 
     @Override
-    protected void executeTask(final Store store) throws CliExecutionException {
+    protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
         LOGGER.info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
@@ -65,11 +66,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        AnalyzerConfiguration analyzerConfiguration = new AnalyzerConfiguration();
+        analyzerConfiguration.setExecuteAppliedConcepts(executeAppliedConcepts);
         Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap()),
+            Analyzer analyzer = new AnalyzerImpl(analyzerConfiguration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap()),
                     inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
             analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
@@ -143,8 +144,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    public void withOptions(final CommandLine options) throws CliConfigurationException {
-        super.withOptions(options);
+    public void withOptions(final CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
+        super.withOptions(options, configurationProperties);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
         if (ruleParametersFileName != null) {
             this.ruleParametersFile = new File(ruleParametersFileName);

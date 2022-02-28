@@ -63,6 +63,10 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>configuration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
         </dependency>
         <dependency>

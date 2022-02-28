@@ -2,8 +2,10 @@ package com.buschmais.jqassistant.commandline.task;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -31,7 +33,7 @@ public class ServerTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void executeTask(final Store store) throws CliExecutionException {
+    protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
         server.start();
@@ -58,7 +60,7 @@ public class ServerTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options) {
+    public void withOptions(CommandLine options, Map<String, String> configurationProperties) {
         runAsDaemon = options.hasOption(CMDLINE_OPTION_DAEMON);
     }
 }

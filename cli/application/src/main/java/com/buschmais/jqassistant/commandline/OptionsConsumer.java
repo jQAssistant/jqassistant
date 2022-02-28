@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline;
 
+import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -7,8 +9,8 @@ import org.apache.commons.cli.CommandLine;
  */
 public interface OptionsConsumer {
 
-    void withStandardOptions(CommandLine commandLine) throws CliConfigurationException;
+    void withStandardOptions(CommandLine commandLine, Map<String, String> configurationProperties) throws CliConfigurationException;
 
-    void withOptions(final CommandLine options) throws CliConfigurationException;
+    void withOptions(final CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException;
 
 }

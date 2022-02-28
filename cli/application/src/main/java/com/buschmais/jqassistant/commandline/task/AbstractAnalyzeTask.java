@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
@@ -106,7 +103,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options) throws CliConfigurationException {
+    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
         String rulesUrl = getOptionValue(options, CMDLINE_OPTION_RULESURL, null);
         if (rulesUrl != null) {
             try {

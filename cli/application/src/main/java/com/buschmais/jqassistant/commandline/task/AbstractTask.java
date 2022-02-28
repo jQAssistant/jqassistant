@@ -44,11 +44,11 @@ public abstract class AbstractTask implements Task {
     }
 
     @Override
-    public void withOptions(CommandLine options) throws CliConfigurationException {
+    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
     }
 
     @Override
-    public void withStandardOptions(CommandLine commandLine) throws CliConfigurationException {
+    public void withStandardOptions(CommandLine commandLine, Map<String, String> configurationProperties) throws CliConfigurationException {
     }
 
     protected List<String> getOptionValues(CommandLine options, String option, List<String> defaultValues) {
