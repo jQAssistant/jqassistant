@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
@@ -31,7 +32,6 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
@@ -67,9 +67,7 @@ public abstract class AbstractPluginIT {
 
     private File outputDirectory;
 
-    /**
-     * The store.
-     */
+    protected Configuration configuration;
     protected Store store;
     protected Analyzer analyzer;
     protected ReportContext reportContext;
@@ -232,16 +230,7 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        return new ScannerImpl(getScannerConfiguration(), properties, scannerContext, scannerPluginRepository);
-    }
-
-    /**
-     * Return the scanner configuration for the test.
-     *
-     * @return The scanner configuration.
-     */
-    protected ScannerConfiguration getScannerConfiguration() {
-        return new ScannerConfiguration();
+        return new ScannerImpl(configuration.scan(), properties, scannerContext, scannerPluginRepository);
     }
 
     /**
