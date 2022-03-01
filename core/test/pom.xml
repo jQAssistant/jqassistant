@@ -6,8 +6,8 @@
         <version>1.12.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>configuration</artifactId>
-    <name>jQAssistant Core Configuration</name>
+    <artifactId>test</artifactId>
+    <name>jQAssistant Test Framework</name>
 
     <dependencies>
         <dependency>
@@ -16,45 +16,43 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.smallrye.config</groupId>
-            <artifactId>smallrye-config-source-yaml</artifactId>
-        </dependency>
-        <!-- Required by smallrye-config -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>configuration</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <!-- Test -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
