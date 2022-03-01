@@ -51,7 +51,7 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>scanner</artifactId>
+            <artifactId>test</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -67,14 +67,6 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>xml</artifactId>
             <version>${jqa-xml-plugin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>report</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
