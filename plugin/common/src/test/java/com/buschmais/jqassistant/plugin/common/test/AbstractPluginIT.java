@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
@@ -44,6 +45,7 @@ import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfigurat
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
+import io.smallrye.config.PropertiesConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -91,6 +93,7 @@ public abstract class AbstractPluginIT {
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
+        this.configuration = loadConfiguration();
         initializeRuleSet();
         outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
@@ -107,6 +110,26 @@ public abstract class AbstractPluginIT {
             store.stop();
         }
     }
+
+    /**
+     * Load configuration for ITs.
+     *
+     * @return The  configuration.
+     */
+    private Configuration loadConfiguration() {
+        PropertiesConfigSource itConfigSource = new PropertiesConfigSource(getConfigurationProperties(), "ITConfigSource", 110);
+        return new ConfigurationLoaderImpl().load(getClassesDirectory(this.getClass()), itConfigSource);
+    }
+
+    /**
+     * Return test specific configuration properties.
+     *
+     * @return test specific configuration properties.
+     */
+    protected Map<String, String> getConfigurationProperties() {
+        return emptyMap();
+    }
+
 
     private void initializeRuleSet() throws RuleException, IOException {
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
