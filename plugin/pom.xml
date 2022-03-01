@@ -434,6 +434,13 @@
             </dependency>
 
             <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>test</artifactId>
+                <version>${jqa-core-framework.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.api</artifactId>
                 <version>${com.buschmais.xo.version}</version>
