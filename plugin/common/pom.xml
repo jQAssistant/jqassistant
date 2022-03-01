@@ -86,6 +86,10 @@
             <artifactId>report</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.spi</artifactId>
         </dependency>
