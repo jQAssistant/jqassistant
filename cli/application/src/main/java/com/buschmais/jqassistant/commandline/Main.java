@@ -9,6 +9,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
@@ -16,6 +18,7 @@ import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl
 import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
@@ -105,12 +108,20 @@ public class Main {
     /**
      * Initialize the plugin repository.
      *
+     * @param configuration
+     *     The {@link CliConfiguration}
      * @return The repository.
      * @throws CliExecutionException
-     *             If initialization fails.
+     *     If initialization fails.
      */
-    private PluginRepository getPluginRepository() throws CliExecutionException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
+    private PluginRepository getPluginRepository(CliConfiguration configuration) throws CliExecutionException {
+        // create classloader for the plugins/ directory.
+        ClassLoader pluginDirectoryClassLoader = createPluginClassLoader();
+        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();
+        PluginResolver pluginResolver = pluginResolverFactory.create(configuration);
+        // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved frol PluginResolver
+        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration.plugins());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         return new PluginRepositoryImpl(pluginConfigurationReader);
     }
 
@@ -205,8 +216,10 @@ public class Main {
         }
         PropertiesConfigSource taskConfigSource = new PropertiesConfigSource(configurationProperties, "TaskConfigSource", 110);
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
-        Configuration configuration = configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(new File(".")), taskConfigSource);
-        PluginRepository pluginRepository = getPluginRepository();
+        File workingDirectory = new File(".");
+        CliConfiguration configuration = configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(workingDirectory),
+            CliConfiguration.class, taskConfigSource);
+        PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
         executeTasks(tasks, configuration, pluginRepository, properties);
     }
