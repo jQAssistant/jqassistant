@@ -120,7 +120,8 @@ public abstract class AbstractPluginIT {
     private Configuration loadConfiguration() {
         PropertiesConfigSource itConfigSource = new PropertiesConfigSource(getConfigurationProperties(), "ITConfigSource", 110);
         ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl();
-        return configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())), itConfigSource);
+        return configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())), Configuration.class,
+            itConfigSource);
     }
 
     /**

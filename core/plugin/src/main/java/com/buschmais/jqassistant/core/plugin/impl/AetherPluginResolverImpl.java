@@ -25,6 +25,7 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 
@@ -43,9 +44,13 @@ public class AetherPluginResolverImpl implements PluginResolver {
 
     @Override
     public PluginClassLoader createClassLoader(ClassLoader parent, List<Plugin> plugins) {
-        List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
-        DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
-        return new PluginClassLoader(getDependencyURLs(dependencyResult), parent);
+        if (!plugins.isEmpty()) {
+            log.info("Resolving {} plugins and required dependencies.", plugins.size());
+            List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
+            DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
+            return new PluginClassLoader(getDependencyURLs(dependencyResult), parent);
+        }
+        return new PluginClassLoader(emptyList(), parent);
     }
 
     private DependencyResult resolvePlugins(List<Dependency> dependencies) {

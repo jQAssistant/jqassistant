@@ -34,16 +34,16 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     public static final String YML = ".yml";
 
     @Override
-    public Configuration load(File configurationDirectory, ConfigSource... configSources) {
+    public <C extends Configuration> C load(File configurationDirectory, Class<C> configurationMapping, ConfigSource... configSources) {
         List<ConfigSource> yamlConfigSources = getYamlConfigSources(configurationDirectory);
-        SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(Configuration.class).addDefaultSources().withSources(yamlConfigSources)
+        SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping).addDefaultSources().withSources(yamlConfigSources)
             .withSources(configSources).withValidateUnknown(false).build();
-        return config.getConfigMapping(Configuration.class);
+        return config.getConfigMapping(configurationMapping);
     }
 
     private List<ConfigSource> getYamlConfigSources(File configurationDirectory) {
         if (configurationDirectory.exists()) {
-            log.info("Loading configuration from directory '{}'.", configurationDirectory);
+            log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
             List<Path> configurationFiles = getConfigurationFiles(configurationDirectory);
             return getYamlConfigSources(configurationFiles);
         }

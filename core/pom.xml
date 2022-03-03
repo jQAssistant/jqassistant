@@ -56,6 +56,7 @@
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>2.23.4</org.mockito.version>
         <snakeyaml-engine.version>2.0</snakeyaml-engine.version>
+        <maven-resolver.version>1.7.3</maven-resolver.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +70,12 @@
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>neo4jv3</artifactId>
                 <version>${jqa-neo4jbackend.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${maven-resolver.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>

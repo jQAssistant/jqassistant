@@ -23,13 +23,17 @@ public interface ConfigurationLoader {
      * - system properties
      * - environment variables
      *
+     * @param <C>
+     *     The configuration mapping type.
      * @param configurationDirectory
      *     The configuration directory
+     * @param configurationMapping
+     *     The class to be returned as configuration mapping.
      * @param configSources
      *     Additional {@link ConfigSource}s to consider, e.g. from a CLI or Maven Mojo.
      * @return The {@link Configuration}.
      */
-    Configuration load(File configurationDirectory, ConfigSource... configSources);
+    <C extends Configuration> C load(File configurationDirectory, Class<C> configurationMapping, ConfigSource... configSources);
 
     /**
      * Determines the default configuration directory relative to the given working directory.

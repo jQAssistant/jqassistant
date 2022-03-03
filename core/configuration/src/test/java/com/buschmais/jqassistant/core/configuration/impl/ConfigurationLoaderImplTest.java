@@ -30,7 +30,7 @@ class ConfigurationLoaderImplTest {
 
     @Test
     void loadFromFiles() {
-        Configuration configuration = configurationLoader.load(configurationDirectory);
+        Configuration configuration = configurationLoader.load(configurationDirectory, Configuration.class);
 
         assertThat(configuration).isNotNull();
         List<Plugin> plugins = configuration.plugins();
@@ -45,7 +45,7 @@ class ConfigurationLoaderImplTest {
     void overrideFromSystemProperty() {
         System.setProperty("jqassistant.scan.continue-on-error", "false");
         try {
-            Configuration configuration = configurationLoader.load(configurationDirectory);
+            Configuration configuration = configurationLoader.load(configurationDirectory, Configuration.class);
             assertThat(configuration.scan().continueOnError()).isEqualTo(false);
         } finally {
             System.clearProperty("jqassistant.scan.continue-on-error");
