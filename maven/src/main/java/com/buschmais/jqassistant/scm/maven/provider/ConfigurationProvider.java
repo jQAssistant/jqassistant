@@ -24,7 +24,7 @@ public class ConfigurationProvider {
         if (configuration == null) {
             ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
             File effectiveConfigurationDirectory = configurationDirectory.orElse(configurationLoader.getDefaultConfigurationDirectory(workingDirectory));
-            this.configuration = configurationLoader.load(effectiveConfigurationDirectory, configSources);
+            this.configuration = configurationLoader.load(effectiveConfigurationDirectory, Configuration.class, configSources);
         }
         return configuration;
     }
