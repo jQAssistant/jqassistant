@@ -45,14 +45,11 @@ public abstract class AbstractStoreTask extends AbstractTask {
     @Override
     public void run(Configuration configuration) throws CliExecutionException {
         final Store store = getStore();
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
             store.start();
             executeTask(configuration, store);
         } finally {
             store.stop();
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
 
