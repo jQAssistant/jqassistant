@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -48,9 +49,15 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public void start() {
-        XOUnit.XOUnitBuilder builder = XOUnit.builder().uri(storeConfiguration.getUri()).types(storePluginRepository.getDescriptorTypes())
-                .validationMode(ValidationMode.NONE).clearAfterCompletion(false)
-                .mappingConfiguration(XOUnit.MappingConfiguration.builder().strictValidation(true).build());
+        XOUnit.XOUnitBuilder builder = XOUnit.builder()
+            .uri(storeConfiguration.getUri())
+            .classLoader(Optional.of(storePluginRepository.getClassLoader()))
+            .types(storePluginRepository.getDescriptorTypes())
+            .validationMode(ValidationMode.NONE)
+            .clearAfterCompletion(false)
+            .mappingConfiguration(XOUnit.MappingConfiguration.builder()
+                .strictValidation(true)
+                .build());
         configure(builder, storeConfiguration);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
         initialize(xoManagerFactory);

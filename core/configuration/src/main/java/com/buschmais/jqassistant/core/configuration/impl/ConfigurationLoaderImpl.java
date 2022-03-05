@@ -36,8 +36,12 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     @Override
     public <C extends Configuration> C load(File configurationDirectory, Class<C> configurationMapping, ConfigSource... configSources) {
         List<ConfigSource> yamlConfigSources = getYamlConfigSources(configurationDirectory);
-        SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping).addDefaultSources().withSources(yamlConfigSources)
-            .withSources(configSources).withValidateUnknown(false).build();
+        SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
+            .addDefaultSources()
+            .withSources(yamlConfigSources)
+            .withSources(configSources)
+            .withValidateUnknown(false)
+            .build();
         return config.getConfigMapping(configurationMapping);
     }
 
