@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -21,6 +20,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -51,7 +52,7 @@ public abstract class AbstractGraphStore implements Store {
     public void start() {
         XOUnit.XOUnitBuilder builder = XOUnit.builder()
             .uri(storeConfiguration.getUri())
-            .classLoader(Optional.of(storePluginRepository.getClassLoader()))
+            .classLoader(ofNullable(storePluginRepository.getClassLoader()))
             .types(storePluginRepository.getDescriptorTypes())
             .validationMode(ValidationMode.NONE)
             .clearAfterCompletion(false)
