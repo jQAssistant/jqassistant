@@ -18,13 +18,15 @@ import static java.util.stream.Collectors.toList;
  */
 public class ScopeHelper {
 
+    public static final String SCOPE_SEPARATOR = "::";
+
     private final Logger logger;
 
     /**
      * Constructor.
      *
      * @param log
-     *            The logger used to log all messages
+     *     The logger used to log all messages
      */
     public ScopeHelper(Logger log) {
         this.logger = log;
@@ -34,7 +36,7 @@ public class ScopeHelper {
      * Print a list of available scopes to the console.
      *
      * @param scopes
-     *            The available scopes.
+     *     The available scopes.
      */
     public void printScopes(Map<String, Scope> scopes) {
         logger.info("Scopes [" + scopes.size() + "]");
@@ -48,14 +50,22 @@ public class ScopeHelper {
     }
 
     public List<ScopedResource> getScopedResources(List<String> resources) {
-        return resources.stream().map(resource -> {
-            String[] segments = resource.trim().split("::");
-            if (segments.length == 2) {
-                return ScopedResource.builder().resource(segments[1]).scopeName(segments[0]).build();
-            } else {
-                return ScopedResource.builder().resource(segments[0]).build();
-            }
-        }).collect(toList());
+        return resources.stream()
+            .map(resource -> {
+                String[] segments = resource.trim()
+                    .split(SCOPE_SEPARATOR);
+                if (segments.length == 2) {
+                    return ScopedResource.builder()
+                        .resource(segments[1])
+                        .scopeName(segments[0])
+                        .build();
+                } else {
+                    return ScopedResource.builder()
+                        .resource(segments[0])
+                        .build();
+                }
+            })
+            .collect(toList());
     }
 
     /**

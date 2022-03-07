@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.test.plugin;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
@@ -17,6 +16,8 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -35,6 +36,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
@@ -94,12 +96,16 @@ public abstract class AbstractPluginIT {
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
-        this.configuration = loadConfiguration();
+        this.configuration = createConfiguration(createPropertiesConfigBuilder());
         initializeRuleSet();
         outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         startStore(testInfo);
         initializeAnalyzer();
+    }
+
+    protected PropertiesConfigBuilder createPropertiesConfigBuilder() {
+        return new PropertiesConfigBuilder("ITConfigSource", 110);
     }
 
     /**
@@ -117,22 +123,12 @@ public abstract class AbstractPluginIT {
      *
      * @return The  configuration.
      */
-    private Configuration loadConfiguration() {
-        PropertiesConfigSource itConfigSource = new PropertiesConfigSource(getConfigurationProperties(), "ITConfigSource", 110);
-        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl();
-        return configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())), Configuration.class,
-            itConfigSource);
+    private Configuration createConfiguration(PropertiesConfigBuilder propertiesConfigBuilder) {
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(
+            ConfigurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())));
+        PropertiesConfigSource propertiesConfigSource = propertiesConfigBuilder.build();
+        return configurationLoader.load(Configuration.class, propertiesConfigSource);
     }
-
-    /**
-     * Return test specific configuration properties.
-     *
-     * @return test specific configuration properties.
-     */
-    protected Map<String, String> getConfigurationProperties() {
-        return emptyMap();
-    }
-
 
     private void initializeRuleSet() throws RuleException, IOException {
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
@@ -238,25 +234,29 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Return an initialized scanner instance.
+     * Return an initialized scanner instance using the default configuration.
      *
-     * @return The artifact scanner instance.
+     * @return The scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(getScannerProperties());
+        return getScanner(configuration);
     }
 
     /**
-     * Return an initialized scanner instance.
+     * Return an initialized scanner instance using the given properties.
      *
-     * @param properties
-     *            The properties to be used to configure the plugins.
-     * @return The artifact scanner instance.
+     * @return The scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
+        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
+        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        return getScanner(configuration);
+    }
+
+    private Scanner getScanner(Configuration configuration) {
         ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        return new ScannerImpl(configuration.scan(), properties, scannerContext, scannerPluginRepository);
+        return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }
 
     /**

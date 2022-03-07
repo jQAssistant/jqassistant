@@ -19,9 +19,9 @@ class ConfigurationLoaderImplTest {
 
     public static final File WORKING_DIRECTORY = new File("src/test/resources/working directory");
 
-    private ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
+    private File configurationDirectory = ConfigurationLoader.getDefaultConfigurationDirectory(WORKING_DIRECTORY);
 
-    private File configurationDirectory = configurationLoader.getDefaultConfigurationDirectory(WORKING_DIRECTORY);
+    private ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(configurationDirectory);
 
     @Test
     void defaultConfigurationDirectory() {
@@ -30,11 +30,12 @@ class ConfigurationLoaderImplTest {
 
     @Test
     void loadFromFiles() {
-        Configuration configuration = configurationLoader.load(configurationDirectory, Configuration.class);
+        Configuration configuration = configurationLoader.load(Configuration.class);
 
         assertThat(configuration).isNotNull();
         List<Plugin> plugins = configuration.plugins();
-        assertThat(plugins).isNotNull().hasSize(2);
+        assertThat(plugins).isNotNull()
+            .hasSize(2);
 
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
@@ -45,8 +46,9 @@ class ConfigurationLoaderImplTest {
     void overrideFromSystemProperty() {
         System.setProperty("jqassistant.scan.continue-on-error", "false");
         try {
-            Configuration configuration = configurationLoader.load(configurationDirectory, Configuration.class);
-            assertThat(configuration.scan().continueOnError()).isEqualTo(false);
+            Configuration configuration = configurationLoader.load(Configuration.class);
+            assertThat(configuration.scan()
+                .continueOnError()).isEqualTo(false);
         } finally {
             System.clearProperty("jqassistant.scan.continue-on-error");
         }

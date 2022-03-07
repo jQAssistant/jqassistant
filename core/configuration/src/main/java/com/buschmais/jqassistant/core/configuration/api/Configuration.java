@@ -10,8 +10,10 @@ import io.smallrye.config.ConfigMapping;
 /**
  * Represents the runtime configuration for jQAssistant.
  */
-@ConfigMapping(prefix = "jqassistant")
+@ConfigMapping(prefix = Configuration.PREFIX)
 public interface Configuration {
+
+    String PREFIX = "jqassistant";
 
     /**
      * The plugins to provision.

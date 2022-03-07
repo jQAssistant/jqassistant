@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.scanner.api.configuration;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -8,7 +7,6 @@ import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.WithDefault;
 
-@Description("The configuration to be used for scanning.")
 public interface Scan {
 
     String PREFIX = "jqassistant.scan";
@@ -27,8 +25,8 @@ public interface Scan {
 
     String INCLUDE = "include";
 
-    @Description("The items and (e.g. files, URLs) to include for scanning. Every item may be prefixed by a scope using '::' as separator., e.g. 'java:classpath::build/classes'.")
-    Optional<List<String>> include();
+    @Description("The items to include for scanning.")
+    Optional<Include> include();
 
     String PROPERTIES = "properties";
 

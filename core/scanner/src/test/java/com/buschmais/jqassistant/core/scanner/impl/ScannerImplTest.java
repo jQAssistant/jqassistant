@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
@@ -82,12 +81,12 @@ class ScannerImplTest {
         context = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
         Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
         plugins.put("testPlugin", scannerPlugin);
-        doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(context, emptyMap());
+        doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(configuration, context);
     }
 
     @Test
     void resolveScope() {
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
         assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
         assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
         assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
@@ -99,7 +98,7 @@ class ScannerImplTest {
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
         doReturn(Boolean.TRUE).when(selectedPlugin).accepts(Mockito.<Properties> anyObject(), Mockito.eq(path), Mockito.eq(scope));
-        ScannerImpl scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
@@ -112,7 +111,7 @@ class ScannerImplTest {
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
         doReturn(Boolean.FALSE).when(selectedPlugin).accepts(Mockito.anyObject(), Mockito.eq(path), Mockito.eq(scope));
-        ScannerImpl scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
@@ -121,7 +120,7 @@ class ScannerImplTest {
 
     @Test
     void failOnError() throws IOException {
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
         try {
             scanner.scan("test", "test", scope);
@@ -140,7 +139,7 @@ class ScannerImplTest {
     @Test
     void continueOnError() throws IOException {
         doReturn(true).when(configuration).continueOnError();
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
 
         scanner.scan("test", "test", scope);
@@ -162,7 +161,7 @@ class ScannerImplTest {
     void continueOnErrorDuringCommit() {
         doThrow(new IllegalStateException("Exception during commit")).when(store).commitTransaction();
         doReturn(true).when(configuration).continueOnError();
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), context, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         scanner.scan("test1", "test1", scope);
         scanner.scan("test2", "test2", scope);
@@ -202,8 +201,8 @@ class ScannerImplTest {
         scannerPlugins.put("TestScanner", new TestItemScannerPlugin());
         scannerPlugins.put("DependentTestScanner", new DependentTestItemScannerPlugin());
         scannerPlugins.put("NestedTestScanner", new NestedTestItemScannerPlugin());
-        doReturn(scannerPlugins).when(scannerPluginRepository).getScannerPlugins(scannerContext, emptyMap());
-        Scanner scanner = new ScannerImpl(configuration, emptyMap(), scannerContext, scannerPluginRepository);
+        doReturn(scannerPlugins).when(scannerPluginRepository).getScannerPlugins(configuration, scannerContext);
+        Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPluginRepository);
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 

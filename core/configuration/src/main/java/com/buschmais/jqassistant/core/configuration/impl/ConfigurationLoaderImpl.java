@@ -33,9 +33,20 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     public static final String YAML = ".yaml";
     public static final String YML = ".yml";
 
+    private List<ConfigSource> yamlConfigSources;
+
+    /**
+     * Constructor.
+     *
+     * @param configurationDirectory
+     *     The directory for loading YAML config files.
+     */
+    public ConfigurationLoaderImpl(File configurationDirectory) {
+        this.yamlConfigSources = getYamlConfigSources(configurationDirectory);
+    }
+
     @Override
-    public <C extends Configuration> C load(File configurationDirectory, Class<C> configurationMapping, ConfigSource... configSources) {
-        List<ConfigSource> yamlConfigSources = getYamlConfigSources(configurationDirectory);
+    public <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources) {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
             .addDefaultSources()
             .withSources(yamlConfigSources)
@@ -62,7 +73,8 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    String fileName = file.toFile().getName();
+                    String fileName = file.toFile()
+                        .getName();
                     if (fileName.endsWith(YAML) || fileName.endsWith(YML)) {
                         configurationFiles.add(file);
                     }
@@ -77,14 +89,17 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     }
 
     private List<ConfigSource> getYamlConfigSources(List<Path> configurationFiles) {
-        return configurationFiles.stream().map(path -> {
-            try {
-                URL url = path.toUri().toURL();
-                return new YamlConfigSource(url);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }).collect(toList());
+        return configurationFiles.stream()
+            .map(path -> {
+                try {
+                    URL url = path.toUri()
+                        .toURL();
+                    return new YamlConfigSource(url);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            })
+            .collect(toList());
     }
 
 }

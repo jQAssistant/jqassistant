@@ -5,6 +5,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 
 /**
@@ -15,17 +16,19 @@ public interface ScannerPluginRepository extends LifecycleAware {
     /**
      * Return the instances of the configured scanner plugins.
      *
-     * @param scannerContext The scannerContext.
-     * @param properties     The configuration properties.
+     * @param scan
+     *     The scan configuration.
+     * @param scannerContext
+     *     The scannerContext.
      * @return The instances of the configured scanner plugins.
      */
-    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties);
+    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext);
 
     /**
      * Return the scope for the given name.
      *
      * @param name
-     *            The name.
+     *     The name.
      * @return The scope.
      */
     Scope getScope(String name);
@@ -36,7 +39,6 @@ public interface ScannerPluginRepository extends LifecycleAware {
      * @return The map of all scopes.
      */
     Map<String, Scope> getScopes();
-
 
     @Override
     void initialize();

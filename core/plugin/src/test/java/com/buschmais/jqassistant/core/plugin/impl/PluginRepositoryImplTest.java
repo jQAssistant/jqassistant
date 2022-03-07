@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -16,12 +12,16 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
 import org.assertj.core.api.SoftAssertions;
 import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +33,11 @@ import static org.mockito.Mockito.mock;
 /**
  * Verifies plugin repository related functionality.
  */
+@ExtendWith(MockitoExtension.class)
 class PluginRepositoryImplTest {
+
+    @Mock
+    private Scan scan;
 
     /**
      * Verifies that properties are loaded and passed to plugins.
@@ -43,10 +47,11 @@ class PluginRepositoryImplTest {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryImplTest.class.getClassLoader());
         Map<String, Object> properties = new HashMap<>();
         properties.put("testKey", "testValue");
+        doReturn(properties).when(scan).properties();
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
         // scanner plugins
-        verifyProperties(getScannerPluginProperties(pluginRepository, properties));
+        verifyProperties(getScannerPluginProperties(pluginRepository));
         // report plugins
         verifyProperties(getReportPluginProperties(pluginRepository, properties));
         pluginRepository.destroy();
@@ -59,8 +64,8 @@ class PluginRepositoryImplTest {
         pluginRepository.initialize();
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext,
-                Collections.emptyMap());
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository()
+            .getScannerPlugins(scan, scannerContext);
         assertThat(scannerPlugins).hasSize(2);
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName()), notNullValue());
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName())).isNotNull();
@@ -142,10 +147,10 @@ class PluginRepositoryImplTest {
         assertThat(pluginProperties.get("testKey")).isEqualTo("testValue");
     }
 
-    private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository, Map<String, Object> properties) {
+    private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository) {
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, properties);
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scan, scannerContext);
         assertThat(scannerPlugins).isNotEmpty();
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
             if (scannerPlugin instanceof TestScannerPlugin) {

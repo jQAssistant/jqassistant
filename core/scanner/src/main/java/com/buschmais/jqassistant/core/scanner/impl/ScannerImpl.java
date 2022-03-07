@@ -40,19 +40,23 @@ public class ScannerImpl implements Scanner {
      * Constructor.
      *  @param configuration
      *            The configuration.
-     * @param pluginProperties
      * @param scannerContext
      *            The scanner context.
      * @param scannerPluginRepository
  *            The {@link ScannerPluginRepository}.
      */
-    public ScannerImpl(Scan configuration, Map<String, Object> pluginProperties, ScannerContext scannerContext,
+    public ScannerImpl(Scan configuration, ScannerContext scannerContext,
             ScannerPluginRepository scannerPluginRepository) {
         this.configuration = configuration;
         this.scannerContext = scannerContext;
         this.scannerPluginRepository = scannerPluginRepository;
-        this.scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, pluginProperties);
+        this.scannerPlugins = scannerPluginRepository.getScannerPlugins(configuration, scannerContext);
         this.scannerContext.push(Scope.class, null);
+    }
+
+    @Override
+    public Scan getConfiguration() {
+        return configuration;
     }
 
     @Override

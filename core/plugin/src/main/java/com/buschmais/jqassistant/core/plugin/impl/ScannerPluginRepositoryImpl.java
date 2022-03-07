@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
 import org.jqassistant.schema.plugin.v1.ClassListType;
@@ -44,9 +45,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     }
 
     @Override
-    public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
+    public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext) {
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
-            scannerPlugin.configure(scannerContext, new HashMap<>(properties));
+            scannerPlugin.configure(scannerContext, new HashMap<>(scan.properties()));
         }
         return scannerPlugins;
     }

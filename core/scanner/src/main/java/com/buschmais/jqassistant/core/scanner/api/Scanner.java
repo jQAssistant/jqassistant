@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.scanner.api;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
@@ -10,8 +11,13 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 public interface Scanner {
 
     /**
+     * Return the scanner configuration.
+     */
+    Scan getConfiguration();
+
+    /**
      * Scan the given item, e.g. a file, inputstream, directory, etc.
-     * 
+     *
      * @param item
      *            The item.
      * @param path
@@ -32,7 +38,7 @@ public interface Scanner {
 
     /**
      * Return an instance of the scanner context.
-     * 
+     *
      * @return The scanner context.
      */
     ScannerContext getContext();
