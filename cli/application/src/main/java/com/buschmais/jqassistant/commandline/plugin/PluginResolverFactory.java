@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.plugin;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.configuration.Remote;
@@ -21,6 +20,7 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transfer.AbstractTransferListener;
@@ -29,16 +29,19 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
 
 /**
  * Factory for the {@link PluginResolver} to be used in standalone in the CLI.
  */
 @Slf4j
 public class PluginResolverFactory {
+
+    private static final RepositoryPolicy SNAPSHOT_REPOSITORY_POLICY = new RepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_FAIL);
 
     private static final RemoteRepository CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2").build();
 
@@ -61,12 +64,14 @@ public class PluginResolverFactory {
      * @return The {@link PluginResolver}.
      */
     public PluginResolver create(CliConfiguration configuration) {
-        Optional<Repositories> repositories = configuration.repositories();
+        Repositories repositories = configuration.repositories();
         File localRepository = getLocalRepository(repositories);
         List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories);
 
         RepositorySystem repositorySystem = newRepositorySystem();
-        log.info("Using local repository '{}'.", localRepository);
+        log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
+            .map(remoteRepository -> "'" + remoteRepository.getId() + " (" + remoteRepository.getUrl() + ")'")
+            .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository);
 
         return new AetherPluginResolverImpl(repositorySystem, session, remoteRepositories);
@@ -79,13 +84,14 @@ public class PluginResolverFactory {
      *     The {@link Repositories} configuration.
      * @return The local repository.
      */
-    private File getLocalRepository(Optional<Repositories> repositories) {
+    private File getLocalRepository(Repositories repositories) {
         // determine local repository
-        File localRepository = repositories.map(r -> r.local()).orElse(empty()).orElseGet(() -> {
-            File repository = new File(jqassistantUserDir, "repository");
-            repository.mkdirs();
-            return repository;
-        });
+        File localRepository = repositories.local()
+            .orElseGet(() -> {
+                File repository = new File(jqassistantUserDir, "repository");
+                repository.mkdirs();
+                return repository;
+            });
         return localRepository;
     }
 
@@ -96,19 +102,26 @@ public class PluginResolverFactory {
      *     The {@link Repositories} configuration.
      * @return The list of configured {@link RemoteRepository}s.
      */
-    private List<RemoteRepository> getRemoteRepositories(Optional<Repositories> repositories) {
-        Map<String, Remote> remotes = repositories.map(r -> r.remotes()).orElse(emptyMap());
+    private List<RemoteRepository> getRemoteRepositories(Repositories repositories) {
+        Map<String, Remote> remotes = repositories.remotes();
         if (remotes.isEmpty()) {
             return singletonList(CENTRAL);
         }
-        return remotes.entrySet().stream().map(remoteEntry -> {
-            String id = remoteEntry.getKey();
-            Remote remote = remoteEntry.getValue();
-            AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-            remote.username().ifPresent(username -> authBuilder.addUsername(username));
-            remote.password().ifPresent(password -> authBuilder.addPassword(password));
-            return new RemoteRepository.Builder(id, "default", remote.url()).setAuthentication(authBuilder.build()).build();
-        }).collect(toList());
+        return remotes.entrySet()
+            .stream()
+            .map(remoteEntry -> {
+                String id = remoteEntry.getKey();
+                Remote remote = remoteEntry.getValue();
+                AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+                remote.username()
+                    .ifPresent(username -> authBuilder.addUsername(username));
+                remote.password()
+                    .ifPresent(password -> authBuilder.addPassword(password));
+                return new RemoteRepository.Builder(id, "default", remote.url()).setAuthentication(authBuilder.build())
+                    .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY)
+                    .build();
+            })
+            .collect(toList());
     }
 
     /**
@@ -145,12 +158,16 @@ public class PluginResolverFactory {
     private static class TransferListener extends AbstractTransferListener {
         @Override
         public void transferStarted(TransferEvent transferEvent) {
-            log.info("Downloading '{}'.", transferEvent.getResource().getFile().getName());
+            log.info("Downloading '{}{}'.", transferEvent.getResource()
+                .getRepositoryUrl(),
+                transferEvent.getResource().getResourceName());
         }
 
         @Override
         public void transferSucceeded(TransferEvent transferEvent) {
-            log.info("Finished download of '{}'.", transferEvent.getResource().getFile().getName());
+            log.info("Finished download of '{}{}'.", transferEvent.getResource()
+                    .getRepositoryUrl(),
+                transferEvent.getResource().getResourceName());
         }
     }
 }
