@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
@@ -73,6 +74,9 @@ class MavenProjectScannerPluginTest {
 
     @Mock
     private RepositorySystemSession repositorySystemSession;
+
+    @Mock
+    private Scan scanConfiguration;
 
     @Mock
     private ScannerContext scannerContext;
@@ -145,6 +149,8 @@ class MavenProjectScannerPluginTest {
         when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
 
         Scanner scanner = mock(Scanner.class);
+        doReturn(scanConfiguration).when(scanner)
+            .getConfiguration();
 
         // pom.xml
         MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);

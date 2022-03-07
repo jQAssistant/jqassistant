@@ -1,14 +1,18 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
@@ -24,7 +28,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordin
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.GraphResolver;
 
@@ -59,6 +62,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     private static final String PROPERTY_NAME_DEPENDENCIES_EXCLUDES = "maven3.dependencies.excludes";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
+
+    private final ScopeHelper scopeHelper = new ScopeHelper(LOGGER);
 
     private final DependencyScanner dependencyScanner;
 
@@ -131,26 +136,42 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         // add test reports
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
+
+        File basedir = project.getBasedir();
+
         // add additional includes
-        List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
-        if (scanIncludes != null) {
-            for (ScanInclude scanInclude : scanIncludes) {
-                String path = scanInclude.getPath();
-                URL url = scanInclude.getUrl();
-                String scopeName = scanInclude.getScope();
-                Scope includeScope = scanner.resolveScope(scopeName);
-                Descriptor descriptor = null;
-                if (path != null) {
-                    descriptor = scanPath(projectDescriptor, path, includeScope, scanner);
-                } else if (url != null) {
-                    descriptor = scanner.scan(url, url.toString(), includeScope);
+        scanner.getConfiguration().include().ifPresent(include -> {
+            // files
+            scanInclude(include.files(), (fileName, s) -> scanFile(projectDescriptor, basedir.toPath()
+                .resolve(fileName)
+                .toFile(), fileName, s, scanner), projectDescriptor, scanner);
+            // urls
+            scanInclude(include.urls(), (url, s) -> {
+                try {
+                    return scanner.scan(new URL(url), url, s);
+                } catch (MalformedURLException e) {
+                    LOGGER.warn("Cannot convert url to URL.", e);
+                    return null;
                 }
+            }, projectDescriptor, scanner);
+        });
+        return projectDescriptor;
+    }
+
+    private void scanInclude(Optional<List<String>> resources, BiFunction<String, Scope, Descriptor> scanAction,
+        MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
+        resources.ifPresent(r -> {
+            for (ScopeHelper.ScopedResource scopedResource : scopeHelper.getScopedResources(r)) {
+                String resource = scopedResource.getResource();
+                String scopeName = scopedResource.getScopeName();
+                Scope resolvedScope = scanner.resolveScope(scopeName);
+                Descriptor descriptor = scanAction.apply(resource, resolvedScope);
                 if (descriptor != null && descriptor instanceof FileDescriptor) {
-                    projectDescriptor.getContains().add((FileDescriptor) descriptor);
+                    projectDescriptor.getContains()
+                        .add((FileDescriptor) descriptor);
                 }
             }
-        }
-        return projectDescriptor;
+        });
     }
 
     /**
@@ -378,12 +399,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
         File file = new File(path);
-        if (file.exists()) {
-            return scanFile(projectDescriptor, file, path, scope, scanner);
-        } else {
-            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
-        }
-        return null;
+        return scanFile(projectDescriptor, file, path, scope, scanner);
     }
 
     /**
@@ -405,11 +421,18 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *     The scanner.
      */
     private <F extends FileDescriptor> F scanFile(MavenProjectDirectoryDescriptor projectDescriptor, File file, String path, Scope scope, Scanner scanner) {
-        scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
-        try {
-            return scanner.scan(file, path, scope);
-        } finally {
-            scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
+        if (file.exists()) {
+            scanner.getContext()
+                .push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
+            try {
+                return scanner.scan(file, path, scope);
+            } finally {
+                scanner.getContext()
+                    .pop(MavenProjectDirectoryDescriptor.class);
+            }
+        } else {
+            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
         }
+        return null;
     }
 }
