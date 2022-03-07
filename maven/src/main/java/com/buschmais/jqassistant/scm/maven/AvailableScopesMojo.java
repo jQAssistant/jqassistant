@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
@@ -32,7 +33,7 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) {
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         getLog().info("Available scopes for '" + rootModule.getName() + "'.");
         ScopeHelper scopeHelper = new ScopeHelper(logger);
         ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();

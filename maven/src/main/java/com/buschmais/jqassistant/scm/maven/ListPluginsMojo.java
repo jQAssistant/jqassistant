@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
@@ -27,12 +28,13 @@ public class ListPluginsMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         getLog().info("Available plugins for '" + rootModule.getName() + "'.");
 
-        List<PluginInfo> sortedInfos = getPluginRepository().getPluginOverview().stream()
-                                                       .sorted(PluginInfo.NAME_COMPARATOR)
-                                                       .collect(Collectors.toList());
+        List<PluginInfo> sortedInfos = getPluginRepository().getPluginOverview()
+            .stream()
+            .sorted(PluginInfo.NAME_COMPARATOR)
+            .collect(Collectors.toList());
 
         sortedInfos.forEach(info -> {
             CharSequence name = info.getName();

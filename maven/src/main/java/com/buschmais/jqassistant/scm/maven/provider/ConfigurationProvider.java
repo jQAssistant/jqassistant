@@ -13,20 +13,33 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 /**
  * Provides the runtime {@link Configuration} for jQAssistant within a Maven reactor.
  * <p>
- * Declared as to allow caching the config.
+ * Declared as singleton to allow caching the {@link ConfigurationLoader} instance.
  */
 @Component(role = ConfigurationProvider.class, instantiationStrategy = "singleton")
 public class ConfigurationProvider {
 
-    private Configuration configuration;
+    /**
+     * Cached {@link ConfigurationLoader} instance.
+     */
+    private ConfigurationLoader configurationLoader;
 
-    public synchronized Configuration getConfiguration(File workingDirectory, Optional<File> configurationDirectory, ConfigSource... configSources) {
-        if (configuration == null) {
-            ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
-            File effectiveConfigurationDirectory = configurationDirectory.orElse(configurationLoader.getDefaultConfigurationDirectory(workingDirectory));
-            this.configuration = configurationLoader.load(effectiveConfigurationDirectory, Configuration.class, configSources);
+    /**
+     * Return the Configuration.
+     *
+     * @param executionRoot
+     *     The Session execution root.
+     * @param configurationDirectory
+     *     The optional configuration directory.
+     * @param configSources
+     *     Additional {@link ConfigSource}s.
+     * @return The {@link Configuration}.
+     */
+    public synchronized Configuration getConfiguration(File executionRoot, Optional<File> configurationDirectory, ConfigSource... configSources) {
+        if (configurationLoader == null) {
+            File effectiveConfigurationDirectory = configurationDirectory.orElse(ConfigurationLoader.getDefaultConfigurationDirectory(executionRoot));
+            configurationLoader = new ConfigurationLoaderImpl(effectiveConfigurationDirectory);
         }
-        return configuration;
+        return configurationLoader.load(Configuration.class, configSources);
     }
 
 }

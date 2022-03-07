@@ -1,12 +1,16 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
+import com.buschmais.jqassistant.core.scanner.api.configuration.Include;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
@@ -74,39 +78,44 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(Map<String, String> properties) {
-        properties.put(Scan.PREFIX + "." + Scan.CONTINUE_ON_ERROR, Boolean.toString(continueOnError));
-        properties.put(Scan.PREFIX + "." + Scan.RESET, Boolean.toString(reset));
-        for (Map.Entry<String, Object> entry : scanProperties.entrySet()) {
-            properties.put(Scan.PREFIX + "." + Scan.PROPERTIES + "." + entry.getKey(), entry.getValue().toString());
+    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+        propertiesConfigBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, continueOnError)
+            .with(Scan.PREFIX, Scan.RESET, reset)
+            .with(Scan.PREFIX, Scan.PROPERTIES, scanProperties);
+        // Convert scan includes
+        List<String> files = new ArrayList<>();
+        List<String> urls = new ArrayList<>();
+        for (ScanInclude scanInclude : scanIncludes) {
+            String path = scanInclude.getPath();
+            URL url = scanInclude.getUrl();
+            String scope = scanInclude.getScope();
+            StringBuilder builder = new StringBuilder();
+            if (scope != null) {
+                builder.append(scope).append(ScopeHelper.SCOPE_SEPARATOR);
+            }
+            if (path != null) {
+                files.add(builder.append(path).toString());
+            } else if (url !=null) {
+                urls.add(builder.append(url).toString());
+            } else {
+                throw new MojoExecutionException(
+                    "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
+            }
         }
-    }
-
-    /**
-     * Return the plugin properties.
-     *
-     * @deprecated to be replaced by {@link #addConfigurationProperties(Map)}
-     *
-     * @return The plugin properties.
-     */
-    @Deprecated
-    protected Map<String, Object> getPluginProperties() {
-        Map<String, Object> properties = new HashMap<>();
-        if (scanProperties != null) {
-            properties.putAll(scanProperties);
-        }
-        properties.put(ScanInclude.class.getName(), scanIncludes);
-        return properties;
+        propertiesConfigBuilder.with(Include.PREFIX, Include.FILES, files);
+        propertiesConfigBuilder.with(Include.PREFIX, Include.URLS, urls);
     }
 
     @Override
     public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException {
-        validate();
         ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
-        Scanner scanner = new ScannerImpl(getConfiguration().scan(), getPluginProperties(), scannerContext, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(getConfiguration().scan(), scannerContext, scannerPluginRepository);
 
-        File localRepositoryDirectory = session.getProjectBuildingRequest().getRepositorySession().getLocalRepository().getBasedir();
+        File localRepositoryDirectory = session.getProjectBuildingRequest()
+            .getRepositorySession()
+            .getLocalRepository()
+            .getBasedir();
         FileResolver fileResolver = scannerContext.peek(FileResolver.class);
         MavenRepositoryArtifactResolver repositoryArtifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver);
 
@@ -114,28 +123,12 @@ public class ScanMojo extends AbstractModuleMojo {
         scannerContext.push(ArtifactResolver.class, repositoryArtifactResolver);
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         try {
-            scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
+            scanner.scan(mavenProject, mavenProject.getFile()
+                .getAbsolutePath(), MavenScope.PROJECT);
         } finally {
             scannerContext.pop(DependencyGraphBuilder.class);
             scannerContext.pop(ArtifactResolver.class);
             scannerContext.pop(MavenSession.class);
-        }
-    }
-
-    /**
-     * Validate the given configuration.
-     *
-     * @throws MojoExecutionException
-     *     If the validation fails.
-     */
-    private void validate() throws MojoExecutionException {
-        if (scanIncludes != null) {
-            for (ScanInclude scanInclude : scanIncludes) {
-                if (scanInclude.getPath() != null && scanInclude.getUrl() != null) {
-                    throw new MojoExecutionException(
-                        "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
-                }
-            }
         }
     }
 }
