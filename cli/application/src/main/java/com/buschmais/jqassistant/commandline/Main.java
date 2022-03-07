@@ -23,7 +23,6 @@ import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
-import io.smallrye.config.PropertiesConfigSource;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +199,6 @@ public class Main {
             System.exit(1);
         }
         PropertiesConfigBuilder propertiesConfigBuilder = new PropertiesConfigBuilder("TaskConfigSource", 110);
-        Map<String, String> configurationProperties = new HashMap<>();
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
@@ -216,10 +214,9 @@ public class Main {
             }
             tasks.add(task);
         }
-        PropertiesConfigSource taskConfigSource = new PropertiesConfigSource(configurationProperties, "TaskConfigSource", 110);
         File workingDirectory = new File(".");
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory);
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, taskConfigSource);
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, propertiesConfigBuilder.build());
         PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
         executeTasks(tasks, configuration, pluginRepository, properties);

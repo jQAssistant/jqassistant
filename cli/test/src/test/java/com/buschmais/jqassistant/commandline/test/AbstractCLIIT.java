@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.commandline.test;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
@@ -143,8 +146,7 @@ public abstract class AbstractCLIIT {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHhome);
-        // environment.put("JQASSISTANT_OPTS",
-        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
+        // environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
