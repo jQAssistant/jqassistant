@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.task;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -12,6 +11,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
@@ -29,7 +29,7 @@ public class ReportTask extends AbstractTask {
     private String reportDirectory;
 
     @Override
-    public void withOptions(CommandLine options, Map<String, String> configurationProperties) {
+    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) {
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
     }
 

@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -198,13 +199,14 @@ public class Main {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
             System.exit(1);
         }
+        PropertiesConfigBuilder propertiesConfigBuilder = new PropertiesConfigBuilder("TaskConfigSource", 110);
         Map<String, String> configurationProperties = new HashMap<>();
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
             try {
-                task.withStandardOptions(commandLine, configurationProperties);
-                task.withOptions(commandLine, configurationProperties);
+                task.withStandardOptions(commandLine, propertiesConfigBuilder);
+                task.withOptions(commandLine, propertiesConfigBuilder);
             } catch (CliConfigurationException e) {
                 printUsage(options, e.getMessage());
                 System.exit(1);
@@ -215,10 +217,9 @@ public class Main {
             tasks.add(task);
         }
         PropertiesConfigSource taskConfigSource = new PropertiesConfigSource(configurationProperties, "TaskConfigSource", 110);
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
         File workingDirectory = new File(".");
-        CliConfiguration configuration = configurationLoader.load(configurationLoader.getDefaultConfigurationDirectory(workingDirectory),
-            CliConfiguration.class, taskConfigSource);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory);
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, taskConfigSource);
         PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
         executeTasks(tasks, configuration, pluginRepository, properties);

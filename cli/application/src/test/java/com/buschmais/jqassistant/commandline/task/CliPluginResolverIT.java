@@ -25,8 +25,8 @@ public class CliPluginResolverIT {
         configurationProperties.put("jqassistant.plugins[0].version","1.11.0");
         PropertiesConfigSource testConfigSource = new PropertiesConfigSource(configurationProperties, "TestConfigSource", 110);
 
-        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl();
-        CliConfiguration cliConfiguration = configurationLoader.load(new File("src/test/resources"), CliConfiguration.class, testConfigSource);
+        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl(new File("src/test/resources"));
+        CliConfiguration cliConfiguration = configurationLoader.load(CliConfiguration.class, testConfigSource);
 
         PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();
         PluginResolver pluginResolver = pluginResolverFactory.create(cliConfiguration);

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -23,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -61,10 +61,10 @@ class AnalyzeTaskTest {
         analyzeTask.initialize(pluginRepository, pluginProperties);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
-        analyzeTask.withOptions(options, emptyMap());
+        analyzeTask.withOptions(options, mock(PropertiesConfigBuilder.class));
         CommandLine standardOptions = mock(CommandLine.class);
         stubOption(standardOptions, "s", "target/jqassistant/test/store");
-        analyzeTask.withStandardOptions(standardOptions, emptyMap());
+        analyzeTask.withStandardOptions(standardOptions, mock(PropertiesConfigBuilder.class));
         analyzeTask.run(configuration);
 
         ArgumentCaptor<Map> propertiesCaptor = ArgumentCaptor.forClass(Map.class);

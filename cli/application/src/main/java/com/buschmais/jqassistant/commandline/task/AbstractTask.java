@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
@@ -44,11 +45,11 @@ public abstract class AbstractTask implements Task {
     }
 
     @Override
-    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
+    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
     }
 
     @Override
-    public void withStandardOptions(CommandLine commandLine, Map<String, String> configurationProperties) throws CliConfigurationException {
+    public void withStandardOptions(CommandLine commandLine, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
     }
 
     protected List<String> getOptionValues(CommandLine options, String option, List<String> defaultValues) {

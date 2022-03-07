@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -144,8 +145,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    public void withOptions(final CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
-        super.withOptions(options, configurationProperties);
+    public void withOptions(final CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+        super.withOptions(options, propertiesConfigBuilder);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
         if (ruleParametersFileName != null) {
             this.ruleParametersFile = new File(ruleParametersFileName);

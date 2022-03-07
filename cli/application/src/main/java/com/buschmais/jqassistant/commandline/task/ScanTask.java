@@ -4,11 +4,11 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -94,19 +94,19 @@ public class ScanTask extends AbstractStoreTask {
     }
 
     private <T> void scan(Configuration configuration, ScannerContext scannerContext, T element, String path, String scopeName) {
-        Scanner scanner = new ScannerImpl(configuration.scan(), pluginProperties, scannerContext, pluginRepository.getScannerPluginRepository());
+        Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, pluginRepository.getScannerPluginRepository());
         Scope scope = scanner.resolveScope(scopeName);
         scanner.scan(element, path, scope);
     }
 
     @Override
-    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
+    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
         files = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_FILES, emptyList()));
         urls = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_URLS, emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
-        configurationProperties.put(Scan.PREFIX + "." + Scan.RESET, Boolean.toString(options.hasOption(CMDLINE_OPTION_RESET)));
-        configurationProperties.put(Scan.PREFIX + "." + Scan.CONTINUE_ON_ERROR, Boolean.toString(options.hasOption(CMDLINE_OPTION_CONTINUEONERROR)));
+        propertiesConfigBuilder.with(Scan.PREFIX, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
+        propertiesConfigBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
     }
 }

@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
@@ -103,7 +107,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, Map<String, String> configurationProperties) throws CliConfigurationException {
+    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
         String rulesUrl = getOptionValue(options, CMDLINE_OPTION_RULESURL, null);
         if (rulesUrl != null) {
             try {
