@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 
 /**
@@ -25,13 +26,13 @@ public interface AnalyzerPluginRepository extends LifecycleAware {
     /**
      * Return the instances of the configured report plugins.
      *
+     * @param configuration
+     *     The {@link Report} configuration.
      * @param reportContext
-     *            The {@link ReportContext}.
-     * @param properties
-     *            The report properties.
+     *     The {@link ReportContext}.
      * @return The instances of the configured report plugins.
      */
-    Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) ;
+    Map<String, ReportPlugin> getReportPlugins(Report configuration, ReportContext reportContext);
 
     @Override
     void initialize();

@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,8 @@ import org.jqassistant.schema.plugin.v1.IdClassListType;
 import org.jqassistant.schema.plugin.v1.IdClassType;
 import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 
+import static java.util.Collections.unmodifiableMap;
+
 /**
  * Scanner plugin repository implementation.
  */
@@ -31,7 +32,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
      */
     public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.scopes = Collections.unmodifiableMap(this.getScopes(plugins));
+        this.scopes = unmodifiableMap(this.getScopes(plugins));
     }
 
     @Override
@@ -46,8 +47,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
 
     @Override
     public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext) {
+        Map<String, Object> properties = unmodifiableMap(scan.properties());
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
-            scannerPlugin.configure(scannerContext, new HashMap<>(scan.properties()));
+            scannerPlugin.configure(scannerContext, properties);
         }
         return scannerPlugins;
     }

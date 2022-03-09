@@ -30,5 +30,10 @@ public interface Configuration {
      */
     Scan scan();
 
+    /**
+     * The {@link Analyze} configuration.
+     *
+     * @return The {@link Analyze} configuration.
+     */
     Analyze analyze();
 }

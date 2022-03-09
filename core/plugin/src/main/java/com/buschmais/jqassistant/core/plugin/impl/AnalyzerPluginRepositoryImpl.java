@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
@@ -12,12 +9,15 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 
 import org.jqassistant.schema.plugin.v1.IdClassListType;
 import org.jqassistant.schema.plugin.v1.IdClassType;
 import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Report plugin repository implementation.
@@ -38,7 +38,8 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
     }
 
     @Override
-    public Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext, Map<String, Object> properties) {
+    public Map<String, ReportPlugin> getReportPlugins(Report configuration, ReportContext reportContext) {
+        Map<String, Object> properties = unmodifiableMap(configuration.properties());
         for (ReportPlugin reportPlugin : reportPlugins.values()) {
             try {
                 reportPlugin.configure(reportContext, properties);

@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
@@ -146,9 +147,8 @@ public abstract class AbstractPluginIT {
 
     private void initializeAnalyzer() {
         this.reportContext = new ReportContextImpl(store, outputDirectory);
-        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, getReportProperties());
-        this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-        this.analyzer = getAnalyzer(configuration);
+        this.reportPlugin = getReportPlugin();
+        this.analyzer = getAnalyzer(configuration.analyze());
     }
 
     /**
@@ -242,23 +242,35 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(propertiesConfigBuilder);
-        return getScanner(configuration);
+        return getScanner(configuration.scan());
     }
 
-    private Scanner getScanner(Configuration configuration) {
+    private Scanner getScanner(Scan scan) {
         ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
+        return new ScannerImpl(scan, scannerContext, scannerPluginRepository);
     }
 
-    private Analyzer getAnalyzer(Configuration configuration) {
-        return new AnalyzerImpl(this.configuration.analyze(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+    private Analyzer getAnalyzer(Analyze analyze) {
+        return new AnalyzerImpl(analyze, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
     private Analyzer getAnalyzer(Map<String, String> parameters) {
         PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(propertiesConfigBuilder);
-        return getAnalyzer(configuration);
+        return getAnalyzer(configuration.analyze());
+    }
+
+    private InMemoryReportPlugin getReportPlugin() {
+        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
+        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        return getReportPlugin(configuration.analyze()
+            .report());
+    }
+
+    private InMemoryReportPlugin getReportPlugin(Report report) {
+        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(report, reportContext);
+        return new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
     }
 
     /**
