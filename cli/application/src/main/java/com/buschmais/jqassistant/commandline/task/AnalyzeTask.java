@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
@@ -62,7 +63,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Executing analysis.");
 
         ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
-        Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
+        Map<String, ReportPlugin> reportPlugins = getReportPlugins(configuration.analyze()
+            .report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), store, pluginRepository.getAnalyzerPluginRepository()
@@ -121,14 +123,16 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     /**
      * Get all configured report plugins.
      *
+     * @param configuration
+     *     The {@link Report} configuration.
      * @param reportContext
-     *            The ReportContext.
+     *     The ReportContext.
      * @return The list of report plugins.
      */
-    private Map<String, ReportPlugin> getReportPlugins(ReportContext reportContext) {
+    private Map<String, ReportPlugin> getReportPlugins(Report configuration, ReportContext reportContext) {
         AnalyzerPluginRepository analyzerPluginRepository;
         analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
-        return analyzerPluginRepository.getReportPlugins(reportContext, pluginProperties);
+        return analyzerPluginRepository.getReportPlugins(configuration, reportContext);
     }
 
     @Override
@@ -145,8 +149,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
         warnOnSeverity = getSeverity(
                 getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConceptSeverity().getValue()));
-        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
         createReportArchive = options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE);
+        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
+        propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
     }
 
     @Override
