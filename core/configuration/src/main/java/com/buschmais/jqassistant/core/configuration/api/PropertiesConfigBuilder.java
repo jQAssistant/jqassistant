@@ -73,17 +73,21 @@ public class PropertiesConfigBuilder {
      * @return The {@link PropertiesConfigBuilder}.
      */
     public PropertiesConfigBuilder with(String prefix, String property, Map<String, ?> values) {
-        for (Map.Entry<String, ?> entry : values.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            addMapEntry(prefix, property, key, value);
+        if (values != null) {
+            for (Map.Entry<String, ?> entry : values.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                addMapEntry(prefix, property, key, value);
+            }
         }
         return this;
     }
 
     public PropertiesConfigBuilder with(String prefix, String property, Properties properties) {
-        for (String key : properties.stringPropertyNames()) {
-            addMapEntry(prefix, property, key, properties.getProperty(key));
+        if (properties != null) {
+            for (String key : properties.stringPropertyNames()) {
+                addMapEntry(prefix, property, key, properties.getProperty(key));
+            }
         }
         return this;
     }
@@ -112,13 +116,15 @@ public class PropertiesConfigBuilder {
      * @return The {@link PropertiesConfigBuilder}.
      */
     public <T> void with(String prefix, String indexedProperty, Iterable<T> values) {
-        int index = 0;
-        for (T value : values) {
-            StringBuilder key = new StringBuilder(getKey(prefix, indexedProperty)).append('[')
-                .append(index)
-                .append(']');
-            properties.put(key.toString(), getValue(value));
-            index++;
+        if (values !=null) {
+            int index = 0;
+            for (T value : values) {
+                StringBuilder key = new StringBuilder(getKey(prefix, indexedProperty)).append('[')
+                    .append(index)
+                    .append(']');
+                properties.put(key.toString(), getValue(value));
+                index++;
+            }
         }
     }
 
