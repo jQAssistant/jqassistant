@@ -107,8 +107,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) {
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
+        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
     }
 
     @Override
