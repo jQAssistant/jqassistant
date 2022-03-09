@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.configuration;
 
 import java.util.Map;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
