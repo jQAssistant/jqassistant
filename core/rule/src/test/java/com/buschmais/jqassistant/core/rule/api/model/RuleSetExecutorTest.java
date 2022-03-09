@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,8 @@ class RuleSetExecutorTest {
     @Mock
     private RuleVisitor visitor;
 
-    private RuleSetExecutorConfiguration configuration;
+    @Mock
+    private Rule configuration;
 
     private RuleSetExecutor ruleExecutor;
 
@@ -38,7 +39,6 @@ class RuleSetExecutorTest {
 
     @BeforeEach
     void setUp() {
-        configuration = new RuleSetExecutorConfiguration();
         ruleExecutor = new RuleSetExecutor(visitor, configuration);
         defaultConcept = Concept.builder().id("concept:Default").severity(Severity.MAJOR).build();
         overriddenConcept = Concept.builder().id("concept:Overridden").severity(Severity.MAJOR).build();
@@ -89,6 +89,7 @@ class RuleSetExecutorTest {
 
     @Test
     void defaultOptionalFailingConceptDependencies() throws RuleException {
+        doReturn(true).when(configuration).requiredConceptsAreOptionalByDefault();
         verifyRequiredConcepts(null, false, times(1), never());
     }
 
@@ -99,7 +100,6 @@ class RuleSetExecutorTest {
 
     @Test
     void defaultRequiredFailingConceptDependencies() throws RuleException {
-        configuration.setRequiredConceptsAreOptionalByDefault(false);
         verifyRequiredConcepts(null, false, never(), times(1));
     }
 
@@ -164,6 +164,7 @@ class RuleSetExecutorTest {
         Map<String, Severity> includesConstraints = new HashMap<>();
         includesConstraints.put("constraint:Dependent", null);
         Group nestedGroup = Group.builder().id("group:Nested").concepts(includesConcepts).constraints(includesConstraints).build();
+        doReturn(true).when(configuration).requiredConceptsAreOptionalByDefault();
 
         Group group = Group.builder().id("group").group("*:Nested", null).concept("*:Default", null).constraint("*:Default", null).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(defaultConcept).addConcept(overriddenConcept).addConcept(requiredConcept1)
@@ -195,6 +196,7 @@ class RuleSetExecutorTest {
         Concept dependentConcept = Concept.builder().id("concept:DependentConcept").requiresConcepts(requiredConcepts).build();
         RuleSet ruleSet = RuleSetBuilder.newInstance().addConcept(requiredConcept).addConcept(dependentConcept).getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder().conceptId("concept:DependentConcept").build();
+        doReturn(true).when(configuration).requiredConceptsAreOptionalByDefault();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 

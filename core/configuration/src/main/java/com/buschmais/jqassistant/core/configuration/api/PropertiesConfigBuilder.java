@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.configuration.api;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import io.smallrye.config.PropertiesConfigSource;
 
@@ -71,21 +72,32 @@ public class PropertiesConfigBuilder {
      *     The values.
      * @return The {@link PropertiesConfigBuilder}.
      */
-    public PropertiesConfigBuilder with(String prefix, String property, Map<String, Object> values) {
-        for (Map.Entry<String, Object> entry : values.entrySet()) {
-            Object value = entry.getValue();
-            StringBuilder keyBuilder = new StringBuilder(getKey(prefix, property)).append('.');
+    public PropertiesConfigBuilder with(String prefix, String property, Map<String, ?> values) {
+        for (Map.Entry<String, ?> entry : values.entrySet()) {
             String key = entry.getKey();
-            if (key.contains(".")) {
-                keyBuilder.append('"')
-                    .append(key)
-                    .append('"');
-            } else {
-                keyBuilder.append(key);
-            }
-            properties.put(keyBuilder.toString(), getValue(value));
+            Object value = entry.getValue();
+            addMapEntry(prefix, property, key, value);
         }
         return this;
+    }
+
+    public PropertiesConfigBuilder with(String prefix, String property, Properties properties) {
+        for (String key : properties.stringPropertyNames()) {
+            addMapEntry(prefix, property, key, properties.getProperty(key));
+        }
+        return this;
+    }
+
+    private void addMapEntry(String prefix, String property, String key, Object value) {
+        StringBuilder keyBuilder = new StringBuilder(getKey(prefix, property)).append('.');
+        if (key.contains(".")) {
+            keyBuilder.append('"')
+                .append(key)
+                .append('"');
+        } else {
+            keyBuilder.append(key);
+        }
+        properties.put(keyBuilder.toString(), getValue(value));
     }
 
     /**

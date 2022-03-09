@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.core.rule.api;
 
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.slf4j.Logger;
@@ -15,13 +15,13 @@ import org.slf4j.Logger;
 public class RuleHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";
-    private Logger logger;
+    private final Logger logger;
 
     /**
      * Constructor.
      *
      * @param log
-     *            The logger to use for printing messages.
+     *     The logger to use for printing messages.
      */
     public RuleHelper(Logger log) {
         this.logger = log;
@@ -31,24 +31,27 @@ public class RuleHelper {
      * Logs the given rule set on level info.
      *
      * @param ruleSet
-     *            The rule set.
+     *     The rule set.
      */
-    public void printRuleSet(RuleSet ruleSet) throws RuleException {
+    public void printRuleSet(RuleSet ruleSet, Rule configuration) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
-            .conceptIds(ruleSet.getConceptBucket().getIds())
-            .constraintIds(ruleSet.getConstraintBucket().getIds())
-            .groupIds(ruleSet.getGroupsBucket().getIds()).build();
-        printRuleSet(ruleSet, ruleSelection);
+            .conceptIds(ruleSet.getConceptBucket()
+                .getIds())
+            .constraintIds(ruleSet.getConstraintBucket()
+                .getIds())
+            .groupIds(ruleSet.getGroupsBucket()
+                .getIds())
+            .build();
+        printRuleSet(ruleSet, ruleSelection, configuration);
     }
 
     /**
-     *
      * @param ruleSet
      * @param ruleSelection
      * @throws RuleException
      */
-    public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
-        CollectRulesVisitor visitor = getAllRules(ruleSet, ruleSelection);
+    public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
+        CollectRulesVisitor visitor = getAllRules(ruleSet, ruleSelection, configuration);
         printValidRules(visitor);
         printMissingRules(visitor);
     }
@@ -57,19 +60,24 @@ public class RuleHelper {
      * Prints all valid rules.
      *
      * @param visitor
-     *            The visitor.
+     *     The visitor.
      */
     private void printValidRules(CollectRulesVisitor visitor) {
-        logger.info("Groups [" + visitor.getGroups().size() + "]");
+        logger.info("Groups [" + visitor.getGroups()
+            .size() + "]");
         for (Group group : visitor.getGroups()) {
             logger.info(LOG_LINE_PREFIX + group.getId() + "\"");
         }
-        logger.info("Constraints [" + visitor.getConstraints().size() + "]");
-        for (Constraint constraint : visitor.getConstraints().keySet()) {
+        logger.info("Constraints [" + visitor.getConstraints()
+            .size() + "]");
+        for (Constraint constraint : visitor.getConstraints()
+            .keySet()) {
             logger.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
         }
-        logger.info("Concepts [" + visitor.getConcepts().size() + "]");
-        for (Concept concept : visitor.getConcepts().keySet()) {
+        logger.info("Concepts [" + visitor.getConcepts()
+            .size() + "]");
+        for (Concept concept : visitor.getConcepts()
+            .keySet()) {
             logger.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
         }
     }
@@ -78,14 +86,16 @@ public class RuleHelper {
      * Determines all rules.
      *
      * @param ruleSet
-     *            The rule set.
+     *     The rule set.
+     * @param configuration
+     *     The {@link com.buschmais.jqassistant.core.rule.api.configuration.Rule} configuration.
      * @return The visitor with all valid and missing rules.
      * @throws RuleException
-     *             If the rules cannot be evaluated.
+     *     If the rules cannot be evaluated.
      */
-    private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
+    private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
-        RuleSetExecutor executor = new RuleSetExecutor(visitor, new RuleSetExecutorConfiguration());
+        RuleSetExecutor executor = new RuleSetExecutor(visitor, configuration);
         executor.execute(ruleSet, ruleSelection);
         return visitor;
     }
@@ -94,7 +104,7 @@ public class RuleHelper {
      * Prints all missing rule ids.
      *
      * @param visitor
-     *            The visitor.
+     *     The visitor.
      */
     private boolean printMissingRules(CollectRulesVisitor visitor) {
         Set<String> missingConcepts = visitor.getMissingConcepts();

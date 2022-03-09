@@ -12,9 +12,9 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
-import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutorConfiguration;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
@@ -34,10 +34,11 @@ public class XmlRuleSetWriter implements RuleSetWriter {
 
     private JAXBContext jaxbContext;
 
-    private RuleSetExecutorConfiguration configuration = new RuleSetExecutorConfiguration();
+    private Rule configuration;
 
-    public XmlRuleSetWriter(RuleConfiguration ruleConfiguration) {
+    public XmlRuleSetWriter(RuleConfiguration ruleConfiguration, Rule configuration) {
         this.ruleConfiguration = ruleConfiguration;
+        this.configuration = configuration;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {

@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.io.File;
 import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -57,7 +57,7 @@ class AnalyzerRuleVisitorTest {
     private ReportPlugin reportWriter;
 
     @Mock
-    private AnalyzerConfiguration configuration;
+    private Analyze configuration;
 
     @Mock
     private AnalyzerContext analyzerContext;
@@ -84,6 +84,7 @@ class AnalyzerRuleVisitorTest {
         columnNames = Arrays.asList("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
         ruleParameters = new HashMap<>();
         ruleParameters.put(PARAMETER_WITHOUT_DEFAULT, "value");
+        doReturn(ruleParameters).when(configuration).ruleParameters();
 
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(eq(statement), anyMap())).thenReturn(result);
@@ -95,7 +96,7 @@ class AnalyzerRuleVisitorTest {
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
 
-        analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleParameters, ruleInterpreterPlugins, reportWriter);
+        analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
     }
 
     /**
@@ -209,7 +210,7 @@ class AnalyzerRuleVisitorTest {
     @Test
     void executeAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
-        when(configuration.isExecuteAppliedConcepts()).thenReturn(true);
+        doReturn(true).when(configuration).executeAppliedConcepts();
 
         analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
@@ -223,8 +224,7 @@ class AnalyzerRuleVisitorTest {
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, Collections.emptyMap(), ruleInterpreterPlugins,
-                    reportWriter);
+            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
             analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
@@ -241,7 +241,7 @@ class AnalyzerRuleVisitorTest {
         when(store.executeQuery(eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleParameters, ruleInterpreterPlugins,
+            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins,
                     reportWriter);
             analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting a " + RuleException.class.getName());

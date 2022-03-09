@@ -5,21 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.Executable;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Parameter;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -28,9 +21,8 @@ import org.apache.commons.lang3.time.StopWatch;
  */
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
-    private AnalyzerConfiguration configuration;
+    private Analyze configuration;
     private AnalyzerContext analyzerContext;
-    private Map<String, String> ruleParameters;
     private ReportPlugin reportPlugin;
     private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
 
@@ -38,19 +30,16 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
      * Constructor.
      *
      * @param configuration
-     *            The configuration
-     * @param ruleParameters
-     *            The rule parameter.s
+     *     The configuration
      * @param ruleInterpreterPlugins
-     *            The {@link RuleInterpreterPlugin}s.
+     *     The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
-     *            The report writer.
+     *     The report writer.
      */
-    AnalyzerRuleVisitor(AnalyzerConfiguration configuration, AnalyzerContext analyzerContext, Map<String, String> ruleParameters,
-            Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins, ReportPlugin reportPlugin) {
+    AnalyzerRuleVisitor(Analyze configuration, AnalyzerContext analyzerContext, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
+        ReportPlugin reportPlugin) {
         this.configuration = configuration;
         this.analyzerContext = analyzerContext;
-        this.ruleParameters = ruleParameters;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
     }
@@ -67,17 +56,21 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     @Override
     public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        ConceptDescriptor conceptDescriptor = analyzerContext.getStore().find(ConceptDescriptor.class, concept.getId());
+        ConceptDescriptor conceptDescriptor = analyzerContext.getStore()
+            .find(ConceptDescriptor.class, concept.getId());
         Result.Status status;
-        if (conceptDescriptor == null || configuration.isExecuteAppliedConcepts()) {
+        if (conceptDescriptor == null || configuration.executeAppliedConcepts()
+            .orElse(false)) {
             analyzerContext.getLogger()
-                    .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity) + "'" + ".");
+                .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity()
+                    .getInfo(effectiveSeverity) + "'" + ".");
             reportPlugin.beginConcept(concept);
             Result<Concept> result = execute(concept, effectiveSeverity);
             reportPlugin.setResult(result);
             status = result.getStatus();
             if (conceptDescriptor == null) {
-                conceptDescriptor = analyzerContext.getStore().create(ConceptDescriptor.class);
+                conceptDescriptor = analyzerContext.getStore()
+                    .create(ConceptDescriptor.class);
                 conceptDescriptor.setId(concept.getId());
                 conceptDescriptor.setStatus(status);
             }
@@ -91,7 +84,11 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     @Override
     public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         reportPlugin.beginConcept(concept);
-        Result<Concept> result = Result.<Concept> builder().rule(concept).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
+        Result<Concept> result = Result.<Concept>builder()
+            .rule(concept)
+            .status(Result.Status.SKIPPED)
+            .severity(effectiveSeverity)
+            .build();
         reportPlugin.setResult(result);
         reportPlugin.endConcept();
     }
@@ -99,7 +96,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getLogger()
-                .info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity().getInfo(effectiveSeverity) + "'.");
+            .info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity()
+                .getInfo(effectiveSeverity) + "'.");
         reportPlugin.beginConstraint(constraint);
         reportPlugin.setResult(execute(constraint, effectiveSeverity));
         reportPlugin.endConstraint();
@@ -108,14 +106,19 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     @Override
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         reportPlugin.beginConstraint(constraint);
-        Result<Constraint> result = Result.<Constraint> builder().rule(constraint).status(Result.Status.SKIPPED).severity(effectiveSeverity).build();
+        Result<Constraint> result = Result.<Constraint>builder()
+            .rule(constraint)
+            .status(Result.Status.SKIPPED)
+            .severity(effectiveSeverity)
+            .build();
         reportPlugin.setResult(result);
         reportPlugin.endConstraint();
     }
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
-        analyzerContext.getLogger().info("Executing group '" + group.getId() + "'");
+        analyzerContext.getLogger()
+            .info("Executing group '" + group.getId() + "'");
         reportPlugin.beginGroup(group);
     }
 
@@ -143,7 +146,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     }
 
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,
-            RuleInterpreterPlugin languagePlugin) throws RuleException {
+        RuleInterpreterPlugin languagePlugin) throws RuleException {
         StopWatch stopWatch = StopWatch.createStarted();
         try {
             Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
@@ -153,8 +156,10 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         } finally {
             stopWatch.stop();
             long ruleExecutionTime = stopWatch.getTime(TimeUnit.SECONDS);
-            if (ruleExecutionTime > configuration.getWarnOnRuleExecutionTimeSeconds()) {
-                analyzerContext.getLogger().warn("Execution of rule defined in '{}' took {} seconds.", executableRule.getSource().getId(), ruleExecutionTime);
+            if (ruleExecutionTime > configuration.warnOnExecutionTimeSeconds()) {
+                analyzerContext.getLogger()
+                    .warn("Execution of rule defined in '{}' took {} seconds.", executableRule.getSource()
+                        .getId(), ruleExecutionTime);
             }
         }
         return null;
@@ -167,10 +172,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             String parameterName = entry.getKey();
             Parameter parameter = entry.getValue();
             Object parameterValue;
-            String parameterValueAsString = this.ruleParameters.get(parameterName);
+            String parameterValueAsString = configuration.ruleParameters()
+                .get(parameterName);
             if (parameterValueAsString != null) {
                 try {
-                    parameterValue = parameter.getType().parse(parameterValueAsString);
+                    parameterValue = parameter.getType()
+                        .parse(parameterValueAsString);
                 } catch (RuleException e) {
                     throw new RuleException("Cannot determine value for parameter " + parameterName + "' of rule '" + executableRule + "'.");
                 }

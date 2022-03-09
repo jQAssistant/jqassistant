@@ -12,8 +12,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
@@ -148,8 +148,7 @@ public abstract class AbstractPluginIT {
         this.reportContext = new ReportContextImpl(store, outputDirectory);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(reportContext, getReportProperties());
         this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-        AnalyzerConfiguration configuration = getAnalyzerConfiguration();
-        analyzer = new AnalyzerImpl(configuration, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+        this.analyzer = getAnalyzer(configuration);
     }
 
     /**
@@ -157,13 +156,6 @@ public abstract class AbstractPluginIT {
      */
     protected Map<String, Object> getScannerProperties() {
         return emptyMap();
-    }
-
-    /**
-     * Return the properties for the scanner, to be overwritten by sub-classes.
-     */
-    protected AnalyzerConfiguration getAnalyzerConfiguration() {
-        return new AnalyzerConfiguration();
     }
 
     /**
@@ -239,7 +231,7 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(configuration);
+        return getScanner(getScannerProperties());
     }
 
     /**
@@ -257,6 +249,16 @@ public abstract class AbstractPluginIT {
         ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
+    }
+
+    private Analyzer getAnalyzer(Configuration configuration) {
+        return new AnalyzerImpl(this.configuration.analyze(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+    }
+
+    private Analyzer getAnalyzer(Map<String, String> parameters) {
+        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
+        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        return getAnalyzer(configuration);
     }
 
     /**
@@ -348,10 +350,11 @@ public abstract class AbstractPluginIT {
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
+        Analyzer analyzer = getAnalyzer(parameters);
         RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
         Concept concept = ruleSet.getConceptBucket().getById(id);
         assertThat(concept).describedAs("The requested concept cannot be found: " + id).isNotNull();
-        analyzer.execute(ruleSet, ruleSelection, parameters);
+        analyzer.execute(ruleSet, ruleSelection);
         return reportPlugin.getConceptResults().get(id);
     }
 
@@ -379,7 +382,7 @@ public abstract class AbstractPluginIT {
         RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
         Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertThat(constraint).describedAs("The requested constraint cannot be found: " + id).isNotNull();
-        analyzer.execute(ruleSet, ruleSelection, parameters);
+        getAnalyzer(parameters).execute(ruleSet, ruleSelection);
         return reportPlugin.getConstraintResults().get(id);
     }
 
@@ -405,7 +408,7 @@ public abstract class AbstractPluginIT {
         RuleSelection ruleSelection = RuleSelection.builder().groupId(id).build();
         Group group = ruleSet.getGroupsBucket().getById(id);
         assertThat(group).describedAs("The request group cannot be found: " + id).isNotNull();
-        analyzer.execute(ruleSet, ruleSelection, parameters);
+        getAnalyzer(parameters).execute(ruleSet, ruleSelection);
     }
 
     @Retention(RetentionPolicy.RUNTIME)

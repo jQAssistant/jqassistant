@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.*;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.slf4j.Logger;
@@ -33,9 +34,9 @@ public class RuleSetExecutor {
 
     private RuleVisitor ruleVisitor;
 
-    private RuleSetExecutorConfiguration configuration;
+    private Rule configuration;
 
-    public RuleSetExecutor(RuleVisitor ruleVisitor, RuleSetExecutorConfiguration configuration) {
+    public RuleSetExecutor(RuleVisitor ruleVisitor, Rule configuration) {
         this.ruleVisitor = ruleVisitor;
         this.configuration = configuration;
     }
@@ -61,19 +62,21 @@ public class RuleSetExecutor {
      * Executes the given group.
      *
      * @param ruleSet
-     *            The rule set.
+     *     The rule set.
      * @param group
-     *            The group.
+     *     The group.
      * @param parentSeverity
-     *            The severity.
+     *     The severity.
      */
     private void executeGroup(RuleSet ruleSet, Group group, Severity parentSeverity) throws RuleException {
         if (!executedGroups.contains(group)) {
             ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, parentSeverity, parentSeverity));
-            for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
+            for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
+                .entrySet()) {
                 applyConcepts(ruleSet, conceptEntry.getKey(), parentSeverity, conceptEntry.getValue());
             }
-            for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
+            for (Map.Entry<String, Severity> groupEntry : group.getGroups()
+                .entrySet()) {
                 executeGroups(ruleSet, groupEntry.getKey(), parentSeverity, groupEntry.getValue());
             }
             Map<String, Severity> constraints = group.getConstraints();
@@ -86,7 +89,8 @@ public class RuleSetExecutor {
     }
 
     private void applyConcepts(RuleSet ruleSet, String conceptPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
-        List<Concept> matchingConcepts = ruleSet.getConceptBucket().match(conceptPattern);
+        List<Concept> matchingConcepts = ruleSet.getConceptBucket()
+            .match(conceptPattern);
         if (matchingConcepts.isEmpty()) {
             LOGGER.warn("Could not find concepts matching to '{}'.", matchingConcepts);
         } else {
@@ -97,7 +101,8 @@ public class RuleSetExecutor {
     }
 
     private void executeGroups(RuleSet ruleSet, String groupPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
-        List<Group> matchingGroups = ruleSet.getGroupsBucket().match(groupPattern);
+        List<Group> matchingGroups = ruleSet.getGroupsBucket()
+            .match(groupPattern);
         if (matchingGroups.isEmpty()) {
             LOGGER.warn("Could not find groups matching to '{}'.", groupPattern);
         } else {
@@ -108,7 +113,8 @@ public class RuleSetExecutor {
     }
 
     private void validateConstraints(RuleSet ruleSet, String constraintPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
-        List<Constraint> matchingConstraints = ruleSet.getConstraintBucket().match(constraintPattern);
+        List<Constraint> matchingConstraints = ruleSet.getConstraintBucket()
+            .match(constraintPattern);
         if (matchingConstraints.isEmpty()) {
             LOGGER.warn("Could not find constraints matching to '{}'.", constraintPattern);
         } else {
@@ -122,11 +128,11 @@ public class RuleSetExecutor {
      * Determines the effective severity for a rule to be executed.
      *
      * @param rule
-     *            The rule.
+     *     The rule.
      * @param parentSeverity
-     *            The severity inherited from the parent group.
+     *     The severity inherited from the parent group.
      * @param requestedSeverity
-     *            The severity as specified on the rule in the parent group.
+     *     The severity as specified on the rule in the parent group.
      * @return The effective severity.
      */
     private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity requestedSeverity) {
@@ -138,14 +144,14 @@ public class RuleSetExecutor {
      * Validates the given constraint.
      *
      * @param ruleSet
-     *            The {@link RuleSet}.
+     *     The {@link RuleSet}.
      * @param constraint
-     *            The constraint.
+     *     The constraint.
      * @param severity
-     *            The {@link Severity} to be used effectively, can be
-     *            <code>null</code>.
+     *     The {@link Severity} to be used effectively, can be
+     *     <code>null</code>.
      * @throws RuleException
-     *             If the constraint cannot be validated.
+     *     If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws RuleException {
         if (!executedConstraints.contains(constraint)) {
@@ -162,17 +168,17 @@ public class RuleSetExecutor {
      * Applies the given concept.
      *
      * @param ruleSet
-     *            The {@link RuleSet}.
+     *     The {@link RuleSet}.
      * @param concept
-     *            The concept.
+     *     The concept.
      * @param severity
-     *            The {@link Severity} to be used effectively, can be
-     *            <code>null</code>.
+     *     The {@link Severity} to be used effectively, can be
+     *     <code>null</code>.
      * @param executionStack
-     *            The {@link Concept}s currently being executed while resolving
-     *            required {@link Concept}s.
+     *     The {@link Concept}s currently being executed while resolving
+     *     required {@link Concept}s.
      * @throws RuleException
-     *             If the concept cannot be applied.
+     *     If the concept cannot be applied.
      */
     private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity severity, Set<Concept> executionStack) throws RuleException {
         Boolean result = executedConcepts.get(concept);
@@ -195,16 +201,17 @@ public class RuleSetExecutor {
      * Executes all concepts that provide to the given base concept applying its severity.
      *
      * @param ruleSet
-     *            The {@link RuleSet}.
+     *     The {@link RuleSet}.
      * @param concept
-     *            The base {@link Concept}.
+     *     The base {@link Concept}.
      * @param stack
-     *            The current execution stack.
+     *     The current execution stack.
      * @throws RuleException
-     *             If execution fails.
+     *     If execution fails.
      */
     private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Severity severity, Set<Concept> stack) throws RuleException {
-        Set<Concept> providedConcepts = ruleSet.getConceptBucket().getProvidedConcepts(concept.getId());
+        Set<Concept> providedConcepts = ruleSet.getConceptBucket()
+            .getProvidedConcepts(concept.getId());
         for (Concept providedConcept : providedConcepts) {
             applyConcept(ruleSet, providedConcept, severity, stack);
         }
@@ -212,14 +219,16 @@ public class RuleSetExecutor {
 
     private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {
         boolean requiredConceptsApplied = true;
-        for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts().entrySet()) {
-            List<Concept> requiredConcepts = ruleSet.getConceptBucket().match(entry.getKey());
+        for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts()
+            .entrySet()) {
+            List<Concept> requiredConcepts = ruleSet.getConceptBucket()
+                .match(entry.getKey());
             for (Concept requiredConcept : requiredConcepts) {
                 if (!stack.contains(requiredConcept)) {
                     boolean conceptResult = applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity(), stack);
                     Boolean optional = entry.getValue();
                     if (optional == null) {
-                        optional = configuration.isRequiredConceptsAreOptionalByDefault();
+                        optional = configuration.requiredConceptsAreOptionalByDefault();
                     }
                     requiredConceptsApplied = requiredConceptsApplied && (conceptResult || optional);
                 }

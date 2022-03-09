@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.configuration.api;
 
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 
@@ -28,4 +29,6 @@ public interface Configuration {
      * @return The {@link Scan} configuration.
      */
     Scan scan();
+
+    Analyze analyze();
 }
