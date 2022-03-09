@@ -26,6 +26,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 
+import static java.lang.Boolean.TRUE;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -210,7 +213,8 @@ class AnalyzerRuleVisitorTest {
     @Test
     void executeAppliedConcept() throws RuleException {
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
-        doReturn(true).when(configuration).executeAppliedConcepts();
+        doReturn(true).when(configuration)
+            .executeAppliedConcepts();
 
         analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
 
@@ -220,6 +224,7 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void missingParameter() {
+        doReturn(emptyMap()).when(configuration).ruleParameters();
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);

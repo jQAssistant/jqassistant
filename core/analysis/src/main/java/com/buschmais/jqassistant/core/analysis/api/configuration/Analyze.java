@@ -19,7 +19,8 @@ public interface Analyze {
 
     String EXECUTE_APPLIED_CONCEPTS = "execute-applied-concepts";
 
-    Optional<Boolean> executeAppliedConcepts();
+    @WithDefault("false")
+    boolean executeAppliedConcepts();
 
     String WARN_ON_EXECUTION_TIME_SECONDS = "warn-on-rule-execution-time-seconds";
 

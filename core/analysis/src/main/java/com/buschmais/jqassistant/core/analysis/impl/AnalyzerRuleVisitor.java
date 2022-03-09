@@ -59,8 +59,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         ConceptDescriptor conceptDescriptor = analyzerContext.getStore()
             .find(ConceptDescriptor.class, concept.getId());
         Result.Status status;
-        if (conceptDescriptor == null || configuration.executeAppliedConcepts()
-            .orElse(false)) {
+        if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
             analyzerContext.getLogger()
                 .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity()
                     .getInfo(effectiveSeverity) + "'" + ".");
