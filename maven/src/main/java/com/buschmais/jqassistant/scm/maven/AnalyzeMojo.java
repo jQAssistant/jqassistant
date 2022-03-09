@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
@@ -110,10 +111,17 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) {
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
+        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
+        if (xmlReportFile != null) {
+            properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
+        }
+        propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
     }
 
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+        Analyze analyze = getConfiguration().analyze();
+
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
@@ -122,12 +130,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(store, ProjectResolver.getOutputDirectory(rootModule));
         Severity effectiveFailOnSeverity = failOnSeverity;
-        Map<String, Object> properties = getReportProperties();
-        Map<String, ReportPlugin> reportPlugins = getPluginRepository().getAnalyzerPluginRepository().getReportPlugins(reportContext,
-                properties);
+        Map<String, ReportPlugin> reportPlugins = getPluginRepository().getAnalyzerPluginRepository()
+            .getReportPlugins(analyze.report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
-        Analyze analyze = getConfiguration().analyze();
 
         try {
             Analyzer analyzer = new AnalyzerImpl(analyze, store, getPluginRepository().getAnalyzerPluginRepository()
@@ -162,14 +168,6 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                     "Report archive has been attached to module '{}:{}:{}'. Use 'installAtEnd' (maven-install-plugin) or 'deployAtEnd' (maven-deploy-plugin) to ensure deployment to local or remote repositories.",
                     rootModule.getGroupId(), rootModule.getArtifactId(), rootModule.getVersion());
         }
-    }
-
-    private Map<String, Object> getReportProperties() {
-        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
-        if (xmlReportFile != null) {
-            properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
-        }
-        return properties;
     }
 
     private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)
