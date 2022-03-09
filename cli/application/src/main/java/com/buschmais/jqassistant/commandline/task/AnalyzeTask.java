@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
@@ -51,11 +50,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
-    private File ruleParametersFile;
     private File reportDirectory;
     private Severity failOnSeverity;
     private Severity warnOnSeverity;
-    private boolean executeAppliedConcepts;
     private boolean createReportArchive;
 
     @Override
@@ -67,14 +64,12 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
         Map<String, ReportPlugin> reportPlugins = getReportPlugins(reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-        AnalyzerConfiguration analyzerConfiguration = new AnalyzerConfiguration();
-        analyzerConfiguration.setExecuteAppliedConcepts(executeAppliedConcepts);
-        Map<String, String> ruleParameters = getRuleParameters();
         try {
-            Analyzer analyzer = new AnalyzerImpl(analyzerConfiguration, store, pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(emptyMap()),
+            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), store, pluginRepository.getAnalyzerPluginRepository()
+                .getRuleInterpreterPlugins(emptyMap()),
                     inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules();
-            analyzer.execute(availableRules, getRuleSelection(availableRules), ruleParameters);
+            analyzer.execute(availableRules, getRuleSelection(availableRules));
         } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
         }
@@ -108,27 +103,19 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     /**
      * Reads the given rule parameters file.
      *
-     * @return The map containing the rule parameters.
+     * @param propertiesConfigBuilder
+     *     The {@link PropertiesConfigBuilder}.
      * @throws CliExecutionException
-     *             If the file cannot be read.
+     *     If the file cannot be read.
      */
-    private Map<String, String> getRuleParameters() throws CliExecutionException {
-        Map<String, String> ruleParameters;
-        if (ruleParametersFile == null) {
-            ruleParameters = emptyMap();
-        } else {
-            Properties properties = new Properties();
-            try {
-                properties.load(new FileInputStream(ruleParametersFile));
-            } catch (IOException e) {
-                throw new CliExecutionException("Cannot read rule parameters file '" + ruleParametersFile.getPath() + "'.");
-            }
-            ruleParameters = new TreeMap<>();
-            for (String name : properties.stringPropertyNames()) {
-                ruleParameters.put(name, properties.getProperty(name));
-            }
+    private void loadRuleParameters(String ruleParametersFile, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(ruleParametersFile));
+        } catch (IOException e) {
+            throw new CliConfigurationException("Cannot read rule parameters file '" + ruleParametersFile + "'.", e);
         }
-        return ruleParameters;
+        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, properties);
     }
 
     /**
@@ -149,12 +136,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         super.withOptions(options, propertiesConfigBuilder);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
         if (ruleParametersFileName != null) {
-            this.ruleParametersFile = new File(ruleParametersFileName);
-            if (!this.ruleParametersFile.exists()) {
-                throw new CliConfigurationException("Cannot find rule parameters file '" + ruleParametersFileName + "'.");
-            }
-        } else {
-            this.ruleParametersFile = null;
+            loadRuleParameters(ruleParametersFileName, propertiesConfigBuilder);
         }
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         reportDirectory = new File(reportDirectoryValue);
@@ -163,7 +145,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
         warnOnSeverity = getSeverity(
                 getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConceptSeverity().getValue()));
-        executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
+        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
         createReportArchive = options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE);
     }
 

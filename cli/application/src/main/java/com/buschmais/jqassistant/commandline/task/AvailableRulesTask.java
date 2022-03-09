@@ -13,7 +13,7 @@ public class AvailableRulesTask extends AbstractAnalyzeTask {
     protected void executeTask(Configuration configuration, Store store) throws CliExecutionException {
         RuleSet availableRules = getAvailableRules();
         try {
-            ruleHelper.printRuleSet(availableRules);
+            ruleHelper.printRuleSet(availableRules, configuration.analyze().rule());
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot print available rules.", e);
         }
