@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -73,7 +74,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     /**
      * Defines the set of reports which shall be created by default. If empty all
-     * available reports will be used.
+     * available default reports will be used.
      */
     @Parameter(property = "jqassistant.reportTypes")
     private Set<String> reportTypes;
@@ -106,6 +107,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
+    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
+    }
+
+    @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
@@ -120,12 +126,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 properties);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
-        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        Analyze analyze = getConfiguration().analyze();
+
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, getPluginRepository().getAnalyzerPluginRepository()
+            Analyzer analyzer = new AnalyzerImpl(analyze, store, getPluginRepository().getAnalyzerPluginRepository()
                     .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, logger);
-            analyzer.execute(ruleSet, ruleSelection, ruleParameters);
+            analyzer.execute(ruleSet, ruleSelection);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }

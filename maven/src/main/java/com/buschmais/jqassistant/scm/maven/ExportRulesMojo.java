@@ -34,7 +34,7 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
         final RuleSet ruleSet = readRules(rootModule);
-        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(getRuleConfiguration());
+        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(getRuleConfiguration(), getConfiguration().analyze().rule());
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {

@@ -40,7 +40,7 @@ public class AvailableRulesMojo extends AbstractProjectMojo {
         RuleSet ruleSet = readRules(rootModule);
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
-            ruleHelper.printRuleSet(ruleSet);
+            ruleHelper.printRuleSet(ruleSet, getConfiguration().analyze().rule());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot print available rules.", e);
         }

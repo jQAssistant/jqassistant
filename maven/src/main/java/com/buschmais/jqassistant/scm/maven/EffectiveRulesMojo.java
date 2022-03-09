@@ -41,7 +41,7 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
-            ruleHelper.printRuleSet(ruleSet, ruleSelection);
+            ruleHelper.printRuleSet(ruleSet, ruleSelection, getConfiguration().analyze().rule());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot print effective rules.", e);
         }
