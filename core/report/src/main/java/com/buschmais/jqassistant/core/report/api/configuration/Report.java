@@ -28,4 +28,9 @@ public interface Report {
     @WithDefault("MAJOR")
     Severity failOnSeverity();
 
+    String CREATE_ARCHIVE = "create-archive";
+
+    @Description("Create an archive containing all generated reports.")
+    @WithDefault("false")
+    boolean createArchive();
 }
