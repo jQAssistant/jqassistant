@@ -16,8 +16,8 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -48,10 +48,10 @@ import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfigurat
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import io.smallrye.config.PropertiesConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,8 +104,8 @@ public abstract class AbstractPluginIT {
         initializeAnalyzer();
     }
 
-    protected PropertiesConfigBuilder createPropertiesConfigBuilder() {
-        return new PropertiesConfigBuilder("ITConfigSource", 110);
+    protected ConfigurationBuilder createPropertiesConfigBuilder() {
+        return new ConfigurationBuilder("ITConfigSource", 110);
     }
 
     /**
@@ -123,11 +123,11 @@ public abstract class AbstractPluginIT {
      *
      * @return The  configuration.
      */
-    private Configuration createConfiguration(PropertiesConfigBuilder propertiesConfigBuilder) {
+    private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(
             ConfigurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())));
-        PropertiesConfigSource propertiesConfigSource = propertiesConfigBuilder.build();
-        return configurationLoader.load(Configuration.class, propertiesConfigSource);
+        ConfigSource configSource = configurationBuilder.build();
+        return configurationLoader.load(Configuration.class, configSource);
     }
 
     private void initializeRuleSet() throws RuleException, IOException {
@@ -241,8 +241,8 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
-        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
-        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
+        Configuration configuration = createConfiguration(configurationBuilder);
         return getScanner(configuration.scan());
     }
 
@@ -257,14 +257,14 @@ public abstract class AbstractPluginIT {
     }
 
     private Analyzer getAnalyzer(Map<String, String> parameters) {
-        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
-        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
+        Configuration configuration = createConfiguration(configurationBuilder);
         return getAnalyzer(configuration.analyze());
     }
 
     private InMemoryReportPlugin getReportPlugin() {
-        PropertiesConfigBuilder propertiesConfigBuilder = createPropertiesConfigBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
-        Configuration configuration = createConfiguration(propertiesConfigBuilder);
+        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
+        Configuration configuration = createConfiguration(configurationBuilder);
         return getReportPlugin(configuration.analyze()
             .report());
     }

@@ -5,9 +5,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import io.smallrye.config.PropertiesConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
- * Builder for {@link PropertiesConfigSource} providing utility methods to support construction.
+ * Builder for a {@link ConfigSource} providing utility methods to support construction.
  * <p>
  * The methods for adding properties take the following parameters:
  * <p>
@@ -15,7 +16,7 @@ import io.smallrye.config.PropertiesConfigSource;
  * - property: The property name, will be appended to the prefix, e.g. "continue-on-error" will create a property jqassistant.scan.continue-on-error"
  * - value: The property value to set, will be converted to a string representation.
  */
-public class PropertiesConfigBuilder {
+public class ConfigurationBuilder {
 
     private final String name;
 
@@ -27,21 +28,21 @@ public class PropertiesConfigBuilder {
      * Constructor.
      *
      * @param name
-     *     The name of the {@link PropertiesConfigSource}.
+     *     The name of the {@link ConfigSource}.
      * @param ordinal
-     *     The ordinal of the {@link PropertiesConfigSource}.
+     *     The ordinal of the {@link ConfigSource}.
      */
-    public PropertiesConfigBuilder(String name, int ordinal) {
+    public ConfigurationBuilder(String name, int ordinal) {
         this.name = name;
         this.ordinal = ordinal;
     }
 
     /**
-     * Build the {@link PropertiesConfigSource}.
+     * Build the {@link ConfigSource}.
      *
-     * @return The {@link PropertiesConfigSource}.
+     * @return The {@link ConfigSource}.
      */
-    public PropertiesConfigSource build() {
+    public ConfigSource build() {
         return new PropertiesConfigSource(properties, name, ordinal);
     }
 
@@ -54,9 +55,9 @@ public class PropertiesConfigBuilder {
      *     The name of the property.
      * @param value
      *     The value.
-     * @return The {@link PropertiesConfigBuilder}.
+     * @return The {@link ConfigurationBuilder}.
      */
-    public PropertiesConfigBuilder with(String prefix, String property, boolean value) {
+    public ConfigurationBuilder with(String prefix, String property, boolean value) {
         properties.put(getKey(prefix, property), getValue(value));
         return this;
     }
@@ -70,9 +71,9 @@ public class PropertiesConfigBuilder {
      *     The name of the property.
      * @param value
      *     The value.
-     * @return The {@link PropertiesConfigBuilder}.
+     * @return The {@link ConfigurationBuilder}.
      */
-    public <E extends Enum<E>> PropertiesConfigBuilder with(String prefix, String property, E value) {
+    public <E extends Enum<E>> ConfigurationBuilder with(String prefix, String property, E value) {
         properties.put(getKey(prefix, property), getValue(value));
         return this;
     }
@@ -86,9 +87,9 @@ public class PropertiesConfigBuilder {
      *     The name of the property.
      * @param values
      *     The values.
-     * @return The {@link PropertiesConfigBuilder}.
+     * @return The {@link ConfigurationBuilder}.
      */
-    public PropertiesConfigBuilder with(String prefix, String property, Map<String, ?> values) {
+    public ConfigurationBuilder with(String prefix, String property, Map<String, ?> values) {
         if (values != null) {
             for (Map.Entry<String, ?> entry : values.entrySet()) {
                 String key = entry.getKey();
@@ -99,7 +100,7 @@ public class PropertiesConfigBuilder {
         return this;
     }
 
-    public PropertiesConfigBuilder with(String prefix, String property, Properties properties) {
+    public ConfigurationBuilder with(String prefix, String property, Properties properties) {
         if (properties != null) {
             for (String key : properties.stringPropertyNames()) {
                 addMapEntry(prefix, property, key, properties.getProperty(key));
@@ -129,10 +130,10 @@ public class PropertiesConfigBuilder {
      *     The name of the indexed property.
      * @param values
      *     The values.
-     * @return The {@link PropertiesConfigBuilder}.
+     * @return The {@link ConfigurationBuilder}.
      */
     public <T> void with(String prefix, String indexedProperty, Iterable<T> values) {
-        if (values !=null) {
+        if (values != null) {
             int index = 0;
             for (T value : values) {
                 StringBuilder key = new StringBuilder(getKey(prefix, indexedProperty)).append('[')

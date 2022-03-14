@@ -31,9 +31,10 @@ public class XmlRuleSetWriter implements RuleSetWriter {
 
     private JAXBContext jaxbContext;
 
-    private Rule configuration;
+    private Rule rule;
 
-    public XmlRuleSetWriter() {
+    public XmlRuleSetWriter(Rule rule) {
+        this.rule = rule;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -46,7 +47,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.builder().groupIds(ruleSet.getGroupsBucket().getIds()).constraintIds(ruleSet.getConstraintBucket().getIds())
                 .conceptIds(ruleSet.getConceptBucket().getIds()).build();
-        new RuleSetExecutor(visitor, configuration).execute(ruleSet, ruleSelection);
+        new RuleSetExecutor(visitor, rule).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
         writeConcepts(visitor.getConcepts().keySet(), rules);
