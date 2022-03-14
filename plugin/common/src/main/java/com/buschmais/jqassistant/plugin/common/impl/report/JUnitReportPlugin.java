@@ -1,11 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.report;
 
 import java.io.File;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,19 +13,9 @@ import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.ObjectFactory;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Testsuite;
 
 /**
  * {@link ReportPlugin} implementation to write JUnit style reports.
@@ -57,8 +43,8 @@ public class JUnitReportPlugin implements ReportPlugin {
     private long ruleBeginTimestamp;
     private Map<Group, GroupInfo> results = new HashMap<>();
 
-    private Severity failureSeverity = RuleConfiguration.DEFAULT.getDefaultConceptSeverity();
-    private Severity errorSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
+    private Severity failureSeverity = Concept.DEFAULT_SEVERITY;
+    private Severity errorSeverity = Constraint.DEFAULT_SEVERITY;
 
     @Override
     public void initialize() throws ReportException {
