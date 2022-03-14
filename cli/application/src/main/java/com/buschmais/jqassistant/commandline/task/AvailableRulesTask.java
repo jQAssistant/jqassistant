@@ -11,7 +11,8 @@ public class AvailableRulesTask extends AbstractAnalyzeTask {
 
     @Override
     protected void executeTask(Configuration configuration, Store store) throws CliExecutionException {
-        RuleSet availableRules = getAvailableRules();
+        RuleSet availableRules = getAvailableRules(configuration.analyze()
+            .rule());
         try {
             ruleHelper.printRuleSet(availableRules, configuration.analyze().rule());
         } catch (RuleException e) {

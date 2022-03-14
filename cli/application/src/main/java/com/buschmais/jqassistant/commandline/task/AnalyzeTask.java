@@ -27,7 +27,6 @@ import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
@@ -52,25 +51,29 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private File reportDirectory;
-    private Severity failOnSeverity;
-    private Severity warnOnSeverity;
     private boolean createReportArchive;
 
     @Override
     protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
+        Analyze analyze = configuration.analyze();
+        Severity warnOnSeverity = analyze.report()
+            .warnOnSeverity();
+        Severity failOnSeverity = analyze.report()
+            .failOnSeverity();
         LOGGER.info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
 
         ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
-        Map<String, ReportPlugin> reportPlugins = getReportPlugins(configuration.analyze()
+        Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze
             .report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), store, pluginRepository.getAnalyzerPluginRepository()
+            Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
                 .getRuleInterpreterPlugins(emptyMap()),
                     inMemoryReportPlugin, LOGGER);
-            RuleSet availableRules = getAvailableRules();
+            RuleSet availableRules = getAvailableRules(analyze
+                .rule());
             analyzer.execute(availableRules, getRuleSelection(availableRules));
         } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
@@ -81,9 +84,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         store.beginTransaction();
         LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
         try {
-            final ReportHelper reportHelper = new ReportHelper(LOGGER);
-            final int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, failOnSeverity, inMemoryReportPlugin);
-            final int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, failOnSeverity, inMemoryReportPlugin);
+            final ReportHelper reportHelper = new ReportHelper(configuration.analyze().report(), LOGGER);
+            final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportPlugin);
+            final int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportPlugin);
             if (conceptViolations > 0 || constraintViolations > 0) {
                 throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
@@ -145,13 +148,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         reportDirectory = new File(reportDirectoryValue);
         reportDirectory.mkdirs();
-        failOnSeverity = getSeverity(
-                getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConstraintSeverity().getValue()));
-        warnOnSeverity = getSeverity(
-                getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY, RuleConfiguration.DEFAULT.getDefaultConceptSeverity().getValue()));
         createReportArchive = options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE);
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
         propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
+        propertiesConfigBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
+        propertiesConfigBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
     }
 
     @Override

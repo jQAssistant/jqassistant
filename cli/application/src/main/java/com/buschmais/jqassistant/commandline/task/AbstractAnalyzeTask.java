@@ -13,11 +13,11 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -27,8 +27,6 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -45,9 +43,6 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     private static final String CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY = "defaultConceptSeverity";
     private static final String CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY = "defaultConstraintSeverity";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
-
-    private RuleConfiguration ruleConfiguration;
     private URL rulesUrl;
     private String ruleDirectory;
     private List<String> conceptIds;
@@ -59,7 +54,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         return false;
     }
 
-    protected RuleSet getAvailableRules() throws CliExecutionException {
+    protected RuleSet getAvailableRules(Rule rule) throws CliExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         if (rulesUrl != null) {
             sources.add(new UrlRuleSource(rulesUrl));
@@ -72,7 +67,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(ruleConfiguration);
+            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(rule);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot get rule source reader plugins.", e);
         }
@@ -120,20 +115,13 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Collections.<String> emptyList());
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
-        RuleConfiguration.RuleConfigurationBuilder ruleConfigurationBuilder = RuleConfiguration.builder();
-        String defaultGroupSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY);
-        if (defaultGroupSeverityValue != null) {
-            ruleConfigurationBuilder.defaultGroupSeverity(getSeverity(defaultGroupSeverityValue));
+        try {
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
+        } catch (RuleException e) {
+            throw new CliConfigurationException("Cannot convert severity.", e);
         }
-        String defaultConceptSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY);
-        if (defaultConceptSeverityValue != null) {
-            ruleConfigurationBuilder.defaultConceptSeverity(getSeverity(defaultConceptSeverityValue));
-        }
-        String defaultConstraintSeverityValue = getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY);
-        if (defaultConstraintSeverityValue != null) {
-            ruleConfigurationBuilder.defaultConstraintSeverity(getSeverity(defaultConstraintSeverityValue));
-        }
-        ruleConfiguration = ruleConfigurationBuilder.build();
     }
 
     @Override

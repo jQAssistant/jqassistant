@@ -11,8 +11,8 @@ import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
@@ -38,6 +38,9 @@ class AnalyzeTaskTest {
     private Analyze analyze;
 
     @Mock
+    private Rule rule;
+
+    @Mock
     private Report report;
 
     @Mock
@@ -56,6 +59,7 @@ class AnalyzeTaskTest {
     void before() {
         doReturn(analyze).when(configuration).analyze();
         doReturn(report).when(analyze).report();
+        doReturn(rule).when(analyze).rule();
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
@@ -81,7 +85,7 @@ class AnalyzeTaskTest {
         verify(storePluginRepository).getProcedureTypes();
         verify(storePluginRepository).getFunctionTypes();
         verify(rulePluginRepository).getRuleSources();
-        verify(rulePluginRepository).getRuleParserPlugins(any(RuleConfiguration.class));
+        verify(rulePluginRepository).getRuleParserPlugins(rule);
         verify(analyzerPluginRepository).getRuleInterpreterPlugins(anyMap());
     }
 

@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 
 import org.apache.commons.cli.CommandLine;
@@ -26,7 +25,6 @@ public abstract class AbstractTask implements Task {
     protected File outputDirectory;
     protected PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
-    protected ReportHelper reportHelper;
     protected Map<String, Object> pluginProperties;
 
     @Override
@@ -35,7 +33,6 @@ public abstract class AbstractTask implements Task {
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(LOGGER);
-        this.reportHelper = new ReportHelper(LOGGER);
     }
 
 
