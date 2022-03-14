@@ -3,8 +3,10 @@ package com.buschmais.jqassistant.commandline.plugin;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.commandline.configuration.Proxy;
 import com.buschmais.jqassistant.commandline.configuration.Remote;
 import com.buschmais.jqassistant.commandline.configuration.Repositories;
 import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
@@ -43,7 +45,9 @@ public class PluginResolverFactory {
 
     private static final RepositoryPolicy SNAPSHOT_REPOSITORY_POLICY = new RepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_FAIL);
 
-    private static final RemoteRepository CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2").build();
+    private static final String CENTRAL_URL = "https://repo1.maven.org/maven2";
+    public static final String CENTRAL_ID = "central";
+    public static final String REPOSITORY_LAYOUT_DEFAULT = "default";
 
     private File jqassistantUserDir;
 
@@ -57,7 +61,7 @@ public class PluginResolverFactory {
      * <p>
      * The default local repository is ~/.jqassistant/repository.
      * <p>
-     * If no remote repository is specified the resolver will use Maven Central, see {@link #CENTRAL}.
+     * If no remote repository is specified the resolver will use Maven Central, see {@link #CENTRAL_URL}.
      *
      * @param configuration
      *     The {@link CliConfiguration}.
@@ -66,7 +70,8 @@ public class PluginResolverFactory {
     public PluginResolver create(CliConfiguration configuration) {
         Repositories repositories = configuration.repositories();
         File localRepository = getLocalRepository(repositories);
-        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories);
+        Optional<org.eclipse.aether.repository.Proxy> proxy = getProxy(configuration.proxy());
+        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxy);
 
         RepositorySystem repositorySystem = newRepositorySystem();
         log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
@@ -95,17 +100,37 @@ public class PluginResolverFactory {
         return localRepository;
     }
 
+    private Optional<org.eclipse.aether.repository.Proxy> getProxy(Optional<Proxy> proxy) {
+        return proxy.map(p -> getProxy(p));
+    }
+
+    private org.eclipse.aether.repository.Proxy getProxy(Proxy proxy) {
+        String protocol = proxy.protocol();
+        String host = proxy.host();
+        Integer port = proxy.port();
+        AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+        proxy.username()
+            .ifPresent(username -> authBuilder.addUsername(username));
+        proxy.password()
+            .ifPresent(password -> authBuilder.addPassword(password));
+
+        return new org.eclipse.aether.repository.Proxy(protocol, host, port, authBuilder.build());
+    }
+
     /**
      * Determines the remote repositories to use, using Maven Central as fallback.
      *
      * @param repositories
      *     The {@link Repositories} configuration.
+     * @param optionalProxy
      * @return The list of configured {@link RemoteRepository}s.
      */
-    private List<RemoteRepository> getRemoteRepositories(Repositories repositories) {
+    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
         Map<String, Remote> remotes = repositories.remotes();
         if (remotes.isEmpty()) {
-            return singletonList(CENTRAL);
+            RemoteRepository.Builder builder = new RemoteRepository.Builder(CENTRAL_ID, REPOSITORY_LAYOUT_DEFAULT, CENTRAL_URL);
+            optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
+            return singletonList(builder.build());
         }
         return remotes.entrySet()
             .stream()
@@ -117,9 +142,11 @@ public class PluginResolverFactory {
                     .ifPresent(username -> authBuilder.addUsername(username));
                 remote.password()
                     .ifPresent(password -> authBuilder.addPassword(password));
-                return new RemoteRepository.Builder(id, "default", remote.url()).setAuthentication(authBuilder.build())
-                    .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY)
-                    .build();
+                RemoteRepository.Builder builder = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(
+                        authBuilder.build())
+                    .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY);
+                optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
+                return builder.build();
             })
             .collect(toList());
     }
@@ -159,15 +186,15 @@ public class PluginResolverFactory {
         @Override
         public void transferStarted(TransferEvent transferEvent) {
             log.info("Downloading '{}{}'.", transferEvent.getResource()
-                .getRepositoryUrl(),
-                transferEvent.getResource().getResourceName());
+                .getRepositoryUrl(), transferEvent.getResource()
+                .getResourceName());
         }
 
         @Override
         public void transferSucceeded(TransferEvent transferEvent) {
             log.info("Finished download of '{}{}'.", transferEvent.getResource()
-                    .getRepositoryUrl(),
-                transferEvent.getResource().getResourceName());
+                .getRepositoryUrl(), transferEvent.getResource()
+                .getResourceName());
         }
     }
 }

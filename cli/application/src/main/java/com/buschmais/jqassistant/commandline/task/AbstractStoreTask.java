@@ -9,7 +9,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
@@ -54,7 +54,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     }
 
     @Override
-    public final void withStandardOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+    public final void withStandardOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         String storeUri = getOptionValue(options, CMDLINE_OPTION_STORE_URI);
         String storeDirectory = getOptionValue(options, CMDLINE_OPTION_S);

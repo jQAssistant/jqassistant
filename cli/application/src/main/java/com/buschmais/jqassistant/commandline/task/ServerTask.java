@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -60,7 +60,7 @@ public class ServerTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) {
+    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) {
         runAsDaemon = options.hasOption(CMDLINE_OPTION_DAEMON);
     }
 }

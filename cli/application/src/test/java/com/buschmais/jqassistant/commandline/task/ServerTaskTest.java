@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -74,7 +74,7 @@ class ServerTaskTest {
         CommandLine commandLine = parser.parse(options, arguments);
 
         serverTask.initialize(pluginRepository, new HashMap<>());
-        serverTask.withOptions(commandLine, mock(PropertiesConfigBuilder.class));
+        serverTask.withOptions(commandLine, mock(ConfigurationBuilder.class));
         serverTask.executeTask(configuration, store);
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -100,13 +100,13 @@ public class ScanTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         files = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_FILES, emptyList()));
         urls = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_URLS, emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
-        propertiesConfigBuilder.with(Scan.PREFIX, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
-        propertiesConfigBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
+        configurationBuilder.with(Scan.PREFIX, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
+        configurationBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
     }
 }

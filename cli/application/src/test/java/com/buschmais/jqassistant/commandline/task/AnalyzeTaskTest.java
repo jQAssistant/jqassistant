@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
@@ -73,10 +73,10 @@ class AnalyzeTaskTest {
         analyzeTask.initialize(pluginRepository, pluginProperties);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
-        analyzeTask.withOptions(options, mock(PropertiesConfigBuilder.class));
+        analyzeTask.withOptions(options, mock(ConfigurationBuilder.class));
         CommandLine standardOptions = mock(CommandLine.class);
         stubOption(standardOptions, "s", "target/jqassistant/test/store");
-        analyzeTask.withStandardOptions(standardOptions, mock(PropertiesConfigBuilder.class));
+        analyzeTask.withStandardOptions(standardOptions, mock(ConfigurationBuilder.class));
 
         analyzeTask.run(configuration);
 

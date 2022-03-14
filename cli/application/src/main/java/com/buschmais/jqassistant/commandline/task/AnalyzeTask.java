@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -108,19 +108,19 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     /**
      * Reads the given rule parameters file.
      *
-     * @param propertiesConfigBuilder
-     *     The {@link PropertiesConfigBuilder}.
+     * @param configurationBuilder
+     *     The {@link ConfigurationBuilder}.
      * @throws CliExecutionException
      *     If the file cannot be read.
      */
-    private void loadRuleParameters(String ruleParametersFile, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+    private void loadRuleParameters(String ruleParametersFile, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(ruleParametersFile));
         } catch (IOException e) {
             throw new CliConfigurationException("Cannot read rule parameters file '" + ruleParametersFile + "'.", e);
         }
-        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, properties);
+        configurationBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, properties);
     }
 
     /**
@@ -139,20 +139,20 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    public void withOptions(final CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
-        super.withOptions(options, propertiesConfigBuilder);
+    public void withOptions(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+        super.withOptions(options, configurationBuilder);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
         if (ruleParametersFileName != null) {
-            loadRuleParameters(ruleParametersFileName, propertiesConfigBuilder);
+            loadRuleParameters(ruleParametersFileName, configurationBuilder);
         }
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         reportDirectory = new File(reportDirectoryValue);
         reportDirectory.mkdirs();
         createReportArchive = options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE);
-        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
-        propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
-        propertiesConfigBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
-        propertiesConfigBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
+        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
+        configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
+        configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
+        configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
     }
 
     @Override

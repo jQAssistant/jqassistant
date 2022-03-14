@@ -12,7 +12,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
@@ -102,7 +102,7 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, PropertiesConfigBuilder propertiesConfigBuilder) throws CliConfigurationException {
+    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         String rulesUrl = getOptionValue(options, CMDLINE_OPTION_RULESURL, null);
         if (rulesUrl != null) {
             try {
@@ -116,9 +116,9 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
         try {
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
         } catch (RuleException e) {
             throw new CliConfigurationException("Cannot convert severity.", e);
         }

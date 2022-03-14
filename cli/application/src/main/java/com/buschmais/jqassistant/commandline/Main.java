@@ -13,8 +13,8 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -198,13 +198,13 @@ public class Main {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
             System.exit(1);
         }
-        PropertiesConfigBuilder propertiesConfigBuilder = new PropertiesConfigBuilder("TaskConfigSource", 110);
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
             try {
-                task.withStandardOptions(commandLine, propertiesConfigBuilder);
-                task.withOptions(commandLine, propertiesConfigBuilder);
+                task.withStandardOptions(commandLine, configurationBuilder);
+                task.withOptions(commandLine, configurationBuilder);
             } catch (CliConfigurationException e) {
                 printUsage(options, e.getMessage());
                 System.exit(1);
@@ -216,7 +216,7 @@ public class Main {
         }
         File workingDirectory = new File(".");
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory);
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, propertiesConfigBuilder.build());
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
         PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
         executeTasks(tasks, configuration, pluginRepository, properties);
