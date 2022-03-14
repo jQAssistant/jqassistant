@@ -3,9 +3,12 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.Properties;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,7 +18,11 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 /**
  * Verifies reading the report part of rules.
  */
+@ExtendWith(MockitoExtension.class)
 class ReportTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     void reportBuilder() {
@@ -41,13 +48,13 @@ class ReportTest {
 
     @Test
     void asciidocReport() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc", rule);
         verifyReport(ruleSet);
     }
 
     @Test
     void xmlReport() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml", rule);
         verifyReport(ruleSet);
     }
 

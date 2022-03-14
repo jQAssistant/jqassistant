@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
 
@@ -30,15 +29,11 @@ import static java.util.stream.Collectors.toList;
  */
 public class XmlRuleSetWriter implements RuleSetWriter {
 
-    private RuleConfiguration ruleConfiguration;
-
     private JAXBContext jaxbContext;
 
     private Rule configuration;
 
-    public XmlRuleSetWriter(RuleConfiguration ruleConfiguration, Rule configuration) {
-        this.ruleConfiguration = ruleConfiguration;
-        this.configuration = configuration;
+    public XmlRuleSetWriter() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -84,19 +79,19 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
                 IncludedReferenceType groupReferenceType = new IncludedReferenceType();
                 groupReferenceType.setRefId(groupEntry.getKey());
-                groupType.setSeverity(getSeverity(groupEntry.getValue(), ruleConfiguration.getDefaultGroupSeverity()));
+                groupType.setSeverity(getSeverity(groupEntry.getValue()));
                 groupType.getIncludeGroup().add(groupReferenceType);
             }
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
                 IncludedReferenceType conceptReferenceType = new IncludedReferenceType();
                 conceptReferenceType.setRefId(conceptEntry.getKey());
-                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), ruleConfiguration.getDefaultConceptSeverity()));
+                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue()));
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
             for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
                 IncludedReferenceType constraintReferenceType = new IncludedReferenceType();
                 constraintReferenceType.setRefId(constraintEntry.getKey());
-                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), ruleConfiguration.getDefaultConstraintSeverity()));
+                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue()));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
             rules.getConceptOrConstraintOrGroup().add(groupType);
@@ -108,7 +103,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
-            conceptType.setSeverity(getSeverity(concept.getSeverity(), ruleConfiguration.getDefaultConceptSeverity()));
+            conceptType.setSeverity(getSeverity(concept.getSeverity()));
             conceptType.setSource(writeExecutable(concept));
             conceptType.getRequiresConcept().addAll(writeRequiredConcepts(concept));
             writeProvidedConcepts(concept, conceptType);
@@ -121,7 +116,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
-            constraintType.setSeverity(getSeverity(constraint.getSeverity(), ruleConfiguration.getDefaultConstraintSeverity()));
+            constraintType.setSeverity(getSeverity(constraint.getSeverity()));
             constraintType.setSource(writeExecutable(constraint));
             constraintType.getRequiresConcept().addAll(writeRequiredConcepts(constraint));
             rules.getConceptOrConstraintOrGroup().add(constraintType);
@@ -158,14 +153,9 @@ public class XmlRuleSetWriter implements RuleSetWriter {
      *
      * @param severity
      *            {@link Severity}, can be <code>null</code>
-     * @param defaultSeverity
-     *            default severity level, can be <code>null</code>
      * @return {@link SeverityEnumType}
      */
-    private SeverityEnumType getSeverity(Severity severity, Severity defaultSeverity) {
-        if (severity == null) {
-            severity = defaultSeverity;
-        }
-        return defaultSeverity != null ? SeverityEnumType.fromValue(severity.getValue()) : null;
+    private SeverityEnumType getSeverity(Severity severity) {
+        return severity != null ? SeverityEnumType.fromValue(severity.getValue()) : null;
     }
 }

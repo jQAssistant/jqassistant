@@ -30,7 +30,6 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.*;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -140,7 +139,9 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository().getRuleSources());
-        Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(RuleConfiguration.DEFAULT);
+        Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository()
+            .getRuleParserPlugins(configuration.analyze()
+                .rule());
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
     }

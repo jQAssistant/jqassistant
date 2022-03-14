@@ -5,25 +5,29 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Parameter.Type;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class YamlRuleParserPluginTest {
     /*
     ** This class contains quite a log of tests. Therefore the test cases are group
@@ -33,6 +37,9 @@ class YamlRuleParserPluginTest {
     ** are intended to keep similar tests to gather if you list them in your
     ** idea.
      */
+
+    @Mock
+    private Rule rule;
 
     @Nested
     class ConceptRelated {
@@ -142,7 +149,7 @@ class YamlRuleParserPluginTest {
             assertThat(concept.getDescription()).isEqualTo("Labels types deriving from java.lang.Throwable as \"Throwable\".");
             assertThat(concept.getParameters()).isEmpty();
             assertThat(concept.getRequiresConcepts()).isEmpty();
-            assertThat(concept.getSeverity()).isEqualTo(RuleConfiguration.DEFAULT.getDefaultConceptSeverity());
+            assertThat(concept.getSeverity()).isEqualTo(Severity.MINOR);
             assertThat(concept.getReport()).isNotNull();
             assertThat(concept.getExecutable()).isNotNull().isInstanceOf(CypherExecutable.class);
 
@@ -478,7 +485,7 @@ class YamlRuleParserPluginTest {
             assertThat(constraints).hasSize(1);
             assertThat(constraints).containsKey("referenced_constraint");
             assertThat(constraints.get("referenced_constraint")).isEqualTo(Severity.INFO);
-            assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(RuleConfiguration.DEFAULT.getDefaultConstraintSeverity());
+            assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(Constraint.DEFAULT_SEVERITY);
         }
 
 
@@ -577,7 +584,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(concepts).hasSize(1);
             assertThat(concepts).containsKey("efg");
-            assertThat(concepts.get("efg")).isEqualTo(RuleConfiguration.DEFAULT.getDefaultGroupSeverity());
+            assertThat(concepts.get("efg")).isNull();
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -597,7 +604,6 @@ class YamlRuleParserPluginTest {
             assertThat(concepts).hasSize(1);
             assertThat(concepts).containsKey("xxx");
             assertThat(concepts.get("xxx")).isEqualTo(Severity.MINOR);
-            assertThat(RuleConfiguration.DEFAULT.getDefaultGroupSeverity()).isNotEqualTo(Severity.MINOR);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -867,7 +873,7 @@ class YamlRuleParserPluginTest {
     }
 
     RuleSet readRuleSet(String resource) throws RuleException {
-        return RuleSetTestHelper.readRuleSet(resource, RuleConfiguration.DEFAULT);
+        return RuleSetTestHelper.readRuleSet(resource, rule);
     }
 
     static Stream<String> windowsUrlPositive() {

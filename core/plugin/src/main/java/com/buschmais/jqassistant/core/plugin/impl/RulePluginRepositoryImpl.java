@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.ClasspathRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -45,9 +45,9 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
     }
 
     @Override
-    public Collection<RuleParserPlugin> getRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException {
+    public Collection<RuleParserPlugin> getRuleParserPlugins(Rule rule) throws RuleException {
         for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
-            ruleParserPlugin.configure(ruleConfiguration);
+            ruleParserPlugin.configure(rule);
         }
         return ruleParserPlugins;
     }

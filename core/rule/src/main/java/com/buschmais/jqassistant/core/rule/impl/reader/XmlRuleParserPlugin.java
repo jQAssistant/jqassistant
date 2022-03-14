@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.xml.validation.Schema;
 
@@ -93,7 +94,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
         SeverityEnumType severityType = referenceableType.getSeverity();
-        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultGroupSeverity());
+        Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
         Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
@@ -106,7 +107,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Executable executable = createExecutable(conceptType, conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
         Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
-        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConceptSeverity());
+        Severity severity = getSeverity(severityType, this::getDefaultConceptSeverity);
         List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         List<ReferenceType> providesConcept = conceptType.getProvidesConcept();
@@ -123,7 +124,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         String description = constraintType.getDescription();
         Map<String, Parameter> parameters = getRequiredParameters(constraintType.getRequiresParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
-        Severity severity = getSeverity(severityType, getRuleConfiguration().getDefaultConstraintSeverity());
+        Severity severity = getSeverity(severityType, this::getDefaultConstraintSeverity);
         List<OptionalReferenceType> requiresConcept = constraintType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         String deprecated = constraintType.getDeprecated();
@@ -202,7 +203,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Map<String, Severity> getIncludedReferences(List<IncludedReferenceType> referenceType) throws RuleException {
         Map<String, Severity> references = new HashMap<>();
         for (IncludedReferenceType includedReferenceType : referenceType) {
-            Severity severity = getSeverity(includedReferenceType.getSeverity(), null);
+            Severity severity = getSeverity(includedReferenceType.getSeverity(), this::getDefaultIncludeSeverity);
             references.put(includedReferenceType.getRefId(), severity);
         }
         return references;
@@ -254,12 +255,11 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
      * Get the severity.
      *
      * @param severityType
-     *            The severity type.
-     * @param defaultSeverity
-     *            The default severity.
+     *     The severity type.
      * @return The severity.
      */
-    private Severity getSeverity(SeverityEnumType severityType, Severity defaultSeverity) throws RuleException {
-        return severityType == null ? defaultSeverity : Severity.fromValue(severityType.value());
+    private Severity getSeverity(SeverityEnumType severityType, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
+        String value = severityType != null ? severityType.value() : null;
+        return getSeverity(value, defaultSeveritySupplier);
     }
 }

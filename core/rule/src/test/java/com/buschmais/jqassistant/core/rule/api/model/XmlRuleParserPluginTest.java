@@ -5,23 +5,30 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@ExtendWith(MockitoExtension.class)
 class XmlRuleParserPluginTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     void readScriptRule() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml", rule);
         ConceptBucket conceptBucket = ruleSet.getConceptBucket();
         assertThat(conceptBucket.size(), equalTo(2));
         assertThat(conceptBucket.getIds(), hasItems("test:JavaScriptConcept", "test:JavaScriptExecutableConcept"));
@@ -42,7 +49,7 @@ class XmlRuleParserPluginTest {
 
     @Test
     void ruleParameters() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml", rule);
         Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
         Concept conceptWithDefaultValues = ruleSet.getConceptBucket().getById("test:ConceptWithParametersAndDefaultValues");
@@ -72,7 +79,7 @@ class XmlRuleParserPluginTest {
         URL url = getClass().getResource("/test-concepts.xml");
         RuleParserPlugin reader = new XmlRuleParserPlugin();
         reader.initialize();
-        reader.configure(RuleConfiguration.builder().build());
+        reader.configure(rule);
         UrlRuleSource ruleSource = new UrlRuleSource(url);
         assertThat(reader.accepts(ruleSource), equalTo(true));
         reader.parse(ruleSource, ruleSetBuilder);
@@ -89,7 +96,7 @@ class XmlRuleParserPluginTest {
 
     @Test
     void ruleSchema_1_8() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", rule);
         Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
         assertThat(conceptIds.size(), equalTo(1));
         assertThat(conceptIds, IsCollectionContaining.hasItems("test"));

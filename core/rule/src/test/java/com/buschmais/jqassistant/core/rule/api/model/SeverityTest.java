@@ -2,17 +2,26 @@ package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.mockito.Mockito.doReturn;
 
+@ExtendWith(MockitoExtension.class)
 class SeverityTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     public void getSeverityFromName() throws RuleException {
@@ -43,7 +52,7 @@ class SeverityTest {
 
     @Test
     void asciidocSeverity() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", Severity.BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint",
@@ -52,15 +61,15 @@ class SeverityTest {
 
     @Test
     void xmlSeverity() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
         verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", Severity.BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint",
                 Severity.CRITICAL);
     }
 
-    private void verifySeverities(RuleSet ruleSet, String groupId, Severity expectedGroupSeverity, String conceptId, Severity expectedConceptSeverity,
-            String constraintId, Severity expectedConstraintSeverity) throws RuleException {
+    private void verifySeverities(RuleSet ruleSet, String groupId, Severity expectedGroupSeverity, String conceptId, Severity expectedIncludedConceptSeverity,
+            String constraintId, Severity expectedIncludedConstraintSeverity) throws RuleException {
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems(conceptId));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems(constraintId));
         GroupsBucket groups = ruleSet.getGroupsBucket();
@@ -70,25 +79,27 @@ class SeverityTest {
         assertThat(group.getSeverity(), equalTo(expectedGroupSeverity));
         Map<String, Severity> includedConcepts = group.getConcepts();
         assertThat(includedConcepts.containsKey(conceptId), equalTo(true));
-        assertThat(includedConcepts.get(conceptId), equalTo(expectedConceptSeverity));
+        assertThat(includedConcepts.get(conceptId), equalTo(expectedIncludedConceptSeverity));
         Map<String, Severity> includedConstraints = group.getConstraints();
         assertThat(includedConstraints.containsKey(constraintId), equalTo(true));
-        assertThat(includedConstraints.get(constraintId), equalTo(expectedConstraintSeverity));
+        assertThat(includedConstraints.get(constraintId), equalTo(expectedIncludedConstraintSeverity));
     }
 
     @Test
     void asciidocDefaultSeverity() throws RuleException {
-        RuleConfiguration ruleConfiguration = RuleConfiguration.builder().defaultConceptSeverity(Severity.CRITICAL).defaultConstraintSeverity(Severity.CRITICAL)
-                .defaultGroupSeverity(Severity.CRITICAL).build();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", ruleConfiguration);
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultConceptSeverity();
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultConstraintSeverity();
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultGroupSeverity();
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
         verifyDefaultSeverities(ruleSet, Severity.CRITICAL);
     }
 
     @Test
     void xmlDefaultSeverity() throws RuleException {
-        RuleConfiguration ruleConfiguration = RuleConfiguration.builder().defaultConceptSeverity(Severity.CRITICAL).defaultConstraintSeverity(Severity.CRITICAL)
-                .defaultGroupSeverity(Severity.CRITICAL).build();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", ruleConfiguration);
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultConceptSeverity();
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultConstraintSeverity();
+        doReturn(of(Severity.CRITICAL)).when(rule).defaultGroupSeverity();
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
         verifyDefaultSeverities(ruleSet, Severity.CRITICAL);
     }
 
@@ -105,21 +116,19 @@ class SeverityTest {
 
     @Test
     void xmlRuleDefaultSeverity() throws RuleException {
-        RuleConfiguration ruleConfiguration = RuleConfiguration.builder().build();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", ruleConfiguration);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
         verifyRuleDefaultSeverity(ruleSet);
     }
 
     @Test
     void asciidocRuleDefaultSeverity() throws RuleException {
-        RuleConfiguration ruleConfiguration = RuleConfiguration.builder().build();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", ruleConfiguration);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
         verifyRuleDefaultSeverity(ruleSet);
     }
 
     private void verifyRuleDefaultSeverity(RuleSet ruleSet) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
-        assertThat(groupWithoutSeverity.getSeverity(), equalTo(null));
+        assertThat(groupWithoutSeverity.getSeverity(), nullValue());
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");
         assertThat(concept.getSeverity(), equalTo(Severity.MINOR));
         Constraint constraint = ruleSet.getConstraintBucket().getById("test:Constraint");

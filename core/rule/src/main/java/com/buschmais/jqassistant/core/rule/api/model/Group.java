@@ -11,6 +11,10 @@ import lombok.Getter;
 @Getter
 public class Group extends AbstractSeverityRule {
 
+    public static Severity DEFAULT_SEVERITY = null;
+
+    public static Severity DEFAULT_INCLUDE_SEVERITY = null;
+
     /**
      * The set of rules contained in the group.
      */

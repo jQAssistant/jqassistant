@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.plugin.impl;
 import java.util.Collection;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
@@ -12,13 +13,19 @@ import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class RulePluginRepositoryImplTest {
 
     RulePluginRepository ruleParserPluginRepository;
+
+    @Mock
+    private Rule rule;
 
     @BeforeEach
     void setupPluginConfigurationReader() {
@@ -29,7 +36,7 @@ class RulePluginRepositoryImplTest {
 
     @Test
     void yamlRuleReaderIsAvailable() throws RuleException {
-        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(DEFAULT);
+        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(rule);
 
         assertThat(plugins).anySatisfy(ruleParserPlugin -> {
             assertThat(ruleParserPlugin).isExactlyInstanceOf(YamlRuleParserPlugin.class);
@@ -38,7 +45,7 @@ class RulePluginRepositoryImplTest {
 
     @Test
     void xmlRuleReaderIsAvailable() throws RuleException {
-        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(DEFAULT);
+        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(rule);
 
         assertThat(plugins).anySatisfy(ruleParserPlugin -> {
             assertThat(ruleParserPlugin).isExactlyInstanceOf(XmlRuleParserPlugin.class);
@@ -47,7 +54,7 @@ class RulePluginRepositoryImplTest {
 
     @Test
     void asciidoctorRuleReaderIsAvailable() throws RuleException {
-        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(DEFAULT);
+        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(rule);
 
         assertThat(plugins).anySatisfy(ruleParserPlugin -> {
             assertThat(ruleParserPlugin).isExactlyInstanceOf(AsciidocRuleParserPlugin.class);

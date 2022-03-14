@@ -1,21 +1,13 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Spliterator;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -39,6 +31,9 @@ public final class ReportHelper {
     public static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
     public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
     private static String FOOTER = "-------------------------------------------------------------------";
+
+    private final Report report;
+
     private final LoggingStrategy warnLogger;
     private final LoggingStrategy errorLogger;
     private final LoggingStrategy debugLogger;
@@ -46,10 +41,13 @@ public final class ReportHelper {
     /**
      * Constructor.
      *
+     * @param report
+     *     The {@link Report} configuration.
      * @param log
-     *            The logger to use for logging messages.
+     *     The {@link Logger} to use for reporting.
      */
-    public ReportHelper(final Logger log) {
+    public ReportHelper(Report report, Logger log) {
+        this.report = report;
         this.errorLogger = message -> log.error(message);
         this.warnLogger = message -> log.warn(message);
         this.debugLogger = message -> log.debug(message);
@@ -60,18 +58,21 @@ public final class ReportHelper {
      * name.
      *
      * @param rule
-     *            The rule.
+     *     The rule.
      * @return The escaped name.
      */
     public static String escapeRuleId(Rule rule) {
-        return rule != null ? rule.getId().replaceAll("\\:", "_") : null;
+        return rule != null ?
+            rule.getId()
+                .replaceAll("\\:", "_") :
+            null;
     }
 
     /**
      * Converts a value to its string representation.
      *
      * @param value
-     *            The value.
+     *     The value.
      * @return The string representation
      */
     public static String getLabel(Object value) {
@@ -84,19 +85,27 @@ public final class ReportHelper {
                 return label;
             }
             return getLabel(descriptor.getDelegate());
-        } else if (value.getClass().isArray()) {
+        } else if (value.getClass()
+            .isArray()) {
             Object[] objects = (Object[]) value;
             return getLabel(asList(objects));
         } else if (value instanceof Iterable) {
             Spliterator<?> spliterator = ((Iterable<?>) value).spliterator();
-            List<String> elements = StreamSupport.stream(spliterator, false).map(element -> getLabel(element)).collect(toList());
+            List<String> elements = StreamSupport.stream(spliterator, false)
+                .map(element -> getLabel(element))
+                .collect(toList());
             return StringUtils.join(elements, ", ");
         } else if (value instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) value;
             if (map.size() == 1) {
-                return getLabel(map.values().iterator().next());
+                return getLabel(map.values()
+                    .iterator()
+                    .next());
             } else {
-                List<String> entries = map.entrySet().stream().map(entry -> getLabel(entry.getKey() + ":" + getLabel(entry.getValue()))).collect(toList());
+                List<String> entries = map.entrySet()
+                    .stream()
+                    .map(entry -> getLabel(entry.getKey() + ":" + getLabel(entry.getValue())))
+                    .collect(toList());
                 return getLabel(entries);
             }
         } else if (value instanceof Neo4jPropertyContainer) {
@@ -118,66 +127,61 @@ public final class ReportHelper {
     /**
      * Verifies the concept results returned by the {@link InMemoryReportPlugin} .
      *
-     * @param warnOnSeverity
-     *            The severity threshold to warn.
-     * @param failOnSeverity
-     *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The {@link InMemoryReportPlugin}
+     *     The {@link InMemoryReportPlugin}
      * @return The number of failed concepts, i.e. for breaking the build if higher
-     *         than 0.
+     * than 0.
      */
-    public int verifyConceptResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
-        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        return verifyRuleResults(conceptResults, warnOnSeverity, failOnSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
+    public int verifyConceptResults(InMemoryReportPlugin inMemoryReportWriter) {
+        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults()
+            .values();
+        return verifyRuleResults(conceptResults, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
      * Verifies the constraint results returned by the {@link InMemoryReportPlugin}
      * .
      *
-     * @param warnOnSeverity
-     *            The severity threshold to warn.
-     * @param failOnSeverity
-     *            The severity threshold to fail.
      * @param inMemoryReportWriter
-     *            The {@link InMemoryReportPlugin}
+     *     The {@link InMemoryReportPlugin}
      * @return The number of failed concepts, i.e. for breaking the build if higher
-     *         than 0.
+     * than 0.
      */
-    public int verifyConstraintResults(Severity warnOnSeverity, Severity failOnSeverity, InMemoryReportPlugin inMemoryReportWriter) {
-        Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
-        return verifyRuleResults(constraintResults, warnOnSeverity, failOnSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+    public int verifyConstraintResults(InMemoryReportPlugin inMemoryReportWriter) {
+        Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults()
+            .values();
+        return verifyRuleResults(constraintResults,"Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
 
     /**
      * Verifies the given results and logs messages.
      *
      * @param results
-     *            The collection of results to verify.
-     * @param warnOnSeverity
-     *            The severity threshold to warn.
-     * @param failOnSeverity
-     *            The severity threshold to fail.
+     *     The collection of results to verify.
      * @param type
-     *            The type of the rules (as string).
+     *     The type of the rules (as string).
      * @param header
-     *            The header to use.
+     *     The header to use.
      * @param logResult
-     *            if `true` log the result of the executable rule.
+     *     if `true` log the result of the executable rule.
      * @return The number of detected violations.
      */
-    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity warnOnSeverity, Severity failOnSeverity, String type,
-            String header, boolean logResult) {
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, String type,
+        String header, boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 ExecutableRule rule = result.getRule();
-                String severityInfo = rule.getSeverity().getInfo(result.getSeverity());
+                String severityInfo = result.getSeverity()
+                    .getInfo(rule.getSeverity());
                 List<String> resultRows = getResultRows(result, logResult);
                 // violation severity level check
-                boolean warn = warnOnSeverity != null && result.getSeverity().getLevel() <= warnOnSeverity.getLevel();
-                boolean fail = failOnSeverity != null && result.getSeverity().getLevel() <= failOnSeverity.getLevel();
+                Severity warnOnSeverity = report.warnOnSeverity();
+                boolean warn = warnOnSeverity != null && result.getSeverity()
+                    .getLevel() <= warnOnSeverity.getLevel();
+                Severity failOnSeverity = report.failOnSeverity();
+                boolean fail = failOnSeverity != null && result.getSeverity()
+                    .getLevel() <= failOnSeverity.getLevel();
                 LoggingStrategy loggingStrategy;
                 if (fail) {
                     violations++;
@@ -211,9 +215,9 @@ public final class ReportHelper {
      * Convert the result rows into a string representation.
      *
      * @param result
-     *            The result.
+     *     The result.
      * @param logResult
-     *            if `false` suppress logging the result.
+     *     if `false` suppress logging the result.
      * @return The string representation as list.
      */
     private List<String> getResultRows(Result<?> result, boolean logResult) {
@@ -240,13 +244,14 @@ public final class ReportHelper {
      * Log the description of a rule.
      *
      * @param rule
-     *            The rule.
+     *     The rule.
      */
     private void logDescription(LoggingStrategy loggingStrategy, Rule rule) {
         String description = rule.getDescription();
         StringTokenizer tokenizer = new StringTokenizer(description, "\n");
         while (tokenizer.hasMoreTokens()) {
-            loggingStrategy.log(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+            loggingStrategy.log(tokenizer.nextToken()
+                .replaceAll("(\\r|\\n|\\t)", ""));
         }
     }
 

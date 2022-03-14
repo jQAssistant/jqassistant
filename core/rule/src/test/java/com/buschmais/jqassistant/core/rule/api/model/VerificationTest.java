@@ -1,27 +1,32 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
+@ExtendWith(MockitoExtension.class)
 class VerificationTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     void adoc() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", rule);
         verifyRuleSet(ruleSet);
     }
 
     @Test
     void xml() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", rule);
         verifyRuleSet(ruleSet);
     }
 

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
@@ -26,8 +26,8 @@ public final class RuleSetTestHelper {
     private RuleSetTestHelper() {
     }
 
-    public static RuleSet readRuleSet(String resource, RuleConfiguration ruleConfiguration) throws RuleException {
-        RuleParser ruleParser = new RuleParser(getDefaultRuleParserPlugins(ruleConfiguration));
+    public static RuleSet readRuleSet(String resource, Rule rule) throws RuleException {
+        RuleParser ruleParser = new RuleParser(getDefaultRuleParserPlugins(rule));
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);
@@ -42,12 +42,12 @@ public final class RuleSetTestHelper {
         assertThat(parameter.getDefaultValue(), Matchers.<Object> equalTo(defaultValue));
     }
 
-    public static List<RuleParserPlugin> getDefaultRuleParserPlugins(RuleConfiguration ruleConfiguration) throws RuleException {
+    public static List<RuleParserPlugin> getDefaultRuleParserPlugins(Rule rule) throws RuleException {
         List<RuleParserPlugin> ruleParserPlugins = asList(new AsciidocRuleParserPlugin(), new XmlRuleParserPlugin(),
                                                           new YamlRuleParserPlugin());
         for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
             ruleParserPlugin.initialize();
-            ruleParserPlugin.configure(ruleConfiguration);
+            ruleParserPlugin.configure(rule);
         }
         return ruleParserPlugins;
     }

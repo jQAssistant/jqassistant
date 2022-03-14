@@ -95,7 +95,7 @@ public class RuleSetExecutor {
             LOGGER.warn("Could not find concepts matching to '{}'.", matchingConcepts);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
-                applyConcept(ruleSet, matchingConcept, getEffectiveSeverity(matchingConcept, parentSeverity, requestedSeverity), new LinkedHashSet<>());
+                applyConcept(ruleSet, matchingConcept, parentSeverity, requestedSeverity, new LinkedHashSet<>());
             }
         }
     }
@@ -119,7 +119,7 @@ public class RuleSetExecutor {
             LOGGER.warn("Could not find constraints matching to '{}'.", constraintPattern);
         } else {
             for (Constraint matchingConstraint : matchingConstraints) {
-                validateConstraint(ruleSet, matchingConstraint, getEffectiveSeverity(matchingConstraint, parentSeverity, requestedSeverity));
+                validateConstraint(ruleSet, matchingConstraint, parentSeverity, requestedSeverity);
             }
         }
     }
@@ -131,13 +131,13 @@ public class RuleSetExecutor {
      *     The rule.
      * @param parentSeverity
      *     The severity inherited from the parent group.
-     * @param requestedSeverity
+     * @param includeSeverity
      *     The severity as specified on the rule in the parent group.
      * @return The effective severity.
      */
-    private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity requestedSeverity) {
-        Severity effectiveSeverity = requestedSeverity != null ? requestedSeverity : parentSeverity;
-        return effectiveSeverity != null ? effectiveSeverity : rule.getSeverity();
+    private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity includeSeverity) {
+        Severity inheritedSeverity = includeSeverity != null ? includeSeverity : parentSeverity;
+        return inheritedSeverity != null ? inheritedSeverity : rule.getSeverity();
     }
 
     /**
@@ -147,18 +147,20 @@ public class RuleSetExecutor {
      *     The {@link RuleSet}.
      * @param constraint
      *     The constraint.
-     * @param severity
-     *     The {@link Severity} to be used effectively, can be
-     *     <code>null</code>.
+     * @param groupSeverity
+     *     The {@link Severity} inherited from the parent.
+     * @param includeSeverity
+     *     The {@link Severity} as request as incluude inherited from the parent group.
      * @throws RuleException
      *     If the constraint cannot be validated.
      */
-    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws RuleException {
+    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity groupSeverity, Severity includeSeverity) throws RuleException {
         if (!executedConstraints.contains(constraint)) {
+            Severity effectiveSeverity = getEffectiveSeverity(constraint, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, constraint, new LinkedHashSet<>())) {
-                ruleVisitor.visitConstraint(constraint, severity);
+                ruleVisitor.visitConstraint(constraint, effectiveSeverity);
             } else {
-                ruleVisitor.skipConstraint(constraint, severity);
+                ruleVisitor.skipConstraint(constraint, effectiveSeverity);
             }
             executedConstraints.add(constraint);
         }
@@ -171,24 +173,27 @@ public class RuleSetExecutor {
      *     The {@link RuleSet}.
      * @param concept
      *     The concept.
-     * @param severity
-     *     The {@link Severity} to be used effectively, can be
-     *     <code>null</code>.
+     * @param groupSeverity
+     *     The {@link Severity} inherited from the parent.
+     * @param includeSeverity
+     *     The {@link Severity} as request as incluude inherited from the parent group.
      * @param executionStack
      *     The {@link Concept}s currently being executed while resolving
      *     required {@link Concept}s.
      * @throws RuleException
      *     If the concept cannot be applied.
      */
-    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity severity, Set<Concept> executionStack) throws RuleException {
+    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity groupSeverity, Severity includeSeverity, Set<Concept> executionStack)
+        throws RuleException {
         Boolean result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
-            applyProvidedConcepts(ruleSet, concept, severity, executionStack);
+            applyProvidedConcepts(ruleSet, concept, executionStack);
+            Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
-                result = ruleVisitor.visitConcept(concept, severity);
+                result = ruleVisitor.visitConcept(concept, effectiveSeverity);
             } else {
-                ruleVisitor.skipConcept(concept, severity);
+                ruleVisitor.skipConcept(concept, effectiveSeverity);
                 result = false;
             }
             executionStack.remove(concept);
@@ -209,11 +214,11 @@ public class RuleSetExecutor {
      * @throws RuleException
      *     If execution fails.
      */
-    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Severity severity, Set<Concept> stack) throws RuleException {
+    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
         Set<Concept> providedConcepts = ruleSet.getConceptBucket()
             .getProvidedConcepts(concept.getId());
         for (Concept providedConcept : providedConcepts) {
-            applyConcept(ruleSet, providedConcept, severity, stack);
+            applyConcept(ruleSet, providedConcept, null, null, stack);
         }
     }
 
@@ -225,7 +230,7 @@ public class RuleSetExecutor {
                 .match(entry.getKey());
             for (Concept requiredConcept : requiredConcepts) {
                 if (!stack.contains(requiredConcept)) {
-                    boolean conceptResult = applyConcept(ruleSet, requiredConcept, requiredConcept.getSeverity(), stack);
+                    boolean conceptResult = applyConcept(ruleSet, requiredConcept, null, null, stack);
                     Boolean optional = entry.getValue();
                     if (optional == null) {
                         optional = configuration.requiredConceptsAreOptionalByDefault();

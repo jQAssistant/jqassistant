@@ -62,6 +62,22 @@ public class PropertiesConfigBuilder {
     }
 
     /**
+     * Add an {@link Enum} property.
+     *
+     * @param prefix
+     *     The property prefix.
+     * @param property
+     *     The name of the property.
+     * @param value
+     *     The value.
+     * @return The {@link PropertiesConfigBuilder}.
+     */
+    public <E extends Enum<E>> PropertiesConfigBuilder with(String prefix, String property, E value) {
+        properties.put(getKey(prefix, property), getValue(value));
+        return this;
+    }
+
+    /**
      * Add a map property.
      *
      * @param prefix

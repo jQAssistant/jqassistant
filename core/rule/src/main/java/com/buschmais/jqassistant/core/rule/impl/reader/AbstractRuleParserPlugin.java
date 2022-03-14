@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.RuleSetBuilder;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import java.util.function.Supplier;
+
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
 
-    private RuleConfiguration ruleConfiguration;
+    private Rule rule;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRuleParserPlugin.class);
 
@@ -76,12 +77,32 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected abstract void doParse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException;
 
     @Override
-    public void configure(RuleConfiguration ruleConfiguration) {
-        this.ruleConfiguration = ruleConfiguration;
+    public void configure(Rule rule) {
+        this.rule = rule;
     }
 
-    protected RuleConfiguration getRuleConfiguration() {
-        return ruleConfiguration;
+    protected Severity getDefaultConceptSeverity() {
+        return rule.defaultConceptSeverity()
+            .orElse(Concept.DEFAULT_SEVERITY);
     }
 
+    protected Severity getDefaultConstraintSeverity() {
+        return rule.defaultConstraintSeverity()
+            .orElse(Constraint.DEFAULT_SEVERITY);
+    }
+
+    protected Severity getDefaultGroupSeverity() {
+        return rule.defaultGroupSeverity()
+            .orElse(Group.DEFAULT_SEVERITY);
+    }
+
+    protected Severity getDefaultIncludeSeverity() {
+        return rule.defaultGroupSeverity()
+            .orElse(Group.DEFAULT_INCLUDE_SEVERITY);
+    }
+
+    protected Severity getSeverity(String value, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
+        Severity severity = Severity.fromValue(value);
+        return severity != null ? severity : defaultSeveritySupplier.get();
+    }
 }

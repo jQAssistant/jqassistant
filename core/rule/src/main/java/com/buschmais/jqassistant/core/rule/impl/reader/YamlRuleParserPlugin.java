@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Parameter.Type;
@@ -111,7 +112,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Concept.ConceptBuilder builder = Concept.builder();
                 Set<String> provided = this.extractProvidedConcepts(executableRule);
                 builder.providesConcepts(provided);
-                this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder);
+                this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder, this::getDefaultConceptSeverity);
             }
         }
 
@@ -121,7 +122,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 (List<Map<String, Object>>) ofNullable(documentMap.get(CONSTRAINTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
-                this.processExecutableRule(executableRule, context, ruleConsumer, Constraint.builder());
+                this.processExecutableRule(executableRule, context, ruleConsumer, Constraint.builder(), this::getDefaultConstraintSeverity);
             }
         }
 
@@ -168,7 +169,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         String severityVal = (String) map.get(SEVERITY);
-        Severity severity = severityVal == null ? null : toSeverity(severityVal);
+        Severity severity = getSeverity(severityVal, this::getDefaultGroupSeverity);
 
         Group group = Group.builder().id(id).severity(severity)
                            .ruleSource(context.getSource())
@@ -182,15 +183,13 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     private RuleSeverityAssociation extractRuleReferencesFrom(Map<String, String> refSpec) throws RuleException {
         String refId = refSpec.get(REF_ID);
         String severityVal = refSpec.get(SEVERITY);
-        Severity severity = severityVal == null ? null : toSeverity(severityVal);
+        Severity severity = getSeverity(severityVal, this::getDefaultIncludeSeverity);
 
         return new RuleSeverityAssociation(refId, severity);
     }
 
     private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> void processExecutableRule(Map<String, Object> map,
-                                                                                                                          RuleContext context,
-                                                                                                                          RuleConsumer<T> consumer,
-                                                                                                                          B builder)
+        RuleContext context, RuleConsumer<T> consumer, B builder, Supplier<Severity> defaultSeveritySupplier)
         throws RuleException {
 
         String id = (String) map.get(ID);
@@ -211,7 +210,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Parameter> parameters = extractParameters(map);
         Verification verification = extractVerification(map);
         Report report = extractReportConfiguration(map);
-        Severity severity = toSeverity(serverityV);
+        Severity severity = getSeverity(serverityV, defaultSeveritySupplier);
 
         T rule = builder.id(id)
                         .description(description)
@@ -371,15 +370,6 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static Type toType(String value) {
         return Type.valueOf(value.toUpperCase());
-    }
-
-    private Severity toSeverity(String value) throws RuleException {
-        if (value == null) {
-            return getRuleConfiguration().getDefaultConceptSeverity();
-        }
-
-        Severity severity = Severity.fromValue(value.toLowerCase());
-        return severity != null ? severity : getRuleConfiguration().getDefaultConceptSeverity();
     }
 
     private static class RuleContext {

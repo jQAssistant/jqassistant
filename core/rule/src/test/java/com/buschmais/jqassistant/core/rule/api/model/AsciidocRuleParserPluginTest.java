@@ -3,11 +3,14 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.Collections;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -15,11 +18,15 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+@ExtendWith(MockitoExtension.class)
 class AsciidocRuleParserPluginTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     public void cypherRules() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/junit-without-assert.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/junit-without-assert.adoc", rule);
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertThat(concepts.size(), equalTo(2));
 
@@ -59,7 +66,7 @@ class AsciidocRuleParserPluginTest {
 
     @Test
     void scriptRules() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.adoc", rule);
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertThat(concepts.size(), equalTo(1));
 
@@ -80,7 +87,7 @@ class AsciidocRuleParserPluginTest {
 
     @Test
     void groups() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/group.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/group.adoc", rule);
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
         GroupsBucket groups = ruleSet.getGroupsBucket();
@@ -104,7 +111,7 @@ class AsciidocRuleParserPluginTest {
 
     @Test
     void brokenRules() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/broken-rules.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/broken-rules.adoc", rule);
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:MissingDescription"));
 
         ConceptBucket concepts = ruleSet.getConceptBucket();
@@ -118,7 +125,7 @@ class AsciidocRuleParserPluginTest {
 
     @Test
     void ruleParameters() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.adoc", rule);
         Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
         // Concept conceptWithDefaultValues =
@@ -133,14 +140,14 @@ class AsciidocRuleParserPluginTest {
 
     @Test
     void documentAsGroup() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/document-as-group.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/document-as-group.adoc", rule);
         Group documentGroup = ruleSet.getGroupsBucket().getById("documentGroup");
         assertThat(documentGroup.getId(), equalTo("documentGroup"));
     }
 
     @Test
     void definitionList() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/definition-list.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/definition-list.adoc", rule);
         Group testGroup = ruleSet.getGroupsBucket().getById("test:Default");
         assertThat(testGroup.getId(), equalTo("test:Default"));
         Concept testConcept = ruleSet.getConceptBucket().getById("test:Concept");

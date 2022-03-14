@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ import org.asciidoctor.extension.PreprocessorReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 
@@ -102,7 +104,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     protected void doParse(RuleSource source, RuleSetBuilder ruleSetBuilder) throws RuleException {
         String content;
         try (InputStream stream = source.getInputStream()) {
-            content = IOUtils.toString(stream);
+            content = IOUtils.toString(stream, UTF_8);
         } catch (IOException e) {
             throw new RuleException("Cannot parse AsciiDoc document from " + source.getId(), e);
         }
@@ -172,13 +174,13 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
             Report report = getReport(executableRuleBlock);
             if (CONCEPT.equals(executableRuleBlock.getRole())) {
                 Map<String, String> providesConcepts = getReferences(attributes, PROVIDES_CONCEPTS);
-                Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConceptSeverity());
+                Severity severity = getSeverity(attributes, this::getDefaultConceptSeverity);
                 Concept concept = Concept.builder().id(id).description(description).severity(severity).executable(executable)
                         .providesConcepts(providesConcepts.keySet()).requiresConcepts(required).parameters(parameters).verification(verification).report(report)
                         .ruleSource(ruleSource).build();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(executableRuleBlock.getRole())) {
-                Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultConstraintSeverity());
+                Severity severity = getSeverity(attributes, this::getDefaultConstraintSeverity);
                 Constraint constraint = Constraint.builder().id(id).description(description).severity(severity).executable(executable)
                         .requiresConcepts(required).parameters(parameters).verification(verification).report(report).ruleSource(ruleSource).build();
                 builder.addConstraint(constraint);
@@ -250,19 +252,20 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Severity> constraints = getGroupElements(attributes, INCLUDES_CONSTRAINTS);
         Map<String, Severity> concepts = getGroupElements(attributes, INCLUDES_CONCEPTS);
         Map<String, Severity> groups = getGroupElements(attributes, INCLUDES_GROUPS);
-        Severity severity = getSeverity(attributes, getRuleConfiguration().getDefaultGroupSeverity());
+        Severity severity = getSeverity(attributes, this::getDefaultGroupSeverity);
         Group group = Group.builder().id(groupBlock.id()).description(groupBlock.getTitle()).severity(severity).ruleSource(ruleSource).concepts(concepts)
                 .constraints(constraints).groups(groups).build();
         ruleSetBuilder.addGroup(group);
     }
 
-    private Map<String, Severity> getGroupElements(Attributes attributes, String attributeName) throws RuleException {
+    private Map<String, Severity> getGroupElements(Attributes attributes, String attributeName)
+        throws RuleException {
         Map<String, String> references = getReferences(attributes, attributeName);
         Map<String, Severity> result = new HashMap<>();
         for (Map.Entry<String, String> entry : references.entrySet()) {
             String id = entry.getKey();
             String dependencyAttribute = entry.getValue();
-            Severity severity = dependencyAttribute != null ? Severity.fromValue(dependencyAttribute.toLowerCase()) : null;
+            Severity severity = getSeverity(dependencyAttribute != null ? dependencyAttribute.toLowerCase() : null, this::getDefaultIncludeSeverity);
             result.put(id, severity);
         }
         return result;
@@ -300,18 +303,14 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
      * Extract the optional severity of a rule.
      *
      * @param attributes
-     *            The attributes of the rule.
-     * @param defaultSeverity
-     *            The default severity to use if no severity is specified.
+     *     The attributes of the rule.
+     * @param defaultSeveritySupplier
+     *     The default severity to use if no severity is specified.
      * @return The severity.
      */
-    private Severity getSeverity(Attributes attributes, Severity defaultSeverity) throws RuleException {
-        String severity = attributes.getString(SEVERITY);
-        if (severity == null) {
-            return defaultSeverity;
-        }
-        Severity value = Severity.fromValue(severity.toLowerCase());
-        return value != null ? value : defaultSeverity;
+    private Severity getSeverity(Attributes attributes, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
+        String severityAttribute = attributes.getString(SEVERITY);
+        return getSeverity(severityAttribute, defaultSeveritySupplier);
     }
 
     /**

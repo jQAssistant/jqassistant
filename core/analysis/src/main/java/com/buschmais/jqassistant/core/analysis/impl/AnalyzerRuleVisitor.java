@@ -61,8 +61,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         Result.Status status;
         if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
             analyzerContext.getLogger()
-                .info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity()
-                    .getInfo(effectiveSeverity) + "'" + ".");
+                .info("Applying concept '" + concept.getId() + "' with severity: '" + effectiveSeverity.getInfo(concept.getSeverity()) + "'" + ".");
             reportPlugin.beginConcept(concept);
             Result<Concept> result = execute(concept, effectiveSeverity);
             reportPlugin.setResult(result);
@@ -95,8 +94,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         analyzerContext.getLogger()
-            .info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity()
-                .getInfo(effectiveSeverity) + "'.");
+            .info("Validating constraint '" + constraint.getId() + "' with severity: '" + effectiveSeverity.getInfo(constraint.getSeverity()) + "'.");
         reportPlugin.beginConstraint(constraint);
         reportPlugin.setResult(execute(constraint, effectiveSeverity));
         reportPlugin.endConstraint();

@@ -1,8 +1,11 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -12,17 +15,21 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies reading dependency information by rule set readers
  */
+@ExtendWith(MockitoExtension.class)
 class RuleDependencyReaderTest {
+
+    @Mock
+    private Rule rule;
 
     @Test
     void asciidoc() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.adoc", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.adoc", rule);
         verifyRules(ruleSet);
     }
 
     @Test
     void xml() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.xml", RuleConfiguration.DEFAULT);
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rule-dependencies.xml", rule);
         verifyRules(ruleSet);
     }
 

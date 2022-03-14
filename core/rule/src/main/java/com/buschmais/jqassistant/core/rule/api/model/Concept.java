@@ -6,6 +6,8 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Singular;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
+
 /**
  * Defines a concept which can be applied.
  *
@@ -13,6 +15,8 @@ import lombok.Singular;
  */
 @Getter
 public class Concept extends AbstractExecutableRule {
+
+    public static Severity DEFAULT_SEVERITY = MINOR;
 
     @Singular
     private Set<String> providesConcepts = new HashSet<>();
