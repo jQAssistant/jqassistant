@@ -119,6 +119,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
         configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, warnOnSeverity);
         configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, failOnSeverity);
+        configurationBuilder.with(Report.PREFIX, Report.CREATE_ARCHIVE, attachReportArchive);
     }
 
     @Override
@@ -145,7 +146,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
-        if (attachReportArchive) {
+        if (analyze.report()
+            .createArchive()) {
             attachReportArchive(rootModule, reportContext);
         }
         ReportHelper reportHelper = new ReportHelper(configuration.analyze()
