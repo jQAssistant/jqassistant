@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -512,23 +512,23 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return The {@link Configuration}.
      */
     private Configuration getConfiguration() throws MojoExecutionException {
-        PropertiesConfigBuilder propertiesConfigBuilder = new PropertiesConfigBuilder("MojoConfigSource", 110);
-        addConfigurationProperties(propertiesConfigBuilder);
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
+        addConfigurationProperties(configurationBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
-        return configurationProvider.getConfiguration(executionRoot, empty(), propertiesConfigBuilder.build());
+        return configurationProvider.getConfiguration(executionRoot, empty(), configurationBuilder.build());
     }
 
     /**
      * Method to be overridden by sub-classes to add configuration properties.
      *
-     * @param propertiesConfigBuilder
-     *     The {@link PropertiesConfigBuilder}.
+     * @param configurationBuilder
+     *     The {@link ConfigurationBuilder}.
      */
-    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+    protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         if (rule != null) {
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
-            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
+            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
         }
     }
 

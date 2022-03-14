@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
@@ -79,9 +79,9 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
-        super.addConfigurationProperties(propertiesConfigBuilder);
-        propertiesConfigBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, continueOnError)
+    protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+        super.addConfigurationProperties(configurationBuilder);
+        configurationBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, continueOnError)
             .with(Scan.PREFIX, Scan.RESET, reset)
             .with(Scan.PREFIX, Scan.PROPERTIES, scanProperties);
         // Convert scan includes
@@ -104,8 +104,8 @@ public class ScanMojo extends AbstractModuleMojo {
                     "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
             }
         }
-        propertiesConfigBuilder.with(Include.PREFIX, Include.FILES, files);
-        propertiesConfigBuilder.with(Include.PREFIX, Include.URLS, urls);
+        configurationBuilder.with(Include.PREFIX, Include.FILES, files);
+        configurationBuilder.with(Include.PREFIX, Include.URLS, urls);
     }
 
     @Override

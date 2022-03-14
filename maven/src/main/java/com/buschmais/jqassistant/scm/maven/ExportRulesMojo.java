@@ -41,7 +41,7 @@ public class ExportRulesMojo extends AbstractProjectMojo {
         Rule rule = configuration.analyze()
             .rule();
         final RuleSet ruleSet = readRules(rootModule, rule);
-        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter();
+        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(rule);
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {

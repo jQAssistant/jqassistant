@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -108,17 +108,17 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
-        super.addConfigurationProperties(propertiesConfigBuilder);
-        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
-        propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
+    protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+        super.addConfigurationProperties(configurationBuilder);
+        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
+        configurationBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
-        propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
-        propertiesConfigBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, warnOnSeverity);
-        propertiesConfigBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, failOnSeverity);
+        configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
+        configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, warnOnSeverity);
+        configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, failOnSeverity);
     }
 
     @Override
