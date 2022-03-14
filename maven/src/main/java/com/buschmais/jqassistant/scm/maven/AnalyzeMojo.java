@@ -9,6 +9,7 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -23,7 +24,6 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -65,13 +65,13 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      * The severity threshold to warn on rule violations.
      */
     @Parameter(property = "jqassistant.warnOnSeverity")
-    protected Severity warnOnSeverity = RuleConfiguration.DEFAULT.getDefaultConceptSeverity();
+    protected Severity warnOnSeverity;
 
     /**
      * The severity threshold to fail on rule violations, i.e. break the build.
      */
     @Parameter(property = "jqassistant.failOnSeverity")
-    protected Severity failOnSeverity = RuleConfiguration.DEFAULT.getDefaultConstraintSeverity();
+    protected Severity failOnSeverity;
 
     /**
      * Defines the set of reports which shall be created by default. If empty all
@@ -108,7 +108,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) {
+    protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+        super.addConfigurationProperties(propertiesConfigBuilder);
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
         propertiesConfigBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
@@ -116,20 +117,22 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
         propertiesConfigBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
+        propertiesConfigBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, warnOnSeverity);
+        propertiesConfigBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, failOnSeverity);
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        Analyze analyze = getConfiguration().analyze();
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration)
+        throws MojoExecutionException, MojoFailureException {
+        Analyze analyze = configuration.analyze();
 
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
 
-        RuleSet ruleSet = readRules(rootModule);
+        RuleSet ruleSet = readRules(rootModule, analyze.rule());
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(store, ProjectResolver.getOutputDirectory(rootModule));
-        Severity effectiveFailOnSeverity = failOnSeverity;
         Map<String, ReportPlugin> reportPlugins = getPluginRepository().getAnalyzerPluginRepository()
             .getReportPlugins(analyze.report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
@@ -145,10 +148,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         if (attachReportArchive) {
             attachReportArchive(rootModule, reportContext);
         }
-        ReportHelper reportHelper = new ReportHelper(logger);
+        ReportHelper reportHelper = new ReportHelper(configuration.analyze()
+            .report(), logger);
         store.beginTransaction();
         try {
-            verifyAnalysisResults(inMemoryReportPlugin, reportHelper, effectiveFailOnSeverity);
+            verifyAnalysisResults(inMemoryReportPlugin, reportHelper);
         } finally {
             store.commitTransaction();
         }
@@ -170,10 +174,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
     }
 
-    private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper, Severity effectiveFailOnSeverity)
+    private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper)
             throws MojoFailureException {
-        int conceptViolations = reportHelper.verifyConceptResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
-        int constraintViolations = reportHelper.verifyConstraintResults(warnOnSeverity, effectiveFailOnSeverity, inMemoryReportWriter);
+        int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
+        int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
 
         boolean hasConceptViolations = conceptViolations > 0;
         boolean hasConstraintViolations = constraintViolations > 0;

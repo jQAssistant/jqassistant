@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.IOException;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
@@ -29,7 +30,7 @@ public class ServerMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
         server.start();

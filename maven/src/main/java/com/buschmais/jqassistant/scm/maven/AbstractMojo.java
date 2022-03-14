@@ -9,10 +9,9 @@ import java.util.*;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -21,6 +20,7 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -37,7 +37,6 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import static com.buschmais.jqassistant.core.rule.api.reader.RuleConfiguration.DEFAULT;
 import static com.buschmais.jqassistant.core.shared.option.OptionHelper.coalesce;
 import static java.util.Optional.empty;
 
@@ -265,7 +264,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             if (skip) {
                 getLog().info("Skipping execution.");
             } else {
-                execute(rootModule, executedModules);
+                Configuration configuration = getConfiguration();
+                execute(rootModule, executedModules, configuration);
             }
             executedModules.add(currentProject);
         }
@@ -275,15 +275,17 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Execute the mojo.
      *
      * @param rootModule
-     *            The root module of the project.
+     *     The root module of the project.
      * @param executedModules
-     *            The already executed modules of the project.
+     *     The already executed modules of the project.
+     * @param configuration
+     *     The {@link Configuration}.
      * @throws MojoExecutionException
-     *             If a general execution problem occurs.
+     *     If a general execution problem occurs.
      * @throws MojoFailureException
-     *             If a failure occurs.
+     *     If a failure occurs.
      */
-    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException;
+    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration) throws MojoExecutionException, MojoFailureException;
 
     /**
      * Determine if the store shall be reset before execution of the mofo.
@@ -306,7 +308,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
-    protected final RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
+    protected final RuleSet readRules(MavenProject rootModule, Rule rule) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         if (rulesUrl != null) {
             getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
@@ -324,7 +326,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = getPluginRepository().getRulePluginRepository().getRuleParserPlugins(getRuleConfiguration());
+            ruleParserPlugins = getPluginRepository().getRulePluginRepository().getRuleParserPlugins(rule);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);
         }
@@ -334,25 +336,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
         }
-    }
-
-    protected final RuleConfiguration getRuleConfiguration() {
-        Severity defaultConceptSeverity = DEFAULT.getDefaultConceptSeverity();
-        Severity defaultConstraintSeverity = DEFAULT.getDefaultConstraintSeverity();
-        Severity defaultGroupSeverity = DEFAULT.getDefaultGroupSeverity();
-
-        if (rule != null) {
-            defaultConceptSeverity = rule.getDefaultConceptSeverity();
-            defaultConstraintSeverity = rule.getDefaultConstraintSeverity();
-            defaultGroupSeverity = rule.getDefaultGroupSeverity();
-        }
-
-        Severity effectiveConceptSeverity = defaultConceptSeverity != null ? defaultConceptSeverity : DEFAULT.getDefaultConceptSeverity();
-        Severity effectiveConstraintSeverity = defaultConstraintSeverity != null ? defaultConstraintSeverity : DEFAULT.getDefaultConstraintSeverity();
-        Severity effectiveGroupSeverity = defaultGroupSeverity != null ? defaultGroupSeverity : DEFAULT.getDefaultGroupSeverity();
-
-        return RuleConfiguration.builder().defaultConceptSeverity(effectiveConceptSeverity).defaultConstraintSeverity(effectiveConstraintSeverity)
-                .defaultGroupSeverity(effectiveGroupSeverity).build();
     }
 
     /**
@@ -395,26 +378,30 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Execute an operation with the store.
-     *
+     * <p>
      * This method enforces thread safety based on the store factory.
      *
      * @param storeOperation
-     *            The store.
+     *     The store.
      * @param rootModule
-     *            The root module to use for store initialization.
+     *     The root module to use for store initialization.
+     * @param executedModules
+     *     The set of already executed modules.
+     * @param configuration
+     *     The {@link Configuration}.
      * @throws MojoExecutionException
-     *             On execution errors.
+     *     On execution errors.
      * @throws MojoFailureException
-     *             On execution failures.
+     *     On execution failures.
      */
-    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules)
+    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
             throws MojoExecutionException, MojoFailureException {
         Store store = getStore(rootModule);
         if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
             store.reset();
         }
         try {
-            storeOperation.run(rootModule, store);
+            storeOperation.run(rootModule, store, configuration);
         } finally {
             releaseStore(store);
         }
@@ -524,7 +511,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return The {@link Configuration}.
      */
-    protected Configuration getConfiguration() throws MojoExecutionException {
+    private Configuration getConfiguration() throws MojoExecutionException {
         PropertiesConfigBuilder propertiesConfigBuilder = new PropertiesConfigBuilder("MojoConfigSource", 110);
         addConfigurationProperties(propertiesConfigBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
@@ -538,6 +525,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     The {@link PropertiesConfigBuilder}.
      */
     protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+        if (rule != null) {
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
+            propertiesConfigBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
+        }
     }
 
     /**
@@ -556,16 +548,18 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         /**
          * Execute the operation-
          *
-         * @param store
-         *            The store.
          * @param rootModule
-         *            The root module.
+         *     The root module.
+         * @param store
+         *     The store.
+         * @param configuration
+         *     The {@link Configuration}.
          * @throws MojoExecutionException
-         *             On execution errors.
+         *     On execution errors.
          * @throws MojoFailureException
-         *             On execution failures.
+         *     On execution failures.
          */
-        void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException;
+        void run(MavenProject rootModule, Store store, Configuration configuration) throws MojoExecutionException, MojoFailureException;
     }
 
 }

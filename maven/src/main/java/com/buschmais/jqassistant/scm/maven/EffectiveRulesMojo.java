@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
@@ -35,13 +37,16 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration)
+        throws MojoExecutionException, MojoFailureException {
         getLog().info("Effective rules for '" + rootModule.getName() + "'.");
-        RuleSet ruleSet = readRules(rootModule);
+        Analyze analyze = configuration.analyze();
+        RuleSet ruleSet = readRules(rootModule, analyze
+            .rule());
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
-            ruleHelper.printRuleSet(ruleSet, ruleSelection, getConfiguration().analyze().rule());
+            ruleHelper.printRuleSet(ruleSet, ruleSelection, analyze.rule());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot print effective rules.", e);
         }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,7 +18,8 @@ import org.apache.maven.project.MavenProject;
 public abstract class AbstractProjectMojo extends AbstractMojo {
 
     @Override
-    public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules) throws MojoExecutionException,
+    public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules, Configuration configuration)
+        throws MojoExecutionException,
             MojoFailureException {
         Map<MavenProject, List<MavenProject>> projects =
                 ProjectResolver.getProjects(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
@@ -27,12 +29,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
                 "Verifying if '" + currentProject + "' is last module for project '" + rootModule + "': " + isLastModuleInProject
                         + (" (project modules='" + projectModules + "')."));
         if (isLastModuleInProject) {
-            execute(new StoreOperation() {
-                @Override
-                public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                    aggregate(rootModule, projectModules, store);
-                }
-            }, rootModule, executedModules);
+            execute((rootModule1, store, configuration1) -> aggregate(rootModule1, projectModules, store, configuration), rootModule, executedModules,
+                configuration);
         }
     }
 
@@ -78,7 +76,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException If execution fails.
      * @throws org.apache.maven.plugin.MojoFailureException   If execution fails.
      */
-    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store) throws MojoExecutionException,
+    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store, Configuration configuration) throws MojoExecutionException,
             MojoFailureException;
 
 }

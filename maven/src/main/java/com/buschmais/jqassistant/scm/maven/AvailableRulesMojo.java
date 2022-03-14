@@ -2,7 +2,9 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.util.List;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -35,12 +37,15 @@ public class AvailableRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration)
+        throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + rootModule.getName() + "'.");
-        RuleSet ruleSet = readRules(rootModule);
+        Rule rule = configuration.analyze()
+            .rule();
+        RuleSet ruleSet = readRules(rootModule, rule);
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
-            ruleHelper.printRuleSet(ruleSet, getConfiguration().analyze().rule());
+            ruleHelper.printRuleSet(ruleSet, rule);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot print available rules.", e);
         }

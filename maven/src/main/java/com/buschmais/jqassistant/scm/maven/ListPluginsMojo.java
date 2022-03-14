@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -28,7 +29,7 @@ public class ListPluginsMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
         getLog().info("Available plugins for '" + rootModule.getName() + "'.");
 
         List<PluginInfo> sortedInfos = getPluginRepository().getPluginOverview()

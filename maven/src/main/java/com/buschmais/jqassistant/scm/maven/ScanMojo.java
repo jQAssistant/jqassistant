@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.PropertiesConfigBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -79,6 +80,7 @@ public class ScanMojo extends AbstractModuleMojo {
 
     @Override
     protected void addConfigurationProperties(PropertiesConfigBuilder propertiesConfigBuilder) throws MojoExecutionException {
+        super.addConfigurationProperties(propertiesConfigBuilder);
         propertiesConfigBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, continueOnError)
             .with(Scan.PREFIX, Scan.RESET, reset)
             .with(Scan.PREFIX, Scan.PROPERTIES, scanProperties);
@@ -107,10 +109,10 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException {
+    public void execute(MavenProject mavenProject, Store store, Configuration configuration) throws MojoExecutionException {
         ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
-        Scanner scanner = new ScannerImpl(getConfiguration().scan(), scannerContext, scannerPluginRepository);
+        Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest()
             .getRepositorySession()
