@@ -44,14 +44,13 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
     private static final String CMDLINE_OPTION_WARN_ON_SEVERITY = "warnOnSeverity";
-    private static final String CMDLINE_OPTION_RULEPARAMETERS = "ruleParameters";
-    private static final String CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS = "executeAppliedConcepts";
+    private static final String CMDLINE_OPTION_RULE_PARAMETERS = "ruleParameters";
+    private static final String CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS = "executeAppliedConcepts";
     private static final String CMDLINE_OPTION_CREATE_REPORT_ARCHIVE = "createReportArchive";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private File reportDirectory;
-    private boolean createReportArchive;
 
     @Override
     protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
@@ -78,7 +77,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
         }
-        if (createReportArchive) {
+        if (analyze.report()
+            .createArchive()) {
             createReportArchive(reportContext);
         }
         store.beginTransaction();
@@ -141,25 +141,25 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     public void withOptions(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         super.withOptions(options, configurationBuilder);
-        String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULEPARAMETERS, null);
+        String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULE_PARAMETERS, null);
         if (ruleParametersFileName != null) {
             loadRuleParameters(ruleParametersFileName, configurationBuilder);
         }
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         reportDirectory = new File(reportDirectoryValue);
         reportDirectory.mkdirs();
-        createReportArchive = options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE);
-        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
+        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
         configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
         configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
         configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
+        configurationBuilder.with(Report.PREFIX, Report.CREATE_ARCHIVE, options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
     }
 
     @Override
     public void addTaskOptions(final List<Option> options) {
         super.addTaskOptions(options);
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULEPARAMETERS).withDescription("The name of a properties file providing rule parameters.")
-                .hasArgs().create(CMDLINE_OPTION_RULEPARAMETERS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULE_PARAMETERS).withDescription("The name of a properties file providing rule parameters.")
+                .hasArgs().create(CMDLINE_OPTION_RULE_PARAMETERS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
                 .create(CMDLINE_OPTION_REPORTDIR));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
@@ -167,8 +167,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_ON_SEVERITY).withDescription("The severity threshold to warn on rule violations.").hasArgs()
                 .create(CMDLINE_OPTION_WARN_ON_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS)
-                .withDescription("If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS)
+                .withDescription("If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE)
                 .withDescription("If set a ZIP archive named 'jqassistant-report.zip' is created containing all generated reports.")
                 .create(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
