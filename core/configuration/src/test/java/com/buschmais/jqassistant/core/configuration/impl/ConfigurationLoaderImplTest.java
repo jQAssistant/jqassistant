@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import org.junit.jupiter.api.Test;
 
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -46,7 +47,7 @@ class ConfigurationLoaderImplTest {
 
         Store store = configuration.store();
         assertThat(store).isNotNull();
-        assertThat(store.uri()).isEqualTo(new URI("bolt://localhost:7687"));
+        assertThat(store.uri()).isEqualTo(of(new URI("bolt://localhost:7687")));
     }
 
     @Test
