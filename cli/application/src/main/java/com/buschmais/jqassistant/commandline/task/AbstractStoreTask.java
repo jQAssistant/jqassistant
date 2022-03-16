@@ -12,9 +12,8 @@ import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -40,11 +39,9 @@ public abstract class AbstractStoreTask extends AbstractTask {
     @Deprecated
     protected static final String CMDLINE_OPTION_STORE_DIRECTORY = "storeDirectory";
 
-    protected StoreConfiguration storeConfiguration;
-
     @Override
     public void run(Configuration configuration) throws CliExecutionException {
-        final Store store = getStore();
+        final Store store = getStore(configuration);
         try {
             store.start();
             executeTask(configuration, store);
@@ -55,74 +52,91 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     @Override
     public final void withStandardOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
-        StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
         String storeUri = getOptionValue(options, CMDLINE_OPTION_STORE_URI);
         String storeDirectory = getOptionValue(options, CMDLINE_OPTION_S);
         if (storeUri != null && storeDirectory != null) {
             throw new CliConfigurationException("Expecting either parameter '" + CMDLINE_OPTION_STORE_DIRECTORY + "' or '" + CMDLINE_OPTION_STORE_URI + "'.");
         }
         if (storeUri != null) {
+            URI uri;
             try {
-                builder.uri(new URI(storeUri));
+                uri = new URI(storeUri);
             } catch (URISyntaxException e) {
                 throw new CliConfigurationException("Cannot parse URI " + storeUri, e);
             }
-            builder.username(getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
-            builder.password(getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
-            builder.encryption(getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
-            builder.trustStrategy(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
-            builder.trustCertificate(getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, uri.toString());
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE,
+                getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         } else {
             String directoryName = OptionHelper.coalesce(storeDirectory, DEFAULT_STORE_DIRECTORY);
             File directory = new File(directoryName);
-            directory.getParentFile().mkdirs();
-            builder.uri(directory.toURI());
+            directory.getParentFile()
+                .mkdirs();
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI()
+                    .toString());
         }
-        builder.embedded(getEmbeddedNeo4jConfiguration(options));
-        this.storeConfiguration = builder.build();
-    }
-
-    private EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration(CommandLine options) {
-        EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
-        builder.connectorEnabled(isConnectorRequired());
-
-        String embeddedListenAddress = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS);
-        builder.listenAddress(OptionHelper.coalesce(embeddedListenAddress, EmbeddedNeo4jConfiguration.DEFAULT_LISTEN_ADDRESS));
-
-        String httpPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT);
-        builder.httpPort(Integer.valueOf(OptionHelper.coalesce(httpPort, Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_HTTP_PORT))));
-
-        String boltPort = getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT);
-        builder.boltPort(Integer.valueOf(OptionHelper.coalesce(boltPort, Integer.toString(EmbeddedNeo4jConfiguration.DEFAULT_BOLT_PORT))));
-
-        return builder.build();
+        configurationBuilder.with(Embedded.PREFIX, Embedded.CONNECTORY_ENABLED, isConnectorRequired());
+        configurationBuilder.with(Embedded.PREFIX, Embedded.LISTEN_ADDRESS, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
+        configurationBuilder.with(Embedded.PREFIX, Embedded.HTTP_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
+        configurationBuilder.with(Embedded.PREFIX, Embedded.BOLT_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
     }
 
     @Override
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt(CMDLINE_OPTION_STORE_DIRECTORY)
-                .withDescription("The location of the Neo4j database. Deprecated, use '" + CMDLINE_OPTION_STORE_URI + "' instead.").hasArgs()
-                .create(CMDLINE_OPTION_S));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S)
+            .withLongOpt(CMDLINE_OPTION_STORE_DIRECTORY)
+            .withDescription("The location of the Neo4j database. Deprecated, use '" + CMDLINE_OPTION_STORE_URI + "' instead.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_S));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_URI)
-                .withDescription("The URI of the Neo4j database, e.g. 'file:jqassistant/store' or 'bolt://localhost:7687'.").hasArgs()
-                .create(CMDLINE_OPTION_STORE_URI));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_USERNAME).withDescription("The user name for bolt connections.").hasArgs()
-                .create(CMDLINE_OPTION_STORE_USERNAME));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD).withDescription("The password for bolt connections.").hasArgs()
-                .create(CMDLINE_OPTION_STORE_PASSWORD));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_ENCRYPTION).withDescription("The encryption level for bolt connections, may be true or false (default).").hasArgs()
+            .withDescription("The URI of the Neo4j database, e.g. 'file:jqassistant/store' or 'bolt://localhost:7687'.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_STORE_URI));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_USERNAME)
+            .withDescription("The user name for bolt connections.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_STORE_USERNAME));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_PASSWORD)
+            .withDescription("The password for bolt connections.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_STORE_PASSWORD));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_ENCRYPTION)
+            .withDescription("The encryption level for bolt connections, may be true or false (default).")
+            .hasArgs()
             .create(CMDLINE_OPTION_STORE_ENCRYPTION));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_STRATEGY).withDescription("The trust strategy for bolt connections, may be trustAllCertificates, trustCustomCaSignedCertificates or trustSystemCaSignedCertificates.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_STRATEGY)
+            .withDescription(
+                "The trust strategy for bolt connections, may be trustAllCertificates, trustCustomCaSignedCertificates or trustSystemCaSignedCertificates.")
+            .hasArgs()
             .create(CMDLINE_OPTION_STORE_TRUST_STRATEGY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_CERITFICATE).withDescription("The file containing the custom CA certificate for trust strategy trustCustomCaSignedCertificates.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_STORE_TRUST_CERITFICATE)
+            .withDescription("The file containing the custom CA certificate for trust strategy trustCustomCaSignedCertificates.")
+            .hasArgs()
             .create(CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS).withDescription("The listen address of the embedded server.").hasArgs()
-                .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_HTTP_PORT).withDescription("The HTTP port of the embedded server.").hasArgs()
-                .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT).withDescription("The Bolt tport of the embedded server.").hasArgs()
-                .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS)
+            .withDescription("The listen address of the embedded server.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_HTTP_PORT)
+            .withDescription("The HTTP port of the embedded server.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EMBEDDED_BOLT_PORT)
+            .withDescription("The Bolt tport of the embedded server.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
         addTaskOptions(options);
         return options;
     }
@@ -132,8 +146,8 @@ public abstract class AbstractStoreTask extends AbstractTask {
      *
      * @return The store.
      */
-    protected Store getStore() {
-        return StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
+    protected Store getStore(Configuration configuration) {
+        return StoreFactory.getStore(configuration.store(), pluginRepository.getStorePluginRepository());
     }
 
     protected abstract void addTaskOptions(List<Option> options);

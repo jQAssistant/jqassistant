@@ -8,11 +8,13 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.io.FileUtils;
@@ -198,8 +200,12 @@ public abstract class AbstractCLIIT {
      * @return The {@link Store}.
      */
     protected Store getStore(File directory) {
-        StoreConfiguration storeConfiguration = StoreConfiguration.builder().uri(directory.toURI()).build();
-        return StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI().toString());
+        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl(new File("target"));
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
+        return StoreFactory.getStore(configuration.store(), pluginRepository.getStorePluginRepository());
     }
 
 
