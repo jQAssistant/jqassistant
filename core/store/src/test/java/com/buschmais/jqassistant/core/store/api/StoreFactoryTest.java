@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
@@ -50,7 +51,8 @@ class StoreFactoryTest {
     }
 
     private void verify(String uri, Class<? extends Store> expectedStoreType) throws URISyntaxException {
-        doReturn(new URI(uri)).when(configuration).uri();
+        doReturn(of(new URI(uri))).when(configuration)
+            .uri();
         Store store = StoreFactory.getStore(configuration, storePluginRepository);
         assertThat(store).isInstanceOf(expectedStoreType);
     }
