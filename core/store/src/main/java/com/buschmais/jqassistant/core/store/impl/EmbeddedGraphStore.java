@@ -5,11 +5,10 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
@@ -31,7 +30,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private EmbeddedNeo4jServer server;
 
-    private EmbeddedNeo4jConfiguration embeddedNeo4jConfiguration;
+    private Embedded embedded;
 
     /**
      * Constructor.
@@ -39,7 +38,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
      * @param configuration
      *     The configuration.
      */
-    public EmbeddedGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
+    public EmbeddedGraphStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
         super(configuration, storePluginRepository);
         this.serverFactory = getEmbeddedNeo4jServerFactory();
     }
@@ -49,12 +48,12 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOUnit configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration) {
-        this.embeddedNeo4jConfiguration = storeConfiguration.getEmbedded();
+    protected XOUnit configure(XOUnit.XOUnitBuilder builder, com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration) {
+        this.embedded = storeConfiguration.embedded();
         // Determine store specific default properties
-        Properties properties = serverFactory.getProperties(this.embeddedNeo4jConfiguration);
+        Properties properties = serverFactory.getProperties(this.embedded);
         // Add/overwrite with user properties
-        properties.putAll(storeConfiguration.getProperties());
+        properties.putAll(storeConfiguration.properties());
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
         return builder.build();
@@ -65,7 +64,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         this.server = serverFactory.getServer();
         LOGGER.info("Initializing embedded Neo4j server " + server.getVersion());
         EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
-        server.initialize(embeddedDatastore, embeddedNeo4jConfiguration, storePluginRepository.getClassLoader(), storePluginRepository.getProcedureTypes(),
+        server.initialize(embeddedDatastore, embedded, storePluginRepository.getClassLoader(), storePluginRepository.getProcedureTypes(),
             storePluginRepository.getFunctionTypes());
     }
 

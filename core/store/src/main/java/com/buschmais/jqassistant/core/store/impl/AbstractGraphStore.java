@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
@@ -35,7 +34,7 @@ public abstract class AbstractGraphStore implements Store {
 
     private Map<String, Cache<?, ? extends Descriptor>> caches = new HashMap<>();
 
-    protected final StoreConfiguration storeConfiguration;
+    protected final com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
 
     protected final StorePluginRepository storePluginRepository;
 
@@ -43,15 +42,15 @@ public abstract class AbstractGraphStore implements Store {
     private XOManager xoManager;
     private int created;
 
-    protected AbstractGraphStore(StoreConfiguration configuration, StorePluginRepository storePluginRepository) {
-        this.storeConfiguration = configuration;
+    protected AbstractGraphStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+        this.configuration = configuration;
         this.storePluginRepository = storePluginRepository;
     }
 
     @Override
     public void start() {
         XOUnit.XOUnitBuilder builder = XOUnit.builder()
-            .uri(storeConfiguration.getUri())
+            .uri(configuration.uri())
             .classLoader(ofNullable(storePluginRepository.getClassLoader()))
             .types(storePluginRepository.getDescriptorTypes())
             .validationMode(ValidationMode.NONE)
@@ -59,7 +58,7 @@ public abstract class AbstractGraphStore implements Store {
             .mappingConfiguration(XOUnit.MappingConfiguration.builder()
                 .strictValidation(true)
                 .build());
-        configure(builder, storeConfiguration);
+        configure(builder, configuration);
         xoManagerFactory = XO.createXOManagerFactory(builder.build());
         initialize(xoManagerFactory);
         xoManager = xoManagerFactory.createXOManager();
@@ -240,7 +239,7 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * Configure store specific options.
      */
-    protected abstract XOUnit configure(XOUnit.XOUnitBuilder builder, StoreConfiguration storeConfiguration);
+    protected abstract XOUnit configure(XOUnit.XOUnitBuilder builder, com.buschmais.jqassistant.core.store.api.configuration.Store configuration);
 
     /**
      * Initialize the store.

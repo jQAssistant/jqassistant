@@ -47,6 +47,38 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Add a {@link String} property.
+     *
+     * @param prefix
+     *     The property prefix.
+     * @param property
+     *     The name of the property.
+     * @param value
+     *     The value.
+     * @return The {@link ConfigurationBuilder}.
+     */
+    public ConfigurationBuilder with(String prefix, String property, String value) {
+        properties.put(getKey(prefix, property), getValue(value));
+        return this;
+    }
+
+    /**
+     * Add a {@link Integer} property.
+     *
+     * @param prefix
+     *     The property prefix.
+     * @param property
+     *     The name of the property.
+     * @param value
+     *     The value.
+     * @return The {@link ConfigurationBuilder}.
+     */
+    public ConfigurationBuilder with(String prefix, String property, Integer value) {
+        properties.put(getKey(prefix, property), getValue(value));
+        return this;
+    }
+
+    /**
      * Add a boolean property.
      *
      * @param prefix

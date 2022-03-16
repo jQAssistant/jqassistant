@@ -5,6 +5,7 @@ import java.util.List;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
+import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import io.smallrye.config.ConfigMapping;
 
@@ -22,6 +23,13 @@ public interface Configuration {
      * @return The {@link List} of plugins.
      */
     List<Plugin> plugins();
+
+    /**
+     * The {@link Store} configuration.
+     *
+     * @return The {@link Store} configuration.
+     */
+    Store store();
 
     /**
      * The {@link Scan} configuration.

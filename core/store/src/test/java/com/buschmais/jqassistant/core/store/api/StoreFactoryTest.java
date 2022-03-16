@@ -13,9 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class StoreFactoryTest {
+
+    @Mock
+    private com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
 
     @Mock
     private StorePluginRepository storePluginRepository;
@@ -46,8 +50,8 @@ class StoreFactoryTest {
     }
 
     private void verify(String uri, Class<? extends Store> expectedStoreType) throws URISyntaxException {
-        StoreConfiguration storeConfiguration = StoreConfiguration.builder().uri(new URI(uri)).build();
-        Store store = StoreFactory.getStore(storeConfiguration, storePluginRepository);
+        doReturn(new URI(uri)).when(configuration).uri();
+        Store store = StoreFactory.getStore(configuration, storePluginRepository);
         assertThat(store).isInstanceOf(expectedStoreType);
     }
 

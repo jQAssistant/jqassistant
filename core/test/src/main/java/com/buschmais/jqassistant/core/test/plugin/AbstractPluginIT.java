@@ -42,9 +42,7 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -72,6 +70,8 @@ public abstract class AbstractPluginIT {
 
     private File outputDirectory;
 
+    private TestStore testStore;
+
     protected Configuration configuration;
     protected Store store;
     protected Analyzer analyzer;
@@ -96,16 +96,57 @@ public abstract class AbstractPluginIT {
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws Exception {
-        this.configuration = createConfiguration(createPropertiesConfigBuilder());
-        initializeRuleSet();
+        Method method = testInfo.getTestMethod()
+            .orElseThrow(() -> new AssertionError("Unable to get the test method for test '" + testInfo.getDisplayName() + "'."));
+        testStore = method.getAnnotation(TestStore.class);
+        this.configuration = createConfiguration(createConfigurationBuilder());
         outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
-        startStore(testInfo);
+        startStore(this.configuration.store(), testStore);
+        initializeRuleSet();
         initializeAnalyzer();
     }
 
-    protected ConfigurationBuilder createPropertiesConfigBuilder() {
-        return new ConfigurationBuilder("ITConfigSource", 110);
+    protected ConfigurationBuilder createConfigurationBuilder() {
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
+        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
+        switch (type) {
+        case FILE:
+            String fileName = "target/jqassistant/test-store";
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new File(fileName).toURI()
+                    .toString());
+            break;
+        case MEMORY:
+            try {
+                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("memory:///").toString());
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Cannot create store URI", e);
+            }
+            break;
+        case REMOTE:
+            try {
+                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("bolt://localhost:7687").toString());
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Cannot create store URI", e);
+            }
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, "NONE");
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, "neo4j");
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, "jqassistant");
+            Properties properties = new Properties();
+            properties.put("neo4j.remote.statement.log.level", "info");
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, properties);
+            break;
+        default:
+            throw new AssertionError("Test store type not supported: " + type);
+        }
+        return configurationBuilder;
     }
 
     /**
@@ -148,7 +189,7 @@ public abstract class AbstractPluginIT {
 
     private void initializeAnalyzer() {
         this.reportContext = new ReportContextImpl(store, outputDirectory);
-        this.reportPlugin = getReportPlugin();
+        this.reportPlugin = getReportPlugin(configuration.analyze().report());
         this.analyzer = getAnalyzer(configuration.analyze());
     }
 
@@ -177,53 +218,12 @@ public abstract class AbstractPluginIT {
     /**
      * Initializes and resets the store.
      */
-    private void startStore(TestInfo testInfo) throws URISyntaxException {
-        Method method = testInfo.getTestMethod()
-            .orElseThrow(() -> new AssertionError("Unabled to get the test method for test '" + testInfo.getDisplayName() + "'."));
-
-        TestStore testStore = method.getAnnotation(TestStore.class);
-        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
-        StoreConfiguration.StoreConfigurationBuilder storeConfigurationBuilder = StoreConfiguration.builder();
-        switch (type) {
-        case FILE:
-            String fileName = "target/jqassistant/test-store";
-            storeConfigurationBuilder.uri(new File(fileName).toURI());
-            storeConfigurationBuilder.embedded(getEmbeddedNeo4jConfiguration());
-            break;
-        case MEMORY:
-            storeConfigurationBuilder.uri(new URI("memory:///"));
-            storeConfigurationBuilder.embedded(getEmbeddedNeo4jConfiguration());
-            break;
-        case REMOTE:
-            storeConfigurationBuilder.uri(new URI("bolt://localhost:7687"));
-            storeConfigurationBuilder.encryption("NONE");
-            storeConfigurationBuilder.username("neo4j").password("jqassistant");
-            Properties properties = new Properties();
-            properties.put("neo4j.remote.statement.log.level", "info");
-            storeConfigurationBuilder.properties(properties);
-            break;
-        default:
-            throw new AssertionError("Test store type not supported: " + type);
-        }
-        /*
-         * You might break IT of depending jQAssistant plugins if you change the
-         * location of the used database. Oliver B. Fischer, 2017-06-10
-         */
-        StoreConfiguration configuration = storeConfigurationBuilder.build();
-        store = StoreFactory.getStore(configuration, pluginRepository.getStorePluginRepository());
+    private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, TestStore testStore) {
+        store = StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
         store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();
         }
-    }
-
-    /**
-     * Provide an {@link EmbeddedNeo4jConfiguration} for the file or memory store.
-     *
-     * @return The {@link EmbeddedNeo4jConfiguration}.
-     */
-    protected EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
-        return EmbeddedNeo4jConfiguration.builder().build();
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(getScannerProperties());
+        return getScanner(configuration.scan());
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
-        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(configurationBuilder);
         return getScanner(configuration.scan());
     }
@@ -257,13 +257,13 @@ public abstract class AbstractPluginIT {
     }
 
     private Analyzer getAnalyzer(Map<String, String> parameters) {
-        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
         return getAnalyzer(configuration.analyze());
     }
 
     private InMemoryReportPlugin getReportPlugin() {
-        ConfigurationBuilder configurationBuilder = createPropertiesConfigBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
         Configuration configuration = createConfiguration(configurationBuilder);
         return getReportPlugin(configuration.analyze()
             .report());
