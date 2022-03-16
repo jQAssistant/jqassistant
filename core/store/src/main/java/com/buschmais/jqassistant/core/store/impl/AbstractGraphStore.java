@@ -24,7 +24,7 @@ import static java.util.Optional.ofNullable;
 
 /**
  * Abstract base implementation of a {@link Store}.
- *
+ * <p>
  * Provides methods for managing the life packages of a store, transactions,
  * resolving descriptors and executing CYPHER queries.
  */
@@ -49,9 +49,10 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public void start() {
-        XOUnit.XOUnitBuilder builder = XOUnit.builder()
-            .uri(configuration.uri())
-            .classLoader(ofNullable(storePluginRepository.getClassLoader()))
+        XOUnit.XOUnitBuilder builder = XOUnit.builder();
+        configuration.uri()
+            .ifPresent(uri -> builder.uri(uri));
+        builder.classLoader(ofNullable(storePluginRepository.getClassLoader()))
             .types(storePluginRepository.getDescriptorTypes())
             .validationMode(ValidationMode.NONE)
             .clearAfterCompletion(false)
@@ -67,9 +68,11 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void stop() {
         if (xoManager != null) {
-            if (xoManager.currentTransaction().isActive()) {
+            if (xoManager.currentTransaction()
+                .isActive()) {
                 LOGGER.warn("Rolling back an active transaction.");
-                xoManager.currentTransaction().rollback();
+                xoManager.currentTransaction()
+                    .rollback();
             }
             xoManager.close();
         }
@@ -140,17 +143,23 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<?> newDescriptorType, Class<N> as) {
-        return xoManager.migrate(descriptor).add(newDescriptorType).as(as);
+        return xoManager.migrate(descriptor)
+            .add(newDescriptorType)
+            .as(as);
     }
 
     @Override
     public <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<N> newDescriptorType) {
-        return xoManager.migrate(descriptor).add(newDescriptorType).as(newDescriptorType);
+        return xoManager.migrate(descriptor)
+            .add(newDescriptorType)
+            .as(newDescriptorType);
     }
 
     @Override
     public <T extends Descriptor, N extends Descriptor> N removeDescriptorType(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as) {
-        return xoManager.migrate(descriptor).remove(obsoleteDescriptorType).as(as);
+        return xoManager.migrate(descriptor)
+            .remove(obsoleteDescriptorType)
+            .as(as);
     }
 
     @Override
@@ -161,40 +170,49 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public Result<Result.CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
-        return xoManager.createQuery(query).withParameters(parameters).execute();
+        return xoManager.createQuery(query)
+            .withParameters(parameters)
+            .execute();
     }
 
     @Override
     public <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters) {
-        return xoManager.createQuery(query).withParameters(parameters).execute();
+        return xoManager.createQuery(query)
+            .withParameters(parameters)
+            .execute();
     }
 
     @Override
     public Result<Result.CompositeRowObject> executeQuery(String query) {
-        return xoManager.createQuery(query).execute();
+        return xoManager.createQuery(query)
+            .execute();
     }
 
     @Override
     public void beginTransaction() {
-        xoManager.currentTransaction().begin();
+        xoManager.currentTransaction()
+            .begin();
         created = 0;
     }
 
     @Override
     public void commitTransaction() {
-        xoManager.currentTransaction().commit();
+        xoManager.currentTransaction()
+            .commit();
     }
 
     @Override
     public void rollbackTransaction() {
-        xoManager.currentTransaction().rollback();
+        xoManager.currentTransaction()
+            .rollback();
     }
 
     @Override
     public boolean hasActiveTransaction() {
         boolean activeTx = false;
 
-        if (xoManager.currentTransaction() != null && xoManager.currentTransaction().isActive()) {
+        if (xoManager.currentTransaction() != null && xoManager.currentTransaction()
+            .isActive()) {
             activeTx = true;
         }
 
@@ -212,23 +230,26 @@ public abstract class AbstractGraphStore implements Store {
         do {
             beginTransaction();
             Result.CompositeRowObject result = executeQuery("MATCH (n) " + //
-                    "OPTIONAL MATCH (n)-[r]-() " + //
-                    "WITH n, r " + //
-                    "LIMIT $batchSize " + //
-                    "WITH distinct n " + //
-                    "DETACH DELETE n " + //
-                    "RETURN count(n) as nodes", params).getSingleResult();
+                "OPTIONAL MATCH (n)-[r]-() " + //
+                "WITH n, r " + //
+                "LIMIT $batchSize " + //
+                "WITH distinct n " + //
+                "DETACH DELETE n " + //
+                "RETURN count(n) as nodes", params).getSingleResult();
             nodes = result.get("nodes", Long.class);
             totalNodes = totalNodes + nodes;
             commitTransaction();
         } while (nodes > 0);
         Instant end = Instant.now();
-        LOGGER.info("Reset finished (removed {} nodes, duration: {}s).", totalNodes, Duration.between(start, end).get(ChronoUnit.SECONDS));
+        LOGGER.info("Reset finished (removed {} nodes, duration: {}s).", totalNodes, Duration.between(start, end)
+            .get(ChronoUnit.SECONDS));
     }
 
     @Override
     public <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey) {
-        return (Cache<K, V>) caches.computeIfAbsent(cacheKey, key -> Caffeine.newBuilder().softValues().build());
+        return (Cache<K, V>) caches.computeIfAbsent(cacheKey, key -> Caffeine.newBuilder()
+            .softValues()
+            .build());
     }
 
     @Override

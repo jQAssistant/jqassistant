@@ -20,7 +20,9 @@ public class StoreFactory {
     }
 
     public static Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
-        URI uri = configuration.uri().normalize();
+        URI uri = configuration.uri()
+            .orElseThrow(() -> new IllegalArgumentException("Expecting a configured store URI but it is not provided."))
+            .normalize();
         LOGGER.info("Connecting to store at '" + uri + "'" + configuration.username()
             .map(username -> " (username=" + username + ")")
             .orElse(""));

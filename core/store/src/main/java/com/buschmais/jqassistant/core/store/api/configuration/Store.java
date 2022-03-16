@@ -14,7 +14,7 @@ public interface Store {
 
     String URI = "uri";
 
-    URI uri();
+    Optional<URI> uri();
 
     String USERNAME = "username";
 
