@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.commandline.TaskFactory;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,9 +34,13 @@ class MainTest {
     @Mock
     private Task task;
 
+    @BeforeEach
+    void setUp() throws CliExecutionException {
+        when(taskFactory.fromName("test")).thenReturn(task);
+    }
+
     @Test
     void defaultPluginProperties() throws CliExecutionException {
-        when(taskFactory.fromName("test")).thenReturn(task);
         Main main = new Main(taskFactory);
         main.run(new String[] { "test" });
         verifyPropertyValue("testValue");
@@ -43,7 +48,6 @@ class MainTest {
 
     @Test
     void alternativePluginProperties() throws CliExecutionException {
-        when(taskFactory.fromName("test")).thenReturn(task);
         File propertyFile = ClasspathResource.getFile(MainTest.class, "/jqassistant-alternative.properties");
         Main main = new Main(taskFactory);
         main.run(new String[] { "test", "-p", propertyFile.getAbsolutePath() });

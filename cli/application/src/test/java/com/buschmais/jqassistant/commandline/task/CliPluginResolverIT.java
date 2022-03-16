@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
@@ -25,7 +26,7 @@ public class CliPluginResolverIT {
         configurationProperties.put("jqassistant.plugins[0].version","1.11.0");
         PropertiesConfigSource testConfigSource = new PropertiesConfigSource(configurationProperties, "TestConfigSource", 110);
 
-        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl(new File("src/test/resources"));
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(new File("src/test/resources"));
         CliConfiguration cliConfiguration = configurationLoader.load(CliConfiguration.class, testConfigSource);
 
         PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();

@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,9 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
+import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +37,12 @@ class AnalyzeTaskTest {
 
     @Mock
     private Configuration configuration;
+
+    @Mock
+    private Store store;
+
+    @Mock
+    private Embedded embedded;
 
     @Mock
     private Analyze analyze;
@@ -56,10 +66,13 @@ class AnalyzeTaskTest {
     private RulePluginRepository rulePluginRepository;
 
     @BeforeEach
-    void before() {
+    void before() throws URISyntaxException {
+        doReturn(store).when(configuration).store();
+        doReturn(embedded).when(store).embedded();
         doReturn(analyze).when(configuration).analyze();
         doReturn(report).when(analyze).report();
         doReturn(rule).when(analyze).rule();
+        doReturn(new URI("memory:///")).when(store).uri();
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
