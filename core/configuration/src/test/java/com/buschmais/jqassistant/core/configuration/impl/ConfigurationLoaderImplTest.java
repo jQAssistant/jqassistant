@@ -1,12 +1,15 @@
 package com.buschmais.jqassistant.core.configuration.impl;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
+import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +32,7 @@ class ConfigurationLoaderImplTest {
     }
 
     @Test
-    void loadFromFiles() {
+    void loadFromFiles() throws URISyntaxException {
         Configuration configuration = configurationLoader.load(Configuration.class);
 
         assertThat(configuration).isNotNull();
@@ -40,6 +43,10 @@ class ConfigurationLoaderImplTest {
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
         assertThat(scan.continueOnError()).isEqualTo(true);
+
+        Store store = configuration.store();
+        assertThat(store).isNotNull();
+        assertThat(store.uri()).isEqualTo(new URI("bolt://localhost:7687"));
     }
 
     @Test
