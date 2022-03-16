@@ -9,6 +9,7 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -131,16 +132,17 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         getLog().info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         getLog().info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
 
-        RuleSet ruleSet = readRules(rootModule, analyze.rule());
+        RuleSet ruleSet = readRules(rootModule, configuration);
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
         ReportContext reportContext = new ReportContextImpl(store, ProjectResolver.getOutputDirectory(rootModule));
-        Map<String, ReportPlugin> reportPlugins = getPluginRepository().getAnalyzerPluginRepository()
+        AnalyzerPluginRepository analyzerPluginRepository = getPluginRepository(configuration).getAnalyzerPluginRepository();
+        Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository
             .getReportPlugins(analyze.report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
                 new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
 
         try {
-            Analyzer analyzer = new AnalyzerImpl(analyze, store, getPluginRepository().getAnalyzerPluginRepository()
+            Analyzer analyzer = new AnalyzerImpl(analyze, store, analyzerPluginRepository
                     .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, logger);
             analyzer.execute(ruleSet, ruleSelection);
         } catch (RuleException e) {

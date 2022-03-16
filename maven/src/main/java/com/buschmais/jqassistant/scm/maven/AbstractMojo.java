@@ -18,9 +18,10 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
+import com.buschmais.jqassistant.scm.maven.configuration.EmbeddedNeo4jConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -105,7 +106,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The store configuration.
      */
     @Parameter
-    protected StoreConfiguration store = StoreConfiguration.builder().build();
+    protected StoreConfiguration store = new StoreConfiguration();
 
     /**
      * The listen address of the embedded server.
@@ -264,7 +265,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             if (skip) {
                 getLog().info("Skipping execution.");
             } else {
-                Configuration configuration = getConfiguration();
+                Configuration configuration = getConfiguration(rootModule);
                 execute(rootModule, executedModules, configuration);
             }
             executedModules.add(currentProject);
@@ -308,8 +309,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
-    protected final RuleSet readRules(MavenProject rootModule, Rule rule) throws MojoExecutionException {
+    protected final RuleSet readRules(MavenProject rootModule, Configuration configuration) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
+        PluginRepository pluginRepository = getPluginRepository(configuration);
         if (rulesUrl != null) {
             getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
             sources.add(new UrlRuleSource(rulesUrl));
@@ -321,12 +323,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                     addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
                 }
             }
-            List<RuleSource> ruleSources = getPluginRepository().getRulePluginRepository().getRuleSources();
+            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = getPluginRepository().getRulePluginRepository().getRuleParserPlugins(rule);
+            ruleParserPlugins = pluginRepository.getRulePluginRepository()
+                .getRuleParserPlugins(configuration.analyze()
+                    .rule());
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);
         }
@@ -395,8 +399,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     On execution failures.
      */
     protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
-            throws MojoExecutionException, MojoFailureException {
-        Store store = getStore(rootModule);
+        throws MojoExecutionException, MojoFailureException {
+        Store store = getStore(configuration);
         if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
             store.reset();
         }
@@ -433,15 +437,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Determine the store instance to use for the given root module.
      *
-     * @param rootModule
-     *            The root module.
      * @return The store instance.
      * @throws MojoExecutionException
      *             If the store cannot be opened.
      */
-    private Store getStore(MavenProject rootModule) throws MojoExecutionException {
-        StoreConfiguration configuration = getStoreConfiguration(rootModule);
-        Object existingStore = cachingStoreProvider.getStore(configuration, getPluginRepository());
+    private Store getStore(Configuration configuration) throws MojoExecutionException {
+        Object existingStore = cachingStoreProvider.getStore(configuration.store(), getPluginRepository(configuration));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                     "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
@@ -467,55 +468,52 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
-     * Creates the {@link StoreConfiguration}. This is a copy of the {@link #store}
-     * enriched by default values and additional command line parameters.
-     *
-     * @param rootModule
-     *            The root module.
-     * @return The directory.
-     */
-    private StoreConfiguration getStoreConfiguration(MavenProject rootModule) {
-        StoreConfiguration.StoreConfigurationBuilder builder = StoreConfiguration.builder();
-        File storeDirectory = coalesce(this.storeDirectory, new File(rootModule.getBuild().getDirectory(), STORE_DIRECTORY));
-        builder.uri(coalesce(storeUri, store.getUri(), new File(storeDirectory, "/").toURI()));
-        builder.username(coalesce(storeUserName, store.getUsername()));
-        builder.password(coalesce(storePassword, store.getPassword()));
-        builder.encryption(coalesce(storeEncryption, store.getEncryption()));
-        builder.trustStrategy(coalesce(storeTrustStrategy, store.getTrustStrategy()));
-        builder.trustCertificate(coalesce(storeTrustCertificate, store.getTrustCertificate()));
-
-        builder.properties(store.getProperties());
-        builder.embedded(getEmbeddedNeo4jConfiguration());
-        StoreConfiguration storeConfiguration = builder.build();
-        getLog().debug("Using store configuration " + storeConfiguration);
-        return storeConfiguration;
-    }
-
-    /**
-     * Create the configuration for the embedded server.
-     */
-    private EmbeddedNeo4jConfiguration getEmbeddedNeo4jConfiguration() {
-        EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
-        EmbeddedNeo4jConfiguration.EmbeddedNeo4jConfigurationBuilder builder = EmbeddedNeo4jConfiguration.builder();
-        builder.connectorEnabled(embedded.isConnectorEnabled() || isConnectorRequired());
-        builder.listenAddress(coalesce(embeddedListenAddress, embedded.getListenAddress()));
-        builder.boltPort(coalesce(embeddedBoltPort, embedded.getBoltPort()));
-        builder.httpPort(coalesce(embeddedHttpPort, embedded.getHttpPort()));
-        return builder.build();
-    }
-
-    /**
      * Retrieve the runtime configuration.
      * <p>
      * The configuration directory is assumed to be located within the execution root of the Maven session.
      *
+     * @param rootModule The root module.
+     *
      * @return The {@link Configuration}.
      */
-    private Configuration getConfiguration() throws MojoExecutionException {
+    private Configuration getConfiguration(MavenProject rootModule) throws MojoExecutionException {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
+        addStoreConfiguration(rootModule, configurationBuilder);
         addConfigurationProperties(configurationBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
         return configurationProvider.getConfiguration(executionRoot, empty(), configurationBuilder.build());
+    }
+
+    /**
+     * Apply store configuration.
+     * @param rootModule
+     *            The root module.
+     * @param configurationBuilder The {@link ConfigurationBuilder}.
+     */
+    private void addStoreConfiguration(MavenProject rootModule, ConfigurationBuilder configurationBuilder) {
+        File storeDirectory = coalesce(this.storeDirectory, new File(rootModule.getBuild()
+            .getDirectory(), STORE_DIRECTORY));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI,
+            coalesce(storeUri, store.getUri(), new File(storeDirectory, "/").toURI()).toString());
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, coalesce(storePassword, store.getPassword()));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, coalesce(storeEncryption, store.getEncryption()));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, coalesce(storeTrustStrategy, store.getTrustStrategy()));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE, coalesce(storeTrustCertificate, store.getTrustCertificate()));
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, store.getProperties());
+
+        EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
+        configurationBuilder.with(Embedded.PREFIX, Embedded.CONNECTORY_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
+        configurationBuilder.with(Embedded.PREFIX, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
+        configurationBuilder.with(Embedded.PREFIX, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
+        configurationBuilder.with(Embedded.PREFIX, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));
     }
 
     /**
@@ -537,8 +535,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return the {@link PluginRepository}.
      */
-    protected PluginRepository getPluginRepository() throws MojoExecutionException {
-        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, getConfiguration().plugins());
+    protected PluginRepository getPluginRepository(Configuration configuration) {
+        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, configuration.plugins());
     }
 
     /**

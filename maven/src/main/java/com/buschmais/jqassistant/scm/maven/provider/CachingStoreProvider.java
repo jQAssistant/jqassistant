@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreConfiguration;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import lombok.Builder;
@@ -52,8 +51,13 @@ public class CachingStoreProvider implements Disposable {
      *            The pluginRepository.
      * @return The store.
      */
-    public synchronized Store getStore(StoreConfiguration storeConfiguration, PluginRepository pluginRepository) {
-        StoreKey key = StoreKey.builder().uri(storeConfiguration.getUri().normalize()).username(storeConfiguration.getUsername()).build();
+    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, PluginRepository pluginRepository) {
+        StoreKey.StoreKeyBuilder storeKeyBuilder = StoreKey.builder()
+            .uri(storeConfiguration.uri()
+                .normalize());
+        storeConfiguration.username()
+            .ifPresent(username -> storeKeyBuilder.username(username));
+        StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
             store = StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());

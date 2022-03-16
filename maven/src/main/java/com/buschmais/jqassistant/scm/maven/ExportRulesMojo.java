@@ -7,7 +7,6 @@ import java.io.Writer;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
@@ -38,10 +37,9 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     @Override
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
-        Rule rule = configuration.analyze()
-            .rule();
-        final RuleSet ruleSet = readRules(rootModule, rule);
-        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(rule);
+        final RuleSet ruleSet = readRules(rootModule, configuration);
+        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(configuration.analyze()
+            .rule());
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {

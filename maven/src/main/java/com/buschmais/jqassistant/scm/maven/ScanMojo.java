@@ -110,7 +110,7 @@ public class ScanMojo extends AbstractModuleMojo {
 
     @Override
     public void execute(MavenProject mavenProject, Store store, Configuration configuration) throws MojoExecutionException {
-        ScannerPluginRepository scannerPluginRepository = getPluginRepository().getScannerPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = getPluginRepository(configuration).getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
 

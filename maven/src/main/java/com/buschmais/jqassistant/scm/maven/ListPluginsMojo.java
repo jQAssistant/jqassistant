@@ -32,7 +32,7 @@ public class ListPluginsMojo extends AbstractProjectMojo {
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
         getLog().info("Available plugins for '" + rootModule.getName() + "'.");
 
-        List<PluginInfo> sortedInfos = getPluginRepository().getPluginOverview()
+        List<PluginInfo> sortedInfos = getPluginRepository(configuration).getPluginOverview()
             .stream()
             .sorted(PluginInfo.NAME_COMPARATOR)
             .collect(Collectors.toList());
