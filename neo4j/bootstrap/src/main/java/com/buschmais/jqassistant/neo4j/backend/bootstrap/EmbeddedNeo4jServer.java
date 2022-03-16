@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.neo4j.backend.bootstrap;
 
 import java.util.Collection;
 
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
 /**
@@ -12,7 +13,7 @@ public interface EmbeddedNeo4jServer {
 
     String getVersion();
 
-    void initialize(EmbeddedDatastore embeddedDatastore, EmbeddedNeo4jConfiguration configuration, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
+    void initialize(EmbeddedDatastore embeddedDatastore, Embedded configuration, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes);
 
     void start();

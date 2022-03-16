@@ -52,9 +52,9 @@ public class Neo4jV3CommunityNeoServer extends AbstractEmbeddedNeo4jServer {
         // Neo4j 3.x
         opts.put(DBMS_CONNECTOR_HTTP_TYPE, HTTP_TYPE);
         opts.put(DBMS_CONNECTOR_HTTP_ENABLED, Boolean.TRUE.toString());
-        opts.put(DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getHttpPort());
+        opts.put(DBMS_CONNECTOR_HTTP_LISTEN_ADDRESS, embedded.listenAddress() + ":" + embedded.httpPort());
         opts.put(DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-        opts.put(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embeddedNeo4jConfiguration.getListenAddress() + ":" + embeddedNeo4jConfiguration.getBoltPort());
+        opts.put(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embedded.listenAddress() + ":" + embedded.boltPort());
         opts.put(DBMS_UNMANAGED_EXTENSION_CLASSES, StaticContentResource.class.getPackage().getName() + "=" + STATIC_CONTENT_ROOT);
 
         Config defaults = Config.defaults(opts);
