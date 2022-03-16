@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.slf4j.Logger;
@@ -46,15 +47,18 @@ public class CachingStoreProvider implements Disposable {
      * Create/open store in the given directory.
      *
      * @param storeConfiguration
-     *            The store configuration.
+     *     The store configuration.
      * @param pluginRepository
-     *            The pluginRepository.
+     *     The pluginRepository.
      * @return The store.
      */
-    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, PluginRepository pluginRepository) {
+    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, PluginRepository pluginRepository)
+        throws MojoExecutionException {
+        URI uri = storeConfiguration.uri()
+            .orElseThrow(() -> new MojoExecutionException("No store URI provided by configuration."))
+            .normalize();
         StoreKey.StoreKeyBuilder storeKeyBuilder = StoreKey.builder()
-            .uri(storeConfiguration.uri()
-                .normalize());
+            .uri(uri);
         storeConfiguration.username()
             .ifPresent(username -> storeKeyBuilder.username(username));
         StoreKey key = storeKeyBuilder.build();
@@ -72,7 +76,7 @@ public class CachingStoreProvider implements Disposable {
      * Close the given store.
      *
      * @param store
-     *            The store.
+     *     The store.
      */
     public void closeStore(Store store) {
         close(store);
@@ -93,7 +97,7 @@ public class CachingStoreProvider implements Disposable {
      * Close the given store.
      *
      * @param store
-     *            The store.
+     *     The store.
      */
     private void close(Store store) {
         StoreKey key = keysByStore.get(store);
