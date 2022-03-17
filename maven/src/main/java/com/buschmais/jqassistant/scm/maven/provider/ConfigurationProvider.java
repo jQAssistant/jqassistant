@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -34,12 +35,12 @@ public class ConfigurationProvider {
      *     Additional {@link ConfigSource}s.
      * @return The {@link Configuration}.
      */
-    public synchronized Configuration getConfiguration(File executionRoot, Optional<File> configurationDirectory, ConfigSource... configSources) {
+    public synchronized MavenConfiguration getConfiguration(File executionRoot, Optional<File> configurationDirectory, ConfigSource... configSources) {
         if (configurationLoader == null) {
             File effectiveConfigurationDirectory = configurationDirectory.orElse(ConfigurationLoader.getDefaultConfigurationDirectory(executionRoot));
             configurationLoader = new ConfigurationLoaderImpl(effectiveConfigurationDirectory);
         }
-        return configurationLoader.load(Configuration.class, configSources);
+        return configurationLoader.load(MavenConfiguration.class, configSources);
     }
 
 }

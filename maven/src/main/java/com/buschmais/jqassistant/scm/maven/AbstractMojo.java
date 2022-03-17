@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
@@ -20,6 +21,7 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
@@ -130,7 +132,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The rule configuration
      */
     @Parameter
-    private RuleConfiguration rule;
+    private RuleConfiguration rule = new RuleConfiguration();
 
     /**
      * Determines if the execution root module shall be used as project root, i.e.
@@ -260,12 +262,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         // Synchronize on this class as multiple instances of the plugin may exist in
         // parallel builds
         synchronized (AbstractMojo.class) {
-            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+            MavenConfiguration configuration = getConfiguration();
+            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory,
+                configuration.useExecutionRootAsProjectRoot());
             Set<MavenProject> executedModules = getExecutedModules(rootModule);
             if (skip) {
                 getLog().info("Skipping execution.");
             } else {
-                Configuration configuration = getConfiguration(rootModule);
                 execute(rootModule, executedModules, configuration);
             }
             executedModules.add(currentProject);
@@ -400,7 +403,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
         throws MojoExecutionException, MojoFailureException {
-        Store store = getStore(configuration);
+        Store store = getStore(configuration, () -> coalesce(this.storeDirectory, new File(rootModule.getBuild()
+            .getDirectory(), STORE_DIRECTORY)));
         if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
             store.reset();
         }
@@ -441,12 +445,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the store cannot be opened.
      */
-    private Store getStore(Configuration configuration) throws MojoExecutionException {
-        Object existingStore = cachingStoreProvider.getStore(configuration.store(), getPluginRepository(configuration));
+    private Store getStore(Configuration configuration, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
+        Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, getPluginRepository(configuration));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
-                    "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
-                            + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
+                "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
+                    + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
         }
         return (Store) existingStore;
     }
@@ -472,13 +476,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * <p>
      * The configuration directory is assumed to be located within the execution root of the Maven session.
      *
-     * @param rootModule The root module.
-     *
      * @return The {@link Configuration}.
      */
-    private Configuration getConfiguration(MavenProject rootModule) throws MojoExecutionException {
+    private MavenConfiguration getConfiguration() throws MojoExecutionException {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
-        addStoreConfiguration(rootModule, configurationBuilder);
+        addStoreConfiguration(configurationBuilder);
         addConfigurationProperties(configurationBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
         return configurationProvider.getConfiguration(executionRoot, empty(), configurationBuilder.build());
@@ -486,16 +488,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Apply store configuration.
-     * @param rootModule
-     *            The root module.
-     * @param configurationBuilder The {@link ConfigurationBuilder}.
+     *
+     * @param configurationBuilder
+     *     The {@link ConfigurationBuilder}.
      */
-    private void addStoreConfiguration(MavenProject rootModule, ConfigurationBuilder configurationBuilder) {
-        File storeDirectory = coalesce(this.storeDirectory, new File(rootModule.getBuild()
-            .getDirectory(), STORE_DIRECTORY));
+    private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.URI,
-            coalesce(storeUri, store.getUri(), new File(storeDirectory, "/").toURI()).toString());
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
             com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
@@ -523,11 +522,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     The {@link ConfigurationBuilder}.
      */
     protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        if (rule != null) {
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
+        configurationBuilder.with(MavenConfiguration.PREFIX, MavenConfiguration.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
+        if (storeDirectory != null) {
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, storeDirectory.toURI());
         }
+        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
+        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
+        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
     }
 
     /**

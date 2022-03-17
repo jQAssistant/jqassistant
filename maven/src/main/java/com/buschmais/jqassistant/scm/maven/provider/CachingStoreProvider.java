@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.scm.maven.provider;
 
+import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -52,7 +54,8 @@ public class CachingStoreProvider implements Disposable {
      *     The pluginRepository.
      * @return The store.
      */
-    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, PluginRepository pluginRepository)
+    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
+        PluginRepository pluginRepository)
         throws MojoExecutionException {
         URI uri = storeConfiguration.uri()
             .orElseThrow(() -> new MojoExecutionException("No store URI provided by configuration."))
@@ -64,7 +67,7 @@ public class CachingStoreProvider implements Disposable {
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            store = StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
+            store = StoreFactory.getStore(storeConfiguration, storeDirectorySupplier, pluginRepository.getStorePluginRepository());
             store.start();
             storesByKey.put(key, store);
             keysByStore.put(store, key);
