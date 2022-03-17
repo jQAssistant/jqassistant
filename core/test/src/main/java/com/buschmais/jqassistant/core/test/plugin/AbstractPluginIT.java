@@ -72,7 +72,6 @@ public abstract class AbstractPluginIT {
 
     private TestStore testStore;
 
-    protected Configuration configuration;
     protected Store store;
     protected Analyzer analyzer;
     protected ReportContext reportContext;
@@ -99,12 +98,12 @@ public abstract class AbstractPluginIT {
         Method method = testInfo.getTestMethod()
             .orElseThrow(() -> new AssertionError("Unable to get the test method for test '" + testInfo.getDisplayName() + "'."));
         testStore = method.getAnnotation(TestStore.class);
-        this.configuration = createConfiguration(createConfigurationBuilder());
+        Configuration configuration = createConfiguration(createConfigurationBuilder());
         outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
-        startStore(this.configuration.store(), testStore);
-        initializeRuleSet();
-        initializeAnalyzer();
+        startStore(configuration.store(), testStore);
+        initializeRuleSet(configuration);
+        initializeAnalyzer(configuration);
     }
 
     protected ConfigurationBuilder createConfigurationBuilder() {
@@ -171,7 +170,7 @@ public abstract class AbstractPluginIT {
         return configurationLoader.load(Configuration.class, configSource);
     }
 
-    private void initializeRuleSet() throws RuleException, IOException {
+    private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
         File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
         // read rules from rules directory
         List<RuleSource> sources = new LinkedList<>();
@@ -187,10 +186,10 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    private void initializeAnalyzer() {
+    private void initializeAnalyzer(Configuration configuration) {
         this.reportContext = new ReportContextImpl(store, outputDirectory);
-        this.reportPlugin = getReportPlugin(configuration.analyze().report());
-        this.analyzer = getAnalyzer(configuration.analyze());
+        this.reportPlugin = getReportPlugin();
+        this.analyzer = getAnalyzer(configuration);
     }
 
     /**
@@ -232,7 +231,7 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(configuration.scan());
+        return getScanner(getScannerProperties());
     }
 
     /**
@@ -243,34 +242,35 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(configurationBuilder);
-        return getScanner(configuration.scan());
+        return getScanner(configuration);
     }
 
-    private Scanner getScanner(Scan scan) {
+    private Scanner getScanner(Configuration configuration) {
         ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        return new ScannerImpl(scan, scannerContext, scannerPluginRepository);
-    }
-
-    private Analyzer getAnalyzer(Analyze analyze) {
-        return new AnalyzerImpl(analyze, store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+        return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }
 
     private Analyzer getAnalyzer(Map<String, String> parameters) {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
-        return getAnalyzer(configuration.analyze());
+        return getAnalyzer(configuration);
+    }
+
+    private Analyzer getAnalyzer(Configuration configuration) {
+        return new AnalyzerImpl(configuration.analyze(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
     private InMemoryReportPlugin getReportPlugin() {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
         Configuration configuration = createConfiguration(configurationBuilder);
-        return getReportPlugin(configuration.analyze()
-            .report());
+        return getReportPlugin(configuration);
     }
 
-    private InMemoryReportPlugin getReportPlugin(Report report) {
-        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository().getReportPlugins(report, reportContext);
+    private InMemoryReportPlugin getReportPlugin(Configuration configuration) {
+        Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
+            .getReportPlugins(configuration.analyze()
+                .report(), reportContext);
         return new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
     }
 
