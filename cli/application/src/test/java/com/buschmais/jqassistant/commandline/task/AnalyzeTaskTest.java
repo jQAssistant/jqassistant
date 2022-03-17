@@ -29,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import static java.util.Optional.of;
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -72,7 +73,7 @@ class AnalyzeTaskTest {
         doReturn(analyze).when(configuration).analyze();
         doReturn(report).when(analyze).report();
         doReturn(rule).when(analyze).rule();
-        doReturn(new URI("memory:///")).when(store).uri();
+        doReturn(of(new URI("memory:///"))).when(store).uri();
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);
