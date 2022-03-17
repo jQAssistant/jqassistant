@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.shared.option.OptionHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
@@ -65,7 +64,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
                 throw new CliConfigurationException("Cannot parse URI " + storeUri, e);
             }
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, uri.toString());
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, uri);
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
@@ -77,14 +76,12 @@ public abstract class AbstractStoreTask extends AbstractTask {
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE,
                 getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
-        } else {
-            String directoryName = OptionHelper.coalesce(storeDirectory, DEFAULT_STORE_DIRECTORY);
-            File directory = new File(directoryName);
+        } else if (storeDirectory != null ){
+            File directory = new File(storeDirectory);
             directory.getParentFile()
                 .mkdirs();
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI()
-                    .toString());
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI());
         }
         configurationBuilder.with(Embedded.PREFIX, Embedded.CONNECTORY_ENABLED, isConnectorRequired());
         configurationBuilder.with(Embedded.PREFIX, Embedded.LISTEN_ADDRESS, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
@@ -147,7 +144,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
      * @return The store.
      */
     protected Store getStore(Configuration configuration) {
-        return StoreFactory.getStore(configuration.store(), pluginRepository.getStorePluginRepository());
+        return StoreFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY), pluginRepository.getStorePluginRepository());
     }
 
     protected abstract void addTaskOptions(List<Option> options);
