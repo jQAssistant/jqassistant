@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.net.URI;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -35,11 +36,15 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     /**
      * Constructor.
      *
+     * @param uri
+     *     The store {@link URI}.
      * @param configuration
      *     The configuration.
+     * @param storePluginRepository
+     *     The {@link StorePluginRepository}.
      */
-    public EmbeddedGraphStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
-        super(configuration, storePluginRepository);
+    public EmbeddedGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+        super(uri, configuration, storePluginRepository);
         this.serverFactory = getEmbeddedNeo4jServerFactory();
     }
 

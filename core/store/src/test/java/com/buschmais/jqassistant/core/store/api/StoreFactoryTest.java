@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.store.api;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
@@ -27,34 +29,33 @@ class StoreFactoryTest {
 
     @Test
     void file() throws URISyntaxException {
-        verify("file://target/jqassistant/store", EmbeddedGraphStore.class);
+        verify(of(new URI("file://target/jqassistant/store")), EmbeddedGraphStore.class);
     }
 
     @Test
     void memory() throws URISyntaxException {
-        verify("memory:///", EmbeddedGraphStore.class);
+        verify(of(new URI("memory:///")), EmbeddedGraphStore.class);
     }
 
     @Test
     void bolt() throws URISyntaxException {
-        verify("bolt://localhost:7687", RemoteGraphStore.class);
+        verify(of(new URI("bolt://localhost:7687")), RemoteGraphStore.class);
     }
 
     @Test
     void neo4j() throws URISyntaxException {
-        verify("neo4j://localhost:7687", RemoteGraphStore.class);
+        verify(of(new URI("neo4j://localhost:7687")), RemoteGraphStore.class);
     }
 
     @Test
     void neo4js() throws URISyntaxException {
-        verify("neo4j+s://localhost:7687", RemoteGraphStore.class);
+        verify(of(new URI("neo4j+s://localhost:7687")), RemoteGraphStore.class);
     }
 
-    private void verify(String uri, Class<? extends Store> expectedStoreType) throws URISyntaxException {
-        doReturn(of(new URI(uri))).when(configuration)
+    private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
+        doReturn(uri).when(configuration)
             .uri();
-        Store store = StoreFactory.getStore(configuration, storePluginRepository);
-        assertThat(store).isInstanceOf(expectedStoreType);
+        assertThat(StoreFactory.getStore(configuration, () -> new File("store"), storePluginRepository)).isInstanceOf(expectedStoreType);
     }
 
 }

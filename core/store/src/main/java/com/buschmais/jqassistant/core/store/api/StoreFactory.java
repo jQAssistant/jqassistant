@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.store.api;
 
+import java.io.File;
 import java.net.URI;
+import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
@@ -19,9 +21,11 @@ public class StoreFactory {
     private StoreFactory() {
     }
 
-    public static Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+    public static Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Supplier<File> storeDirectorySupplier,
+        StorePluginRepository storePluginRepository) {
         URI uri = configuration.uri()
-            .orElseThrow(() -> new IllegalArgumentException("Expecting a configured store URI but it is not provided."))
+            .orElse(storeDirectorySupplier.get()
+                .toURI())
             .normalize();
         LOGGER.info("Connecting to store at '" + uri + "'" + configuration.username()
             .map(username -> " (username=" + username + ")")
@@ -33,11 +37,11 @@ public class StoreFactory {
         switch (scheme.toLowerCase()) {
         case "file":
         case "memory":
-            return new EmbeddedGraphStore(configuration, storePluginRepository);
+            return new EmbeddedGraphStore(uri, configuration, storePluginRepository);
         case "bolt":
         case "neo4j":
         case "neo4j+s":
-            return new RemoteGraphStore(configuration, storePluginRepository);
+            return new RemoteGraphStore(uri, configuration, storePluginRepository);
         default:
             throw new IllegalArgumentException("Cannot determine store type from URI '" + uri + "'.");
         }

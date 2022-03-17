@@ -62,8 +62,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public abstract class AbstractPluginIT {
 
+    public static final File TEST_STORE_DIRECTORY = new File("target/jqassistant/test-store");
+
     protected static final String ARTIFACT_ID = "artifact";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
+
 
     private static PluginRepositoryImpl pluginRepository;
 
@@ -107,18 +111,14 @@ public abstract class AbstractPluginIT {
 
     protected ConfigurationBuilder createConfigurationBuilder() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
-        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
+        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.FILE;
         switch (type) {
         case FILE:
-            String fileName = "target/jqassistant/test-store";
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new File(fileName).toURI()
-                    .toString());
             break;
         case MEMORY:
             try {
                 configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("memory:///").toString());
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("memory:///"));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
@@ -126,7 +126,7 @@ public abstract class AbstractPluginIT {
         case REMOTE:
             try {
                 configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("bolt://localhost:7687").toString());
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("bolt://localhost:7687"));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
@@ -215,7 +215,7 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, TestStore testStore) {
-        store = StoreFactory.getStore(storeConfiguration, pluginRepository.getStorePluginRepository());
+        store = StoreFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY, pluginRepository.getStorePluginRepository());
         store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();

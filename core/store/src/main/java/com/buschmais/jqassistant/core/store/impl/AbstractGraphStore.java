@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -34,6 +35,8 @@ public abstract class AbstractGraphStore implements Store {
 
     private Map<String, Cache<?, ? extends Descriptor>> caches = new HashMap<>();
 
+    protected final URI uri;
+
     protected final com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
 
     protected final StorePluginRepository storePluginRepository;
@@ -42,17 +45,17 @@ public abstract class AbstractGraphStore implements Store {
     private XOManager xoManager;
     private int created;
 
-    protected AbstractGraphStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+    protected AbstractGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+        this.uri = uri;
         this.configuration = configuration;
         this.storePluginRepository = storePluginRepository;
     }
 
     @Override
     public void start() {
-        XOUnit.XOUnitBuilder builder = XOUnit.builder();
-        configuration.uri()
-            .ifPresent(uri -> builder.uri(uri));
-        builder.classLoader(ofNullable(storePluginRepository.getClassLoader()))
+        XOUnit.XOUnitBuilder builder = XOUnit.builder()
+            .uri(uri)
+            .classLoader(ofNullable(storePluginRepository.getClassLoader()))
             .types(storePluginRepository.getDescriptorTypes())
             .validationMode(ValidationMode.NONE)
             .clearAfterCompletion(false)

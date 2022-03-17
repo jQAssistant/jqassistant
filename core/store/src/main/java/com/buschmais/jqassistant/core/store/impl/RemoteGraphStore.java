@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.net.URI;
 import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
@@ -11,8 +12,8 @@ import com.buschmais.xo.neo4j.remote.api.RemoteNeo4jXOProvider.Property;
 
 public class RemoteGraphStore extends AbstractGraphStore {
 
-    public RemoteGraphStore(Store configuration, StorePluginRepository storePluginRepository) {
-        super(configuration, storePluginRepository);
+    public RemoteGraphStore(URI uri, Store configuration, StorePluginRepository storePluginRepository) {
+        super(uri, configuration, storePluginRepository);
     }
 
     @Override

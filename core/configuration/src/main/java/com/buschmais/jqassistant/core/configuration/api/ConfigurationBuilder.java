@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.configuration.api;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -58,6 +59,22 @@ public class ConfigurationBuilder {
      * @return The {@link ConfigurationBuilder}.
      */
     public ConfigurationBuilder with(String prefix, String property, String value) {
+        properties.put(getKey(prefix, property), getValue(value));
+        return this;
+    }
+
+    /**
+     * Add a {@link URI} property.
+     *
+     * @param prefix
+     *     The property prefix.
+     * @param property
+     *     The name of the property.
+     * @param value
+     *     The value.
+     * @return The {@link ConfigurationBuilder}.
+     */
+    public ConfigurationBuilder with(String prefix, String property, URI value) {
         properties.put(getKey(prefix, property), getValue(value));
         return this;
     }
