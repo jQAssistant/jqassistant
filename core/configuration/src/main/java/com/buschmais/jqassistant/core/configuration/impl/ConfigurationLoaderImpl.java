@@ -36,13 +36,20 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     private List<ConfigSource> yamlConfigSources;
 
     /**
-     * Constructor.
+     * Constructor using a configuration directory for looking up YAML config files.
      *
      * @param configurationDirectory
      *     The directory for loading YAML config files.
      */
     public ConfigurationLoaderImpl(File configurationDirectory) {
         this.yamlConfigSources = getYamlConfigSources(configurationDirectory);
+    }
+
+    /**
+     * Constructor.
+     */
+    public ConfigurationLoaderImpl() {
+        this.yamlConfigSources = emptyList();
     }
 
     @Override

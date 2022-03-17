@@ -49,7 +49,6 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,10 +163,8 @@ public abstract class AbstractPluginIT {
      * @return The  configuration.
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(
-            ConfigurationLoader.getDefaultConfigurationDirectory(getClassesDirectory(this.getClass())));
-        ConfigSource configSource = configurationBuilder.build();
-        return configurationLoader.load(Configuration.class, configSource);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
+        return configurationLoader.load(Configuration.class, configurationBuilder.build());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
