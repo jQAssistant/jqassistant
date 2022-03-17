@@ -203,7 +203,7 @@ public abstract class AbstractCLIIT {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI().toString());
-        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl(new File("target"));
+        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl();
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
         return StoreFactory.getStore(configuration.store(), pluginRepository.getStorePluginRepository());
     }
