@@ -111,16 +111,16 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Override
     protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         super.addConfigurationProperties(configurationBuilder);
-        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
-        configurationBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, ruleParameters);
+        configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
+        configurationBuilder.with(Analyze.class, Analyze.RULE_PARAMETERS, ruleParameters);
         Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
         if (xmlReportFile != null) {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
-        configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, properties);
-        configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, warnOnSeverity);
-        configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, failOnSeverity);
-        configurationBuilder.with(Report.PREFIX, Report.CREATE_ARCHIVE, attachReportArchive);
+        configurationBuilder.with(Report.class, Report.PROPERTIES, properties);
+        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, warnOnSeverity);
+        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, failOnSeverity);
+        configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, attachReportArchive);
     }
 
     @Override

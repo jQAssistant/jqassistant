@@ -81,9 +81,9 @@ public class ScanMojo extends AbstractModuleMojo {
     @Override
     protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         super.addConfigurationProperties(configurationBuilder);
-        configurationBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, continueOnError)
-            .with(Scan.PREFIX, Scan.RESET, reset)
-            .with(Scan.PREFIX, Scan.PROPERTIES, scanProperties);
+        configurationBuilder.with(Scan.class, Scan.CONTINUE_ON_ERROR, continueOnError)
+            .with(Scan.class, Scan.RESET, reset)
+            .with(Scan.class, Scan.PROPERTIES, scanProperties);
         // Convert scan includes
         List<String> files = new ArrayList<>();
         List<String> urls = new ArrayList<>();
@@ -104,8 +104,8 @@ public class ScanMojo extends AbstractModuleMojo {
                     "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
             }
         }
-        configurationBuilder.with(Include.PREFIX, Include.FILES, files);
-        configurationBuilder.with(Include.PREFIX, Include.URLS, urls);
+        configurationBuilder.with(Include.class, Include.FILES, files);
+        configurationBuilder.with(Include.class, Include.URLS, urls);
     }
 
     @Override

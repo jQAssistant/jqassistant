@@ -20,10 +20,7 @@ import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
-import com.buschmais.jqassistant.scm.maven.configuration.EmbeddedNeo4jConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.StoreConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.*;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -263,8 +260,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         // parallel builds
         synchronized (AbstractMojo.class) {
             MavenConfiguration configuration = getConfiguration();
-            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory,
-                configuration.useExecutionRootAsProjectRoot());
+            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, configuration.maven()
+                .useExecutionRootAsProjectRoot());
             Set<MavenProject> executedModules = getExecutedModules(rootModule);
             if (skip) {
                 getLog().info("Skipping execution.");
@@ -495,26 +492,26 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     The {@link ConfigurationBuilder}.
      */
     private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, coalesce(storePassword, store.getPassword()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, coalesce(storeEncryption, store.getEncryption()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, coalesce(storeTrustStrategy, store.getTrustStrategy()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE, coalesce(storeTrustCertificate, store.getTrustCertificate()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, store.getProperties());
 
         EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
-        configurationBuilder.with(Embedded.PREFIX, Embedded.CONNECTORY_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
-        configurationBuilder.with(Embedded.PREFIX, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
-        configurationBuilder.with(Embedded.PREFIX, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
-        configurationBuilder.with(Embedded.PREFIX, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTORY_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
+        configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
+        configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
+        configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));
     }
 
     /**
@@ -524,10 +521,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     The {@link ConfigurationBuilder}.
      */
     protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        configurationBuilder.with(MavenConfiguration.PREFIX, MavenConfiguration.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
-        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
-        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
-        configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
+        configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
     }
 
     /**
