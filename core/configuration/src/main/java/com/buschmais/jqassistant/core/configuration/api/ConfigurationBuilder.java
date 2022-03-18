@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.PropertiesConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
@@ -50,116 +51,116 @@ public class ConfigurationBuilder {
     /**
      * Add a {@link String} property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param value
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(String prefix, String property, String value) {
-        properties.put(getKey(prefix, property), getValue(value));
+    public ConfigurationBuilder with(Class<?> mapping, String property, String value) {
+        properties.put(getKey(mapping, property), getValue(value));
         return this;
     }
 
     /**
      * Add a {@link URI} property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param value
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(String prefix, String property, URI value) {
-        properties.put(getKey(prefix, property), getValue(value));
+    public ConfigurationBuilder with(Class<?> mapping, String property, URI value) {
+        properties.put(getKey(mapping, property), getValue(value));
         return this;
     }
 
     /**
      * Add a {@link Integer} property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param value
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(String prefix, String property, Integer value) {
-        properties.put(getKey(prefix, property), getValue(value));
+    public ConfigurationBuilder with(Class<?> mapping, String property, Integer value) {
+        properties.put(getKey(mapping, property), getValue(value));
         return this;
     }
 
     /**
      * Add a boolean property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param value
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(String prefix, String property, boolean value) {
-        properties.put(getKey(prefix, property), getValue(value));
+    public ConfigurationBuilder with(Class<?> mapping, String property, boolean value) {
+        properties.put(getKey(mapping, property), getValue(value));
         return this;
     }
 
     /**
      * Add an {@link Enum} property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param value
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public <E extends Enum<E>> ConfigurationBuilder with(String prefix, String property, E value) {
-        properties.put(getKey(prefix, property), getValue(value));
+    public <E extends Enum<E>> ConfigurationBuilder with(Class<?> mapping, String property, E value) {
+        properties.put(getKey(mapping, property), getValue(value));
         return this;
     }
 
     /**
      * Add a map property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The name of the property.
      * @param values
      *     The values.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(String prefix, String property, Map<String, ?> values) {
+    public ConfigurationBuilder with(Class<?> mapping, String property, Map<String, ?> values) {
         if (values != null) {
             for (Map.Entry<String, ?> entry : values.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                addMapEntry(prefix, property, key, value);
+                addMapEntry(mapping, property, key, value);
             }
         }
         return this;
     }
 
-    public ConfigurationBuilder with(String prefix, String property, Properties properties) {
+    public ConfigurationBuilder with(Class<?> mapping, String property, Properties properties) {
         if (properties != null) {
             for (String key : properties.stringPropertyNames()) {
-                addMapEntry(prefix, property, key, properties.getProperty(key));
+                addMapEntry(mapping, property, key, properties.getProperty(key));
             }
         }
         return this;
     }
 
-    private void addMapEntry(String prefix, String property, String key, Object value) {
-        StringBuilder keyBuilder = new StringBuilder(getKey(prefix, property)).append('.');
+    private void addMapEntry(Class<?> mapping, String property, String key, Object value) {
+        StringBuilder keyBuilder = new StringBuilder(getKey(mapping, property)).append('.');
         if (key.contains(".")) {
             keyBuilder.append('"')
                 .append(key)
@@ -173,19 +174,19 @@ public class ConfigurationBuilder {
     /**
      * Add a list property.
      *
-     * @param prefix
-     *     The property prefix.
+     * @param mapping
+     *     The mapping.
      * @param indexedProperty
      *     The name of the indexed property.
      * @param values
      *     The values.
      * @return The {@link ConfigurationBuilder}.
      */
-    public <T> void with(String prefix, String indexedProperty, Iterable<T> values) {
+    public <T> void with(Class<?> mapping, String indexedProperty, Iterable<T> values) {
         if (values != null) {
             int index = 0;
             for (T value : values) {
-                StringBuilder key = new StringBuilder(getKey(prefix, indexedProperty)).append('[')
+                StringBuilder key = new StringBuilder(getKey(mapping, indexedProperty)).append('[')
                     .append(index)
                     .append(']');
                 properties.put(key.toString(), getValue(value));
@@ -197,14 +198,18 @@ public class ConfigurationBuilder {
     /**
      * Create a property key from a prefix and property name.
      *
-     * @param prefix
-     *     The prefix.
+     * @param mapping
+     *     The mapping.
      * @param property
      *     The property name.
      * @return The property key.
      */
-    private String getKey(String prefix, String property) {
-        return new StringBuilder(prefix).append('.')
+    private String getKey(Class<?> mapping, String property) {
+        ConfigMapping configMapping = mapping.getAnnotation(ConfigMapping.class);
+        if (configMapping == null) {
+            throw new IllegalArgumentException("Class " + mapping.getName() + " is not annotated with " + ConfigMapping.class.getName());
+        }
+        return new StringBuilder(configMapping.prefix()).append('.')
             .append(property)
             .toString();
     }

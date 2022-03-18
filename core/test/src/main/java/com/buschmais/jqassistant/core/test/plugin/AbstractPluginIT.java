@@ -117,7 +117,7 @@ public abstract class AbstractPluginIT {
             break;
         case MEMORY:
             try {
-                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                     com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("memory:///"));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
@@ -125,20 +125,20 @@ public abstract class AbstractPluginIT {
             break;
         case REMOTE:
             try {
-                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+                configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                     com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("bolt://localhost:7687"));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, "NONE");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, "neo4j");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, "jqassistant");
             Properties properties = new Properties();
             properties.put("neo4j.remote.statement.log.level", "info");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, properties);
             break;
         default:
@@ -237,7 +237,7 @@ public abstract class AbstractPluginIT {
      * @return The scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
-        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.PREFIX, Scan.PROPERTIES, properties);
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.class, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(configurationBuilder);
         return getScanner(configuration);
     }
@@ -249,7 +249,7 @@ public abstract class AbstractPluginIT {
     }
 
     private Analyzer getAnalyzer(Map<String, String> parameters) {
-        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, parameters);
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
         return getAnalyzer(configuration);
     }
@@ -259,7 +259,7 @@ public abstract class AbstractPluginIT {
     }
 
     private InMemoryReportPlugin getReportPlugin() {
-        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Report.PREFIX, Report.PROPERTIES, getReportProperties());
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Report.class, Report.PROPERTIES, getReportProperties());
         Configuration configuration = createConfiguration(configurationBuilder);
         return getReportPlugin(configuration);
     }

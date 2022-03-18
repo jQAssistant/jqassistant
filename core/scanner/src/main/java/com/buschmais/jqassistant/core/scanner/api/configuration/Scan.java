@@ -5,11 +5,11 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
+@ConfigMapping(prefix = "jqassistant.scan")
 public interface Scan {
-
-    String PREFIX = "jqassistant.scan";
 
     String RESET = "reset";
 

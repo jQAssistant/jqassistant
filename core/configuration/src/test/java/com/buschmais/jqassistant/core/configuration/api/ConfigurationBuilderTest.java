@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 
+import io.smallrye.config.ConfigMapping;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
 
@@ -15,18 +16,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ConfigurationBuilderTest {
 
-    public static final String PREFIX = "jqassistant.test";
+    @ConfigMapping(prefix = "jqassistant.test")
+    static class TestMapping {
+    }
+
     private ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("Test", 110);
 
     @Test
     void properties() {
-        configurationBuilder.with(PREFIX, "boolean-value", true);
+        configurationBuilder.with(TestMapping.class, "boolean-value", true);
         Map<String, Object> map = MapBuilder.<String, Object>builder()
             .entry("key.1", "value1")
             .entry("key.2", "value2")
             .build();
-        configurationBuilder.with(PREFIX, "map-value", map);
-        configurationBuilder.with(PREFIX, "list-value", asList("element0", "element1"));
+        configurationBuilder.with(TestMapping.class, "map-value", map);
+        configurationBuilder.with(TestMapping.class, "list-value", asList("element0", "element1"));
 
         ConfigSource propertiesConfigSource = configurationBuilder.build();
 

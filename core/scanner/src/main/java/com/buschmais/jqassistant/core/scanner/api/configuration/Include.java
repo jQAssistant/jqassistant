@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
+import io.smallrye.config.ConfigMapping;
+
+@ConfigMapping(prefix = "jqassistant.scan.include")
 @Description("The items and (e.g. files, URLs) to include for scanning. Every item may be prefixed by a scope using '::' as separator., e.g. 'java:classpath::build/classes'.")
 public interface Include {
-
-    String PREFIX = "jqassistant.scan.include";
 
     String FILES = "files";
 

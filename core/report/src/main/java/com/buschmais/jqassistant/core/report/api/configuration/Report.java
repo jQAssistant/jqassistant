@@ -5,11 +5,11 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
+@ConfigMapping(prefix = "jqassistant.analyze.report")
 public interface Report {
-
-    String PREFIX = "jqassistant.analyze.report";
 
     String PROPERTIES = "properties";
 
