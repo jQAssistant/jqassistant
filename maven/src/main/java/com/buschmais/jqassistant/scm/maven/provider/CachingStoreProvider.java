@@ -15,7 +15,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.slf4j.Logger;
@@ -55,10 +54,14 @@ public class CachingStoreProvider implements Disposable {
      * @return The store.
      */
     public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
-        PluginRepository pluginRepository)
-        throws MojoExecutionException {
+        PluginRepository pluginRepository) {
         URI uri = storeConfiguration.uri()
-            .orElseThrow(() -> new MojoExecutionException("No store URI provided by configuration."))
+            .orElseGet(() -> {
+                File storeDirectory = storeDirectorySupplier.get();
+                // ensure directory exists, otherwise URIs don't match (trailing slash is missing if directory does not exist yet)
+                storeDirectory.mkdirs();
+                return storeDirectory.toURI();
+            })
             .normalize();
         StoreKey.StoreKeyBuilder storeKeyBuilder = StoreKey.builder()
             .uri(uri);

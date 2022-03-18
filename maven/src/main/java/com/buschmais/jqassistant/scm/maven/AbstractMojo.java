@@ -403,8 +403,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
         throws MojoExecutionException, MojoFailureException {
-        Store store = getStore(configuration, () -> coalesce(this.storeDirectory, new File(rootModule.getBuild()
-            .getDirectory(), STORE_DIRECTORY)));
+        Store store = getStore(configuration, () -> new File(rootModule.getBuild()
+            .getDirectory(), STORE_DIRECTORY));
         if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
             store.reset();
         }
@@ -494,7 +494,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI,
+            coalesce(storeUri, store.getUri(), storeDirectory != null ? storeDirectory.toURI() : null));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
             com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
