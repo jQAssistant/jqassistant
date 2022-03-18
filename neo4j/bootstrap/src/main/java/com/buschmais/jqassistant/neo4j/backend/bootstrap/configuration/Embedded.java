@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration;
 
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
+@ConfigMapping(prefix = "jqassistant.store.embedded")
 public interface Embedded {
-
-    String PREFIX = "jqassistant.store.embedded";
 
     String DEFAULT_LISTEN_ADDRESS = "localhost";
     String DEFAULT_BOLT_PORT = "7687";
