@@ -13,6 +13,7 @@ import static com.buschmais.jqassistant.core.configuration.api.Configuration.PRE
 @Description("The configuration for the Command Line Utility.")
 public interface CliConfiguration extends Configuration {
 
+    @Description("The proxy to use for connecting to repositories.")
     Optional<Proxy> proxy();
 
     @Description("The repositories for resolving plugins and their dependencies.")

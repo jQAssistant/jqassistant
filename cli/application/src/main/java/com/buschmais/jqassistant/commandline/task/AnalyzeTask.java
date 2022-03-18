@@ -120,7 +120,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         } catch (IOException e) {
             throw new CliConfigurationException("Cannot read rule parameters file '" + ruleParametersFile + "'.", e);
         }
-        configurationBuilder.with(Analyze.PREFIX, Analyze.RULE_PARAMETERS, properties);
+        configurationBuilder.with(Analyze.class, Analyze.RULE_PARAMETERS, properties);
     }
 
     /**
@@ -148,11 +148,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         String reportDirectoryValue = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         reportDirectory = new File(reportDirectoryValue);
         reportDirectory.mkdirs();
-        configurationBuilder.with(Analyze.PREFIX, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
-        configurationBuilder.with(Report.PREFIX, Report.PROPERTIES, pluginProperties);
-        configurationBuilder.with(Report.PREFIX, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
-        configurationBuilder.with(Report.PREFIX, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
-        configurationBuilder.with(Report.PREFIX, Report.CREATE_ARCHIVE, options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
+        configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
+        configurationBuilder.with(Report.class, Report.PROPERTIES, pluginProperties);
+        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
+        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
+        configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
     }
 
     @Override

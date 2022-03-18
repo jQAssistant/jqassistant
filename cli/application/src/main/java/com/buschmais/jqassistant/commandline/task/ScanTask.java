@@ -106,7 +106,7 @@ public class ScanTask extends AbstractStoreTask {
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
-        configurationBuilder.with(Scan.PREFIX, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
-        configurationBuilder.with(Scan.PREFIX, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
+        configurationBuilder.with(Scan.class, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
+        configurationBuilder.with(Scan.class, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
     }
 }

@@ -63,30 +63,30 @@ public abstract class AbstractStoreTask extends AbstractTask {
             } catch (URISyntaxException e) {
                 throw new CliConfigurationException("Cannot parse URI " + storeUri, e);
             }
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.URI, uri);
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE,
                 getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         } else if (storeDirectory != null ){
             File directory = new File(storeDirectory);
             directory.getParentFile()
                 .mkdirs();
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI());
         }
-        configurationBuilder.with(Embedded.PREFIX, Embedded.CONNECTORY_ENABLED, isConnectorRequired());
-        configurationBuilder.with(Embedded.PREFIX, Embedded.LISTEN_ADDRESS, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
-        configurationBuilder.with(Embedded.PREFIX, Embedded.HTTP_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
-        configurationBuilder.with(Embedded.PREFIX, Embedded.BOLT_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTORY_ENABLED, isConnectorRequired());
+        configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
+        configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
+        configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
     }
 
     @Override

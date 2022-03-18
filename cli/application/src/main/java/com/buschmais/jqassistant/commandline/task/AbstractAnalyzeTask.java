@@ -116,9 +116,9 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
         try {
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
-            configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
         } catch (RuleException e) {
             throw new CliConfigurationException("Cannot convert severity.", e);
         }
