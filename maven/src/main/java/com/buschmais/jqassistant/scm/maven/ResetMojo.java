@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,7 +26,7 @@ public class ResetMojo extends AbstractModuleMojo {
     }
 
     @Override
-    protected void execute(MavenProject mavenProject, Store store, Configuration configuration) throws MojoExecutionException, MojoFailureException {
+    protected void execute(MavenProject mavenProject, Store store, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException {
         store.reset();
     }
 

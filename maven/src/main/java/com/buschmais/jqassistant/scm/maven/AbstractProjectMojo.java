@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,11 +18,11 @@ import org.apache.maven.project.MavenProject;
 public abstract class AbstractProjectMojo extends AbstractMojo {
 
     @Override
-    public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules, Configuration configuration)
+    public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules, MavenConfiguration configuration)
         throws MojoExecutionException,
             MojoFailureException {
-        Map<MavenProject, List<MavenProject>> projects =
-                ProjectResolver.getProjects(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+        Map<MavenProject, List<MavenProject>> projects = ProjectResolver.getProjects(reactorProjects, rulesDirectory, configuration.maven()
+            .useExecutionRootAsProjectRoot());
         final List<MavenProject> projectModules = projects.get(rootModule);
         boolean isLastModuleInProject = isLastModuleInProject(executedModules, projectModules);
         getLog().debug(
@@ -76,7 +76,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException If execution fails.
      * @throws org.apache.maven.plugin.MojoFailureException   If execution fails.
      */
-    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store, Configuration configuration) throws MojoExecutionException,
+    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store, MavenConfiguration configuration) throws MojoExecutionException,
             MojoFailureException;
 
 }

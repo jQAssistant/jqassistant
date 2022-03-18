@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -22,6 +21,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -109,7 +109,7 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MavenProject mavenProject, Store store, Configuration configuration) throws MojoExecutionException {
+    public void execute(MavenProject mavenProject, Store store, MavenConfiguration configuration) throws MojoExecutionException {
         ScannerPluginRepository scannerPluginRepository = getPluginRepository(configuration).getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);

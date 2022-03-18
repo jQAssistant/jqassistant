@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -26,6 +25,7 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -124,7 +124,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration)
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
         throws MojoExecutionException, MojoFailureException {
         Analyze analyze = configuration.analyze();
 

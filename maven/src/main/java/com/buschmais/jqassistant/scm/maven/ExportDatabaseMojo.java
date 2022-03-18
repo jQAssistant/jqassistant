@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.*;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,7 +41,8 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
+        throws MojoExecutionException {
         File file = ProjectResolver.getOutputFile(rootModule, exportFile, EXPORT_FILE);
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
         store.beginTransaction();

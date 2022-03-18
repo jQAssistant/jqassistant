@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
@@ -280,13 +279,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @param executedModules
      *     The already executed modules of the project.
      * @param configuration
-     *     The {@link Configuration}.
+     *     The {@link MavenConfiguration}.
      * @throws MojoExecutionException
      *     If a general execution problem occurs.
      * @throws MojoFailureException
      *     If a failure occurs.
      */
-    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration) throws MojoExecutionException, MojoFailureException;
+    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException;
 
     /**
      * Determine if the store shall be reset before execution of the mofo.
@@ -309,7 +308,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
-    protected final RuleSet readRules(MavenProject rootModule, Configuration configuration) throws MojoExecutionException {
+    protected final RuleSet readRules(MavenProject rootModule, MavenConfiguration configuration) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         PluginRepository pluginRepository = getPluginRepository(configuration);
         if (rulesUrl != null) {
@@ -392,13 +391,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @param executedModules
      *     The set of already executed modules.
      * @param configuration
-     *     The {@link Configuration}.
+     *     The {@link MavenConfiguration}.
      * @throws MojoExecutionException
      *     On execution errors.
      * @throws MojoFailureException
      *     On execution failures.
      */
-    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
+    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, MavenConfiguration configuration)
         throws MojoExecutionException, MojoFailureException {
         Store store = getStore(configuration, () -> storeDirectory != null ?
             storeDirectory :
@@ -444,7 +443,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the store cannot be opened.
      */
-    private Store getStore(Configuration configuration, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
+    private Store getStore(MavenConfiguration configuration, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
         Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, getPluginRepository(configuration));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
@@ -475,7 +474,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * <p>
      * The configuration directory is assumed to be located within the execution root of the Maven session.
      *
-     * @return The {@link Configuration}.
+     * @return The {@link MavenConfiguration}.
      */
     private MavenConfiguration getConfiguration() throws MojoExecutionException {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
@@ -532,7 +531,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return the {@link PluginRepository}.
      */
-    protected PluginRepository getPluginRepository(Configuration configuration) {
+    protected PluginRepository getPluginRepository(MavenConfiguration configuration) {
         return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, configuration.plugins());
     }
 
@@ -548,13 +547,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
          * @param store
          *     The store.
          * @param configuration
-         *     The {@link Configuration}.
+         *     The {@link MavenConfiguration}.
          * @throws MojoExecutionException
          *     On execution errors.
          * @throws MojoFailureException
          *     On execution failures.
          */
-        void run(MavenProject rootModule, Store store, Configuration configuration) throws MojoExecutionException, MojoFailureException;
+        void run(MavenProject rootModule, Store store, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException;
     }
 
 }

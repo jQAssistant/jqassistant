@@ -6,12 +6,12 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.writer.XmlRuleSetWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,7 +35,8 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration) throws MojoExecutionException {
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
+        throws MojoExecutionException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
         final RuleSet ruleSet = readRules(rootModule, configuration);
         RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(configuration.analyze()

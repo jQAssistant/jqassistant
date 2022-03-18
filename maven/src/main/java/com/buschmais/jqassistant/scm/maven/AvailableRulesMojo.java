@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,7 +36,7 @@ public class AvailableRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, Configuration configuration)
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
         throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule, configuration);
