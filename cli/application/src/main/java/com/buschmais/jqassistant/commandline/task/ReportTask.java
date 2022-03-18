@@ -10,7 +10,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
@@ -34,7 +34,7 @@ public class ReportTask extends AbstractTask {
     }
 
     @Override
-    public void run(Configuration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration) throws CliExecutionException {
         File xmlReportFile = new File(reportDirectory, REPORT_FILE_XML);
         if (!xmlReportFile.exists()) {
             LOGGER.error(xmlReportFile.getName() + " does not exist.");

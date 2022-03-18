@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
@@ -39,7 +39,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_STORE_DIRECTORY = "storeDirectory";
 
     @Override
-    public void run(Configuration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration) throws CliExecutionException {
         final Store store = getStore(configuration);
         try {
             store.start();
@@ -76,7 +76,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE,
                 getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
-        } else if (storeDirectory != null ){
+        } else if (storeDirectory != null) {
             File directory = new File(storeDirectory);
             directory.getParentFile()
                 .mkdirs();
@@ -143,7 +143,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
      *
      * @return The store.
      */
-    protected Store getStore(Configuration configuration) {
+    protected Store getStore(CliConfiguration configuration) {
         return StoreFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY), pluginRepository.getStorePluginRepository());
     }
 
@@ -151,6 +151,6 @@ public abstract class AbstractStoreTask extends AbstractTask {
 
     protected abstract boolean isConnectorRequired();
 
-    protected abstract void executeTask(Configuration configuration, final Store store) throws CliExecutionException;
+    protected abstract void executeTask(CliConfiguration configuration, final Store store) throws CliExecutionException;
 
 }

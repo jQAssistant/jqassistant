@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 class AnalyzeTaskTest {
 
     @Mock
-    private Configuration configuration;
+    private CliConfiguration configuration;
 
     @Mock
     private Store store;
@@ -68,12 +68,18 @@ class AnalyzeTaskTest {
 
     @BeforeEach
     void before() throws URISyntaxException {
-        doReturn(store).when(configuration).store();
-        doReturn(embedded).when(store).embedded();
-        doReturn(analyze).when(configuration).analyze();
-        doReturn(report).when(analyze).report();
-        doReturn(rule).when(analyze).rule();
-        doReturn(of(new URI("memory:///"))).when(store).uri();
+        doReturn(store).when(configuration)
+            .store();
+        doReturn(embedded).when(store)
+            .embedded();
+        doReturn(analyze).when(configuration)
+            .analyze();
+        doReturn(report).when(analyze)
+            .report();
+        doReturn(rule).when(analyze)
+            .rule();
+        doReturn(of(new URI("memory:///"))).when(store)
+            .uri();
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
         when(pluginRepository.getAnalyzerPluginRepository()).thenReturn(analyzerPluginRepository);

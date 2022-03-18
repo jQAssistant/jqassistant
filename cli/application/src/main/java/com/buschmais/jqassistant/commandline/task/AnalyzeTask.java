@@ -10,11 +10,11 @@ import java.util.Properties;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -53,7 +53,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private File reportDirectory;
 
     @Override
-    protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
+    protected void executeTask(CliConfiguration configuration, final Store store) throws CliExecutionException {
         Analyze analyze = configuration.analyze();
         Severity warnOnSeverity = analyze.report()
             .warnOnSeverity();
@@ -64,15 +64,12 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Executing analysis.");
 
         ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
-        Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze
-            .report(), reportContext);
+        Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
         try {
             Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
-                .getRuleInterpreterPlugins(emptyMap()),
-                    inMemoryReportPlugin, LOGGER);
-            RuleSet availableRules = getAvailableRules(analyze
-                .rule());
+                .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
+            RuleSet availableRules = getAvailableRules(analyze.rule());
             analyzer.execute(availableRules, getRuleSelection(availableRules));
         } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
@@ -84,7 +81,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         store.beginTransaction();
         LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
         try {
-            final ReportHelper reportHelper = new ReportHelper(configuration.analyze().report(), LOGGER);
+            final ReportHelper reportHelper = new ReportHelper(configuration.analyze()
+                .report(), LOGGER);
             final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportPlugin);
             final int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportPlugin);
             if (conceptViolations > 0 || constraintViolations > 0) {
@@ -158,19 +156,27 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     public void addTaskOptions(final List<Option> options) {
         super.addTaskOptions(options);
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULE_PARAMETERS).withDescription("The name of a properties file providing rule parameters.")
-                .hasArgs().create(CMDLINE_OPTION_RULE_PARAMETERS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
-                .create(CMDLINE_OPTION_REPORTDIR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULE_PARAMETERS)
+            .withDescription("The name of a properties file providing rule parameters.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_RULE_PARAMETERS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR)
+            .withDescription("The directory for writing reports.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_REPORTDIR));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
-                .withDescription("The severity threshold to fail on rule violations, i.e. to exit with an error code.").hasArgs()
-                .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_ON_SEVERITY).withDescription("The severity threshold to warn on rule violations.").hasArgs()
-                .create(CMDLINE_OPTION_WARN_ON_SEVERITY));
+            .withDescription("The severity threshold to fail on rule violations, i.e. to exit with an error code.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_ON_SEVERITY)
+            .withDescription("The severity threshold to warn on rule violations.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_WARN_ON_SEVERITY));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS)
-                .withDescription("If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
+            .withDescription("If set also execute concepts which have already been applied.")
+            .create(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE)
-                .withDescription("If set a ZIP archive named 'jqassistant-report.zip' is created containing all generated reports.")
-                .create(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
+            .withDescription("If set a ZIP archive named 'jqassistant-report.zip' is created containing all generated reports.")
+            .create(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
     }
 }

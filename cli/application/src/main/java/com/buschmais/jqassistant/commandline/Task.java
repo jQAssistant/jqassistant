@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.commandline;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 
 /**
@@ -21,5 +21,5 @@ public interface Task extends OptionsProvider, OptionsConsumer {
 
     void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws com.buschmais.jqassistant.commandline.CliExecutionException;
 
-    void run(Configuration configuration) throws com.buschmais.jqassistant.commandline.CliExecutionException;
+    void run(CliConfiguration configuration) throws com.buschmais.jqassistant.commandline.CliExecutionException;
 }

@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.commandline.task;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.Option;
@@ -26,7 +26,7 @@ public class ResetTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void executeTask(Configuration configuration, final Store store) {
+    protected void executeTask(CliConfiguration configuration, final Store store) {
         LOGGER.info("Resetting store.");
         store.reset();
     }

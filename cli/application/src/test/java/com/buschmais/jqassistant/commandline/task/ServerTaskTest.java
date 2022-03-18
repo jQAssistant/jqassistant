@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class ServerTaskTest {
 
     @Mock
-    private Configuration configuration;
+    private CliConfiguration configuration;
 
     @Mock
     private PluginRepository pluginRepository;
@@ -37,7 +37,8 @@ class ServerTaskTest {
 
     @BeforeEach
     final void setUp() {
-        doReturn(server).when(store).getServer();
+        doReturn(server).when(store)
+            .getServer();
     }
 
     private ServerTask serverTask = new ServerTask();

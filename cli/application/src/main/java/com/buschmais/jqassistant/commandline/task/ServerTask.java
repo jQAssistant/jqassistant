@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -33,7 +33,7 @@ public class ServerTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void executeTask(Configuration configuration, final Store store) throws CliExecutionException {
+    protected void executeTask(CliConfiguration configuration, final Store store) throws CliExecutionException {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
         server.start();
@@ -55,8 +55,9 @@ public class ServerTask extends AbstractStoreTask {
 
     @Override
     public void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DAEMON).withDescription("Do not wait for <Enter> on standard input to stop the server.")
-                .create(CMDLINE_OPTION_DAEMON));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DAEMON)
+            .withDescription("Do not wait for <Enter> on standard input to stop the server.")
+            .create(CMDLINE_OPTION_DAEMON));
     }
 
     @Override

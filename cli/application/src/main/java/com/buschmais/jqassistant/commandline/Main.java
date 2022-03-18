@@ -12,7 +12,6 @@ import java.util.*;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
 import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
@@ -47,9 +46,9 @@ public class Main {
      * The main method.
      *
      * @param args
-     *            The command line arguments.
+     *     The command line arguments.
      * @throws IOException
-     *             If an error occurs.
+     *     If an error occurs.
      */
     public static void main(String[] args) {
         try {
@@ -66,7 +65,7 @@ public class Main {
      * Constructor.
      *
      * @param taskFactory
-     *            The task factory to use.
+     *     The task factory to use.
      */
     public Main(TaskFactory taskFactory) {
         this.taskFactory = taskFactory;
@@ -76,9 +75,9 @@ public class Main {
      * Run tasks according to the given arguments.
      *
      * @param args
-     *            The arguments.
+     *     The arguments.
      * @throws CliExecutionException
-     *             If execution fails.
+     *     If execution fails.
      */
     public void run(String[] args) throws CliExecutionException {
         Options options = gatherOptions(taskFactory);
@@ -90,7 +89,7 @@ public class Main {
      * Extract an error message from the given exception and its causes.
      *
      * @param e
-     *            The exception.
+     *     The exception.
      * @return The error message.
      */
     private static String getErrorMessage(CliExecutionException e) {
@@ -100,8 +99,7 @@ public class Main {
             messageBuilder.append("-> ");
             messageBuilder.append(current.getMessage());
             current = current.getCause();
-        }
-        while (current != null);
+        } while (current != null);
         return messageBuilder.toString();
     }
 
@@ -141,12 +139,15 @@ public class Main {
      * Gathers the standard options shared by all tasks.
      *
      * @param options
-     *            The standard options.
+     *     The standard options.
      */
     @SuppressWarnings("static-access")
     private void gatherStandardOptions(final Options options) {
-        options.addOption(OptionBuilder.withArgName("p").withDescription(
-                "Path to property file; default is jqassistant.properties in the class path").withLongOpt("properties").hasArg().create("p"));
+        options.addOption(OptionBuilder.withArgName("p")
+            .withDescription("Path to property file; default is jqassistant.properties in the class path")
+            .withLongOpt("properties")
+            .hasArg()
+            .create("p"));
         options.addOption(new Option("help", "print this message"));
     }
 
@@ -154,7 +155,7 @@ public class Main {
      * Gathers the task specific options for all tasks.
      *
      * @param options
-     *            The task specific options.
+     *     The task specific options.
      */
     private void gatherTasksOptions(TaskFactory taskFactory, Options options) {
         for (Task task : taskFactory.getTasks()) {
@@ -172,23 +173,26 @@ public class Main {
     private String gatherTaskNames(TaskFactory taskFactory) {
         final StringBuilder builder = new StringBuilder();
         for (String taskName : taskFactory.getTaskNames()) {
-            builder.append("'").append(taskName).append("' ");
+            builder.append("'")
+                .append(taskName)
+                .append("' ");
         }
-        return builder.toString().trim();
+        return builder.toString()
+            .trim();
     }
 
     /**
      * Parse the command line and execute the requested task.
      *
      * @param commandLine
-     *            The command line.
+     *     The command line.
      * @param options
-     *            The known options.
+     *     The known options.
      * @throws CliExecutionException
-     *             If an error occurs.
+     *     If an error occurs.
      */
     private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
-        if(commandLine.hasOption(OPTION_HELP)) {
+        if (commandLine.hasOption(OPTION_HELP)) {
             printUsage(options, null);
             System.exit(1);
         }
@@ -222,8 +226,8 @@ public class Main {
         executeTasks(tasks, configuration, pluginRepository, properties);
     }
 
-    private void executeTasks(List<Task> tasks, Configuration configuration, PluginRepository pluginRepository,
-        Map<String, Object> properties) throws CliExecutionException {
+    private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)
+        throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
@@ -238,9 +242,9 @@ public class Main {
      * Parse the command line
      *
      * @param args
-     *            The arguments.
+     *     The arguments.
      * @param options
-     *            The known options.
+     *     The known options.
      * @return The command line.
      */
     private CommandLine getCommandLine(String[] args, Options options) {
@@ -261,13 +265,13 @@ public class Main {
      * @param task
      *     The task.
      * @param configuration
-     *     The {@link Configuration}-
+     *     The {@link CliConfiguration}-
      * @param properties
      *     The plugin properties
      * @throws IOException
      */
-    private void executeTask(Task task, Configuration configuration, PluginRepository pluginRepository,
-        Map<String, Object> properties) throws CliExecutionException {
+    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)
+        throws CliExecutionException {
         task.initialize(pluginRepository, properties);
         task.run(configuration);
     }
@@ -276,10 +280,10 @@ public class Main {
      * Read the plugin properties file if specified on the command line or if it exists on the class path.
      *
      * @param commandLine
-     *            The command line.
+     *     The command line.
      * @return The plugin properties.
      * @throws CliConfigurationException
-     *             If an error occurs.
+     *     If an error occurs.
      */
     private Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
         final Properties properties = new Properties();
@@ -315,12 +319,12 @@ public class Main {
      * Print usage information.
      *
      * @param options
-     *            The known options.
+     *     The known options.
      * @param errorMessage
-     *            The error message to append.
+     *     The error message to append.
      */
     private void printUsage(final Options options, final String errorMessage) {
-        if(errorMessage != null) {
+        if (errorMessage != null) {
             System.out.println("Error: " + errorMessage);
         }
         final HelpFormatter formatter = new HelpFormatter();
@@ -356,7 +360,7 @@ public class Main {
      *
      * @return The plugin class loader.
      * @throws com.buschmais.jqassistant.commandline.CliExecutionException
-     *             If the plugins cannot be loaded.
+     *     If the plugins cannot be loaded.
      */
     private ClassLoader createPluginClassLoader() throws CliExecutionException {
         ClassLoader parentClassLoader = Task.class.getClassLoader();
@@ -370,8 +374,12 @@ public class Main {
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.toFile().getName().endsWith(".jar")) {
-                            urls.add(file.toFile().toURI().toURL());
+                        if (file.toFile()
+                            .getName()
+                            .endsWith(".jar")) {
+                            urls.add(file.toFile()
+                                .toURI()
+                                .toURL());
                         }
                         return FileVisitResult.CONTINUE;
                     }

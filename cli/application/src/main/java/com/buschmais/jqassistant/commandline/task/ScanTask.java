@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -53,22 +53,31 @@ public class ScanTask extends AbstractStoreTask {
     @SuppressWarnings("static-access")
     @Override
     public void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt(CMD_LONG_OPTION_FILES)
-                .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_FILES));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt(CMDLINE_LONG_OPTION_URLS)
-                .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_URLS));
-        options.add(
-                OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).").create(CMDLINE_OPTION_RESET));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUEONERROR).withDescription("Continue scanning if an error is encountered. (default=false).")
-                .create(CMDLINE_OPTION_CONTINUEONERROR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES)
+            .withLongOpt(CMD_LONG_OPTION_FILES)
+            .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_FILES));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS)
+            .withLongOpt(CMDLINE_LONG_OPTION_URLS)
+            .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_URLS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET)
+            .withDescription("Reset store before scanning (default=false).")
+            .create(CMDLINE_OPTION_RESET));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUEONERROR)
+            .withDescription("Continue scanning if an error is encountered. (default=false).")
+            .create(CMDLINE_OPTION_CONTINUEONERROR));
     }
 
     @Override
-    protected void executeTask(Configuration configuration, Store store) throws CliExecutionException {
+    protected void executeTask(CliConfiguration configuration, Store store) throws CliExecutionException {
         ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
-        if (configuration.scan().reset()) {
+        if (configuration.scan()
+            .reset()) {
             store.reset();
         }
         for (ScopeHelper.ScopedResource scopedResource : files) {
@@ -93,7 +102,7 @@ public class ScanTask extends AbstractStoreTask {
         }
     }
 
-    private <T> void scan(Configuration configuration, ScannerContext scannerContext, T element, String path, String scopeName) {
+    private <T> void scan(CliConfiguration configuration, ScannerContext scannerContext, T element, String path, String scopeName) {
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, pluginRepository.getScannerPluginRepository());
         Scope scope = scanner.resolveScope(scopeName);
         scanner.scan(element, path, scope);
