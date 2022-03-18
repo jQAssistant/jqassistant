@@ -33,7 +33,7 @@
                         <groupId>@project.groupId@</groupId>
                         <artifactId>@project.artifactId@</artifactId>
                         <configuration>
-                            <storeDirectory>target/unsedstore</storeDirectory>
+                            <storeDirectory>target/unusedstore</storeDirectory>
                             <store>
                                 <uri>file:target/store2</uri>
                             </store>

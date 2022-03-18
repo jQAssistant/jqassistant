@@ -403,8 +403,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, Configuration configuration)
         throws MojoExecutionException, MojoFailureException {
-        Store store = getStore(configuration, () -> new File(rootModule.getBuild()
-            .getDirectory(), STORE_DIRECTORY));
+        Store store = getStore(configuration, () -> storeDirectory != null ?
+            storeDirectory :
+            new File(rootModule.getBuild()
+                .getDirectory(), STORE_DIRECTORY));
         if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
             store.reset();
         }
@@ -494,8 +496,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.URI,
-            coalesce(storeUri, store.getUri(), storeDirectory != null ? storeDirectory.toURI() : null));
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
             com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
@@ -524,10 +525,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         configurationBuilder.with(MavenConfiguration.PREFIX, MavenConfiguration.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
-        if (storeDirectory != null) {
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.PREFIX,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, storeDirectory.toURI());
-        }
         configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
         configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
         configurationBuilder.with(Rule.PREFIX, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
