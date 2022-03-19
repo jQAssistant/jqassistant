@@ -219,7 +219,7 @@ public class Main {
             tasks.add(task);
         }
         File workingDirectory = new File(".");
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, ConfigurationLoader.DEFAULT_CONFIGURATION_DIRECTORY);
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
         PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
