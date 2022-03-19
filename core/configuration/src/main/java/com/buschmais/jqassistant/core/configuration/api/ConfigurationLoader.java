@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.configuration.api;
 
-import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
@@ -15,6 +16,11 @@ public interface ConfigurationLoader {
      * The path to the default configuration repository, relative to the working directory.
      */
     String DEFAULT_CONFIGURATION_DIRECTORY = ".jqassistant";
+
+    /**
+     * The default names of configuration files
+     */
+    List<String> DEFAULT_CONFIGURATION_FILES = Arrays.asList("jqassistant.yml", "jqassistant.yaml");
 
     /**
      * Load the {@link Configuration} using the given working directory including
@@ -33,14 +39,4 @@ public interface ConfigurationLoader {
      */
     <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources);
 
-    /**
-     * Determines the default configuration directory relative to the given working directory.
-     *
-     * @param workingDirectory
-     *     The working directory.
-     * @return The configuration directory.
-     */
-    static File getDefaultConfigurationDirectory(File workingDirectory) {
-        return new File(workingDirectory, DEFAULT_CONFIGURATION_DIRECTORY);
-    }
 }

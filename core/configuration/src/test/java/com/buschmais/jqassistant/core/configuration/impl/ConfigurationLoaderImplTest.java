@@ -23,14 +23,7 @@ class ConfigurationLoaderImplTest {
 
     public static final File WORKING_DIRECTORY = new File("src/test/resources/working directory");
 
-    private File configurationDirectory = ConfigurationLoader.getDefaultConfigurationDirectory(WORKING_DIRECTORY);
-
-    private ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(configurationDirectory);
-
-    @Test
-    void defaultConfigurationDirectory() {
-        assertThat(configurationDirectory).isEqualTo(new File(WORKING_DIRECTORY, ".jqassistant"));
-    }
+    private ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(WORKING_DIRECTORY, ConfigurationLoader.DEFAULT_CONFIGURATION_DIRECTORY);
 
     @Test
     void loadFromFiles() throws URISyntaxException {

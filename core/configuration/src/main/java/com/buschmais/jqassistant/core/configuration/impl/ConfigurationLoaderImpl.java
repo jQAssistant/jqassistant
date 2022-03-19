@@ -38,11 +38,13 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     /**
      * Constructor using a configuration directory for looking up YAML config files.
      *
+     * @param workingDirectory
+     *     The working directory for loading YAML config files.
      * @param configurationDirectory
-     *     The directory for loading YAML config files.
+     *     The name of the configuration directory relative to the working directory.
      */
-    public ConfigurationLoaderImpl(File configurationDirectory) {
-        this.yamlConfigSources = getYamlConfigSources(configurationDirectory);
+    public ConfigurationLoaderImpl(File workingDirectory, String configurationDirectory) {
+        this.yamlConfigSources = getYamlConfigSources(workingDirectory, configurationDirectory);
     }
 
     /**
@@ -61,6 +63,22 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
             .withValidateUnknown(false)
             .build();
         return config.getConfigMapping(configurationMapping);
+    }
+
+    private List<ConfigSource> getYamlConfigSources(File workingDirectory, String configurationDirectory) {
+        List<ConfigSource> yamlConfigSources = getYamlConfigSources(new File(workingDirectory, configurationDirectory));
+        for (String configurationFile : DEFAULT_CONFIGURATION_FILES) {
+            addConfigFile(workingDirectory, configurationFile, yamlConfigSources);
+
+        }
+        return yamlConfigSources;
+    }
+
+    private void addConfigFile(File workingDirectory, String fileName, List<ConfigSource> yamlConfigSources) {
+        File configFile = new File(workingDirectory, fileName);
+        if (configFile.exists()) {
+            yamlConfigSources.add(getYamlConfigSource(configFile.toPath()));
+        }
     }
 
     private List<ConfigSource> getYamlConfigSources(File configurationDirectory) {
@@ -98,15 +116,19 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     private List<ConfigSource> getYamlConfigSources(List<Path> configurationFiles) {
         return configurationFiles.stream()
             .map(path -> {
-                try {
-                    URL url = path.toUri()
-                        .toURL();
-                    return new YamlConfigSource(url);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException(e);
-                }
+                return getYamlConfigSource(path);
             })
             .collect(toList());
+    }
+
+    private YamlConfigSource getYamlConfigSource(Path path) {
+        try {
+            URL url = path.toUri()
+                .toURL();
+            return new YamlConfigSource(url);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
 }
