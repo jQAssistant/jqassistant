@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import lombok.*;
 
@@ -26,10 +24,23 @@ public class RuleSelection {
     @Singular
     private Set<String> groupIds;
 
-    public static RuleSelection select(RuleSet ruleSet, List<String> groupIds, List<String> constraintIds, List<String> conceptIds) {
-        if (groupIds.isEmpty() && conceptIds.isEmpty() && constraintIds.isEmpty() && ruleSet.getGroupsBucket().getIds().contains(GROUP_DEFAULT)) {
-            return builder().groupId(GROUP_DEFAULT).build();
+    public static RuleSelection select(RuleSet ruleSet, Optional<List<String>> groupIds, Optional<List<String>> constraintIds,
+        Optional<List<String>> conceptIds) {
+        return select(ruleSet, groupIds.orElse(Collections.emptyList()), constraintIds.orElse(Collections.emptyList()),
+            conceptIds.orElse(Collections.emptyList()));
+    }
+
+    private static RuleSelection select(RuleSet ruleSet, List<String> groupIds, List<String> constraintIds, List<String> conceptIds) {
+        if (groupIds.isEmpty() && conceptIds.isEmpty() && constraintIds.isEmpty() && ruleSet.getGroupsBucket()
+            .getIds()
+            .contains(GROUP_DEFAULT)) {
+            return builder().groupId(GROUP_DEFAULT)
+                .build();
         }
-        return builder().groupIds(new LinkedHashSet<>(groupIds)).constraintIds(new LinkedHashSet<>(constraintIds)).conceptIds(new LinkedHashSet<>(conceptIds)).build();
+        // use LinkedHashSet to keep order of selection
+        return builder().groupIds(new LinkedHashSet<>(groupIds))
+            .constraintIds(new LinkedHashSet<>(constraintIds))
+            .conceptIds(new LinkedHashSet<>(conceptIds))
+            .build();
     }
 }

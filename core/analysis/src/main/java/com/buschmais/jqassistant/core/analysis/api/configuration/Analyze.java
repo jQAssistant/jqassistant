@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.configuration;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
@@ -27,6 +29,21 @@ public interface Analyze {
      */
     @Description("The report configuration.")
     Report report();
+
+    String CONCEPTS = "concepts";
+
+    @Description("The concepts to be applied.")
+    Optional<List<String>> concepts();
+
+    String CONSTRAINTS = "constraints";
+
+    @Description("The constraints to be validated.")
+    Optional<List<String>> constraints();
+
+    String GROUPS = "groups";
+
+    @Description("The groups to be executed.")
+    Optional<List<String>> groups();
 
     String RULE_PARAMETERS = "rule-parameters";
 

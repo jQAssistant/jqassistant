@@ -11,6 +11,11 @@ import io.smallrye.config.WithDefault;
 @ConfigMapping(prefix = "jqassistant.analyze.rule")
 public interface Rule {
 
+    String RULE_DIRECTORY = "rule-directory";
+
+    @Description("The name of the directory containing project rules.")
+    Optional<String> ruleDirectory();
+
     String DEFAULT_CONCEPT_SEVERITY = "default-concept-severity";
 
     @Description("The default severity of concepts without an explicit severity.")
@@ -23,7 +28,7 @@ public interface Rule {
 
     String DEFAULT_GROUP_SEVERITY = "default-group-severity";
 
-    @Description("The default severity of constraints without an explicit severity.")
+    @Description("The default severity of groups without an explicit severity.")
     Optional<Severity> defaultGroupSeverity();
 
     String REQUIRED_CONCEPTS_ARE_OPTIONAL_BY_DEFAULT = "required-concepts-are-optional-by-default";
