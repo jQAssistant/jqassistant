@@ -34,10 +34,10 @@ public class ConfigurationProvider {
      *     Additional {@link ConfigSource}s.
      * @return The {@link MavenConfiguration}.
      */
-    public synchronized MavenConfiguration getConfiguration(File executionRoot, Optional<File> configurationDirectory, ConfigSource... configSources) {
+    public synchronized MavenConfiguration getConfiguration(File executionRoot, Optional<String> configurationDirectory, ConfigSource... configSources) {
         if (configurationLoader == null) {
-            File effectiveConfigurationDirectory = configurationDirectory.orElse(ConfigurationLoader.getDefaultConfigurationDirectory(executionRoot));
-            configurationLoader = new ConfigurationLoaderImpl(effectiveConfigurationDirectory);
+            String effectiveConfigurationDirectory = configurationDirectory.orElse(ConfigurationLoader.DEFAULT_CONFIGURATION_DIRECTORY);
+            configurationLoader = new ConfigurationLoaderImpl(executionRoot, effectiveConfigurationDirectory);
         }
         return configurationLoader.load(MavenConfiguration.class, configSources);
     }
