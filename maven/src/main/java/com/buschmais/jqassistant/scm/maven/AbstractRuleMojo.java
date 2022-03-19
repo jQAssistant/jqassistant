@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
@@ -15,6 +18,7 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
+import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -25,28 +29,52 @@ import org.apache.maven.plugins.annotations.Parameter;
 public abstract class AbstractRuleMojo extends AbstractProjectMojo {
 
     /**
+     * Specifies a list of directory names relative to the root module containing
+     * additional rule files.
+     */
+    @Parameter(property = "jqassistant.rules.directories")
+    private List<String> rulesDirectories;
+
+    /**
      * The URL to retrieve rules.
      */
     @Parameter(property = "jqassistant.rules.url")
     private URL rulesUrl;
 
     /**
+     * The rule configuration
+     */
+    @Parameter
+    private RuleConfiguration rule = new RuleConfiguration();
+
+    /**
      * The list of concept names to be applied.
      */
     @Parameter(property = "jqassistant.concepts")
-    protected List<String> concepts;
+    private List<String> concepts;
 
     /**
      * The list of constraint names to be validated.
      */
     @Parameter(property = "jqassistant.constraints")
-    protected List<String> constraints;
+    private List<String> constraints;
 
     /**
      * The list of group names to be executed.
      */
     @Parameter(property = "jqassistant.groups")
-    protected List<String> groups;
+    private List<String> groups;
+
+    @Override
+    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+        super.configure(configurationBuilder);
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
+        configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
+        configurationBuilder.with(Analyze.class, Analyze.CONCEPTS, concepts);
+        configurationBuilder.with(Analyze.class, Analyze.CONSTRAINTS, constraints);
+        configurationBuilder.with(Analyze.class, Analyze.GROUPS, groups);
+    }
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.

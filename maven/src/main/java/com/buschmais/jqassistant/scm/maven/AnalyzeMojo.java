@@ -53,25 +53,25 @@ public class AnalyzeMojo extends AbstractRuleMojo {
      * The rule parameters to use (optional).
      */
     @Parameter(property = "jqassistant.ruleParameters")
-    protected Map<String, String> ruleParameters;
+    private Map<String, String> ruleParameters;
 
     /**
      * If set also execute concepts which have already been applied.
      */
     @Parameter(property = "jqassistant.executeAppliedConcepts")
-    protected boolean executeAppliedConcepts = false;
+    private boolean executeAppliedConcepts = false;
 
     /**
      * The severity threshold to warn on rule violations.
      */
     @Parameter(property = "jqassistant.warnOnSeverity")
-    protected Severity warnOnSeverity;
+    private Severity warnOnSeverity;
 
     /**
      * The severity threshold to fail on rule violations, i.e. break the build.
      */
     @Parameter(property = "jqassistant.failOnSeverity")
-    protected Severity failOnSeverity;
+    private Severity failOnSeverity;
 
     /**
      * Defines the set of reports which shall be created by default. If empty all
@@ -133,7 +133,8 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         RuleSet ruleSet = readRules(mojoExecutionContext);
-        RuleSelection ruleSelection = RuleSelection.select(ruleSet, groups, constraints, concepts);
+        Analyze analyze = configuration.analyze();
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
         withStore(store -> analyze(configuration, rootModule, ruleSet, ruleSelection, store), mojoExecutionContext);
     }
 

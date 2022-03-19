@@ -116,12 +116,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private Integer embeddedHttpPort;
 
     /**
-     * The rule configuration
-     */
-    @Parameter
-    private RuleConfiguration rule = new RuleConfiguration();
-
-    /**
      * Determines if the execution root module shall be used as project root, i.e.
      * to create the store and read the rules from.
      */
@@ -134,13 +128,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "jqassistant.rules.directory", defaultValue = MojoExecutionContext.DEFAULT_RULES_DIRECTORY)
     private String rulesDirectory;
-
-    /**
-     * Specifies a list of directory names relative to the root module containing
-     * additional rule files.
-     */
-    @Parameter(property = "jqassistant.rules.directories")
-    protected List<String> rulesDirectories;
 
     /**
      * Skip the execution.
@@ -391,9 +378,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
         configurationBuilder.with(Rule.class, Rule.RULE_DIRECTORY, rulesDirectory);
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
     }
 
     /**
