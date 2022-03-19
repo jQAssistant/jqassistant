@@ -2,9 +2,6 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -15,12 +12,11 @@ import org.apache.maven.project.MavenProject;
 public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
-    public final void execute(MavenProject rootModule, Set<MavenProject> executedModules, MavenConfiguration configuration)
-        throws MojoExecutionException, MojoFailureException {
-        StoreOperation storeOperation = (root, store, config) -> execute(currentProject, store, config);
-        execute(storeOperation, rootModule, executedModules, configuration);
+    public final void execute(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
+        execute(mojoExecutionContext, currentProject);
     }
 
-    protected abstract void execute(MavenProject mavenProject, Store store, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException;
+    protected abstract void execute(MojoExecutionContext mojoExecutionContext, MavenProject mavenProject)
+        throws MojoExecutionException, MojoFailureException;
 
 }

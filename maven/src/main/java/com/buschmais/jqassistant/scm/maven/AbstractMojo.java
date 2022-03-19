@@ -1,22 +1,13 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
-import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.*;
@@ -62,67 +53,67 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The store directory.
      */
     @Parameter(property = "jqassistant.store.directory")
-    protected File storeDirectory;
+    private File storeDirectory;
 
     /**
      * The store url.
      */
     @Parameter(property = "jqassistant.store.uri")
-    protected URI storeUri;
+    private URI storeUri;
 
     /**
      * The store user name.
      */
     @Parameter(property = "jqassistant.store.username")
-    protected String storeUserName;
+    private String storeUserName;
 
     /**
      * The store password.
      */
     @Parameter(property = "jqassistant.store.password")
-    protected String storePassword;
+    private String storePassword;
 
     /**
      * The store encryption.
      */
     @Parameter(property = "jqassistant.store.encryption")
-    protected String storeEncryption;
+    private String storeEncryption;
 
     /**
      * The store trust strategy.
      */
     @Parameter(property = "jqassistant.store.trustStrategy")
-    protected String storeTrustStrategy;
+    private String storeTrustStrategy;
 
     /**
      * The store trust certificate.
      */
     @Parameter(property = "jqassistant.store.trustCertificate")
-    protected String storeTrustCertificate;
+    private String storeTrustCertificate;
 
     /**
      * The store configuration.
      */
     @Parameter
-    protected StoreConfiguration store = new StoreConfiguration();
+    private StoreConfiguration store = new StoreConfiguration();
 
     /**
      * The listen address of the embedded server.
      */
     @Parameter(property = PARAMETER_EMBEDDED_LISTEN_ADDRESS)
-    protected String embeddedListenAddress;
+    private String embeddedListenAddress;
 
     /**
      * The bolt port of the embedded server.
      */
     @Parameter(property = PARAMETER_EMBEDDED_BOLT_PORT)
-    protected Integer embeddedBoltPort;
+    private Integer embeddedBoltPort;
 
     /**
      * The http port of the embedded server.
      */
     @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
-    protected Integer embeddedHttpPort;
+    private Integer embeddedHttpPort;
 
     /**
      * The rule configuration
@@ -141,8 +132,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Specifies the name of the directory containing rule files. It is also used to
      * identify the root module.
      */
-    @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
-    protected String rulesDirectory;
+    @Parameter(property = "jqassistant.rules.directory", defaultValue = MojoExecutionContext.DEFAULT_RULES_DIRECTORY)
+    private String rulesDirectory;
 
     /**
      * Specifies a list of directory names relative to the root module containing
@@ -152,36 +143,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected List<String> rulesDirectories;
 
     /**
-     * The URL to retrieve rules.
-     */
-    @Parameter(property = "jqassistant.rules.url")
-    protected URL rulesUrl;
-
-    /**
-     * The list of concept names to be applied.
-     */
-    @Parameter(property = "jqassistant.concepts")
-    protected List<String> concepts;
-
-    /**
-     * The list of constraint names to be validated.
-     */
-    @Parameter(property = "jqassistant.constraints")
-    protected List<String> constraints;
-
-    /**
-     * The list of group names to be executed.
-     */
-    @Parameter(property = "jqassistant.groups")
-    protected List<String> groups;
-
-    /**
-     * The file to write the XML report to.
-     */
-    @Parameter(property = "jqassistant.report.xml")
-    protected File xmlReportFile;
-
-    /**
      * Skip the execution.
      */
     @Parameter(property = "jqassistant.skip", defaultValue = "false")
@@ -189,11 +150,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Controls the life cycle of the data store.
-     *
+     * <p>
      * {@link StoreLifecycle#REACTOR} is the default value which provides caching of
      * the initialized store. There are configurations where this will cause
      * problems, in such cases {@link StoreLifecycle#MODULE} shall be used.
-     *
      */
     @Parameter(property = PROPERTY_STORE_LIFECYCLE)
     protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
@@ -209,12 +169,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "project")
     protected MavenProject currentProject;
-
-    /**
-     * Contains the full list of projects in the reactor.
-     */
-    @Parameter(property = "reactorProjects")
-    protected List<MavenProject> reactorProjects;
 
     /**
      * The current execution.
@@ -243,12 +197,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Component
     private RepositorySystem repositorySystem;
 
-    @Parameter( defaultValue = "${repositorySystemSession}", readonly = true, required = true )
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
     private RepositorySystemSession repositorySystemSession;
 
-    @Parameter( defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true)
     private List<RemoteRepository> repositories;
-
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -259,13 +212,16 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         // parallel builds
         synchronized (AbstractMojo.class) {
             MavenConfiguration configuration = getConfiguration();
-            MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, configuration.maven()
-                .useExecutionRootAsProjectRoot());
+            MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, configuration);
+            MavenProject rootModule = mojoExecutionContext.getRootModule();
             Set<MavenProject> executedModules = getExecutedModules(rootModule);
             if (skip) {
                 getLog().info("Skipping execution.");
             } else {
-                execute(rootModule, executedModules, configuration);
+                if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
+                    withStore(store -> store.reset(), mojoExecutionContext);
+                }
+                execute(mojoExecutionContext, executedModules);
             }
             executedModules.add(currentProject);
         }
@@ -274,18 +230,17 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Execute the mojo.
      *
-     * @param rootModule
-     *     The root module of the project.
+     * @param mojoExecutionContext
+     *     The {@link MojoExecutionContext}.
      * @param executedModules
      *     The already executed modules of the project.
-     * @param configuration
-     *     The {@link MavenConfiguration}.
      * @throws MojoExecutionException
      *     If a general execution problem occurs.
      * @throws MojoFailureException
      *     If a failure occurs.
      */
-    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException;
+    protected abstract void execute(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules)
+        throws MojoExecutionException, MojoFailureException;
 
     /**
      * Determine if the store shall be reset before execution of the mofo.
@@ -302,112 +257,26 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected abstract boolean isConnectorRequired();
 
     /**
-     * Reads the available rules from the rules directory and deployed catalogs.
-     *
-     * @return A rule set. .
-     * @throws MojoExecutionException
-     *             If the rules cannot be read.
-     */
-    protected final RuleSet readRules(MavenProject rootModule, MavenConfiguration configuration) throws MojoExecutionException {
-        List<RuleSource> sources = new ArrayList<>();
-        PluginRepository pluginRepository = getPluginRepository(configuration);
-        if (rulesUrl != null) {
-            getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
-            sources.add(new UrlRuleSource(rulesUrl));
-        } else {
-            // read rules from rules directory
-            addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, rulesDirectory));
-            if (rulesDirectories != null) {
-                for (String directory : rulesDirectories) {
-                    addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
-                }
-            }
-            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
-            sources.addAll(ruleSources);
-        }
-        Collection<RuleParserPlugin> ruleParserPlugins;
-        try {
-            ruleParserPlugins = pluginRepository.getRulePluginRepository()
-                .getRuleParserPlugins(configuration.analyze()
-                    .rule());
-        } catch (RuleException e) {
-            throw new MojoExecutionException("Cannot get rules rule source reader plugins.", e);
-        }
-        try {
-            RuleParser ruleParser = new RuleParser(ruleParserPlugins);
-            return ruleParser.parse(sources);
-        } catch (RuleException e) {
-            throw new MojoExecutionException("Cannot read rules.", e);
-        }
-    }
-
-    /**
-     * Add rules from the given directory to the list of sources.
-     *
-     * @param sources
-     *            The sources.
-     * @param directory
-     *            The directory.
-     * @throws MojoExecutionException
-     *             On error.
-     */
-    private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
-        List<RuleSource> ruleSources = readRulesDirectory(directory);
-        for (RuleSource ruleSource : ruleSources) {
-            getLog().debug("Adding rules from file " + ruleSource);
-            sources.add(ruleSource);
-        }
-    }
-
-    /**
-     * Retrieves the list of available rules from the rules directory.
-     *
-     * @param rulesDirectory
-     *            The rules directory.
-     * @return The {@link java.util.List} of available rules {@link java.io.File}s.
-     * @throws MojoExecutionException
-     *             If the rules directory cannot be read.
-     */
-    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
-        if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
-        }
-        try {
-            return FileRuleSource.getRuleSources(rulesDirectory);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
-        }
-    }
-
-    /**
      * Execute an operation with the store.
      * <p>
      * This method enforces thread safety based on the store factory.
      *
      * @param storeOperation
      *     The store.
-     * @param rootModule
-     *     The root module to use for store initialization.
-     * @param executedModules
-     *     The set of already executed modules.
-     * @param configuration
-     *     The {@link MavenConfiguration}.
      * @throws MojoExecutionException
      *     On execution errors.
      * @throws MojoFailureException
      *     On execution failures.
      */
-    protected final void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules, MavenConfiguration configuration)
-        throws MojoExecutionException, MojoFailureException {
+    protected final void withStore(StoreOperation storeOperation, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
         Store store = getStore(configuration, () -> storeDirectory != null ?
             storeDirectory :
             new File(rootModule.getBuild()
                 .getDirectory(), STORE_DIRECTORY));
-        if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
-            store.reset();
-        }
         try {
-            storeOperation.run(rootModule, store, configuration);
+            storeOperation.run(store);
         } finally {
             releaseStore(store);
         }
@@ -417,7 +286,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Determine the already executed modules for a given root module.
      *
      * @param rootModule
-     *            The root module.
+     *     The root module.
      * @return The set of already executed modules belonging to the root module.
      */
     private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
@@ -441,7 +310,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return The store instance.
      * @throws MojoExecutionException
-     *             If the store cannot be opened.
+     *     If the store cannot be opened.
      */
     private Store getStore(MavenConfiguration configuration, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
         Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, getPluginRepository(configuration));
@@ -457,7 +326,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Release a store instance.
      *
      * @param store
-     *            The store instance.
+     *     The store instance.
      */
     private void releaseStore(Store store) {
         switch (storeLifecycle) {
@@ -479,7 +348,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private MavenConfiguration getConfiguration() throws MojoExecutionException {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
         addStoreConfiguration(configurationBuilder);
-        addConfigurationProperties(configurationBuilder);
+        configure(configurationBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
         return configurationProvider.getConfiguration(executionRoot, empty(), configurationBuilder.build());
     }
@@ -519,8 +388,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @param configurationBuilder
      *     The {@link ConfigurationBuilder}.
      */
-    protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
+        configurationBuilder.with(Rule.class, Rule.RULE_DIRECTORY, rulesDirectory);
         configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
         configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
         configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
@@ -540,20 +410,16 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected interface StoreOperation {
         /**
-         * Execute the operation-
+         * Execute the operation.
          *
-         * @param rootModule
-         *     The root module.
          * @param store
          *     The store.
-         * @param configuration
-         *     The {@link MavenConfiguration}.
          * @throws MojoExecutionException
          *     On execution errors.
          * @throws MojoFailureException
          *     On execution failures.
          */
-        void run(MavenProject rootModule, Store store, MavenConfiguration configuration) throws MojoExecutionException, MojoFailureException;
+        void run(Store store) throws MojoExecutionException, MojoFailureException;
     }
 
 }

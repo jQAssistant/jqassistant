@@ -57,7 +57,7 @@ public class ReportMojo extends AbstractMavenReport {
         if (xmlReportFile != null) {
             selectedXmlReportFile = xmlReportFile;
         } else {
-            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + ProjectResolver.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
+            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + MojoExecutionContext.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
         }
         if (selectedXmlReportFile.exists()) {
             StringWriter writer = new StringWriter();

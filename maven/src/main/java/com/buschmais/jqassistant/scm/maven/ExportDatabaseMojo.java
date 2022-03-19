@@ -1,16 +1,14 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.*;
-import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.neo4j.cypher.export.DatabaseSubGraph;
 import org.neo4j.cypher.export.SubGraph;
 import org.neo4j.cypher.export.SubGraphExporter;
@@ -41,13 +39,17 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
-        throws MojoExecutionException {
-        File file = ProjectResolver.getOutputFile(rootModule, exportFile, EXPORT_FILE);
+    protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        withStore(store -> export(store, mojoExecutionContext.getOutputFile(exportFile, EXPORT_FILE)), mojoExecutionContext);
+    }
+
+    private void export(Store store, File file) throws MojoExecutionException {
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
         store.beginTransaction();
         try {
-            GraphDatabaseService graphDatabaseService = store.getXOManager().getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+            GraphDatabaseService graphDatabaseService = store.getXOManager()
+                .getDatastoreSession(EmbeddedNeo4jDatastoreSession.class)
+                .getGraphDatabaseService();
             SubGraph graph = DatabaseSubGraph.from(graphDatabaseService);
             new SubGraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
         } catch (IOException e) {

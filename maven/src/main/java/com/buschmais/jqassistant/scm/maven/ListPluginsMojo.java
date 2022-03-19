@@ -4,12 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Lists all plugins known based on the current configuration
@@ -29,11 +26,11 @@ public class ListPluginsMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
-        throws MojoExecutionException {
-        getLog().info("Available plugins for '" + rootModule.getName() + "'.");
+    protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        getLog().info("Available plugins for '" + mojoExecutionContext.getRootModule()
+            .getName() + "'.");
 
-        List<PluginInfo> sortedInfos = getPluginRepository(configuration).getPluginOverview()
+        List<PluginInfo> sortedInfos = getPluginRepository(mojoExecutionContext.getConfiguration()).getPluginOverview()
             .stream()
             .sorted(PluginInfo.NAME_COMPARATOR)
             .collect(Collectors.toList());

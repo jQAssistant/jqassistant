@@ -25,6 +25,7 @@ import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -79,8 +80,8 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    protected void addConfigurationProperties(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        super.addConfigurationProperties(configurationBuilder);
+    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+        super.configure(configurationBuilder);
         configurationBuilder.with(Scan.class, Scan.CONTINUE_ON_ERROR, continueOnError)
             .with(Scan.class, Scan.RESET, reset)
             .with(Scan.class, Scan.PROPERTIES, scanProperties);
@@ -93,12 +94,15 @@ public class ScanMojo extends AbstractModuleMojo {
             String scope = scanInclude.getScope();
             StringBuilder builder = new StringBuilder();
             if (scope != null) {
-                builder.append(scope).append(ScopeHelper.SCOPE_SEPARATOR);
+                builder.append(scope)
+                    .append(ScopeHelper.SCOPE_SEPARATOR);
             }
             if (path != null) {
-                files.add(builder.append(path).toString());
-            } else if (url !=null) {
-                urls.add(builder.append(url).toString());
+                files.add(builder.append(path)
+                    .toString());
+            } else if (url != null) {
+                urls.add(builder.append(url)
+                    .toString());
             } else {
                 throw new MojoExecutionException(
                     "A scanInclude can only include either a file or an URL: path=" + scanInclude.getPath() + ", url=" + scanInclude.getUrl());
@@ -109,9 +113,14 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MavenProject mavenProject, Store store, MavenConfiguration configuration) throws MojoExecutionException {
+    public void execute(MojoExecutionContext mojoExecutionContext, MavenProject mavenProject) throws MojoExecutionException, MojoFailureException {
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        withStore(store -> scan(mavenProject, configuration, store), mojoExecutionContext);
+    }
+
+    private void scan(MavenProject mavenProject, MavenConfiguration configuration, Store store) {
         ScannerPluginRepository scannerPluginRepository = getPluginRepository(configuration).getScannerPluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(store, ProjectResolver.getOutputDirectory(mavenProject));
+        ScannerContext scannerContext = new ScannerContextImpl(store, MojoExecutionContext.getOutputDirectory(mavenProject));
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest()

@@ -1,24 +1,18 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.List;
-
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Lists all available scopes.
  */
-@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
-      configurator = "custom")
+@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, configurator = "custom")
 public class AvailableScopesMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AvailableScopesMojo.class);
@@ -34,10 +28,11 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration) throws MojoExecutionException {
-        getLog().info("Available scopes for '" + rootModule.getName() + "'.");
+    public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        getLog().info("Available scopes for '" + mojoExecutionContext.getRootModule()
+            .getName() + "'.");
         ScopeHelper scopeHelper = new ScopeHelper(logger);
-        ScannerPluginRepository scannerPluginRepository = getPluginRepository(configuration).getScannerPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = getPluginRepository(mojoExecutionContext.getConfiguration()).getScannerPluginRepository();
         scopeHelper.printScopes(scannerPluginRepository.getScopes());
     }
 }

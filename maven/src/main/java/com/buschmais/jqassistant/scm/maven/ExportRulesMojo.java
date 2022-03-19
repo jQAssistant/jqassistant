@@ -4,14 +4,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.List;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.writer.XmlRuleSetWriter;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -20,9 +17,8 @@ import org.apache.maven.project.MavenProject;
 /**
  * Exports the all rules to an XML file.
  */
-@Mojo(name = "export-rules", threadSafe = true,
-      configurator = "custom")
-public class ExportRulesMojo extends AbstractProjectMojo {
+@Mojo(name = "export-rules", threadSafe = true, configurator = "custom")
+public class ExportRulesMojo extends AbstractRuleMojo {
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -35,13 +31,15 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store, MavenConfiguration configuration)
-        throws MojoExecutionException {
+    protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
-        final RuleSet ruleSet = readRules(rootModule, configuration);
-        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(configuration.analyze()
+        final RuleSet ruleSet = readRules(mojoExecutionContext);
+        RuleSetWriter ruleSetWriter = new XmlRuleSetWriter(mojoExecutionContext.getConfiguration()
+            .analyze()
             .rule());
-        String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
+        String exportedRules = rootModule.getBuild()
+            .getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(exportedRules), "UTF-8");
