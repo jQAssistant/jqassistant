@@ -70,7 +70,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
                 .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
             RuleSet availableRules = getAvailableRules(analyze.rule());
-            analyzer.execute(availableRules, getRuleSelection(availableRules));
+            analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
         } catch (RuleException e) {
             throw new CliExecutionException("Analysis failed.", e);
         }

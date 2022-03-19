@@ -12,6 +12,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -45,9 +46,6 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
 
     private URL rulesUrl;
     private String ruleDirectory;
-    private List<String> conceptIds;
-    private List<String> constraintIds;
-    private List<String> groupIds;
 
     @Override
     protected boolean isConnectorRequired() {
@@ -62,12 +60,14 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             File selectedDirectory = new File(ruleDirectory);
             // read rules from rules directory
             sources.addAll(readRulesDirectory(selectedDirectory));
-            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
+            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()
+                .getRuleSources();
             sources.addAll(ruleSources);
         }
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
-            ruleParserPlugins = pluginRepository.getRulePluginRepository().getRuleParserPlugins(rule);
+            ruleParserPlugins = pluginRepository.getRulePluginRepository()
+                .getRuleParserPlugins(rule);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot get rule source reader plugins.", e);
         }
@@ -83,11 +83,13 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
      * Return the selection of rules.
      *
      * @param ruleSet
-     *            The rule set.
+     *     The rule set.
+     * @param analyze
+     *     The {@link Analyze} configuration.
      * @return The selection of rules.
      */
-    protected RuleSelection getRuleSelection(RuleSet ruleSet) {
-        return RuleSelection.select(ruleSet, groupIds,constraintIds, conceptIds);
+    protected RuleSelection getRuleSelection(RuleSet ruleSet, Analyze analyze) {
+        return RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
     }
 
     private List<RuleSource> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
@@ -112,13 +114,16 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             }
         }
         ruleDirectory = getOptionValue(options, CMDLINE_OPTION_R, Task.DEFAULT_RULE_DIRECTORY);
-        groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Collections.<String> emptyList());
-        constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
-        conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
+        configurationBuilder.with(Analyze.class, Analyze.GROUPS, getOptionValues(options, CMDLINE_OPTION_GROUPS, Collections.<String>emptyList()));
+        configurationBuilder.with(Analyze.class, Analyze.CONSTRAINTS, getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String>emptyList()));
+        configurationBuilder.with(Analyze.class, Analyze.CONCEPTS, getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String>emptyList()));
         try {
-            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
-            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
-            configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY,
+                Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY,
+                Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)));
+            configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY,
+                Severity.fromValue(getOptionValue(options, CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)));
         } catch (RuleException e) {
             throw new CliConfigurationException("Cannot convert severity.", e);
         }
@@ -126,22 +131,45 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
 
     @Override
     public void addTaskOptions(List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_R).withLongOpt(CMDLINE_OPTION_RULEDIRECTORY).withDescription("The directory containing rules.")
-                .hasArgs().create(CMDLINE_OPTION_R));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULESURL).withDescription("The URL of a file containing rules.").hasArgs()
-                .create(CMDLINE_OPTION_RULESURL));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_GROUPS).withDescription("The groups to execute (default='default').").withValueSeparator(',')
-                .hasArgs().create(CMDLINE_OPTION_GROUPS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONSTRAINTS).withDescription("The constraints to verify.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_CONSTRAINTS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONCEPTS).withDescription("The concepts to apply.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_CONCEPTS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY).withDescription("The default severity for groups.").withValueSeparator(',')
-                .hasArgs().create(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY).withDescription("The default severity for concepts.")
-                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY).withDescription("The default severity for constraints.")
-                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_R)
+            .withLongOpt(CMDLINE_OPTION_RULEDIRECTORY)
+            .withDescription("The directory containing rules.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_R));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULESURL)
+            .withDescription("The URL of a file containing rules.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_RULESURL));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_GROUPS)
+            .withDescription("The groups to execute (default='default').")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_GROUPS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONSTRAINTS)
+            .withDescription("The constraints to verify.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_CONSTRAINTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONCEPTS)
+            .withDescription("The concepts to apply.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_CONCEPTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY)
+            .withDescription("The default severity for groups.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_DEFAULT_GROUP_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY)
+            .withDescription("The default severity for concepts.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_DEFAULT_CONCEPT_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY)
+            .withDescription("The default severity for constraints.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
     }
 
     protected Severity getSeverity(String severityValue) throws CliConfigurationException {
