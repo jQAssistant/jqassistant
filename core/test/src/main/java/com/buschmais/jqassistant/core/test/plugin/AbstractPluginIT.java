@@ -111,7 +111,7 @@ public abstract class AbstractPluginIT {
 
     protected ConfigurationBuilder createConfigurationBuilder() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
-        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.FILE;
+        TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
         switch (type) {
         case FILE:
             break;
@@ -162,7 +162,7 @@ public abstract class AbstractPluginIT {
      *
      * @return The  configuration.
      */
-    private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
+    protected Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
         return configurationLoader.load(Configuration.class, configurationBuilder.build());
     }
