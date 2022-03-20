@@ -86,7 +86,7 @@ public final class MojoExecutionContext {
     }
 
     private MavenProject getRootModule(MavenProject module) {
-        File directory = new File(module.getBasedir(), getRuleDirectoryName());
+        File directory = getDirectory(module, getRuleDirectoryName());
         if (directory.exists() && directory.isDirectory()) {
             return module;
         }
@@ -121,16 +121,7 @@ public final class MojoExecutionContext {
      */
     File getRuleDirectory() {
         String directoryName = getRuleDirectoryName();
-        File directory = new File(directoryName);
-        return directory.isAbsolute() ? directory : getRuleDirectory(DEFAULT_RULES_DIRECTORY);
-    }
-
-    private String getRuleDirectoryName() {
-        String directoryName = configuration.analyze()
-            .rule()
-            .ruleDirectory()
-            .orElse(DEFAULT_RULES_DIRECTORY);
-        return directoryName;
+        return getRuleDirectory(directoryName);
     }
 
     /**
@@ -138,8 +129,31 @@ public final class MojoExecutionContext {
      *
      * @return The file representing the directory.
      */
-    File getRuleDirectory(String directory) {
-        return new File(rootModule.getBasedir(), directory);
+    File getRuleDirectory(String directoryName) {
+        return getDirectory(rootModule, directoryName);
+    }
+
+    /**
+     * Resolve a directory.
+     * <p>
+     * If the directory name is absolute then it is returned as is, otherwise resolved against the given {@link MavenProject}.
+     *
+     * @param module
+     *     The {@link MavenProject}.
+     * @param directoryName
+     *     The directory name.
+     * @return The directory.
+     */
+    private File getDirectory(MavenProject module, String directoryName) {
+        File directory = new File(directoryName);
+        return directory.isAbsolute() ? directory : new File(module.getBasedir(), directoryName);
+    }
+
+    private String getRuleDirectoryName() {
+        return configuration.analyze()
+            .rule()
+            .ruleDirectory()
+            .orElse(DEFAULT_RULES_DIRECTORY);
     }
 
     /**
@@ -151,7 +165,7 @@ public final class MojoExecutionContext {
      *     The plugin
      * @return <code>true</code> if the project uses the plugim.
      */
-    static boolean containsBuildPlugin(MavenProject project, Plugin plugin) {
+    boolean containsBuildPlugin(MavenProject project, Plugin plugin) {
         return project.getBuildPlugins()
             .contains(plugin);
     }
@@ -159,11 +173,9 @@ public final class MojoExecutionContext {
     /**
      * Determines the directory for writing output files.
      *
-     * @param rootModule
-     *     The root module of the project.
      * @return The report directory.
      */
-    static File getOutputDirectory(MavenProject rootModule) {
+    File getOutputDirectory() {
         String directoryName = rootModule.getBuild()
             .getDirectory() + "/" + OUTPUT_DIRECTORY;
         File directory = new File(directoryName);
@@ -185,7 +197,7 @@ public final class MojoExecutionContext {
         if (reportFile != null) {
             selectedXmlReportFile = reportFile;
         } else if (rootModule != null) {
-            selectedXmlReportFile = new File(getOutputDirectory(rootModule) + "/" + defaultFile);
+            selectedXmlReportFile = new File(getOutputDirectory() + "/" + defaultFile);
         } else {
             throw new MojoExecutionException("Cannot determine report file.");
         }

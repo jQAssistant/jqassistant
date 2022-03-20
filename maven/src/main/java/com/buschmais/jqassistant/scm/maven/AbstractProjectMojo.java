@@ -17,13 +17,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     @Override
     public final void execute(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules)
         throws MojoExecutionException, MojoFailureException {
-        Map<MavenProject, List<MavenProject>> projects = mojoExecutionContext.getProjects();
-        MavenProject rootModule = mojoExecutionContext.getRootModule();
-        final List<MavenProject> projectModules = projects.get(rootModule);
-        boolean isLastModuleInProject = isLastModuleInProject(executedModules, projectModules);
-        getLog().debug(
-            "Verifying if '" + currentProject + "' is last module for project '" + rootModule + "': " + isLastModuleInProject + (" (project modules='"
-                + projectModules + "')."));
+        boolean isLastModuleInProject = isLastModuleInProject(mojoExecutionContext, executedModules);
         if (isLastModuleInProject) {
             aggregate(mojoExecutionContext);
         }
@@ -32,11 +26,13 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     /**
      * Determines if the last module for a project is currently executed.
      *
-     * @param projectModules
-     *     The modules of the project.
      * @return <code>true</code> if the current module is the last of the project.
      */
-    private boolean isLastModuleInProject(Set<MavenProject> executedModules, List<MavenProject> projectModules) {
+    private boolean isLastModuleInProject(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules) throws MojoExecutionException {
+        Map<MavenProject, List<MavenProject>> projects = mojoExecutionContext.getProjects();
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        List<MavenProject> projectModules = projects.get(rootModule);
+        getLog().debug("Verifying if '" + currentProject + "' is last module for project '" + rootModule + (" (project modules='" + projectModules + "')."));
         Set<MavenProject> remainingModules = new HashSet<>();
         if (execution.getPlugin()
             .getExecutions()
@@ -45,7 +41,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
             remainingModules.addAll(projectModules);
         } else {
             for (MavenProject projectModule : projectModules) {
-                if (MojoExecutionContext.containsBuildPlugin(projectModule, execution.getPlugin())) {
+                if (mojoExecutionContext.containsBuildPlugin(projectModule, execution.getPlugin())) {
                     remainingModules.add(projectModule);
                 }
             }
@@ -53,11 +49,10 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         remainingModules.removeAll(executedModules);
         remainingModules.remove(currentProject);
         if (remainingModules.isEmpty()) {
-            getLog().debug("Did not find any subsequent module with a plugin configuration." + " Will consider this module as the last one.");
+            getLog().debug("Did not find any subsequent module with a plugin configuration, considering this module as the last one.");
             return true;
         } else {
-            getLog().debug(
-                "Found " + remainingModules.size() + " subsequent modules possibly executing this plugin." + " Will NOT consider this module as the last one.");
+            getLog().debug("Found " + remainingModules.size() + " subsequent modules executing this plugin.");
             return false;
         }
     }

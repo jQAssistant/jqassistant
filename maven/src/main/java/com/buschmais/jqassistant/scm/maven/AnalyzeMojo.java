@@ -135,11 +135,12 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         RuleSet ruleSet = readRules(mojoExecutionContext);
         Analyze analyze = configuration.analyze();
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
-        withStore(store -> analyze(configuration, rootModule, ruleSet, ruleSelection, store), mojoExecutionContext);
+        File outputDirectory = mojoExecutionContext.getOutputDirectory();
+        withStore(store -> analyze(configuration, rootModule, ruleSet, ruleSelection, store, outputDirectory), mojoExecutionContext);
     }
 
-    private void analyze(MavenConfiguration configuration, MavenProject rootModule, RuleSet ruleSet, RuleSelection ruleSelection, Store store)
-        throws MojoExecutionException, MojoFailureException {
+    private void analyze(MavenConfiguration configuration, MavenProject rootModule, RuleSet ruleSet, RuleSelection ruleSelection, Store store,
+        File outputDirectory) throws MojoExecutionException, MojoFailureException {
         Analyze analyze = configuration.analyze();
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         getLog().info("Will warn on violations starting from severity '" + analyze.report()
@@ -147,7 +148,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         getLog().info("Will fail on violations starting from severity '" + analyze.report()
             .failOnSeverity() + "'.");
 
-        ReportContext reportContext = new ReportContextImpl(store, MojoExecutionContext.getOutputDirectory(rootModule));
+        ReportContext reportContext = new ReportContextImpl(store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = getPluginRepository(configuration).getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(analyze.report(), reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
