@@ -25,7 +25,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
             "Verifying if '" + currentProject + "' is last module for project '" + rootModule + "': " + isLastModuleInProject + (" (project modules='"
                 + projectModules + "')."));
         if (isLastModuleInProject) {
-            withStore(store -> aggregate(mojoExecutionContext), mojoExecutionContext);
+            aggregate(mojoExecutionContext);
         }
     }
 
