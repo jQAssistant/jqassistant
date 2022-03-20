@@ -20,7 +20,7 @@ public interface ConfigurationLoader {
     /**
      * The default names of configuration files
      */
-    List<String> DEFAULT_CONFIGURATION_FILES = Arrays.asList("jqassistant.yml", "jqassistant.yaml");
+    List<String> DEFAULT_CONFIGURATION_FILES = Arrays.asList(".jqassistant.yml", ".jqassistant.yaml");
 
     /**
      * Load the {@link Configuration} using the given working directory including

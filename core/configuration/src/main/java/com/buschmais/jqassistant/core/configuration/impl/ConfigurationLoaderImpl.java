@@ -9,6 +9,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
@@ -22,6 +23,8 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -66,19 +69,19 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     }
 
     private List<ConfigSource> getYamlConfigSources(File workingDirectory, String configurationDirectory) {
-        List<ConfigSource> yamlConfigSources = getYamlConfigSources(new File(workingDirectory, configurationDirectory));
+        List<ConfigSource> configSources = new ArrayList<>(getYamlConfigSources(new File(workingDirectory, configurationDirectory)));
         for (String configurationFile : DEFAULT_CONFIGURATION_FILES) {
-            addConfigFile(workingDirectory, configurationFile, yamlConfigSources);
-
+            getYamlConfigFile(workingDirectory, configurationFile).ifPresent(configSource -> configSources.add(configSource));
         }
-        return yamlConfigSources;
+        return configSources;
     }
 
-    private void addConfigFile(File workingDirectory, String fileName, List<ConfigSource> yamlConfigSources) {
+    private Optional<ConfigSource> getYamlConfigFile(File workingDirectory, String fileName) {
         File configFile = new File(workingDirectory, fileName);
         if (configFile.exists()) {
-            yamlConfigSources.add(getYamlConfigSource(configFile.toPath()));
+            return of(getYamlConfigSource(configFile.toPath()));
         }
+        return empty();
     }
 
     private List<ConfigSource> getYamlConfigSources(File configurationDirectory) {
