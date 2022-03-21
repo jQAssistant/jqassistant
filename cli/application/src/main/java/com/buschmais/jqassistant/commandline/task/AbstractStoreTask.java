@@ -33,24 +33,52 @@ public abstract class AbstractStoreTask extends AbstractTask {
     protected static final String CMDLINE_OPTION_EMBEDDED_BOLT_PORT = "embeddedBoltPort";
     protected static final String CMDLINE_OPTION_EMBEDDED_HTTP_PORT = "embeddedHttpPort";
 
+    /**
+     * Defines an operation to execute on an initialized store instance.
+     */
+    protected interface StoreOperation {
+        /**
+         * Execute the operation.
+         *
+         * @param store
+         *     The store.
+         * @throws CliExecutionException
+         *     On execution errors.
+         */
+        void run(Store store) throws CliExecutionException;
+    }
+
     @Deprecated
     protected static final String CMDLINE_OPTION_S = "s";
     @Deprecated
     protected static final String CMDLINE_OPTION_STORE_DIRECTORY = "storeDirectory";
 
-    @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
-        final Store store = getStore(configuration);
+    /**
+     * Execute a {@link StoreOperation}.
+     *
+     * @param configuration
+     *     The {@link CliConfiguration}.
+     * @param storeOperation
+     *     The {@link StoreOperation}.
+     * @throws CliExecutionException
+     *     If the execution fails.
+     */
+    void withStore(CliConfiguration configuration, StoreOperation storeOperation) throws CliExecutionException {
+        Store store = getStore(configuration);
         try {
             store.start();
-            executeTask(configuration, store);
+            storeOperation.run(store);
         } finally {
             store.stop();
         }
     }
 
+    protected Store getStore(CliConfiguration configuration) {
+        return StoreFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY), pluginRepository.getStorePluginRepository());
+    }
+
     @Override
-    public final void withStandardOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
         String storeUri = getOptionValue(options, CMDLINE_OPTION_STORE_URI);
         String storeDirectory = getOptionValue(options, CMDLINE_OPTION_S);
         if (storeUri != null && storeDirectory != null) {
@@ -138,19 +166,8 @@ public abstract class AbstractStoreTask extends AbstractTask {
         return options;
     }
 
-    /**
-     * Return the {@link Store} instance.
-     *
-     * @return The store.
-     */
-    protected Store getStore(CliConfiguration configuration) {
-        return StoreFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY), pluginRepository.getStorePluginRepository());
-    }
-
     protected abstract void addTaskOptions(List<Option> options);
 
     protected abstract boolean isConnectorRequired();
-
-    protected abstract void executeTask(CliConfiguration configuration, final Store store) throws CliExecutionException;
 
 }

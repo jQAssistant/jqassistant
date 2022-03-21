@@ -27,7 +27,6 @@ import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -53,44 +52,47 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private File reportDirectory;
 
     @Override
-    protected void executeTask(CliConfiguration configuration, final Store store) throws CliExecutionException {
+    public void run(CliConfiguration configuration) throws CliExecutionException {
         Analyze analyze = configuration.analyze();
         Severity warnOnSeverity = analyze.report()
             .warnOnSeverity();
         Severity failOnSeverity = analyze.report()
             .failOnSeverity();
-        LOGGER.info("Will warn on violations starting form severity '" + warnOnSeverity + "'");
+        LOGGER.info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
-
-        ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
-        Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
-        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-        try {
-            Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
-                .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
-            RuleSet availableRules = getAvailableRules(analyze.rule());
-            analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
-        } catch (RuleException e) {
-            throw new CliExecutionException("Analysis failed.", e);
-        }
-        if (analyze.report()
-            .createArchive()) {
-            createReportArchive(reportContext);
-        }
-        store.beginTransaction();
-        LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
-        try {
-            final ReportHelper reportHelper = new ReportHelper(configuration.analyze()
-                .report(), LOGGER);
-            final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportPlugin);
-            final int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportPlugin);
-            if (conceptViolations > 0 || constraintViolations > 0) {
-                throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
+        withStore(configuration, store -> {
+            ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
+            Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
+            InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
+            try {
+                Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
+                    .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
+                RuleSet availableRules = getAvailableRules(analyze.rule());
+                analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
+            } catch (RuleException e) {
+                throw new CliExecutionException("Analysis failed.", e);
             }
-        } finally {
-            store.commitTransaction();
-        }
+            if (analyze.report()
+                .createArchive()) {
+                createReportArchive(reportContext);
+            }
+            store.beginTransaction();
+            LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
+            try {
+                final ReportHelper reportHelper = new ReportHelper(configuration.analyze()
+                    .report(), LOGGER);
+                final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportPlugin);
+                final int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportPlugin);
+                if (conceptViolations > 0 || constraintViolations > 0) {
+                    throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
+                }
+            } finally {
+                store.commitTransaction();
+            }
+        });
+
+
     }
 
     private void createReportArchive(ReportContext reportContext) throws CliConfigurationException {
@@ -137,8 +139,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    public void withOptions(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
-        super.withOptions(options, configurationBuilder);
+    public void configure(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+        super.configure(options, configurationBuilder);
         String ruleParametersFileName = getOptionValue(options, CMDLINE_OPTION_RULE_PARAMETERS, null);
         if (ruleParametersFileName != null) {
             loadRuleParameters(ruleParametersFileName, configurationBuilder);

@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
 
@@ -35,13 +36,18 @@ class ServerTaskTest {
     @Mock
     private EmbeddedNeo4jServer server;
 
+    private ServerTask serverTask;
+
     @BeforeEach
     final void setUp() {
         doReturn(server).when(store)
             .getServer();
+        serverTask = new ServerTask() {
+            protected Store getStore(CliConfiguration configuration) {
+                return store;
+            }
+        };
     }
-
-    private ServerTask serverTask = new ServerTask();
 
     @Test
     void daemon() throws CliExecutionException, ParseException {
@@ -75,8 +81,8 @@ class ServerTaskTest {
         CommandLine commandLine = parser.parse(options, arguments);
 
         serverTask.initialize(pluginRepository, new HashMap<>());
-        serverTask.withOptions(commandLine, mock(ConfigurationBuilder.class));
-        serverTask.executeTask(configuration, store);
+        serverTask.configure(commandLine, mock(ConfigurationBuilder.class));
+        serverTask.run(configuration);
     }
 
 }

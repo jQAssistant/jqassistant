@@ -9,8 +9,6 @@ import org.apache.commons.cli.CommandLine;
  */
 public interface OptionsConsumer {
 
-    void withStandardOptions(CommandLine commandLine, ConfigurationBuilder configurationBuilder) throws CliConfigurationException;
-
-    void withOptions(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException;
+    void configure(final CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException;
 
 }

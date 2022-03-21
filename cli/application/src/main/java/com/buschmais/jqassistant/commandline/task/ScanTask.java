@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -74,32 +73,34 @@ public class ScanTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void executeTask(CliConfiguration configuration, Store store) throws CliExecutionException {
-        ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
-        if (configuration.scan()
-            .reset()) {
-            store.reset();
-        }
-        for (ScopeHelper.ScopedResource scopedResource : files) {
-            String fileName = scopedResource.getResource();
-            String scopeName = scopedResource.getScopeName();
-            File file = new File(fileName);
-            String absolutePath = file.getAbsolutePath();
-            if (!file.exists()) {
-                LOGGER.info(absolutePath + "' does not exist, skipping scan.");
-            } else {
-                scan(configuration, scannerContext, file, file.getAbsolutePath(), scopeName);
+    public void run(CliConfiguration configuration) throws CliExecutionException {
+        withStore(configuration, store -> {
+            ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
+            if (configuration.scan()
+                .reset()) {
+                store.reset();
             }
-        }
-        for (ScopeHelper.ScopedResource scopedResource : urls) {
-            String uri = scopedResource.getResource();
-            String scopeName = scopedResource.getScopeName();
-            try {
-                scan(configuration, scannerContext, new URI(uri), uri, scopeName);
-            } catch (URISyntaxException e) {
-                throw new CliConfigurationException("Cannot parse URI " + uri, e);
+            for (ScopeHelper.ScopedResource scopedResource : files) {
+                String fileName = scopedResource.getResource();
+                String scopeName = scopedResource.getScopeName();
+                File file = new File(fileName);
+                String absolutePath = file.getAbsolutePath();
+                if (!file.exists()) {
+                    LOGGER.info(absolutePath + "' does not exist, skipping scan.");
+                } else {
+                    scan(configuration, scannerContext, file, file.getAbsolutePath(), scopeName);
+                }
             }
-        }
+            for (ScopeHelper.ScopedResource scopedResource : urls) {
+                String uri = scopedResource.getResource();
+                String scopeName = scopedResource.getScopeName();
+                try {
+                    scan(configuration, scannerContext, new URI(uri), uri, scopeName);
+                } catch (URISyntaxException e) {
+                    throw new CliConfigurationException("Cannot parse URI " + uri, e);
+                }
+            }
+        });
     }
 
     private <T> void scan(CliConfiguration configuration, ScannerContext scannerContext, T element, String path, String scopeName) {
@@ -109,7 +110,8 @@ public class ScanTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+        super.configure(options, configurationBuilder);
         files = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_FILES, emptyList()));
         urls = scopeHelper.getScopedResources(getOptionValues(options, CMDLINE_OPTION_URLS, emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {

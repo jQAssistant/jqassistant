@@ -209,8 +209,7 @@ public class Main {
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
             try {
-                task.withStandardOptions(commandLine, configurationBuilder);
-                task.withOptions(commandLine, configurationBuilder);
+                task.configure(commandLine, configurationBuilder);
             } catch (CliConfigurationException e) {
                 printUsage(options, e.getMessage());
                 System.exit(1);

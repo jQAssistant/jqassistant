@@ -19,7 +19,7 @@ public interface Task extends OptionsProvider, OptionsConsumer {
 
     String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws com.buschmais.jqassistant.commandline.CliExecutionException;
+    void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException;
 
-    void run(CliConfiguration configuration) throws com.buschmais.jqassistant.commandline.CliExecutionException;
+    void run(CliConfiguration configuration) throws CliExecutionException;
 }

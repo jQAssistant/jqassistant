@@ -93,10 +93,9 @@ class AnalyzeTaskTest {
         analyzeTask.initialize(pluginRepository, pluginProperties);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
-        analyzeTask.withOptions(options, mock(ConfigurationBuilder.class));
+        analyzeTask.configure(options, mock(ConfigurationBuilder.class));
         CommandLine standardOptions = mock(CommandLine.class);
         stubOption(standardOptions, "s", "target/jqassistant/test/store");
-        analyzeTask.withStandardOptions(standardOptions, mock(ConfigurationBuilder.class));
 
         analyzeTask.run(configuration);
 

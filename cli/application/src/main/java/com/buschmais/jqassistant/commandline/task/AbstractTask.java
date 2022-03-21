@@ -42,11 +42,7 @@ public abstract class AbstractTask implements Task {
     }
 
     @Override
-    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
-    }
-
-    @Override
-    public void withStandardOptions(CommandLine commandLine, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
     }
 
     protected List<String> getOptionValues(CommandLine options, String option, List<String> defaultValues) {

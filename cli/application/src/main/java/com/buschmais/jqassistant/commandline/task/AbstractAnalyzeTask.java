@@ -104,7 +104,8 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
     }
 
     @Override
-    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+        super.configure(options, configurationBuilder);
         String rulesUrl = getOptionValue(options, CMDLINE_OPTION_RULESURL, null);
         if (rulesUrl != null) {
             try {

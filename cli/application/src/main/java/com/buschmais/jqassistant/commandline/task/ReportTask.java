@@ -29,7 +29,7 @@ public class ReportTask extends AbstractTask {
     private String reportDirectory;
 
     @Override
-    public void withOptions(CommandLine options, ConfigurationBuilder configurationBuilder) {
+    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) {
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
     }
 
