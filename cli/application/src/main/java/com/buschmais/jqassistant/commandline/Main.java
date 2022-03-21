@@ -26,6 +26,8 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Optional.empty;
+
 /**
  * The main class, i.e. the entry point for the CLI.
  *
@@ -219,7 +221,7 @@ public class Main {
             tasks.add(task);
         }
         File workingDirectory = new File(".");
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, ConfigurationLoader.DEFAULT_CONFIGURATION_DIRECTORY);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, empty());
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
         PluginRepository pluginRepository = getPluginRepository(configuration);
         Map<String, Object> properties = readProperties(commandLine);
