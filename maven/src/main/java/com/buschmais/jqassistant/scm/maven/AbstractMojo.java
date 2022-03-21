@@ -10,7 +10,10 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
-import com.buschmais.jqassistant.scm.maven.configuration.*;
+import com.buschmais.jqassistant.scm.maven.configuration.EmbeddedNeo4jConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.Maven;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
@@ -29,6 +32,8 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 import static com.buschmais.jqassistant.core.shared.option.OptionHelper.coalesce;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -48,6 +53,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
+
+    /**
+     * The config locations.
+     */
+    @Parameter(property = "jqassistant.configuration.locations")
+    private List<String> configurationLocations;
 
     /**
      * The store directory.
@@ -337,7 +348,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         addStoreConfiguration(configurationBuilder);
         configure(configurationBuilder);
         File executionRoot = new File(session.getExecutionRootDirectory());
-        return configurationProvider.getConfiguration(executionRoot, empty(), configurationBuilder.build());
+        return configurationProvider.getConfiguration(executionRoot, isEmpty(configurationLocations) ? empty() : of(configurationLocations), configurationBuilder.build());
     }
 
     /**
