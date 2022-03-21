@@ -62,7 +62,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
             .addDefaultSources()
             .withSources(yamlConfigSources)
             .withSources(configSources)
-            .withValidateUnknown(true)
+            .withValidateUnknown(false)
             .build();
         return config.getConfigMapping(configurationMapping);
     }
