@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -23,8 +24,6 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -43,11 +42,11 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
      *
      * @param workingDirectory
      *     The working directory for loading YAML config files.
-     * @param configurationDirectory
+     * @param configLocations
      *     The name of the configuration directory relative to the working directory.
      */
-    public ConfigurationLoaderImpl(File workingDirectory, String configurationDirectory) {
-        this.yamlConfigSources = getYamlConfigSources(workingDirectory, configurationDirectory);
+    public ConfigurationLoaderImpl(File workingDirectory, Optional<List<String>> configLocations) {
+        this.yamlConfigSources = getYamlConfigSources(workingDirectory, configLocations);
     }
 
     /**
@@ -63,25 +62,24 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
             .addDefaultSources()
             .withSources(yamlConfigSources)
             .withSources(configSources)
-            .withValidateUnknown(false)
+            .withValidateUnknown(true)
             .build();
         return config.getConfigMapping(configurationMapping);
     }
 
-    private List<ConfigSource> getYamlConfigSources(File workingDirectory, String configurationDirectory) {
-        List<ConfigSource> configSources = new ArrayList<>(getYamlConfigSources(new File(workingDirectory, configurationDirectory)));
-        for (String configurationFile : DEFAULT_CONFIGURATION_FILES) {
-            getYamlConfigFile(workingDirectory, configurationFile).ifPresent(configSource -> configSources.add(configSource));
+    private List<ConfigSource> getYamlConfigSources(File workingDirectory, Optional<List<String>> optionalConfigLocations) {
+        List<ConfigSource> configSources = new ArrayList<>();
+        for (String configLocations : optionalConfigLocations.orElse(DEFAULT_CONFIG_LOCATIONS)) {
+            File file = workingDirectory.toPath()
+                .resolve(Paths.get(configLocations))
+                .toFile();
+            if (file.isDirectory()) {
+                configSources.addAll(getYamlConfigSources(file));
+            } else if (file.exists()) {
+                configSources.add(getYamlConfigSource(file.toPath()));
+            }
         }
         return configSources;
-    }
-
-    private Optional<ConfigSource> getYamlConfigFile(File workingDirectory, String fileName) {
-        File configFile = new File(workingDirectory, fileName);
-        if (configFile.exists()) {
-            return of(getYamlConfigSource(configFile.toPath()));
-        }
-        return empty();
     }
 
     private List<ConfigSource> getYamlConfigSources(File configurationDirectory) {

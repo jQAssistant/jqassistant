@@ -13,14 +13,9 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 public interface ConfigurationLoader {
 
     /**
-     * The path to the default configuration repository, relative to the working directory.
-     */
-    String DEFAULT_CONFIGURATION_DIRECTORY = ".jqassistant";
-
-    /**
      * The default names of configuration files
      */
-    List<String> DEFAULT_CONFIGURATION_FILES = Arrays.asList(".jqassistant.yml", ".jqassistant.yaml");
+    List<String> DEFAULT_CONFIG_LOCATIONS = Arrays.asList(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant");
 
     /**
      * Load the {@link Configuration} using the given working directory including
