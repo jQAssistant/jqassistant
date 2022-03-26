@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
+import com.buschmais.jqassistant.core.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 
 import org.hamcrest.Matcher;
@@ -12,7 +12,7 @@ public class PackageDescriptorMatcher extends AbstractDescriptorMatcher<PackageD
 
     /**
      * Constructor.
-     * 
+     *
      * @param p
      *            The expected package.
      */
@@ -22,7 +22,7 @@ public class PackageDescriptorMatcher extends AbstractDescriptorMatcher<PackageD
 
     /**
      * Constructor.
-     * 
+     *
      * @param name
      *            The expected full qualified package name.
      */
@@ -32,7 +32,7 @@ public class PackageDescriptorMatcher extends AbstractDescriptorMatcher<PackageD
 
     /**
      * Return a {@link PackageDescriptorMatcher} .
-     * 
+     *
      * @param p
      *            The expected package.
      * @return The {@link PackageDescriptorMatcher}.
@@ -43,7 +43,7 @@ public class PackageDescriptorMatcher extends AbstractDescriptorMatcher<PackageD
 
     /**
      * Return a {@link PackageDescriptorMatcher}.
-     * 
+     *
      * @param name
      *            The expected full qualified package name.
      * @return The {@link PackageDescriptorMatcher}.

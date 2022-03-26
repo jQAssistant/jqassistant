@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
+import com.buschmais.jqassistant.core.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 import org.hamcrest.Matcher;
@@ -12,7 +12,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
 
     /**
      * Constructor.
-     * 
+     *
      * @param type
      *            The expected class.
      */
@@ -22,7 +22,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
 
     /**
      * Constructor.
-     * 
+     *
      * @param name
      *            The expected full qualified types name.
      */
@@ -32,7 +32,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
 
     /**
      * Return a {@link TypeDescriptorMatcher} .
-     * 
+     *
      * @param type
      *            The expected types.
      * @return The {@link TypeDescriptorMatcher}.
@@ -43,7 +43,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
 
     /**
      * Return a {@link TypeDescriptorMatcher}.
-     * 
+     *
      * @param name
      *            The expected full qualified types name.
      * @return The {@link TypeDescriptorMatcher}.
