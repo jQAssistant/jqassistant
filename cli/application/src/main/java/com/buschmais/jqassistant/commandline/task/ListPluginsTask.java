@@ -7,10 +7,16 @@ import java.util.stream.Collectors;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 
+import org.apache.commons.cli.Option;
+
 /**
  * @author Oliver B. Fischer, Freiheitsgrade Consulting
  */
 public class ListPluginsTask extends AbstractTask {
+
+    @Override
+    protected void addTaskOptions(List<Option> options) {
+    }
 
     @Override
     public void run(CliConfiguration configuration) {

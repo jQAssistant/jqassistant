@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.task;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
@@ -118,8 +117,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
     }
 
     @Override
-    public List<Option> getOptions() {
-        final List<Option> options = new ArrayList<>();
+    protected void addTaskOptions(List<Option> options) {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S)
             .withLongOpt(CMDLINE_OPTION_STORE_DIRECTORY)
             .withDescription("The location of the Neo4j database. Deprecated, use '" + CMDLINE_OPTION_STORE_URI + "' instead.")
@@ -162,11 +160,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
             .withDescription("The Bolt tport of the embedded server.")
             .hasArgs()
             .create(CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
-        addTaskOptions(options);
-        return options;
     }
-
-    protected abstract void addTaskOptions(List<Option> options);
 
     protected abstract boolean isConnectorRequired();
 

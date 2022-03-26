@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
@@ -16,9 +17,11 @@ import org.apache.commons.cli.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.emptyList;
-
 public abstract class AbstractTask implements Task {
+
+    private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "configurationLocations";
+
+    private static final String CMDLINE_OPTION_SKIP = "skip";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
@@ -35,14 +38,22 @@ public abstract class AbstractTask implements Task {
         this.ruleHelper = new RuleHelper(LOGGER);
     }
 
-
     @Override
-    public List<Option> getOptions() {
-        return emptyList();
+    public final List<Option> getOptions() {
+        List<Option> options = new ArrayList<>();
+        options.add(Option.builder()
+            .argName(CMDLINE_OPTION_SKIP)
+            .longOpt(CMDLINE_OPTION_SKIP)
+            .desc("Skip execution.")
+            .build());
+        addTaskOptions(options);
+        return options;
     }
 
     @Override
     public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
+        configurationBuilder.with(CliConfiguration.class, CliConfiguration.SKIP, getOptionValue(options, CMDLINE_OPTION_SKIP));
+
     }
 
     protected List<String> getOptionValues(CommandLine options, String option, List<String> defaultValues) {
@@ -69,4 +80,7 @@ public abstract class AbstractTask implements Task {
             return defaultValue;
         }
     }
+
+    protected abstract void addTaskOptions(List<Option> options);
+
 }

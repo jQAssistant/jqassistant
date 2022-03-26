@@ -222,9 +222,13 @@ public class Main {
         File workingDirectory = new File(".");
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, empty());
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
-        PluginRepository pluginRepository = getPluginRepository(configuration);
-        Map<String, Object> properties = readProperties(commandLine);
-        executeTasks(tasks, configuration, pluginRepository, properties);
+        if (configuration.skip()) {
+            LOGGER.info("Skipping execution.");
+        } else {
+            PluginRepository pluginRepository = getPluginRepository(configuration);
+            Map<String, Object> properties = readProperties(commandLine);
+            executeTasks(tasks, configuration, pluginRepository, properties);
+        }
     }
 
     private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)

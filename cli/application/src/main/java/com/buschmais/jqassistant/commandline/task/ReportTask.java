@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.commandline.task;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -17,6 +18,7 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,10 @@ public class ReportTask extends AbstractTask {
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
     private String reportDirectory;
+
+    @Override
+    protected void addTaskOptions(List<Option> options) {
+    }
 
     @Override
     public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) {
