@@ -144,7 +144,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Skip the execution.
      */
     @Parameter(property = "jqassistant.skip", defaultValue = "false")
-    protected boolean skip;
+    private boolean skip;
 
     /**
      * Controls the life cycle of the data store.
@@ -213,7 +213,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, configuration);
             MavenProject rootModule = mojoExecutionContext.getRootModule();
             Set<MavenProject> executedModules = getExecutedModules(rootModule);
-            if (skip) {
+            if (configuration.skip()) {
                 getLog().info("Skipping execution.");
             } else {
                 if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
@@ -387,6 +387,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     The {@link ConfigurationBuilder}.
      */
     protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+        configurationBuilder.with(MavenConfiguration.class, MavenConfiguration.SKIP, skip);
         configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
         configurationBuilder.with(Rule.class, Rule.RULE_DIRECTORY, rulesDirectory);
     }
