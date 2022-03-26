@@ -11,9 +11,9 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDe
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
