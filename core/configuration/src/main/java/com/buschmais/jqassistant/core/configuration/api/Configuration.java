@@ -5,9 +5,11 @@ import java.util.List;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 /**
  * Represents the runtime configuration for jQAssistant.
@@ -16,6 +18,12 @@ import io.smallrye.config.ConfigMapping;
 public interface Configuration {
 
     String PREFIX = "jqassistant";
+
+    String SKIP = "skip";
+
+    @WithDefault("false")
+    @Description("Skip execution of jQAssistant tasks/goals.")
+    boolean skip();
 
     /**
      * The plugins to provision.

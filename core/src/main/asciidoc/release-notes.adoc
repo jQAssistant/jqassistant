@@ -7,6 +7,7 @@
 * Fixed an issue where diagram reports (e.g. GraphML) failed with an exception (`"Element type not supported:"`)
 * Upgrade to PlantUML 1.2022.1
 * Add support for Elk layout mechanism for use in PlantUML diagrams
+* Added a module `test` providing core test infrastructure for plugins. Matchers located in the `test-jar` artifacts of `store` and `analysis` have been moved to this module, as well as `com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT`.
 
 == 1.11.1
 * Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated

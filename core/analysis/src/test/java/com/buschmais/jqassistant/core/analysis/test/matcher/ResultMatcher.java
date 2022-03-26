@@ -5,6 +5,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -12,7 +13,11 @@ import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher for {@link Result}s.
+ *
+ * @deprecated This class is replaced by com.buschmais.jqassistant.core.test.matcher.ResultMatcher.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 1, minor = 13)
 public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMatcher<Result<E>> {
 
     private Matcher<? extends ExecutableRule> executableMatcher;

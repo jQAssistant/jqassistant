@@ -1,12 +1,17 @@
 package com.buschmais.jqassistant.core.analysis.test.matcher;
 
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link Concept}s.
+ *
+ * @deprecated This class is replaced by com.buschmais.jqassistant.core.test.matcher.ConceptMatcher.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 1, minor = 13)
 public class ConceptMatcher extends AbstractRuleMatcher<Concept> {
 
     /**
