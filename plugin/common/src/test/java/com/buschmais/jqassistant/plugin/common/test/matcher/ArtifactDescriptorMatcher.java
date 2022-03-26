@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test.matcher;
 
-import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
+import com.buschmais.jqassistant.core.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 
 import org.hamcrest.Matcher;
@@ -12,7 +12,7 @@ public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<Artifac
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            The expected artifact id.
      */
@@ -22,7 +22,7 @@ public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<Artifac
 
     /**
      * Return a {@link ArtifactDescriptorMatcher}.
-     * 
+     *
      * @param id
      *            The artifact id.
      * @return The {@link ArtifactDescriptorMatcher}.
