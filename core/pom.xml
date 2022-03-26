@@ -50,7 +50,7 @@
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <org.asciidoctor.version>2.5.3</org.asciidoctor.version>
         <org.asciidoctorj-diagram.version>2.2.1</org.asciidoctorj-diagram.version>
-        <net.sourceforge.plantuml.version>1.2022.1</net.sourceforge.plantuml.version>
+        <net.sourceforge.plantuml.version>1.2022.2</net.sourceforge.plantuml.version>
         <org.eclipse.elk.version>0.7.1</org.eclipse.elk.version>
         <org.jruby.version>9.2.20.1</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
@@ -287,6 +287,7 @@
                      ! Oliver B. Fischer, 2017-06-07
                      !-->
                     <groups>
+                        <group>jqa-core-framework</group>
                         <group>jqa-legal</group>
                         <group>jqa-maven-constraints</group>
                         <group>jqa-maven-dependency-constraints</group>
