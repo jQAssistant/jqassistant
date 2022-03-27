@@ -66,16 +66,6 @@
             <version>${jqa-xml-plugin.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>store</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>analysis</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
