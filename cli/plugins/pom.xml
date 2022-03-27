@@ -9,7 +9,7 @@
     <groupId>com.buschmais.jqassistant.cli</groupId>
     <packaging>pom</packaging>
 
-    <name>jQAssistant Commandline Plugins</name>
+    <name>jQAssistant Commandline Plugin Distribution</name>
 
     <build>
         <plugins>

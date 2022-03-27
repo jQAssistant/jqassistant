@@ -8,7 +8,7 @@
     <artifactId>jqassistant-commandline-neo4jv3</artifactId>
     <groupId>com.buschmais.jqassistant.cli</groupId>
 
-    <name>jQAssistant Commandline Neo4jv3</name>
+    <name>jQAssistant Commandline Neo4jv3 Distribution</name>
 
     <properties>
         <org.neo4j.version>${org.neo4j_3x.version}</org.neo4j.version>
