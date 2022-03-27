@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.shared.mockito;
+package com.buschmais.jqassistant.core.test.mockito;
 
 import java.lang.reflect.Method;
 

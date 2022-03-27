@@ -16,6 +16,7 @@
 				<executions>
 					<execution>
 						<goals>
+                            <!-- Deprecated -->
 							<goal>test-jar</goal>
 						</goals>
 					</execution>
