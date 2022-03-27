@@ -137,16 +137,6 @@
         </dependency>
         <!-- Test dependencies -->
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>store</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>analysis</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
