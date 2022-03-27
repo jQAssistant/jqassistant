@@ -52,6 +52,7 @@ public class ScanTask extends AbstractStoreTask {
     @SuppressWarnings("static-access")
     @Override
     public void addTaskOptions(final List<Option> options) {
+        super.addTaskOptions(options);
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES)
             .withLongOpt(CMD_LONG_OPTION_FILES)
             .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.")

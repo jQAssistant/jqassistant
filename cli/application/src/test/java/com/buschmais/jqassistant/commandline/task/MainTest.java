@@ -13,19 +13,21 @@ import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.ClearSystemProperty;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Verifies functionality of the main class.
  */
 @ExtendWith(MockitoExtension.class)
+@ClearSystemProperty(key = "jqassistant.skip") // might be given as system property to Maven
 class MainTest {
 
     @Mock
@@ -34,23 +36,35 @@ class MainTest {
     @Mock
     private Task task;
 
+    private Main main;
+
     @BeforeEach
     void setUp() throws CliExecutionException {
         when(taskFactory.fromName("test")).thenReturn(task);
+        this.main = new Main(taskFactory);
+    }
+
+    @Test
+    @SetSystemProperty(key = "jqassistant.skip", value = "true")
+    void skip() throws CliExecutionException {
+        main.run(new String[] { "test" });
+
+        verify(task, never()).run(any());
     }
 
     @Test
     void defaultPluginProperties() throws CliExecutionException {
-        Main main = new Main(taskFactory);
         main.run(new String[] { "test" });
+
         verifyPropertyValue("testValue");
     }
 
     @Test
     void alternativePluginProperties() throws CliExecutionException {
         File propertyFile = ClasspathResource.getFile(MainTest.class, "/jqassistant-alternative.properties");
-        Main main = new Main(taskFactory);
+
         main.run(new String[] { "test", "-p", propertyFile.getAbsolutePath() });
+
         verifyPropertyValue("alternativeValue");
     }
 

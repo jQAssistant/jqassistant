@@ -40,7 +40,8 @@ public class Main {
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
 
-    private static final String OPTION_HELP = "-help";
+    private static final String CMDLINE_OPTION_HELP = "-help";
+    private static final String CMDLINE_OPTION_SKIP = "-skip";
 
     private final TaskFactory taskFactory;
 
@@ -150,7 +151,8 @@ public class Main {
             .withLongOpt("properties")
             .hasArg()
             .create("p"));
-        options.addOption(new Option("help", "print this message"));
+        options.addOption(new Option("help", "Print this message"));
+        options.addOption(new Option("skip", "Skip execution"));
     }
 
     /**
@@ -194,7 +196,7 @@ public class Main {
      *     If an error occurs.
      */
     private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
-        if (commandLine.hasOption(OPTION_HELP)) {
+        if (commandLine.hasOption(CMDLINE_OPTION_HELP)) {
             printUsage(options, null);
             System.exit(1);
         }
@@ -205,6 +207,7 @@ public class Main {
             System.exit(1);
         }
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
+        configurationBuilder.with(CliConfiguration.class, CliConfiguration.SKIP, commandLine.hasOption(CMDLINE_OPTION_SKIP));
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
