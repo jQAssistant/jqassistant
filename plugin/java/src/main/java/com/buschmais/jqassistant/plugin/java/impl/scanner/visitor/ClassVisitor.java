@@ -22,6 +22,16 @@ import static java.util.Arrays.asList;
  */
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
+    /**
+     * The name of constructor methods.
+     */
+    private static final String CONSTRUCTOR_METHOD = "<init>";
+
+    /**
+     * The prefix of lambda methods.
+     */
+    private static final String LAMBDA_METHOD = "lambda$";
+
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
     private FileDescriptor fileDescriptor;
     private VisitorHelper visitorHelper;
@@ -108,7 +118,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public org.objectweb.asm.MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
         final String[] exceptions) {
-        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, SignatureHelper.getMethodSignature(name, desc));
+        Class<? extends MethodDescriptor> methodDescriptorType = getMethodDescriptor(name, access);
+        String methodSignature = SignatureHelper.getMethodSignature(name, desc);
+        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature, methodDescriptorType);
         visitorHelper.getTypeVariableResolver().push();
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);
@@ -137,6 +149,24 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         }
         return new DelegatingMethodVisitor(asList(new MethodVisitor(cachedType, methodDescriptor, visitorHelper), new MethodLoCVisitor(methodDescriptor),
             new MethodComplexityVisitor(methodDescriptor)));
+    }
+
+    /**
+     * Determine the {@link MethodDescriptor} type, i.e. {@link ConstructorDescriptor}, {@link LambdaMethodDescriptor} or {@link MethodDescriptor}.
+     *
+     * @param name
+     *     The method name.
+     * @param access
+     *     The access modifiers.
+     * @return The {@link MethodDescriptor} type
+     */
+    private Class<? extends MethodDescriptor> getMethodDescriptor(String name, int access) {
+        if (hasFlag(access, Opcodes.ACC_SYNTHETIC) && (hasFlag(access, Opcodes.ACC_STATIC) && name.startsWith("lambda$"))) {
+            return LambdaMethodDescriptor.class;
+        } else if (name.equals(CONSTRUCTOR_METHOD)) {
+            return ConstructorDescriptor.class;
+        }
+        return MethodDescriptor.class;
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
@@ -181,7 +211,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         cachedOuterType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
         if (name != null) {
             String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature);
+            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature, MethodDescriptor.class);
             methodDescriptor.getDeclaredInnerClasses().add(innerType);
         }
     }

@@ -3,6 +3,7 @@
 
 == 1.12.0
 
+* Added support for invocations of method references and lambda methods, e.g. `(:Method)-[:INVOKES]->(:Lambda:Method)` (see https://github.com/jQAssistant/jqa-java-plugin/issues/35[issue])
 * Improved calculation of cyclomatic complexity for Java class methods
 
 == 1.10.1

@@ -23,11 +23,6 @@ public class VisitorHelper {
 
     public static final int ASM_OPCODES = Opcodes.ASM9;
 
-    /**
-     * The name of constructor methods.
-     */
-    private static final String CONSTRUCTOR_METHOD = "void <init>";
-
     private final ScannerContext scannerContext;
 
     private final ClassModelConfiguration classModelConfiguration;
@@ -110,16 +105,16 @@ public class VisitorHelper {
      *            The method signature.
      * @return The method descriptor.
      */
-    MethodDescriptor getMethodDescriptor(TypeCache.CachedType<?> cachedType, String signature) {
-        MethodDescriptor methodDescriptor = cachedType.getMethod(signature);
+    <M extends MethodDescriptor> M getMethodDescriptor(TypeCache.CachedType<?> cachedType, String signature, Class<M> type) {
+        M methodDescriptor = cachedType.getMethod(signature);
         if (methodDescriptor == null) {
-            if (signature.startsWith(CONSTRUCTOR_METHOD)) {
-                methodDescriptor = scannerContext.getStore().create(ConstructorDescriptor.class);
-            } else {
-                methodDescriptor = scannerContext.getStore().create(MethodDescriptor.class);
-            }
+            methodDescriptor = scannerContext.getStore()
+                .create(type);
             methodDescriptor.setSignature(signature);
             cachedType.addMember(signature, methodDescriptor);
+        }
+        if (!type.isAssignableFrom(methodDescriptor.getClass())) {
+            return scannerContext.getStore().addDescriptorType(methodDescriptor, type);
         }
         return methodDescriptor;
     }

@@ -8,6 +8,10 @@ public class LambdaMethod {
         Stream.of("Hello", "World").forEach(s -> System.out.println(s));
     }
 
+    public void withMethodReference() {
+        Stream.of("Hello", "World").forEach(System.out::println);
+    }
+
     public void withoutLambda() {
         System.out.println("Hello World!");
     }

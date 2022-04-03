@@ -33,7 +33,7 @@ public class TypeCache {
 
     /**
      * Find a type by its fully qualified named.
-     * 
+     *
      * @param fullQualifiedName
      *            The fqn.
      * @return The cached type or <code>null</code>.
@@ -52,7 +52,7 @@ public class TypeCache {
 
     /**
      * Put a type.
-     * 
+     *
      * @param fullQualifiedName
      *            The fqn.
      * @param cachedType
@@ -91,8 +91,8 @@ public class TypeCache {
             return (FieldDescriptor) getMembers().get(signature);
         }
 
-        public MethodDescriptor getMethod(String signature) {
-            return (MethodDescriptor) getMembers().get(signature);
+        public <M extends MethodDescriptor> M getMethod(String signature) {
+            return (M) getMembers().get(signature);
         }
 
         public void addMember(String signature, MemberDescriptor member) {

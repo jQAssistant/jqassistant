@@ -17,6 +17,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</class>

@@ -39,4 +39,14 @@ class LambdaMethodIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    void methodReference() throws Exception {
+        scanClasses(LambdaMethod.class);
+
+        store.beginTransaction();
+        TestResult result = query("MATCH (m:Method{name:'withMethodReference'})-[:INVOKES]->(:Method{signature:'void println(java.lang.String)'})<-[:DECLARES]-(:Type{fqn:'java.io.PrintStream'}) RETURN m");
+        assertThat(result.getRows().size(), equalTo(1));
+        assertThat(result.getColumn("m"), hasItem(methodDescriptor(LambdaMethod.class, "withMethodReference")));
+        store.commitTransaction();
+    }
 }

@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.lang.invoke.LambdaMetafactory;
+
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 import org.objectweb.asm.signature.SignatureReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,8 @@ import org.slf4j.LoggerFactory;
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
+
+    private static final String LAMBDA_META_FACTORY = Type.getType(LambdaMetafactory.class).getInternalName();
 
     /**
      * Annotation indicating a synthetic parameter of a method.
@@ -78,10 +79,33 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
+    public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle, Object... bootstrapMethodArguments) {
+        // Invocations of lambda methods and method references are implemented as dynamic invocation using the #LAMBDA_META_FACTORY.
+        if (LAMBDA_META_FACTORY.equals(bootstrapMethodHandle.getOwner())) {
+            Handle bootstrapMethodArgument = (Handle) bootstrapMethodArguments[1];
+            invoke(bootstrapMethodArgument.getOwner(), bootstrapMethodArgument.getName(), bootstrapMethodArgument.getDesc());
+        }
+    }
+
+    @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc, boolean itf) {
+        invoke(owner, name, desc);
+    }
+
+    /**
+     * Adds an invocation of the current method to the method specified by the parameters.
+     *
+     * @param owner
+     *     The owner of the invoked method.
+     * @param name
+     *     The name of the invoked method
+     * @param desc
+     *     The raw signature of the invoked method.
+     */
+    private void invoke(String owner, String name, String desc) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
-        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature);
+        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature, MethodDescriptor.class);
         visitorHelper.addInvokes(methodDescriptor, lineNumber, invokedMethodDescriptor);
     }
 
