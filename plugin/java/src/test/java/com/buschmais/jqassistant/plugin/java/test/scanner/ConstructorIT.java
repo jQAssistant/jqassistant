@@ -27,6 +27,8 @@ class ConstructorIT extends AbstractJavaPluginIT {
         scanClasses(ImplicitDefaultConstructor.class);
         store.beginTransaction();
         assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
+        // the constructor of java.lang.Object is not scanned but should be identified as constructor
+        assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"), hasItem(constructorDescriptor(Object.class)));
         store.commitTransaction();
     }
 

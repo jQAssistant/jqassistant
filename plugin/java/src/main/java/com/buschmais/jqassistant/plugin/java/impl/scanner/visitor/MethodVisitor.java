@@ -105,7 +105,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private void invoke(String owner, String name, String desc) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
-        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature, MethodDescriptor.class);
+        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature);
         visitorHelper.addInvokes(methodDescriptor, lineNumber, invokedMethodDescriptor);
     }
 

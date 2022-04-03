@@ -29,7 +29,7 @@ class LambdaMethodIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java:LambdaMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
-        TestResult result = query("MATCH (m:Method)-[:DECLARES_LAMBDA]->(l:Method:Lambda) RETURN m,l");
+        TestResult result = query("MATCH (m:Method{name:'withLambda'})-[:INVOKES]->(l:Method:Lambda)<-[:DECLARES_LAMBDA]-(m) RETURN m,l");
         assertThat(result.getRows().size(), equalTo(1));
         assertThat(result.getColumn("m"), hasItem(methodDescriptor(LambdaMethod.class, "withLambda")));
         List<MethodDescriptor> lambdaMethods = result.getColumn("l");

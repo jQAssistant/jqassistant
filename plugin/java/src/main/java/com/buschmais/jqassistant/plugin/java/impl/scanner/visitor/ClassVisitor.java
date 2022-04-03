@@ -118,9 +118,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public org.objectweb.asm.MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
         final String[] exceptions) {
-        Class<? extends MethodDescriptor> methodDescriptorType = getMethodDescriptor(name, access);
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature, methodDescriptorType);
+        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature);
+        if (isLambda(name, access)) {
+            visitorHelper.getStore().addDescriptorType(methodDescriptor, LambdaMethodDescriptor.class);
+        }
         visitorHelper.getTypeVariableResolver().push();
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);
@@ -152,21 +154,16 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     /**
-     * Determine the {@link MethodDescriptor} type, i.e. {@link ConstructorDescriptor}, {@link LambdaMethodDescriptor} or {@link MethodDescriptor}.
+     * Determine if a method represents a lambda expression.
      *
      * @param name
      *     The method name.
      * @param access
      *     The access modifiers.
-     * @return The {@link MethodDescriptor} type
+     * @return <code>true</code> if the method represents a lambda expression.
      */
-    private Class<? extends MethodDescriptor> getMethodDescriptor(String name, int access) {
-        if (hasFlag(access, Opcodes.ACC_SYNTHETIC) && (hasFlag(access, Opcodes.ACC_STATIC) && name.startsWith("lambda$"))) {
-            return LambdaMethodDescriptor.class;
-        } else if (name.equals(CONSTRUCTOR_METHOD)) {
-            return ConstructorDescriptor.class;
-        }
-        return MethodDescriptor.class;
+    private boolean isLambda(String name, int access) {
+        return (hasFlag(access, Opcodes.ACC_SYNTHETIC) && (hasFlag(access, Opcodes.ACC_STATIC) && name.startsWith("lambda$")));
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
@@ -211,7 +208,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         cachedOuterType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
         if (name != null) {
             String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature, MethodDescriptor.class);
+            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature);
             methodDescriptor.getDeclaredInnerClasses().add(innerType);
         }
     }
