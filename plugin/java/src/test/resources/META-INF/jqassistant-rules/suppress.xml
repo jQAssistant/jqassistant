@@ -34,7 +34,7 @@
         <description>Return all suppressed fields.</description>
         <cypher><![CDATA[
         MATCH
-          (field:Java:jQASuppress:Field)
+          (:Type:Class)-[:DECLARES]->(field:Java:jQASuppress:Field)
         RETURN
           field
         ]]></cypher>
@@ -44,7 +44,7 @@
         <description>Return all fields.</description>
         <cypher><![CDATA[
         MATCH
-          (field:Java:Field)
+          (:Type:Class)-[:DECLARES]->(field:Java:Field)
         RETURN
           field
         ]]></cypher>
@@ -54,7 +54,7 @@
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
-          (method:Java:jQASuppress:Method)
+          (:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
         RETURN
           method
         ]]></cypher>
@@ -64,7 +64,7 @@
         <description>Return all methods.</description>
         <cypher><![CDATA[
         MATCH
-          (method:Java:Method)
+          (:Type:Class)-[:DECLARES]->(method:Java:Method)
         WHERE
           not method:Constructor
         RETURN
@@ -76,7 +76,7 @@
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
-          (type:Type)-[:DECLARES]->(method:Java:jQASuppress:Method)
+          (type:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
         RETURN
           type, method
         ]]></cypher>
@@ -87,7 +87,7 @@
         <description>Return all methods.</description>
         <cypher><![CDATA[
         MATCH
-          (type:Type)-[:DECLARES]->(method:Java:Method)
+          (type:Type:Class)-[:DECLARES]->(method:Java:Method)
         WHERE
           not method:Constructor
         RETURN
