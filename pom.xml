@@ -94,7 +94,7 @@
         <maven.dependency.version>3.1.1</maven.dependency.version>
         <maven.deploy.version>3.0.0-M1</maven.deploy.version>
         <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
-        <maven.failsafe.version>3.0.0-M4</maven.failsafe.version>
+        <maven.failsafe.version>3.0.0-M6</maven.failsafe.version>
         <maven.install.version>3.0.0-M1</maven.install.version>
         <maven.jar.version>3.1.1</maven.jar.version>
         <maven.javadoc.version>3.3.1</maven.javadoc.version>
