@@ -45,6 +45,7 @@
         <assertj-core.version>3.21.0</assertj-core.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-bom.version>1.12.0-SNAPSHOT</jqa-bom.version>
         <jqa-core-framework.version>1.12.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-neo4jbackend.version>1.12.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
@@ -191,7 +192,6 @@
                         <goals>
                             <goal>transform</goal>
                         </goals>
-                        <!--<phase>none</phase>-->
                         <phase>process-sources</phase>
                         <configuration>
                             <transformationSets>
@@ -378,6 +378,14 @@
              !-->
 
             <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>bom</artifactId>
+                <version>${jqa-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>configuration</artifactId>
                 <version>${jqa-core-framework.version}</version>
@@ -461,27 +469,31 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- 3rd party -->
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>shared</artifactId>
+                <type>test-jar</type>
+                <version>${jqa-core-framework.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>provided</scope>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>store</artifactId>
+                <version>${jqa-core-framework.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
+
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>provided</scope>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>analysis</artifactId>
+                <version>${jqa-core-framework.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
-            <!-- Common functionality provided by Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-                <scope>provided</scope>
-            </dependency>
+
+
             <!-- Provides a cache framework for plugins -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
@@ -506,7 +518,6 @@
             </dependency>
 
             <dependency>
-                <!-- todo Why do we need Groovy here? -->
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-jsr223</artifactId>
                 <version>${org.codehaus.groovy.version}</version>
@@ -524,13 +535,6 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
