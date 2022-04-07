@@ -44,6 +44,7 @@
         <checkstyle.version>8.29</checkstyle.version>
         <jackson.version>2.10.1</jackson.version>
         <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-bom.version>1.12.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>1.12.0-SNAPSHOT</jqa-neo4jbackend.version>
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
@@ -61,6 +62,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>bom</artifactId>
+                <version>${jqa-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
                 <artifactId>bootstrap</artifactId>
@@ -91,11 +99,6 @@
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
