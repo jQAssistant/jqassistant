@@ -4,6 +4,9 @@
     <id>distribution</id>
     <formats>
         <format>zip</format>
+        <!-- The dir format is used to debug the content of the distribution without
+             unpacking it. -->
+        <format>dir</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
     <dependencySets>
