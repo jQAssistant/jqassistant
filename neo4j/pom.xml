@@ -23,6 +23,7 @@
     <properties>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
+        <jqa-bom.version>1.12.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
         <org.mockito.version>2.24.0</org.mockito.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
@@ -204,6 +205,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>bom</artifactId>
+                <version>${jqa-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
