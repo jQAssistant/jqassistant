@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>jQAssistant Embedded Neo4j Server Parent</name>
-    <url>http://jqassistant.org/</url>
+    <url>https://jqassistant.org/</url>
 
     <description>
         Provides integrations jQAssistant and Neo4j server.
