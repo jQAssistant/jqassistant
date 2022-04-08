@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>jQAssistant Plugin Parent POM</name>
-    <url>http://jqassistant.org/</url>
+    <url>https://jqassistant.org/</url>
     <inceptionYear>2016</inceptionYear>
 
     <organization>
