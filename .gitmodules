@@ -4,6 +4,9 @@
 [submodule "jqa-asciidoctor-utilities"]
 	path = jqa-asciidoctor-utilities
 	url = https://github.com/jQAssistant/jqa-asciidoctor-utilities.git
+[submodule "jqa-bom"]
+	path = jqa-bom
+	url = https://github.com/jQAssistant/jqa-bom.git
 [submodule "jqa-cdi-plugin"]
 	path = jqa-cdi-plugin
 	url = https://github.com/jQAssistant/jqa-cdi-plugin.git
