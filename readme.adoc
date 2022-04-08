@@ -26,6 +26,7 @@ The table below lists the repositories jQAssistant is made of.
 | Core Framework            | https://github.com/jqassistant/jqa-core-framework[^]
 | EJB 3 Plugin              | https://github.com/jqassistant/jqa-ejb3-plugin[^]
 | GraphML Plugin            | https://github.com/jqassistant/jqa-graphml-plugin[^]
+| GraphQL Plugin            | https://github.com/jqassistant/jqa-graphql-plugin[^]
 | Java Plugin               | https://github.com/jqassistant/jqa-java-plugin[^]
 | Java EE 6 Plugin          | https://github.com/jqassistant/jqa-javaee6-plugin[^]
 | JAX RS Plugin             | https://github.com/jqassistant/jqa-jaxrs-plugin[^]
