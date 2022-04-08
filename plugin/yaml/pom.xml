@@ -13,7 +13,7 @@
     <version>1.12.0-SNAPSHOT</version>
 
     <name>jQAssistant YAML 2 Plugin</name>
-    <url>http://jqassistant.org/</url>
+    <url>https://jqassistant.org/</url>
 
     <inceptionYear>2019</inceptionYear>
     <description>Yet another YAML file scanner for jQAssistant.</description>
