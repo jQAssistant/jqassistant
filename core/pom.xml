@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
 
     <name>jQAssistant Core Framework</name>
-    <url>http://jqassistant.org/</url>
+    <url>https://jqassistant.org/</url>
 
     <description>
         The jQAssistant Core Framework providing the basic infrastructure
