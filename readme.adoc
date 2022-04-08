@@ -20,6 +20,7 @@ The table below lists the repositories jQAssistant is made of.
 .List of jQAssistant repositories
 |===
 | Asciidoctor Report Plugin | https://github.com/jqassistant/jqa-commandline-tool[^]
+| BOM                       | https://github.com/jqassistant/jqa-bom[^]
 | CDI Plugin                | https://github.com/jqassistant/jqa-cdi-plugin[^]
 | Commandline Distribution  | https://github.com/jqassistant/jqa-commandline-tool[^]
 | Core Framework            | https://github.com/jqassistant/jqa-core-framework[^]
