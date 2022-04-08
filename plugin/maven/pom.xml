@@ -13,7 +13,7 @@
     <version>1.12.0-SNAPSHOT</version>
 
     <name>jQAssistant Maven 3 Plugin</name>
-    <url>http://jqassistant.org/</url>
+    <url>https://jqassistant.org/</url>
 
     <description>
         Plugin for jQAssistant to be able to scan and to
