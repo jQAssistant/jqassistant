@@ -9,7 +9,7 @@
 
     <groupId>com.buschmais.jqassistant.core</groupId>
     <artifactId>schemata</artifactId>
-    <name>jQassistant Core Schemata</name>
+    <name>jQAssistant Core Schemata</name>
 
 
     <build>
