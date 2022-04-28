@@ -15,6 +15,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 
+import io.smallrye.config.ExpressionConfigSourceInterceptor;
 import io.smallrye.config.SmallRyeConfig;
 import io.smallrye.config.SmallRyeConfigBuilder;
 import io.smallrye.config.source.yaml.YamlConfigSource;
@@ -63,6 +64,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
             .withSources(yamlConfigSources)
             .withSources(configSources)
             .withValidateUnknown(false)
+            .withInterceptors(new ExpressionConfigSourceInterceptor())
             .build();
         return config.getConfigMapping(configurationMapping);
     }
@@ -116,9 +118,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
 
     private List<ConfigSource> getYamlConfigSources(List<Path> configurationFiles) {
         return configurationFiles.stream()
-            .map(path -> {
-                return getYamlConfigSource(path);
-            })
+            .map(path -> getYamlConfigSource(path))
             .collect(toList());
     }
 

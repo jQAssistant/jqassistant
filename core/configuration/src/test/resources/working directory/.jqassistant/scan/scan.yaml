@@ -1,6 +1,6 @@
 jqassistant:
   scan:
-    continue-on-error: true
+    continue-on-error: ${continueOnError:true}
     reset: true
     include:
       files:

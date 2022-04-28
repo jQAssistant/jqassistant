@@ -71,13 +71,22 @@ class ConfigurationLoaderImplTest {
 
     @Test
     void overrideFromSystemProperty() {
-        System.setProperty("jqassistant.scan.continue-on-error", "false");
+        overrideFromSystemProperty("jqassistant.scan.continue-on-error");
+    }
+
+    @Test
+    void useExpressionFromSystemProperty() {
+        overrideFromSystemProperty("continueOnError");
+    }
+
+    private void overrideFromSystemProperty(String continueOnError) {
+        System.setProperty(continueOnError, "false");
         try {
             Configuration configuration = getConfiguration(empty());
             assertThat(configuration.scan()
                 .continueOnError()).isEqualTo(false);
         } finally {
-            System.clearProperty("jqassistant.scan.continue-on-error");
+            System.clearProperty(continueOnError);
         }
     }
 
