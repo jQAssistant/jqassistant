@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
-import com.buschmais.jqassistant.scm.maven.configuration.RuleConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.mojo.RuleConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;

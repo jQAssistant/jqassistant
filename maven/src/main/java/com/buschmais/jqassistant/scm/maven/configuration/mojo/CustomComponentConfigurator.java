@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.BasicComponentConfigurator;

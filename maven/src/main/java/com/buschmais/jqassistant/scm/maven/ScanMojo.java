@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.ScanInclude;
+import com.buschmais.jqassistant.scm.maven.configuration.mojo.ScanInclude;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;

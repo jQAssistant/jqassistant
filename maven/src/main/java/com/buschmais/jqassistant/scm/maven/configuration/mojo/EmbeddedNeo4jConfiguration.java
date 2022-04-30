@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

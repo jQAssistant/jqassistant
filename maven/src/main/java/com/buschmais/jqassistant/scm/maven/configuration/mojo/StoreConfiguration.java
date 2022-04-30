@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo;
 
 import java.net.URI;
 import java.util.Properties;
