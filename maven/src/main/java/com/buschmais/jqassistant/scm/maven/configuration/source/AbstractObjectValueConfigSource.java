@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.scm.maven.configuration.source;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import io.smallrye.config.common.AbstractConfigSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
@@ -15,8 +13,10 @@ import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
  */
 class AbstractObjectValueConfigSource<T> extends AbstractConfigSource {
 
-    private PrefixedObjectValueSource valueSource;
-    private Set<String> propertyNames;
+    private final PrefixedObjectValueSource valueSource;
+    private final Set<String> propertyNames;
+
+    private final Map<String, String> properties = new HashMap<>();
 
     AbstractObjectValueConfigSource(String name, T valueObject, String prefix, Collection<String> propertyNames) {
         super(name, DEFAULT_ORDINAL);
@@ -30,11 +30,13 @@ class AbstractObjectValueConfigSource<T> extends AbstractConfigSource {
     }
 
     @Override
-    public String getValue(String s) {
-        Object value = valueSource.getValue(s);
-        return value != null ?
-            value.toString()
-                .replace("\\", "\\\\") :
-            null;
+    public String getValue(String property) {
+        return properties.computeIfAbsent(property, key -> {
+            Object value = valueSource.getValue(key);
+            return value != null ?
+                value.toString()
+                    .replace("\\", "\\\\") :
+                null;
+        });
     }
 }
