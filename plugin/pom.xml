@@ -42,7 +42,6 @@
     </description>
 
     <properties>
-        <assertj-core.version>3.21.0</assertj-core.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>1.12.0-SNAPSHOT</jqa-bom.version>
@@ -503,12 +502,6 @@
             </dependency>
 
             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj-core.version}</version>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-jsr223</artifactId>
