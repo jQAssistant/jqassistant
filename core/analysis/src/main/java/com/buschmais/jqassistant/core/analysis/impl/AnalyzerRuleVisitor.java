@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import io.smallrye.config.ConfigMapping;
 import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 
