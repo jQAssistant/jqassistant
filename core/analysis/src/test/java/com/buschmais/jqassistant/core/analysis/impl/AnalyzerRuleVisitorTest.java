@@ -33,7 +33,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.*;
 
 /**
@@ -198,9 +197,11 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void skipAppliedConcept() throws RuleException {
-        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
+        ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
+        doReturn(Result.Status.SUCCESS).when(conceptDescriptor).getStatus();
+        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
 
-        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(true));
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
@@ -210,11 +211,13 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeAppliedConcept() throws RuleException {
-        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(mock(ConceptDescriptor.class));
+        doReturn(Result.Status.SUCCESS).when(analyzerContext).verify(eq(concept), anyList(), anyList());
+        ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
+        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
-        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(true));
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);

@@ -14,7 +14,11 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
+import io.smallrye.config.ConfigMapping;
 import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.LoggerFactory;
+
+import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -59,9 +63,10 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         ConceptDescriptor conceptDescriptor = analyzerContext.getStore()
             .find(ConceptDescriptor.class, concept.getId());
         Result.Status status;
-        if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
+        boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
+        if (conceptDescriptor == null || isExecuteAppliedConcepts) {
             analyzerContext.getLogger()
-                .info("Applying concept '" + concept.getId() + "' with severity: '" + effectiveSeverity.getInfo(concept.getSeverity()) + "'" + ".");
+                .info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
             reportPlugin.beginConcept(concept);
             Result<Concept> result = execute(concept, effectiveSeverity);
             reportPlugin.setResult(result);
@@ -74,6 +79,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             }
             reportPlugin.endConcept();
         } else {
+            if (!isExecuteAppliedConcepts) {
+                analyzerContext.getLogger()
+                    .info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
+                        Analyze.class.getAnnotation(ConfigMapping.class)
+                            .prefix(), EXECUTE_APPLIED_CONCEPTS);
+            }
             status = conceptDescriptor.getStatus();
         }
         return Result.Status.SUCCESS.equals(status);
