@@ -85,7 +85,7 @@
         <io.smallrye.config.version>2.10.0</io.smallrye.config.version>
         <guava.version>30.0-jre</guava.version>
         <caffeine.version>2.8.4</caffeine.version>
-        <maven.ant.version>3.0.0</maven.ant.version>
+        <maven.ant.version>3.1.0</maven.ant.version>
         <maven.assembly.version>3.3.0</maven.assembly.version>
         <maven.buildhelper.version>3.2.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.1.0</maven.checkstyle.version>
