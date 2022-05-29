@@ -10,7 +10,7 @@ public interface Embedded {
     String DEFAULT_BOLT_PORT = "7687";
     String DEFAULT_HTTP_PORT = "7474";
 
-    String CONNECTORY_ENABLED = "connector-enabled";
+    String CONNECTOR_ENABLED = "connector-enabled";
 
     @WithDefault("false")
     boolean connectorEnabled();
