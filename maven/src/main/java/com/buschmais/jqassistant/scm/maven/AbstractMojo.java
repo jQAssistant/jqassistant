@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
@@ -370,21 +371,15 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, coalesce(storeUserName, store.getUsername()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, coalesce(storePassword, store.getPassword()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, coalesce(storeEncryption, store.getEncryption()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, coalesce(storeTrustStrategy, store.getTrustStrategy()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE, coalesce(storeTrustCertificate, store.getTrustCertificate()));
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, store.getProperties());
+        configurationBuilder.with(Remote.class, Remote.USERNAME, coalesce(storeUserName, store.getUsername()));
+        configurationBuilder.with(Remote.class, Remote.PASSWORD, coalesce(storePassword, store.getPassword()));
+        configurationBuilder.with(Remote.class, Remote.ENCRYPTION, coalesce(storeEncryption, store.getEncryption()));
+        configurationBuilder.with(Remote.class, Remote.TRUST_STRATEGY, coalesce(storeTrustStrategy, store.getTrustStrategy()));
+        configurationBuilder.with(Remote.class, Remote.TRUST_CERTIFICATE, coalesce(storeTrustCertificate, store.getTrustCertificate()));
+        configurationBuilder.with(Remote.class, Remote.PROPERTIES, store.getProperties());
 
         EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
-        configurationBuilder.with(Embedded.class, Embedded.CONNECTORY_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
         configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
         configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
         configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));

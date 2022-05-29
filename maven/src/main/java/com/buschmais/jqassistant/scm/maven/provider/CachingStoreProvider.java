@@ -65,7 +65,7 @@ public class CachingStoreProvider implements Disposable {
             .normalize();
         StoreKey.StoreKeyBuilder storeKeyBuilder = StoreKey.builder()
             .uri(uri);
-        storeConfiguration.username()
+        storeConfiguration.remote().username()
             .ifPresent(username -> storeKeyBuilder.username(username));
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
