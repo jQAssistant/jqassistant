@@ -11,10 +11,10 @@ import io.smallrye.config.WithDefault;
 @ConfigMapping(prefix = "jqassistant.analyze.rule")
 public interface Rule {
 
-    String RULE_DIRECTORY = "rule-directory";
+    String DIRECTORY = "directory";
 
     @Description("The name of the directory containing project rules.")
-    Optional<String> ruleDirectory();
+    Optional<String> directory();
 
     String DEFAULT_CONCEPT_SEVERITY = "default-concept-severity";
 
