@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.net.URI;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -25,17 +26,18 @@ public class RemoteGraphStore extends AbstractGraphStore {
     protected XOUnit configure(XOUnit.XOUnitBuilder builder, Store configuration) {
         builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
-        this.configuration.username()
+        Remote remote = this.configuration.remote();
+        remote.username()
             .ifPresent(username -> properties.setProperty(Property.USERNAME.getKey(), username));
-        this.configuration.password()
+        remote.password()
             .ifPresent(password -> properties.setProperty(Property.PASSWORD.getKey(), password));
-        boolean encryption = this.configuration.encryption();
+        boolean encryption = remote.encryption();
         properties.setProperty(Property.ENCRYPTION.getKey(), Boolean.toString(encryption));
-        this.configuration.trustStrategy()
+        remote.trustStrategy()
             .ifPresent(trustStrategy -> properties.setProperty(Property.TRUST_STRATEGY.getKey(), trustStrategy));
-        this.configuration.trustCertificate()
+        remote.trustCertificate()
             .ifPresent(trustCertificate -> properties.setProperty(Property.TRUST_CERTIFICATE.getKey(), trustCertificate));
-        properties.putAll(this.configuration.properties());
+        properties.putAll(remote.properties());
         builder.properties(properties);
         return builder.build();
     }

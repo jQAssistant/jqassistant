@@ -48,11 +48,9 @@
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.impl</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.neo4j.remote</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- XO dependencies // end -->

@@ -27,7 +27,8 @@ public class StoreFactory {
             .orElse(storeDirectorySupplier.get()
                 .toURI())
             .normalize();
-        LOGGER.info("Connecting to store at '" + uri + "'" + configuration.username()
+        LOGGER.info("Connecting to store at '" + uri + "'" + configuration.remote()
+            .username()
             .map(username -> " (username=" + username + ")")
             .orElse(""));
         String scheme = uri.getScheme();

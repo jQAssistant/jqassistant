@@ -43,6 +43,7 @@ import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -130,16 +131,12 @@ public abstract class AbstractPluginIT {
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, "NONE");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, "neo4j");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, "jqassistant");
+            configurationBuilder.with(Remote.class, Remote.ENCRYPTION, "NONE");
+            configurationBuilder.with(Remote.class, Remote.USERNAME, "neo4j");
+            configurationBuilder.with(Remote.class, Remote.PASSWORD, "jqassistant");
             Properties properties = new Properties();
             properties.put("neo4j.remote.statement.log.level", "info");
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.PROPERTIES, properties);
+            configurationBuilder.with(Remote.class, Remote.PROPERTIES, properties);
             break;
         default:
             throw new AssertionError("Test store type not supported: " + type);
