@@ -152,7 +152,7 @@ public final class MojoExecutionContext {
     private String getRuleDirectoryName() {
         return configuration.analyze()
             .rule()
-            .ruleDirectory()
+            .directory()
             .orElse(DEFAULT_RULES_DIRECTORY);
     }
 

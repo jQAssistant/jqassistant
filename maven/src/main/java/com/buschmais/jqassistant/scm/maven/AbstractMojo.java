@@ -394,7 +394,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         configurationBuilder.with(MavenConfiguration.class, MavenConfiguration.SKIP, skip);
         configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
-        configurationBuilder.with(Rule.class, Rule.RULE_DIRECTORY, rulesDirectory);
+        configurationBuilder.with(Rule.class, Rule.DIRECTORY, rulesDirectory);
     }
 
     /**
