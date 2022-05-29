@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
@@ -23,6 +24,9 @@ class StoreFactoryTest {
 
     @Mock
     private com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
+
+    @Mock
+    private Remote remote;
 
     @Mock
     private StorePluginRepository storePluginRepository;
@@ -55,6 +59,8 @@ class StoreFactoryTest {
     private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
         doReturn(uri).when(configuration)
             .uri();
+        doReturn(remote).when(configuration)
+            .remote();
         assertThat(StoreFactory.getStore(configuration, () -> new File("store"), storePluginRepository)).isInstanceOf(expectedStoreType);
     }
 
