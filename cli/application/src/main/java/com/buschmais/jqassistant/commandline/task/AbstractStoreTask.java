@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
@@ -92,17 +93,11 @@ public abstract class AbstractStoreTask extends AbstractTask {
             }
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.URI, uri);
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.USERNAME, getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.PASSWORD, getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.ENCRYPTION, getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_STRATEGY, getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.TRUST_CERTIFICATE,
-                getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
+            configurationBuilder.with(Remote.class, Remote.USERNAME, getOptionValue(options, CMDLINE_OPTION_STORE_USERNAME));
+            configurationBuilder.with(Remote.class, Remote.PASSWORD, getOptionValue(options, CMDLINE_OPTION_STORE_PASSWORD));
+            configurationBuilder.with(Remote.class, Remote.ENCRYPTION, getOptionValue(options, CMDLINE_OPTION_STORE_ENCRYPTION));
+            configurationBuilder.with(Remote.class, Remote.TRUST_STRATEGY, getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_STRATEGY));
+            configurationBuilder.with(Remote.class, Remote.TRUST_CERTIFICATE, getOptionValue(options, CMDLINE_OPTION_STORE_TRUST_CERITFICATE));
         } else if (storeDirectory != null) {
             File directory = new File(storeDirectory);
             directory.getParentFile()
@@ -110,7 +105,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
             configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
                 com.buschmais.jqassistant.core.store.api.configuration.Store.URI, directory.toURI());
         }
-        configurationBuilder.with(Embedded.class, Embedded.CONNECTORY_ENABLED, isConnectorRequired());
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, isConnectorRequired());
         configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_LISTEN_ADDRESS));
         configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_HTTP_PORT));
         configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, getOptionValue(options, CMDLINE_OPTION_EMBEDDED_BOLT_PORT));
