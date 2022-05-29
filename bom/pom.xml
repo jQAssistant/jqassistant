@@ -141,7 +141,6 @@
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.remote</artifactId>
                 <version>${xo.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
