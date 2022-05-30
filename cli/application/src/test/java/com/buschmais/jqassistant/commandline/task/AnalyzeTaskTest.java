@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
+import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
@@ -46,6 +47,9 @@ class AnalyzeTaskTest {
     private Embedded embedded;
 
     @Mock
+    private Remote remote;
+
+    @Mock
     private Analyze analyze;
 
     @Mock
@@ -72,6 +76,8 @@ class AnalyzeTaskTest {
             .store();
         doReturn(embedded).when(store)
             .embedded();
+        doReturn(remote).when(store)
+            .remote();
         doReturn(analyze).when(configuration)
             .analyze();
         doReturn(report).when(analyze)
