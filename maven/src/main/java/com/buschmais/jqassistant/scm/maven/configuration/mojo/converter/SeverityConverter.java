@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration.mojo;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo.converter;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -8,7 +8,7 @@ import org.codehaus.plexus.component.configurator.converters.basic.AbstractBasic
 
 import static java.lang.String.format;
 
-public class SeverityConfigurationConverter extends AbstractBasicConverter {
+public class SeverityConverter extends AbstractBasicConverter {
     @Override
     public boolean canConvert(Class<?> type) {
         return type.isAssignableFrom(Severity.class);

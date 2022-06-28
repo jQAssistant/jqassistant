@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration.mojo;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo.converter;
 
 import java.util.Locale;
 

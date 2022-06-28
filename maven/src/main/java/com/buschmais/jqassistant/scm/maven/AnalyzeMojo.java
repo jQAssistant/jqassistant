@@ -65,13 +65,13 @@ public class AnalyzeMojo extends AbstractRuleMojo {
      * The severity threshold to warn on rule violations.
      */
     @Parameter(property = "jqassistant.warnOnSeverity")
-    private Severity warnOnSeverity;
+    private Severity.Threshold warnOnSeverity;
 
     /**
-     * The severity threshold to fail on rule violations, i.e. break the build.
+     * The severity threshold to fail on rule violations.
      */
     @Parameter(property = "jqassistant.failOnSeverity")
-    private Severity failOnSeverity;
+    private Severity.Threshold failOnSeverity;
 
     /**
      * Defines the set of reports which shall be created by default. If empty all
@@ -123,8 +123,8 @@ public class AnalyzeMojo extends AbstractRuleMojo {
             properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
         }
         configurationBuilder.with(Report.class, Report.PROPERTIES, properties);
-        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, warnOnSeverity);
-        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, failOnSeverity);
+        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, warnOnSeverity != null ? warnOnSeverity.toString() : null);
+        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, failOnSeverity != null ? failOnSeverity.toString() : null);
         configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, attachReportArchive);
     }
 

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration.mojo;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo.converter;
 
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class SeverityConfigurationConverterTest {
+class SeverityConverterTest {
 
-    private SeverityConfigurationConverter converter = new SeverityConfigurationConverter();
+    private SeverityConverter converter = new SeverityConverter();
 
     @Test
     void canConvertReturnsTrueForSeverity() {

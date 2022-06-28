@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration.mojo;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo.converter;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.BasicComponentConfigurator;
@@ -17,7 +17,8 @@ public class CustomComponentConfigurator
 
     @Override
     public void initialize() {
-        this.converterLookup.registerConverter(new SeverityConfigurationConverter());
+        this.converterLookup.registerConverter(new SeverityConverter());
+        this.converterLookup.registerConverter(new SeverityThresholdConverter());
         this.converterLookup.registerConverter(new StoreLifeCycleConverter());
     }
 }

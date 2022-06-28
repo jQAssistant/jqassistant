@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.configuration.mojo;
+package com.buschmais.jqassistant.scm.maven.configuration.mojo.converter;
 
 import com.buschmais.jqassistant.scm.maven.StoreLifecycle;
 
