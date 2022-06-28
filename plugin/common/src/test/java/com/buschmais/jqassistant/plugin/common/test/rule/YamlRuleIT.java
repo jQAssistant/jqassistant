@@ -42,13 +42,20 @@ public class YamlRuleIT extends AbstractPluginIT {
 
         @Override
         public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> properties, Map<String, Object> ruleParameters,
-                Severity severity, AnalyzerContext context) {
-            PropertyDescriptor propertyDescriptor = context.getStore().create(PropertyDescriptor.class);
+            Severity severity, AnalyzerContext context) {
+            PropertyDescriptor propertyDescriptor = context.getStore()
+                .create(PropertyDescriptor.class);
             propertyDescriptor.setName("testProperty");
             propertyDescriptor.setValue("testValue");
             Map<String, Object> row = new HashMap<>();
             row.put("Property", propertyDescriptor);
-            return context.resultBuilder(executableRule, severity).columnNames(singletonList("Property")).rows(singletonList(row)).status(SUCCESS).build();
+            return Result.<T>builder()
+                .rule(executableRule)
+                .severity(severity)
+                .columnNames(singletonList("Property"))
+                .rows(singletonList(row))
+                .status(SUCCESS)
+                .build();
         }
     }
 }

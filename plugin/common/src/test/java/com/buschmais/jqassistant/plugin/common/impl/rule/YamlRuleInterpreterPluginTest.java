@@ -24,8 +24,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 
 @ExtendWith(MockitoExtension.class)
 public class YamlRuleInterpreterPluginTest {
@@ -37,11 +35,6 @@ public class YamlRuleInterpreterPluginTest {
 
     @BeforeEach
     public void setUp() {
-        doAnswer(invocation -> {
-            ExecutableRule<?> rule = (ExecutableRule<?>) invocation.getArguments()[0];
-            Severity severity = (Severity) invocation.getArguments()[1];
-            return Result.builder().rule(rule).severity(severity);
-        }).when(analyzerContext).resultBuilder(any(ExecutableRule.class), any(Severity.class));
         plugin.initialize();
         plugin.configure(emptyMap());
     }
@@ -80,7 +73,13 @@ public class YamlRuleInterpreterPluginTest {
                 row.put("Value", entry.getValue());
                 rows.add(row);
             }
-            return context.resultBuilder(executableRule, severity).status(Result.Status.SUCCESS).columnNames(asList("Property", "Value")).rows(rows).build();
+            return Result.<T>builder()
+                .rule(executableRule)
+                .severity(severity)
+                .status(Result.Status.SUCCESS)
+                .columnNames(asList("Property", "Value"))
+                .rows(rows)
+                .build();
         }
     }
 }

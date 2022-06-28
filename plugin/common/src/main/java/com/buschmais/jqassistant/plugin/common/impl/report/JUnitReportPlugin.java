@@ -43,8 +43,8 @@ public class JUnitReportPlugin implements ReportPlugin {
     private long ruleBeginTimestamp;
     private Map<Group, GroupInfo> results = new HashMap<>();
 
-    private Severity failureSeverity = Concept.DEFAULT_SEVERITY;
-    private Severity errorSeverity = Constraint.DEFAULT_SEVERITY;
+    private Severity.Threshold failureSeverity = Severity.Threshold.from(Concept.DEFAULT_SEVERITY);
+    private Severity.Threshold errorSeverity = Severity.Threshold.from(Constraint.DEFAULT_SEVERITY);
 
     @Override
     public void initialize() throws ReportException {
@@ -70,11 +70,11 @@ public class JUnitReportPlugin implements ReportPlugin {
         }
     }
 
-    private Severity getSeverity(String errorSeverity) throws ReportException {
+    private Severity.Threshold getSeverity(String value) throws ReportException {
         try {
-            return Severity.fromValue(errorSeverity);
+            return Severity.Threshold.from(value);
         } catch (RuleException e) {
-            throw new ReportException("Cannot parse error severity " + errorSeverity, e);
+            throw new ReportException("Cannot convert " + value + " to severity threshold.", e);
         }
     }
 
@@ -115,7 +115,8 @@ public class JUnitReportPlugin implements ReportPlugin {
         long time = ruleEndTimestamp - ruleBeginTimestamp;
         Group group = groups.peek();
         GroupInfo groupInfo = results.get(group);
-        groupInfo.getResults().put(result, Long.valueOf(time));
+        groupInfo.getResults()
+            .put(result, Long.valueOf(time));
     }
 
     private void pushGroup(Group group) {
@@ -131,13 +132,16 @@ public class JUnitReportPlugin implements ReportPlugin {
         int failures = 0;
         int errors = 0;
         String testSuiteId = getTestSuiteId(group);
-        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupInfo.getResults().entrySet()) {
+        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : groupInfo.getResults()
+            .entrySet()) {
             // TestCase
             Result<? extends Rule> result = entry.getKey();
-            long time = entry.getValue().longValue();
+            long time = entry.getValue()
+                .longValue();
             Testcase testcase = new Testcase();
             Rule rule = result.getRule();
-            testcase.setName(rule.getClass().getSimpleName() + "_" + ReportHelper.escapeRuleId(rule));
+            testcase.setName(rule.getClass()
+                .getSimpleName() + "_" + ReportHelper.escapeRuleId(rule));
             testcase.setClassname(testSuiteId);
             testcase.setTime(toTime(time));
             List<Map<String, Object>> rows = result.getRows();
@@ -156,22 +160,25 @@ public class JUnitReportPlugin implements ReportPlugin {
                 }
                 String content = sb.toString();
                 Severity severity = result.getSeverity();
-                if (severity.getLevel() <= failureSeverity.getLevel()) {
+                if (severity.exceeds(failureSeverity)) {
                     Failure failure = new Failure();
                     failure.setMessage(rule.getDescription());
                     failure.setContent(content);
-                    testcase.getFailure().add(failure);
+                    testcase.getFailure()
+                        .add(failure);
                     failures++;
-                } else if (severity.getLevel() <= errorSeverity.getLevel()) {
+                } else if (severity.exceeds(errorSeverity)) {
                     Error error = new Error();
                     error.setMessage(rule.getDescription());
                     error.setContent(content);
-                    testcase.getError().add(error);
+                    testcase.getError()
+                        .add(error);
                     errors++;
                 }
             }
             tests++;
-            testsuite.getTestcase().add(testcase);
+            testsuite.getTestcase()
+                .add(testcase);
         }
         testsuite.setTests(Integer.toString(tests));
         testsuite.setFailures(Integer.toString(failures));
@@ -195,7 +202,7 @@ public class JUnitReportPlugin implements ReportPlugin {
      * Convert the given time (ms) to a string representation.
      *
      * @param time
-     *            The time.
+     *     The time.
      * @return The string representation.
      */
     private String toTime(long time) {
@@ -205,7 +212,8 @@ public class JUnitReportPlugin implements ReportPlugin {
     private String getTestSuiteId(Group group) {
         StringBuilder testSuiteIdBuilder = new StringBuilder(TESTSUITE_PREFIX);
         if (group != null) {
-            testSuiteIdBuilder.append('_').append(ReportHelper.escapeRuleId(group));
+            testSuiteIdBuilder.append('_')
+                .append(ReportHelper.escapeRuleId(group));
         }
         return testSuiteIdBuilder.toString();
     }
