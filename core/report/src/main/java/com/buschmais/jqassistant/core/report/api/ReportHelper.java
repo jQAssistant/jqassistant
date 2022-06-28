@@ -172,21 +172,16 @@ public final class ReportHelper {
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 ExecutableRule rule = result.getRule();
-                String severityInfo = result.getSeverity()
+                Severity resultSeverity = result.getSeverity();
+                String severityInfo = resultSeverity
                     .getInfo(rule.getSeverity());
                 List<String> resultRows = getResultRows(result, logResult);
                 // violation severity level check
-                Severity warnOnSeverity = report.warnOnSeverity();
-                boolean warn = warnOnSeverity != null && result.getSeverity()
-                    .getLevel() <= warnOnSeverity.getLevel();
-                Severity failOnSeverity = report.failOnSeverity();
-                boolean fail = failOnSeverity != null && result.getSeverity()
-                    .getLevel() <= failOnSeverity.getLevel();
                 LoggingStrategy loggingStrategy;
-                if (fail) {
+                if (resultSeverity.exceeds(report.failOnSeverity())) {
                     violations++;
                     loggingStrategy = errorLogger;
-                } else if (warn) {
+                } else if (resultSeverity.exceeds(report.warnOnSeverity())) {
                     loggingStrategy = warnLogger;
                 } else {
                     loggingStrategy = debugLogger;

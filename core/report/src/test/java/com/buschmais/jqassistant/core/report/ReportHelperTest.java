@@ -70,8 +70,8 @@ class ReportHelperTest {
             .warn(Mockito.anyString());
         doAnswer(new LogAnswer(errorMessages)).when(logger)
             .error(Mockito.anyString());
-        doReturn(Severity.MINOR).when(report).warnOnSeverity();
-        doReturn(Severity.MAJOR).when(report).failOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.MINOR)).when(report).warnOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report).failOnSeverity();
     }
 
     @Test
@@ -106,8 +106,8 @@ class ReportHelperTest {
 
     @Test
     void failedConceptsWithOverriddenSeverity() {
-        doReturn(Severity.MAJOR).when(report).warnOnSeverity();
-        doReturn(Severity.CRITICAL).when(report).failOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report).warnOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.CRITICAL)).when(report).failOnSeverity();
         Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR);
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR);
         Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR, Severity.CRITICAL);
@@ -125,7 +125,7 @@ class ReportHelperTest {
 
     @Test
     void validatedConstraint() {
-        doReturn(Severity.MINOR).when(report).failOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.MINOR)).when(report).failOnSeverity();
         Result<Constraint> constraintResult = mockResult("test:concept", Constraint.class, Result.Status.SUCCESS, Severity.MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:concept", constraintResult);
@@ -167,8 +167,8 @@ class ReportHelperTest {
 
     @Test
     void failedConstraintsWithOverriddenSeverity() {
-        doReturn(Severity.MAJOR).when(report).warnOnSeverity();
-        doReturn(Severity.CRITICAL).when(report).failOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report).warnOnSeverity();
+        doReturn(Severity.Threshold.from(Severity.CRITICAL)).when(report).failOnSeverity();
         Map<String, Object> infoRow = new HashMap<>();
         infoRow.put("InfoElement", "InfoValue");
         Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.FAILURE, Severity.INFO, Severity.MINOR,

@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 
 @ConfigMapping(prefix = "jqassistant.analyze.report")
@@ -18,15 +19,17 @@ public interface Report {
 
     String WARN_ON_SEVERITY = "warn-on-severity";
 
-    @Description("Determines the severity level for issuing warnings for failed with equal or higher severities.")
+    @Description("Determines the severity level to report warnings for rules with equal or higher severities.")
     @WithDefault("MINOR")
-    Severity warnOnSeverity();
+    @WithConverter(SeverityThresholdConverter.class)
+    Severity.Threshold warnOnSeverity();
 
     String FAIL_ON_SEVERITY = "fail-on-severity";
 
-    @Description("Determines the severity level for breaking the build if at least one rule with an equal or higher severity failed.")
+    @Description("Determines the severity level to report failures for rules with equal or higher severities.")
     @WithDefault("MAJOR")
-    Severity failOnSeverity();
+    @WithConverter(SeverityThresholdConverter.class)
+    Severity.Threshold failOnSeverity();
 
     String CREATE_ARCHIVE = "create-archive";
 
