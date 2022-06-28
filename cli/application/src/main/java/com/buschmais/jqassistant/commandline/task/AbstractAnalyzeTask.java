@@ -172,12 +172,4 @@ public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
             .hasArgs()
             .create(CMDLINE_OPTION_DEFAULT_CONSTRAINT_SEVERITY));
     }
-
-    protected Severity getSeverity(String severityValue) throws CliConfigurationException {
-        try {
-            return Severity.fromValue(severityValue);
-        } catch (RuleException e) {
-            throw new CliConfigurationException("Unknown severity value " + severityValue);
-        }
-    }
 }

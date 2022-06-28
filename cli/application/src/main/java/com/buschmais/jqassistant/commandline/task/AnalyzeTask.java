@@ -54,9 +54,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     public void run(CliConfiguration configuration) throws CliExecutionException {
         Analyze analyze = configuration.analyze();
-        Severity warnOnSeverity = analyze.report()
+        Severity.Threshold warnOnSeverity = analyze.report()
             .warnOnSeverity();
-        Severity failOnSeverity = analyze.report()
+        Severity.Threshold failOnSeverity = analyze.report()
             .failOnSeverity();
         LOGGER.info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
@@ -150,8 +150,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         reportDirectory.mkdirs();
         configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
         configurationBuilder.with(Report.class, Report.PROPERTIES, pluginProperties);
-        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY)));
-        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, getSeverity(getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY)));
+        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY));
+        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY));
         configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
     }
 
