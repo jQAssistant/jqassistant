@@ -124,4 +124,20 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
      *            the URL of the project home.
      */
     void setUrl(String url);
+
+    /**
+     * Returns the description of the POM.
+     *
+     * @return the URL of the project home or `null` if this information is present.
+     */
+    @Property("description")
+    String getDescription();
+
+    /**
+     * Sets the description of the POM.
+     *
+     * @param description
+     *            the description of the POM.
+     */
+    void setDescription(String description);
 }

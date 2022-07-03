@@ -84,6 +84,7 @@ class MavenModelScannerPluginTest {
         doReturn("test").when(model).getArtifactId();
         doReturn("jar").when(model).getPackaging();
         doReturn("1.0.0").when(model).getVersion();
+        doReturn("Framework for structural analysis of Java applications.").when(model).getDescription();
         doReturn(new Properties()).when(model).getProperties();
         return model;
     }
@@ -100,6 +101,7 @@ class MavenModelScannerPluginTest {
         verify(mavenPomDescriptor).setArtifactId("test");
         verify(mavenPomDescriptor).setPackaging("jar");
         verify(mavenPomDescriptor).setVersion("1.0.0");
+        verify(mavenPomDescriptor).setDescription("Framework for structural analysis of Java applications.");
         return mavenPomDescriptor;
     }
 }
