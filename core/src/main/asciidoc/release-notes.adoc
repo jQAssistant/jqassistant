@@ -9,8 +9,11 @@
 * Add support for Elk layout mechanism for use in PlantUML diagrams
 * Added a module `test` providing core test infrastructure for plugins. Matchers located in the `test-jar` artifacts of `store` and `analysis` have been moved to this module, as well as `com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT`.
 +
-NOTE: Plugins must declare `com.buschmais.jqassistant.core:test`as dependency (test-scoped).
+NOTE: Plugins must declare `com.buschmais.jqassistant.core:test` as a test-scoped dependency.
 * Upgraded to PlantUML 1.2022.6, AsciidoctorJ 2.5.4, AsciidoctorJ diagram 2.2.3 and JRuby 9.3.6.0
++
+TIP: If loading Asciidoc files turns out to be very slow on Windows systems try to specify the system property
+`-Djruby.jar.cache.expiration=5000` for running Maven or the Command Line Utility.
 
 == 1.11.1
 * Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
