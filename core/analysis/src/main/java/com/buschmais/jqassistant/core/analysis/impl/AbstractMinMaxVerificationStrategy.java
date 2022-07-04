@@ -1,13 +1,19 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
-public abstract class AbstractMinMaxVerificationStrategy {
+import lombok.RequiredArgsConstructor;
 
-    protected <T extends ExecutableRule> Result.Status getStatus(T executable, int value, Integer min, Integer max) {
+import static lombok.AccessLevel.PROTECTED;
+
+@RequiredArgsConstructor(access = PROTECTED)
+public abstract class AbstractMinMaxVerificationStrategy<T extends Verification> implements VerificationStrategy<T> {
+
+    private final Report configuration;
+
+    protected <T extends ExecutableRule> Result.Status getStatus(T executable, Severity severity, int value, Integer min, Integer max) {
         if (min == null && max == null) {
             if (executable instanceof Concept) {
                 min = 1;

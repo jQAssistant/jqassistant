@@ -20,22 +20,25 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher
  * queries.
- *
+ * <p>
  * The
  */
 public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpreterPlugin {
 
     protected <T extends ExecutableRule<?>> Result<T> execute(String cypher, T executableRule, Map<String, Object> parameters, Severity severity,
-            AnalyzerContext context) throws RuleException {
+        AnalyzerContext context) throws RuleException {
         List<Map<String, Object>> rows = new LinkedList<>();
-        context.getLogger().debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
+        context.getLogger()
+            .debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
         String primaryColumn = null;
         List<String> columnNames = null;
-        try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = context.getStore().executeQuery(cypher, parameters)) {
+        try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = context.getStore()
+            .executeQuery(cypher, parameters)) {
             for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
                 if (columnNames == null) {
                     columnNames = unmodifiableList(rowObject.getColumns());
-                    primaryColumn = executableRule.getReport().getPrimaryColumn();
+                    primaryColumn = executableRule.getReport()
+                        .getPrimaryColumn();
                     if (primaryColumn == null) {
                         primaryColumn = columnNames.get(0);
                     }
@@ -51,22 +54,28 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
         } catch (Exception e) {
             throw new RuleException("Cannot execute query for rule '" + executableRule + "'.", e);
         }
-        Status status = getStatus(executableRule, columnNames, rows, context);
-        return Result.<T> builder().rule(executableRule).status(status).severity(severity).columnNames(columnNames).rows(rows).build();
+        Status status = getStatus(executableRule, severity, columnNames, rows, context);
+        return Result.<T>builder()
+            .rule(executableRule)
+            .status(status)
+            .severity(severity)
+            .columnNames(columnNames)
+            .rows(rows)
+            .build();
     }
 
     /**
      * Verifies if the given row shall be suppressed.
-     *
+     * <p>
      * The primary column is checked if it contains a suppression that matches the
      * current rule id.
      *
      * @param ruleId
-     *            The rule id.
+     *     The rule id.
      * @param row
-     *            The row.
+     *     The row.
      * @param primaryColumn
-     *            The name of the primary column.
+     *     The name of the primary column.
      * @return <code>true</code> if the row shall be suppressed.
      */
     private boolean isSuppressedRow(String ruleId, Map<String, Object> row, String primaryColumn) {
@@ -86,22 +95,24 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
      * Evaluate the status of the result, may be overridden by sub-classes.
      *
      * @param executableRule
-     *            The {@link ExecutableRule}.
+     *     The {@link ExecutableRule}.
+     * @param severity
+     *     The effective {@link Severity}.
      * @param columnNames
-     *            The column names.
+     *     The column names.
      * @param rows
-     *            The rows.
+     *     The rows.
      * @param context
-     *            The {@link AnalyzerContext}.
+     *     The {@link AnalyzerContext}.
      * @param <T>
-     *            The rule type.
+     *     The rule type.
      * @return The {@link Status}.
      * @throws RuleException
-     *             If evaluation fails.
+     *     If evaluation fails.
      */
-    protected <T extends ExecutableRule<?>> Status getStatus(T executableRule, List<String> columnNames, List<Map<String, Object>> rows,
-            AnalyzerContext context) throws RuleException {
-        return context.verify(executableRule, columnNames, rows);
+    protected <T extends ExecutableRule<?>> Status getStatus(T executableRule, Severity severity, List<String> columnNames, List<Map<String, Object>> rows,
+        AnalyzerContext context) throws RuleException {
+        return context.verify(executableRule, severity, columnNames, rows);
     }
 
 }

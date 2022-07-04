@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -45,7 +46,8 @@ class AnalyzerRuleVisitorTest {
     private static final FileRuleSource FILE_RULE_SOURCE = new FileRuleSource(new File("."), "test.xml");
     private static final String PARAMETER_WITHOUT_DEFAULT = "noDefault";
     private static final String PARAMETER_WITH_DEFAULT = "withDefault";
-    private static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder().build();
+    private static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder()
+        .build();
 
     @Mock
     private Store store;
@@ -84,13 +86,16 @@ class AnalyzerRuleVisitorTest {
         columnNames = Arrays.asList("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
         ruleParameters = new HashMap<>();
         ruleParameters.put(PARAMETER_WITHOUT_DEFAULT, "value");
-        doReturn(ruleParameters).when(configuration).ruleParameters();
+        doReturn(ruleParameters).when(configuration)
+            .ruleParameters();
 
         Query.Result<Query.Result.CompositeRowObject> result = createResult(columnNames);
         when(store.executeQuery(eq(statement), anyMap())).thenReturn(result);
 
-        doReturn(store).when(analyzerContext).getStore();
-        doReturn(logger).when(analyzerContext).getLogger();
+        doReturn(store).when(analyzerContext)
+            .getStore();
+        doReturn(logger).when(analyzerContext)
+            .getLogger();
 
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
@@ -103,7 +108,7 @@ class AnalyzerRuleVisitorTest {
      * Verifies that columns of a query a reported in the order given by the query.
      *
      * @throws RuleException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void columnOrder() throws RuleException {
@@ -121,9 +126,10 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeConcept() throws RuleException {
-        doReturn(Result.Status.SUCCESS).when(analyzerContext).verify(eq(concept), anyList(), anyList());
+        doReturn(Result.Status.SUCCESS).when(analyzerContext)
+            .verify(eq(concept), eq(MAJOR), anyList(), anyList());
 
-        boolean visitConcept = analyzerRuleVisitor.visitConcept(concept, Severity.MAJOR);
+        boolean visitConcept = analyzerRuleVisitor.visitConcept(concept, MAJOR);
 
         assertThat(visitConcept, equalTo(true));
 
@@ -138,14 +144,14 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         Result result = resultCaptor.getValue();
         assertThat(result.getStatus(), equalTo(Result.Status.SUCCESS));
-        assertThat(result.getSeverity(), equalTo(Severity.MAJOR));
+        assertThat(result.getSeverity(), equalTo(MAJOR));
         verify(reportWriter).endConcept();
         verify(store).create(ConceptDescriptor.class);
     }
 
     @Test
     void skipConcept() throws RuleException {
-        analyzerRuleVisitor.skipConcept(concept, Severity.MAJOR);
+        analyzerRuleVisitor.skipConcept(concept, MAJOR);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
 
@@ -154,16 +160,17 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         Result result = resultCaptor.getValue();
         assertThat(result.getStatus(), equalTo(Result.Status.SKIPPED));
-        assertThat(result.getSeverity(), equalTo(Severity.MAJOR));
+        assertThat(result.getSeverity(), equalTo(MAJOR));
         verify(reportWriter).endConcept();
         verify(store, never()).create(ConceptDescriptor.class);
     }
 
     @Test
     void executeConstraint() throws RuleException {
-        doReturn(Result.Status.FAILURE).when(analyzerContext).verify(eq(constraint), anyList(), anyList());
+        doReturn(Result.Status.FAILURE).when(analyzerContext)
+            .verify(eq(constraint), eq(BLOCKER), anyList(), anyList());
 
-        analyzerRuleVisitor.visitConstraint(constraint, Severity.BLOCKER);
+        analyzerRuleVisitor.visitConstraint(constraint, BLOCKER);
 
         ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(statement), argumentCaptor.capture());
@@ -176,13 +183,13 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         Result result = resultCaptor.getValue();
         assertThat(result.getStatus(), equalTo(Result.Status.FAILURE));
-        assertThat(result.getSeverity(), equalTo(Severity.BLOCKER));
+        assertThat(result.getSeverity(), equalTo(BLOCKER));
         verify(reportWriter).endConstraint();
     }
 
     @Test
     void skipConstraint() throws RuleException {
-        analyzerRuleVisitor.skipConstraint(constraint, Severity.BLOCKER);
+        analyzerRuleVisitor.skipConstraint(constraint, BLOCKER);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
 
@@ -191,14 +198,15 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         Result result = resultCaptor.getValue();
         assertThat(result.getStatus(), equalTo(Result.Status.SKIPPED));
-        assertThat(result.getSeverity(), equalTo(Severity.BLOCKER));
+        assertThat(result.getSeverity(), equalTo(BLOCKER));
         verify(reportWriter).endConstraint();
     }
 
     @Test
     void skipAppliedConcept() throws RuleException {
         ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
-        doReturn(Result.Status.SUCCESS).when(conceptDescriptor).getStatus();
+        doReturn(Result.Status.SUCCESS).when(conceptDescriptor)
+            .getStatus();
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(true));
@@ -211,7 +219,8 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeAppliedConcept() throws RuleException {
-        doReturn(Result.Status.SUCCESS).when(analyzerContext).verify(eq(concept), anyList(), anyList());
+        doReturn(Result.Status.SUCCESS).when(analyzerContext)
+            .verify(eq(concept), eq(MINOR), anyList(), anyList());
         ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
         doReturn(true).when(configuration)
@@ -225,7 +234,8 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void missingParameter() {
-        doReturn(emptyMap()).when(configuration).ruleParameters();
+        doReturn(emptyMap()).when(configuration)
+            .ruleParameters();
         String statement = "match (n) return n";
         Concept concept = createConcept(statement);
         ReportPlugin reportWriter = mock(ReportPlugin.class);
@@ -247,8 +257,7 @@ class AnalyzerRuleVisitorTest {
         when(store.executeQuery(eq(statement), anyMap())).thenThrow(new IllegalStateException("An error"));
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
-            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins,
-                    reportWriter);
+            AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
             analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
@@ -264,9 +273,19 @@ class AnalyzerRuleVisitorTest {
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
-        Report report = Report.builder().primaryColumn("primaryColumn").build();
-        return Concept.builder().id("test:Concept").description("Test Concept").ruleSource(FILE_RULE_SOURCE).severity(Severity.MINOR)
-                .executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
+        Report report = Report.builder()
+            .primaryColumn("primaryColumn")
+            .build();
+        return Concept.builder()
+            .id("test:Concept")
+            .description("Test Concept")
+            .ruleSource(FILE_RULE_SOURCE)
+            .severity(Severity.MINOR)
+            .executable(executable)
+            .parameters(parameters)
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(report)
+            .build();
     }
 
     private Constraint createConstraint(String statement) {
@@ -276,9 +295,19 @@ class AnalyzerRuleVisitorTest {
         Map<String, Parameter> parameters = new HashMap<>();
         parameters.put(parameterWithoutDefaultValue.getName(), parameterWithoutDefaultValue);
         parameters.put(parameterWithDefaultValue.getName(), parameterWithDefaultValue);
-        Report report = Report.builder().primaryColumn("primaryColumn").build();
-        return Constraint.builder().id("test:Constraint").description("Test Constraint").ruleSource(FILE_RULE_SOURCE)
-                .severity(Severity.MAJOR).executable(executable).parameters(parameters).verification(ROW_COUNT_VERIFICATION).report(report).build();
+        Report report = Report.builder()
+            .primaryColumn("primaryColumn")
+            .build();
+        return Constraint.builder()
+            .id("test:Constraint")
+            .description("Test Constraint")
+            .ruleSource(FILE_RULE_SOURCE)
+            .severity(MAJOR)
+            .executable(executable)
+            .parameters(parameters)
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(report)
+            .build();
     }
 
     private Query.Result<Query.Result.CompositeRowObject> createResult(List<String> columnNames) {
