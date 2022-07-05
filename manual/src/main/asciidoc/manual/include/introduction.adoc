@@ -209,7 +209,7 @@ These concepts again might require other concepts.
 There may be situation where pre-defined constraints and required concepts are defined within a plugin.
 In this case it can become necessary to extend such concepts with project-specific concepts, e.g. to work with generated code:
 
-* Constraints defined by the Spring plugin delivered with jQAssisatnt verify correct usage of dependency injection
+* Constraints defined by the Spring plugin delivered with jQAssistant verify correct usage of dependency injection
 * These constraints exclude all Java types labeled with `:Type:Generated` and therefore require the concept `java:GeneratedType` which is defined by the Java plugin
 * This concept may be extended by project specific concepts adding labels `:Type:Generated` and declaring the provided concept `java:GeneratedType` using `providesConcept(s)`
 
@@ -258,6 +258,20 @@ Thus execution of the group 'my-rules:MyGroup' will report a violation of constr
 
 - ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
 - ...'my-rules-Constraint2' with severity 'minor' (specified within the group)
+
+==== Warnings and Failures
+
+Based on the severity of violated rules jQAssistant generates warnings and failures.
+These are based on configurable thresholds:
+
+* `jqassistant.analyze.report.warn-on-severity` (default: `minor`)
+* `jqassistant.analyze.report.fail-on-severity` (default: `major`)
+
+The warnings and failures are logged on the console and part of generated reports (e.g. XML or Asciidoc).
+
+Furthermore, the setting `jqassistant.analyze.report.break-on-failure` (default: `true`) controls whether jQAssistant will break the buildif at least one failure has been detected during analysis.
+
+TIP: If  violations are exported to dashboards (e.g. SonarQube, Teamscale) for managing them there then `jqassistant.analyze.report.break-on-failure` should be set to `false`.
 
 ==== Script Languages
 
