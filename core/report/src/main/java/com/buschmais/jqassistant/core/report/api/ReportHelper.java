@@ -22,6 +22,12 @@ import static java.util.stream.Collectors.toList;
  */
 public final class ReportHelper {
 
+    public interface FailAction<E extends Exception> {
+
+        void fail(String message) throws E;
+
+    }
+
     private interface LoggingStrategy {
 
         void log(String message);
@@ -32,8 +38,9 @@ public final class ReportHelper {
     public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
     private static String FOOTER = "-------------------------------------------------------------------";
 
-    private final Report report;
+    private final Report configuration;
 
+    private final LoggingStrategy infoLogger;
     private final LoggingStrategy warnLogger;
     private final LoggingStrategy errorLogger;
     private final LoggingStrategy debugLogger;
@@ -41,13 +48,12 @@ public final class ReportHelper {
     /**
      * Constructor.
      *
-     * @param report
-     *     The {@link Report} configuration.
      * @param log
      *     The {@link Logger} to use for reporting.
      */
-    public ReportHelper(Report report, Logger log) {
-        this.report = report;
+    public ReportHelper(Report configuration, Logger log) {
+        this.configuration = configuration;
+        this.infoLogger = message -> log.info(message);
         this.errorLogger = message -> log.error(message);
         this.warnLogger = message -> log.warn(message);
         this.debugLogger = message -> log.debug(message);
@@ -125,6 +131,32 @@ public final class ReportHelper {
     }
 
     /**
+     * Verify the result provided by the {@link InMemoryReportPlugin}.
+     * <p>
+     * This method logs detected warnings and failures and determines if the build shall break. The latter might be implemented by throwing an exception in the provided {@link FailAction} or by evaluation the return value.
+     *
+     * @param inMemoryReport
+     *     The {@link InMemoryReportPlugin}.
+     * @param failAction
+     *     The {@link FailAction} that shall be triggered for breaking a build.
+     * @return <code>true</code> If the build shall break according to the detected failures and the setting {@link Report#breakOnFailure()}.
+     * @throws E
+     *     The exception declared by the {@link FailAction}.
+     */
+    public <E extends Exception> boolean verify(InMemoryReportPlugin inMemoryReport, FailAction<E> failAction) throws E {
+        infoLogger.log("Verifying results (warn-on-severity=" + configuration.warnOnSeverity() + ", fail-on-severity=" + configuration.failOnSeverity()
+            + ", break-on-failure=" + configuration.breakOnFailure() + ")");
+        int conceptFailures = verifyConceptResults(inMemoryReport);
+        int constraintFailures = verifyConstraintResults(inMemoryReport);
+        int totalFailures = conceptFailures + constraintFailures;
+        if (totalFailures > 0 && this.configuration.breakOnFailure()) {
+            failAction.fail("Failed rules detected: " + conceptFailures + " concepts, " + constraintFailures + " constraints");
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Verifies the concept results returned by the {@link InMemoryReportPlugin} .
      *
      * @param inMemoryReportWriter
@@ -132,7 +164,7 @@ public final class ReportHelper {
      * @return The number of failed concepts, i.e. for breaking the build if higher
      * than 0.
      */
-    public int verifyConceptResults(InMemoryReportPlugin inMemoryReportWriter) {
+    int verifyConceptResults(InMemoryReportPlugin inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults()
             .values();
         return verifyRuleResults(conceptResults, "Concept", CONCEPT_FAILED_HEADER, false);
@@ -147,10 +179,10 @@ public final class ReportHelper {
      * @return The number of failed concepts, i.e. for breaking the build if higher
      * than 0.
      */
-    public int verifyConstraintResults(InMemoryReportPlugin inMemoryReportWriter) {
+    int verifyConstraintResults(InMemoryReportPlugin inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults()
             .values();
-        return verifyRuleResults(constraintResults,"Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+        return verifyRuleResults(constraintResults, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
 
     /**
@@ -164,32 +196,33 @@ public final class ReportHelper {
      *     The header to use.
      * @param logResult
      *     if `true` log the result of the executable rule.
-     * @return The number of detected violations.
+     * @return The number of detected failures.
      */
-    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, String type,
-        String header, boolean logResult) {
-        int violations = 0;
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, String type, String header, boolean logResult) {
+        int failures = 0;
         for (Result<?> result : results) {
-            if (Result.Status.FAILURE.equals(result.getStatus())) {
-                ExecutableRule rule = result.getRule();
-                Severity resultSeverity = result.getSeverity();
-                String severityInfo = resultSeverity
-                    .getInfo(rule.getSeverity());
-                List<String> resultRows = getResultRows(result, logResult);
-                // violation severity level check
-                LoggingStrategy loggingStrategy;
-                if (resultSeverity.exceeds(report.failOnSeverity())) {
-                    violations++;
-                    loggingStrategy = errorLogger;
-                } else if (resultSeverity.exceeds(report.warnOnSeverity())) {
-                    loggingStrategy = warnLogger;
-                } else {
-                    loggingStrategy = debugLogger;
-                }
-                log(loggingStrategy, rule, resultRows, severityInfo, type, header);
+            Result.Status status = result.getStatus();
+            ExecutableRule rule = result.getRule();
+            Severity resultSeverity = result.getSeverity();
+            String severityInfo = resultSeverity.getInfo(rule.getSeverity());
+            List<String> resultRows = getResultRows(result, logResult);
+            // violation severity level check
+            LoggingStrategy loggingStrategy;
+            switch (status) {
+            case WARNING:
+                loggingStrategy = warnLogger;
+                break;
+            case FAILURE:
+                failures++;
+                loggingStrategy = errorLogger;
+                break;
+            default:
+                loggingStrategy = debugLogger;
+                break;
             }
+            log(loggingStrategy, rule, resultRows, severityInfo, type, header);
         }
-        return violations;
+        return failures;
     }
 
     private void log(LoggingStrategy loggingStrategy, ExecutableRule rule, List<String> resultRows, String severityInfo, String type, String header) {

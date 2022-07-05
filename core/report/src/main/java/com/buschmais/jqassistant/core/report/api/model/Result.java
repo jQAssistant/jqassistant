@@ -28,7 +28,7 @@ public class Result<T extends ExecutableRule> {
      * The defined status for the result of a rule.
      */
     public enum Status {
-        SUCCESS, FAILURE, SKIPPED
+        SUCCESS, FAILURE, WARNING, SKIPPED;
     }
 
     /**

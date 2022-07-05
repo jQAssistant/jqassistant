@@ -41,6 +41,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
             column = columnNames.get(0);
             LOGGER.debug("No aggregation column specified, using " + column);
         }
+        int aggregatedValue = 0;
         for (Map<String, Object> row : rows) {
             Object value = row.get(column);
             if (value == null) {
@@ -48,12 +49,8 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
             } else if (!Number.class.isAssignableFrom(value.getClass())) {
                 throw new RuleException("The value in column '" + column + "' must be a numeric value but was '" + value + "'");
             }
-            int aggregationValue = ((Number) value).intValue();
-            Result.Status status = getStatus(executable, severity, aggregationValue, verification.getMin(), verification.getMax());
-            if (Result.Status.FAILURE.equals(status)) {
-                return Result.Status.FAILURE;
-            }
+            aggregatedValue = aggregatedValue + ((Number) value).intValue();
         }
-        return Result.Status.SUCCESS;
+        return getStatus(executable, severity, aggregatedValue, verification.getMin(), verification.getMax());
     }
 }

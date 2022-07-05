@@ -3,8 +3,10 @@
 == 1.12.0
 * Added support for configuration via YAML files, environment variables and system properties based on Eclipse Microprofile config mechanism
 * Added support for plugin provisioning based on a given configuration via Maven repositories (including dependency resolution)
+* Improved the state of an executed rule as `warning` or `failure` to generated reports (e.g. XML)
+* Added support for the state `warning` in the XML report
 * Removed deprecated source locations from XML report
-* Added message during analysis for concepts which are skipped because they have already been applied in a previous execution.
+* Added a message during analysis for concepts which are skipped because they have already been applied in a previous execution
 * Fixed an issue where diagram reports (e.g. GraphML) failed with an exception (`"Element type not supported:"`)
 * Add support for Elk layout mechanism for use in PlantUML diagrams
 * Added a module `test` providing core test infrastructure for plugins. Matchers located in the `test-jar` artifacts of `store` and `analysis` have been moved to this module, as well as `com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT`.

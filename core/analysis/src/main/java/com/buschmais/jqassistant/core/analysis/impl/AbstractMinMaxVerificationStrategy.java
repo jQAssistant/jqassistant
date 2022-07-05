@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static lombok.AccessLevel.PROTECTED;
 
 @RequiredArgsConstructor(access = PROTECTED)
@@ -22,7 +23,23 @@ public abstract class AbstractMinMaxVerificationStrategy<T extends Verification>
                 max = 0;
             }
         }
-        return (min == null || value >= min) && (max == null || value <= max) ? Result.Status.SUCCESS : Result.Status.FAILURE;
+        boolean success = (min == null || value >= min) && (max == null || value <= max);
+        return getStatus(severity, success);
+    }
+
+    private Result.Status getStatus(Severity severity, boolean success) {
+        if (!success) {
+            Severity.Threshold failOnSeverity = configuration.failOnSeverity();
+            Severity.Threshold warnOnSeverity = configuration.warnOnSeverity();
+            if (severity.exceeds(failOnSeverity)) {
+                return FAILURE;
+            } else {
+                if (severity.exceeds(warnOnSeverity)) {
+                    return WARNING;
+                }
+            }
+        }
+        return SUCCESS;
     }
 
 }

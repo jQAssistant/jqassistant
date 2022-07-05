@@ -31,6 +31,11 @@ public interface Report {
     @WithConverter(SeverityThresholdConverter.class)
     Severity.Threshold failOnSeverity();
 
+    String BREAK_ON_FAILURE = "break-on-failure";
+    @Description("Determines if jQAssistant shall break the build if a at least one failure has been detected.")
+    @WithDefault("true")
+    boolean breakOnFailure();
+
     String CREATE_ARCHIVE = "create-archive";
 
     @Description("Create an archive containing all generated reports.")
