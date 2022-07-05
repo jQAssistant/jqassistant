@@ -155,20 +155,20 @@ jqassistant:
       properties:
         # plugin.property.key: value
 
-      # Determines the severity level for issuing warnings for failed with equal or higher severities.
+      # Determines the severity level for reporting a warning.
       #
       # jqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       warn-on-severity: MINOR
 
-      # Determines the severity level for breaking the build if at least one rule with an equal or higher severity failed.
+      # Determines the severity level for reporting a failure.
       #
       # jqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       fail-on-severity: MAJOR
 
-      # Determines if jQAssistant shall break the build if a at least one failure has been detected.
+      # Determines if jQAssistant shall continue the build if failures have been detected.
       #
-      # jqassistant.analyze.report.break-on-failure: true|false
-      break-on-failure: true
+      # jqassistant.analyze.report.continue-on-failure: true|false
+      continue-on-failure: false
 
       # Create an archive containing all generated reports.
       #

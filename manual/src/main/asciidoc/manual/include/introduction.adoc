@@ -269,9 +269,9 @@ These are based on configurable thresholds:
 
 The warnings and failures are logged on the console and part of generated reports (e.g. XML or Asciidoc).
 
-Furthermore, the setting `jqassistant.analyze.report.break-on-failure` (default: `true`) controls whether jQAssistant will break the buildif at least one failure has been detected during analysis.
+Furthermore, the setting `jqassistant.analyze.report.continue-on-failure` (default: `false`) controls whether jQAssistant will continue or break the build failures have been detected during analysis.
 
-TIP: If  violations are exported to dashboards (e.g. SonarQube, Teamscale) for managing them there then `jqassistant.analyze.report.break-on-failure` should be set to `false`.
+TIP: If violations are exported to dashboards (e.g. SonarQube, Teamscale) then `jqassistant.analyze.report.continue-on-failure` should be set to `true`.
 
 ==== Script Languages
 
