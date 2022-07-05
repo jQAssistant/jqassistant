@@ -4,8 +4,7 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -19,8 +18,8 @@ public class VerifyIT extends AbstractPluginIT {
 
     @Test
     public void invalidConceptRowCount() throws Exception {
-        assertThat(applyConcept("concept:InvalidRowCount").getStatus(), equalTo(FAILURE));
-        assertThat(applyConcept("concept:InvalidExplicitRowCount").getStatus(), equalTo(FAILURE));
+        assertThat(applyConcept("concept:InvalidRowCount").getStatus(), equalTo(WARNING));
+        assertThat(applyConcept("concept:InvalidExplicitRowCount").getStatus(), equalTo(WARNING));
     }
 
     @Test
@@ -43,8 +42,8 @@ public class VerifyIT extends AbstractPluginIT {
 
     @Test
     public void invalidConceptAggregation() throws Exception {
-        assertThat(applyConcept("concept:InvalidAggregation").getStatus(), equalTo(FAILURE));
-        assertThat(applyConcept("concept:InvalidAggregationWithColumn").getStatus(), equalTo(FAILURE));
+        assertThat(applyConcept("concept:InvalidAggregation").getStatus(), equalTo(WARNING));
+        assertThat(applyConcept("concept:InvalidAggregationWithColumn").getStatus(), equalTo(WARNING));
     }
 
     @Test
