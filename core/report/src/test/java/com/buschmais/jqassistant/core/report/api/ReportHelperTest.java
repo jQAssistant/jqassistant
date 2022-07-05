@@ -208,9 +208,9 @@ class ReportHelperTest {
     }
 
     @Test
-    void breakOnFailureDisabled() throws ReportException {
+    void continueOnFailureEnabled() throws ReportException {
         doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report).failOnSeverity();
-        doReturn(false).when(report).breakOnFailure();
+        doReturn(true).when(report).continueOnFailure();
 
         Result<Concept> conceptResult = mockResult("test:concept", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
@@ -230,10 +230,10 @@ class ReportHelperTest {
     }
 
     @Test
-    void breakOnFailureEnabled() {
+    void continueOnFailureDisabled() {
         doReturn(Severity.Threshold.from(Severity.MINOR)).when(report).warnOnSeverity();
         doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report).failOnSeverity();
-        doReturn(true).when(report).breakOnFailure();
+        doReturn(false).when(report).continueOnFailure();
 
         Result<Concept> conceptResult1 = mockResult("test:concept1", Concept.class, Result.Status.SUCCESS, Severity.MAJOR);
         Result<Concept> conceptResult2 = mockResult("test:concept2", Concept.class, Result.Status.WARNING, Severity.MINOR);

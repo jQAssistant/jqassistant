@@ -139,17 +139,17 @@ public final class ReportHelper {
      *     The {@link InMemoryReportPlugin}.
      * @param failAction
      *     The {@link FailAction} that shall be triggered for breaking a build.
-     * @return <code>true</code> If the build shall break according to the detected failures and the setting {@link Report#breakOnFailure()}.
+     * @return <code>true</code> If the build shall break according to the detected failures and the setting {@link Report#continueOnFailure()}.
      * @throws E
      *     The exception declared by the {@link FailAction}.
      */
     public <E extends Exception> boolean verify(InMemoryReportPlugin inMemoryReport, FailAction<E> failAction) throws E {
         infoLogger.log("Verifying results (warn-on-severity=" + configuration.warnOnSeverity() + ", fail-on-severity=" + configuration.failOnSeverity()
-            + ", break-on-failure=" + configuration.breakOnFailure() + ")");
+            + ", continue-on-failure=" + configuration.continueOnFailure() + ")");
         int conceptFailures = verifyConceptResults(inMemoryReport);
         int constraintFailures = verifyConstraintResults(inMemoryReport);
         int totalFailures = conceptFailures + constraintFailures;
-        if (totalFailures > 0 && this.configuration.breakOnFailure()) {
+        if (totalFailures > 0 && !this.configuration.continueOnFailure()) {
             failAction.fail("Failed rules detected: " + conceptFailures + " concepts, " + constraintFailures + " constraints");
             return true;
         }
