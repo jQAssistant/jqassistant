@@ -65,6 +65,13 @@ class AnalyzeIT extends AbstractCLIIT {
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
+    @TestTemplate
+    void continueOnFailure() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" , "-continueOnFailure"};
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
+    }
+
     /**
      * Warn on a violated constraint but do not fail.
      *

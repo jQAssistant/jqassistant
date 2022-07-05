@@ -41,8 +41,9 @@ import static java.util.Collections.emptyMap;
  */
 public class AnalyzeTask extends AbstractAnalyzeTask {
 
-    private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
     private static final String CMDLINE_OPTION_WARN_ON_SEVERITY = "warnOnSeverity";
+    private static final String CMDLINE_OPTION_FAIL_ON_SEVERITY = "failOnSeverity";
+    private static final String CMDLINE_OPTION_CONTINUE_ON_FAILURE = "continueOnFailure";
     private static final String CMDLINE_OPTION_RULE_PARAMETERS = "ruleParameters";
     private static final String CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS = "executeAppliedConcepts";
     private static final String CMDLINE_OPTION_CREATE_REPORT_ARCHIVE = "createReportArchive";
@@ -148,8 +149,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         reportDirectory.mkdirs();
         configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
         configurationBuilder.with(Report.class, Report.PROPERTIES, pluginProperties);
-        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY));
         configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY));
+        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY));
+        configurationBuilder.with(Report.class, Report.CONTINUE_ON_FAILURE, options.hasOption(CMDLINE_OPTION_CONTINUE_ON_FAILURE));
         configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, options.hasOption(CMDLINE_OPTION_CREATE_REPORT_ARCHIVE));
     }
 
@@ -164,14 +166,17 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             .withDescription("The directory for writing reports.")
             .hasArgs()
             .create(CMDLINE_OPTION_REPORTDIR));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
-            .withDescription("The severity threshold to fail on rule violations, i.e. to exit with an error code.")
-            .hasArgs()
-            .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_WARN_ON_SEVERITY)
-            .withDescription("The severity threshold to warn on rule violations.")
+            .withDescription("The severity threshold to report a warning.")
             .hasArgs()
             .create(CMDLINE_OPTION_WARN_ON_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FAIL_ON_SEVERITY)
+            .withDescription("The severity threshold to report a failure.")
+            .hasArgs()
+            .create(CMDLINE_OPTION_FAIL_ON_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUE_ON_FAILURE)
+            .withDescription("Determines if jQAssistant shall continue the build if failures have been detected.")
+            .create(CMDLINE_OPTION_CONTINUE_ON_FAILURE));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS)
             .withDescription("If set also execute concepts which have already been applied.")
             .create(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));

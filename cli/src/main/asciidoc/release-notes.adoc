@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 1.12.0
+
+* Added option `-continueOnFailure` for the analysis task.
+
 == 1.11.0
 
 * Added new commandline task `list-plugins`. This task lists all plugins

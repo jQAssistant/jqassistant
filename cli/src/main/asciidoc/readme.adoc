@@ -92,17 +92,16 @@ Executes an analysis.
 * <<cli:defaultGroupSeverity>>
 
 * -warnOnSeverity
-** determines the severity level for issuing warnings for failed with equal or higher severities
-** values: 'info', 'minor', 'major', 'critical' or 'blocker'
+** determines the severity level for reporting a warning.
+** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
 ** default: 'minor'
 * -failOnSeverity (-Djqassistant.failOnSeverity)
-** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
-** values: 'info', 'minor', 'major', 'critical' or 'blocker'
+** determines the severity level for reporting a failure.
+** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
 ** default: 'major'
-* -severity <severity>
-** specifies the severity of a problem for the analysis to fail. The program will return with exit code 2.
-** values: 'info', 'minor', 'major', 'critical' or 'blocker'
-** Deprecated: use `-failOnSeverity` instead
+* -continueOnSeverity
+** Determines if jQAssistant shall continue the build if failures have been detected. If not set the program will return with exit code 2.
+** default: 'false'
 * -executeAppliedConcepts
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
