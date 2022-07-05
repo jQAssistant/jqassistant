@@ -333,13 +333,15 @@ Executes an analysis.
 * <<rulesUrl>>
 * <<xmlReportFile>>
 * warnOnSeverity (-Djqassistant.warnOnSeverity)
-** determines the severity level for issuing warnings for failed with equal or higher severities
-** default: 'MINOR'
+** determines the severity level for reporting a warning.
+** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
+** default: 'minor'
 * failOnSeverity (-Djqassistant.failOnSeverity)
-** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
-** default: 'MAJOR'
+** determines the severity level for reporting a failure.
+** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
+** default: 'major'
 * continueOnFailure
-** Determines if jQAssistant shall continue the build if failures have been detected
+** determines if jQAssistant shall continue the build if failures have been detected
 * executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
