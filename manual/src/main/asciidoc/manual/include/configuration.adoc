@@ -8,7 +8,8 @@ jqassistant:
 
   # The list of plugins to load and activate.
   #
-  # Each plugin is identified using Maven coordinates
+  # Each plugin is identified using its Maven coordinates:
+  #
   # jqassistant.plugins[0].group-id
   # jqassistant.plugins[0].artifact-id
   # jqassistant.plugins[0].version
@@ -88,7 +89,7 @@ jqassistant:
   # The Scanner configuration
   scan:
 
-    # "Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning."
+    # Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning.
     #
     # jqassistant.scan.reset: true|false
     reset: true
@@ -156,13 +157,18 @@ jqassistant:
 
       # Determines the severity level for issuing warnings for failed with equal or higher severities.
       #
-      # jqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      # jqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       warn-on-severity: MINOR
 
       # Determines the severity level for breaking the build if at least one rule with an equal or higher severity failed.
       #
-      # jqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      # jqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       fail-on-severity: MAJOR
+
+      # Determines if jQAssistant shall break the build if a at least one failure has been detected.
+      #
+      # jqassistant.analyze.report.break-on-failure: true|false
+      break-on-failure: true
 
       # Create an archive containing all generated reports.
       #
@@ -203,3 +209,9 @@ jqassistant:
     # warn-on-rule-execution-time-seconds
     warn-on-rule-execution-time-seconds: 5
 ----
+
+.jqassistant.yml
+yml files in the folder .jqassistant
+
+Environment variables
+System properties
