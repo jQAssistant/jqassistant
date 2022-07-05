@@ -82,11 +82,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             try {
                 final ReportHelper reportHelper = new ReportHelper(configuration.analyze()
                     .report(), LOGGER);
-                final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportPlugin);
-                final int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportPlugin);
-                if (conceptViolations > 0 || constraintViolations > 0) {
-                    throw new CliRuleViolationException("Failed rules detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
-                }
+                reportHelper.verify(inMemoryReportPlugin, message -> {
+                    throw new CliRuleViolationException(message);
+                });
             } finally {
                 store.commitTransaction();
             }
