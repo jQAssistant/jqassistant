@@ -17,4 +17,4 @@ assert buildLog.getText().contains('[ERROR] foobar')
 assert buildLog.getText().contains('[ERROR]   c=com.buschmais.jqassistant.maven.it.yaml.violatedconstraint.AClass')
 
 // Only one constraint should have been violated
-assert buildLog.getText().contains('Violations detected: 0 concepts, 1 constraints')
+assert buildLog.getText().contains('Failed rules detected: 0 concepts, 1 constraints')

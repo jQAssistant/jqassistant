@@ -1,5 +1,4 @@
-assert new File(basedir, 'target/jqassistant/jqassistant-report.xml').exists()
-def reportFile = new File(basedir, 'target/jqassistant/jqassistant-report.xml')
+def reportFile = new File(basedir, 'target/jqassistant/jqassistant-report.4.xml')
 assert reportFile.exists()
 def jqassistantReport = new XmlSlurper().parse(reportFile)
 def defaultGroup = jqassistantReport.group.find { it.@id = 'default' }

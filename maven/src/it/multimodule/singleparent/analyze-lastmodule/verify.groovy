@@ -23,5 +23,5 @@ assert !foundModule3Violation // Not the last module - should not analyze yet
 assert foundModule4Violation // Should finally analyze and find the violation
 
 static boolean isViolationLogLineForModule(String moduleName, String line) {
-    line ==~ /^\[ERROR\] Failed to execute goal com.buschmais.jqassistant:jqassistant-maven-plugin:.* on project jqassistant-maven-plugin.integration.multimodule.singleparent.analyze-lastmodule.$moduleName: Violations detected.*$/
+    line ==~ /^\[ERROR\] Failed to execute goal com.buschmais.jqassistant:jqassistant-maven-plugin:.* on project jqassistant-maven-plugin.integration.multimodule.singleparent.analyze-lastmodule.$moduleName: Failed rules detected:.*$/
 }

@@ -10,21 +10,6 @@
 
     <profiles>
         <profile>
-            <!-- legacy -->
-            <id>failOnViolations</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <failSeverity>minor</failSeverity>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>failOnSeverity</id>
             <build>
                 <plugins>
@@ -49,6 +34,37 @@
                         <configuration>
                             <warnOnSeverity>minor</warnOnSeverity>
                             <failOnSeverity>major</failOnSeverity>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>breakOnFailure</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <configuration>
+                            <warnOnSeverity>info</warnOnSeverity>
+                            <failOnSeverity>info</failOnSeverity>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>breakOnFailureDisabled</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <configuration>
+                            <warnOnSeverity>info</warnOnSeverity>
+                            <failOnSeverity>info</failOnSeverity>
+                            <breakOnFailure>false</breakOnFailure>
                         </configuration>
                     </plugin>
                 </plugins>
