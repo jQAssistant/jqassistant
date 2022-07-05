@@ -383,6 +383,7 @@ class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         Assert.assertNull(pomDescriptor.getGroupId());
         assertThat(pomDescriptor.getArtifactId(), equalTo("jqassistant.child"));
         assertThat(pomDescriptor.getVersion(), nullValue());
+        assertThat(pomDescriptor.getDescription(), nullValue());
 
         ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
         assertThat(parentDescriptor.getGroup(), equalTo("com.buschmais.jqassistant"));
@@ -444,6 +445,7 @@ class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         assertThat(pomDescriptor.getGroupId(), equalTo("com.buschmais.jqassistant"));
         assertThat(pomDescriptor.getArtifactId(), equalTo("jqassistant.parent"));
         assertThat(pomDescriptor.getVersion(), equalTo("1.0.0-RC-SNAPSHOT"));
+        assertThat(pomDescriptor.getDescription(), equalTo("Framework for structural analysis of Java applications."));
 
         ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
         assertThat(parentDescriptor, nullValue());
