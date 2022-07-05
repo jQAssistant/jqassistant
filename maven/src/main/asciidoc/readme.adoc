@@ -141,6 +141,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <!--
                             <warnOnSeverity>MINOR</warnOnSeverity>
                             <failOnSeverity>MAJOR</failOnSeverity>
+                            <continueOnFailure>true</continueOnFailure>
                             <concepts>
                                 <concept>junit4:TestClass</concept>
                             </concepts>
@@ -337,6 +338,8 @@ Executes an analysis.
 * failOnSeverity (-Djqassistant.failOnSeverity)
 ** determines the severity level for breaking the build if at least one rule with an equal or higher severity failed
 ** default: 'MAJOR'
+* continueOnFailure
+** Determines if jQAssistant shall continue the build if failures have been detected
 * executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
 ** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
    same data. Setting this flag to 'true' is useful for creating and trying out new concepts.

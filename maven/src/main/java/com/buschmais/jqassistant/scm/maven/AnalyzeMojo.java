@@ -74,6 +74,12 @@ public class AnalyzeMojo extends AbstractRuleMojo {
     private Severity.Threshold failOnSeverity;
 
     /**
+     * Determines if jQAssistant shall continue the build if failures have been detected.
+     */
+    @Parameter(property = "jqassistant.continueOnFailure")
+    private boolean continueOnFailure = false;
+
+    /**
      * Defines the set of reports which shall be created by default. If empty all
      * available default reports will be used.
      */
@@ -125,6 +131,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         configurationBuilder.with(Report.class, Report.PROPERTIES, properties);
         configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, warnOnSeverity != null ? warnOnSeverity.toString() : null);
         configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, failOnSeverity != null ? failOnSeverity.toString() : null);
+        configurationBuilder.with(Report.class, Report.CONTINUE_ON_FAILURE, continueOnFailure);
         configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, attachReportArchive);
     }
 

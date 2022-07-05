@@ -40,7 +40,7 @@
             </build>
         </profile>
         <profile>
-            <id>breakOnFailure</id>
+            <id>continueOnFailureDisabled</id>
             <build>
                 <plugins>
                     <plugin>
@@ -55,7 +55,7 @@
             </build>
         </profile>
         <profile>
-            <id>breakOnFailureDisabled</id>
+            <id>continueOnFailureEnabled</id>
             <build>
                 <plugins>
                     <plugin>
@@ -64,7 +64,7 @@
                         <configuration>
                             <warnOnSeverity>info</warnOnSeverity>
                             <failOnSeverity>info</failOnSeverity>
-                            <breakOnFailure>false</breakOnFailure>
+                            <continueOnFailure>true</continueOnFailure>
                         </configuration>
                     </plugin>
                 </plugins>
