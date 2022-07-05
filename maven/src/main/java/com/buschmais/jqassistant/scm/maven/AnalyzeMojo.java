@@ -141,33 +141,36 @@ public class AnalyzeMojo extends AbstractRuleMojo {
 
     private void analyze(MavenConfiguration configuration, MavenProject rootModule, RuleSet ruleSet, RuleSelection ruleSelection, Store store,
         File outputDirectory) throws MojoExecutionException, MojoFailureException {
-        Analyze analyze = configuration.analyze();
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
-        getLog().info("Will warn on violations starting from severity '" + analyze.report()
+        Report report = configuration.analyze()
+            .report();
+        getLog().info("Will warn on violations starting from severity '" + report
             .warnOnSeverity() + "'");
-        getLog().info("Will fail on violations starting from severity '" + analyze.report()
+        getLog().info("Will fail on violations starting from severity '" + report
             .failOnSeverity() + "'.");
 
         ReportContext reportContext = new ReportContextImpl(store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = getPluginRepository(configuration).getAnalyzerPluginRepository();
-        Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(analyze.report(), reportContext);
+        Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
             new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
 
         try {
-            Analyzer analyzer = new AnalyzerImpl(analyze, store, analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), store, analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
             analyzer.execute(ruleSet, ruleSelection);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
-        if (analyze.report()
+        if (report
             .createArchive()) {
             attachReportArchive(rootModule, reportContext);
         }
-        ReportHelper reportHelper = new ReportHelper(analyze.report(), LOGGER);
+        ReportHelper reportHelper = new ReportHelper(report, LOGGER);
         store.beginTransaction();
         try {
-            verifyAnalysisResults(inMemoryReportPlugin, reportHelper);
+            reportHelper.verify(inMemoryReportPlugin, message -> {
+                throw new MojoFailureException(message);
+            });
         } finally {
             store.commitTransaction();
         }
@@ -189,16 +192,4 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         }
     }
 
-    private void verifyAnalysisResults(InMemoryReportPlugin inMemoryReportWriter, ReportHelper reportHelper) throws MojoFailureException {
-        int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
-        int constraintViolations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
-
-        boolean hasConceptViolations = conceptViolations > 0;
-        boolean hasConstraintViolations = constraintViolations > 0;
-        boolean hasViolations = hasConceptViolations || hasConstraintViolations;
-
-        if (hasViolations) {
-            throw new MojoFailureException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
-        }
-    }
 }
