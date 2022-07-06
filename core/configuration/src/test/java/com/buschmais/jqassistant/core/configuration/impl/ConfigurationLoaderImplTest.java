@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
@@ -67,6 +68,14 @@ class ConfigurationLoaderImplTest {
         Store store = configuration.store();
         assertThat(store).isNotNull();
         assertThat(store.uri()).isEmpty();
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "jqassistant_scan_continue_on_error", value = "false")
+    void overrideFromEnvVariable() {
+        Configuration configuration = getConfiguration(empty());
+        assertThat(configuration.scan()
+            .continueOnError()).isEqualTo(false);
     }
 
     @Test
