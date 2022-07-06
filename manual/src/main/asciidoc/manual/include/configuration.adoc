@@ -1,20 +1,47 @@
+== Configuration
+
+The behavior of jQAssistant accepts a wide range of configuration options, e.g.
+
+* passing properties to scanner or report plugins
+* rules to be executed during analysis including required rule parameters
+* define thresholds for warnings and failures during analysis
+* location of the database to use, e.g. directory of the embedded Neo4j instance or URL of a remote Neo4j instance
+
+The configuration options can be passed in different ways:
+
+* YAML files (recommended)
+* system properties or environment variables
+* command line options for the Command Line Interface
+* configuration options in the Maven build descriptors (pom.xml)
+
+=== YAML files
+
+jQAssistant automatically loads YAML files from the following locations (relative to the working directory):
+
+* `.jqassistant.yml` or `.jqassistant.yaml`
+* `.yml` or `.yaml` files located in the directory or sub-directory of `.jqassistant/`
+
+TIP: The locations can be overridden by command line parameters of the Command Line Utility or the Maven plugin.
+
+The following options are supported (including default values):
+
 [source,yaml]
 ----
 jqassistant:
   # Controls whether the execution of jQAssistant shall be skipped
   #
-  # jqassistant.skip: true|false
+  # -Djqassistant.skip: true|false
   skip: false
 
   # The list of plugins to load and activate.
   #
   # Each plugin is identified using its Maven coordinates:
   #
-  # jqassistant.plugins[0].group-id
-  # jqassistant.plugins[0].artifact-id
-  # jqassistant.plugins[0].version
-  # jqassistant.plugins[0].classifier (optional)
-  # jqassistant.plugins[0].type (optional)
+  # -Djqassistant.plugins[0].group-id
+  # -Djqassistant.plugins[0].artifact-id
+  # -Djqassistant.plugins[0].version
+  # -Djqassistant.plugins[0].classifier (optional)
+  # -Djqassistant.plugins[0].type (optional)
   plugins:
     - group-id:
       artifact-id:
@@ -27,7 +54,7 @@ jqassistant:
 
     # URI of the database to connect to. Supported URI schemes are 'file' for embedded databases and 'bolt' for connecting to a running Neo4j instance (3.x+), e.g.
     #
-    # jqassistant.store.uri
+    # -Djqassistant.store.uri
     uri: file://target/jqassistant/store
 
     # Settings for the embedded Neo4j store
@@ -35,22 +62,22 @@ jqassistant:
 
       # Enable the HTTP and BOLT connector for the embedded store
       #
-      # jqassistant.store.embedded.connector-enabled: true|false
+      # -Djqassistant.store.embedded.connector-enabled: true|false
       connector-enabled: false
 
       # The listen address for the HTTP and BOLT connectors
       #
-      # jqassistant.store.embedded.listen-address
+      # -Djqassistant.store.embedded.listen-address
       listen-address: localhost
 
       # The BOLT connector port
       #
-      # jqassistant.store.embedded.bolt-port
+      # -Djqassistant.store.embedded.bolt-port
       bolt-port: 7687
 
       # The HTTP connector port
       #
-      # jqassistant.store.embedded.http-port: 7474
+      # -Djqassistant.store.embedded.http-port: 7474
       http-port: 7474
 
     # Settings for connecting to a remote Neo4j store
@@ -58,32 +85,32 @@ jqassistant:
 
       # The user name for authentication.
       #
-      # jqassistant.store.username
+      # -Djqassistant.store.username
       username:
 
       # The password for authentication.
       #
-      # jqassistant.store.password
+      # -Djqassistant.store.password
       password:
 
       # Activate encryption level for 'bolt' connections.
       #
-      # jqassistant.store.encryption: true|false
+      # -Djqassistant.store.encryption: true|false
       encryption: true
 
       #The trust strategy for 'bolt' connections
       #
-      # jqassistant.store.trust-strategy: trustAllCertificates|trustCustomCaSignedCertificates|trustSystemCaSignedCertificates
+      # -Djqassistant.store.trust-strategy: trustAllCertificates|trustCustomCaSignedCertificates|trustSystemCaSignedCertificates
       trust-strategy: trustAllCertificates
 
       # The file containing the custom CA certificate for trust strategy.
       #
-      # jqassistant.store.trust-certificate
+      # -Djqassistant.store.trust-certificate
       trust-certificate:
 
       # Additional properties to be passed to the remote store as key-value pairs.
       #
-      # jqassistant.store.properties
+      # -Djqassistant.store.properties
       properties:
 
   # The Scanner configuration
@@ -91,12 +118,12 @@ jqassistant:
 
     # Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning.
     #
-    # jqassistant.scan.reset: true|false
+    # -Djqassistant.scan.reset: true|false
     reset: true
 
     # Specifies if a scan shall be continued if an error is encountered.
     #
-    # jqassistant.scan.continue-on-error: true|false
+    # -Djqassistant.scan.continue-on-error: true|false
     continue-on-error: false
 
     # The items to include for scanning.
@@ -116,7 +143,7 @@ jqassistant:
 
     # The properties to configure scanner plugins as key-value pairs. The supported properties are plugin specific.
     #
-    # jqassistant.scan.properties
+    # -Djqassistant.scan.properties
     properties:
       # plugin.property.key: value
 
@@ -128,22 +155,22 @@ jqassistant:
 
       # The name of the directory containing project rules.
       #
-      # jqassistant.analyze.rule.directory
+      # -Djqassistant.analyze.rule.directory
       directory: jqassistant/
 
       # The default severity of concepts without an explicit severity.
       #
-      # jqassistant.analyze.rule.default-concept-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      # -Djqassistant.analyze.rule.default-concept-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
       default-concept-severity: MINOR
 
       # The default severity of constraint without an explicit severity.
       #
-      # jqassistant.analyze.rule.default-constraint-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      # -Djqassistant.analyze.rule.default-constraint-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
       default-constraint-severity: MAJOR
 
       # The default severity of groups without an explicit severity.
       #
-      # jqassistant.analyze.rule.default-group-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      # -Djqassistant.analyze.rule.default-group-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
       default-group-severity:
 
     # The report configuration
@@ -151,67 +178,77 @@ jqassistant:
 
       # The properties to configure report plugins. The supported properties are plugin specific.
       #
-      # jqassistant.analyze.report.properties
+      # -Djqassistant.analyze.report.properties
       properties:
         # plugin.property.key: value
 
       # Determines the severity level for reporting a warning.
       #
-      # jqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
+      # -Djqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       warn-on-severity: MINOR
 
       # Determines the severity level for reporting a failure.
       #
-      # jqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
+      # -Djqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
       fail-on-severity: MAJOR
 
       # Determines if jQAssistant shall continue the build if failures have been detected.
       #
-      # jqassistant.analyze.report.continue-on-failure: true|false
+      # -Djqassistant.analyze.report.continue-on-failure: true|false
       continue-on-failure: false
 
       # Create an archive containing all generated reports.
       #
-      # jqassistant.analyze.report.create-archive: true|false
+      # -Djqassistant.analyze.report.create-archive: true|false
       create-archive: false
 
     # The concepts to be applied.
     #
-    # jqassistant.analyze.concepts[0]
+    # -Djqassistant.analyze.concepts[0]
     concepts:
     # - my-concept
 
     # The constraints to be validated.
     #
-    # jqassistant.analyze.constraints[0]
+    # -Djqassistant.analyze.constraints[0]
     constraints:
     # - my-constraint
 
     # The groups to be executed.
     #
-    # jqassistant.analyze.groups[0]
+    # -Djqassistant.analyze.groups[0]
     groups:
     # - spring-boot:Default
 
     # The parameters to be passed to the executed rules.
     #
-    # jqassistant.analyze.rule-parameters
+    # -Djqassistant.analyze.rule-parameters."parameterName"
     rule-parameters:
     # parameterName: value
 
     # Execute concepts even if they have already been applied before
     #
-    # jqassistant.analyze.execute-applied-concepts: true|false
+    # -Djqassistant.analyze.execute-applied-concepts: true|false
     execute-applied-concepts: false
 
     # The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.
     #
-    # warn-on-rule-execution-time-seconds
+    # -Djqassistant.analyze.warn-on-rule-execution-time-seconds
     warn-on-rule-execution-time-seconds: 5
 ----
 
-.jqassistant.yml
-yml files in the folder .jqassistant
+=== System Properties
 
-Environment variables
-System properties
+All configuration options can be provided as system properties.
+The according names are documented in the YAML example above.
+
+=== Environment Variables
+
+The names of system properties may be used for environment variables.
+Depending on execution environment there may be restrictions on the naming, e.g. not allowing characters like `.`.
+Therefore the following mappings are supported (see https://download.eclipse.org/microprofile/microprofile-config-1.4/microprofile-config-spec.html#default_configsources.env.mapping[Eclipse Microprofile Config]):
+
+* Exact match (e.g. `jqassistant.scan.continue-on-error`)
+* Replace each character that is neither alphanumeric nor _ with _ (e.g. `jqassistant_scan_continue_on_error`)
+* Replace each character that is neither alphanumeric nor _ with _; then convert the name to upper case (`JQASSISTANT_SCAN_CONTINUE_ON_ERROR`)
+
