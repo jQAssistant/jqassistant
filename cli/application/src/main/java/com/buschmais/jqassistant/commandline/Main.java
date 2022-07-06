@@ -26,7 +26,10 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The main class, i.e. the entry point for the CLI.
@@ -42,6 +45,8 @@ public class Main {
 
     private static final String CMDLINE_OPTION_HELP = "-help";
     private static final String CMDLINE_OPTION_SKIP = "-skip";
+
+    private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
 
     private final TaskFactory taskFactory;
 
@@ -146,6 +151,12 @@ public class Main {
      */
     @SuppressWarnings("static-access")
     private void gatherStandardOptions(final Options options) {
+        options.addOption(Option.builder()
+            .longOpt("configurationLocations")
+            .desc("The list of configuration locations, i.e. YAML files and directories")
+            .hasArgs()
+            .valueSeparator(',')
+            .build());
         options.addOption(OptionBuilder.withArgName("p")
             .withDescription("Path to property file; default is jqassistant.properties in the class path")
             .withLongOpt("properties")
@@ -208,6 +219,7 @@ public class Main {
         }
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         configurationBuilder.with(CliConfiguration.class, CliConfiguration.SKIP, commandLine.hasOption(CMDLINE_OPTION_SKIP));
+
         List<Task> tasks = new ArrayList<>();
         for (String taskName : taskNames) {
             Task task = taskFactory.fromName(taskName);
@@ -223,7 +235,9 @@ public class Main {
             tasks.add(task);
         }
         File workingDirectory = new File(".");
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, empty());
+
+        Optional<List<String>> configLocations = getConfigLocations(commandLine);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, configLocations);
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
@@ -232,6 +246,14 @@ public class Main {
             Map<String, Object> properties = readProperties(commandLine);
             executeTasks(tasks, configuration, pluginRepository, properties);
         }
+    }
+
+    private Optional<List<String>> getConfigLocations(CommandLine commandLine) {
+        if (commandLine.hasOption(CMDLINE_OPTION_CONFIG_LOCATIONS)) {
+            return of(stream(commandLine.getOptionValues(CMDLINE_OPTION_CONFIG_LOCATIONS)).filter(configLocation -> !configLocation.isEmpty())
+                .collect(toList()));
+        }
+        return empty();
     }
 
     private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)

@@ -181,6 +181,11 @@ Starts the integrated Neo4j web server.
 
 ==== Common options
 
+[[cli:configurationLocations]]
+===== -configurationLocations <files> <directories>
+* the list of configuration locations, e.g. YAML files and directories
+* default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
+
 [[cli:storeDirectory]]
 ===== -s, --storeDirectory <directory>
 * specifies the location of the database to use

@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTask implements Task {
 
-    private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "configurationLocations";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
     protected File outputDirectory;
