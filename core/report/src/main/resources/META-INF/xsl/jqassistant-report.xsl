@@ -7,21 +7,21 @@
     <xsl:template name="content">
         <script type="text/javascript">
             function toggle(id){
-            if(id.length!=0){
-            var display = document.getElementById(id).style.display;
-            if(display=="table-row"){
-            document.getElementById(id).style.display="none";
-            }else{
-            document.getElementById(id).style.display="table-row";
-            }
-            }
+              if(id.length != 0) {
+                var display = document.getElementById(id).style.display;
+                if(display == "table-row") {
+                  document.getElementById(id).style.display = "none";
+                } else {
+                  document.getElementById(id).style.display = "table-row";
+                }
+              }
             }
 
-            function hideAll(){
-            var rows = document.getElementsByName('resultRow');
-            for (var i = 0; i &lt; rows.length; ++i){
-            rows[i].style.display='none';
-            }
+            function hideAll() {
+              var rows = document.getElementsByName('resultRow');
+              for (var i = 0; i &lt; rows.length; ++i){
+                rows[i].style.display = 'none';
+              }
             }
         </script>
         <style type="text/css" onLoad="hideAll()">
@@ -73,7 +73,6 @@
             .nameWithResult {
             cursor:pointer;
             text-decoration:underline;
-            color:#3d3a37;
             }
 
             .result {
@@ -81,31 +80,31 @@
             color:#3d3a37;
             }
 
-            .constraint_success {
-            background-color:#74bc00;
+            .success {
+            background-color:green;
             color:#fff;
             }
 
-            .constraint_success * .ruleName:after {
+            .success * .ruleName:after {
             content:" \2714";
             }
 
-            .constraint_error {
-            background-color:#fc9600;
+            .failure {
+            background-color:crimson;
             color:#fff;
             }
 
-            .constraint_error * .ruleName:after {
+            .failure * .ruleName:after {
             content:" \2718";
             }
 
-            .concept_warn {
-            background-color:#ff5917;
+            .warning {
+            background-color:orange;
             color:#fff;
             }
 
-            .concept_warn * .ruleName:after{
-            content:" ?";
+            .warning * .ruleName:after {
+            content:" \0021";
             }
         </style>
         <h1>jQAssistant Report</h1>
@@ -154,10 +153,10 @@
             <table>
                 <tr>
                     <th style="width:5%;">#</th>
-                    <th style="width:50%;">Concept Name</th>
-                    <th style="width:15%;">Count</th>
-                    <th style="width:15%;">Severity</th>
-                    <th style="width:15%;">Duration (in ms)</th>
+                    <th style="width:65%;">Concept Name</th>
+                    <th style="width:10%;">Count</th>
+                    <th style="width:10%;">Severity</th>
+                    <th style="width:10%;">Duration (in ms)</th>
                 </tr>
                 <xsl:apply-templates select="//tns:concept">
                     <xsl:sort select="count(tns:result)" order="descending"
@@ -189,9 +188,9 @@
         <tr>
             <xsl:attribute name="class">
                 <xsl:choose>
-                    <xsl:when test="tns:result and name()='constraint'">constraint_error</xsl:when>
-                    <xsl:when test="not(tns:result) and name()='constraint'">constraint_success</xsl:when>
-                    <xsl:when test="not(tns:result) and name()='concept'">concept_warn</xsl:when>
+                    <xsl:when test="tns:status='failure'">failure</xsl:when>
+                    <xsl:when test="tns:status='warning'">warning</xsl:when>
+                    <xsl:when test="tns:status='success'">success</xsl:when>
                     <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
@@ -223,22 +222,9 @@
         </tr>
         <xsl:if test="tns:result">
             <tr id="{$resultId}" style="display:none;" name="resultRow">
-                <xsl:if test="name()='constraint'">
-                    <xsl:attribute name="class">
-                        <xsl:choose>
-                            <xsl:when test="tns:result">constraint_error</xsl:when>
-                            <xsl:otherwise>constraint_success</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <td colspan="5">
-                        <xsl:apply-templates select="tns:result"/>
-                    </td>
-                </xsl:if>
-                <xsl:if test="name()!='constraint'">
-                    <td colspan="5">
-                        <xsl:apply-templates select="tns:result"/>
-                    </td>
-                </xsl:if>
+                <td colspan="5">
+                    <xsl:apply-templates select="tns:result"/>
+                </td>
             </tr>
         </xsl:if>
     </xsl:template>
