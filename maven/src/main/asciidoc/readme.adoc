@@ -179,6 +179,12 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         <!-- Misc -->
                             <!--
                             <skip>false</skip>
+                            <configurationLocations>
+                              <configurationLocation>.jqassistant.yml</configurationLocation>
+                              <configurationLocation>.jqassistant.yaml</configurationLocation>
+                              <configurationLocation>.jqassistant/*.yml</configurationLocation>
+                              <configurationLocation>.jqassistant/*.yaml</configurationLocation>
+                            <configurationLocations>
                             <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
                             -->
                          </configuration>
@@ -320,6 +326,7 @@ Starts the integrated Neo4j web server (default address: http://localhost:7474).
 Executes an analysis.
 
 ===== Configuration
+* <<configurationLocations>>
 * <<skip>>
 * <<useExecutionRootAsProjectRoot>>
 * <<store>>
@@ -396,6 +403,11 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 
 === Common Configuration Properties
 ==== Execution
+
+[[configurationLocations]]
+===== configurationLocations (-Djqassistant.configuration.locations)
+* the list of configuration locations, e.g. files and directories
+* default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
 
 [[skip]]
 ===== skip (-Djqassistant.skip)
