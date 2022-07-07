@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -54,6 +55,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOUnit configure(XOUnit.XOUnitBuilder builder, com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration) {
         this.embedded = storeConfiguration.embedded();
+        Properties properties = serverFactory.getProperties(this.embedded);
+        builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
         return builder.build();
     }
