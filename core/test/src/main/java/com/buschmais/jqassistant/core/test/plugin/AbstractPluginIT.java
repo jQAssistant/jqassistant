@@ -102,7 +102,9 @@ public abstract class AbstractPluginIT {
         Method method = testInfo.getTestMethod()
             .orElseThrow(() -> new AssertionError("Unable to get the test method for test '" + testInfo.getDisplayName() + "'."));
         testStore = method.getAnnotation(TestStore.class);
-        Configuration configuration = createConfiguration(createConfigurationBuilder());
+        ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
+        configure(configurationBuilder);
+        Configuration configuration = createConfiguration(configurationBuilder);
         outputDirectory = new File("target/jqassistant");
         outputDirectory.mkdirs();
         startStore(configuration.store(), testStore);
@@ -110,7 +112,10 @@ public abstract class AbstractPluginIT {
         initializeAnalyzer(configuration);
     }
 
-    protected ConfigurationBuilder createConfigurationBuilder() {
+    protected void configure(ConfigurationBuilder configurationBuilder) {
+    }
+
+    private ConfigurationBuilder createConfigurationBuilder() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
         TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
         switch (type) {
@@ -159,7 +164,7 @@ public abstract class AbstractPluginIT {
      *
      * @return The  configuration.
      */
-    protected Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
+    private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
         return configurationLoader.load(Configuration.class, configurationBuilder.build());
     }
