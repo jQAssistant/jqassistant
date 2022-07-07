@@ -1,19 +1,25 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
+import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
 
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Abstract base class for server tests.
  */
-public class AbstractEmbeddedNeo4jServerIT extends AbstractPluginIT {
-
-    public static final int SERVER_PORT = 17474;
+public abstract class AbstractEmbeddedNeo4jServerIT extends AbstractPluginIT {
 
     private EmbeddedNeo4jServer server;
+
+    @Override
+    protected void configure(ConfigurationBuilder configurationBuilder) {
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, true);
+    }
 
     @BeforeEach
     public void startServer() {
@@ -22,7 +28,7 @@ public class AbstractEmbeddedNeo4jServerIT extends AbstractPluginIT {
         server.start();
     }
 
-    @AfterAll
+    @AfterEach
     public void stopServer() {
         if (server != null) {
             server.stop();
