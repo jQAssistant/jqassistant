@@ -20,6 +20,62 @@ The following example will scan the content of the directories classes/ and test
 jqassistant.sh scan -f classes,test-classes
 ----
 
+=== Configuration
+
+The recommended way of configuring jQAssistant is using a file `.jqassistant.yml` located in the working directory.
+Available options are described in the section <<core:Configuration>>.
+
+Furthermore, the following command line specific option is supported:
+
+[source,yaml]
+----
+jqassistant:
+
+  # Defines the local and remote Maven repositories for retrieving additional plugins.
+  repositories:
+    # The path to the local repository.
+    #
+    # -Djqassistant.repositories.local (optional)
+    local: ~/.jqassistant/repository
+    remotes:
+      central:
+        # The URL of the Maven repository
+        #
+        # -Djqassistant.repositories.central.url
+        url:
+        # The user name for authenticating against the repository
+        #
+        # -Djqassistant.repositories.central.username (optional)
+        username:
+        # The password for authenticating against the repository
+        #
+        # -Djqassistant.repositories.central.password (optional)
+        password:
+
+  # The optional proxy to use for downloading additional plugins
+  proxy:
+    # The protocol of the proxy
+    #
+    # -Djqassistant.proxy.protocol (optional)
+    protocol: https
+    # The proxy host
+    #
+    # -Djqassistant.proxy.host
+    host:
+    # The proxy port
+    #
+    # -Djqassistant.proxy.port
+    port:
+    # The proxy user name for authentication
+    #
+    # -Djqassistant.proxy.username (optional)
+    username:
+    # The proxy password for authentication
+    #
+    # -Djqassistant.proxy.password (optional)
+    password:
+----
+
 === Tasks
 
 * <<cli:analyze>>
