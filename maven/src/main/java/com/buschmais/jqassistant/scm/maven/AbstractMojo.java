@@ -379,7 +379,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         configurationBuilder.with(Remote.class, Remote.PROPERTIES, store.getProperties());
 
         EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
-        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, coalesce(embedded.getConnectorEnabled(), isConnectorRequired()));
+        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, coalesce(isConnectorRequired(), embedded.getConnectorEnabled())); //isConnectorRequired has precedence over the user setting
         configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
         configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
         configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));
