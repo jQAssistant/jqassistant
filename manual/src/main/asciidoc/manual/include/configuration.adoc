@@ -1,3 +1,4 @@
+[[core:Configuration]]
 == Configuration
 
 The behavior of jQAssistant accepts a wide range of configuration options, e.g.
@@ -237,11 +238,6 @@ jqassistant:
     warn-on-rule-execution-time-seconds: 5
 ----
 
-=== System Properties
-
-All configuration options can be provided as system properties.
-The according names are documented in the YAML example above.
-
 === Environment Variables
 
 The names of system properties may be used for environment variables.
@@ -252,3 +248,10 @@ Therefore the following mappings are supported (see https://download.eclipse.org
 * Replace each character that is neither alphanumeric nor _ with _ (e.g. `jqassistant_scan_continue_on_error`)
 * Replace each character that is neither alphanumeric nor _ with _; then convert the name to upper case (`JQASSISTANT_SCAN_CONTINUE_ON_ERROR`)
 
+=== System Properties
+
+All configuration options can be provided as system properties.
+The according names are documented in the YAML example above.
+
+NOTE: Configuration options defined in a YAML file can be overridden by environment variables of system properties.
+The priorities are as following: `System Property` --> `Environment Variable` --> `YAML file`.
