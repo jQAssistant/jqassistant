@@ -72,7 +72,25 @@ as root module by setting the configuration option <<useExecutionRootAsProjectRo
 
 ==== Plugin Configuration
 
-The jQAssistant Maven plugin must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
+The recommended way of configuringthe jQAssistant Maven plugin is using a file `.jqassistant.yml` located in the root directory of the reactor.
+Available options are described in the section <<core:Configuration>>.
+
+Furthermore, the following Maven specific option is supported:
+
+[source,yaml]
+----
+jqassistant:
+
+  maven:
+    # Force the module where 'mvn' is being executed to be used as root module. The database will be created in this module and contain all information of the reactor. Rules will be read from the rules folder of this module.
+    #
+    # jqassistant.maven.use-execution-root-as-project-root: true|false
+    use-execution-root-as-project-root: false
+----
+
+TIP: Maven properties (e.g. `project.basedir`) or user properties defined in pom.xml or settings.xml files can be referenced in YAML files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
+
+Alternatively the jQAssistant Maven plugin can be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
 
 .Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
 [source,xml]
