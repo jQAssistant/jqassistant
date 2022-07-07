@@ -18,6 +18,10 @@
             <artifactId>asciidoctorj-diagram</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
         </dependency>
@@ -36,14 +40,6 @@
         <dependency>
             <groupId>org.eclipse.elk</groupId>
             <artifactId>org.eclipse.elk.graph</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby-stdlib</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -133,18 +133,13 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
+                        <artifactId>jruby</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
-                <artifactId>jruby-core</artifactId>
-                <version>${org.jruby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby-stdlib</artifactId>
+                <artifactId>jruby</artifactId>
                 <version>${org.jruby.version}</version>
             </dependency>
             <dependency>
