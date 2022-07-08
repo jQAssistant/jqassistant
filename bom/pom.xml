@@ -54,7 +54,6 @@
         <jqa-asciidoctor-utilities.version>1.12.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-own-constraints.version>1.12.0-SNAPSHOT</jqa-own-constraints.version>
         <slf4j.version>1.8.0-beta4</slf4j.version>
-        <xo.version>1.5.0-SNAPSHOT</xo.version>
     </properties>
 
     <distributionManagement>
@@ -112,7 +111,7 @@
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.embedded</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
                 <exclusions>
                     <exclusion>
                         <!-- provided by the selected Neo4j 2.x/3.x backend -->
@@ -124,28 +123,28 @@
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.api</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.api</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.impl</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j.remote</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.spi</artifactId>
-                <version>${xo.version}</version>
+                <version>${com.buschmais.xo.version}</version>
             </dependency>
             <!-- End of XO dependencies -->
 
