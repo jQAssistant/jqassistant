@@ -92,6 +92,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>overview</id>
@@ -197,7 +198,6 @@
                 </executions>
                 <configuration>
                     <backend>xhtml5</backend>
-                    <sourceHighlighter>coderay</sourceHighlighter>
                     <attributes>
                         <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
@@ -205,6 +205,7 @@
                         <stylesheet>../jqassistant.css</stylesheet>
                         -->
                         <docRoot>${asciidoc.directory}</docRoot>
+                        <source-highlighter>coderay</source-highlighter>
                         <projectGroupId>${project.groupId}</projectGroupId>
                         <projectArtifactId>${project.artifactId}</projectArtifactId>
                         <projectVersion>${project.version}</projectVersion>

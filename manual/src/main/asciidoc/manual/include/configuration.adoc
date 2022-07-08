@@ -20,7 +20,7 @@ The configuration options can be passed in different ways:
 jQAssistant automatically loads YAML files from the following locations (relative to the working directory):
 
 * `.jqassistant.yml` or `.jqassistant.yaml`
-* `.yml` or `.yaml` files located in the directory or sub-directory of `.jqassistant/`
+* `.yml` or `.yaml` files located in the directory or sub-directories of `.jqassistant/`
 
 TIP: The locations can be overridden by command line parameters of the Command Line Utility or the Maven plugin.
 
@@ -49,6 +49,7 @@ jqassistant:
       version:
       classifier:
       type:
+
 
   # The store configuration
   store:
@@ -114,6 +115,7 @@ jqassistant:
       # -Djqassistant.store.properties
       properties:
 
+
   # The Scanner configuration
   scan:
 
@@ -147,6 +149,7 @@ jqassistant:
     # -Djqassistant.scan.properties
     properties:
       # plugin.property.key: value
+
 
   # The analyze configuration
   analyze:
@@ -242,7 +245,7 @@ jqassistant:
 
 The names of system properties may be used for environment variables.
 Depending on execution environment there may be restrictions on the naming, e.g. not allowing characters like `.`.
-Therefore the following mappings are supported (see https://download.eclipse.org/microprofile/microprofile-config-1.4/microprofile-config-spec.html#default_configsources.env.mapping[Eclipse Microprofile Config]):
+Therefore, the following mappings are supported (see https://download.eclipse.org/microprofile/microprofile-config-1.4/microprofile-config-spec.html#default_configsources.env.mapping[Eclipse Microprofile Config]):
 
 * Exact match (e.g. `jqassistant.scan.continue-on-error`)
 * Replace each character that is neither alphanumeric nor _ with _ (e.g. `jqassistant_scan_continue_on_error`)
@@ -255,3 +258,27 @@ The according names are documented in the YAML example above.
 
 NOTE: Configuration options defined in a YAML file can be overridden by environment variables of system properties.
 The priorities are as following: `System Property` --> `Environment Variable` --> `YAML file`.
+
+=== Property placeholders
+
+Values may contain placeholders referering to other properties:
+
+[source,yaml]
+----
+src-dir: ./src
+
+jqassistant:
+  scan:
+    include:
+      files:
+        - ${src-dir}/folder1
+        - ${src-dir}/folder2
+----
+
+The properties in placeholders can be defined in different sources:
+
+- within the same or other configuration files
+- system properties
+- environment variables
+- Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)
+

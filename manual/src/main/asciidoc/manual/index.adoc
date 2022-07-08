@@ -27,11 +27,11 @@ include::include/quickstart.adoc[]
 
 include::include/introduction.adoc[]
 
-include::include/configuration.adoc[]
-
 include::{docRoot}/com.buschmais.jqassistant.cli/parent/asciidoc/readme.adoc[]
 
 include::{docRoot}/com.buschmais.jqassistant/jqassistant-maven-plugin/asciidoc/readme.adoc[]
+
+include::include/configuration.adoc[]
 
 include::include/plugins.adoc[]
 
