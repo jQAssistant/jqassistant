@@ -84,7 +84,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
         List<T> matches = new ArrayList<>();
         if (pattern.contains("?") || pattern.contains("*")) {
             for (Map.Entry<String, T> entry : rules.entrySet()) {
-                if (RuleFilter.getInstance().matches(entry.getKey(), pattern)) {
+                if (RuleFilter.matches(entry.getKey(), pattern)) {
                     matches.add(entry.getValue());
                 }
             }
