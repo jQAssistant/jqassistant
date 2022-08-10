@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -23,6 +24,37 @@ import org.apache.commons.lang3.StringUtils;
 public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
 
     @Override
+    public void initialize() {
+        URL.setURLStreamHandlerFactory(protocol -> {
+            switch (protocol) {
+            case PluginURLStreamHandler.PROTOCOL:
+                return new PluginURLStreamHandler();
+            default:
+                return null;
+            }
+        });
+    }
+
+    /**
+     * A {@link URLStreamHandler} which takes the path part of the URL and interprets it as a classpath-resource.
+     */
+    private static class PluginURLStreamHandler extends URLStreamHandler {
+
+        private static final String PROTOCOL = "jqassistant-plugin";
+
+        @Override
+        protected URLConnection openConnection(URL url) throws IOException {
+            String path = url.getPath();
+            URL resource = UrlScannerPlugin.class.getClassLoader()
+                .getResource(path);
+            if (resource == null) {
+                throw new IOException("Cannot determine classpath URL for path '" + path + "'.");
+            }
+            return resource.openConnection();
+        }
+    }
+
+    @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return scope.equals(DefaultScope.NONE);
     }
@@ -34,7 +66,8 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
             public InputStream createStream() throws IOException {
                 URLConnection urlConnection = item.openConnection();
                 if (item.getUserInfo() != null) {
-                    String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(item.getUserInfo().getBytes());
+                    String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(item.getUserInfo()
+                        .getBytes());
                     urlConnection.setRequestProperty("Authorization", basicAuth);
                 }
                 return urlConnection.getInputStream();
@@ -53,21 +86,26 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
         String query = item.getQuery();
         String ref = item.getRef();
         StringBuilder result = new StringBuilder();
-        result.append(protocol).append(":");
+        result.append(protocol)
+            .append(":");
         if (StringUtils.isNotEmpty(host)) {
-            result.append("//").append(host);
+            result.append("//")
+                .append(host);
         }
         if (port != -1) {
-            result.append(":").append(port);
+            result.append(":")
+                .append(port);
         }
         if (path != null) {
             result.append(path);
         }
         if (query != null) {
-            result.append("?").append(query);
+            result.append("?")
+                .append(query);
         }
         if (ref != null) {
-            result.append("#").append(ref);
+            result.append("#")
+                .append(ref);
         }
         return result.toString();
     }
