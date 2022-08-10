@@ -37,9 +37,9 @@ class GZipFileScannerIT extends AbstractPluginIT {
         File gzFile = File.createTempFile("test", ".txt.gz");
         gzFile.deleteOnExit();
 
-        FileOutputStream outputStream = new FileOutputStream(gzFile);
-        outputStream.write("Hello World".getBytes());
-        outputStream.close();
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(gzFile));
+        gzipOutputStream.write("Hello World".getBytes());
+        gzipOutputStream.close();
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
         assertThat("Expecting a GZIP descriptor.", descriptor, instanceOf(GZipFileDescriptor.class));
@@ -48,7 +48,7 @@ class GZipFileScannerIT extends AbstractPluginIT {
         GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
         assertThat("Expecting one entry.", gZipFileDescriptor.getContains().size(), equalTo(1));
         FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
-        assertThat("Expecting a valid entry file name, e.g. wihout .gz", fileDescriptor.getFileName(),
+        assertThat("Expecting a valid entry file name, e.g. without .gz", fileDescriptor.getFileName(),
                 equalTo(expectedGZFileName.substring(0, expectedGZFileName.length() - 3)));
         store.commitTransaction();
     }
