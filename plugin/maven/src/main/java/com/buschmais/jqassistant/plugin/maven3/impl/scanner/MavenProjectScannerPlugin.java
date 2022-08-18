@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -112,21 +112,26 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         Artifact artifact = project.getArtifact();
         MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, false),
             MavenMainArtifactDescriptor.class, artifactResolver, scanner);
-        projectDescriptor.getCreatesArtifacts().add(mainArtifactDescriptor);
+        projectDescriptor.getCreatesArtifacts()
+            .add(mainArtifactDescriptor);
         // test artifact
         MavenArtifactDescriptor testArtifactDescriptor = null;
-        String testOutputDirectory = project.getBuild().getTestOutputDirectory();
+        String testOutputDirectory = project.getBuild()
+            .getTestOutputDirectory();
         if (testOutputDirectory != null) {
             testArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, true), MavenTestArtifactDescriptor.class,
                 artifactResolver, scanner);
-            DependsOnDescriptor dependsOnDescriptor = context.getStore().create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
+            DependsOnDescriptor dependsOnDescriptor = context.getStore()
+                .create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
             dependsOnDescriptor.setScope(Artifact.SCOPE_COMPILE);
-            projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
+            projectDescriptor.getCreatesArtifacts()
+                .add(testArtifactDescriptor);
         }
         resolveDependencyGraph(project, mainArtifactDescriptor, testArtifactDescriptor, scanner, mavenSession);
 
         // Scan classes
-        scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
+        scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild()
+            .getOutputDirectory(), scanner);
         if (testOutputDirectory != null) {
             scanClassesDirectory(projectDescriptor, testArtifactDescriptor, testOutputDirectory, scanner);
         }
@@ -134,27 +139,32 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         // project information
         addProjectDetails(project, projectDescriptor, scanner);
         // add test reports
-        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
-        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
+        scanPath(projectDescriptor, project.getBuild()
+            .getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
+        scanPath(projectDescriptor, project.getBuild()
+            .getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
 
         File basedir = project.getBasedir();
 
         // add additional includes
-        scanner.getConfiguration().include().ifPresent(include -> {
-            // files
-            scanInclude(include.files(), (fileName, s) -> scanFile(projectDescriptor, basedir.toPath()
-                .resolve(fileName)
-                .toFile(), fileName, s, scanner), projectDescriptor, scanner);
-            // urls
-            scanInclude(include.urls(), (url, s) -> {
-                try {
-                    return scanner.scan(new URL(url), url, s);
-                } catch (MalformedURLException e) {
-                    LOGGER.warn("Cannot convert url to URL.", e);
-                    return null;
-                }
-            }, projectDescriptor, scanner);
-        });
+        scanner.getConfiguration()
+            .include()
+            .ifPresent(include -> {
+                // files
+                scanInclude(include.files(), (fileName, s) -> scanFile(projectDescriptor, basedir.toPath()
+                    .resolve(fileName)
+                    .toFile(), fileName, s, scanner), projectDescriptor, scanner);
+                // urls
+                scanInclude(include.urls(), (url, s) -> {
+                    try {
+                        // scan URL as URI to allow more flexibility on protocols
+                        return scanner.scan(new URI(url), url, s);
+                    } catch (URISyntaxException e) {
+                        LOGGER.warn("Cannot convert URL '" + url + "' to URI.", e);
+                        return null;
+                    }
+                }, projectDescriptor, scanner);
+            });
         return projectDescriptor;
     }
 
@@ -190,7 +200,9 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(Coordinates coordinates, Class<T> type, ArtifactResolver artifactResolver,
         Scanner scanner) {
         MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(coordinates, scanner.getContext());
-        return scanner.getContext().getStore().addDescriptorType(mavenArtifactDescriptor, type);
+        return scanner.getContext()
+            .getStore()
+            .addDescriptorType(mavenArtifactDescriptor, type);
     }
 
     /**
@@ -288,11 +300,15 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
         // Effective model
-        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext().getStore().create(MavenPomDescriptor.class);
+        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
+            .getStore()
+            .create(MavenPomDescriptor.class);
         Model model = new EffectiveModel(project.getModel());
-        scanner.getContext().push(MavenPomDescriptor.class, effectiveModelDescriptor);
+        scanner.getContext()
+            .push(MavenPomDescriptor.class, effectiveModelDescriptor);
         scanner.scan(model, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
-        scanner.getContext().pop(MavenPomDescriptor.class);
+        scanner.getContext()
+            .pop(MavenPomDescriptor.class);
         projectDescriptor.setEffectiveModel(effectiveModelDescriptor);
     }
 
@@ -332,7 +348,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         for (MavenProject module : project.getCollectedProjects()) {
             if (modules.contains(module.getBasedir())) {
                 MavenProjectDescriptor moduleDescriptor = resolveProject(module, MavenProjectDescriptor.class, scannerContext);
-                projectDescriptor.getModules().add(moduleDescriptor);
+                projectDescriptor.getModules()
+                    .add(moduleDescriptor);
             }
         }
     }
@@ -373,7 +390,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private JavaArtifactFileDescriptor scanArtifact(MavenProjectDirectoryDescriptor projectDescriptor, ArtifactDescriptor artifactDescriptor, File file,
         String path, Scanner scanner) {
-        JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext().getStore()
+        JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
+            .getStore()
             .addDescriptorType(artifactDescriptor, JavaClassesDirectoryDescriptor.class);
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
