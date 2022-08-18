@@ -14,16 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class URLScannerPluginIT extends AbstractPluginIT {
 
     @Test
-    void classpathDirectoryPluginResource() throws MalformedURLException {
-        verify("jqassistant-plugin:/test-resource.txt");
-    }
-
-    @Test
-    void jarPluginResource() throws MalformedURLException {
-        verify("jqassistant-plugin:/java/lang/Object.class");
-    }
-
-    @Test
     void classPathURL() throws MalformedURLException {
         URL url = URLScannerPluginIT.class.getClassLoader()
             .getResource("java/lang/Object.class");

@@ -21,6 +21,7 @@
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DirectoryResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DefaultUriScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.JQAssistantPluginScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.TarFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.TarArchiveInputStreamScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin</class>
