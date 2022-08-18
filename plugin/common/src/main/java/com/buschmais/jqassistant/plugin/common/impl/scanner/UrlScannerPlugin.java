@@ -16,23 +16,31 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScann
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Scanner plugin which handles URLs as input.
  */
+@Slf4j
 public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
 
     @Override
     public void initialize() {
-        URL.setURLStreamHandlerFactory(protocol -> {
-            switch (protocol) {
-            case PluginURLStreamHandler.PROTOCOL:
-                return new PluginURLStreamHandler();
-            default:
-                return null;
-            }
-        });
+        try {
+            URL.setURLStreamHandlerFactory(protocol -> {
+                switch (protocol) {
+                case PluginURLStreamHandler.PROTOCOL_JQASSISTANT_PLUGIN:
+                    return new PluginURLStreamHandler();
+                default:
+                    return null;
+                }
+            });
+        } catch (Error e) {
+            // A custom java.net.URLStreamHandlerFactory can only be set once, any subsequent attempt results in an Error
+            log.warn("Scanning of URLs for protocol '" + PluginURLStreamHandler.PROTOCOL_JQASSISTANT_PLUGIN
+                + "' cannot be activated (registration of URLStreamHandlerFactory did not succeed).", e);
+        }
     }
 
     /**
@@ -40,7 +48,7 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
      */
     private static class PluginURLStreamHandler extends URLStreamHandler {
 
-        private static final String PROTOCOL = "jqassistant-plugin";
+        private static final String PROTOCOL_JQASSISTANT_PLUGIN = "jqassistant-plugin";
 
         @Override
         protected URLConnection openConnection(URL url) throws IOException {
