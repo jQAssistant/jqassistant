@@ -14,6 +14,7 @@
         <class>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
@@ -21,7 +22,7 @@
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DirectoryResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DefaultUriScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.JQAssistantPluginScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.PluginUriScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.TarFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.TarArchiveInputStreamScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin</class>

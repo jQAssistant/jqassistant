@@ -1,4 +1,4 @@
-<<FileResourceScanner>> <<DirectoryResourceScanner>> <<UrlScanner>>
+<<FileResourceScanner>> <<DirectoryResourceScanner>> <<UrlScanner>> <<UriScanner>>
 
 [[FileResourceScanner]]
 == File Resource Scanner
@@ -40,9 +40,27 @@ Represents a directory.
 | fileName   | The file name.
 |====
 
+
 [[UrlScanner]]
-== Url Scanner
+== URL Scanner
 
 Imports file resources from URLs as <<:File>> nodes.
 
-NOTE: The implementation is based on mechanism provided by Java top resolve URLs and supports common protocol schemes like `file`, `http` or `https`. Furthermore, a protocol scheme `jqassistant-plugin` is available which allows scanning file resources which are packaged within jQAssistant plugins, e.g. `jqassistant-plugin:/my-resource.xml`.
+[[UriScanner]]
+== URI Scanner
+
+Imports resources using URIs.
+
+NOTE: The implementation is based on the mechanism provided by Java to resolve URLs and supports common protocol schemes like `file`, `http` or `https`. Furthermore, a protocol scheme `jqassistant-plugin` is available which allows scanning file resources which are packaged within jQAssistant plugins, e.g. `jqassistant-plugin:///my-resource.xml`.
+
+[[:URI]]
+=== :URI
+
+Represents a URI.
+
+.Properties of :URI
+[options="header"]
+|====
+| Name  | Description
+| uri   | The URI of the resource.
+|====
