@@ -1,5 +1,8 @@
 = Core Framework
 
+== 1.12.1
+* Upgraded to AsciidoctorJ 2.5.7 and PlantUML 1.2022.12
+
 == 1.12.0
 * Added support for configuration via YAML files, environment variables and system properties based on Eclipse Microprofile config mechanism
 * Added support for plugin provisioning based on a given configuration via Maven repositories (including dependency resolution)
