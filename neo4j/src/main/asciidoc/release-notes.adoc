@@ -1,6 +1,9 @@
 
 = Neo4j Backend
 
+== 1.12.1
+* Upgraded to Neo4j 3.5.35
+
 == 1.12.0
 * Upgraded to Neo4j 3.5.31
 
