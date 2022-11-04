@@ -42,7 +42,7 @@ public abstract class AbstractUriScannerPlugin<R> extends AbstractScannerPlugin<
     public final URIDescriptor scan(URI uri, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         return getResource(uri, context).map(resource -> {
-                log.info("Resolved URI '{}' to resource '{}'.", uri, resource);
+                log.debug("Resolved URI '{}' to resource '{}'.", uri, resource);
                 Descriptor descriptor = scanner.scan(resource, path, scope);
                 if (descriptor != null) {
                     URIDescriptor uriDescriptor = context.getStore()
@@ -85,6 +85,7 @@ public abstract class AbstractUriScannerPlugin<R> extends AbstractScannerPlugin<
                 .entry("uri", uri.toString())
                 .build());
         if (result.hasResult()) {
+            log.debug("URI '{}' has already been scanned, skipping.", uri);
             return empty();
         }
         return ofNullable(resourceSupplier.get());
