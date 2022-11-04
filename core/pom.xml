@@ -41,7 +41,7 @@
 
     <properties>
         <checkstyle.version>8.29</checkstyle.version>
-        <jackson.version>2.10.1</jackson.version>
+        <jackson.version>2.13.2</jackson.version>
         <jqa-asciidoctor-utilities.version>1.13.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>1.13.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>1.13.0-SNAPSHOT</jqa-own-constraints.version>
