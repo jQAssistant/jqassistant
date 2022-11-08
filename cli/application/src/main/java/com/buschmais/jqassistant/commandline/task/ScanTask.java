@@ -76,7 +76,7 @@ public class ScanTask extends AbstractStoreTask {
     @Override
     public void run(CliConfiguration configuration) throws CliExecutionException {
         withStore(configuration, store -> {
-            ScannerContext scannerContext = new ScannerContextImpl(store, new File(DEFAULT_OUTPUT_DIRECTORY));
+            ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_OUTPUT_DIRECTORY));
             if (configuration.scan()
                 .reset()) {
                 store.reset();

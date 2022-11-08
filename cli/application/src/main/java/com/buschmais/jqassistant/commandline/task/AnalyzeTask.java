@@ -63,11 +63,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
         LOGGER.info("Executing analysis.");
         withStore(configuration, store -> {
-            ReportContext reportContext = new ReportContextImpl(store, reportDirectory, reportDirectory);
+            ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, reportDirectory, reportDirectory);
             Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
             InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
             try {
-                Analyzer analyzer = new AnalyzerImpl(analyze, store, pluginRepository.getAnalyzerPluginRepository()
+                Analyzer analyzer = new AnalyzerImpl(analyze, pluginRepository.getClassLoader(), store, pluginRepository.getAnalyzerPluginRepository()
                     .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
                 RuleSet availableRules = getAvailableRules(analyze.rule());
                 analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
