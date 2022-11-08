@@ -30,7 +30,7 @@ class ScannerContextImplTest {
 
     @BeforeEach
     void setUp() {
-        scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
+        scannerContext = new ScannerContextImpl(ScannerContextImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
     }
 
     @Test

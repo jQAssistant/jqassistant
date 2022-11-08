@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ScannerContextImpl implements ScannerContext {
 
+    private final ClassLoader classLoader;
+
     private final Store store;
 
     private final File dataDirectory;
@@ -29,12 +31,15 @@ public class ScannerContextImpl implements ScannerContext {
     /**
      * Constructor.
      *
+     * @param classLoader
+     *     The {@link ClassLoader}.
      * @param store
-     *            The store.
+     *     The store.
      * @param outputDirectory
-     *            The output directory
+     *     The output directory
      */
-    public ScannerContextImpl(Store store, File outputDirectory) {
+    public ScannerContextImpl(ClassLoader classLoader, Store store, File outputDirectory) {
+        this.classLoader = classLoader;
         this.store = store;
         this.dataDirectory = new File(outputDirectory, DATA_DIRECTORY);
     }
@@ -90,6 +95,11 @@ public class ScannerContextImpl implements ScannerContext {
             contextValuesPerKey.put(key, values);
         }
         return values;
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override

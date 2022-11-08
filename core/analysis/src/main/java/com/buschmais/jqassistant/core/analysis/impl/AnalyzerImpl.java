@@ -34,6 +34,8 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param configuration
      *            The configuration.
+     * @param classLoader
+     *            The plugin {@link ClassLoader}
      * @param store
      *            The store
      * @param ruleInterpreterPlugins
@@ -43,10 +45,10 @@ public class AnalyzerImpl implements Analyzer {
      * @param log
      *            The {@link Logger}.
      */
-    public AnalyzerImpl(Analyze configuration, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
+    public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
             ReportPlugin reportPlugin, Logger log) {
         this.configuration = configuration;
-        this.analyzerContext = new AnalyzerContextImpl(configuration, store, log);
+        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, log);
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
     }

@@ -26,17 +26,25 @@ class AnalyzerContextImpl implements AnalyzerContext {
     private static final Verification DEFAULT_VERIFICATION = RowCountVerification.builder()
         .build();
 
+    private final ClassLoader classLoader;
+
     private final Store store;
 
     private final Logger logger;
 
     private final Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies;
 
-    AnalyzerContextImpl(Analyze configuration, Store store, Logger logger) {
+    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, Logger logger) {
+        this.classLoader = classLoader;
         this.store = store;
         this.logger = logger;
         this.verificationStrategies = of(new RowCountVerificationStrategy(configuration.report()),
             new AggregationVerificationStrategy(configuration.report())).collect(toMap(strategy -> strategy.getVerificationType(), strategy -> strategy));
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override

@@ -37,6 +37,8 @@ public class ReportContextImpl implements ReportContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportContextImpl.class);
 
+    private final ClassLoader classLoader;
+
     private final Store store;
 
     private final File outputDirectory;
@@ -53,8 +55,8 @@ public class ReportContextImpl implements ReportContext {
      * @param outputDirectory
      *            The output directory.
      */
-    public ReportContextImpl(Store store, File outputDirectory) {
-        this(store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
+    public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory) {
+        this(classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
     }
 
     /**
@@ -65,10 +67,16 @@ public class ReportContextImpl implements ReportContext {
      * @param outputDirectory
      *            The output directory.
      */
-    public ReportContextImpl(Store store, File outputDirectory, File reportDirectory) {
+    public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory, File reportDirectory) {
+        this.classLoader = classLoader;
         this.store = store;
         this.outputDirectory = outputDirectory;
         this.reportDirectory = reportDirectory;
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override

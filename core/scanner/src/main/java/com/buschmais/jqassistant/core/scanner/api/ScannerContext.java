@@ -16,6 +16,13 @@ public interface ScannerContext {
     String DATA_DIRECTORY = "data";
 
     /**
+     * Return the plugin {@link ClassLoader}.
+     *
+     * @return The plugin {@link ClassLoader}
+     */
+    ClassLoader getClassLoader();
+
+    /**
      * Return the store.
      *
      * @return The store.

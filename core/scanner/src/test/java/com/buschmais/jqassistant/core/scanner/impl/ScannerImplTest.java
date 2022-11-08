@@ -78,7 +78,7 @@ class ScannerImplTest {
             return null;
         }).when(store).rollbackTransaction();
         // context
-        context = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
+        context = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
         Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
         plugins.put("testPlugin", scannerPlugin);
         doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(configuration, context);
@@ -188,7 +188,7 @@ class ScannerImplTest {
     @Test
     void pluginPipeline() {
         Store store = mock(Store.class);
-        ScannerContext scannerContext = new ScannerContextImpl(store, OUTPUT_DIRECTORY);
+        ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
         when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
             Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];
             return mock(descriptorType);

@@ -186,7 +186,7 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeAnalyzer(Configuration configuration) {
-        this.reportContext = new ReportContextImpl(store, outputDirectory);
+        this.reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         this.reportPlugin = getReportPlugin();
         this.analyzer = getAnalyzer(configuration);
     }
@@ -245,7 +245,7 @@ public abstract class AbstractPluginIT {
     }
 
     private Scanner getScanner(Configuration configuration) {
-        ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
+        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }
@@ -257,7 +257,7 @@ public abstract class AbstractPluginIT {
     }
 
     private Analyzer getAnalyzer(Configuration configuration) {
-        return new AnalyzerImpl(configuration.analyze(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
     }
 
     private InMemoryReportPlugin getReportPlugin() {

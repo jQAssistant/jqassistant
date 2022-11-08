@@ -43,7 +43,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.initialize();
         File reportDirectory = new File("target/test");
         reportDirectory.mkdirs();
-        xmlReportWriter.configure(new ReportContextImpl(mock(Store.class), reportDirectory), Collections.EMPTY_MAP);
+        xmlReportWriter.configure(new ReportContextImpl(XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory), Collections.EMPTY_MAP);
     }
 
     /**

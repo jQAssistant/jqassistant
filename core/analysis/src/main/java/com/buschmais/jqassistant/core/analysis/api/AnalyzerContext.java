@@ -17,6 +17,13 @@ import org.slf4j.Logger;
 public interface AnalyzerContext {
 
     /**
+     * Return the plugin {@link ClassLoader}.
+     *
+     * @return The plugin {@link ClassLoader}
+     */
+    ClassLoader getClassLoader();
+
+    /**
      * Return the {@link Store}.
      *
      * @return The {@link Store}.

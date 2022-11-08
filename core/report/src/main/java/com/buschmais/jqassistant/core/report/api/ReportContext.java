@@ -17,6 +17,13 @@ public interface ReportContext {
     String REPORT_DIRECTORY = "report";
 
     /**
+     * Return the plugin {@link ClassLoader}.
+     *
+     * @return The plugin {@link ClassLoader}.
+     */
+    ClassLoader getClassLoader();
+
+    /**
      * Return the {@link Store}.
      */
     Store getStore();
