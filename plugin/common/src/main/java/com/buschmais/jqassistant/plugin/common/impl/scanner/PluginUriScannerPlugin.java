@@ -22,7 +22,7 @@ public class PluginUriScannerPlugin extends AbstractUriScannerPlugin<URL> {
 
     @Override
     protected Optional<URL> getResource(URI uri, ScannerContext context) {
-        return resolve(uri, () -> PluginUriScannerPlugin.class.getResource(uri.getPath()), context);
+        return resolve(uri, () -> context.getClassLoader().getResource(uri.getSchemeSpecificPart()), context);
     }
 
 }

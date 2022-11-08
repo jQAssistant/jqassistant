@@ -35,7 +35,7 @@ public abstract class AbstractReportPluginTest {
     public final void setUp() throws ReportException {
         plugin.initialize();
         File outputDirectory = new File("target/test");
-        reportContext = new ReportContextImpl(store, outputDirectory);
+        reportContext = new ReportContextImpl(AbstractReportPluginTest.class.getClassLoader(), store, outputDirectory);
     }
 
     protected final void apply(Constraint constraint, Result.Status status) throws ReportException {

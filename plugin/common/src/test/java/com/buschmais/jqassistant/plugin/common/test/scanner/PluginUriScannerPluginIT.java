@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PluginUriScannerPluginIT extends AbstractPluginIT {
 
-    private static final String DIRECTORY_RESOURCE = "jqassistant-plugin:///test-resource.txt";
-    private static final String JAR_RESOURCE = "jqassistant-plugin:///java/lang/Object.class";
+    private static final String DIRECTORY_RESOURCE = "jqassistant-plugin:test-resource.txt";
+    private static final String JAR_RESOURCE = "jqassistant-plugin:java/lang/Object.class";
 
     @Test
     void classpathDirectoryPluginResource() throws URISyntaxException {
@@ -43,7 +43,7 @@ class PluginUriScannerPluginIT extends AbstractPluginIT {
         assertThat(uriDescriptor).isNotNull();
         assertThat(uriDescriptor.getUri()).isEqualTo(uri);
         assertThat(uriDescriptor).isInstanceOf(FileDescriptor.class);
-        assertThat(((FileDescriptor) uriDescriptor).getFileName()).endsWith(item.getPath());
+        assertThat(((FileDescriptor) uriDescriptor).getFileName()).endsWith(item.getSchemeSpecificPart());
         store.commitTransaction();
     }
 

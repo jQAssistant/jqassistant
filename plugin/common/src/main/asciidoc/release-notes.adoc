@@ -1,9 +1,9 @@
 
 = Common Plugin
 
-== 1.12.1
+== 1.12.2
 
-* Added support for scanning resources from jQAssistant plugins using URLs with the protocol prefix `jqassistant-plugin`, e.g. a file `/my-resource.xml` packaged within a jQAssistant plugin can be scanned using the URL `jqassistant-plugin:/my-resource.xml`
+* Added support for scanning resources from jQAssistant plugins using URLs with the protocol prefix `jqassistant-plugin`, e.g. a file `/my-resource.xml` packaged within a jQAssistant plugin can be scanned using the URL `jqassistant-plugin:my-resource.xml`
 
 == 1.5.0
 
