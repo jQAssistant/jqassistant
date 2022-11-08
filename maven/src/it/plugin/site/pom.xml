@@ -13,27 +13,21 @@
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
-                <configuration>
-                    <groups>
-                        <!-- rules located in the folder jqassistant within this module -->
-                        <group>default</group>
-                        <!-- rules provided by the plugin, to be reported with Asciidoc -->
-                        <group>custom</group>
-                    </groups>
-                    <scanProperties>
-                        <custom.scan.value>testValue</custom.scan.value>
-                    </scanProperties>
-                    <reportProperties>
-                        <customReport.fileName>${project.build.directory}/customReport.txt</customReport.fileName>
-                    </reportProperties>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@.integration.plugin.customplugin</artifactId>
-                        <version>@project.version@</version>
-                    </dependency>
-                </dependencies>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                        <configuration>
+                            <configurationLocations>
+                                <!-- The module is executed within the aggregator by the invoker plugin, the configuration would be searched there -->
+                                <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
+                            </configurationLocations>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

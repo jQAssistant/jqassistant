@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -156,14 +157,16 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         getLog().info("Will fail on violations starting from severity '" + report
             .failOnSeverity() + "'.");
 
-        ReportContext reportContext = new ReportContextImpl(store, outputDirectory);
-        AnalyzerPluginRepository analyzerPluginRepository = getPluginRepository(configuration).getAnalyzerPluginRepository();
+        PluginRepository pluginRepository = getPluginRepository(configuration);
+        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
             new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
 
         try {
-            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), store, analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
+            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
+                analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
             analyzer.execute(ruleSet, ruleSelection);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);

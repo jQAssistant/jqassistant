@@ -17,8 +17,10 @@ assert new File(basedir, 'site/target/jqassistant/report/asciidoc/custom-embedde
 def reportFile = new File(basedir, 'site/target/jqassistant/jqassistant-report.xml')
 assert reportFile.exists()
 def report = new XmlSlurper().parse(reportFile)
+assert report.group.concept.find { it.@id == 'customPlugin:PluginURI' }.status == "success"
 verifyValueConcept(report.group.concept.find { it.@id == "customPlugin:testValue1" })
 verifyValueConcept(report.group.concept.find { it.@id == "customPlugin:testValue2" })
+
 
 private void verifyValueConcept(testValueConcept) {
     assert testValueConcept != null

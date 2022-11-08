@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
@@ -120,8 +121,9 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     private void scan(MavenProject mavenProject, MavenConfiguration configuration, Store store, File outputDirectory) {
-        ScannerPluginRepository scannerPluginRepository = getPluginRepository(configuration).getScannerPluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(store, outputDirectory);
+        PluginRepository pluginRepository = getPluginRepository(configuration);
+        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
 
         File localRepositoryDirectory = session.getProjectBuildingRequest()
