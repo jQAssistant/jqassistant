@@ -3,14 +3,14 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>1.13.0-SNAPSHOT</version>
+        <version>1.12.2</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.cli</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.13.0-SNAPSHOT</version>
+    <version>1.12.2</version>
 
     <name>jQAssistant Commandline Parent</name>
     <url>https://jqassistant.org/</url>
@@ -41,11 +41,11 @@
 
     <properties>
         <checkstyle.version>8.29</checkstyle.version>
-        <jqa-asciidoctor-utilities.version>1.13.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
-        <jqa-bom.version>1.13.0-SNAPSHOT</jqa-bom.version>
-        <jqa-distribution-spec.version>1.13.0-SNAPSHOT</jqa-distribution-spec.version>
-        <jqa-neo4jbackend.version>1.13.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-own-constraints.version>1.13.0-SNAPSHOT</jqa-own-constraints.version>
+        <jqa-asciidoctor-utilities.version>1.12.2</jqa-asciidoctor-utilities.version>
+        <jqa-bom.version>1.12.2</jqa-bom.version>
+        <jqa-distribution-spec.version>1.12.2</jqa-distribution-spec.version>
+        <jqa-neo4jbackend.version>1.12.2</jqa-neo4jbackend.version>
+        <jqa-own-constraints.version>1.12.2</jqa-own-constraints.version>
         <junit.version>5.8.1</junit.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
