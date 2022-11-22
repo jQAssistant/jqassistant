@@ -16,15 +16,6 @@
         Provides the API for an embedded Neo4j Server on top of a jQAssistant instance.
     </description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>com.buschmais.xo</groupId>
