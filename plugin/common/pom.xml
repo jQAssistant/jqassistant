@@ -42,6 +42,7 @@
     <properties>
         <commons-compress.version>1.19</commons-compress.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
+        <jaxb-api.version>2.3.0</jaxb-api.version>
     </properties>
 
     <build>
@@ -61,10 +62,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <sourcepath>${project.build.directory}/generated-sources/delombok;${project.build.directory}/generated-sources/antlr4;${project.build.directory}/generated-sources/xjc</sourcepath>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>configuration</artifactId>
