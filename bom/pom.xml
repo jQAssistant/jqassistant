@@ -1,4 +1,4 @@
-<!-- --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -51,6 +51,8 @@
         <jqa-asciidoctor-utilities.version>1.13.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-own-constraints.version>1.13.0-SNAPSHOT</jqa-own-constraints.version>
         <slf4j.version>1.8.0-beta4</slf4j.version>
+        <xo.version>1.4.2</xo.version>
+        <jaxb-api.version>2.3.0</jaxb-api.version>
     </properties>
 
     <distributionManagement>
@@ -184,6 +186,12 @@
                 <scope>compile</scope>
             </dependency>
             <!-- End of misc dependencies -->
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
