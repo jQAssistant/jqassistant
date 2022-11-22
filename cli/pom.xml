@@ -53,50 +53,6 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <quiet>true</quiet>
-                        <detectLinks>false</detectLinks>
-                        <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalOptions>
-                            <additionalOption>-Xdoclint:none</additionalOption>
-                            <additionalOption>--base-dir ${project.basedir}</additionalOption>
-                        </additionalOptions>
-
-                        <source>1.8</source>
-                        <doclet>org.asciidoctor.Asciidoclet</doclet>
-                        <docletArtifact>
-                            <groupId>org.asciidoctor</groupId>
-                            <artifactId>asciidoclet</artifactId>
-                            <version>1.5.4</version>
-                        </docletArtifact>
-                        <!--<overview>src/main/java/overview.adoc</overview>-->
-                        </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <environmentVariables>
-                            <JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>
-                        </environmentVariables>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
