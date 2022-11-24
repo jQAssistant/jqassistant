@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.metric.CyclomaticC
 
 import org.junit.jupiter.api.Test;
 
-import static java.lang.Integer.valueOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,12 +19,12 @@ class CyclomaticComplexityIT extends AbstractJavaPluginIT {
     @Test
     void cyclomaticComplexity() {
         Map<String, Integer> expectedComplexities = new HashMap<>();
-        expectedComplexities.put("<init>", valueOf(1));
-        expectedComplexities.put("ifStatement", valueOf(2));
-        expectedComplexities.put("caseStatement", valueOf(4));
-        expectedComplexities.put("tryCatch", valueOf(3));
-        expectedComplexities.put("nestedTryCatch", valueOf(5));
-        expectedComplexities.put("tryWithResources", valueOf(5)); // TODO revisit this value
+        expectedComplexities.put("<init>", 1);
+        expectedComplexities.put("ifStatement", 2);
+        expectedComplexities.put("caseStatement", 4);
+        expectedComplexities.put("tryCatch", 3);
+        expectedComplexities.put("nestedTryCatch", 5);
+        expectedComplexities.put("tryWithResources", 3);
         scanClasses(CyclomaticComplexityType.class);
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (:Class)-[:DECLARES]->(m:Method) return m").getColumn("m");

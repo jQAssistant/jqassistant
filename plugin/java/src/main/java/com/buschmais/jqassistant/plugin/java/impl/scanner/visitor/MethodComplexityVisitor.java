@@ -39,7 +39,8 @@ class MethodComplexityVisitor extends MethodVisitor {
     }
 
     private static final Set<Integer> OPCODES_IF = unmodifiableSet(new HashSet<>(
-        asList(IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE, IFNULL, IFNONNULL)));
+        asList(IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT,
+               IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE, IFNULL, IFNONNULL)));
 
     private Set<Label> whitelistLabels = new HashSet<>();
 
