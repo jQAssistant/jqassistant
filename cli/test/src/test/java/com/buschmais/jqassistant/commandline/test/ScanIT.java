@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,18 +47,6 @@ class ScanIT extends AbstractCLIIT {
         Long count = executeQuery(store, query, params, "count", Long.class);
         store.stop();
         assertThat(count).isEqualTo(1L);
-    }
-
-    @TestTemplate
-    void pluginClassLoader() throws IOException, InterruptedException {
-        File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
-        String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + testClassDirectory.getAbsolutePath() };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
-        Store store = getStore(getDefaultStoreDirectory());
-        store.start();
-        Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
-        assertThat(count).describedAs("Expecting one beans.xml descriptor.").isEqualTo(1L);
-        store.stop();
     }
 
     @TestTemplate
