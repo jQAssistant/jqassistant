@@ -624,12 +624,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>11</source>
-                            <target>11</target>
-                            <testSource>11</testSource>
-                            <testTarget>11</testTarget>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
