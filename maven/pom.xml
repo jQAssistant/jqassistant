@@ -473,7 +473,7 @@
             <version>${org.apache.maven.reporting_version}</version>
             <exclusions>
                 <exclusion>
-                    <!-- conflicts with httpcore from m2repo-plugin -->
+                    <!-- Conflicts with httpcore from jQAssistnt M2 Repo Plugin -->
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
                 </exclusion>
