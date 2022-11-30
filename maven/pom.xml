@@ -63,7 +63,6 @@
         <it.jqa.core.version>2.0.0-SNAPSHOT</it.jqa.core.version>
         <it.jqa.java-plugin.version>2.0.0-SNAPSHOT</it.jqa.java-plugin.version>
         <it.jqa.plugin-common.version>2.0.0-SNAPSHOT</it.jqa.plugin-common.version>
-        <it.jqa-tycho-plugin.version>2.0.0-SNAPSHOT</it.jqa-tycho-plugin.version>
         <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
     </properties>
 
@@ -129,7 +128,6 @@
                                 <include>configuration/*/pom.xml</include>
                                 <include>singlemodule/*/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
-                                <include>tycho/*/pom.xml</include>
                                 <include>list-plugins/pom.xml</include>
                                 <include>plugin/pom.xml</include>
                                 <include>yaml/*/pom.xml</include>
@@ -394,41 +392,7 @@
          !-->
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>asciidoc-report</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>ejb3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>graphml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>graphql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
-        </dependency>
-        <!-- todo java 11 -->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>javaee6</artifactId>
-        </dependency>
-        <!-- -->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jaxrs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jpa2</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -440,39 +404,11 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>m2repo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>maven3</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>rdbms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>testng</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>tycho</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>yaml</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>

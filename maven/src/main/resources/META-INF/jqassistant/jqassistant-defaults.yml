@@ -2,25 +2,10 @@ jqassistant:
   default-plugins:
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id:
-        - asciidoc-report
-        - cdi
-        - ejb3
-        - graphml
-        - graphql
         - java
-#        - javaee6
-        - jaxrs
-        - jpa2
         - junit
         - json
-        - m2repo
         - maven3
-        - osgi
-        - rdbms
-        - spring
-        - testng
-        - tycho
         - xml
-        - yaml
         - yaml2
       version: 1.12.0-SNAPSHOT
