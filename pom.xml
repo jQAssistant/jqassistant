@@ -254,7 +254,7 @@
                         <encoding>UTF-8</encoding>
                         <detectJavaApiLink>false</detectJavaApiLink>
                         <doclint>none</doclint>
-                        <sourcepath>${project.build.directory}/generated-sources/delombok</sourcepath>
+                        <sourcepath>${project.build.directory}/generated-sources/delombok;${project.build.directory}/generated-sources/xjc</sourcepath>
                     </configuration>
                     <executions>
                         <execution>
