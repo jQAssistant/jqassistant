@@ -383,20 +383,6 @@
                                 </rules>
                             </configuration>
                         </execution>
-                        <execution>
-                            <id>enforce-banned-dependencies</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <bannedDependencies>
-                                    </bannedDependencies>
-
-                                </rules>
-                                <fail>true</fail>
-                            </configuration>
-                        </execution>
                     </executions>
                 </plugin>
 
