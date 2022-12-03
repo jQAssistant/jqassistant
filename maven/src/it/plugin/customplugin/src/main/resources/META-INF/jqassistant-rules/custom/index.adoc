@@ -8,16 +8,6 @@ include::jQA:Summary[]
 [role=group,includesConcepts="custom:*"]
 == Default
 
-[[custom:ClassDiagram]]
-[source,cypher,role=concept,reportType="plantuml-class-diagram"]
-.Class Diagram
-----
-MATCH
-  (:Main:Artifact)-[:CONTAINS]->(type:Type)
-RETURN
-  type
-----
-
 == Relative Include
 
 include::include.adoc[]
@@ -25,15 +15,3 @@ include::include.adoc[]
 == Absolute Include
 
 include::/include.adoc[]
-
-== Embedded PlantUML
-
-[plantuml,custom-embedded-plantuml,svg]
-----
-@startuml
-component "Component 1" as c1
-component "Component 2" as c2
-
-c1 --> c2
-@enduml
-----

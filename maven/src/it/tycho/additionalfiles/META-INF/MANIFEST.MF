@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-SymbolicName: jqassistant-maven-plugin.integration.tycho.additionalfiles
-Bundle-Version: 1.0.0.qualifier
-Export-Package: com.buschmais.jqassistant.scm.maven.it.tycho
