@@ -9,26 +9,11 @@
 
 == Plugins
 
-include::{docRoot}/com.buschmais.jqassistant.plugin/asciidoc-report/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/cdi/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/ejb3/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/graphml/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/graphql/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/java/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/jpa2/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/junit/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/jaxrs/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/javaee6/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/json/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/m2repo/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/maven3/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/osgi/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/rdbms/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/spring/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/testng/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/tycho/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/xml/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.plugin/yaml/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.plugin/yaml2/asciidoc/release-notes.adoc[leveloffset=2]
 
 == Commandline Tool and Plugin for Maven
