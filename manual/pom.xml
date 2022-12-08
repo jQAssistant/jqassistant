@@ -272,13 +272,6 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.buschmais.jqassistant.plugin</groupId>
-                                    <artifactId>graphql</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.plugin</groupId>
                                     <artifactId>yaml2</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>sources</classifier>
@@ -421,27 +414,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>asciidoc-report</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jaxrs</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>cdi</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
@@ -449,35 +421,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>ejb3</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>graphml</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>graphql</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>javaee6</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
@@ -498,20 +442,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jpa2</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>m2repo</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>maven3</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
@@ -519,49 +449,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>osgi</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>rdbms</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>spring</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>testng</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>tycho</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>xml</artifactId>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>yaml</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>

@@ -166,7 +166,6 @@ relations.
 
 jQAssistant comes with language and framework plugins which include general technical concepts, e.g.
 
-- "jpa2:Entity" provided by the JPA2 plugin adds a label "Entity" to a node if it represents a class which is annotated by "@javax.persistence.Entity".
 - "java:MethodOverrides" provided by the Java plugin adds a relation "OVERRIDES" between a method of a sub class to the super class methods it overrides.
 
 It is recommended to use concepts to enrich the database with information which is specific for the concrete project, e.g. labels can be added to
