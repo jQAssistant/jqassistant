@@ -8,11 +8,11 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a1:Artifact)-[:REQUIRES]->(t1:Type)
+              (a1:Artifact)-[:REQUIRES]->(t1:Java:Type)
             WITH
               a1, t1, t1.fqn as fqn
             MATCH
-              (a2:Artifact)-[:CONTAINS]->(t2:Type)
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
             WHERE
               t2.fqn=t1.fqn
             MERGE
@@ -32,7 +32,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t1:Type)-[:RESOLVES_TO]->(t2:Type),
+              (t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type),
               (t1)-[:DECLARES]->(m1),
               (t2)-[:DECLARES]->(m2)
             WHERE
@@ -56,7 +56,7 @@
         <deprecated>This concept has been replaced by "classpath:ResolveDependsOn".</deprecated>
         <cypher><![CDATA[
             MATCH
-              (t1:Type)-[:DEPENDS_ON{resolved:true}]->(t2:Type)
+              (t1:Java:Type)-[:DEPENDS_ON{resolved:true}]->(t2:Java:Type)
             RETURN
               count(*) as ResolvedDependencies
         ]]></cypher>
@@ -72,7 +72,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[dependsOn:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
             MERGE
               (t)-[dependsOn1:DEPENDS_ON]->(t2)
             SET
@@ -93,7 +93,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[extends:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Java:Type)-[extends:EXTENDS]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
             MERGE
               (t)-[extends1:EXTENDS]->(t2)
             SET
@@ -114,7 +114,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[implements:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (t:Java:Type)-[implements:IMPLEMENTS]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
             MERGE
               (t)-[implements1:IMPLEMENTS]->(t2)
             SET
@@ -135,7 +135,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (f:Field)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (f:Field)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (f)-[ofType1:OF_TYPE]->(t)
             SET
@@ -156,7 +156,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[throws:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Method)-[throws:THROWS]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (m)-[throws1:THROWS]->(t)
             SET
@@ -177,7 +177,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[returns:RETURNS]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Method)-[returns:RETURNS]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (m)-[returns1:RETURNS]->(t)
             SET
@@ -198,7 +198,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Parameter)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Parameter)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (m)-[ofType1:OF_TYPE]->(t)
             SET
@@ -219,7 +219,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Annotation)-[ofType:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (a:Annotation)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (a)-[ofType1:OF_TYPE]->(t)
             SET
@@ -240,7 +240,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (b:Bound)-[ofRawType:OF_RAW_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+              (b:Bound)-[ofRawType:OF_RAW_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
             MERGE
               (b)-[ofRawType1:OF_RAW_TYPE]->(t)
             SET

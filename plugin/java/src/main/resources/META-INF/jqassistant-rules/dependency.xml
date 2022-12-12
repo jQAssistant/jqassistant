@@ -7,7 +7,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-                (p1:Package)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(p2:Package)
+                (p1:Package)-[:CONTAINS]->(t1:Java:Type)-[:DEPENDS_ON]->(t2:Java:Type)<-[:CONTAINS]-(p2:Package)
             WHERE
                 p1<>p2
             MERGE
@@ -28,11 +28,11 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a1:Artifact)-[:CONTAINS]->(:Type)-[:DEPENDS_ON]->(type:Type)
+              (a1:Artifact)-[:CONTAINS]->(:Java:Type)-[:DEPENDS_ON]->(type:Java:Type)
             WITH
               a1,type.fqn as fqn
             MATCH
-              (a2:Artifact)-[:CONTAINS]->(t2:Type)
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
             WHERE
               a1 <> a2
               and t2.fqn = fqn

@@ -6,7 +6,7 @@
         <description>Sets a label "Inner" on inner types.</description>
         <cypher><![CDATA[
             MATCH
-              (:Type)-[:DECLARES]->(innerType:Type)
+              (:Java:Type)-[:DECLARES]->(innerType:Java:Type)
             SET
               innerType:Inner
             RETURN
@@ -19,7 +19,7 @@
         <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
         <cypher><![CDATA[
             MATCH
-              (innerType:Inner:Type)
+              (innerType:Inner:Java:Type)
             WHERE
               innerType.name =~ ".*\\$[0-9]*"
             SET
@@ -36,20 +36,17 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)
+              (type:Java:Type)
             MERGE
               (type)-[:ASSIGNABLE_FROM]->(type)
             WITH
               type
             MATCH
-              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
-            WITH
-              type, collect(distinct superType) as superTypes
-            UNWIND
-              superTypes as superType
+              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Java:Type)
             MERGE
               (superType)-[:ASSIGNABLE_FROM]->(type)
-            RETURN type AS AssignableType, superType AS AssignableFrom
+            RETURN
+              type.fqn AS AssignableType, superType.fqn AS AssignableFrom
         ]]></cypher>
     </concept>
 
@@ -91,8 +88,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:DECLARES]->(method:Method),
-              (superType:Type)-[:DECLARES]->(superMethod:Method),
+              (type:Java:Type)-[:DECLARES]->(method:Method),
+              (superType:Java:Type)-[:DECLARES]->(superMethod:Method),
               path=(type)-[:EXTENDS|IMPLEMENTS*]->(superType)
             WHERE
               method.signature = superMethod.signature
@@ -149,8 +146,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Type),
-              (dependent:Type)-[:DEPENDS_ON]->(superType)
+              (type:Java:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Java:Type),
+              (dependent:Java:Type)-[:DEPENDS_ON]->(superType)
             WHERE NOT (
               superType.fqn = "java.lang.Object"
               or (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
@@ -176,7 +173,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:DECLARES]->(method:Method),
+              (type:Java:Type)-[:DECLARES]->(method:Method),
               (type)-[:DECLARES]->(otherMethod:Method)
             WHERE
               method <> otherMethod
@@ -194,7 +191,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Type)
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Java:Type)
             WHERE
               dt.fqn='java.lang.Deprecated'
             SET
@@ -208,7 +205,7 @@
         <description>Labels types deriving from java.lang.Exception as "Exception".</description>
         <cypher><![CDATA[
             MATCH
-              (exception)-[:EXTENDS*]->(t:Type)
+              (exception)-[:EXTENDS*]->(t:Java:Type)
             WHERE
               t.fqn = 'java.lang.Exception'
             SET
@@ -222,7 +219,7 @@
         <description>Labels types deriving from java.lang.RuntimeException as "RuntimeException".</description>
         <cypher><![CDATA[
             MATCH
-              (runtimeException)-[:EXTENDS*]->(t:Type)
+              (runtimeException)-[:EXTENDS*]->(t:Java:Type)
             WHERE
               t.fqn = 'java.lang.RuntimeException'
             SET
@@ -236,7 +233,7 @@
         <description>Labels types deriving from java.lang.Error as "Error".</description>
         <cypher><![CDATA[
             MATCH
-              (throwable)-[:EXTENDS*]->(t:Type)
+              (throwable)-[:EXTENDS*]->(t:Java:Type)
             WHERE
               t.fqn = 'java.lang.Error'
             SET
@@ -250,7 +247,7 @@
         <description>Labels types deriving from java.lang.Throwable as "Throwable".</description>
         <cypher><![CDATA[
             MATCH
-              (throwable)-[:EXTENDS*]->(t:Type)
+              (throwable)-[:EXTENDS*]->(t:Java:Type)
             WHERE
               t.fqn = 'java.lang.Throwable'
             SET
@@ -347,7 +344,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (postConstruct:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"javax.annotation.PostConstruct"})
+              (postConstruct:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Java:Type{fqn:"javax.annotation.PostConstruct"})
             SET
               postConstruct:PostConstruct
             RETURN
@@ -360,7 +357,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (preDestroy:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"javax.annotation.PreDestroy"})
+              (preDestroy:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Java:Type{fqn:"javax.annotation.PreDestroy"})
             SET
               preDestroy:PreDestroy
             RETURN
@@ -372,7 +369,7 @@
         <description>Propagates the annotations from the package-info.java to the package node.</description>
         <cypher><![CDATA[
             MATCH
-              (p:Package)-[:CONTAINS]->(t:Type{sourceFileName: "package-info.java"}),
+              (p:Package)-[:CONTAINS]->(t:Java:Type{sourceFileName: "package-info.java"}),
               (t)-[:ANNOTATED_BY]->(a:Annotation)
             MERGE
               (p)-[:ANNOTATED_BY]->(a)
@@ -423,7 +420,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (parameterizedType:ParameterizedType)-[:OF_RAW_TYPE]->(rawType:Type),
+              (parameterizedType:ParameterizedType)-[:OF_RAW_TYPE]->(rawType:Java:Type),
               (parameterizedType)-[hasActualTypeArgument:HAS_ACTUAL_TYPE_ARGUMENT]->(typeArgument),
               (rawType)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER]->(typeParameter)
             WHERE
