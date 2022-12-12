@@ -218,7 +218,7 @@
     <modules>
         <module>application</module>
         <module>plugins</module>
-        <module>neo4jv3</module>
+        <module>distribution</module>
         <module>test</module>
     </modules>
 

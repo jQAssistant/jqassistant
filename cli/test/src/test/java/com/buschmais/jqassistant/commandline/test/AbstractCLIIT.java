@@ -30,21 +30,6 @@ import static org.junit.Assume.assumeTrue;
  */
 public abstract class AbstractCLIIT {
 
-    public enum NeoVersion {
-        NEO4JV3("neo4jv3");
-
-        private final String version;
-
-        NeoVersion(String neo4jVersion) {
-            version = neo4jVersion;
-        }
-
-        @Override
-        public String toString() {
-            return version;
-        }
-    }
-
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
 
     public static final String TEST_CONCEPT = "default:TestConcept";
@@ -58,8 +43,6 @@ public abstract class AbstractCLIIT {
     private PluginRepository pluginRepository;
 
     private Properties properties = new Properties();
-
-    private NeoVersion neo4jVersion;
 
     /**
      * Represents the result of a CLI execution containing exit code and console
@@ -104,8 +87,7 @@ public abstract class AbstractCLIIT {
      * Reset the default store.
      */
     @BeforeEach
-    public void before(NeoVersion neoVersion) throws IOException {
-        neo4jVersion = neoVersion;
+    public void before() throws IOException {
         properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
@@ -135,7 +117,7 @@ public abstract class AbstractCLIIT {
                    SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
         String jqaHomeProperty = properties.getProperty("jqassistant.home");
         String projectVersionProperty = properties.getProperty("project.version");
-        String jqaHhome = new File(jqaHomeProperty + "jqassistant-commandline-" + neo4jVersion + "-" + projectVersionProperty).getAbsolutePath();
+        String jqaHhome = new File(jqaHomeProperty + "jqassistant-commandline-distribution-" + projectVersionProperty).getAbsolutePath();
         List<String> command = new ArrayList<>();
         if (SystemUtils.IS_OS_WINDOWS) {
             command.add("cmd.exe");
@@ -169,7 +151,7 @@ public abstract class AbstractCLIIT {
      * @return The working directory.
      */
     protected File getWorkingDirectory() {
-        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName() + "/" + neo4jVersion);
+        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
         workingDirectory.mkdirs();
         return workingDirectory;
     }

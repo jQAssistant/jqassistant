@@ -3,23 +3,21 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies command line listing of available rules.
  */
-@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 class HelpIT extends AbstractCLIIT {
 
-    @TestTemplate
+    @Test
     void runWithoutTask() throws IOException, InterruptedException {
         verify(new String[0]);
     }
 
-    @TestTemplate
+    @Test
     void helpOption() throws IOException, InterruptedException {
         verify(new String[] { "-help}" });
     }

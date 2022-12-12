@@ -8,8 +8,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 
 import static com.buschmais.xo.api.Query.Result;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
@@ -18,38 +17,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies command line analysis.
  */
-@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 class AnalyzeIT extends AbstractCLIIT {
 
-    @TestTemplate
+    @Test
     public void defaultGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     public void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", CUSTOM_GROUP };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void conceptWithParameter() throws IOException, InterruptedException {
         File ruleParameters = new File(AnalyzeIT.class.getResource("/ruleparameters.properties").getPath());
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER, "-ruleParameters",
@@ -58,14 +56,14 @@ class AnalyzeIT extends AbstractCLIIT {
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT_WITH_PARAMETER));
     }
 
-    @TestTemplate
+    @Test
     void constraintFailOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void continueOnFailure() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" , "-continueOnFailure"};
         assertThat(execute(args).getExitCode()).isEqualTo(0);
@@ -78,7 +76,7 @@ class AnalyzeIT extends AbstractCLIIT {
      * @throws IOException
      * @throws InterruptedException
      */
-    @TestTemplate
+    @Test
     void constraintWarnOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "major", "-failOnSeverity",
                 "critical" };
@@ -91,7 +89,7 @@ class AnalyzeIT extends AbstractCLIIT {
 
     }
 
-    @TestTemplate
+    @Test
     void defaultConstraintSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "minor",
                 "-defaultConstraintSeverity", "info" };
@@ -99,14 +97,14 @@ class AnalyzeIT extends AbstractCLIIT {
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void defaultGroupSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-failOnSeverity", "minor", "-defaultGroupSeverity", "info" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void storeDirectory() throws IOException, InterruptedException {
         File customStoreDir = new File(getWorkingDirectory(), "customStore");
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
@@ -115,7 +113,7 @@ class AnalyzeIT extends AbstractCLIIT {
         withStore(customStoreDir, store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
-    @TestTemplate
+    @Test
     void createReportArchive() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-createReportArchive" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);

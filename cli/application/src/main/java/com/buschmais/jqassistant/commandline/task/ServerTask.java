@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;

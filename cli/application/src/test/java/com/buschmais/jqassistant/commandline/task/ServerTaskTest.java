@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
 import org.apache.commons.cli.*;
 import org.junit.jupiter.api.BeforeEach;

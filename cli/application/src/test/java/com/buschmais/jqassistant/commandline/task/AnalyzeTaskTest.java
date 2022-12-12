@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
+import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;

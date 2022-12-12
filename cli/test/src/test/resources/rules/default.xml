@@ -15,7 +15,7 @@
         <description>Test concept.</description>
         <cypher><![CDATA[
            WITH
-             {testParam} as result
+             $testParam as result
            RETURN
               result
         ]]></cypher>

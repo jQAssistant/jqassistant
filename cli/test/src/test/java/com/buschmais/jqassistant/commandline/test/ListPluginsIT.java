@@ -3,18 +3,16 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies, that commandline supports the list-plugins command
  */
-@ExtendWith(Neo4JTestTemplateInvocationContextProvider.class)
 class ListPluginsIT extends AbstractCLIIT {
 
-    @TestTemplate
+    @Test
     void supportsListingOfPlugins() throws IOException, InterruptedException {
         verify(new String[] { "list-plugins" });
     }

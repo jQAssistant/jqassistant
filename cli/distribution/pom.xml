@@ -5,14 +5,9 @@
         <artifactId>parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>jqassistant-commandline-neo4jv3</artifactId>
-    <groupId>com.buschmais.jqassistant.cli</groupId>
+    <artifactId>jqassistant-commandline-distribution</artifactId>
 
-    <name>jQAssistant Commandline Neo4jv3 Distribution</name>
-
-    <properties>
-        <org.neo4j.version>${org.neo4j_3x.version}</org.neo4j.version>
-    </properties>
+    <name>jQAssistant Commandline Distribution</name>
 
     <build>
         <plugins>
@@ -42,7 +37,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                                <descriptor>src/main/assembly/bin.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -52,11 +47,6 @@
     </build>
 
     <dependencies>
-        <!-- Neo4j -->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-            <artifactId>neo4jv3</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.cli</groupId>
             <artifactId>application</artifactId>
