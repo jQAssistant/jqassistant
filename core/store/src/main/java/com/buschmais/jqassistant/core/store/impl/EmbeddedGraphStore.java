@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.core.store.impl;
 
 import java.net.URI;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.ServiceLoader;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServerFactory;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
+import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
+import com.buschmais.jqassistant.neo4j.embedded.neo4jv4.Neo4jV4ServerFactory;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
@@ -71,13 +70,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
-        ServiceLoader<EmbeddedNeo4jServerFactory> serverFactories = ServiceLoader.load(EmbeddedNeo4jServerFactory.class);
-        Iterator<EmbeddedNeo4jServerFactory> iterator = serverFactories.iterator();
-        if (iterator.hasNext()) {
-            return iterator.next();
-        } else {
-            throw new IllegalStateException("Cannot find server factory.");
-        }
+        return new Neo4jV4ServerFactory();
     }
 
     @Override

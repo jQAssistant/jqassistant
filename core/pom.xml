@@ -74,13 +74,8 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-                <artifactId>bootstrap</artifactId>
-                <version>${jqa-neo4jbackend.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-                <artifactId>neo4jv3</artifactId>
+                <groupId>com.buschmais.jqassistant.neo4j</groupId>
+                <artifactId>embedded</artifactId>
                 <version>${jqa-neo4jbackend.version}</version>
             </dependency>
             <dependency>
@@ -338,3 +333,4 @@
     </pluginRepositories>
 
 </project>
+
