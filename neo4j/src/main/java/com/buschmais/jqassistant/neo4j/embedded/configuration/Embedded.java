@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration;
+package com.buschmais.jqassistant.neo4j.embedded.configuration;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;

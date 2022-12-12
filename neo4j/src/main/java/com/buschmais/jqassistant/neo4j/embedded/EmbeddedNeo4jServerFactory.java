@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.neo4j.backend.bootstrap;
+package com.buschmais.jqassistant.neo4j.embedded;
 
 import java.util.Properties;
 
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
+import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 public interface EmbeddedNeo4jServerFactory {
 
