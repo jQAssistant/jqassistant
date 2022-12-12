@@ -502,14 +502,6 @@
             <!-- The scope must be provided otherwise it will be part of the distribution -->
             <scope>provided</scope>
         </dependency>
-        <!-- Test -->
-
-        <dependency>
-            <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-            <artifactId>neo4jv3</artifactId>
-            <version>${jqa-neo4jbackend.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <repositories>
