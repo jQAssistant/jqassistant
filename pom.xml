@@ -80,8 +80,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <doxia-markdown.version>1.9</doxia-markdown.version>
-        <com.buschmais.xo.version>1.4.2</com.buschmais.xo.version>
-        <org.neo4j_3x.version>3.5.35</org.neo4j_3x.version>
+        <com.buschmais.xo.version>2.0.0</com.buschmais.xo.version>
         <io.smallrye.config.version>2.12.1</io.smallrye.config.version>
         <guava.version>30.0-jre</guava.version>
         <caffeine.version>2.8.4</caffeine.version>
@@ -100,7 +99,7 @@
         <maven.install.version>3.0.0-M1</maven.install.version>
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.4.0</maven.javadoc.version>
-        <maven.jaxb2-plugin.version>0.14.0</maven.jaxb2-plugin.version>
+        <maven.jaxb2-plugin.version>0.15.1</maven.jaxb2-plugin.version>
 
         <!--
          ! This two properties controls on which severity of constraint
@@ -120,7 +119,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>1.12.0-M1</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>1.12.2</maven.jqassistant.previous.version>
         <maven.min.version>3.5.0</maven.min.version>
         <maven.resources.version>3.0.2</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
@@ -226,6 +225,7 @@
                                 <goal>delombok</goal>
                             </goals>
                             <configuration>
+                                <skip>true</skip>
                                 <addOutputDirectory>false</addOutputDirectory>
                                 <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
                             </configuration>
@@ -646,7 +646,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
