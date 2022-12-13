@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.configuration.Embedded;
+import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.mojo.EmbeddedNeo4jConfiguration;

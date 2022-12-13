@@ -68,18 +68,6 @@
 
     <profiles>
         <profile>
-            <id>neo4jv3</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-                        <artifactId>neo4jv3</artifactId>
-                    </dependency>
-                </dependencies>
-        </profile>
-        <profile>
             <id>IT</id>
             <properties>
                 <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
@@ -537,3 +525,4 @@
     </repositories>
 
 </project>
+

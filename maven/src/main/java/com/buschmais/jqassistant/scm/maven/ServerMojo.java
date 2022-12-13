@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.neo4j.backend.bootstrap.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

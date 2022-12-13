@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.0
+
+* Removed (undocumented) goal `export-database`
+
 == 1.12.0
 
 * Added initial support for externalized configuration based on YAML files, environment variables and system properties
