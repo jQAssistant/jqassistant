@@ -25,7 +25,7 @@ include::{docRoot}/com.buschmais.jqassistant.cli/parent/asciidoc/release-notes.a
 
 include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/release-notes.adoc[leveloffset=2]
 include::{docRoot}/com.buschmais.jqassistant.core/parent/asciidoc/release-notes.adoc[leveloffset=2]
-include::{docRoot}/com.buschmais.jqassistant.neo4jserver/parent/asciidoc/release-notes.adoc[leveloffset=2]
+include::{docRoot}/com.buschmais.jqassistant.neo4j/embedded/asciidoc/release-notes.adoc[leveloffset=2]
 
 include::1.1.3.adoc[]
 include::1.1.2.adoc[]
