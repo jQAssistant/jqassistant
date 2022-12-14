@@ -169,13 +169,13 @@
                 <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
+                <groupId>com.buschmais.jqassistant.neo4j</groupId>
                 <artifactId>embedded</artifactId>
                 <version>${jqa-neo4jbackend.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.buschmais.jqassistant.neo4jserver</groupId>
-                <artifactId>parent</artifactId>
+                <groupId>com.buschmais.jqassistant.neo4j</groupId>
+                <artifactId>embedded</artifactId>
                 <version>${jqa-neo4jbackend.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
