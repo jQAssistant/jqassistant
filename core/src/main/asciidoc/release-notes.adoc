@@ -1,5 +1,10 @@
 = Core Framework
 
+== 2.0.0
+* Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
++
+NOTE: It is still possible to scan applications compiled with older Java versions.
+
 == 1.12.1
 * Upgraded to AsciidoctorJ 2.5.7 and PlantUML 1.2022.12
 
