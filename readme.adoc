@@ -19,31 +19,16 @@ The table below lists the repositories jQAssistant is made of.
 
 .List of jQAssistant repositories
 |===
-| Asciidoctor Report Plugin | https://github.com/jqassistant/jqa-commandline-tool[^]
 | BOM                       | https://github.com/jqassistant/jqa-bom[^]
-| CDI Plugin                | https://github.com/jqassistant/jqa-cdi-plugin[^]
 | Commandline Distribution  | https://github.com/jqassistant/jqa-commandline-tool[^]
 | Core Framework            | https://github.com/jqassistant/jqa-core-framework[^]
-| EJB 3 Plugin              | https://github.com/jqassistant/jqa-ejb3-plugin[^]
-| GraphML Plugin            | https://github.com/jqassistant/jqa-graphml-plugin[^]
-| GraphQL Plugin            | https://github.com/jqassistant/jqa-graphql-plugin[^]
 | Java Plugin               | https://github.com/jqassistant/jqa-java-plugin[^]
-| Java EE 6 Plugin          | https://github.com/jqassistant/jqa-javaee6-plugin[^]
-| JAX RS Plugin             | https://github.com/jqassistant/jqa-jaxrs-plugin[^]
-| JPA 2 Plugin              | https://github.com/jqassistant/jqa-jpa2-plugin[^]
 | JSON Plugin               | https://github.com/jqassistant/jqa-json-plugin[^]
-| M2 Repo Plugin            | https://github.com/jqassistant/jqa-m2repo-plugin[^]
 | Maven 3 Plugin            | https://github.com/jqassistant/jqa-maven3-plugin[^]
 | JUnit Plugin              | https://github.com/jqassistant/jqa-junit-plugin[^]
 | Neo4j Backend             | https://github.com/jqassistant/jqa-neo4j-backend[^]
-| OSGi Plugin               | https://github.com/jqassistant/jqa-osgi-plugin[^]
 | Plugin for Apache Maven   | https://github.com/jqassistant/jqa-maven-plugin[^]
-| RDBMS Plugin              | https://github.com/jqassistant/jqa-rdbms-plugin[^]
-| Spring Plugin             | https://github.com/jqassistant/jqa-spring-plugin[^]
-| TestNG Plugin             | https://github.com/jqassistant/jqa-testng-plugin[^]
-| Tycho Plugin              | https://github.com/jqassistant/jqa-tycho-plugin[^]
 | XML Plugin                | https://github.com/jqassistant/jqa-xml-plugin[^]
-| YAML Plugin               | https://github.com/jqassistant/jqa-yaml-plugin[^]
 | YAML 2 Plugin             | https://github.com/jqassistant/jqa-yaml2-plugin[^]
 |===
 

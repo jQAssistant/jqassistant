@@ -9,29 +9,14 @@
 	<modules>
         <module>jqa-uber-parent</module>
         <module>jqa-plugin-parent</module>
-        <module>jqa-asciidoc-report-plugin</module>
-        <module>jqa-cdi-plugin</module>
         <module>jqa-core-framework</module>
-        <module>jqa-ejb3-plugin</module>
-        <module>jqa-graphml-plugin</module>
-        <module>jqa-graphql-plugin</module>
         <module>jqa-java-plugin</module>
-        <module>jqa-javaee6-plugin</module>
-        <module>jqa-jaxrs-plugin</module>
-        <module>jqa-jpa2-plugin</module>
         <module>jqa-json-plugin</module>
         <module>jqa-junit-plugin</module>
-        <module>jqa-m2repo-plugin</module>
         <module>jqa-maven3-plugin</module>
         <module>jqa-maven-plugin</module>
         <module>jqa-neo4j-backend</module>
-        <module>jqa-osgi-plugin</module>
-        <module>jqa-rdbms-plugin</module>
-        <module>jqa-spring-plugin</module>
-        <module>jqa-testng-plugin</module>
-        <module>jqa-tycho-plugin</module>
         <module>jqa-xml-plugin</module>
-        <module>jqa-yaml-plugin</module>
         <module>jqa-yaml2-plugin</module>
         <module>jqa-distribution-specification</module>
         <module>jqa-asciidoctor-utilities</module>

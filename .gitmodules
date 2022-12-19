@@ -1,15 +1,9 @@
-[submodule "jqa-asciidoc-report-plugin"]
-	path = jqa-asciidoc-report-plugin
-	url = https://github.com/jQAssistant/jqa-asciidoc-report-plugin.git
 [submodule "jqa-asciidoctor-utilities"]
 	path = jqa-asciidoctor-utilities
 	url = https://github.com/jQAssistant/jqa-asciidoctor-utilities.git
 [submodule "jqa-bom"]
 	path = jqa-bom
 	url = https://github.com/jQAssistant/jqa-bom.git
-[submodule "jqa-cdi-plugin"]
-	path = jqa-cdi-plugin
-	url = https://github.com/jQAssistant/jqa-cdi-plugin.git
 [submodule "jqa-checkstyle-config"]
 	path = jqa-checkstyle-config
 	url = https://github.com/jQAssistant/jqa-checkstyle-config.git
@@ -25,27 +19,9 @@
 [submodule "jqa-docker-images"]
 	path = jqa-docker-images
 	url = https://github.com/jQAssistant/jqa-docker-images.git
-[submodule "jqa-ejb3-plugin"]
-	path = jqa-ejb3-plugin
-	url = https://github.com/jQAssistant/jqa-ejb3-plugin.git
-[submodule "jqa-graphml-plugin"]
-	path = jqa-graphml-plugin
-	url = https://github.com/jQAssistant/jqa-graphml-plugin.git
-[submodule "jqa-graphql-plugin"]
-	path = jqa-graphql-plugin
-	url = https://github.com/jQAssistant/jqa-graphql-plugin.git
 [submodule "jqa-java-plugin"]
 	path = jqa-java-plugin
 	url = https://github.com/jQAssistant/jqa-java-plugin.git
-[submodule "jqa-javaee6-plugin"]
-	path = jqa-javaee6-plugin
-	url = https://github.com/jQAssistant/jqa-javaee6-plugin.git
-[submodule "jqa-jaxrs-plugin"]
-	path = jqa-jaxrs-plugin
-	url = https://github.com/jQAssistant/jqa-jaxrs-plugin.git
-[submodule "jqa-jpa2-plugin"]
-	path = jqa-jpa2-plugin
-	url = https://github.com/jQAssistant/jqa-jpa2-plugin.git
 [submodule "jqa-jenkins-jobdsl"]
 	path = jqa-jenkins-jobdsl
 	url = https://github.com/jQAssistant/jqa-jenkins-jobdsl.git
@@ -55,9 +31,6 @@
 [submodule "jqa-junit-plugin"]
 	path = jqa-junit-plugin
 	url = https://github.com/jQAssistant/jqa-junit-plugin.git
-[submodule "jqa-m2repo-plugin"]
-	path = jqa-m2repo-plugin
-	url = https://github.com/jQAssistant/jqa-m2repo-plugin.git
 [submodule "jqa-manual"]
 	path = jqa-manual
 	url = https://github.com/jQAssistant/jqa-manual.git
@@ -70,9 +43,6 @@
 [submodule "jqa-neo4j-backend"]
 	path = jqa-neo4j-backend
 	url = https://github.com/jQAssistant/jqa-neo4j-backend.git
-[submodule "jqa-osgi-plugin"]
-	path = jqa-osgi-plugin
-	url = https://github.com/jQAssistant/jqa-osgi-plugin.git
 [submodule "jqa-own-constraints"]
 	path = jqa-own-constraints
 	url = https://github.com/jQAssistant/jqa-own-constraints.git
@@ -82,27 +52,12 @@
 [submodule "jqa-plugin-parent"]
 	path = jqa-plugin-parent
 	url = https://github.com/jQAssistant/jqa-plugin-parent.git
-[submodule "jqa-rdbms-plugin"]
-	path = jqa-rdbms-plugin
-	url = https://github.com/jQAssistant/jqa-rdbms-plugin.git
-[submodule "jqa-spring-plugin"]
-	path = jqa-spring-plugin
-	url = https://github.com/jQAssistant/jqa-spring-plugin.git
-[submodule "jqa-testng-plugin"]
-	path = jqa-testng-plugin
-	url = https://github.com/jQAssistant/jqa-testng-plugin.git
-[submodule "jqa-tycho-plugin"]
-	path = jqa-tycho-plugin
-	url = https://github.com/jQAssistant/jqa-tycho-plugin.git
 [submodule "jqa-uber-parent"]
 	path = jqa-uber-parent
 	url = https://github.com/jQAssistant/jqa-uber-parent.git
 [submodule "jqa-xml-plugin"]
 	path = jqa-xml-plugin
 	url = https://github.com/jQAssistant/jqa-xml-plugin.git
-[submodule "jqa-yaml-plugin"]
-	path = jqa-yaml-plugin
-	url = https://github.com/jQAssistant/jqa-yaml-plugin.git
 [submodule "jqa-yaml2-plugin"]
 	path = jqa-yaml2-plugin
 	url = https://github.com/jQAssistant/jqa-yaml2-plugin.git
