@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.model.generics;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -16,6 +18,6 @@ public interface BoundDescriptor extends JavaByteCodeDescriptor, Descriptor {
     void setRawType(TypeDescriptor rawType);
 
     @Incoming
-    HasActualTypeArgumentDescriptor getParameterizedType();
+    List<HasActualTypeArgumentDescriptor> getParameterizedType();
 
 }

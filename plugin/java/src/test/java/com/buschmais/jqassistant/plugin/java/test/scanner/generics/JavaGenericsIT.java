@@ -295,6 +295,26 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    void variableOfParameterizedType() {
+        scanClasses(GenericFields.class);
+        store.beginTransaction();
+        Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", "GenericFields").entry("variable", "parameterizedType").build();
+        List<VariableDescriptor> variables = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(:Java:ByteCode:Method)-[:DECLARES]->(variable:Variable{name:$variable}) RETURN variable", parameters)
+            .getColumn("variable");
+        assertThat(variables).hasSize(1);
+        VariableDescriptor variable = variables.get(0);
+        assertThat(variable.getType()).is(matching(typeDescriptor(Map.class)));
+        BoundDescriptor genericType = variable.getGenericType();
+        assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
+        ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) genericType;
+        assertThat(((BoundDescriptor)parameterizedType).getRawType()).is(matching(typeDescriptor(Map.class)));
+        Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 2);
+        assertThat(typeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
+        verifyTypeVariable(typeArguments.get(1), "X", typeDescriptor(GenericFields.class), Object.class);
+        store.commitTransaction();
+    }
+
     private <T extends MemberDescriptor> T getMember(String typeName, String memberName) {
         Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", typeName).entry("memberName", memberName).build();
         List<T> members = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(member:Java:ByteCode:Member{name:$memberName}) RETURN member", parameters)
@@ -306,7 +326,7 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
     private WildcardTypeDescriptor getListOfWildcard(BoundDescriptor genericType) {
         assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
         ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) genericType;
-        assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(List.class)));
+        assertThat(((BoundDescriptor)parameterizedType).getRawType()).is(matching(typeDescriptor(List.class)));
         Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 1);
         BoundDescriptor boundDescriptor = typeArguments.get(0);
         assertThat(boundDescriptor).isInstanceOf(WildcardTypeDescriptor.class);

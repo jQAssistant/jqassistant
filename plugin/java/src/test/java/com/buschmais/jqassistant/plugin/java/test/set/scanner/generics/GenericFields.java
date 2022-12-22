@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,8 @@ public class GenericFields<X> {
     private List<?> unboundWildcard;
 
     private List<boolean[]> arrayOfPrimitive;
+
+    public void method() {
+        Map<String, X> parameterizedType = new HashMap<>();
+    }
 }

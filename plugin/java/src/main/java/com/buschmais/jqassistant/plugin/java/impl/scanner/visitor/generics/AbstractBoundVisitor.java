@@ -126,10 +126,6 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
      * @return The raw type bound (optional).
      */
     private TypeDescriptor getRawTypeBound(BoundDescriptor bound) {
-        if (bound instanceof ParameterizedTypeDescriptor) {
-            ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) bound;
-            return parameterizedType.getRawType();
-        }
         if (bound instanceof TypeVariableDescriptor) {
             TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
             return getUniqueRawTypeBound(typeVariable.getUpperBounds());
@@ -143,12 +139,12 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
                 return getUniqueRawTypeBound(upperBounds);
             }
         }
-        return null;
+        return bound.getRawType();
     }
 
     @Override
     public final void visitEnd() {
-        if (actualTypeArguments != null) {
+        if (!actualTypeArguments.isEmpty()) {
             Store store = visitorHelper.getStore();
             ParameterizedTypeDescriptor parameterizedType = store.addDescriptorType(current, ParameterizedTypeDescriptor.class);
             int index = 0;
