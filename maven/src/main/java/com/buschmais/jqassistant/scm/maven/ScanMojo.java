@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
@@ -45,25 +46,41 @@ public class ScanMojo extends AbstractModuleMojo {
     /**
      * Specifies a list of directory names relative to the root module containing
      * additional rule files.
+     *
+     * @deprecated Replaced by the configuration properties "jqassistant.scan.include.*".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.scan.includes")
     protected List<ScanInclude> scanIncludes;
 
     /**
      * Specifies properties to be passed to the scanner plugins.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.scan.properties".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.scan.properties")
     private Map<String, Object> scanProperties;
 
     /**
      * Specifies if the scanner shall continue if an error is encountered.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.scan.continue-on.error".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.scan.continueOnError")
     private boolean continueOnError = false;
 
     /**
      * Indicates whether to initially reset the store before scanning.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.scan.reset".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.reset")
     protected boolean reset = true;
 

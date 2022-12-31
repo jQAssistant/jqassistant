@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
@@ -66,81 +67,133 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * The store directory.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.uri".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.directory")
     private File storeDirectory;
 
     /**
-     * The store url.
+     * The store uri.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.uri".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.uri")
     private URI storeUri;
 
     /**
      * The store user name.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.remote.username".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.username")
     private String storeUserName;
 
     /**
      * The store password.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.remote.password".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.password")
     private String storePassword;
 
     /**
      * The store encryption.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.remote.encryption".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.encryption")
     private String storeEncryption;
 
     /**
      * The store trust strategy.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.remote.trust-strategy".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.trustStrategy")
     private String storeTrustStrategy;
 
     /**
      * The store trust certificate.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.remote.trust-certificate".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.store.trustCertificate")
     private String storeTrustCertificate;
 
     /**
      * The store configuration.
+     *
+     * @deprecated Replaced by the configuration properties "jqassistant.store.*".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter
     private StoreConfiguration store = new StoreConfiguration();
 
     /**
      * The listen address of the embedded server.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.listen-address".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = PARAMETER_EMBEDDED_LISTEN_ADDRESS)
     private String embeddedListenAddress;
 
     /**
      * The bolt port of the embedded server.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.bolt-port".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = PARAMETER_EMBEDDED_BOLT_PORT)
     private Integer embeddedBoltPort;
 
     /**
      * The http port of the embedded server.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.http-port".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
     private Integer embeddedHttpPort;
 
     /**
      * Determines if the execution root module shall be used as project root, i.e.
      * to create the store and read the rules from.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.maven.use-execution-root-as-project-root".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.useExecutionRootAsProjectRoot")
     protected Boolean useExecutionRootAsProjectRoot;
 
     /**
      * Specifies the name of the directory containing rule files. It is also used to
      * identify the root module.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.rule.directory".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.rules.directory", defaultValue = MojoExecutionContext.DEFAULT_RULES_DIRECTORY)
     private String rulesDirectory;
 

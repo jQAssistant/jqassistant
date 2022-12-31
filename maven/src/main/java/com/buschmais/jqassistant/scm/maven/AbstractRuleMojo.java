@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.scm.maven.configuration.mojo.RuleConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,36 +33,56 @@ public abstract class AbstractRuleMojo extends AbstractProjectMojo {
      * Specifies a list of directory names relative to the root module containing
      * additional rule files.
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.rules.directories")
     private List<String> rulesDirectories;
 
     /**
      * The URL to retrieve rules.
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.rules.url")
     private URL rulesUrl;
 
     /**
      * The rule configuration
+     *
+     * @deprecated Replaced by the configuration properties "jqassistant.analyze.rule.*".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter
     private RuleConfiguration rule = new RuleConfiguration();
 
     /**
      * The list of concept names to be applied.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.concepts".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.concepts")
     private List<String> concepts;
 
     /**
      * The list of constraint names to be validated.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.constraints".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.constraints")
     private List<String> constraints;
 
     /**
      * The list of group names to be executed.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.groups".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.groups")
     private List<String> groups;
 
