@@ -60,7 +60,7 @@ public class ConfigurationBuilder {
      * @return The {@link ConfigurationBuilder}.
      */
     public ConfigurationBuilder with(Class<?> mapping, String property, String value) {
-        properties.put(getKey(mapping, property), getValue(value));
+        put(mapping, property, value);
         return this;
     }
 
@@ -76,7 +76,7 @@ public class ConfigurationBuilder {
      * @return The {@link ConfigurationBuilder}.
      */
     public ConfigurationBuilder with(Class<?> mapping, String property, URI value) {
-        properties.put(getKey(mapping, property), getValue(value));
+        put(mapping, property, value);
         return this;
     }
 
@@ -92,7 +92,7 @@ public class ConfigurationBuilder {
      * @return The {@link ConfigurationBuilder}.
      */
     public ConfigurationBuilder with(Class<?> mapping, String property, Integer value) {
-        properties.put(getKey(mapping, property), getValue(value));
+        put(mapping, property, value);
         return this;
     }
 
@@ -107,8 +107,8 @@ public class ConfigurationBuilder {
      *     The value.
      * @return The {@link ConfigurationBuilder}.
      */
-    public ConfigurationBuilder with(Class<?> mapping, String property, boolean value) {
-        properties.put(getKey(mapping, property), getValue(value));
+    public ConfigurationBuilder with(Class<?> mapping, String property, Boolean value) {
+        put(mapping, property, value);
         return this;
     }
 
@@ -124,7 +124,7 @@ public class ConfigurationBuilder {
      * @return The {@link ConfigurationBuilder}.
      */
     public <E extends Enum<E>> ConfigurationBuilder with(Class<?> mapping, String property, E value) {
-        properties.put(getKey(mapping, property), getValue(value));
+        put(mapping, property, value);
         return this;
     }
 
@@ -150,6 +150,17 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Add properties property.
+     *
+     * @param mapping
+     *     The mapping.
+     * @param property
+     *     The name of the property.
+     * @param properties
+     *     The properties.
+     * @return The {@link ConfigurationBuilder}.
+     */
     public ConfigurationBuilder with(Class<?> mapping, String property, Properties properties) {
         if (properties != null) {
             for (String key : properties.stringPropertyNames()) {
@@ -168,7 +179,7 @@ public class ConfigurationBuilder {
         } else {
             keyBuilder.append(key);
         }
-        properties.put(keyBuilder.toString(), getValue(value));
+        put(keyBuilder.toString(), value);
     }
 
     /**
@@ -189,7 +200,7 @@ public class ConfigurationBuilder {
                 StringBuilder key = new StringBuilder(getKey(mapping, indexedProperty)).append('[')
                     .append(index)
                     .append(']');
-                properties.put(key.toString(), getValue(value));
+                put(key.toString(), value);
                 index++;
             }
         }
@@ -215,16 +226,34 @@ public class ConfigurationBuilder {
     }
 
     /**
-     * Convert a value to a string representation, currently based on {@link Object#toString()}.
+     * Put a non-null value for the given mapping into the configuration properties.
      *
+     * @param mapping
+     *     The mapping.
+     * @param property
+     *     The property name.
      * @param value
      *     The value.
      * @param <T>
      *     The value type.
-     * @return The string representation.
      */
-    private <T> String getValue(T value) {
-        return value != null ? value.toString() : null;
+    private <T> void put(Class<?> mapping, String property, T value) {
+        put(getKey(mapping, property), value);
     }
 
+    /**
+     * Put a non-null value for the given key into the configuration properties.
+     *
+     * @param key
+     *     The mapping.
+     * @param value
+     *     The value.
+     * @param <T>
+     *     The value type.
+     */
+    private <T> void put(String key, T value) {
+        if (value != null) {
+            properties.put(key, value.toString());
+        }
+    }
 }

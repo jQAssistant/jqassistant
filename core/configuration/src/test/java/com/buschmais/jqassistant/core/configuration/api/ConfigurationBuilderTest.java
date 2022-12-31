@@ -25,6 +25,8 @@ class ConfigurationBuilderTest {
     @Test
     void properties() {
         configurationBuilder.with(TestMapping.class, "boolean-value", true);
+        // null values must not override existing configuration properties
+        configurationBuilder.with(TestMapping.class, "boolean-value", (Boolean) null);
         Map<String, Object> map = MapBuilder.<String, Object>builder()
             .entry("key.1", "value1")
             .entry("key.2", "value2")

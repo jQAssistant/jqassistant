@@ -15,9 +15,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.configuration.api.Configuration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 
-import io.smallrye.config.ExpressionConfigSourceInterceptor;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
+import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -60,8 +58,9 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     @Override
     public <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources) {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-            .addDefaultSources()
             .withSources(yamlConfigSources)
+            .withSources(new EnvConfigSource() {
+            }, new SysPropConfigSource())
             .withSources(configSources)
             .withValidateUnknown(false)
             .withInterceptors(new ExpressionConfigSourceInterceptor())
