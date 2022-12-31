@@ -225,6 +225,9 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
+        // clear all caches assigned to that store
+        caches.clear();
+        // remove nodes and relations in batches
         Map<String, Object> params = new HashMap<>();
         params.put("batchSize", 65536);
         long totalNodes = 0;
