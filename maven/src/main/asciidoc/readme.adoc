@@ -5,21 +5,24 @@ jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which ca
 process or manual execution from a command line.
 
 === Setup
+
 [[ProjectScope]]
 ==== Project Scope
 
-Software projects often consist of several modules which are assembled to executable or deployable artifacts. In a Maven project, these modules
-are usually organized hierarchically with a common parent module which is referenced directly or indirectly by all sub-modules. For each
-project, jQAssistant uses a separate database with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant
-first determines the project scope, i.e. the root module, by searching within the tree starting from the current module following the
-parent relation until either a module is found where a directory "jqassistant/" exists or no parent is defined. The determined root module
-defines the location of
+The jQAssistant Maven plugins uses a root Maven module where the following items will be searched or created:
 
 - the set of rules to apply (from the directory "jqassistant/")
 - the database, default "{project.build.directory}/jqassistant/store"
-- the generated native report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
-- and the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
+- the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
+- the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
+- additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")
 
+By default the root module is the directory, where the `mvn` command has been executed.
+
+For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
+`jqassistant.use-execution-root-as-project-root` can be set to `false`.
+The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
+parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
 The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
 
 .Single project consisting of two modules
@@ -66,9 +69,7 @@ root
                     |-pom.xml
 ----
 
-NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with
-consistent parent relations. For other setups, it is possible to enforce using the module where the mvn goal is invoked
-as root module by setting the configuration option <<useExecutionRootAsProjectRoot>>.
+NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
 
 ==== Plugin Configuration
 

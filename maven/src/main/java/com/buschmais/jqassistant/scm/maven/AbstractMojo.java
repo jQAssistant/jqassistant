@@ -135,7 +135,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * to create the store and read the rules from.
      */
     @Parameter(property = "jqassistant.useExecutionRootAsProjectRoot")
-    protected boolean useExecutionRootAsProjectRoot = false;
+    protected Boolean useExecutionRootAsProjectRoot;
 
     /**
      * Specifies the name of the directory containing rule files. It is also used to
