@@ -31,12 +31,12 @@ public class Neo4jV4ServerFactory implements EmbeddedNeo4jServerFactory {
         properties.setProperty(ALLOW_STORE_UPGRADE, Boolean.TRUE.toString());
         properties.setProperty(KEEP_LOGICAL_LOGS, Boolean.FALSE.toString());
         properties.setProperty(DBMS_ALLOW_FORMAT_MIGRATION, Boolean.TRUE.toString());
-        properties.putIfAbsent(DBMS_SECURITY_PROCEDURES_UNRESTRICTED, "*");
-        properties.putIfAbsent(DBMS_TX_LOG_ROTATION_SIZE, "50M");
-        properties.putIfAbsent(DBMS_TX_LOG_ROTATION_RETENTION_POLICY, Boolean.FALSE.toString());
+        properties.setProperty(DBMS_SECURITY_PROCEDURES_UNRESTRICTED, "*");
+        properties.setProperty(DBMS_TX_LOG_ROTATION_SIZE, "50M");
+        properties.setProperty(DBMS_TX_LOG_ROTATION_RETENTION_POLICY, Boolean.FALSE.toString());
         if (embedded.connectorEnabled()){
-            properties.putIfAbsent(DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
-            properties.putIfAbsent(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embedded.listenAddress() + ":" + embedded.boltPort());
+            properties.setProperty(DBMS_CONNECTOR_BOLT_ENABLED, Boolean.TRUE.toString());
+            properties.setProperty(DBMS_CONNECTOR_BOLT_LISTEN_ADDRESS, embedded.listenAddress() + ":" + embedded.boltPort());
         }
         return properties;
     }
