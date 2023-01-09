@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
@@ -52,31 +53,51 @@ public class AnalyzeMojo extends AbstractRuleMojo {
 
     /**
      * The rule parameters to use (optional).
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.rule-parameters".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.ruleParameters")
     private Map<String, String> ruleParameters;
 
     /**
      * If set also execute concepts which have already been applied.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.execute-applied-concepts".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.executeAppliedConcepts")
-    private boolean executeAppliedConcepts = false;
+    private Boolean executeAppliedConcepts;
 
     /**
      * The severity threshold to warn on rule violations.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.warn-on-severity".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.warnOnSeverity")
     private Severity.Threshold warnOnSeverity;
 
     /**
      * The severity threshold to fail on rule violations.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.fail-on-severity".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.failOnSeverity")
     private Severity.Threshold failOnSeverity;
 
     /**
      * Determines if jQAssistant shall continue the build if failures have been detected.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.continue-on-failure".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.continueOnFailure")
     private boolean continueOnFailure = false;
 
@@ -84,12 +105,18 @@ public class AnalyzeMojo extends AbstractRuleMojo {
      * Defines the set of reports which shall be created by default. If empty all
      * available default reports will be used.
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.reportTypes")
     private Set<String> reportTypes;
 
     /**
      * Defines the properties for report plugins.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.properties".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.reportProperties")
     private Map<String, Object> reportProperties;
 
@@ -97,13 +124,19 @@ public class AnalyzeMojo extends AbstractRuleMojo {
      * If `true` a ZIP file `jqassistant-report.zip` containing the generated
      * reports is created in the folder `target/jqassistant` of the root module and
      * attached using the classifier `jqassistant-report`.
+     *
+     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.create-archive".
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.attachReportArchive")
     private boolean attachReportArchive = false;
 
     /**
      * The file to write the XML report to.
      */
+    @Deprecated(forRemoval = true)
+    @ToBeRemovedInVersion(major = 2, minor = 1)
     @Parameter(property = "jqassistant.report.xml")
     private File xmlReportFile;
 
