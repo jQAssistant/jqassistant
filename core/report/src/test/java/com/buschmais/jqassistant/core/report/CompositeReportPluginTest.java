@@ -11,11 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Report;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +22,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
@@ -40,9 +33,6 @@ class CompositeReportPluginTest {
 
     @Mock
     ReportPlugin reportPlugin2;
-
-    @Mock
-    ReportPlugin reportPlugin3;
 
     @Mock
     ReportPlugin selectableReportPlugin1;
@@ -66,10 +56,9 @@ class CompositeReportPluginTest {
         Map<String, ReportPlugin> reportPlugins = new HashMap<>();
         reportPlugins.put("plugin1", new DefaultReportPlugin(reportPlugin1));
         reportPlugins.put("plugin2", new DefaultReportPlugin(reportPlugin2));
-        reportPlugins.put("plugin3", new DefaultReportPlugin(reportPlugin3));
         reportPlugins.put("selectablePlugin1", selectableReportPlugin1);
         reportPlugins.put("selectablePlugin2", selectableReportPlugin2);
-        compositeReportPlugin = new CompositeReportPlugin(reportPlugins, new HashSet<>(asList("plugin1", "plugin2")));
+        compositeReportPlugin = new CompositeReportPlugin(reportPlugins);
     }
 
     @Test
@@ -80,9 +69,9 @@ class CompositeReportPluginTest {
         write(concept, constraint);
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2);
-        verifyNotInvoked(concept, reportPlugin3, selectableReportPlugin1, selectableReportPlugin2);
+        verifyNotInvoked(concept, selectableReportPlugin1, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2);
-        verifyNotInvoked(constraint, reportPlugin3, selectableReportPlugin1, selectableReportPlugin2);
+        verifyNotInvoked(constraint, selectableReportPlugin1, selectableReportPlugin2);
         verifyGroup();
     }
 
@@ -94,9 +83,9 @@ class CompositeReportPluginTest {
         write(concept, constraint);
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2, selectableReportPlugin1);
-        verifyNotInvoked(concept, reportPlugin3, selectableReportPlugin2);
+        verifyNotInvoked(concept, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2, selectableReportPlugin1);
-        verifyNotInvoked(constraint, reportPlugin3, selectableReportPlugin2);
+        verifyNotInvoked(constraint, selectableReportPlugin2);
         verifyGroup();
     }
 
@@ -109,8 +98,6 @@ class CompositeReportPluginTest {
 
         verifyInvoked(concept, reportPlugin1, reportPlugin2, selectableReportPlugin1, selectableReportPlugin2);
         verifyInvoked(constraint, reportPlugin1, reportPlugin2, selectableReportPlugin1, selectableReportPlugin2);
-        verifyNotInvoked(concept, reportPlugin3);
-        verifyNotInvoked(constraint, reportPlugin3);
         verifyGroup();
     }
 

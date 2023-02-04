@@ -34,26 +34,19 @@ public class CompositeReportPlugin implements ReportPlugin {
 
     private Map<String, ReportPlugin> selectedReportPlugins = Collections.emptyMap();
 
-    public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins) {
-        this(reportPlugins, null);
-    }
-
     /**
      * Constructor.
      *
      * @param reportPlugins
      *            The available {@link ReportPlugin}s.
-     * @param defaultReportFilter
-     *            The filter for active default reports identified by their id.
      */
-    public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins, Set<String> defaultReportFilter) {
+    public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins) {
         for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
             String id = entry.getKey();
             ReportPlugin reportPlugin = entry.getValue();
-            if (reportPlugin.getClass().isAnnotationPresent(Default.class)) {
-                if (defaultReportFilter == null || defaultReportFilter.contains(id)) {
-                    defaultReportPlugins.put(id, reportPlugin);
-                }
+            if (reportPlugin.getClass()
+                .isAnnotationPresent(Default.class)) {
+                defaultReportPlugins.put(id, reportPlugin);
             }
             selectableReportPlugins.put(id, reportPlugin);
         }
