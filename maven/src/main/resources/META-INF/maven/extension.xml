@@ -7,9 +7,4 @@
         <exportedPackage>com.sun.jersey</exportedPackage>
         <exportedPackage>org.eclipse.jetty</exportedPackage>
     </exportedPackages>
-    <!--
-    <exportedArtifacts>
-        <exportedArtifact>org.company:myextension</exportedArtifact>
-    </exportedArtifacts>
--->
 </extension>

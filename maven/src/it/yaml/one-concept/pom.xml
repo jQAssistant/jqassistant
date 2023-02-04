@@ -23,9 +23,6 @@
                         <id>analyze</id>
                     </execution>
                 </executions>
-                <configuration>
-                    <failOnSeverity>MINOR</failOnSeverity>
-                </configuration>
             </plugin>
         </plugins>
     </build>

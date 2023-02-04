@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lists all available scopes.
  */
-@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, configurator = "custom")
+@Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableScopesMojo extends AbstractProjectMojo {
 
     private Logger logger = LoggerFactory.getLogger(AvailableScopesMojo.class);

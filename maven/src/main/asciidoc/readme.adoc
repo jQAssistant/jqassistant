@@ -73,7 +73,7 @@ NOTE: The described mechanism is designed to work for Maven module structures wh
 
 ==== Plugin Configuration
 
-The recommended way of configuringthe jQAssistant Maven plugin is using a file `.jqassistant.yml` located in the root directory of the reactor.
+The recommended way of configuring the jQAssistant Maven plugin is using a file `.jqassistant.yml` located in the root directory of the reactor.
 Available options are described in the section <<core:Configuration>>.
 
 Furthermore, the following Maven specific option is supported:
@@ -87,17 +87,23 @@ jqassistant:
     #
     # jqassistant.maven.use-execution-root-as-project-root: true|false
     use-execution-root-as-project-root: false
+
+    # Re-use store instances across all modules of the Maven reactor. Can be set to false for mitigating problems in specific setups,
+    # the jQAssistant Maven plugin will display an according hint when this is necessary.
+    #
+    # jqassistant.maven.reuse-store: true|false
+    reuse-store: true
 ----
 
 TIP: Maven properties (e.g. `project.basedir`) or user properties defined in pom.xml or settings.xml files can be referenced in YAML files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
 
-Alternatively the jQAssistant Maven plugin can be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
+The jQAssistant Maven plugin can be configured in the pom.xml of the root module and should not be overwritten by sub-modules.
 
 .Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
 [source,xml]
 ----
-<project ...>
-    ...
+<project>
+
     <build>
         <plugins>
             <plugin>
@@ -116,109 +122,14 @@ Alternatively the jQAssistant Maven plugin can be configured in the pom.xml of t
                         <extensions>false</extensions>
                         -->
                         <configuration>
-                        <!-- Store/Database -->
                             <!--
-                            <store>
-                                <uri>file:target/jqassistant/store</uri>
-                                <username></username>
-                                <password></password>
-                                <encryption>false</encryption>
-                                <trustStrategy></trustStrategy>
-                                <trustCertificate></trustCertificate>
-                                <embedded>
-                                  <listenAddress>localhost</listenAddress>
-                                  <httpPort>7474</httpPort>
-                                  <boltPort>7687</boltPort>
-                                </embedded>
-                            </store>
-                            <storeLifecycle>REACTOR</storeLifecycle>
-                             -->
-
-                        <!-- Scan -->
-                            <!--
-                            <reset>true</reset>
-                            <scanIncludes>
-                                <scanInclude>
-                                    <path>config</path>
-                                </scanInclude>
-                                <scanInclude>
-                                    <path>${project.build.directory}/extra-classes</path>
-                                    <scope>java:classpath</scope>
-                                </scanInclude>
-                                <scanInclude>
-                                    <url>https://repo1.maven.org/maven2</url>
-                                    <scope>maven:repository</scope>
-                                </scanInclude>
-                            </scanIncludes>
-                            <scanProperties>
-                                <customScanner.property>value</customScanner.property>
-                            </scanProperties>
-                            <continueOnError>false</continueOnError>
-                            -->
-
-                        <!-- Analysis configuration -->
-                            <!--
-                            <warnOnSeverity>MINOR</warnOnSeverity>
-                            <failOnSeverity>MAJOR</failOnSeverity>
-                            <continueOnFailure>true</continueOnFailure>
-                            <concepts>
-                                <concept>junit4:TestClass</concept>
-                            </concepts>
-                            <constraints>
-                                <constraint>junit4:TestMethodWithoutAssertion</constraint>
-                            </constraints>
-                            <groups>
-                                <group>default</group>
-                            </groups>
-                            <ruleParameters>
-                                <myRuleParameter>com.buschmais</myRuleParameter>
-                            </ruleParameters>
-                            <rule>
-                                <defaultConceptSeverity>MINOR</defaultConceptSeverity>
-                                <defaultConstraintSeverity>MAJOR</defaultConstraintSeverity>
-                                <defaultGroupSeverity></defaultGroupSeverity>
-                            </rule>
-                            <rulesDirectory>jqassistant</rulesDirectory>
-                            <rulesDirectories>
-                                <rulesDirectory>${project.build.directory}/generated-rules</rulesDirectory>
-                            </rulesDirectories>
-                            -->
-
-                        <!-- Report -->
-                            <!--
-                            <reportProperties>
-                                <customReport.fileName>
-                                    ${project.build.directory}/customReport.txt
-                                </customReport.fileName>
-                            </reportProperties>
-                            <attachReportArchive>false</attachReportArchive>
-                            <xmlReportFile>${project.build.directory}/jqassistant/jqassistant-report.xml</xmlReportFile>
-                            -->
-
-                        <!-- Misc -->
-                            <!--
-                            <skip>false</skip>
                             <configurationLocations>
-                              <configurationLocation>.jqassistant.yml</configurationLocation>
-                              <configurationLocation>.jqassistant.yaml</configurationLocation>
-                              <configurationLocation>.jqassistant/*.yml</configurationLocation>
-                              <configurationLocation>.jqassistant/*.yaml</configurationLocation>
-                            <configurationLocations>
-                            <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
+                                <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
+                            </configurationLocations>
                             -->
-                         </configuration>
+                        </configuration>
                     </execution>
                 </executions>
-                <!-- Plugins are declared as dependencies of the Maven plugin -->
-                <!--
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jqassistant.contrib.plugin</groupId>
-                        <artifactId>jqassistant-test-impact-analysis-plugin</artifactId>
-                        <version>1.0.0</version>
-                    </dependency>
-                </dependencies>
-                -->
             </plugin>
         </plugins>
     </build>
@@ -245,9 +156,13 @@ Alternatively the jQAssistant Maven plugin can be configured in the pom.xml of t
             </plugin>
         </plugins>
     </reporting>
-    ...
+
 </project>
 ----
+
+configurationLocations (-Djqassistant.configuration.locations)::
+* the list of configuration locations, e.g. files and directories
+* default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
 
 ==== Command Line
 
@@ -287,250 +202,47 @@ mvn jqassistant:available-rules
 
 [[scan]]
 ==== jqassistant:scan
-===== Description
+
 Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
 gathered information in the database.
 
-===== Configuration
-
-* <<skip>>
-* <<useExecutionRootAsProjectRoot>>
-* <<store>>
-* <<storeLifecycle>>
-* reset (-Djqassistant.store.reset)
-** indicates whether the store shall be reset (i.e. cleaned up) before scanning
-** default: 'true'
-* scanIncludes
-** add directories, files or URLs to be included while scanning (optionally qualifed with a scope)
-** wildcards are not supported
-* scanProperties
-** allows passing properties to scanner plugins
-* continueOnError
-** continue scanning even if a plugin fails with an unrecoverable error
-** default: `false`
-
-WARNING: Using 'continueOnError' might create inconsistent data.
-Any reported errors should be reported to the plugin developer.
-
 [[available-scopes]]
 ==== jqassistant:available-scopes
-===== Description
+
 List all available scopes which may be specified for scanInclude properties.
 
 [[reset]]
 ==== jqassistant:reset
-===== Description
-Resets the database by deleting all nodes and relationships.
 
-===== Configuration
-* <<skip>>
-* <<useExecutionRootAsProjectRoot>>
-* <<store>>
-* <<storeLifecycle>>
+Resets the database by deleting all nodes and relationships.
 
 [[server]]
 ==== jqassistant:server
-===== Description
-Starts the integrated Neo4j web server (default address: http://localhost:7474).
 
-===== Configuration
-* <<skip>>
-* <<useExecutionRootAsProjectRoot>>
-* <<store>>
-* <<storeLifecycle>>
+Starts the integrated Neo4j web server (default address: http://localhost:7474).
 
 [[analyze]]
 ==== jqassistant:analyze
-===== Description
+
 Executes an analysis.
 
-===== Configuration
-* <<configurationLocations>>
-* <<skip>>
-* <<useExecutionRootAsProjectRoot>>
-* <<store>>
-* <<storeLifecycle>>
-* <<rule>>
-* <<concepts>>
-* <<constraints>>
-* <<groups>>
-* <<rulesDirectory>>
-* <<rulesDirectories>>
-* <<rulesUrl>>
-* <<xmlReportFile>>
-* warnOnSeverity (-Djqassistant.warnOnSeverity)
-** determines the severity level for reporting a warning.
-** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
-** default: 'minor'
-* failOnSeverity (-Djqassistant.failOnSeverity)
-** determines the severity level for reporting a failure.
-** values: 'info', 'minor', 'major', 'critical', 'blocker' or 'never'
-** default: 'major'
-* continueOnFailure
-** determines if jQAssistant shall continue the build if failures have been detected
-* executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
-** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
-   same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
-** default 'false'
-* ruleParameters
-** The values for rules that require parameters
-* reportProperties
-** The properties to be passed to report plugins
-* attachReportArchive
-** If `true` a ZIP file `jqassistant-report.zip` containing the generated reports is created in the folder
-   `target/jqassistant` of the root module and attached using the classifier `jqassistant-report`.
-
-NOTE: If for a multi-module project the report archive shall be installed into the local repository the https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven Install Plugin]
-      must be configured to use `installAtEnd`.
-      In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
-
+NOTE: If for a multi-module project a report archive shall be created and installed into the local repository the
+https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven Install Plugin] must be configured to use
+`installAtEnd`.
+In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
-===== Description
-List the rules which would be executed for an analysis and the given concepts, constraints or groups.
 
-===== Configuration
-* <<skip>>
-* <<concepts>>
-* <<constraints>>
-* <<groups>>
-* <<useExecutionRootAsProjectRoot>>
-* <<rulesDirectory>>
-* <<rulesDirectories>>
-* <<rulesUrl>>
+List the rules which would be executed for an analysis and the given concepts, constraints or groups.
 
 [[available-rules]]
 ==== jqassistant:available-rules
-===== Description
-List all available rules.
 
-===== Configuration
-* <<skip>>
-* <<useExecutionRootAsProjectRoot>>
-* <<rulesDirectory>>
-* <<rulesDirectories>>
-* <<rulesUrl>>
+List all available rules.
 
 [[report]]
 ==== jqassistant:report
-===== Description
+
 Transforms the XML report into HTML (i.e. for generating a Maven site).
 
-===== Configuration
-* <<xmlReportFile>>
-
-=== Common Configuration Properties
-==== Execution
-
-[[configurationLocations]]
-===== configurationLocations (-Djqassistant.configuration.locations)
-* the list of configuration locations, e.g. files and directories
-* default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
-
-[[skip]]
-===== skip (-Djqassistant.skip)
-* skip execution of the plugin
-* default: 'false'
-
-[[useExecutionRootAsProjectRoot]]
-===== useExecutionRootAsProjectRoot (-Djqassistant.useExecutionRootAsProjectRoot)
-* force the module where 'mvn' is being executed to be used as root module
-** the database will be created in this module and contain all information of the reactor
-** rules will be read from the <<rulesDirectory>> of this module
-* default: 'false'
-
-==== Store
-
-[[store]]
-===== store
-* specifies the configuration of the database to use
-* uri (-Djqassistant.store.uri)
-** URI of the database, supported URI schemes are
-** 'file' for embedded databases, e.g. 'file:target/mystore'
-** 'bolt' for connecting to a running Neo4j instance (3.x+), e.g. 'bolt://localhost:7687'
-* username (-Djqassistant.store.username)
-** the username 'bolt' connections
-* password (-Djqassistant.store.password)
-** the password for 'bolt' connections
-* encryption (-Djqassistant.store.encryption)
-** the encryption level for 'bolt' connections: `false` (default) or `true`
-* trustStrategy (-Djqassistant.store.trustStrategy)
-** the trust strategy for  'bolt' connections: `trustAllCertificates` (default), `trustCustomCaSignedCertificates` or `trustSystemCaSignedCertificates`
-* trustCertificate (-Djqassistant.store.trustCertificate)
-** the file containing the custom CA certificate for trust strategy `trustCustomCaSignedCertificates`
-* default: use embedded database at 'file:{rootModule}/target/jqassistant/store'
-* <<embedded>>
-
-[[embedded]]
-===== embedded
-* the configuration of the embedded Neo4j store
-* listenAddress (-Djqassistant.embedded.listenAddress)
-** the listen address to use for opening BOLT/HTTP connections
-** default: `localhost`
-* httpPort (-Djqassistant.embedded.httpPort)
-** the HTTP port to be used by the Neo4j server
-** default: `7474`
-* boltPort (-Djqassistant.embedded.boltPort)
-** the BOLT port to be used by the Neo4j server
-** default: `7687`
-
-[[storeDirectory]]
-===== storeDirectory (-Djqassistant.store.directory)
-* specifies the location of the database, either a relative path to the root module directory or an absolute path
-* default: '{rootModule}/target/jqassistant/store'
-
-[[storeLifecycle]]
-===== storeLifecycle (-Djqassistant.store.lifecycle)
-* specifies the lifecycle of the data store
-** 'REACTOR': cache the store for the execution time of the reactor for fast execution
-** 'MODULE': open and close the store for each module, slower but required for maven reactors containing extensions
-* default: 'REACTOR'
-
-==== Analysis And Report
-
-[[concepts]]
-===== concepts (-Djqassistant.concepts)
-* specifies the ids of the concepts to be applied
-
-[[constraints]]
-===== constraints (-Djqassistant.constraints)
-* specifies the ids of the constraints to be validated
-
-[[groups]]
-===== groups (-Djqassistant.groups)
-* specifies the ids of the groups to be executed
-* default: 'default'
-
-[[rule]]
-===== rule
-* specifies rule-related settings
-* defaultConceptSeverity
-** the default severity of concepts without an explicit severity
-** default: 'MINOR'
-* defaultConstraintSeverity
-** the default severity of constraints without an explicit severity
-** default: 'MAJOR'
-* defaultGroupSeverity
-** the default severity of groups without an explicit severity
-** default: none
-
-[[rulesDirectory]]
-===== rulesDirectory (-Djqassistant.rules.directory)
-* specifies the name of the directory which contains rules
-* this directory is also used to identify the root module of a project, see <<ProjectScope>>
-* default: 'jqassistant'
-
-[[rulesDirectories]]
-===== rulesDirectories (-Djqassistant.rules.directories)
-* specifies a list of directory names relative to the root module containing additional rules
-
-[[rulesUrl]]
-===== rulesUrl <url> (-Djqassistant.rules.url)
-* specifies the URL of a file containing rules
-* this option is exclusive, i.e. it will disable loading rules from plugins or rule directories
-
-[[xmlReportFile]]
-===== xmlReportFile (-Djqassistant.report.xml)
-* specifies the target file for writing the XML report
-* default: '{rootModule}/target/jqassistant/jqassistant-report.xml'

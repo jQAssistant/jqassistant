@@ -14,7 +14,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Exports the all rules to an XML file.
  */
-@Mojo(name = "export-rules", threadSafe = true, configurator = "custom")
+@Mojo(name = "export-rules", threadSafe = true)
 public class ExportRulesMojo extends AbstractRuleMojo {
 
     @Override

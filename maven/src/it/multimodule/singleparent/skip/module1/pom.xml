@@ -8,6 +8,6 @@
 	<artifactId>@project.artifactId@.integration.multimodule.singleparent.skip.module1</artifactId>
 
 	<properties>
-		<jqassistant.skip>true</jqassistant.skip>
+		<jqa.skip>true</jqa.skip>
 	</properties>
 </project>

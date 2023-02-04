@@ -2,100 +2,24 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
-import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
-import com.buschmais.jqassistant.scm.maven.configuration.mojo.RuleConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Abstract base class for mojo using rules.
  */
 public abstract class AbstractRuleMojo extends AbstractProjectMojo {
-
-    /**
-     * Specifies a list of directory names relative to the root module containing
-     * additional rule files.
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.rules.directories")
-    private List<String> rulesDirectories;
-
-    /**
-     * The URL to retrieve rules.
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.rules.url")
-    private URL rulesUrl;
-
-    /**
-     * The rule configuration
-     *
-     * @deprecated Replaced by the configuration properties "jqassistant.analyze.rule.*".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter
-    private RuleConfiguration rule = new RuleConfiguration();
-
-    /**
-     * The list of concept names to be applied.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.concepts".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.concepts")
-    private List<String> concepts;
-
-    /**
-     * The list of constraint names to be validated.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.constraints".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.constraints")
-    private List<String> constraints;
-
-    /**
-     * The list of group names to be executed.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.groups".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.groups")
-    private List<String> groups;
-
-    @Override
-    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        super.configure(configurationBuilder);
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONCEPT_SEVERITY, rule.getDefaultConceptSeverity());
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_CONSTRAINT_SEVERITY, rule.getDefaultConstraintSeverity());
-        configurationBuilder.with(Rule.class, Rule.DEFAULT_GROUP_SEVERITY, rule.getDefaultGroupSeverity());
-        configurationBuilder.with(Analyze.class, Analyze.CONCEPTS, concepts);
-        configurationBuilder.with(Analyze.class, Analyze.CONSTRAINTS, constraints);
-        configurationBuilder.with(Analyze.class, Analyze.GROUPS, groups);
-    }
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -107,21 +31,11 @@ public abstract class AbstractRuleMojo extends AbstractProjectMojo {
     protected final RuleSet readRules(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
         PluginRepository pluginRepository = getPluginRepository(mojoExecutionContext.getConfiguration());
-        if (rulesUrl != null) {
-            getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
-            sources.add(new UrlRuleSource(rulesUrl));
-        } else {
-            // read rules from rules directory
-            addRuleFiles(sources, mojoExecutionContext.getRuleDirectory());
-            if (rulesDirectories != null) {
-                for (String directory : rulesDirectories) {
-                    addRuleFiles(sources, mojoExecutionContext.getRuleDirectory(directory));
-                }
-            }
-            List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()
-                .getRuleSources();
-            sources.addAll(ruleSources);
-        }
+        // read rules from rules directory
+        addRuleFiles(sources, mojoExecutionContext.getRuleDirectory());
+        List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()
+            .getRuleSources();
+        sources.addAll(ruleSources);
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
             ruleParserPlugins = pluginRepository.getRulePluginRepository()

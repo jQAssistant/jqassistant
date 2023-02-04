@@ -8,17 +8,4 @@
     </parent>
     <artifactId>@project.artifactId@.integration.singlemodule.ruleparameter</artifactId>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <ruleParameters>
-                        <testArtifactId>${project.artifactId}</testArtifactId>
-                    </ruleParameters>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

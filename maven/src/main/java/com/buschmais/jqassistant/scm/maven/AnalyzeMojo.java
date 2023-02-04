@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -19,12 +16,9 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
-import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
@@ -33,7 +27,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.slf4j.Logger;
@@ -44,101 +37,13 @@ import static java.util.Collections.emptyMap;
 /**
  * Runs analysis according to the defined rules.
  */
-@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, configurator = "custom")
+@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class AnalyzeMojo extends AbstractRuleMojo {
 
     public static final String JQASSISTANT_REPORT_CLASSIFIER = "jqassistant-report";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeMojo.class);
 
-    /**
-     * The rule parameters to use (optional).
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.rule-parameters".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.ruleParameters")
-    private Map<String, String> ruleParameters;
-
-    /**
-     * If set also execute concepts which have already been applied.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.execute-applied-concepts".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.executeAppliedConcepts")
-    private Boolean executeAppliedConcepts;
-
-    /**
-     * The severity threshold to warn on rule violations.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.warn-on-severity".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.warnOnSeverity")
-    private Severity.Threshold warnOnSeverity;
-
-    /**
-     * The severity threshold to fail on rule violations.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.fail-on-severity".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.failOnSeverity")
-    private Severity.Threshold failOnSeverity;
-
-    /**
-     * Determines if jQAssistant shall continue the build if failures have been detected.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.continue-on-failure".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.continueOnFailure")
-    private boolean continueOnFailure = false;
-
-    /**
-     * Defines the set of reports which shall be created by default. If empty all
-     * available default reports will be used.
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.reportTypes")
-    private Set<String> reportTypes;
-
-    /**
-     * Defines the properties for report plugins.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.properties".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.reportProperties")
-    private Map<String, Object> reportProperties;
-
-    /**
-     * If `true` a ZIP file `jqassistant-report.zip` containing the generated
-     * reports is created in the folder `target/jqassistant` of the root module and
-     * attached using the classifier `jqassistant-report`.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.report.create-archive".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.attachReportArchive")
-    private boolean attachReportArchive = false;
-
-    /**
-     * The file to write the XML report to.
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.report.xml")
-    private File xmlReportFile;
 
     @Component
     private MavenProjectHelper mavenProjectHelper;
@@ -151,22 +56,6 @@ public class AnalyzeMojo extends AbstractRuleMojo {
     @Override
     protected boolean isConnectorRequired() {
         return false;
-    }
-
-    @Override
-    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        super.configure(configurationBuilder);
-        configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, executeAppliedConcepts);
-        configurationBuilder.with(Analyze.class, Analyze.RULE_PARAMETERS, ruleParameters);
-        Map<String, Object> properties = reportProperties != null ? reportProperties : new HashMap<>();
-        if (xmlReportFile != null) {
-            properties.put(XmlReportPlugin.XML_REPORT_FILE, xmlReportFile.getAbsolutePath());
-        }
-        configurationBuilder.with(Report.class, Report.PROPERTIES, properties);
-        configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, warnOnSeverity != null ? warnOnSeverity.toString() : null);
-        configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, failOnSeverity != null ? failOnSeverity.toString() : null);
-        configurationBuilder.with(Report.class, Report.CONTINUE_ON_FAILURE, continueOnFailure);
-        configurationBuilder.with(Report.class, Report.CREATE_ARCHIVE, attachReportArchive);
     }
 
     @Override
@@ -194,8 +83,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
-        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(
-            new CompositeReportPlugin(reportPlugins, reportTypes.isEmpty() ? null : reportTypes));
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
 
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,

@@ -1,0 +1,4 @@
+jqassistant:
+  analyze:
+    rule:
+      default-group-severity: INFO

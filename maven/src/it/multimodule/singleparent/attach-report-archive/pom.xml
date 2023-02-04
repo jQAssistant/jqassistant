@@ -20,13 +20,6 @@
                     <installAtEnd>true</installAtEnd>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-                <configuration>
-                    <attachReportArchive>true</attachReportArchive>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

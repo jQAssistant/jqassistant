@@ -1,0 +1,3 @@
+jqassistant:
+  store:
+    uri: ${jqa.storeUri:${project.build.directory}/jqassistant/store}

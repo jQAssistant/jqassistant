@@ -11,36 +11,15 @@
     <profiles>
         <profile>
             <id>store1</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <store>
-                                <uri>file:target/store1</uri>
-                            </store>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.storeUri>file:target/store1</jqa.storeUri>
+            </properties>
         </profile>
         <profile>
             <id>store2</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <storeDirectory>target/unusedstore</storeDirectory>
-                            <store>
-                                <uri>file:target/store2</uri>
-                            </store>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.storeUri>file:target/store2</jqa.storeUri>
+            </properties>
         </profile>
     </profiles>
 

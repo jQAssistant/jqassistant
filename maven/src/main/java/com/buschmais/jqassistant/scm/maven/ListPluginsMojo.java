@@ -12,7 +12,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  * Lists all plugins known based on the current configuration
  * to jQAssistant.
  */
-@Mojo(name = "list-plugins", threadSafe = true, configurator = "custom")
+@Mojo(name = "list-plugins", threadSafe = true)
 public class ListPluginsMojo extends AbstractProjectMojo {
 
     @Override

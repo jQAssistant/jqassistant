@@ -1,0 +1,8 @@
+jqassistant:
+  analyze:
+    report:
+      warn-on-severity: ${jqa.warnOnSeverity}
+      fail-on-severity: ${jqa.failOnSeverity}
+      continue-on-failure: ${jqa.continueOnFailure:false}
+      properties:
+        xml.report.file: ${jqa.xmlReportFile}

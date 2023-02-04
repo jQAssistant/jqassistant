@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lists all effective rules.
  */
-@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, configurator = "custom")
+@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EffectiveRulesMojo extends AbstractRuleMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveRulesMojo.class);

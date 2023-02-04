@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lists all available rules.
  */
-@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, configurator = "custom")
+@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableRulesMojo extends AbstractRuleMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesMojo.class);
 

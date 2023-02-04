@@ -9,18 +9,6 @@
     <artifactId>@project.artifactId@.integration.multimodule.singleparent.customruledir</artifactId>
     <packaging>pom</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-                <configuration>
-                    <rulesDirectory>build-config/jqa-rules</rulesDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <modules>
         <module>module1</module>
         <module>module2</module>

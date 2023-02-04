@@ -7,16 +7,4 @@
 	</parent>
 	<artifactId>@project.artifactId@.integration.multimodule.singleparent.skip.module2</artifactId>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

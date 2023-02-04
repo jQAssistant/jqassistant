@@ -1,0 +1,4 @@
+jqassistant:
+  analyze:
+    rule-parameters:
+      testArtifactId: ${project.artifactId}

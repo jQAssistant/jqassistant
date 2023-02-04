@@ -8,7 +8,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Resets the store.
  */
-@Mojo(name = "reset", aggregator = true, requiresProject = false, threadSafe = true, configurator = "custom")
+@Mojo(name = "reset", aggregator = true, requiresProject = false, threadSafe = true)
 public class ResetMojo extends AbstractModuleMojo {
 
     @Override

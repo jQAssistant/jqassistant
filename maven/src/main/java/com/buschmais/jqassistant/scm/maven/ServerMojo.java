@@ -13,7 +13,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Starts an embedded Neo4j server.
  */
-@Mojo(name = "server", threadSafe = true, configurator = "custom")
+@Mojo(name = "server", threadSafe = true)
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override

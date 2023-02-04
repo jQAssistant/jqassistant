@@ -3,8 +3,10 @@
 
 == 2.0.0
 
+* The configuration section has been removed from pom.xml in favor of using the settings in `.jqassistant.yml` and according system properties or environment variables
 * The execution directory of Maven is now used as project root by default (`jqassistant.use-execution-root-as-project-root=true`), i.e. the database will be created in the target directory and the rules will be looked up in the folder `jqassistant/` of the module where the `mvn` command is executed.
 * Removed (undocumented) goal `export-database`
+
 
 == 1.12.0
 

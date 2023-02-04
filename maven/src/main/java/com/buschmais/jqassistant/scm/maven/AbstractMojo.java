@@ -1,21 +1,15 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
-import java.net.URI;
 import java.util.*;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.mojo.EmbeddedNeo4jConfiguration;
-import com.buschmais.jqassistant.scm.maven.configuration.mojo.StoreConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
@@ -35,7 +29,6 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import static com.buschmais.jqassistant.core.shared.option.OptionHelper.coalesce;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -45,10 +38,6 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
-    public static final String PARAMETER_EMBEDDED_LISTEN_ADDRESS = "jqassistant.embedded.listenAddress";
-    public static final String PARAMETER_EMBEDDED_BOLT_PORT = "jqassistant.embedded.boltPort";
-    public static final String PARAMETER_EMBEDDED_HTTP_PORT = "jqassistant.embedded.httpPort";
-
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
     private static String createExecutionKey(MojoExecution mojoExecution) {
@@ -57,161 +46,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         return mojoExecution.getGoal() + "@" + mojoExecution.getExecutionId();
     }
 
-    public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
-
     /**
      * The config locations.
      */
     @Parameter(property = "jqassistant.configuration.locations")
     private List<String> configurationLocations;
-
-    /**
-     * The store directory.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.uri".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.directory")
-    private File storeDirectory;
-
-    /**
-     * The store uri.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.uri".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.uri")
-    private URI storeUri;
-
-    /**
-     * The store user name.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.remote.username".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.username")
-    private String storeUserName;
-
-    /**
-     * The store password.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.remote.password".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.password")
-    private String storePassword;
-
-    /**
-     * The store encryption.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.remote.encryption".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.encryption")
-    private String storeEncryption;
-
-    /**
-     * The store trust strategy.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.remote.trust-strategy".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.trustStrategy")
-    private String storeTrustStrategy;
-
-    /**
-     * The store trust certificate.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.remote.trust-certificate".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.store.trustCertificate")
-    private String storeTrustCertificate;
-
-    /**
-     * The store configuration.
-     *
-     * @deprecated Replaced by the configuration properties "jqassistant.store.*".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter
-    private StoreConfiguration store = new StoreConfiguration();
-
-    /**
-     * The listen address of the embedded server.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.listen-address".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = PARAMETER_EMBEDDED_LISTEN_ADDRESS)
-    private String embeddedListenAddress;
-
-    /**
-     * The bolt port of the embedded server.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.bolt-port".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = PARAMETER_EMBEDDED_BOLT_PORT)
-    private Integer embeddedBoltPort;
-
-    /**
-     * The http port of the embedded server.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.store.embedded.http-port".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = PARAMETER_EMBEDDED_HTTP_PORT)
-    private Integer embeddedHttpPort;
-
-    /**
-     * Determines if the execution root module shall be used as project root, i.e.
-     * to create the store and read the rules from.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.maven.use-execution-root-as-project-root".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.useExecutionRootAsProjectRoot")
-    protected Boolean useExecutionRootAsProjectRoot;
-
-    /**
-     * Specifies the name of the directory containing rule files. It is also used to
-     * identify the root module.
-     *
-     * @deprecated Replaced by the configuration property "jqassistant.analyze.rule.directory".
-     */
-    @Deprecated(forRemoval = true)
-    @ToBeRemovedInVersion(major = 2, minor = 1)
-    @Parameter(property = "jqassistant.rules.directory", defaultValue = MojoExecutionContext.DEFAULT_RULES_DIRECTORY)
-    private String rulesDirectory;
-
-    /**
-     * Skip the execution.
-     */
-    @Parameter(property = "jqassistant.skip", defaultValue = "false")
-    private boolean skip;
-
-    /**
-     * Controls the life cycle of the data store.
-     * <p>
-     * {@link StoreLifecycle#REACTOR} is the default value which provides caching of
-     * the initialized store. There are configurations where this will cause
-     * problems, in such cases {@link StoreLifecycle#MODULE} shall be used.
-     */
-    @Parameter(property = PROPERTY_STORE_LIFECYCLE)
-    protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
 
     /**
      * The Maven Session.
@@ -326,14 +165,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected final void withStore(StoreOperation storeOperation, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
-        Store store = getStore(configuration, () -> storeDirectory != null ?
-            storeDirectory :
-            new File(rootModule.getBuild()
-                .getDirectory(), STORE_DIRECTORY));
+        Store store = getStore(configuration, () -> new File(rootModule.getBuild()
+            .getDirectory(), STORE_DIRECTORY));
         try {
             storeOperation.run(store);
         } finally {
-            releaseStore(store);
+            releaseStore(store, configuration.maven());
         }
     }
 
@@ -371,8 +208,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, getPluginRepository(configuration));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
-                "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
-                    + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
+                "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D" + Maven.REUSE_STORE
+                    + "=false on the command line.");
         }
         return (Store) existingStore;
     }
@@ -382,14 +219,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @param store
      *     The store instance.
+     * @param maven
      */
-    private void releaseStore(Store store) {
-        switch (storeLifecycle) {
-        case MODULE:
+    private void releaseStore(Store store, Maven maven) {
+        if (!maven.reuseStore()) {
             cachingStoreProvider.closeStore(store);
-            break;
-        case REACTOR:
-            break;
         }
     }
 
@@ -400,10 +234,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return The {@link MavenConfiguration}.
      */
-    private MavenConfiguration getConfiguration() throws MojoExecutionException {
+    private MavenConfiguration getConfiguration() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
-        addStoreConfiguration(configurationBuilder);
-        configure(configurationBuilder);
+        if (isConnectorRequired()) {
+            configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, true);
+        }
         File executionRoot = new File(session.getExecutionRootDirectory());
         MavenProjectConfigSource projectConfigSource = new MavenProjectConfigSource(currentProject);
         SettingsConfigSource settingsConfigSource = new SettingsConfigSource(session.getSettings());
@@ -413,41 +248,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         return configurationProvider.getConfiguration(executionRoot, isEmpty(configurationLocations) ? empty() : of(configurationLocations),
             configurationBuilder.build(), projectConfigSource, settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource,
             systemPropertiesConfigSource);
-    }
-
-    /**
-     * Apply store configuration.
-     *
-     * @param configurationBuilder
-     *     The {@link ConfigurationBuilder}.
-     */
-    private void addStoreConfiguration(ConfigurationBuilder configurationBuilder) {
-        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, coalesce(storeUri, store.getUri()));
-        configurationBuilder.with(Remote.class, Remote.USERNAME, coalesce(storeUserName, store.getUsername()));
-        configurationBuilder.with(Remote.class, Remote.PASSWORD, coalesce(storePassword, store.getPassword()));
-        configurationBuilder.with(Remote.class, Remote.ENCRYPTION, coalesce(storeEncryption, store.getEncryption()));
-        configurationBuilder.with(Remote.class, Remote.TRUST_STRATEGY, coalesce(storeTrustStrategy, store.getTrustStrategy()));
-        configurationBuilder.with(Remote.class, Remote.TRUST_CERTIFICATE, coalesce(storeTrustCertificate, store.getTrustCertificate()));
-        configurationBuilder.with(Remote.class, Remote.PROPERTIES, store.getProperties());
-
-        EmbeddedNeo4jConfiguration embedded = store.getEmbedded();
-        configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, coalesce(isConnectorRequired(), embedded.getConnectorEnabled())); //isConnectorRequired has precedence over the user setting
-        configurationBuilder.with(Embedded.class, Embedded.LISTEN_ADDRESS, coalesce(embeddedListenAddress, embedded.getListenAddress()));
-        configurationBuilder.with(Embedded.class, Embedded.BOLT_PORT, coalesce(embeddedBoltPort, embedded.getBoltPort()));
-        configurationBuilder.with(Embedded.class, Embedded.HTTP_PORT, coalesce(embeddedHttpPort, embedded.getHttpPort()));
-    }
-
-    /**
-     * Method to be overridden by sub-classes to add configuration properties.
-     *
-     * @param configurationBuilder
-     *     The {@link ConfigurationBuilder}.
-     */
-    protected void configure(ConfigurationBuilder configurationBuilder) throws MojoExecutionException {
-        configurationBuilder.with(MavenConfiguration.class, MavenConfiguration.SKIP, skip);
-        configurationBuilder.with(Maven.class, Maven.USE_EXECUTION_ROOT_AS_PROJECT_ROOT, useExecutionRootAsProjectRoot);
-        configurationBuilder.with(Rule.class, Rule.DIRECTORY, rulesDirectory);
     }
 
     /**

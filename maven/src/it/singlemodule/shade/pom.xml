@@ -8,17 +8,12 @@
     </parent>
     <artifactId>@project.artifactId@.integration.singlemodule.shade</artifactId>
 
+    <properties>
+        <jqa.ruleDir>${project.basedir}/jqassistant</jqa.ruleDir>
+    </properties>
+
     <build>
         <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <failOnSeverity>minor</failOnSeverity>
-                    <rulesDirectory>${project.basedir}/jqassistant</rulesDirectory>
-                    <storeDirectory>${project.build.directory}/jqassistant/store</storeDirectory>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

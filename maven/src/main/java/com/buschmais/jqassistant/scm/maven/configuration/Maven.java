@@ -14,4 +14,9 @@ public interface Maven {
     @WithDefault("true")
     boolean useExecutionRootAsProjectRoot();
 
+    String REUSE_STORE = "reuse-store";
+
+    @WithDefault("true")
+    @Description("Re-use store instances across all modules of the Maven reactor. Can be set to false for mitigating problems in specific setups, the jQAssistant Maven plugin will display an according hint when this is required.")
+    boolean reuseStore();
 }

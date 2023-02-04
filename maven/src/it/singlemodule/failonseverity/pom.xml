@@ -9,20 +9,4 @@
 
     <artifactId>@project.artifactId@.integration.singlemodule.failonseverity</artifactId>
 
-    <properties>
-        <prop.failOnSeverity>INVALID_VALUE</prop.failOnSeverity>
-    </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <failOnSeverity>${prop.failOnSeverity}</failOnSeverity>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

@@ -8,18 +8,4 @@
     </parent>
     <artifactId>@project.artifactId@.integration.singlemodule.defaultseverity</artifactId>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <configuration>
-                    <rule>
-                        <defaultGroupSeverity>INFO</defaultGroupSeverity>
-                    </rule>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

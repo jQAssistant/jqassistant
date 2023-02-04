@@ -11,64 +11,36 @@
     <profiles>
         <profile>
             <id>failOnSeverity</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <warnOnSeverity>MINOR</warnOnSeverity>
-                            <failOnSeverity>MINOR</failOnSeverity>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.warnOnSeverity>MINOR</jqa.warnOnSeverity>
+                <jqa.failOnSeverity>MINOR</jqa.failOnSeverity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.1.xml</jqa.xmlReportFile>
+            </properties>
         </profile>
         <profile>
             <id>failOnSeverityWithLowerCaseLetters</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <warnOnSeverity>minor</warnOnSeverity>
-                            <failOnSeverity>major</failOnSeverity>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.warnOnSeverity>minor</jqa.warnOnSeverity>
+                <jqa.failOnSeverity>major</jqa.failOnSeverity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.2.xml</jqa.xmlReportFile>
+            </properties>
         </profile>
         <profile>
             <id>continueOnFailureDisabled</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <warnOnSeverity>info</warnOnSeverity>
-                            <failOnSeverity>info</failOnSeverity>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.warnOnSeverity>info</jqa.warnOnSeverity>
+                <jqa.failOnSeverity>info</jqa.failOnSeverity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.3.xml</jqa.xmlReportFile>
+            </properties>
         </profile>
         <profile>
             <id>continueOnFailureEnabled</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>@project.groupId@</groupId>
-                        <artifactId>@project.artifactId@</artifactId>
-                        <configuration>
-                            <warnOnSeverity>info</warnOnSeverity>
-                            <failOnSeverity>info</failOnSeverity>
-                            <continueOnFailure>true</continueOnFailure>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <jqa.warnOnSeverity>info</jqa.warnOnSeverity>
+                <jqa.failOnSeverity>info</jqa.failOnSeverity>
+                <jqa.continueOnFailure>true</jqa.continueOnFailure>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.4.xml</jqa.xmlReportFile>
+            </properties>
         </profile>
     </profiles>
 </project>
