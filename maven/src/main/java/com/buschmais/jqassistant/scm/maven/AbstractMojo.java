@@ -11,12 +11,12 @@ import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConfigSource;
+import com.buschmais.jqassistant.scm.maven.configuration.source.MavenPropertiesConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
-import io.smallrye.config.PropertiesConfigSource;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -242,9 +242,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         File executionRoot = new File(session.getExecutionRootDirectory());
         MavenProjectConfigSource projectConfigSource = new MavenProjectConfigSource(currentProject);
         SettingsConfigSource settingsConfigSource = new SettingsConfigSource(session.getSettings());
-        PropertiesConfigSource projectPropertiesConfigSource = new PropertiesConfigSource(currentProject.getProperties(), "Maven Project Properties");
-        PropertiesConfigSource userPropertiesConfigSource = new PropertiesConfigSource(session.getUserProperties(), "Maven Session User Properties ");
-        PropertiesConfigSource systemPropertiesConfigSource = new PropertiesConfigSource(session.getSystemProperties(), "Maven Session System Properties");
+        MavenPropertiesConfigSource projectPropertiesConfigSource = new MavenPropertiesConfigSource(currentProject.getProperties(), "Maven Project Properties");
+        MavenPropertiesConfigSource userPropertiesConfigSource = new MavenPropertiesConfigSource(session.getUserProperties(), "Maven Session User Properties ");
+        MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
+            "Maven Session System Properties");
         return configurationProvider.getConfiguration(executionRoot, isEmpty(configurationLocations) ? empty() : of(configurationLocations),
             configurationBuilder.build(), projectConfigSource, settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource,
             systemPropertiesConfigSource);
