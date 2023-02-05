@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.commandline;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
@@ -22,6 +25,7 @@ import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
+import io.smallrye.config.SysPropConfigSource;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,13 +242,12 @@ public class Main {
 
         Optional<List<String>> configLocations = getConfigLocations(commandLine);
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, configLocations);
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build(), new SysPropConfigSource());
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
             PluginRepository pluginRepository = getPluginRepository(configuration);
-            Map<String, Object> properties = readProperties(commandLine);
-            executeTasks(tasks, configuration, pluginRepository, properties);
+            executeTasks(tasks, configuration, pluginRepository);
         }
     }
 
@@ -256,12 +259,12 @@ public class Main {
         return empty();
     }
 
-    private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)
+    private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository)
         throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
-                executeTask(task, configuration, pluginRepository, properties);
+                executeTask(task, configuration, pluginRepository);
             }
         } finally {
             pluginRepository.destroy();
@@ -296,53 +299,12 @@ public class Main {
      *     The task.
      * @param configuration
      *     The {@link CliConfiguration}-
-     * @param properties
-     *     The plugin properties
      * @throws IOException
      */
-    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, Map<String, Object> properties)
+    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository)
         throws CliExecutionException {
-        task.initialize(pluginRepository, properties);
+        task.initialize(pluginRepository);
         task.run(configuration);
-    }
-
-    /**
-     * Read the plugin properties file if specified on the command line or if it exists on the class path.
-     *
-     * @param commandLine
-     *     The command line.
-     * @return The plugin properties.
-     * @throws CliConfigurationException
-     *     If an error occurs.
-     */
-    private Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
-        final Properties properties = new Properties();
-        InputStream propertiesStream;
-        if (commandLine.hasOption("p")) {
-            File propertyFile = new File(commandLine.getOptionValue("p"));
-            if (!propertyFile.exists()) {
-                throw new CliConfigurationException("Property file given by command line does not exist: " + propertyFile.getAbsolutePath());
-            }
-            try {
-                propertiesStream = new FileInputStream(propertyFile);
-            } catch (FileNotFoundException e) {
-                throw new CliConfigurationException("Cannot open property file.", e);
-            }
-        } else {
-            propertiesStream = Main.class.getResourceAsStream("/jqassistant.properties");
-        }
-        Map<String, Object> result = new HashMap<>();
-        if (propertiesStream != null) {
-            try {
-                properties.load(propertiesStream);
-            } catch (IOException e) {
-                throw new CliConfigurationException("Cannot load properties from file.", e);
-            }
-            for (String name : properties.stringPropertyNames()) {
-                result.put(name, properties.getProperty(name));
-            }
-        }
-        return result;
     }
 
     /**

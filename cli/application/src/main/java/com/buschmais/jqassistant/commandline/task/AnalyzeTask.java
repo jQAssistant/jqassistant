@@ -148,7 +148,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         reportDirectory = new File(reportDirectoryValue);
         reportDirectory.mkdirs();
         configurationBuilder.with(Analyze.class, Analyze.EXECUTE_APPLIED_CONCEPTS, options.hasOption(CMDLINE_OPTION_EXECUTE_APPLIED_CONCEPTS));
-        configurationBuilder.with(Report.class, Report.PROPERTIES, pluginProperties);
         configurationBuilder.with(Report.class, Report.WARN_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_WARN_ON_SEVERITY));
         configurationBuilder.with(Report.class, Report.FAIL_ON_SEVERITY, getOptionValue(options, CMDLINE_OPTION_FAIL_ON_SEVERITY));
         configurationBuilder.with(Report.class, Report.CONTINUE_ON_FAILURE, options.hasOption(CMDLINE_OPTION_CONTINUE_ON_FAILURE));

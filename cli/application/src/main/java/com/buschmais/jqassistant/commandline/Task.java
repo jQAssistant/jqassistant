@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.commandline;
 
-import java.util.Map;
-
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 
@@ -19,7 +17,7 @@ public interface Task extends OptionsProvider, OptionsConsumer {
 
     String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException;
+    void initialize(PluginRepository pluginRepository) throws CliExecutionException;
 
     void run(CliConfiguration configuration) throws CliExecutionException;
 }

@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.commandline.task;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
@@ -80,7 +79,7 @@ class ServerTaskTest {
         CommandLineParser parser = new BasicParser();
         CommandLine commandLine = parser.parse(options, arguments);
 
-        serverTask.initialize(pluginRepository, new HashMap<>());
+        serverTask.initialize(pluginRepository);
         serverTask.configure(commandLine, mock(ConfigurationBuilder.class));
         serverTask.run(configuration);
     }

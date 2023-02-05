@@ -2,8 +2,6 @@ package com.buschmais.jqassistant.commandline.task;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
@@ -95,8 +93,7 @@ class AnalyzeTaskTest {
     @Test
     void loadPlugins() throws CliExecutionException, RuleException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
-        Map<String, Object> pluginProperties = new HashMap<>();
-        analyzeTask.initialize(pluginRepository, pluginProperties);
+        analyzeTask.initialize(pluginRepository);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
         analyzeTask.configure(options, mock(ConfigurationBuilder.class));
