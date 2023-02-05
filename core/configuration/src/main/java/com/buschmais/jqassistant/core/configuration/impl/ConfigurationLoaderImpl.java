@@ -59,8 +59,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     public <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources) {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
             .withSources(yamlConfigSources)
-            .withSources(new EnvConfigSource() {
-            }, new SysPropConfigSource())
+            .withSources(new EnvConfigSource() {})
             .withSources(configSources)
             .withValidateUnknown(false)
             .withInterceptors(new ExpressionConfigSourceInterceptor())
@@ -125,7 +124,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
         try {
             URL url = path.toUri()
                 .toURL();
-            return new YamlConfigSource(url);
+            return new YamlConfigSource(url, 100);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

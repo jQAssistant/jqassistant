@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
+import io.smallrye.config.SysPropConfigSource;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
@@ -101,6 +102,6 @@ class ConfigurationLoaderImplTest {
 
     private Configuration getConfiguration(Optional<List<String>> configLocations) {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(WORKING_DIRECTORY, configLocations);
-        return configurationLoader.load(Configuration.class);
+        return configurationLoader.load(Configuration.class, new SysPropConfigSource());
     }
 }
