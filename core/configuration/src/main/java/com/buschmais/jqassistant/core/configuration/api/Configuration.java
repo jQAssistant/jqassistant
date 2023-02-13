@@ -52,4 +52,11 @@ public interface Configuration {
      * @return The {@link Analyze} configuration.
      */
     Analyze analyze();
+
+    /**
+     * The {@link Server} configuration.
+     *
+     * @return The {@link Server} configuration.
+     */
+    Server server();
 }
