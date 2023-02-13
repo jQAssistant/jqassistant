@@ -49,18 +49,6 @@ public abstract class AbstractTask implements Task {
         return defaultValues;
     }
 
-    protected String getOptionValue(CommandLine options, String option) {
-        return getOptionValue(options, option, null);
-    }
-
-    protected String getOptionValue(CommandLine options, String option, String defaultValue) {
-        if (options.hasOption(option)) {
-            return options.getOptionValue(option);
-        } else {
-            return defaultValue;
-        }
-    }
-
     protected abstract void addTaskOptions(List<Option> options);
 
 }

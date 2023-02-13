@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.commandline;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 
+import org.apache.commons.cli.Options;
+
 /**
  * @author jn4, Kontext E GmbH, 17.02.14
  */
@@ -19,5 +21,5 @@ public interface Task extends OptionsProvider, OptionsConsumer {
 
     void initialize(PluginRepository pluginRepository) throws CliExecutionException;
 
-    void run(CliConfiguration configuration) throws CliExecutionException;
+    void run(CliConfiguration configuration, Options options) throws CliExecutionException;
 }

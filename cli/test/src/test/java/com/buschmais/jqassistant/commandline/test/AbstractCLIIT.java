@@ -117,19 +117,19 @@ public abstract class AbstractCLIIT {
                    SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
         String jqaHomeProperty = properties.getProperty("jqassistant.home");
         String projectVersionProperty = properties.getProperty("project.version");
-        String jqaHhome = new File(jqaHomeProperty + "jqassistant-commandline-distribution-" + projectVersionProperty).getAbsolutePath();
+        String jqaHome = new File(jqaHomeProperty + "jqassistant-commandline-distribution-" + projectVersionProperty).getAbsolutePath();
         List<String> command = new ArrayList<>();
         if (SystemUtils.IS_OS_WINDOWS) {
             command.add("cmd.exe");
             command.add("/C");
-            command.add(jqaHhome + "\\bin\\jqassistant.cmd");
+            command.add(jqaHome + "\\bin\\jqassistant.cmd");
         } else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
-            command.add(jqaHhome + "/bin/jqassistant.sh");
+            command.add(jqaHome + "/bin/jqassistant.sh");
         }
         command.addAll(asList(args));
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
-        environment.put("JQASSISTANT_HOME", jqaHhome);
+        environment.put("JQASSISTANT_HOME", jqaHome);
 //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();

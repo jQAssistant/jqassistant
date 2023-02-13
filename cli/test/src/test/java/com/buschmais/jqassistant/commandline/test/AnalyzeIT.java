@@ -21,51 +21,55 @@ class AnalyzeIT extends AbstractCLIIT {
 
     @Test
     public void defaultGroup() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     public void customGroup() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", CUSTOM_GROUP };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.groups=" + CUSTOM_GROUP };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
     @Test
     void constraint() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     void concept() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.concepts=" + TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
     }
 
     @Test
     void conceptWithParameter() throws IOException, InterruptedException {
-        File ruleParameters = new File(AnalyzeIT.class.getResource("/ruleparameters.properties").getPath());
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT_WITH_PARAMETER, "-ruleParameters",
-                ruleParameters.getAbsolutePath() };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.concepts=" + TEST_CONCEPT_WITH_PARAMETER, "-D", "jqassistant.analyze.rule-parameters.\\\"testParam\\\"=TestValue" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT_WITH_PARAMETER));
     }
 
     @Test
     void constraintFailOnSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.fail-on-severity=major" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     void continueOnFailure() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "major" , "-continueOnFailure"};
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.continue-on-failure=true" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
@@ -78,8 +82,9 @@ class AnalyzeIT extends AbstractCLIIT {
      */
     @Test
     void constraintWarnOnSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-warnOnSeverity", "major", "-failOnSeverity",
-                "critical" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "-Djqassistant.analyze.warn-on-severity=major", "-D",
+            "jqassistant.analyze.report.fail-on-severity=critical" };
         ExecutionResult executionResult = execute(args);
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
@@ -91,31 +96,34 @@ class AnalyzeIT extends AbstractCLIIT {
 
     @Test
     void defaultConstraintSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-failOnSeverity", "minor",
-                "-defaultConstraintSeverity", "info" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.fail-on-severity=minor", "-D",
+            "jqassistant.analyze.rule.default-constraint-severity=info" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     void defaultGroupSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-failOnSeverity", "minor", "-defaultGroupSeverity", "info" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.report.fail-on-severity=minor", "-D", "jqassistant.analyze.rule.default-group-severity=info" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
-    void storeDirectory() throws IOException, InterruptedException {
+    void storeUri() throws IOException, InterruptedException {
         File customStoreDir = new File(getWorkingDirectory(), "customStore");
-        String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDir.getAbsolutePath() };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.store.uri=" + customStoreDir.toURI() };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(customStoreDir, store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
     void createReportArchive() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-createReportArchive" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY,
+            "-Djqassistant.analyze.report.create-archive" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
@@ -124,14 +132,14 @@ class AnalyzeIT extends AbstractCLIIT {
      * Verifies if the database contains the given concepts.
      *
      * @param store
-     *            The {@link Store}.
+     *     The {@link Store}.
      * @param concepts
-     *            The concepts
+     *     The concepts
      */
     private void verifyConcepts(Store store, String... concepts) {
         for (String concept : concepts) {
             assertThat(isConceptPresent(store, concept)).withFailMessage("Expecting a result for %s", concept)
-                                                        .isTrue();
+                .isTrue();
         }
     }
 
@@ -139,9 +147,9 @@ class AnalyzeIT extends AbstractCLIIT {
      * Determine if a specific concept is in the database.
      *
      * @param store
-     *            The store
+     *     The store
      * @param concept
-     *            The concept
+     *     The concept
      * @return <code>true</code> if the concept is represented in the database.
      */
     private boolean isConceptPresent(Store store, String concept) {
@@ -150,7 +158,8 @@ class AnalyzeIT extends AbstractCLIIT {
         params.put("concept", concept);
         Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params);
         assertThat(result.hasResult()).isTrue();
-        Long count = result.getSingleResult().get("count", Long.class);
+        Long count = result.getSingleResult()
+            .get("count", Long.class);
         store.commitTransaction();
         return count == 1;
     }

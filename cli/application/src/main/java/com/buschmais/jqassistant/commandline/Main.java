@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
-import com.buschmais.jqassistant.commandline.task.DefaultTaskFactoryImpl;
+import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
@@ -25,12 +25,14 @@ import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
+import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
@@ -47,12 +49,7 @@ public class Main {
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
 
-    private static final String CMDLINE_OPTION_HELP = "-help";
-    private static final String CMDLINE_OPTION_SKIP = "-skip";
-
     private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
-
-    private final TaskFactory taskFactory;
 
     /**
      * The main method.
@@ -64,23 +61,12 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            TaskFactory taskFactory = new DefaultTaskFactoryImpl();
-            new Main(taskFactory).run(args);
+            new Main().run(args);
         } catch (CliExecutionException e) {
             String message = getErrorMessage(e);
             LOGGER.error(message);
             System.exit(e.getExitCode());
         }
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param taskFactory
-     *     The task factory to use.
-     */
-    public Main(TaskFactory taskFactory) {
-        this.taskFactory = taskFactory;
     }
 
     /**
@@ -92,9 +78,9 @@ public class Main {
      *     If execution fails.
      */
     public void run(String[] args) throws CliExecutionException {
-        Options options = gatherOptions(taskFactory);
+        Options options = gatherOptions();
         CommandLine commandLine = getCommandLine(args, options);
-        interpretCommandLine(commandLine, options, taskFactory);
+        interpretCommandLine(commandLine, options);
     }
 
     /**
@@ -140,9 +126,9 @@ public class Main {
      *
      * @return The options.
      */
-    private Options gatherOptions(TaskFactory taskFactory) {
+    private Options gatherOptions() {
         final Options options = new Options();
-        gatherTasksOptions(taskFactory, options);
+        gatherTasksOptions(options);
         gatherStandardOptions(options);
         return options;
     }
@@ -155,19 +141,17 @@ public class Main {
      */
     @SuppressWarnings("static-access")
     private void gatherStandardOptions(final Options options) {
-        options.addOption(Option.builder()
+        options.addOption(Option.builder("C")
             .longOpt("configurationLocations")
             .desc("The list of configuration locations, i.e. YAML files and directories")
             .hasArgs()
             .valueSeparator(',')
             .build());
-        options.addOption(OptionBuilder.withArgName("p")
-            .withDescription("Path to property file; default is jqassistant.properties in the class path")
-            .withLongOpt("properties")
-            .hasArg()
-            .create("p"));
-        options.addOption(new Option("help", "Print this message"));
-        options.addOption(new Option("skip", "Skip execution"));
+        options.addOption(Option.builder("D")
+            .desc("Additional configuration property.")
+            .hasArgs()
+            .valueSeparator('=')
+            .build());
     }
 
     /**
@@ -176,28 +160,12 @@ public class Main {
      * @param options
      *     The task specific options.
      */
-    private void gatherTasksOptions(TaskFactory taskFactory, Options options) {
-        for (Task task : taskFactory.getTasks()) {
+    private void gatherTasksOptions(Options options) {
+        for (Task task : RegisteredTask.getTasks()) {
             for (Option option : task.getOptions()) {
                 options.addOption(option);
             }
         }
-    }
-
-    /**
-     * Returns a string containing the names of all supported tasks.
-     *
-     * @return The names of all supported tasks.
-     */
-    private String gatherTaskNames(TaskFactory taskFactory) {
-        final StringBuilder builder = new StringBuilder();
-        for (String taskName : taskFactory.getTaskNames()) {
-            builder.append("'")
-                .append(taskName)
-                .append("' ");
-        }
-        return builder.toString()
-            .trim();
     }
 
     /**
@@ -210,45 +178,40 @@ public class Main {
      * @throws CliExecutionException
      *     If an error occurs.
      */
-    private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
-        if (commandLine.hasOption(CMDLINE_OPTION_HELP)) {
-            printUsage(options, null);
-            System.exit(1);
-        }
-
-        List<String> taskNames = commandLine.getArgList();
-        if (taskNames.isEmpty()) {
-            printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
-            System.exit(1);
-        }
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
-        configurationBuilder.with(CliConfiguration.class, CliConfiguration.SKIP, commandLine.hasOption(CMDLINE_OPTION_SKIP));
-
-        List<Task> tasks = new ArrayList<>();
-        for (String taskName : taskNames) {
-            Task task = taskFactory.fromName(taskName);
-            try {
-                task.configure(commandLine, configurationBuilder);
-            } catch (CliConfigurationException e) {
-                printUsage(options, e.getMessage());
-                System.exit(1);
-            }
-            if (task == null) {
-                printUsage(options, "Unknown task " + taskName);
-            }
-            tasks.add(task);
-        }
+    private void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         File workingDirectory = new File(".");
-
         Optional<List<String>> configLocations = getConfigLocations(commandLine);
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, configLocations);
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build(), new SysPropConfigSource());
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
+        PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build(), new SysPropConfigSource(),
+            commandLineProperties);
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
+            List<String> taskNames = commandLine.getArgList();
+            List<Task> tasks = getTasks(taskNames, commandLine, configurationBuilder);
             PluginRepository pluginRepository = getPluginRepository(configuration);
-            executeTasks(tasks, configuration, pluginRepository);
+            executeTasks(tasks, configuration, pluginRepository, options);
         }
+    }
+
+    private List<Task> getTasks(List<String> taskNames, CommandLine commandLine, ConfigurationBuilder configurationBuilder) {
+        if (taskNames.isEmpty()) {
+            return singletonList(RegisteredTask.HELP.getTask());
+        }
+        List<Task> tasks = new ArrayList<>(taskNames.size());
+        for (String taskName : taskNames) {
+            try {
+                Task task = RegisteredTask.fromName(taskName);
+                task.configure(commandLine, configurationBuilder);
+                tasks.add(task);
+            } catch (CliExecutionException e) {
+                printUsage(e.getMessage());
+                System.exit(1);
+            }
+        }
+        return tasks;
     }
 
     private Optional<List<String>> getConfigLocations(CommandLine commandLine) {
@@ -259,12 +222,12 @@ public class Main {
         return empty();
     }
 
-    private void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository)
+    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Options options)
         throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
-                executeTask(task, configuration, pluginRepository);
+                executeTask(task, configuration, pluginRepository, options);
             }
         } finally {
             pluginRepository.destroy();
@@ -286,7 +249,7 @@ public class Main {
         try {
             commandLine = parser.parse(options, args);
         } catch (ParseException e) {
-            printUsage(options, e.getMessage());
+            printUsage(e.getMessage());
             System.exit(1);
         }
         return commandLine;
@@ -299,31 +262,24 @@ public class Main {
      *     The task.
      * @param configuration
      *     The {@link CliConfiguration}-
+     * @param options
      * @throws IOException
      */
-    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository)
-        throws CliExecutionException {
+    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, Options options) throws CliExecutionException {
         task.initialize(pluginRepository);
-        task.run(configuration);
+        task.run(configuration, options);
     }
 
     /**
      * Print usage information.
      *
-     * @param options
-     *     The known options.
      * @param errorMessage
      *     The error message to append.
      */
-    private void printUsage(final Options options, final String errorMessage) {
+    private void printUsage(final String errorMessage) {
         if (errorMessage != null) {
             System.out.println("Error: " + errorMessage);
         }
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.setWidth(120);
-        formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
-        System.out.println("Tasks are: " + gatherTaskNames(taskFactory));
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
     /**

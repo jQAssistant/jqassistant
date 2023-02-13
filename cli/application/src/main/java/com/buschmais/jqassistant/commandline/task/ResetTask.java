@@ -1,11 +1,9 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.util.List;
-
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 
-import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +20,7 @@ public class ResetTask extends AbstractStoreTask {
     }
 
     @Override
-    protected void addTaskOptions(List<Option> options) {
-    }
-
-    @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             LOGGER.info("Resetting store.");
             store.reset();
