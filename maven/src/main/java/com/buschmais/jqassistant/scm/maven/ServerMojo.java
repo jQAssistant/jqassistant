@@ -37,13 +37,15 @@ public class ServerMojo extends AbstractProjectMojo {
         EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
         server.start();
         getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
-        getLog().info("Press <Enter> to finish.");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            throw new MojoExecutionException("Cannot read from System.in.", e);
-        } finally {
-            server.stop();
+        if (!mojoExecutionContext.getConfiguration().server().daemon()) {
+            getLog().info("Press <Enter> to finish.");
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Cannot read from System.in.", e);
+            } finally {
+                server.stop();
+            }
         }
     }
 }
