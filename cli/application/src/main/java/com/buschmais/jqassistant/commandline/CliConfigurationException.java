@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.commandline;
 /**
  * @author jn4, Kontext E GmbH, 17.02.14
  */
-public class CliConfigurationException extends com.buschmais.jqassistant.commandline.CliExecutionException {
+public class CliConfigurationException extends CliExecutionException {
     /**
      * The serial version UID.
      */
@@ -11,9 +11,9 @@ public class CliConfigurationException extends com.buschmais.jqassistant.command
 
     /**
      * Constructor.
-     * 
+     *
      * @param message
-     *            The message.
+     *     The message.
      */
     public CliConfigurationException(final String message) {
         super(message);
@@ -23,9 +23,9 @@ public class CliConfigurationException extends com.buschmais.jqassistant.command
      * Constructor.
      *
      * @param message
-     *            The message.
+     *     The message.
      * @param cause
-     *            The cause.
+     *     The cause.
      */
     public CliConfigurationException(final String message, final Throwable cause) {
         super(message, cause);

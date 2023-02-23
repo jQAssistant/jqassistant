@@ -6,6 +6,7 @@ import java.io.InputStream;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.configuration.api.Server;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -27,20 +28,24 @@ class ServerTaskTest {
     private CliConfiguration configuration;
 
     @Mock
+    private Server server;
+
+    @Mock
     private PluginRepository pluginRepository;
 
     @Mock
     private EmbeddedGraphStore store;
 
     @Mock
-    private EmbeddedNeo4jServer server;
+    private EmbeddedNeo4jServer embeddedNeo4jServer;
 
     private ServerTask serverTask;
 
     @BeforeEach
     final void setUp() {
-        doReturn(server).when(store)
+        doReturn(embeddedNeo4jServer).when(store)
             .getServer();
+        doReturn(server).when(configuration).server();
         serverTask = new ServerTask() {
             protected Store getStore(CliConfiguration configuration) {
                 return store;
@@ -50,9 +55,12 @@ class ServerTaskTest {
 
     @Test
     void daemon() throws CliExecutionException, ParseException {
-        startServer("-daemon");
+        doReturn(true).when(server).daemon();
 
-        verify(server).start();
+        startServer();
+
+        verify(embeddedNeo4jServer).start();
+        verify(embeddedNeo4jServer, never()).stop();
     }
 
     @Test
@@ -67,8 +75,8 @@ class ServerTaskTest {
 
         }
 
-        verify(server).start();
-        verify(server).stop();
+        verify(embeddedNeo4jServer).start();
+        verify(embeddedNeo4jServer).stop();
     }
 
     private void startServer(String... arguments) throws ParseException, CliExecutionException {
@@ -81,7 +89,7 @@ class ServerTaskTest {
 
         serverTask.initialize(pluginRepository);
         serverTask.configure(commandLine, mock(ConfigurationBuilder.class));
-        serverTask.run(configuration);
+        serverTask.run(configuration, options);
     }
 
 }

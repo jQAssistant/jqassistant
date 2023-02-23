@@ -1,18 +1,13 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.io.IOException;
-import java.util.List;
 
-import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ServerTask extends AbstractStoreTask {
 
-    private static final String CMDLINE_OPTION_DAEMON = "daemon";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
-
-    private Boolean runAsDaemon;
 
     @Override
     protected boolean isConnectorRequired() {
@@ -33,13 +24,13 @@ public class ServerTask extends AbstractStoreTask {
     }
 
     @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
             EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
             server.start();
             LOGGER.info("Running server");
-            if (runAsDaemon) {
+            if (configuration.server().daemon()) {
                 // let the neo4j daemon do the job
                 LOGGER.info("Running server. Use <Ctrl-C> to stop server.");
             } else {
@@ -54,18 +45,5 @@ public class ServerTask extends AbstractStoreTask {
             }
             ;
         });
-    }
-
-    @Override
-    public void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_DAEMON)
-            .withDescription("Do not wait for <Enter> on standard input to stop the server.")
-            .create(CMDLINE_OPTION_DAEMON));
-    }
-
-    @Override
-    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
-        super.configure(options, configurationBuilder);
-        runAsDaemon = options.hasOption(CMDLINE_OPTION_DAEMON);
     }
 }

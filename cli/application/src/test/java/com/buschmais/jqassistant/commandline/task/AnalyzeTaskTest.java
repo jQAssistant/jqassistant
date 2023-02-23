@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,7 +101,7 @@ class AnalyzeTaskTest {
         CommandLine standardOptions = mock(CommandLine.class);
         stubOption(standardOptions, "s", "target/jqassistant/test/store");
 
-        analyzeTask.run(configuration);
+        analyzeTask.run(configuration, mock(Options.class));
 
         verify(analyzerPluginRepository).getReportPlugins(eq(report), any(ReportContext.class));
         verify(storePluginRepository).getDescriptorTypes();

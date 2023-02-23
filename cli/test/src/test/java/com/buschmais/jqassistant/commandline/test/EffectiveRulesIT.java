@@ -14,8 +14,7 @@ class EffectiveRulesIT extends AbstractCLIIT {
 
     @Test
     void defaultGroup() throws IOException, InterruptedException {
-        String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "effective-rules", "-r", rulesDirectory };
+        String[] args = new String[] { "effective-rules", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
@@ -27,8 +26,8 @@ class EffectiveRulesIT extends AbstractCLIIT {
 
     @Test
     void customGroup() throws IOException, InterruptedException {
-        String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-groups", CUSTOM_GROUP };
+        String[] args = new String[] { "effective-rules", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.groups=" + CUSTOM_GROUP };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
@@ -40,8 +39,10 @@ class EffectiveRulesIT extends AbstractCLIIT {
 
     @Test
     void concept() throws IOException, InterruptedException {
-        String rulesDirectory = EffectiveRulesIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "effective-rules", "-r", rulesDirectory, "-concepts", "junit4:TestMethod" };
+        String rulesDirectory = EffectiveRulesIT.class.getResource("/rules")
+            .getFile();
+        String[] args = new String[] { "effective-rules", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.concepts=junit4:TestMethod" };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isEqualTo(0);
 

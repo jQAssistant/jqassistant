@@ -1,56 +1,54 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.commandline.TaskFactory;
+import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 
+import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.junitpioneer.jupiter.SetSystemProperty;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Verifies functionality of the main class.
  */
-@ExtendWith(MockitoExtension.class)
 @ClearSystemProperty(key = "jqassistant.skip") // might be given as system property to Maven
 class MainTest {
-
-    @Mock
-    private TaskFactory taskFactory;
-
-    @Mock
-    private Task task;
 
     private Main main;
 
     @BeforeEach
-    void setUp() throws CliExecutionException {
-        when(taskFactory.fromName("test")).thenReturn(task);
-        this.main = new Main(taskFactory);
+    void setUp() {
+        this.main = new com.buschmais.jqassistant.commandline.Main() {
+            @Override
+            protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Options options) {
+                fail("(No task must be executed");
+            }
+        };
+    }
+
+    @Test
+    void skipByCommandLineOption() throws CliExecutionException {
+        main.run(new String[] { "help", "-D", "jqassistant.skip=true" });
     }
 
     @Test
     @SetSystemProperty(key = "jqassistant.skip", value = "true")
     void skipBySystemProperty() throws CliExecutionException {
-        main.run(new String[] { "test" });
-
-        verify(task, never()).run(any());
+        main.run(new String[] { "help" });
     }
 
     @Test
     @SetEnvironmentVariable(key = "JQASSISTANT_SKIP", value = "true")
     void skipByEnvironmentVariable() throws CliExecutionException {
-        main.run(new String[] { "test" });
-
-        verify(task, never()).run(any());
+        main.run(new String[] { "help" });
     }
 }

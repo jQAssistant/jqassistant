@@ -7,10 +7,12 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
+import org.apache.commons.cli.Options;
+
 public class EffectiveRulesTask extends AbstractAnalyzeTask {
 
     @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         try {
             Analyze analyze = configuration.analyze();
             Rule rule = analyze

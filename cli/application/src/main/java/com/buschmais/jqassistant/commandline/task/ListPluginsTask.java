@@ -4,13 +4,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 
 /**
  * @author Oliver B. Fischer, Freiheitsgrade Consulting
@@ -22,7 +20,7 @@ public class ListPluginsTask extends AbstractTask {
     }
 
     @Override
-    public void run(CliConfiguration configuration) {
+    public void run(CliConfiguration configuration, Options options) {
         Comparator<PluginInfo> comparator = PluginInfo.NAME_COMPARATOR;
 
         List<PluginInfo> sortedInfos = pluginRepository.getPluginOverview()
@@ -36,9 +34,5 @@ public class ListPluginsTask extends AbstractTask {
             String output = String.format("%s (%s)", name, id);
             System.out.println(output);
         });
-    }
-
-    @Override
-    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) throws CliConfigurationException {
     }
 }

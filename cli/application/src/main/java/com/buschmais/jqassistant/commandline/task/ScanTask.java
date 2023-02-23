@@ -13,13 +13,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
-import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,6 @@ public class ScanTask extends AbstractStoreTask {
     public static final String CMD_LONG_OPTION_FILES = "files";
     public static final String CMDLINE_OPTION_URLS = "u";
     public static final String CMDLINE_LONG_OPTION_URLS = "urls";
-    public static final String CMDLINE_OPTION_RESET = "reset";
-    public static final String CMDLINE_OPTION_CONTINUEONERROR = "continueOnError";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanTask.class);
 
@@ -51,30 +49,7 @@ public class ScanTask extends AbstractStoreTask {
 
     @SuppressWarnings("static-access")
     @Override
-    public void addTaskOptions(final List<Option> options) {
-        super.addTaskOptions(options);
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES)
-            .withLongOpt(CMD_LONG_OPTION_FILES)
-            .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.")
-            .withValueSeparator(',')
-            .hasArgs()
-            .create(CMDLINE_OPTION_FILES));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS)
-            .withLongOpt(CMDLINE_LONG_OPTION_URLS)
-            .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.")
-            .withValueSeparator(',')
-            .hasArgs()
-            .create(CMDLINE_OPTION_URLS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET)
-            .withDescription("Reset store before scanning (default=false).")
-            .create(CMDLINE_OPTION_RESET));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUEONERROR)
-            .withDescription("Continue scanning if an error is encountered. (default=false).")
-            .create(CMDLINE_OPTION_CONTINUEONERROR));
-    }
-
-    @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_OUTPUT_DIRECTORY));
             if (configuration.scan()
@@ -118,7 +93,22 @@ public class ScanTask extends AbstractStoreTask {
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
-        configurationBuilder.with(Scan.class, Scan.RESET, options.hasOption(CMDLINE_OPTION_RESET));
-        configurationBuilder.with(Scan.class, Scan.CONTINUE_ON_ERROR, options.hasOption(CMDLINE_OPTION_CONTINUEONERROR));
+    }
+
+    @Override
+    public void addTaskOptions(final List<Option> options) {
+        super.addTaskOptions(options);
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES)
+            .withLongOpt(CMD_LONG_OPTION_FILES)
+            .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_FILES));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS)
+            .withLongOpt(CMDLINE_LONG_OPTION_URLS)
+            .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.")
+            .withValueSeparator(',')
+            .hasArgs()
+            .create(CMDLINE_OPTION_URLS));
     }
 }

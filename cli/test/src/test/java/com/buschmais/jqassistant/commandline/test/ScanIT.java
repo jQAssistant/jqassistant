@@ -25,7 +25,8 @@ class ScanIT extends AbstractCLIIT {
 
     @Test
     public void classFromDirectory() throws IOException, InterruptedException {
-        String directory = ScanIT.class.getResource("/").getFile();
+        String directory = ScanIT.class.getResource("/")
+            .getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
@@ -50,8 +51,8 @@ class ScanIT extends AbstractCLIIT {
     @Test
     void reset() throws IOException, InterruptedException {
         URL file = getResource(AnalyzeIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-reset" };
-        ExecutionResult executionResult = execute(args2);
+        String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.scan.reset=true" };
+        ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains("Resetting store"));
@@ -61,63 +62,36 @@ class ScanIT extends AbstractCLIIT {
     }
 
     @Test
-    void storeDirectory() throws IOException, InterruptedException {
-        File directory = new File(getWorkingDirectory(), "store1");
-        FileUtils.deleteDirectory(directory);
-        URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath() };
-        assertThat(execute(args2).getExitCode()).isEqualTo(0);
-        withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
-    }
-
-    @Test
     void storeUri() throws IOException, InterruptedException {
         File directory = new File(getWorkingDirectory(), "store2");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-storeUri", directory.toURI().toString() };
-        assertThat(execute(args2).getExitCode()).isEqualTo(0);
+        String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.store.uri=" + directory.toURI() };
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
-    }
-
-    /**
-     * Verify that it's not allowed to specify both storeDirectory and storeUri.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws InterruptedException
-     *             If execution is interrupted.
-     */
-    @Test
-    void storeUriAndDirectory() throws IOException, InterruptedException {
-        File directory = new File(getWorkingDirectory(), "store1");
-        FileUtils.deleteDirectory(directory);
-        URL file = getResource(ScanIT.class);
-        String[] args2 = new String[] { "scan", "-f", file.getFile(), "-s", directory.getAbsolutePath(), "-storeUri", directory.toURI().toString() };
-        assertThat(execute(args2).getExitCode()).isEqualTo(1);
-        withStore(directory, store -> verifyFilesNotScanned(store, new File(file.getFile())));
     }
 
     /**
      * Converts a class to a URL.
      *
      * @param type
-     *            The class.
+     *     The class.
      * @return The URL.
      */
     private URL getResource(Class<?> type) {
-        return type.getResource("/" + type.getName().replace(".", "/") + ".class");
+        return type.getResource("/" + type.getName()
+            .replace(".", "/") + ".class");
     }
 
     /**
      * Executes a query with single result and returns it.
      *
      * @param store
-     *            The initialized store.
+     *     The initialized store.
      * @param query
-     *            The query.
+     *     The query.
      * @param params
-     *            The parameters.
+     *     The parameters.
      * @return The result.
      */
 
@@ -125,7 +99,8 @@ class ScanIT extends AbstractCLIIT {
         store.beginTransaction();
         Result<CompositeRowObject> result = store.executeQuery(query, params);
         assertThat(result.hasResult()).isTrue();
-        T value = result.getSingleResult().get(resultColumn, resultType);
+        T value = result.getSingleResult()
+            .get(resultColumn, resultType);
         store.commitTransaction();
         return value;
     }
@@ -134,9 +109,9 @@ class ScanIT extends AbstractCLIIT {
      * Determine if a specific type is in the database.
      *
      * @param store
-     *            The store
+     *     The store
      * @param type
-     *            The type
+     *     The type
      * @return <code>true</code> if the type is represented in the database.
      */
     private boolean isTypeScanned(Store store, Class<?> type) {
@@ -151,14 +126,15 @@ class ScanIT extends AbstractCLIIT {
      * Determine if a specific file is in the database.
      *
      * @param store
-     *            The store
+     *     The store
      * @param file
-     *            The file
+     *     The file
      * @return <code>true</code> if the file is represented in the database.
      */
     private boolean isFileScanned(Store store, File file) {
         Map<String, Object> params = new HashMap<>();
-        params.put("name", file.getAbsolutePath().replace("\\", "/"));
+        params.put("name", file.getAbsolutePath()
+            .replace("\\", "/"));
         String query = "match (t:File) where t.fileName=$name return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         return count == 1;
@@ -168,13 +144,14 @@ class ScanIT extends AbstractCLIIT {
      * Verifies if a database is created not containing the the given files.
      *
      * @param store
-     *            The {@link Store}.
+     *     The {@link Store}.
      * @param files
-     *            The types.
+     *     The types.
      */
     private void verifyFilesNotScanned(Store store, File... files) {
         for (File file : files) {
-            assertThat(isFileScanned(store, file)).describedAs("Expecting no result for %s", file).isFalse();
+            assertThat(isFileScanned(store, file)).describedAs("Expecting no result for %s", file)
+                .isFalse();
         }
     }
 
@@ -182,13 +159,14 @@ class ScanIT extends AbstractCLIIT {
      * Verifies if a database is created containing the the given types.
      *
      * @param store
-     *            The {@link Store}.
+     *     The {@link Store}.
      * @param types
-     *            The types.
+     *     The types.
      */
     private void verifyTypesScanned(Store store, Class<?>... types) {
         for (Class<?> type : types) {
-            assertThat(isTypeScanned(store, type)).describedAs("Expecting a result for %s", type.getName()).isTrue();
+            assertThat(isTypeScanned(store, type)).describedAs("Expecting a result for %s", type.getName())
+                .isTrue();
         }
     }
 
@@ -196,13 +174,14 @@ class ScanIT extends AbstractCLIIT {
      * Verifies if a database is created containing the the given types.
      *
      * @param store
-     *            The {@link Store}.
+     *     The {@link Store}.
      * @param files
-     *            The files.
+     *     The files.
      */
     private void verifyFilesScanned(Store store, File... files) {
         for (File file : files) {
-            assertThat(isFileScanned(store, file)).describedAs("Expecting a result for %s", file).isTrue();
+            assertThat(isFileScanned(store, file)).describedAs("Expecting a result for %s", file)
+                .isTrue();
         }
     }
 }

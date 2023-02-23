@@ -12,13 +12,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,19 +27,16 @@ public class ReportTask extends AbstractTask {
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
-    private String reportDirectory;
-
     @Override
     protected void addTaskOptions(List<Option> options) {
     }
 
     @Override
-    public void configure(CommandLine options, ConfigurationBuilder configurationBuilder) {
-        reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
-    }
-
-    @Override
-    public void run(CliConfiguration configuration) throws CliExecutionException {
+    public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
+        File reportDirectory = new File(configuration.analyze()
+            .report()
+            .directory()
+            .orElse(DEFAULT_REPORT_DIRECTORY));
         File xmlReportFile = new File(reportDirectory, REPORT_FILE_XML);
         if (!xmlReportFile.exists()) {
             LOGGER.error(xmlReportFile.getName() + " does not exist.");

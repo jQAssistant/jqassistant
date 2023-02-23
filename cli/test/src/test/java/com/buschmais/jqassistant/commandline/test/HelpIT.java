@@ -19,12 +19,12 @@ class HelpIT extends AbstractCLIIT {
 
     @Test
     void helpOption() throws IOException, InterruptedException {
-        verify(new String[] { "-help}" });
+        verify(new String[] { "help" });
     }
 
     private void verify(String[] args) throws IOException, InterruptedException {
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(1);
+        assertThat(executionResult.getExitCode()).isEqualTo(0);
         List<String> console = executionResult.getStandardConsole();
         assertThat(console).anyMatch(item -> item.contains("usage: com.buschmais.jqassistant.commandline.Main <task> [options]"));
     }
