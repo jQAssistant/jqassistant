@@ -126,6 +126,10 @@ The jQAssistant Maven plugin can be configured in the pom.xml of the root module
                             <configurationLocations>
                                 <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
                             </configurationLocations>
+                            <yaml>
+                                jqassistant:
+                                  skip: true
+                            <yaml>
                             -->
                         </configuration>
                     </execution>
@@ -163,6 +167,10 @@ The jQAssistant Maven plugin can be configured in the pom.xml of the root module
 configurationLocations (-Djqassistant.configuration.locations)::
 * the list of configuration locations, e.g. files and directories
 * default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
+
+yaml
+* embedded YAML configuration
+* can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
 
 ==== Command Line
 

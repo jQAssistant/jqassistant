@@ -27,7 +27,7 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 /**
- * Scans the output directory and test output directory.
+ * Scans the current Maven project.
  */
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, requiresDependencyResolution = TEST, threadSafe = true)
 public class ScanMojo extends AbstractModuleMojo {

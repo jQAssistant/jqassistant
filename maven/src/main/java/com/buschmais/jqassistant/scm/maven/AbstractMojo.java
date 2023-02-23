@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
+import com.buschmais.jqassistant.scm.maven.configuration.source.EmptyConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenPropertiesConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
@@ -17,6 +18,7 @@ import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
+import io.smallrye.config.source.yaml.YamlConfigSource;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,10 +30,12 @@ import org.apache.maven.rtinfo.RuntimeInformation;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -51,6 +55,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "jqassistant.configuration.locations")
     private List<String> configurationLocations;
+
+    @Parameter
+    private String yaml;
 
     /**
      * The Maven Session.
@@ -246,9 +253,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource userPropertiesConfigSource = new MavenPropertiesConfigSource(session.getUserProperties(), "Maven Session User Properties ");
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
+
         return configurationProvider.getConfiguration(executionRoot, isEmpty(configurationLocations) ? empty() : of(configurationLocations),
             configurationBuilder.build(), projectConfigSource, settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource,
-            systemPropertiesConfigSource);
+            systemPropertiesConfigSource, getMavenPluginConfiguration());
+    }
+
+    private ConfigSource getMavenPluginConfiguration() {
+        return isNotEmpty(yaml) ? new YamlConfigSource("Maven plugin configuration", yaml) : EmptyConfigSource.INSTANCE;
     }
 
     /**
