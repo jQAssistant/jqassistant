@@ -53,7 +53,7 @@ class AnalyzeIT extends AbstractCLIIT {
     @Test
     void conceptWithParameter() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
-            "jqassistant.analyze.concepts=" + TEST_CONCEPT_WITH_PARAMETER, "-D", "jqassistant.analyze.rule-parameters.\\\"testParam\\\"=TestValue" };
+            "jqassistant.analyze.concepts=" + TEST_CONCEPT_WITH_PARAMETER, "-D", "jqassistant.analyze.rule-parameters.\"testParam\"=TestValue" };
         assertThat(execute(args).getExitCode()).isEqualTo(0);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT_WITH_PARAMETER));
     }
