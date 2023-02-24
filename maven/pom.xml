@@ -114,6 +114,7 @@
                             <pomIncludes>
                                 <!-- Use -Dinvoker.test=<pattern> to override the configuration below on the commandline -->
                                 <include>configuration/*/pom.xml</include>
+                                <include>cli/*/pom.xml</include>
                                 <include>singlemodule/*/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>list-plugins/pom.xml</include>
