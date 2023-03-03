@@ -43,7 +43,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     public static final String ENCODING = "UTF-8";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v1.11";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.0";
 
     private XMLOutputFactory xmlOutputFactory;
 
