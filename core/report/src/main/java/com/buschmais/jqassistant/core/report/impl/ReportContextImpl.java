@@ -51,9 +51,9 @@ public class ReportContextImpl implements ReportContext {
      * Constructor.
      *
      * @param store
-     *            The {@link Store};
+     *     The {@link Store};
      * @param outputDirectory
-     *            The output directory.
+     *     The output directory.
      */
     public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory) {
         this(classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
@@ -63,9 +63,9 @@ public class ReportContextImpl implements ReportContext {
      * Constructor.
      *
      * @param store
-     *            The {@link Store};
+     *     The {@link Store};
      * @param outputDirectory
-     *            The output directory.
+     *     The output directory.
      */
     public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory, File reportDirectory) {
         this.classLoader = classLoader;
@@ -100,19 +100,19 @@ public class ReportContextImpl implements ReportContext {
 
     @Override
     public <E extends ExecutableRule<?>> Report<E> addReport(String label, E rule, ReportType reportType, URL url) {
-        Report<E> report = ReportImpl.<E> builder().label(label).rule(rule).reportType(reportType).url(url).build();
+        Report<E> report = ReportImpl.<E>builder()
+            .label(label)
+            .rule(rule)
+            .reportType(reportType)
+            .url(url)
+            .build();
         getReports(rule).add(report);
         return report;
     }
 
     @Override
     public <E extends ExecutableRule<?>> List<Report<?>> getReports(E rule) {
-        List<Report<?>> ruleReports = reports.get(rule.getId());
-        if (ruleReports == null) {
-            ruleReports = new ArrayList<>();
-            reports.put(rule.getId(), ruleReports);
-        }
-        return ruleReports;
+        return reports.computeIfAbsent(rule.getId(), id -> new ArrayList<>());
     }
 
     @Override
@@ -125,8 +125,11 @@ public class ReportContextImpl implements ReportContext {
             Path reportPath = reportDirectory.toPath();
             Files.walkFileTree(reportPath, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (!file.toFile().equals(reportArchive)) {
-                        zos.putNextEntry(new ZipEntry(reportPath.relativize(file).toString().replace('\\', '/')));
+                    if (!file.toFile()
+                        .equals(reportArchive)) {
+                        zos.putNextEntry(new ZipEntry(reportPath.relativize(file)
+                            .toString()
+                            .replace('\\', '/')));
                         Files.copy(file, zos);
                         zos.closeEntry();
                     }

@@ -49,6 +49,8 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private XMLStreamWriter xmlStreamWriter;
 
+    private ReportContext reportContext;
+
     private File xmlReportFile;
 
     private Result<? extends ExecutableRule> result;
@@ -66,13 +68,14 @@ public class XmlReportPlugin implements ReportPlugin {
 
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
+        this.reportContext = reportContext;
         String xmlReport = (String) properties.get(XML_REPORT_FILE);
         this.xmlReportFile = xmlReport != null ? new File(xmlReport) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
     }
 
     @Override
     public void begin() throws ReportException {
-        run(() -> {
+        xml(() -> {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), ENCODING);
             XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
             xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
@@ -85,7 +88,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     @Override
     public void end() throws ReportException {
-        run(() -> {
+        xml(() -> {
             xmlStreamWriter.writeEndElement();
             xmlStreamWriter.writeEndDocument();
             xmlStreamWriter.close();
@@ -105,25 +108,19 @@ public class XmlReportPlugin implements ReportPlugin {
     @Override
     public void beginGroup(final Group group) throws ReportException {
         final Date now = new Date();
-        run(new XmlOperation() {
-            @Override
-            public void run() throws XMLStreamException {
-                xmlStreamWriter.writeStartElement("group");
-                xmlStreamWriter.writeAttribute("id", group.getId());
-                xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
-            }
+        xml(() -> {
+            xmlStreamWriter.writeStartElement("group");
+            xmlStreamWriter.writeAttribute("id", group.getId());
+            xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
         });
         this.groupBeginTime = now.getTime();
     }
 
     @Override
     public void endGroup() throws ReportException {
-        run(new XmlOperation() {
-            @Override
-            public void run() throws XMLStreamException {
-                writeDuration(groupBeginTime);
-                xmlStreamWriter.writeEndElement();
-            }
+        xml(() -> {
+            writeDuration(groupBeginTime);
+            xmlStreamWriter.writeEndElement();
         });
     }
 
@@ -149,58 +146,82 @@ public class XmlReportPlugin implements ReportPlugin {
     private void endRule() throws ReportException {
         if (result != null) {
             final ExecutableRule rule = result.getRule();
-            final String elementName;
-            if (rule instanceof Concept) {
-                elementName = "concept";
-            } else if (rule instanceof Constraint) {
-                elementName = "constraint";
-            } else {
-                throw new ReportException("Cannot write report for unsupported rule " + rule);
-            }
-            final List<String> columnNames = result.getColumnNames();
-            final String primaryColumn = getPrimaryColumn(rule, columnNames);
-            run(new XmlOperation() {
-                @Override
-                public void run() throws XMLStreamException {
-                    xmlStreamWriter.writeStartElement(elementName);
-                    xmlStreamWriter.writeAttribute("id", rule.getId());
-                    writeElementWithCharacters("description", rule.getDescription());
-                    if (!result.isEmpty()) {
-                        xmlStreamWriter.writeStartElement("result");
-                        xmlStreamWriter.writeStartElement("columns");
-                        xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
-                        xmlStreamWriter.writeAttribute("primary", primaryColumn);
-                        for (String column : columnNames) {
-                            xmlStreamWriter.writeStartElement("column");
-                            if (primaryColumn.equals(column)) {
-                                xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
-                            }
-                            xmlStreamWriter.writeCharacters(column);
-                            xmlStreamWriter.writeEndElement(); // column
-                        }
-                        xmlStreamWriter.writeEndElement(); // columns
-                        xmlStreamWriter.writeStartElement("rows");
-                        List<Map<String, Object>> rows = result.getRows();
-                        xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-                        for (Map<String, Object> row : rows) {
-                            xmlStreamWriter.writeStartElement("row");
-                            for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                                String columnName = rowEntry.getKey();
-                                Object value = rowEntry.getValue();
-                                writeColumn(columnName, value);
-                            }
-                            xmlStreamWriter.writeEndElement();
-                        }
-                        xmlStreamWriter.writeEndElement(); // rows
-                        xmlStreamWriter.writeEndElement(); // result
-                    }
-                    writeStatus(result.getStatus()); // status
-                    writeSeverity(result.getSeverity()); // severity
-                    writeDuration(ruleBeginTime);
-                    xmlStreamWriter.writeEndElement(); // concept|constraint
-                }
-            });
+            writeResult(rule);
+            writeReports(rule);
         }
+    }
+
+    private void writeResult(ExecutableRule rule) throws ReportException {
+        final String elementName;
+        if (rule instanceof Concept) {
+            elementName = "concept";
+        } else if (rule instanceof Constraint) {
+            elementName = "constraint";
+        } else {
+            throw new ReportException("Cannot write report for unsupported rule " + rule);
+        }
+        final List<String> columnNames = result.getColumnNames();
+        final String primaryColumn = getPrimaryColumn(rule, columnNames);
+        xml(() -> {
+            xmlStreamWriter.writeStartElement(elementName);
+            xmlStreamWriter.writeAttribute("id", rule.getId());
+            writeElementWithCharacters("description", rule.getDescription());
+            if (!result.isEmpty()) {
+                xmlStreamWriter.writeStartElement("result");
+                xmlStreamWriter.writeStartElement("columns");
+                xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
+                xmlStreamWriter.writeAttribute("primary", primaryColumn);
+                for (String column : columnNames) {
+                    xmlStreamWriter.writeStartElement("column");
+                    if (primaryColumn.equals(column)) {
+                        xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
+                    }
+                    xmlStreamWriter.writeCharacters(column);
+                    xmlStreamWriter.writeEndElement(); // column
+                }
+                xmlStreamWriter.writeEndElement(); // columns
+                xmlStreamWriter.writeStartElement("rows");
+                List<Map<String, Object>> rows = result.getRows();
+                xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
+                for (Map<String, Object> row : rows) {
+                    xmlStreamWriter.writeStartElement("row");
+                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                        String columnName = rowEntry.getKey();
+                        Object value = rowEntry.getValue();
+                        writeColumn(columnName, value);
+                    }
+                    xmlStreamWriter.writeEndElement();
+                }
+                xmlStreamWriter.writeEndElement(); // rows
+                xmlStreamWriter.writeEndElement(); // result
+            }
+            writeStatus(result.getStatus()); // status
+            writeSeverity(result.getSeverity()); // severity
+            writeDuration(ruleBeginTime);
+            xmlStreamWriter.writeEndElement(); // concept|constraint
+        });
+    }
+
+    private void writeReports(ExecutableRule rule) throws ReportException {
+        xml(() -> {
+            for (ReportContext.Report<?> report : reportContext.getReports(rule)) {
+                ReportContext.ReportType reportType = report.getReportType();
+                switch (reportType) {
+                case LINK:
+                    xmlStreamWriter.writeStartElement("link");
+                    break;
+                case IMAGE:
+                    xmlStreamWriter.writeStartElement("image");
+                    break;
+                default:
+                    throw new ReportException("Unsupported report type: " + reportType);
+                }
+                xmlStreamWriter.writeAttribute("label", report.getLabel());
+                xmlStreamWriter.writeCharacters(report.getUrl()
+                    .toString());
+                xmlStreamWriter.writeEndElement();
+            }
+        });
     }
 
     public File getXmlReportFile() {
@@ -211,15 +232,18 @@ public class XmlReportPlugin implements ReportPlugin {
      * Determine the primary column for a rule, i.e. the colum used by tools like
      * SonarQube to attach issues.
      *
-     * @param rule The {@link ExecutableRule}.
-     * @param columnNames The column names returned by the executed rule.
+     * @param rule
+     *     The {@link ExecutableRule}.
+     * @param columnNames
+     *     The column names returned by the executed rule.
      * @return The name of the primary column.
      */
     private String getPrimaryColumn(ExecutableRule rule, List<String> columnNames) {
         if (columnNames == null || columnNames.isEmpty()) {
             return null;
         }
-        String primaryColumn = rule.getReport().getPrimaryColumn();
+        String primaryColumn = rule.getReport()
+            .getPrimaryColumn();
         String firstColumn = columnNames.get(0);
         if (primaryColumn == null) {
             // primary column not explicitly specifed by the rule, so take the first column by default.
@@ -227,7 +251,7 @@ public class XmlReportPlugin implements ReportPlugin {
         }
         if (!columnNames.contains(primaryColumn)) {
             log.warn("Rule '{}' defines primary column '{}' which is not provided by the result (available columns: {}). Falling back to '{}'.", rule,
-                    primaryColumn, columnNames, firstColumn);
+                primaryColumn, columnNames, firstColumn);
             primaryColumn = firstColumn;
         }
         return primaryColumn;
@@ -237,10 +261,11 @@ public class XmlReportPlugin implements ReportPlugin {
      * Write the status of the current result.
      *
      * @throws XMLStreamException
-     *             If a problem occurs.
+     *     If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
-        writeElementWithCharacters("status", status.name().toLowerCase());
+        writeElementWithCharacters("status", status.name()
+            .toLowerCase());
     }
 
     /**
@@ -248,11 +273,11 @@ public class XmlReportPlugin implements ReportPlugin {
      * column.
      *
      * @param columnName
-     *            The name of the column.
+     *     The name of the column.
      * @param value
-     *            The value.
+     *     The value.
      * @throws XMLStreamException
-     *             If a problem occurs.
+     *     If a problem occurs.
      */
     private void writeColumn(String columnName, Object value) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("column");
@@ -312,7 +337,8 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private void writeOptionalIntegerAttribute(String attribute, Optional<Integer> value) throws XMLStreamException {
         if (value.isPresent()) {
-            xmlStreamWriter.writeAttribute(attribute, value.get().toString());
+            xmlStreamWriter.writeAttribute(attribute, value.get()
+                .toString());
         }
     }
 
@@ -326,9 +352,9 @@ public class XmlReportPlugin implements ReportPlugin {
      * Writes the duration.
      *
      * @param beginTime
-     *            The begin time.
+     *     The begin time.
      * @throws XMLStreamException
-     *             If writing fails.
+     *     If writing fails.
      */
     private void writeDuration(long beginTime) throws XMLStreamException {
         writeElementWithCharacters("duration", Long.toString(System.currentTimeMillis() - beginTime));
@@ -338,13 +364,14 @@ public class XmlReportPlugin implements ReportPlugin {
      * Writes the severity of the rule.
      *
      * @param severity
-     *            The severity the rule has been executed with
+     *     The severity the rule has been executed with
      * @throws XMLStreamException
-     *             If writing fails.
+     *     If writing fails.
      */
     private void writeSeverity(Severity severity) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("severity");
-        xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
+        xmlStreamWriter.writeAttribute("level", severity.getLevel()
+            .toString());
         xmlStreamWriter.writeCharacters(severity.getValue());
         xmlStreamWriter.writeEndElement();
     }
@@ -353,11 +380,11 @@ public class XmlReportPlugin implements ReportPlugin {
      * Defines an operation to write XML elements.
      *
      * @param operation
-     *            The operation.
+     *     The operation.
      * @throws ReportException
-     *             If writing fails.
+     *     If writing fails.
      */
-    private void run(XmlOperation operation) throws ReportException {
+    private void xml(XmlOperation operation) throws ReportException {
         try {
             operation.run();
         } catch (XMLStreamException | IOException e) {
@@ -366,7 +393,7 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private interface XmlOperation {
-        void run() throws XMLStreamException, IOException;
+        void run() throws XMLStreamException, IOException, ReportException;
     }
 
 }

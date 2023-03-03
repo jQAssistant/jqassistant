@@ -136,10 +136,10 @@
     </xs:complexType>
 
     <xs:complexType name="LocationType" abstract="true">
-            <xs:sequence>
-                <xs:element name="parent" type="tns:ArtifactLocationType" minOccurs="0" />
-            </xs:sequence>
-            <xs:attribute name="fileName" type="xs:string" use="required"/>
+        <xs:sequence>
+            <xs:element name="parent" type="tns:ArtifactLocationType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="fileName" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="SourceLocationType">
@@ -164,13 +164,13 @@
     </xs:complexType>
 
     <xs:complexType name="ReportsType">
-        <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
             <xs:element name="image" type="tns:ImageType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="link" type="tns:LinkType" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
+        </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="ImageType">
+    <xs:complexType name="AbstractReportType" abstract="true">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="label" type="xs:string"/>
@@ -178,11 +178,15 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:complexType name="ImageType">
+        <xs:simpleContent>
+            <xs:extension base="tns:AbstractReportType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <xs:complexType name="LinkType">
         <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="label" type="xs:string"/>
-            </xs:extension>
+            <xs:extension base="tns:AbstractReportType"/>
         </xs:simpleContent>
     </xs:complexType>
 </xs:schema>

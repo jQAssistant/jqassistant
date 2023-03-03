@@ -17,8 +17,8 @@
             </result>
             <reports>
                 <image label="plantuml">file://...</image>
-                <image label="plantuml">file://...</image>
                 <link label="CSV">file://...</link>
+                <image label="plantuml">file://...</image>
             </reports>
             <status>success</status>
             <severity level="4">info</severity>
