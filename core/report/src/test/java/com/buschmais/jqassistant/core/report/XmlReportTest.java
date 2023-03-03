@@ -1,34 +1,24 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
+import com.buschmais.jqassistant.core.report.api.ReportReader;
 
 import org.jqassistant.schema.report.v2.*;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class XmlReportTest {
 
+    private static final ReportReader REPORT_READER = new ReportReader();
+
     private XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
     @Test
-    void writeAndReadReport() throws JAXBException, SAXException, ReportException, IOException {
+    void writeAndReadReport() throws ReportException {
         File xmlReport = xmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report).isNotNull();
@@ -71,7 +61,7 @@ class XmlReportTest {
     }
 
     @Test
-    void testReportWithConstraint() throws JAXBException, SAXException, ReportException, IOException {
+    void testReportWithConstraint() throws ReportException {
         File xmlReport = xmlReportTestHelper.createXmlReportWithConstraints();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
@@ -94,7 +84,7 @@ class XmlReportTest {
     }
 
     @Test
-    void reportEncoding() throws ReportException, JAXBException, SAXException, IOException {
+    void reportEncoding() throws ReportException {
         String description = "ÄÖÜß";
         File xmlReport = xmlReportTestHelper.createXmlWithUmlauts(description);
         JqassistantReport jqassistantReport = readReport(xmlReport);
@@ -111,14 +101,8 @@ class XmlReportTest {
         assertThat(meinKonzept.getDescription()).isEqualTo(description);
     }
 
-    private JqassistantReport readReport(File xmlReport) throws SAXException, JAXBException, IOException {
-        SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/report/xsd/jqassistant-report-v2.0.xsd")));
-        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource streamSource = new StreamSource(new InputStreamReader(new FileInputStream(xmlReport), XmlReportPlugin.ENCODING));
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-        return unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
+    private JqassistantReport readReport(File xmlReport) {
+        return REPORT_READER.read(xmlReport);
     }
 
     private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
