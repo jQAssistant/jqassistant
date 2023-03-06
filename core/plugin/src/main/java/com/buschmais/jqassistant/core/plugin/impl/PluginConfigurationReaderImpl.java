@@ -4,20 +4,20 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.TreeSet;
 
 import javax.xml.validation.Schema;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
 import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.lang.String.format;
 
 /**
  * Plugin reader implementation.
@@ -94,20 +94,16 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
                 LOGGER.debug("Reading plugin descriptor from '{}'.", url);
                 JqassistantPlugin plugin = idGenerator.apply(readPlugin(url));
 
-                if (ids.contains(plugin.getId())) {
+                if (ids.add(plugin.getId())) {
+                    plugins.add(plugin);
+                    LOGGER.info("Loaded plugin '{}' with id '{}'", plugin.getName(),
+                        plugin.getId());
+                } else {
                     JqassistantPlugin loadedPlugin = plugins.stream().filter(p -> p.getId().equals(plugin.getId()))
                                                             .findFirst().get();
-                    String message = format("Unable to load plugin '%s' with id '%s', as the same id is used by " +
-                                     "plugin '%s'", plugin.getName(), plugin.getId(), loadedPlugin.getName());
-
-                    LOGGER.error(message);
-                    throw new PluginRepositoryException(message);
+                    LOGGER.warn("Skipping plugin '{}' with id '{}' as it uses the same id as the already loaded plugin '{}'.", plugin.getName(), plugin.getId(),
+                        loadedPlugin.getName());
                 }
-
-                LOGGER.info("Loaded plugin '{}' with id '{}'", plugin.getName(),
-                            plugin.getId());
-                ids.add(plugin.getId());
-                plugins.add(plugin);
             }
         }
 
