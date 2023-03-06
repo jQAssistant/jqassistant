@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.plugin.api;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
-import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 
