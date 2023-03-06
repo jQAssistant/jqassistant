@@ -9,8 +9,8 @@ public class CypherExecutable extends SourceExecutable<String> {
 
     private static final String LANGUAGE = "cypher";
 
-    public CypherExecutable(String statement) {
-        super(LANGUAGE, statement, String.class);
+    public CypherExecutable(String statement, boolean transactional) {
+        super(LANGUAGE, statement, String.class, transactional);
     }
 
 }

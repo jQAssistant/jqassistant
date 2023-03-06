@@ -196,21 +196,21 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         String description = (String) map.get(DESCRIPTION);
         String source = (String) map.get(SOURCE);
         String language = (String) map.get(LANGUAGE);
-        String serverityV = (String) map.get(SEVERITY);
+        boolean transactional = getTransactional((String) map.get(TRANSACTIONAL));
 
         Executable<?> executable = null;
 
         if (CYPHER.equals(language) || null == language) {
-            executable = new CypherExecutable(source);
+            executable = new CypherExecutable(source, transactional);
         } else {
-            executable = new ScriptExecutable(language, source);
+            executable = new ScriptExecutable(language, source, transactional);
         }
 
         Map<String, Boolean> required = extractRequiredConcepts(map);
         Map<String, Parameter> parameters = extractParameters(map);
         Verification verification = extractVerification(map);
         Report report = extractReportConfiguration(map);
-        Severity severity = getSeverity(serverityV, defaultSeveritySupplier);
+        Severity severity = getSeverity((String) map.get(SEVERITY), defaultSeveritySupplier);
 
         T rule = builder.id(id)
                         .description(description)

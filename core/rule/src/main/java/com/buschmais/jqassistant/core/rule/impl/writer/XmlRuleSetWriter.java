@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.jqassistant.schema.rule.v1.*;
+import org.jqassistant.schema.rule.v2.*;
 
 import static java.util.stream.Collectors.toList;
 

@@ -267,7 +267,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Concept createConcept(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable executable = new CypherExecutable(statement, true);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
@@ -289,7 +289,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Constraint createConstraint(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable executable = new CypherExecutable(statement, true);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();

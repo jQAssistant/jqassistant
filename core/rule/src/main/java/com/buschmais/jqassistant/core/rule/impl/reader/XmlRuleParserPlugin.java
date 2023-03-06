@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
-import org.jqassistant.schema.rule.v1.*;
+import org.jqassistant.schema.rule.v2.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -24,8 +24,8 @@ import static java.util.stream.Collectors.toSet;
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE_1_10 = "http://schema.jqassistant.org/rule/v1.10";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v1.10.xsd";
+    private static final String NAMESPACE_RULE_1_10 = "http://schema.jqassistant.org/rule/v2.0";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v2.0.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -134,16 +134,17 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
                 .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
     }
 
-    private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, String cypher, SourceType scriptType) throws RuleException {
+    private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, CypherType cypherType, SourceType scriptType) throws RuleException {
+
         if (source != null) {
-            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
+            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class, source.isTransactional());
         }
         // for compatibility
-        if (cypher != null) {
-            return new CypherExecutable(cypher);
+        if (cypherType != null) {
+            return new CypherExecutable(cypherType.getValue(), cypherType.isTransactional());
         }
         if (scriptType != null) {
-            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
+            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue(), scriptType.isTransactional());
         }
         throw new RuleException("Cannot determine executable for " + severityRuleType.getId());
     }
