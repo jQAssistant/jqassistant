@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.xml.transform.Source;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 class HtmlReportTransformerTest {
 
     @Test
-    void transform() throws ReportException, ReportTransformerException, FileNotFoundException {
+    void transform() throws ReportException, ReportTransformerException, IOException {
         File xmlReport = new XmlReportTestHelper().createXmlReport();
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(new FileReader(xmlReport));

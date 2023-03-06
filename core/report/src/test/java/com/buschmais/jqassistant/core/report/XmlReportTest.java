@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportReader;
@@ -9,6 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportReader;
 import org.jqassistant.schema.report.v2.*;
 import org.junit.jupiter.api.Test;
 
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class XmlReportTest {
@@ -18,39 +21,49 @@ class XmlReportTest {
     private XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
     @Test
-    void writeAndReadReport() throws ReportException {
+    void writeAndReadReport() throws ReportException, MalformedURLException {
         File xmlReport = xmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report).isNotNull();
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
-        GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
+        GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint()
+            .get(0);
         assertThat(groupType.getDate()).isNotNull();
         assertThat(groupType.getId()).isEqualTo("default");
         assertThat(groupType.getGroupOrConceptOrConstraint()).hasSize(1);
-        ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint().get(0);
+        ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint()
+            .get(0);
         assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
         assertThat(ruleType).isInstanceOf(ConceptType.class);
         assertThat(ruleType.getId()).isEqualTo("my:concept");
         assertThat(ruleType.getDescription()).isEqualTo("My concept description");
+        // Result
         assertThat(ruleType.getResult()).isNotNull();
         ResultType result = ruleType.getResult();
-        assertThat(result.getColumns().getCount()).isEqualTo(2);
-        List<ColumnHeaderType> columnHeaders = result.getColumns().getColumn();
+        assertThat(result.getColumns()
+            .getCount()).isEqualTo(2);
+        List<ColumnHeaderType> columnHeaders = result.getColumns()
+            .getColumn();
         assertThat(columnHeaders).hasSize(2);
         verifyColumnHeader(columnHeaders.get(0), "c1", false);
         verifyColumnHeader(columnHeaders.get(1), "c2", true);
-        assertThat(result.getRows().getCount()).isEqualTo(1);
-        List<RowType> rows = result.getRows().getRow();
+        assertThat(result.getRows()
+            .getCount()).isEqualTo(1);
+        List<RowType> rows = result.getRows()
+            .getRow();
         assertThat(rows).hasSize(1);
         RowType rowType = rows.get(0);
-        assertThat(rowType.getColumn().size()).isEqualTo(2);
+        assertThat(rowType.getColumn()
+            .size()).isEqualTo(2);
         for (ColumnType column : rowType.getColumn()) {
             assertThat(column.getName()).isIn("c1", "c2");
             if ("c1".equals(column.getName())) {
                 assertThat(column.getValue()).isEqualTo("simpleValue");
             } else if ("c2".equals(column.getName())) {
-                assertThat(column.getElement().getLanguage()).isEqualTo("TestLanguage");
-                assertThat(column.getElement().getValue()).isEqualTo("TestElement");
+                assertThat(column.getElement()
+                    .getLanguage()).isEqualTo("TestLanguage");
+                assertThat(column.getElement()
+                    .getValue()).isEqualTo("TestElement");
                 assertThat(column.getValue()).isEqualTo("descriptorValue");
                 SourceLocationType source = column.getSource();
                 assertThat(source.getFileName()).isEqualTo("Test.java");
@@ -58,6 +71,19 @@ class XmlReportTest {
                 assertThat(source.getEndLine()).isEqualTo(2);
             }
         }
+        // Reports
+        ReportsType reports = ruleType.getReports();
+        assertThat(reports).isNotNull();
+        List<AbstractReportType> imageOrLink = reports.getImageOrLink();
+        assertThat(imageOrLink).hasSize(2);
+        Map<String, AbstractReportType> reportsByLabel = imageOrLink.stream()
+            .collect(toMap(r -> r.getLabel(), r -> r));
+        AbstractReportType image = reportsByLabel.get("Image");
+        assertThat(image).isInstanceOf(ImageType.class);
+        assertThat(image.getValue()).isEqualTo("file:image.png");
+        AbstractReportType link = reportsByLabel.get("Link");
+        assertThat(link).isInstanceOf(LinkType.class);
+        assertThat(link.getValue()).isEqualTo("file:report.csv");
     }
 
     @Test
@@ -65,13 +91,16 @@ class XmlReportTest {
         File xmlReport = xmlReportTestHelper.createXmlReportWithConstraints();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
-        GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint().get(0);
+        GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint()
+            .get(0);
         assertThat(groupType.getId()).isEqualTo("default");
         assertThat(groupType.getGroupOrConceptOrConstraint()).hasSize(1);
-        ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint().get(0);
+        ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint()
+            .get(0);
         assertThat(ruleType).isInstanceOf(ConstraintType.class);
         assertThat(ruleType.getId()).isEqualTo("my:Constraint");
-        assertThat(ruleType.getSeverity().getValue()).isEqualTo("critical");
+        assertThat(ruleType.getSeverity()
+            .getValue()).isEqualTo("critical");
         assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.FAILURE);
         ResultType result = ruleType.getResult();
         assertThat(result).isNotNull();
