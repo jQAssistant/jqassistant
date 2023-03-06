@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 import com.buschmais.jqassistant.plugin.json.impl.parsing.DataProvider;
 

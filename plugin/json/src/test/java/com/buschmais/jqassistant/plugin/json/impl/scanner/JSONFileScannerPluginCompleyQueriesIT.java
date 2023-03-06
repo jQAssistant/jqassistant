@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor;
 
