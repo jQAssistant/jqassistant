@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.yaml2.impl.scanner;
 
 import java.io.File;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor;
 
 import org.junit.jupiter.api.AfterEach;
