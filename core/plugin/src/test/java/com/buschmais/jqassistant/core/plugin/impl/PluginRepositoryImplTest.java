@@ -1,11 +1,9 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
@@ -27,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -51,7 +50,8 @@ class PluginRepositoryImplTest {
      */
     @Test
     void pluginProperties() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryImplTest.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(
+            new PluginClassLoader(PluginRepositoryImplTest.class.getClassLoader()));
         Map<String, String> properties = new HashMap<>();
         properties.put("testKey", "testValue");
         doReturn(properties).when(scan).properties();
@@ -67,7 +67,8 @@ class PluginRepositoryImplTest {
 
     @Test
     void repositories() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(PluginRepositoryImplTest.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(
+            new PluginClassLoader(PluginRepositoryImplTest.class.getClassLoader()));
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
         // Scanner plugins

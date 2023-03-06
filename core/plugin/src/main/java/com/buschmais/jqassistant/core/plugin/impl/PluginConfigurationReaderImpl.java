@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import javax.xml.validation.Schema;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
@@ -36,19 +37,12 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private List<JqassistantPlugin> plugins = null;
 
     /**
-     * Default constructor.
-     */
-    public PluginConfigurationReaderImpl() {
-        this(PluginConfigurationReader.class.getClassLoader());
-    }
-
-    /**
      * Constructor.
      *
      * @param pluginClassLoader
      *            The class loader to use for detecting plugins.
      */
-    public PluginConfigurationReaderImpl(ClassLoader pluginClassLoader) {
+    public PluginConfigurationReaderImpl(PluginClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
         this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantPlugin.class, SCHEMA, NAMESPACE);
     }

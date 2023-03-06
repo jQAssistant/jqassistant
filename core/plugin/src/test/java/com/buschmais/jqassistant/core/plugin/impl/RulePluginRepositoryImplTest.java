@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.util.Collection;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -29,7 +30,7 @@ class RulePluginRepositoryImplTest {
 
     @BeforeEach
     void setupPluginConfigurationReader() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(new PluginClassLoader(RulePluginRepositoryImpl.class.getClassLoader()));
         ruleParserPluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         ruleParserPluginRepository.initialize();
     }

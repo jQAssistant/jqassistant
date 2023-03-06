@@ -48,9 +48,9 @@ public class AetherPluginResolverImpl implements PluginResolver {
             log.info("Resolving {} plugins and required dependencies.", plugins.size());
             List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
             DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
-            return new PluginClassLoader(getDependencyURLs(dependencyResult), parent);
+            return new PluginClassLoader(parent, getDependencyURLs(dependencyResult));
         }
-        return new PluginClassLoader(emptyList(), parent);
+        return new PluginClassLoader(parent);
     }
 
     private DependencyResult resolvePlugins(List<Dependency> dependencies) {
