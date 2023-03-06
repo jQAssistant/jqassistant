@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
@@ -91,7 +92,7 @@ public abstract class AbstractCLIIT {
         properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
-        pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl());
+        pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())));
         pluginRepository.initialize();
     }
 
