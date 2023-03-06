@@ -146,82 +146,87 @@ public class XmlReportPlugin implements ReportPlugin {
     private void endRule() throws ReportException {
         if (result != null) {
             final ExecutableRule rule = result.getRule();
-            writeResult(rule);
-            writeReports(rule);
+            final String elementName;
+            if (rule instanceof Concept) {
+                elementName = "concept";
+            } else if (rule instanceof Constraint) {
+                elementName = "constraint";
+            } else {
+                throw new ReportException("Cannot write report for unsupported rule " + rule);
+            }
+            final List<String> columnNames = result.getColumnNames();
+            final String primaryColumn = getPrimaryColumn(rule, columnNames);
+            xml(() -> {
+                xmlStreamWriter.writeStartElement(elementName);
+                xmlStreamWriter.writeAttribute("id", rule.getId());
+                writeElementWithCharacters("description", rule.getDescription());
+                writeResult(columnNames, primaryColumn);
+                writeReports(rule);
+                writeStatus(result.getStatus()); // status
+                writeSeverity(result.getSeverity()); // severity
+                writeDuration(ruleBeginTime);
+                xmlStreamWriter.writeEndElement(); // concept|constraint
+            });
         }
     }
 
-    private void writeResult(ExecutableRule rule) throws ReportException {
-        final String elementName;
-        if (rule instanceof Concept) {
-            elementName = "concept";
-        } else if (rule instanceof Constraint) {
-            elementName = "constraint";
-        } else {
-            throw new ReportException("Cannot write report for unsupported rule " + rule);
-        }
-        final List<String> columnNames = result.getColumnNames();
-        final String primaryColumn = getPrimaryColumn(rule, columnNames);
-        xml(() -> {
-            xmlStreamWriter.writeStartElement(elementName);
-            xmlStreamWriter.writeAttribute("id", rule.getId());
-            writeElementWithCharacters("description", rule.getDescription());
-            if (!result.isEmpty()) {
-                xmlStreamWriter.writeStartElement("result");
-                xmlStreamWriter.writeStartElement("columns");
-                xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
-                xmlStreamWriter.writeAttribute("primary", primaryColumn);
-                for (String column : columnNames) {
-                    xmlStreamWriter.writeStartElement("column");
-                    if (primaryColumn.equals(column)) {
-                        xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
-                    }
-                    xmlStreamWriter.writeCharacters(column);
-                    xmlStreamWriter.writeEndElement(); // column
+    private void writeResult(List<String> columnNames, String primaryColumn) throws XMLStreamException {
+        if (!result.isEmpty()) {
+            xmlStreamWriter.writeStartElement("result");
+            xmlStreamWriter.writeStartElement("columns");
+            xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
+            xmlStreamWriter.writeAttribute("primary", primaryColumn);
+            for (String column : columnNames) {
+                xmlStreamWriter.writeStartElement("column");
+                if (primaryColumn.equals(column)) {
+                    xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
                 }
-                xmlStreamWriter.writeEndElement(); // columns
-                xmlStreamWriter.writeStartElement("rows");
-                List<Map<String, Object>> rows = result.getRows();
-                xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-                for (Map<String, Object> row : rows) {
-                    xmlStreamWriter.writeStartElement("row");
-                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                        String columnName = rowEntry.getKey();
-                        Object value = rowEntry.getValue();
-                        writeColumn(columnName, value);
-                    }
-                    xmlStreamWriter.writeEndElement();
-                }
-                xmlStreamWriter.writeEndElement(); // rows
-                xmlStreamWriter.writeEndElement(); // result
+                xmlStreamWriter.writeCharacters(column);
+                xmlStreamWriter.writeEndElement(); // column
             }
-            writeStatus(result.getStatus()); // status
-            writeSeverity(result.getSeverity()); // severity
-            writeDuration(ruleBeginTime);
-            xmlStreamWriter.writeEndElement(); // concept|constraint
-        });
+            xmlStreamWriter.writeEndElement(); // columns
+            xmlStreamWriter.writeStartElement("rows");
+            List<Map<String, Object>> rows = result.getRows();
+            xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
+            for (Map<String, Object> row : rows) {
+                xmlStreamWriter.writeStartElement("row");
+                for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                    String columnName = rowEntry.getKey();
+                    Object value = rowEntry.getValue();
+                    writeColumn(columnName, value);
+                }
+                xmlStreamWriter.writeEndElement();
+            }
+            xmlStreamWriter.writeEndElement(); // rows
+            xmlStreamWriter.writeEndElement(); // result
+        }
     }
 
     private void writeReports(ExecutableRule rule) throws ReportException {
-        xml(() -> {
-            for (ReportContext.Report<?> report : reportContext.getReports(rule)) {
-                ReportContext.ReportType reportType = report.getReportType();
-                switch (reportType) {
-                case LINK:
-                    xmlStreamWriter.writeStartElement("link");
-                    break;
-                case IMAGE:
-                    xmlStreamWriter.writeStartElement("image");
-                    break;
-                default:
-                    throw new ReportException("Unsupported report type: " + reportType);
+        List<ReportContext.Report<?>> reports = reportContext.getReports(rule);
+        if (!reports.isEmpty()) {
+            xml(() -> {
+                xmlStreamWriter.writeStartElement("reports");
+                for (ReportContext.Report<?> report : reports) {
+                    ReportContext.ReportType reportType = report.getReportType();
+                    switch (reportType) {
+                    case LINK:
+                        xmlStreamWriter.writeStartElement("link");
+                        break;
+                    case IMAGE:
+                        xmlStreamWriter.writeStartElement("image");
+                        break;
+                    default:
+                        throw new ReportException("Unsupported report type: " + reportType);
+                    }
+                    xmlStreamWriter.writeAttribute("label", report.getLabel());
+                    xmlStreamWriter.writeCharacters(report.getUrl()
+                        .toString());
+                    xmlStreamWriter.writeEndElement();
                 }
-                xmlStreamWriter.writeAttribute("label", report.getLabel());
-                xmlStreamWriter.writeCharacters(report.getUrl()
-                    .toString());
                 xmlStreamWriter.writeEndElement();
-            }
-        });
+            });
+        }
     }
 
     public File getXmlReportFile() {
