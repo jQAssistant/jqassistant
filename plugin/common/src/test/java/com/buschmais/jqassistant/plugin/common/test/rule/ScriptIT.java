@@ -6,7 +6,6 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * Verifies rules execution based of scripts.
  */
-public class ScriptIT extends AbstractPluginIT {
+public class ScriptIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     public void javaScriptXmlConcept() throws Exception {

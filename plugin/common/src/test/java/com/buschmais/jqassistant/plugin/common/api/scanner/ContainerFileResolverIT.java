@@ -2,13 +2,12 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ContainerFileResolverIT extends AbstractPluginIT {
+public class ContainerFileResolverIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     public void requireFile() {

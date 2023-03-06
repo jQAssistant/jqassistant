@@ -9,7 +9,6 @@ import java.util.zip.ZipOutputStream;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies scanning of ZIP arichves.
  */
-class ZipScannerIT extends AbstractPluginIT {
+class ZipScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     void zipFile() throws Exception {

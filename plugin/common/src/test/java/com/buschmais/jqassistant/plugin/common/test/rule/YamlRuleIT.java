@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.rule.JavaRule;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Verifies YAML rule execution.
  */
-public class YamlRuleIT extends AbstractPluginIT {
+public class YamlRuleIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     public void adocJavaRule() throws RuleException {

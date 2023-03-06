@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Verifies scanning of gzipped files.
  */
-class GZipFileScannerIT extends AbstractPluginIT {
+class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     /**
      * Scan a GZipped zip file.

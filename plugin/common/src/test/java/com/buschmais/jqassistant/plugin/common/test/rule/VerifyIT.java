@@ -1,14 +1,12 @@
 package com.buschmais.jqassistant.plugin.common.test.rule;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class VerifyIT extends AbstractPluginIT {
+public class VerifyIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     public void validConceptRowCount() throws Exception {

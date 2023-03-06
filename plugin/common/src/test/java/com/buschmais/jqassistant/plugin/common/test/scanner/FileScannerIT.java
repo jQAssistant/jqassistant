@@ -10,7 +10,6 @@ import java.util.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Verifies file/directory scanning.
  */
-class FileScannerIT extends AbstractPluginIT {
+class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.

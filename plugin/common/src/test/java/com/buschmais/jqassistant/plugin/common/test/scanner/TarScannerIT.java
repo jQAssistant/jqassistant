@@ -7,7 +7,6 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -22,7 +21,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 /**
  * Verifies scanning of TAR arichves.
  */
-class TarScannerIT extends AbstractPluginIT {
+class TarScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
     @Test
     void tarFile() throws Exception {
