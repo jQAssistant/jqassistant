@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import io.smallrye.config.ConfigMapping;
 import org.apache.commons.lang3.time.StopWatch;
@@ -59,24 +60,22 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     @Override
     public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        ConceptDescriptor conceptDescriptor = analyzerContext.getStore()
-            .find(ConceptDescriptor.class, concept.getId());
+        Store store = analyzerContext.getStore();
+        TransactionContext transactionContext = new TransactionContext(store);
+        ConceptDescriptor conceptDescriptor = findConcept(concept, transactionContext);
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
         if (conceptDescriptor == null || isExecuteAppliedConcepts) {
             analyzerContext.getLogger()
                 .info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
-            reportPlugin.beginConcept(concept);
+            transactionContext.requireTX(() -> reportPlugin.beginConcept(concept));
             Result<Concept> result = execute(concept, effectiveSeverity);
-            reportPlugin.setResult(result);
+            transactionContext.requireTX(() -> reportPlugin.setResult(result));
             status = result.getStatus();
             if (conceptDescriptor == null) {
-                conceptDescriptor = analyzerContext.getStore()
-                    .create(ConceptDescriptor.class);
-                conceptDescriptor.setId(concept.getId());
-                conceptDescriptor.setStatus(status);
+                createConcept(concept, status, transactionContext);
             }
-            reportPlugin.endConcept();
+            transactionContext.requireTX(() -> reportPlugin.endConcept());
         } else {
             if (!isExecuteAppliedConcepts) {
                 analyzerContext.getLogger()
@@ -197,6 +196,20 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             ruleParameters.put(parameterName, parameterValue);
         }
         return ruleParameters;
+    }
+
+    private ConceptDescriptor findConcept(Concept concept, TransactionContext transactionContext) throws RuleException {
+        ConceptDescriptor conceptDescriptor = transactionContext.requireTX(() -> transactionContext.getStore()
+            .find(ConceptDescriptor.class, concept.getId()));
+        return conceptDescriptor;
+    }
+
+    private void createConcept(Concept concept, Result.Status status, TransactionContext transactionContext) throws RuleException {
+        transactionContext.requireTX(() -> {
+            ConceptDescriptor conceptDescriptor = transactionContext.getStore().create(ConceptDescriptor.class);
+            conceptDescriptor.setId(concept.getId());
+            conceptDescriptor.setStatus(status);
+        });
     }
 
 }

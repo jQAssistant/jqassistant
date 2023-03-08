@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOException;
 
@@ -26,13 +23,25 @@ import static org.mockito.Mockito.*;
  */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
-class TransactionalVisitorTest {
+class TransactionalRuleVisitorTest {
 
     @Mock
     private RuleVisitor delegate;
 
     @Mock
     private Store store;
+
+    @Mock
+    private Group group;
+
+    @Mock
+    private Concept concept;
+
+    @Mock
+    private Constraint constraint;
+
+    @Mock
+    private Executable<?> executable;
 
     private boolean activeTransaction;
 
@@ -45,6 +54,9 @@ class TransactionalVisitorTest {
         doAnswer(invocation -> activeTransaction = false).when(store).commitTransaction();
         doAnswer(invocation -> activeTransaction = false).when(store).rollbackTransaction();
         doAnswer(invocation -> activeTransaction).when(store).hasActiveTransaction();
+        doReturn(true).when(executable).isTransactional();
+        doReturn(executable).when(concept).getExecutable();
+        doReturn(executable).when(constraint).getExecutable();
     }
 
     @Test
@@ -65,8 +77,6 @@ class TransactionalVisitorTest {
 
     @Test
     void beforeGroup() throws RuleException {
-        Group group = mock(Group.class);
-
         visitor.beforeGroup(group, MAJOR);
 
         verify(delegate).beforeGroup(group, MAJOR);
@@ -75,8 +85,6 @@ class TransactionalVisitorTest {
 
     @Test
     void afterGroup() throws RuleException {
-        Group group = mock(Group.class);
-
         visitor.afterGroup(group);
 
         verify(delegate).afterGroup(group);
@@ -85,8 +93,6 @@ class TransactionalVisitorTest {
 
     @Test
     void visitConcept() throws RuleException {
-        Concept concept = mock(Concept.class);
-
         visitor.visitConcept(concept, MINOR);
 
         verify(delegate).visitConcept(concept, MINOR);
@@ -94,9 +100,17 @@ class TransactionalVisitorTest {
     }
 
     @Test
-    void skipConcept() throws RuleException {
-        Concept concept = mock(Concept.class);
+    void visitNonTransactionalConcept() throws RuleException {
+        doReturn(false).when(executable).isTransactional();
 
+        visitor.visitConcept(concept, MINOR);
+
+        verify(delegate).visitConcept(concept, MINOR);
+        verifyNoTransaction();
+    }
+
+    @Test
+    void skipConcept() throws RuleException {
         visitor.skipConcept(concept, MINOR);
 
         verify(delegate).skipConcept(concept, MINOR);
@@ -105,8 +119,6 @@ class TransactionalVisitorTest {
 
     @Test
     void visitConstraint() throws RuleException {
-        Constraint constraint = mock(Constraint.class);
-
         visitor.visitConstraint(constraint, MINOR);
 
         verify(delegate).visitConstraint(constraint, MINOR);
@@ -114,9 +126,17 @@ class TransactionalVisitorTest {
     }
 
     @Test
-    void skipConstraint() throws RuleException {
-        Constraint constraint = mock(Constraint.class);
+    void visitNonTransactionalConstraint() throws RuleException {
+        doReturn(false).when(executable).isTransactional();
 
+        visitor.visitConstraint(constraint, MINOR);
+
+        verify(delegate).visitConstraint(constraint, MINOR);
+        verifyNoTransaction();
+    }
+
+    @Test
+    void skipConstraint() throws RuleException {
         visitor.skipConstraint(constraint, MAJOR);
 
         verify(delegate).skipConstraint(constraint, MAJOR);
@@ -125,7 +145,6 @@ class TransactionalVisitorTest {
 
     @Test
     void ruleException() throws RuleException {
-        Constraint constraint = mock(Constraint.class);
         doThrow(new RuleException("Test")).when(delegate).visitConstraint(constraint, MAJOR);
 
         try {
@@ -139,7 +158,6 @@ class TransactionalVisitorTest {
 
     @Test
     void runtimeException() throws RuleException {
-        Constraint constraint = mock(Constraint.class);
         doThrow(new NullPointerException()).when(delegate).visitConstraint(constraint, MAJOR);
 
         try {
@@ -160,6 +178,11 @@ class TransactionalVisitorTest {
     private void verifyFailedTransaction() {
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
+        verify(store, never()).commitTransaction();
+    }
+
+    private void verifyNoTransaction() {
+        verify(store, never()).beginTransaction();
         verify(store, never()).commitTransaction();
     }
 }

@@ -29,4 +29,11 @@ public interface Executable<S> {
      */
     Class<S> getType();
 
+    /**
+     * Return if the executable is transactional, i.e. it requires a transaction.
+     *
+     * @return <code>true</code> if the executable is transactional.
+     */
+    boolean isTransactional();
+
 }
