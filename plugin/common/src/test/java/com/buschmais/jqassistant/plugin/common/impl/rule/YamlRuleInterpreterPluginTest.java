@@ -42,7 +42,7 @@ public class YamlRuleInterpreterPluginTest {
     @Test
     public void javaRule() throws RuleException {
         String source = "java-rule: " + TestJavaRule.class.getName() + "\nconfiguration:\n  testProperty: testValue";
-        SourceExecutable<String> executable = new SourceExecutable("yaml", source, String.class, true);
+        SourceExecutable<String> executable = new SourceExecutable("yaml", source, String.class);
         Concept concept = Concept.builder().id("test-java-rule").executable(executable).severity(Severity.MINOR).build();
 
         Result<Concept> result = plugin.execute(concept, emptyMap(), Severity.MAJOR, analyzerContext);

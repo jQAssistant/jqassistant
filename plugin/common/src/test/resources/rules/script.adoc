@@ -7,6 +7,7 @@
 .Demonstrates a concept using JavaScript.
 [source,javascript,role=concept,severity=major]
 ----
+store.beginTransaction()
 // create a test descriptor
 var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
 testDescriptor.setName("test");
@@ -17,6 +18,7 @@ row.put("test", testDescriptor);
 var rows = java.util.Arrays.asList(row);
 // return the result
 var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+store.commitTransaction()
 new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
 ----
 
