@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.api;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+import com.buschmais.jqassistant.core.shared.transaction.Transactional;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.Example;
@@ -15,7 +16,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 /**
  * Defines the store for {@link Descriptor}s.
  */
-public interface Store {
+public interface Store extends Transactional {
 
     /**
      * Start the store.

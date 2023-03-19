@@ -189,15 +189,14 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private Executable<?> getExecutable(StructuralNode block, Attributes attributes) {
-        boolean transactional = getTransactional(attributes.getString(TRANSACTIONAL));
         String language;
         if (SOURCE.equals(block.getStyle())) {
             language = attributes.getString(LANGUAGE);
             String source = unescapeHtml(block.getContent());
             if (CYPHER.equals(language)) {
-                return new CypherExecutable(source, transactional);
+                return new CypherExecutable(source);
             } else {
-                return new ScriptExecutable(language.toLowerCase(), source, transactional);
+                return new ScriptExecutable(language.toLowerCase(), source);
             }
         } else {
             // Use style for native Asciidoc blocks
@@ -207,7 +206,7 @@ public class AsciidocRuleParserPlugin extends AbstractRuleParserPlugin {
                 language = attributes.getString("1");
             }
             if (language != null) {
-                return new SourceExecutable<>(language.toLowerCase(), block, StructuralNode.class, transactional);
+                return new SourceExecutable<>(language.toLowerCase(), block, StructuralNode.class);
             } else {
                 LOGGER.warn("Cannot determine language for '" + block + "'.");
             }

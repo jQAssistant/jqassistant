@@ -54,7 +54,6 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String PRIMARY_COLUMN = "primaryColumn";
     protected static final String REPORT_PROPERTIES = "properties";
     protected static final String VERIFY = "verify";
-    protected static final String TRANSACTIONAL = "transactional";
     protected static final String SOURCE = "source";
     protected static final String LANGUAGE = "language";
     protected static final String CYPHER = "cypher";

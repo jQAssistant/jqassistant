@@ -27,32 +27,38 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
 
     protected <T extends ExecutableRule<?>> Result<T> execute(String cypher, T executableRule, Map<String, Object> parameters, Severity severity,
         AnalyzerContext context) throws RuleException {
-        List<Map<String, Object>> rows = new LinkedList<>();
         context.getLogger()
             .debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
-        String primaryColumn = null;
-        List<String> columnNames = null;
         try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = context.getStore()
             .executeQuery(cypher, parameters)) {
-            for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
-                if (columnNames == null) {
-                    columnNames = unmodifiableList(rowObject.getColumns());
-                    primaryColumn = executableRule.getReport()
-                        .getPrimaryColumn();
-                    if (primaryColumn == null) {
-                        primaryColumn = columnNames.get(0);
-                    }
-                }
-                Map<String, Object> row = new LinkedHashMap<>();
-                for (String columnName : columnNames) {
-                    row.put(columnName, rowObject.get(columnName, Object.class));
-                }
-                if (!isSuppressedRow(executableRule.getId(), row, primaryColumn)) {
-                    rows.add(row);
-                }
-            }
+            return context.getStore()
+                .requireTransaction(() -> getResult(executableRule, severity, context, compositeRowObjects));
         } catch (Exception e) {
             throw new RuleException("Cannot execute query for rule '" + executableRule + "'.", e);
+        }
+    }
+
+    private <T extends ExecutableRule<?>> Result<T> getResult(T executableRule, Severity severity, AnalyzerContext context,
+        Query.Result<Query.Result.CompositeRowObject> compositeRowObjects) throws RuleException {
+        List<Map<String, Object>> rows = new LinkedList<>();
+        String primaryColumn = null;
+        List<String> columnNames = null;
+        for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
+            if (columnNames == null) {
+                columnNames = unmodifiableList(rowObject.getColumns());
+                primaryColumn = executableRule.getReport()
+                    .getPrimaryColumn();
+                if (primaryColumn == null) {
+                    primaryColumn = columnNames.get(0);
+                }
+            }
+            Map<String, Object> row = new LinkedHashMap<>();
+            for (String columnName : columnNames) {
+                row.put(columnName, rowObject.get(columnName, Object.class));
+            }
+            if (!isSuppressedRow(executableRule.getId(), row, primaryColumn)) {
+                rows.add(row);
+            }
         }
         Status status = getStatus(executableRule, severity, columnNames, rows, context);
         return Result.<T>builder()

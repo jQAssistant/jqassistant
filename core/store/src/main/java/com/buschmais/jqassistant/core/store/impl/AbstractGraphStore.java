@@ -223,6 +223,43 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <E extends Exception> void requireTransaction(TransactionalAction<E> transactionalAction) throws E {
+        requireTransaction((TransactionalSupplier<Void, E>) () -> {
+            transactionalAction.execute();
+            return null;
+        });
+    }
+
+    /**
+     * Executes a {@link TransactionalSupplier} within a transaction.
+     *
+     * @param transactionalSupplier
+     *     The {@link TransactionalSupplier}.
+     * @param <T>
+     *     The return type of the {@link TransactionalSupplier}.
+     * @return The value provided by the {@link TransactionalSupplier}.
+     * @throws E
+     *     If the transaction failed due to an underlying
+     *     {@link XOException}.
+     */
+    @Override
+    public <T, E extends Exception> T requireTransaction(TransactionalSupplier<T, E> transactionalSupplier) throws E {
+        if (hasActiveTransaction()) {
+            return transactionalSupplier.execute();
+        }
+        try {
+            beginTransaction();
+            T result = transactionalSupplier.execute();
+            commitTransaction();
+            return result;
+        } finally {
+            if (hasActiveTransaction()) {
+                rollbackTransaction();
+            }
+        }
+    }
+
+    @Override
     public void reset() {
         LOGGER.info("Resetting store.");
         // clear all caches assigned to that store

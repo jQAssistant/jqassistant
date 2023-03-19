@@ -42,11 +42,11 @@ class XmlReportTest {
         ResultType result = ruleType.getResult();
         assertThat(result.getColumns()
             .getCount()).isEqualTo(2);
-        List<ColumnHeaderType> columnHeaders = result.getColumns()
+        assertThat(result.getColumns().getPrimary()).isEqualTo("c2");
+        List<String> columnHeaders = result.getColumns()
             .getColumn();
         assertThat(columnHeaders).hasSize(2);
-        verifyColumnHeader(columnHeaders.get(0), "c1", false);
-        verifyColumnHeader(columnHeaders.get(1), "c2", true);
+        assertThat(columnHeaders).containsExactly("c1", "c2");
         assertThat(result.getRows()
             .getCount()).isEqualTo(1);
         List<RowType> rows = result.getRows()
@@ -107,9 +107,8 @@ class XmlReportTest {
         ColumnsHeaderType columnsHeader = result.getColumns();
         assertThat(columnsHeader.getCount()).isEqualTo(2);
         assertThat(columnsHeader.getPrimary()).isEqualTo("c1");
-        List<ColumnHeaderType> columnHeaders = columnsHeader.getColumn();
-        verifyColumnHeader(columnHeaders.get(0), "c1", true);
-        verifyColumnHeader(columnHeaders.get(1), "c2", false);
+        List<String> columnHeaders = columnsHeader.getColumn();
+        assertThat(columnHeaders).containsExactly("c1", "c2");
     }
 
     @Test
@@ -132,11 +131,6 @@ class XmlReportTest {
 
     private JqassistantReport readReport(File xmlReport) {
         return REPORT_READER.read(xmlReport);
-    }
-
-    private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
-        assertThat(columnHeaderC1.getValue()).isEqualTo(expectedName);
-        assertThat(columnHeaderC1.isPrimary()).isEqualTo(isPrimary);
     }
 
 }
