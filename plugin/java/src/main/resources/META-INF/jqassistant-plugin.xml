@@ -55,7 +55,6 @@
     </scanner>
     <rules>
         <resource>java.xml</resource>
-        <resource>dependency.xml</resource>
-        <resource>classpath.xml</resource>
+        <resource>java-classpath.xml</resource>
     </rules>
 </jqassistant-plugin>

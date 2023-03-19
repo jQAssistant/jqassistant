@@ -33,7 +33,7 @@
         <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable
             from the other (i.e. a super class or interface).
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (type:Java:Type)-[:IMPLEMENTS|EXTENDS*0..]->(superType:Java:Type)
             CALL {
@@ -51,7 +51,7 @@
         <description>Creates a relationship INHERITS between two "Member" labeled nodes if a member is inherited from a
             super type.
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (type:Java:Type)-[:DECLARES]->(member:Member),
               (superType:Java:Type)-[:DECLARES]->(superMember:Member),
@@ -87,7 +87,7 @@
         <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
             one from a super type.
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (type:Java:Type)-[:DECLARES]->(method:Method),
               (superType:Java:Type)-[:DECLARES]->(superMethod:Method),
@@ -125,7 +125,7 @@
         <description>Propagates INVOKES relationships as VIRTUAL_INVOKES to non-abstract methods within the inheritance
             hierarchy, i.e. identifying potential methods that could be invoked.
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (method:Method)-[invokes:INVOKES]->(:Method)-[:INHERITED_FROM*0..1]->(invokedMethod:Method),
               (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
@@ -153,7 +153,7 @@
         <description>Propagates DEPENDS_ON relationships as VIRTUAL_DEPENDS_ON to types that extend or implement the
             referenced type.
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (type:Java:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Java:Type),
               (dependent:Java:Type)-[:DEPENDS_ON]->(superType)
@@ -184,7 +184,7 @@
             one from the same type (i.e. the
             methods have the same name but not the same signature).
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
               (type:Java:Type)-[:DECLARES]->(method:Method),
               (type)-[:DECLARES]->(otherMethod:Method)
@@ -309,7 +309,7 @@
         <description>Labels functional interfaces (i.e. to be used as lambda expressions)
             with `FunctionalInterface`.
         </description>
-        <cypher transactional="false"><![CDATA[
+        <cypher><![CDATA[
             MATCH
                 (i:Java:Interface)-[:DECLARES]->(m:Member:Java:Method {abstract: true})
             WITH
@@ -436,6 +436,90 @@
             <aggregation/>
         </verify>
     </concept>
+
+    <concept id="java:PackageDependency">
+        <description>
+            Creates a DEPENDS_ON_PACKAGE relationship between a packages if there are type dependencies between them.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:CONTAINS]->(t1:Java:Type)-[dependsOn:DEPENDS_ON]->(t2:Java:Type)<-[:CONTAINS]-(p2:Package)
+            WHERE
+                p1 <> p2
+            WITH
+              p1, count(dependsOn) as weight, p2
+            CALL {
+              WITH
+                p1, weight, p2
+              MERGE
+                (p1)-[d:DEPENDS_ON_PACKAGE]->(p2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              p1 AS package, COUNT(p2) AS PackageDependencies
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:ArtifactDependency">
+        <description>
+            Creates a new DEPENDS_ON_ARTIFACT relationship between artifacts or updates an existing one with a 'used'
+            property if there are type dependencies between them, i.e. if an artifact contains a type with a fully
+            qualified name which a type from another artifact requires.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a1:Artifact)-[:CONTAINS]->(:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type),
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+            WHERE
+              a1 <> a2
+              and t1.fqn = t2.fqn
+            WITH
+              a1, count(dependsOn) as weight, a2
+            CALL {
+              WITH
+                a1, weight, a2
+              MERGE
+                (a1)-[d:DEPENDS_ON_ARTIFACT]->(a2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:AvoidCyclicPackageDependencies">
+        <requiresConcept refId="java:PackageDependency"/>
+        <description>Cyclic package dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:DEPENDS_ON_PACKAGE]->(p2:Package),
+                path=shortestPath((p2)-[:DEPENDS_ON_PACKAGE*]->(p1))
+            WHERE
+                p1<>p2
+            RETURN
+                p1 as Package, nodes(path) as Cycle
+            ORDER BY
+                Package.fqn
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java:AvoidCyclicArtifactDependencies">
+        <requiresConcept refId="java:ArtifactDependency"/>
+        <description>Cyclic artifact dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (a1:Artifact)-[:DEPENDS_ON_ARTIFACT]->(a2:Artifact),
+                path=shortestPath((a2)-[:DEPENDS_ON_ARTIFACT*]->(a1))
+            WHERE
+                a1<>a2
+            RETURN
+                a1 as Artifact, nodes(path) as Cycle
+            ORDER BY
+                Artifact.fqn
+        ]]></cypher>
+    </constraint>
 
 </jqassistant-rules>
 

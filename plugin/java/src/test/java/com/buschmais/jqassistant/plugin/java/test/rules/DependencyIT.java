@@ -10,6 +10,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
@@ -22,7 +23,6 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
@@ -32,8 +32,7 @@ import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -43,7 +42,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 class DependencyIT extends AbstractJavaPluginIT {
 
     /**
-     * Verifies the concept "dependency:Type".
+     * Verifies type dependencies.
      *
      */
     @Test
@@ -116,7 +115,7 @@ class DependencyIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "dependency:Package".
+     * Verifies the concept "java:PackageDependency".
      *
      * @throws IOException
      *             If the test fails.
@@ -124,14 +123,19 @@ class DependencyIT extends AbstractJavaPluginIT {
     @Test
     void packages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
-        assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
+        assertThat(applyConcept("java:PackageDependency").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
-                hasItem(packageDescriptor(B.class.getPackage())));
-        parameters.put("package", B.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
+        List<Map<String, Object>> rows = query("MATCH (p1:Package)-[d:DEPENDS_ON_PACKAGE]->(p2:Package) WHERE p1.fqn=$package RETURN p2, d.weight as weight",
+            parameters).getRows();
+        assertThat(rows.size(), equalTo(1));
+        Map<String, Object> row = rows.get(0);
+        assertThat((PackageDescriptor) row.get("p2"), packageDescriptor(B.class.getPackage()));
+        assertThat(row.get("weight"), equalTo(1L));
+        parameters.put("package", B.class.getPackage()
+            .getName());
+        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON_PACKAGE]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(A.class.getPackage())));
         store.commitTransaction();
     }
@@ -151,27 +155,27 @@ class DependencyIT extends AbstractJavaPluginIT {
         store.commitTransaction();
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        assertThat(applyConcept("dependency:Artifact").getStatus(), Matchers.equalTo(SUCCESS));
+        assertThat(applyConcept("java:ArtifactDependency").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         verifyArtifactDependency("a", "b");
         verifyArtifactDependency("b", "a");
         store.commitTransaction();
     }
 
-    private Map<String, Object> verifyArtifactDependency(String from, String to) {
+    private void verifyArtifactDependency(String from, String to) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", from);
-        List<Object> usedDependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2", parameters)
-                .getColumn("a2");
-        assertThat(usedDependency, hasItem(artifactDescriptor(to)));
-        // The DEPENDS_RELATION must be unique
-        List<Object> dependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2", parameters).getColumn("a2");
-        assertThat(dependency.size(), equalTo(1));
-        return parameters;
+        List<Map<String, Object>> rows = query(
+            "MATCH (a1:Artifact)-[dependsOn:DEPENDS_ON_ARTIFACT]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2, dependsOn.weight as weight",
+            parameters).getRows();
+        assertThat(rows.size(), equalTo(1));
+        Map<String, Object> row = rows.get(0);
+        assertThat((ArtifactFileDescriptor) row.get("a2"), artifactDescriptor(to));
+        assertThat(row.get("weight"), equalTo(1L));
     }
 
     /**
-     * Verifies the constraint "dependency:PackageCycles".
+     * Verifies the constraint "java:AvoidCyclicPackageDependencies".
      *
      * @throws IOException
      *             If the test fails.
@@ -179,12 +183,11 @@ class DependencyIT extends AbstractJavaPluginIT {
     @Test
     void packageCycles() throws Exception {
         scanClassPathDirectory(getClassesDirectory(A.class));
-        assertThat(validateConstraint("dependency:PackageCycles").getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint("java:AvoidCyclicPackageDependencies").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
-        assertThat(constraintViolations.values(), matcher);
-        Result<Constraint> result = constraintViolations.get("dependency:PackageCycles");
+        Result<Constraint> result = constraintViolations.get("java:AvoidCyclicPackageDependencies");
+        assertThat(result, notNullValue());
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(2));
         for (Map<String, Object> row : rows) {
@@ -195,7 +198,7 @@ class DependencyIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the constraint "dependency:ArtifactCycles".
+     * Verifies the constraint "java:AvoidCyclicArtifactDependencies".
      *
      * @throws IOException
      *             If the test fails.
@@ -204,10 +207,10 @@ class DependencyIT extends AbstractJavaPluginIT {
     void artifactCycles() throws Exception {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        assertThat(validateConstraint("dependency:ArtifactCycles").getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint("java:AvoidCyclicArtifactDependencies").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         Collection<Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults().values();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("java:AvoidCyclicArtifactDependencies")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
     }
