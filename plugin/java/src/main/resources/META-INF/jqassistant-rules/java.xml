@@ -7,11 +7,18 @@
         <cypher><![CDATA[
             MATCH
               (:Java:Type)-[:DECLARES]->(innerType:Java:Type)
-            SET
-              innerType:Inner
+            CALL {
+              WITH
+                innerType
+              SET
+                innerType:Inner
+            } IN TRANSACTIONS
             RETURN
-              innerType AS InnerType
+              count(innerType) AS InnerTypes
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:AnonymousInnerType">
@@ -19,13 +26,17 @@
         <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
         <cypher><![CDATA[
             MATCH
-              (innerType:Inner:Java:Type)
+              (anonymousInnerTypes:Inner:Java:Type)
             WHERE
-              innerType.name =~ ".*\\$[0-9]*"
-            SET
-              innerType:Anonymous
+              anonymousInnerTypes.name =~ ".*\\$[0-9]*"
+            CALL {
+              WITH
+                anonymousInnerTypes
+              SET
+                anonymousInnerTypes:Anonymous
+            } IN TRANSACTIONS
             RETURN
-              innerType AS AnonymousInnerType
+              count(anonymousInnerTypes) AS AnonymousInnerTypes
         ]]></cypher>
     </concept>
 
@@ -43,8 +54,11 @@
                   (superType)-[:ASSIGNABLE_FROM]->(type)
             } IN TRANSACTIONS
             RETURN
-              type.fqn AS AssignableType
+              count(*) AS AssignableTypes
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:MemberInheritedFrom">
@@ -197,8 +211,12 @@
               MERGE
                 (method)-[:OVERLOADS]->(otherMethod)
             } IN TRANSACTIONS
-            RETURN method AS OverloadedMethod, type AS DeclaringType
+            RETURN
+              count(method) AS OverloadedMethods
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:Deprecated">
@@ -323,8 +341,11 @@
                 i:FunctionalInterface
             } IN TRANSACTIONS
             RETURN
-                i AS FunctionInterface
+              count(i) AS FunctionInterfaces
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:DefaultMethod">
@@ -407,10 +428,14 @@
             WHERE
               outer <> inner
               and declaredTypeParameter.name = requiredTypeParameter.name
-            MERGE
-              (requiredTypeParameter)-[declaredBy:DECLARED_BY]->(declaredTypeParameter)
+            CALL {
+              WITH
+                requiredTypeParameter, declaredTypeParameter
+              MERGE
+                (requiredTypeParameter)-[:DECLARED_BY]->(declaredTypeParameter)
+            } IN TRANSACTIONS
             RETURN
-              count(declaredBy) as OuterTypeDeclarations
+              count(*) as OuterTypeDeclarations
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -427,8 +452,12 @@
               (rawType)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER]->(typeParameter)
             WHERE
               hasActualTypeArgument.index = declaresTypeParameter.index
-            MERGE
-              (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            CALL {
+              WITH
+                typeArgument, typeParameter
+              MERGE
+                (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            } IN TRANSACTIONS
             RETURN
               count(*) as TypeParameterDeclarations
         ]]></cypher>
