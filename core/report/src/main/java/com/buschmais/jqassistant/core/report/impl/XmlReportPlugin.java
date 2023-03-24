@@ -17,8 +17,10 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -186,14 +188,15 @@ public class XmlReportPlugin implements ReportPlugin {
             }
             xmlStreamWriter.writeEndElement(); // columns
             xmlStreamWriter.writeStartElement("rows");
-            List<Map<String, Object>> rows = result.getRows();
+            List<Row> rows = result.getRows();
             xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-            for (Map<String, Object> row : rows) {
+            for (Row row : rows) {
                 xmlStreamWriter.writeStartElement("row");
-                for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                xmlStreamWriter.writeAttribute("key", row.getKey());
+                for (Map.Entry<String, Column<?>> rowEntry : row.getColumns().entrySet()) {
                     String columnName = rowEntry.getKey();
-                    Object value = rowEntry.getValue();
-                    writeColumn(columnName, value);
+                    Column column = rowEntry.getValue();
+                    writeColumn(columnName, column);
                 }
                 xmlStreamWriter.writeEndElement();
             }
@@ -279,15 +282,15 @@ public class XmlReportPlugin implements ReportPlugin {
      *
      * @param columnName
      *     The name of the column.
-     * @param value
-     *     The value.
+     * @param column
+     *     The {@link Column}.
      * @throws XMLStreamException
      *     If a problem occurs.
      */
-    private void writeColumn(String columnName, Object value) throws XMLStreamException {
+    private void writeColumn(String columnName, Column column) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
-        String label = null;
+        Object value = column.getValue();
         if (value instanceof CompositeObject) {
             CompositeObject descriptor = (CompositeObject) value;
             LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
@@ -297,7 +300,6 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeCharacters(elementValue.name());
                 xmlStreamWriter.writeEndElement(); // element
                 SourceProvider sourceProvider = elementValue.getSourceProvider();
-                label = sourceProvider.getName(descriptor);
                 Optional<FileLocation> sourceLocation = sourceProvider.getSourceLocation(descriptor);
                 if (sourceLocation.isPresent()) {
                     xmlStreamWriter.writeStartElement("source");
@@ -305,10 +307,8 @@ public class XmlReportPlugin implements ReportPlugin {
                     xmlStreamWriter.writeEndElement(); // sourceFile
                 }
             }
-        } else if (value != null) {
-            label = ReportHelper.getLabel(value);
         }
-        writeElementWithCharacters("value", label);
+        writeElementWithCharacters("value", column.getLabel());
         xmlStreamWriter.writeEndElement(); // column
     }
 

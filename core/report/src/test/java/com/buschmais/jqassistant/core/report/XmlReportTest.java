@@ -53,6 +53,7 @@ class XmlReportTest {
             .getRow();
         assertThat(rows).hasSize(1);
         RowType rowType = rows.get(0);
+        assertThat(rowType.getKey()).hasSize(64);
         assertThat(rowType.getColumn()
             .size()).isEqualTo(2);
         for (ColumnType column : rowType.getColumn()) {

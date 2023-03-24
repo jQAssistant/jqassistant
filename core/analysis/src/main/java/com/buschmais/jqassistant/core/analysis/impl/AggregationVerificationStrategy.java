@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -28,7 +29,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
 
     @Override
     public <T extends ExecutableRule> Result.Status verify(T executable, Severity severity, AggregationVerification verification, List<String> columnNames,
-        List<Map<String, Object>> rows) throws RuleException {
+        List<Row> rows) throws RuleException {
         LOGGER.debug("Verifying result of " + executable);
         if (rows.isEmpty()) {
             return getStatus(executable, severity, 0, verification.getMin(), verification.getMax());
@@ -36,18 +37,20 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         if (columnNames.isEmpty()) {
             throw new RuleException("Result contains no columns, at least one with a numeric value is expected.");
         }
-        String column = verification.getColumn();
-        if (column == null) {
-            column = columnNames.get(0);
-            LOGGER.debug("No aggregation column specified, using " + column);
+        String columnName = verification.getColumn();
+        if (columnName == null) {
+            columnName = columnNames.get(0);
+            LOGGER.debug("No aggregation column specified, using " + columnName);
         }
         int aggregatedValue = 0;
-        for (Map<String, Object> row : rows) {
-            Object value = row.get(column);
+        for (Row row : rows) {
+            Column<?> column = row.getColumns()
+                .get(columnName);
+            Object value = column.getValue();
             if (value == null) {
-                throw new RuleException("The result does not contain a column '" + column);
+                throw new RuleException("The result does not contain a column '" + columnName);
             } else if (!Number.class.isAssignableFrom(value.getClass())) {
-                throw new RuleException("The value in column '" + column + "' must be a numeric value but was '" + value + "'");
+                throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
             }
             aggregatedValue = aggregatedValue + ((Number) value).intValue();
         }
