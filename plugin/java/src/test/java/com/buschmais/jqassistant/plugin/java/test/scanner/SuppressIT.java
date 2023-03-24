@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -57,8 +56,10 @@ class SuppressIT extends AbstractJavaPluginIT {
         assertThat(suppressClasses.getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(suppressClasses.getRows().size(), equalTo(1));
-        Map<String, Object> row = suppressClasses.getRows().get(0);
-        JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.get(column);
+        Row row = suppressClasses.getRows().get(0);
+        JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.getColumns()
+            .get(column)
+            .getValue();
         assertThat(asList(suppressDescriptor.getSuppressIds()), hasItem(constraintId));
         store.commitTransaction();
     }
