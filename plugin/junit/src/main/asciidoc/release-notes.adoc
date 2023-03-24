@@ -6,6 +6,8 @@
 * The constraint `junit:AssertionMustProvideMessage` in `junit:Default` has been deprecated
 ** The new rule `junit4:AssertionMustProvideMessage` in `junit4:Default` replaces it for jUnit 4
 ** The new rule `junit5:AssertionMustProvideMessage` in `junit5:Default` replaces it for jUnit 5
+* Adds `junit4:NonJUnit4TestMethod` and `junit4:UsageOfJUnit5TestApi` to `junit4:Default`
+* Adds `junit5:NonJUnit5TestMethod` and `junit5:UsageOfJUnit4TestApi` to `junit5:Default`
 
 == 1.10.0
 
