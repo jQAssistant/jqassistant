@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import com.opencsv.CSVWriter;
@@ -72,10 +73,10 @@ public class CSVReportPlugin implements ReportPlugin {
             List<String> columnNames = result.getColumnNames();
             if (columnNames != null) {
                 csvWriter.writeNext(columnNames.toArray(new String[columnNames.size()]));
-                for (Map<String, Object> row : result.getRows()) {
+                for (Row row : result.getRows()) {
                     List<String> csvRow = new ArrayList<>(columnNames.size());
                     for (String columnName : columnNames) {
-                        csvRow.add(ReportHelper.getLabel(row.get(columnName)));
+                        csvRow.add(row.getColumns().get(columnName).getLabel());
                     }
                     csvWriter.writeNext(csvRow.toArray(new String[columnNames.size()]));
                 }

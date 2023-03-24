@@ -3,7 +3,9 @@ package com.buschmais.jqassistant.plugin.common.test.rule;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor;
@@ -76,11 +78,12 @@ public class ScriptIT extends com.buschmais.jqassistant.core.test.plugin.Abstrac
         Result<?> result = results.get(ruleName);
         assertThat("Expecting a result for " + ruleName, result, notNullValue());
         assertThat("Expecting severity " + severity, result.getSeverity(), equalTo(severity));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat("Expecting one row for rule " + ruleName, rows.size(), equalTo(1));
-        Map<String, Object> row = rows.get(0);
-        Object value = row.get("test");
-        assertThat("Expecting a column test", value, notNullValue());
+        Map<String, Column<?>> row = rows.get(0).getColumns();
+        Column column = row.get("test");
+        assertThat("Expecting a column test", column, notNullValue());
+        Object value = column.getValue();
         assertThat("Expecting a value of type " + TestLabelDescriptor.class.getName(), value, instanceOf(TestLabelDescriptor.class));
         TestLabelDescriptor testLabelDescriptor = (TestLabelDescriptor) value;
         assertThat("Expecting property with value 'test'", testLabelDescriptor.getName(), equalTo("test"));

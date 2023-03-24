@@ -12,7 +12,9 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
@@ -144,17 +146,18 @@ public class JUnitReportPlugin implements ReportPlugin {
                 .getSimpleName() + "_" + ReportHelper.escapeRuleId(rule));
             testcase.setClassname(testSuiteId);
             testcase.setTime(toTime(time));
-            List<Map<String, Object>> rows = result.getRows();
+            List<Row> rows = result.getRows();
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 StringBuilder sb = new StringBuilder();
-                for (Map<String, Object> row : rows) {
+                for (Row row : rows) {
+                    Map<String, Column<?>> columns = row.getColumns();
                     if (sb.length() > 0) {
                         sb.append("---\n");
                     }
-                    for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                        sb.append(rowEntry.getKey());
+                    for (Map.Entry<String, Column<?>> columnEntry : columns.entrySet()) {
+                        sb.append(columnEntry.getKey());
                         sb.append(" = ");
-                        sb.append(ReportHelper.getLabel(rowEntry.getValue()));
+                        sb.append(columnEntry.getValue().getLabel());
                         sb.append('\n');
                     }
                 }

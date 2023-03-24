@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -46,13 +48,13 @@ public class YamlRuleIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
                 .create(PropertyDescriptor.class);
             propertyDescriptor.setName("testProperty");
             propertyDescriptor.setValue("testValue");
-            Map<String, Object> row = new HashMap<>();
-            row.put("Property", propertyDescriptor);
+            Map<String, Column<?>> columns = new HashMap<>();
+            columns.put("Property", context.toColumn(propertyDescriptor));
             return Result.<T>builder()
                 .rule(executableRule)
                 .severity(severity)
                 .columnNames(singletonList("Property"))
-                .rows(singletonList(row))
+                .rows(singletonList(ReportHelper.toRow(executableRule, columns)))
                 .status(SUCCESS)
                 .build();
         }
