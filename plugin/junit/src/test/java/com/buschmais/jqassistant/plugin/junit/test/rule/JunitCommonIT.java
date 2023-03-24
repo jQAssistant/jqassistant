@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
@@ -105,20 +106,24 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(4));
 
         List<MethodDescriptor> methods = rows.stream()
-                                             .map(map -> new Tuple<>("IgnoreWithoutMessage", map.get("IgnoreWithoutMessage")))
-                                             .filter(tuple -> tuple.b() instanceof MethodDescriptor)
-                                             .map(tuple -> MethodDescriptor.class.cast(tuple.b()))
-                                             .collect(toList());
+            .map(map -> new Tuple<>("IgnoreWithoutMessage", map.getColumns()
+                .get("IgnoreWithoutMessage")
+                .getValue()))
+            .filter(tuple -> tuple.b() instanceof MethodDescriptor)
+            .map(tuple -> MethodDescriptor.class.cast(tuple.b()))
+            .collect(toList());
 
         List<TypeDescriptor> types = rows.stream()
-                                         .map(map -> new Tuple<>("IgnoreWithoutMessage", map.get("IgnoreWithoutMessage")))
-                                         .filter(tuple -> tuple.b() instanceof TypeDescriptor)
-                                         .map(tuple -> TypeDescriptor.class.cast(tuple.b()))
-                                         .collect(toList());
+            .map(map -> new Tuple<>("IgnoreWithoutMessage", map.getColumns()
+                .get("IgnoreWithoutMessage")
+                .getValue()))
+            .filter(tuple -> tuple.b() instanceof TypeDescriptor)
+            .map(tuple -> TypeDescriptor.class.cast(tuple.b()))
+            .collect(toList());
 
         assertThat(methods, containsInAnyOrder(methodDescriptor(IgnoredTest.class, "ignoredTest"),
                                                methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage")));
@@ -158,9 +163,12 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
+        assertThat((MethodDescriptor) rows.get(0)
+            .getColumns()
+            .get("Method")
+            .getValue(), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
 
@@ -181,9 +189,13 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:TestMethodWithoutAssertion")));
-        List<MethodDescriptor> methods = result.getRows().stream()
-                                               .map(row -> row.get("Method"))
-                                               .map(MethodDescriptor.class::cast).collect(toList());
+        List<MethodDescriptor> methods = result.getRows()
+            .stream()
+            .map(row -> row.getColumns()
+                .get("Method")
+                .getValue())
+            .map(MethodDescriptor.class::cast)
+            .collect(toList());
         assertThat(methods.size(), equalTo(4));
 
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
