@@ -283,6 +283,7 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
     <description>JavaScript example constraint: returns a result containing the number
         of declared methods for each class.</description>
     <script language="JavaScript">
+        store.beginTransaction()
         // Define the columns returned by the constraint
         var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
         // Define the list of rows returned by the constraint
@@ -310,6 +311,7 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
             var row = context.toRow(rule, columns);
             rows.add(row);
         }
+        store.commitTransaction()
         // Return the result
         var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
         new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
@@ -324,6 +326,7 @@ or in Asciidoc:
 .JavaScript example constraint: returns a result containing the number of declared methods for each class.
 [source,javascript,role=constraint]
 ----
+store.beginTransaction()
 // Define the columns returned by the constraint
 var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
 // Define the list of rows returned by the constraint
@@ -351,6 +354,7 @@ while(typeIterator.hasNext()) {
     var row = context.toRow(rule, columns);
     rows.add(row);
 }
+store.commitTransaction()
 // Return the result
 var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
