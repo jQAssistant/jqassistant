@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
@@ -287,9 +288,12 @@ public class Junit4IT extends AbstractJunitIT {
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
+        assertThat((MethodDescriptor) rows.get(0)
+            .getColumns()
+            .get("Method")
+            .getValue(), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
 
@@ -307,7 +311,7 @@ public class Junit4IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit4:NonJUnit4TestMethod");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.get("TestMethod")).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
         assertThat(rows.size(), equalTo(9));
         assertThat(rows, containsInAnyOrder(
                 is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
@@ -336,7 +340,7 @@ public class Junit4IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit4:UsageOfJUnit5TestApi");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.get("TestMethod")).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
         assertThat(rows.size(), equalTo(6));
         assertThat(rows, containsInAnyOrder(
                 is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
