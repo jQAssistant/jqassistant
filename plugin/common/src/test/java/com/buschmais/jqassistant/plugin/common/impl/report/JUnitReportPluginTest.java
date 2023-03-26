@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
@@ -145,11 +148,17 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     @Override
     protected <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status) {
-        HashMap<String, Object> row1 = new HashMap<>();
-        row1.put("c", "foo");
-        HashMap<String, Object> row2 = new HashMap<>();
-        row2.put("c", "bar");
-        return Result.<T> builder().rule(rule).severity(rule.getSeverity()).status(status).columnNames(asList("c")).rows(asList(row1, row2)).build();
+        Map<String, Column<?>> columns1 = new HashMap<>();
+        columns1.put("c", toColumn("foo"));
+        Map<String, Column<?>> columns2 = new HashMap<>();
+        columns2.put("c", toColumn("bar"));
+        return Result.<T>builder()
+            .rule(rule)
+            .severity(rule.getSeverity())
+            .status(status)
+            .columnNames(asList("c"))
+            .rows(asList(toRow(rule, columns1), toRow(rule, columns2)))
+            .build();
     }
 
 }

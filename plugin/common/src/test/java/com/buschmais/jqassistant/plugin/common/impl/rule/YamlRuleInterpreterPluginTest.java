@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -20,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.*;
@@ -52,11 +56,11 @@ public class YamlRuleInterpreterPluginTest {
         assertThat(result.getSeverity(), is(Severity.MAJOR));
         assertThat(result.getStatus(), equalTo(Result.Status.SUCCESS));
         assertThat(result.getColumnNames(), equalTo(asList("Property", "Value")));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        Map<String, Object> row = rows.get(0);
-        assertThat(row.get("Property"), equalTo("testProperty"));
-        assertThat(row.get("Value"), equalTo("testValue"));
+        Map<String, Column<?>> row = rows.get(0).getColumns();
+        assertThat(row.get("Property").getValue(), equalTo("testProperty"));
+        assertThat(row.get("Value").getValue(), equalTo("testValue"));
     }
 
     /**
@@ -66,12 +70,12 @@ public class YamlRuleInterpreterPluginTest {
         @Override
         public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> configuration, Map<String, Object> ruleParameters,
                 Severity severity, AnalyzerContext context) {
-            List<Map<String, Object>> rows = new ArrayList<>();
+            List<Row> rows = new ArrayList<>();
             for (Map.Entry<String, Object> entry : configuration.entrySet()) {
-                Map<String, Object> row = new HashMap<>();
-                row.put("Property", entry.getKey());
-                row.put("Value", entry.getValue());
-                rows.add(row);
+                Map<String, Column<?>> columns = new HashMap<>();
+                columns.put("Property", toColumn(entry.getKey()));
+                columns.put("Value", toColumn(entry.getValue()));
+                rows.add(toRow(executableRule, columns));
             }
             return Result.<T>builder()
                 .rule(executableRule)

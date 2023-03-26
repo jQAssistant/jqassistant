@@ -9,7 +9,9 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -20,8 +22,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -99,16 +104,16 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         assertThat(report.exists(), equalTo(true));
 
         String content = FileUtils.readFileToString(report);
-        assertThat(content, equalTo(""));
+        assertThat(content, equalTo("\n"));
     }
 
     @Override
     protected <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status) {
         if (rule.equals(conceptWithRows)) {
-            HashMap<String, Object> row = new HashMap<>();
-            row.put("String", "foo");
-            row.put("Double", 42.0);
-            row.put("Named", new NamedDescriptor() {
+            Map<String, Column<?>> columns = new HashMap<>();
+            columns.put("String", toColumn("foo"));
+            columns.put("Double", toColumn(42.0));
+            columns.put("Named", toColumn(new NamedDescriptor() {
                 @Override
                 public <I> I getId() {
                     return null;
@@ -132,12 +137,18 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
                 @Override
                 public void setName(String name) {
                 }
-            });
-            row.put("EscapedString", "\"'");
-            return Result.<T> builder().rule(rule).severity(rule.getSeverity()).status(status).columnNames(asList("String", "Double", "Named", "EscapedString"))
-                    .rows(asList(row)).build();
+            }));
+            columns.put("EscapedString", toColumn("\"'"));
+            Row row = toRow(rule, columns);
+            return Result.<T>builder()
+                .rule(rule)
+                .severity(rule.getSeverity())
+                .status(status)
+                .columnNames(asList("String", "Double", "Named", "EscapedString"))
+                .rows(asList(row))
+                .build();
         } else {
-            return Result.<T> builder().rule(rule).severity(rule.getSeverity()).status(status).columnNames(null).rows(null).build();
+            return Result.<T> builder().rule(rule).severity(rule.getSeverity()).status(status).columnNames(emptyList()).rows(emptyList()).build();
         }
     }
 

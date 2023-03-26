@@ -10,8 +10,8 @@
            // prepare the result
            var columnNames = java.util.Arrays.asList("test");
            var row = new java.util.HashMap();
-           row.put("test", testDescriptor);
-           var rows = java.util.Arrays.asList(row);
+           row.put("test", context.toColumn(testDescriptor));
+           var rows = java.util.Arrays.asList(context.toRow(rule, row));
            // return the result
            var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
            new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
@@ -27,8 +27,8 @@
             var testDescriptor = queryResult.getSingleResult().get("t",
             com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
             var row = new java.util.HashMap();
-            row.put("test", testDescriptor);
-            var rows = java.util.Arrays.asList(row);
+            row.put("test", context.toColumn(testDescriptor));
+            var rows = java.util.Arrays.asList(context.toRow(rule, row));
             var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
         </script>
@@ -44,8 +44,8 @@
             // prepare the result
             def columnNames = java.util.Arrays.asList("test");
             def row = new java.util.HashMap();
-            row.put("test", testDescriptor);
-            def rows = java.util.Arrays.asList(row);
+            row.put("test", context.toColumn(testDescriptor));
+            def rows = java.util.Arrays.asList(context.toRow(rule, row));
             // return the result
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
@@ -61,8 +61,8 @@
             def testDescriptor = queryResult.getSingleResult().get("t",
             com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
             def row = new java.util.HashMap();
-            row.put("test", testDescriptor);
-            def rows = java.util.Arrays.asList(row);
+            row.put("test", context.toColumn(testDescriptor));
+            def rows = java.util.Arrays.asList(context.toRow(rule, row));
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
         </script>
@@ -76,8 +76,10 @@
             testDescriptor.setName "test"
             # prepare the result
             columnNames = java.util.Arrays.asList "test"
-            row = java.util.HashMap.new
-            row.put "test", testDescriptor
+            column = context.toColumn testDescriptor
+            columns = java.util.HashMap.new
+            columns.put "test", column
+            row = context.toRow rule, columns
             rows = java.util.Arrays.asList row
             # return the result
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::SUCCESS
@@ -93,8 +95,10 @@
             queryResult = store.executeQuery "match (t:TestLabel) return t"
             testDescriptor =
             queryResult.getSingleResult.get("t",com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.java_class)
-            row = java.util.HashMap.new
-            row.put "test",testDescriptor
+            column = context.toColumn testDescriptor
+            columns = java.util.HashMap.new
+            columns.put "test", column
+            row = context.toRow rule, columns
             rows = java.util.Arrays.asList row
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::FAILURE
             com.buschmais.jqassistant.core.report.api.model.Result.new rule,status,severity,columnNames,rows
