@@ -87,7 +87,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
 
         try {
             Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
-                analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin, LOGGER);
+                analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin);
             analyzer.execute(ruleSet, ruleSelection);
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
