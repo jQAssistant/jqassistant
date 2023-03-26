@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
@@ -35,11 +37,11 @@ class Maven3IT extends AbstractPluginIT {
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("maven3:HierarchicalParentModuleRelation")));
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
-        Map<String, Object> row = rows.get(0);
-        MavenProjectDirectoryDescriptor invalidModule = (MavenProjectDirectoryDescriptor) row.get("InvalidModule");
-        assertThat(invalidModule, equalTo(module2));
+        Map<String, Column<?>> row = rows.get(0).getColumns();
+        Column invalidModuleColumn = row.get("InvalidModule");
+        assertThat((MavenProjectDirectoryDescriptor) invalidModuleColumn.getValue(), equalTo(module2));
         store.commitTransaction();
     }
 
