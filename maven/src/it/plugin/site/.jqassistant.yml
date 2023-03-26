@@ -6,13 +6,12 @@ jqassistant:
   scan:
     include:
       urls:
-        - jqassistant-plugin:META-INF/jqassistant-rules/custom/index.adoc
+        - jqassistant-plugin:META-INF/jqassistant-plugin.xml
     properties:
       custom.scan.value: testValue
   analyze:
     groups:
       - default
-      - custom
     report:
       properties:
         customReport.fileName: ${project.build.directory}/customReport.txt

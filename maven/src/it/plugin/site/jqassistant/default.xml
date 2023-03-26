@@ -37,12 +37,12 @@
     </concept>
 
     <concept id="customPlugin:PluginURI">
-        <description>Return the scanned plugin URI .</description>
+        <description>Return the scanned plugin URI.</description>
         <cypher><![CDATA[
         MATCH
           (uri:URI)
         WHERE
-          uri.uri="jqassistant-plugin:META-INF/jqassistant-rules/custom/index.adoc"
+          uri.uri="jqassistant-plugin:META-INF/jqassistant-plugin.xml"
         RETURN
           uri
         ]]></cypher>
