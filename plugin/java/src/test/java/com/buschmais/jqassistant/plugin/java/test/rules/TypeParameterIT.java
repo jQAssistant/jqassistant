@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -24,9 +24,12 @@ class TypeParameterIT extends AbstractJavaPluginIT {
         scanClasses(GenericTypeDeclarations.class, GenericTypeDeclarations.Inner.class);
         Result<Concept> conceptResult = applyConcept("java:InnerTypeParameterDeclaredByOuterType");
         assertThat(conceptResult.getStatus()).isEqualTo(SUCCESS);
-        List<Map<String, Object>> rows = conceptResult.getRows();
+        List<Row> rows = conceptResult.getRows();
         assertThat(rows).hasSize(1);
-        assertThat(rows.get(0).get("OuterTypeDeclarations")).isEqualTo(1l);
+        assertThat(rows.get(0)
+            .getColumns()
+            .get("OuterTypeDeclarations")
+            .getValue()).isEqualTo(1l);
         store.beginTransaction();
         List<TypeDescriptor> outerTypes = query(
                 "MATCH (:Type{name:'GenericTypeDeclarations$Inner'})-[:REQUIRES_TYPE_PARAMETER]->(:TypeVariable)-[:DECLARED_BY]->(:TypeVariable)<-[:DECLARES_TYPE_PARAMETER]-(outer:Type) RETURN outer")
@@ -41,9 +44,12 @@ class TypeParameterIT extends AbstractJavaPluginIT {
         scanClasses(GenericTypeDeclarations.class, GenericTypeDeclarations.Inner.class);
         Result<Concept> conceptResult = applyConcept("java:TypeArgumentDeclaredByTypeParameter");
         assertThat(conceptResult.getStatus()).isEqualTo(SUCCESS);
-        List<Map<String, Object>> rows = conceptResult.getRows();
+        List<Row> rows = conceptResult.getRows();
         assertThat(rows).hasSize(1);
-        assertThat(rows.get(0).get("TypeParameterDeclarations")).isEqualTo(2l);
+        assertThat(rows.get(0)
+            .getColumns()
+            .get("TypeParameterDeclarations")
+            .getValue()).isEqualTo(2l);
         store.beginTransaction();
         List<String> typeVariables = query( //
                 "MATCH (:Type{name:'GenericTypeDeclarations$Inner'})-[:EXTENDS_GENERIC]->(parameterizedType:ParameterizedType)," + //
