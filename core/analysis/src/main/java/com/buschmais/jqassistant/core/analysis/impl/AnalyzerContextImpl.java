@@ -5,7 +5,10 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -13,7 +16,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.of;
@@ -21,6 +24,7 @@ import static java.util.stream.Stream.of;
 /**
  * Implementation of the {@link AnalyzerContext}.
  */
+@Slf4j
 class AnalyzerContextImpl implements AnalyzerContext {
 
     private static final Verification DEFAULT_VERIFICATION = RowCountVerification.builder()
@@ -30,14 +34,11 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     private final Store store;
 
-    private final Logger logger;
-
     private final Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies;
 
-    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, Logger logger) {
+    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store) {
         this.classLoader = classLoader;
         this.store = store;
-        this.logger = logger;
         this.verificationStrategies = of(new RowCountVerificationStrategy(configuration.report()),
             new AggregationVerificationStrategy(configuration.report())).collect(toMap(strategy -> strategy.getVerificationType(), strategy -> strategy));
     }
@@ -53,16 +54,21 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Logger getLogger() {
-        return logger;
+    public <T> Column<T> toColumn(T value) {
+        return ReportHelper.toColumn(value);
     }
 
     @Override
-    public <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Map<String, Object>> rows)
+    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        return ReportHelper.toRow(rule, columns);
+    }
+
+    @Override
+    public <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows)
         throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
-            getLogger().debug("Using default verification for '{}'.", executable);
+            log.debug("Using default verification for '{}'.", executable);
             verification = DEFAULT_VERIFICATION;
         }
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());

@@ -7,7 +7,10 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.graph.model.Node;
 import com.buschmais.jqassistant.core.report.api.graph.model.Relationship;
 import com.buschmais.jqassistant.core.report.api.graph.model.SubGraph;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.xo.api.CompositeObject;
@@ -20,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -31,17 +36,26 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 public class SubGraphFactoryTest {
 
-    private SubGraphFactory factory = new SubGraphFactory();
+    private final SubGraphFactory factory = new SubGraphFactory();
+
+    private final Concept concept = Concept.builder().id("test").build();
 
     @Test
     public void nodeAndRelationship() throws ReportException {
-        MapBuilder<String, Object> builder = MapBuilder.builder();
+        MapBuilder<String, Column<?>> builder = MapBuilder.builder();
 
-        Map<String, Object> nodeProperties = MapBuilder.<String, Object> builder().entry("nodeKey", "value").build();
-        builder.entry("node", getNeo4jNode(1l, nodeProperties, "Test1", "Test2"));
-        Map<String, Object> relationshipProperties = MapBuilder.<String, Object> builder().entry("relationshipKey", "value").build();
-        builder.entry("relation", getNeo4jRelationship(1l, relationshipProperties, "TEST"));
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
+        Map<String, Object> nodeProperties = MapBuilder.<String, Object>builder()
+            .entry("nodeKey", "value")
+            .build();
+        builder.entry("node", toColumn(getNeo4jNode(1l, nodeProperties, "Test1", "Test2")));
+        Map<String, Object> relationshipProperties = MapBuilder.<String, Object>builder()
+            .entry("relationshipKey", "value")
+            .build();
+        builder.entry("relation", toColumn(getNeo4jRelationship(1l, relationshipProperties, "TEST")));
+        Row row = toRow(concept, builder.build());
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -66,11 +80,14 @@ public class SubGraphFactoryTest {
 
     @Test
     public void collectionOfNodesAndCollectionOfRelationships() throws ReportException {
-        MapBuilder<String, Object> builder = MapBuilder.builder();
+        MapBuilder<String, Column<?>> builder = MapBuilder.builder();
 
-        builder.entry("nodes", asList(asList(getNeo4jNode(1l), getNeo4jNode(2l))));
-        builder.entry("relations", asList(asList(getNeo4jRelationship(1l, "TEST"), getNeo4jRelationship(2l, "TEST"))));
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
+        builder.entry("nodes", toColumn(asList(asList(getNeo4jNode(1l), getNeo4jNode(2l)))));
+        builder.entry("relations", toColumn(asList(asList(getNeo4jRelationship(1l, "TEST"), getNeo4jRelationship(2l, "TEST")))));
+        Row row = toRow(concept, builder.build());
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -95,16 +112,21 @@ public class SubGraphFactoryTest {
 
     @Test
     public void virtualNode() throws ReportException {
-        Map<Object, Object> properties = MapBuilder.builder().entry("key", "value").build();
-        Map<String, Object> virtualNode = MapBuilder.<String, Object> builder() //
-                .entry("role", "node") //
-                .entry("label", "Virtual Node") //
-                .entry("labels", singletonList("Test")) //
-                .entry("properties", properties) //
-                .build();
-        MapBuilder<String, Object> builder = MapBuilder.builder();
-        builder.entry("nodes", singletonList(virtualNode));
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
+        Map<Object, Object> properties = MapBuilder.builder()
+            .entry("key", "value")
+            .build();
+        Map<String, Object> virtualNode = MapBuilder.<String, Object>builder() //
+            .entry("role", "node") //
+            .entry("label", "Virtual Node") //
+            .entry("labels", singletonList("Test")) //
+            .entry("properties", properties) //
+            .build();
+        MapBuilder<String, Column<?>> builder = MapBuilder.builder();
+        builder.entry("nodes", toColumn(singletonList(virtualNode)));
+        Row row = toRow(concept, builder.build());
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -120,18 +142,23 @@ public class SubGraphFactoryTest {
 
     @Test
     public void virtualRelationship() throws ReportException {
-        Map<Object, Object> properties = MapBuilder.builder().entry("key", "value").build();
-        Map<String, Object> virtualNode = MapBuilder.<String, Object> builder() //
-                .entry("role", "relationship") //
-                .entry("label", "Virtual Relationship") //
-                .entry("type", "TEST") //
-                .entry("properties", properties) //
-                .entry("startNode", getNeo4jNode(1l)) //
-                .entry("endNode", getNeo4jNode(2l)) //
-                .build();
-        MapBuilder<String, Object> builder = MapBuilder.builder();
-        builder.entry("relationships", singletonList(virtualNode));
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
+        Map<Object, Object> properties = MapBuilder.builder()
+            .entry("key", "value")
+            .build();
+        Map<String, Object> virtualNode = MapBuilder.<String, Object>builder() //
+            .entry("role", "relationship") //
+            .entry("label", "Virtual Relationship") //
+            .entry("type", "TEST") //
+            .entry("properties", properties) //
+            .entry("startNode", getNeo4jNode(1l)) //
+            .entry("endNode", getNeo4jNode(2l)) //
+            .build();
+        MapBuilder<String, Column<?>> builder = MapBuilder.builder();
+        builder.entry("relationships", toColumn(singletonList(virtualNode)));
+        Row row = toRow(concept, builder.build());
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -153,18 +180,22 @@ public class SubGraphFactoryTest {
 
     @Test
     public void subGraph() throws ReportException {
-        Map<String, Object> virtualGraph = MapBuilder.<String, Object> builder() //
-                .entry("role", "graph") //
-                .entry("label", "Virtual Graph") //
-                .entry("parent", getNeo4jNode(0l)) //
-                .entry("nodes", singletonList(getNeo4jNode(1l))) //
-                .entry("relationships", singletonList(getNeo4jRelationship(1l, "TEST"))) //
-                .build();
+        Map<String, Object> virtualGraph = MapBuilder.<String, Object>builder() //
+            .entry("role", "graph") //
+            .entry("label", "Virtual Graph") //
+            .entry("parent", getNeo4jNode(0l)) //
+            .entry("nodes", singletonList(getNeo4jNode(1l))) //
+            .entry("relationships", singletonList(getNeo4jRelationship(1l, "TEST"))) //
+            .build();
 
-        MapBuilder<String, Object> rowBuilder = MapBuilder.builder();
-        Map<String, Object> row = rowBuilder.entry("graph", virtualGraph).build();
+        Map<String, Column<?>> columns = MapBuilder.<String, Column<?>>builder()
+            .entry("graph", toColumn(virtualGraph))
+            .build();
+        Row row = toRow(concept, columns);
 
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(row)).build();
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -196,10 +227,14 @@ public class SubGraphFactoryTest {
     public void compositeObject() throws ReportException {
         CompositeObject compositeObject = mock(CompositeObject.class);
         Neo4jNode neo4jNode = getNeo4jNode(1l, "Test");
-        doReturn(neo4jNode).when(compositeObject).getDelegate();
-        MapBuilder<String, Object> builder = MapBuilder.builder();
-        builder.entry("nodes", singletonList(compositeObject));
-        Result<ExecutableRule> result = Result.builder().rows(singletonList(builder.build())).build();
+        doReturn(neo4jNode).when(compositeObject)
+            .getDelegate();
+        MapBuilder<String, Column<?>> builder = MapBuilder.builder();
+        builder.entry("nodes", toColumn(singletonList(compositeObject)));
+        Row row = toRow(concept, builder.build());
+        Result<ExecutableRule> result = Result.builder()
+            .row(row)
+            .build();
 
         SubGraph graph = factory.createSubGraph(result);
 
@@ -217,9 +252,14 @@ public class SubGraphFactoryTest {
 
     private Neo4jNode getNeo4jNode(long id, Map<String, Object> properties, String... labels) {
         Neo4jNode node = mock(Neo4jNode.class);
-        doReturn(id).when(node).getId();
-        doReturn(properties).when(node).getProperties();
-        doReturn(Stream.of(labels).map(label -> (Neo4jLabel) () -> label).collect(toList())).when(node).getLabels();
+        doReturn(id).when(node)
+            .getId();
+        doReturn(properties).when(node)
+            .getProperties();
+        doReturn(Stream.of(labels)
+            .map(label -> (Neo4jLabel) () -> label)
+            .collect(toList())).when(node)
+            .getLabels();
         return node;
     }
 
@@ -229,9 +269,12 @@ public class SubGraphFactoryTest {
 
     private Neo4jRelationship getNeo4jRelationship(long id, Map<String, Object> properties, String type) {
         Neo4jRelationship relationship = mock(Neo4jRelationship.class);
-        doReturn(id).when(relationship).getId();
-        doReturn(properties).when(relationship).getProperties();
-        doReturn((Neo4jRelationshipType) () -> type).when(relationship).getType();
+        doReturn(id).when(relationship)
+            .getId();
+        doReturn(properties).when(relationship)
+            .getProperties();
+        doReturn((Neo4jRelationshipType) () -> type).when(relationship)
+            .getType();
         return relationship;
     }
 }

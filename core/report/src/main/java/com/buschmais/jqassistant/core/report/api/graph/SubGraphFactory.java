@@ -9,7 +9,9 @@ import com.buschmais.jqassistant.core.report.api.graph.model.Identifiable;
 import com.buschmais.jqassistant.core.report.api.graph.model.Node;
 import com.buschmais.jqassistant.core.report.api.graph.model.Relationship;
 import com.buschmais.jqassistant.core.report.api.graph.model.SubGraph;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
@@ -52,9 +54,9 @@ public class SubGraphFactory {
     public SubGraph createSubGraph(Result<? extends ExecutableRule> result) throws ReportException {
         SubGraph graph = new SubGraph();
         graph.setId(subgraphId--);
-        for (Map<String, Object> row : result.getRows()) {
-            for (Object value : row.values()) {
-                addToValueGraph(graph, value);
+        for (Row row : result.getRows()) {
+            for (Column column : row.getColumns().values()) {
+                addToValueGraph(graph, column.getValue());
             }
         }
         return graph;

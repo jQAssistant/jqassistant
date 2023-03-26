@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -39,7 +39,7 @@ class RowCountVerificationStrategyTest {
     private Constraint constraint;
 
     @Mock
-    private List<Map<String, Object>> result;
+    private List<Row> result;
 
     private RowCountVerificationStrategy strategy;
 

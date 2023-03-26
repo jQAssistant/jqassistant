@@ -116,6 +116,7 @@
         <xs:sequence>
             <xs:element name="column" type="tns:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="key" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="ColumnType">

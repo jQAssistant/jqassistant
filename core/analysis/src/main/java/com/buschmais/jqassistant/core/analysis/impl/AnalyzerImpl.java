@@ -15,8 +15,6 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import org.slf4j.Logger;
-
 /**
  * Implementation of the {@link Analyzer}.
  */
@@ -42,13 +40,11 @@ public class AnalyzerImpl implements Analyzer {
      *            The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
      *            The report wrtier.
-     * @param log
-     *            The {@link Logger}.
      */
     public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
-            ReportPlugin reportPlugin, Logger log) {
+        ReportPlugin reportPlugin) {
         this.configuration = configuration;
-        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, log);
+        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store);
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
     }

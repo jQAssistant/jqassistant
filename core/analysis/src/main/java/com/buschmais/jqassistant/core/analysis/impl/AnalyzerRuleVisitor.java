@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import io.smallrye.config.ConfigMapping;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
@@ -22,6 +23,7 @@ import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.
 /**
  * Implementation of a rule visitor for analysis execution.
  */
+@Slf4j
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     private Analyze configuration;
@@ -64,8 +66,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
         if (conceptDescriptor == null || isExecuteAppliedConcepts) {
-            analyzerContext.getLogger()
-                .info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
+            log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
             reportPlugin.beginConcept(concept);
             Result<Concept> result = execute(concept, effectiveSeverity);
             reportPlugin.setResult(result);
@@ -79,8 +80,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             reportPlugin.endConcept();
         } else {
             if (!isExecuteAppliedConcepts) {
-                analyzerContext.getLogger()
-                    .info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
+                log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
                         Analyze.class.getAnnotation(ConfigMapping.class)
                             .prefix(), EXECUTE_APPLIED_CONCEPTS);
             }
@@ -103,8 +103,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
-        analyzerContext.getLogger()
-            .info("Validating constraint '" + constraint.getId() + "' with severity: '" + effectiveSeverity.getInfo(constraint.getSeverity()) + "'.");
+        log.info("Validating constraint '" + constraint.getId() + "' with severity: '" + effectiveSeverity.getInfo(constraint.getSeverity()) + "'.");
         reportPlugin.beginConstraint(constraint);
         reportPlugin.setResult(execute(constraint, effectiveSeverity));
         reportPlugin.endConstraint();
@@ -124,8 +123,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
-        analyzerContext.getLogger()
-            .info("Executing group '" + group.getId() + "'");
+        log.info("Executing group '" + group.getId() + "'");
         reportPlugin.beginGroup(group);
     }
 
@@ -164,9 +162,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             stopWatch.stop();
             long ruleExecutionTime = stopWatch.getTime(TimeUnit.SECONDS);
             if (ruleExecutionTime > configuration.warnOnExecutionTimeSeconds()) {
-                analyzerContext.getLogger()
-                    .warn("Execution of rule defined in '{}' took {} seconds.", executableRule.getSource()
-                        .getId(), ruleExecutionTime);
+                log.warn("Execution of rule with id '{}' took {} seconds.", executableRule.getSource()
+                    .getId(), ruleExecutionTime);
             }
         }
         return null;
