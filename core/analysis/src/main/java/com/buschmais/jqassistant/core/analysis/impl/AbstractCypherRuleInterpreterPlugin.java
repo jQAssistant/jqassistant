@@ -32,10 +32,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
 
     protected <T extends ExecutableRule<?>> Result<T> execute(String cypher, T executableRule, Map<String, Object> parameters, Severity severity,
         AnalyzerContext context) throws RuleException {
-        List<Row> rows = new LinkedList<>();
         log.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
-        String primaryColumn = null;
-        List<String> columnNames = null;
         try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = context.getStore()
             .executeQuery(cypher, parameters)) {
             return context.getStore()
@@ -47,7 +44,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
 
     private <T extends ExecutableRule<?>> Result<T> getResult(T executableRule, Severity severity, AnalyzerContext context,
         Query.Result<Query.Result.CompositeRowObject> compositeRowObjects) throws RuleException {
-        List<Map<String, Object>> rows = new LinkedList<>();
+        List<Row> rows = new LinkedList<>();
         String primaryColumn = null;
         List<String> columnNames = null;
         for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
