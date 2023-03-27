@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.core.report.api.model;
 
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * The result of an executed {@link Rule}.
@@ -20,7 +17,8 @@ import lombok.ToString;
  * @see Rule
  */
 @Builder
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 @ToString
 public class Result<T extends ExecutableRule> {
 
@@ -34,44 +32,25 @@ public class Result<T extends ExecutableRule> {
     /**
      * The executed rule.
      */
-    private T rule;
+    private final T rule;
 
-    private Status status;
+    private final Status status;
 
     /**
      * The effective severity.
      */
-    private Severity severity;
+    private final Severity severity;
 
     /**
      * The list of returned columns.
      */
-    private List<String> columnNames;
+    private final List<String> columnNames;
 
     /**
      * The returned rows.
      */
-    private List<Map<String, Object>> rows;
-
-    public T getRule() {
-        return rule;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    public List<String> getColumnNames() {
-        return columnNames;
-    }
-
-    public List<Map<String, Object>> getRows() {
-        return rows;
-    }
+    @Singular
+    private final List<Row> rows;
 
     public boolean isEmpty() {
         return rows.isEmpty();

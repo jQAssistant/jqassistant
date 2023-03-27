@@ -3,13 +3,13 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.store.api.Store;
-
-import org.slf4j.Logger;
 
 /**
  * Provides access to infrastructure for analysis..
@@ -31,11 +31,25 @@ public interface AnalyzerContext {
     Store getStore();
 
     /**
-     * Return the {@link Logger} for emitting user warnings/errors..
+     * Create a result {@link Column} from a value.
      *
-     * @return The {@link Logger}.
+     * @param value
+     *     The value.
+     * @param <T>
+     *     The value type.
+     * @return The {@link Column}.
      */
-    Logger getLogger();
+    <T> Column toColumn(T value) ;
+
+    /**
+     * Create a result {@link Row} from a map of columns.
+     *
+     * @param rule
+     * @param columns
+     *     The columns.
+     * @return The {@link Row}
+     */
+    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.
@@ -54,6 +68,6 @@ public interface AnalyzerContext {
      * @throws RuleException
      *     If no valid verification strategy can be found.
      */
-    <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Map<String, Object>> rows)
+    <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows)
         throws RuleException;
 }

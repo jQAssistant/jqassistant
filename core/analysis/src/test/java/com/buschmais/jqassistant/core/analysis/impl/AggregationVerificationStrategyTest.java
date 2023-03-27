@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.report.api.model.Column;
+import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
@@ -40,7 +41,7 @@ class AggregationVerificationStrategyTest {
     @Mock
     private Constraint constraint;
 
-    private List<Map<String, Object>> result;
+    private List<Row> result;
 
     private AggregationVerificationStrategy strategy;
 
@@ -57,13 +58,13 @@ class AggregationVerificationStrategyTest {
     void defaultConcept() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .build();
-        result = asList(createRow(0), createRow(0));
+        result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        result = asList(createRow(0), createRow(1));
+        result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(1), createRow(1));
+        result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
     }
@@ -73,13 +74,13 @@ class AggregationVerificationStrategyTest {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .min(1)
             .build();
-        result = asList(createRow(0), createRow(0));
+        result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(0), createRow(1));
+        result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        result = asList(createRow(1), createRow(1));
+        result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
     }
@@ -89,13 +90,13 @@ class AggregationVerificationStrategyTest {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .max(0)
             .build();
-        result = asList(createRow(0), createRow(0));
+        result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        result = asList(createRow(0), createRow(1));
+        result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(1), createRow(1));
+        result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
     }
@@ -106,19 +107,19 @@ class AggregationVerificationStrategyTest {
             .min(1)
             .max(1)
             .build();
-        result = asList(createRow(0), createRow(0));
+        result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(0), createRow(1));
+        result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        result = asList(createRow(1), createRow(1));
+        result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(1), createRow(2));
+        result = asList(createRow(concept, 1), createRow(concept, 2));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        result = asList(createRow(2), createRow(2));
+        result = asList(createRow(concept, 2), createRow(concept, 2));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
     }
@@ -128,7 +129,7 @@ class AggregationVerificationStrategyTest {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .column("c1")
             .build();
-        result = asList(createRow(0, 1), createRow(0, 1));
+        result = asList(createRow(concept, 0, 1), createRow(concept, 0, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
     }
@@ -142,11 +143,11 @@ class AggregationVerificationStrategyTest {
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
     }
 
-    private Map<String, Object> createRow(int... values) {
-        Map<String, Object> row = new LinkedHashMap<>();
+    private Row createRow(ExecutableRule<?> rule, int... values) {
+        Map<String, Column<?>> columns = new LinkedHashMap<>();
         for (int i = 0; i < values.length; i++) {
-            row.put("c" + i, values[i]);
+            columns.put("c" + i, toColumn(values[i]));
         }
-        return row;
+        return toRow(rule, columns);
     }
 }

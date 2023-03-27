@@ -7,7 +7,10 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
@@ -17,6 +20,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import static com.buschmais.jqassistant.core.report.api.ReportContext.ReportType.IMAGE;
 import static com.buschmais.jqassistant.core.report.api.ReportContext.ReportType.LINK;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
 
@@ -60,8 +65,8 @@ public final class XmlReportTestHelper {
             .build();
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConcept(concept);
-        List<Map<String, Object>> rows = new ArrayList<>();
-        rows.add(createRow());
+        List<Row> rows = new ArrayList<>();
+        rows.add(createRow(concept));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .status(Result.Status.SUCCESS)
@@ -100,8 +105,8 @@ public final class XmlReportTestHelper {
             .build();
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConcept(concept);
-        List<Map<String, Object>> rows = new ArrayList<>();
-        rows.add(createRow());
+        List<Row> rows = new ArrayList<>();
+        rows.add(createRow(concept));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .status(Result.Status.SUCCESS)
@@ -144,8 +149,8 @@ public final class XmlReportTestHelper {
             .build();
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConstraint(constraint);
-        List<Map<String, Object>> rows = new ArrayList<>();
-        rows.add(createRow());
+        List<Row> rows = new ArrayList<>();
+        rows.add(createRow(constraint));
         Result<Constraint> result = Result.<Constraint>builder()
             .rule(constraint)
             .status(Result.Status.FAILURE)
@@ -179,10 +184,13 @@ public final class XmlReportTestHelper {
         return reportContext;
     }
 
-    private static Map<String, Object> createRow() {
-        Map<String, Object> row = new HashMap<>();
-        row.put(C1, "simpleValue");
-        row.put(C2, new TestDescriptorWithLanguageElement() {
+    private static Row createRow(ExecutableRule<?> rule) {
+        Map<String, Column<?>> columns = new HashMap<>();
+        columns.put(C1, Column.builder()
+            .value("simpleValue")
+            .label(ReportHelper.getLabel("simpleValue"))
+            .build());
+        TestDescriptorWithLanguageElement testDescriptor = new TestDescriptorWithLanguageElement() {
             @Override
             public <I> I getId() {
                 return null;
@@ -202,7 +210,8 @@ public final class XmlReportTestHelper {
             public String getValue() {
                 return "descriptorValue";
             }
-        });
-        return row;
+        };
+        columns.put(C2, toColumn(testDescriptor));
+        return toRow(rule, columns);
     }
 }

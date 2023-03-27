@@ -4,13 +4,16 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
@@ -72,6 +75,34 @@ public final class ReportHelper {
             rule.getId()
                 .replaceAll("\\:", "_") :
             null;
+    }
+
+    public static <T> Column<T> toColumn(T value) {
+        return Column.<T>builder()
+            .value(value)
+            .label(getLabel(value))
+            .build();
+    }
+
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        return Row.builder()
+            .key(getRowKey(rule, columns))
+            .columns(columns)
+            .build();
+    }
+
+    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        StringBuilder id = new StringBuilder(rule.getClass()
+            .getName()).append("|")
+            .append(rule.getId())
+            .append("|");
+        columns.entrySet()
+            .stream()
+            .forEach(entry -> id.append(entry.getKey())
+                .append(':')
+                .append(entry.getValue()
+                    .getLabel()));
+        return DigestUtils.sha256Hex(id.toString());
     }
 
     /**
@@ -251,18 +282,19 @@ public final class ReportHelper {
     private List<String> getResultRows(Result<?> result, boolean logResult) {
         List<String> rows = new ArrayList<>();
         if (logResult) {
-            for (Map<String, Object> columns : result.getRows()) {
-                StringBuilder row = new StringBuilder();
-                for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                    if (row.length() > 0) {
-                        row.append(", ");
+            for (Row row : result.getRows()) {
+                StringBuilder value = new StringBuilder();
+                for (Map.Entry<String, Column<?>> entry : row.getColumns().entrySet()) {
+                    if (value.length() > 0) {
+                        value.append(", ");
                     }
-                    row.append(entry.getKey());
-                    row.append('=');
-                    String stringValue = getLabel(entry.getValue());
-                    row.append(stringValue);
+                    value.append(entry.getKey());
+                    value.append('=');
+                    String stringValue = entry.getValue()
+                        .getLabel();
+                    value.append(stringValue);
                 }
-                rows.add("  " + row.toString());
+                rows.add("  " + value);
             }
         }
         return rows;

@@ -258,7 +258,7 @@ public abstract class AbstractPluginIT {
     }
 
     private Analyzer getAnalyzer(Configuration configuration) {
-        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), reportPlugin, LOGGER);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), reportPlugin);
     }
 
     private InMemoryReportPlugin getReportPlugin() {
