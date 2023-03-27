@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
@@ -188,10 +189,10 @@ class DependencyIT extends AbstractJavaPluginIT {
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         Result<Constraint> result = constraintViolations.get("java:AvoidCyclicPackageDependencies");
         assertThat(result, notNullValue());
-        List<Map<String, Object>> rows = result.getRows();
+        List<Row> rows = result.getRows();
         assertThat(rows.size(), equalTo(2));
-        for (Map<String, Object> row : rows) {
-            PackageDescriptor p = (PackageDescriptor) row.get("Package");
+        for (Row row : rows) {
+            PackageDescriptor p = (PackageDescriptor) row.getColumns().get("Package").getValue();
             assertThat(p.getFullQualifiedName(), anyOf(equalTo(A.class.getPackage().getName()), equalTo(B.class.getPackage().getName())));
         }
         store.commitTransaction();
