@@ -3,6 +3,13 @@
 
 == 2.0.0
 
+* Renamed concepts and constraints
+** `classpath:*` -> `java-classpath:*`
+** `dependency:Package` -> `java:PackageDependency`
+** `dependency:PackageCycle` -> `java:AvoidCyclicPackageDependencies`
+** `dependency:Artifact` -> `java:ArtifactDependency`
+** `dependency:ArtifactCycle` -> `java:AvoidCyclicArtifactDependencies`
+* Migrated expensive Java concepts (e.g. `java:VirtualDependsOn`, `java-classpath:*`) to be executed in batches
 * Fixed a problem for support of generic type variables (only last usage of the variable within a class was referenced e.g. for multiple declarations like `List<X>`)
 
 == 1.12.0
