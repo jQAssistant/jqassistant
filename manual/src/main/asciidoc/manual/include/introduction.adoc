@@ -29,9 +29,7 @@ conditions, e.g. file name extensions or a provided scope. The latter is an extr
 like "java:classpath" for a directory containing Java classes or "maven:repository" for a URL.
 
 === Rules
-Rules are expressed as Cypher queries and are specified either in XML or AsciiDoc files:
-
-==== XML example
+Rules are expressed as Cypher queries and are specified either in XML files:
 
 [source,xml]
 .my-rules.xml
@@ -91,60 +89,6 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
 
 </jqassistant-rules>
 ----
-
-==== AsciiDoc example
-
-[source,asciidoc]
-.my-rules.adoc
-....
-
-[[my-rules:MyConcept]]
-.A human readable description of the concept.
-[source,cypher,role=concept]
-----
-MATCH
-  ...
-WHERE
-  ...
-MERGE
-  ...
-SET
-  ...
-RETURN
-  ...
-----
-
-[[my-rules:MyConstraint]]
-.A human readable description of the constraint.
-[source,cypher,role=constraint,requiresConcepts="my-rules:MyConcept",severity=blocker]
-----
-MATCH
-  ...
-WHERE
-  ...
-RETURN
-  ...
-----
-
-[[my-rules:MyProvidingConcept]]
-.A human readable description of the concept.
-[source,cypher,role=concept,providesConcepts="java:GeneratedType"]
-----
-MATCH
-  ...
-WHERE
-  ...
-SET
-  type:Generated
-RETURN
-  ...
-----
-
-[[my-rules:MyGroup]]
-.A human readable description of the group.
-[role=group,includesConstraints="my-rules:MyConstraint(minor),java:GeneratedType"]
-== My Group
-....
 
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
@@ -244,15 +188,6 @@ further severity is given, e.g.
 </jqassistant-rules>
 ----
 
-or in Asciidoc:
-
-....
-[[my-rules:MyGroup]]
-.A human readable description of the group.
-[role=group,severity=blocker,requiresConstraints="my-rules:Constraint1,my-rules:Constraint2(minor)"]
-== My Group
-....
-
 Thus execution of the group 'my-rules:MyGroup' will report a violation of constraint...
 
 - ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
@@ -319,48 +254,6 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
 </constraint>
 ----
 
-or in Asciidoc:
-
-....
-[[asciiDocExample:JavaScriptConstraint]]
-.JavaScript example constraint: returns a result containing the number of declared methods for each class.
-[source,javascript,role=constraint]
-----
-store.beginTransaction()
-// Define the columns returned by the constraint
-var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
-// Define the list of rows returned by the constraint
-var rows = new java.util.ArrayList();
-// Execute a query using the store
-var typeIterator = store.executeQuery("match (t:Type:Class) return t").iterator();
-while(typeIterator.hasNext()) {
-    // Get the next row from the query result
-    var typeRow = typeIterator.next();
-    // Get the column "t" from the row, it represents a type
-    // descriptor as defined by the Java plugin
-    var type = typeRow.get("t",
-        com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.class);
-    // Get the declared methods of the type and count them
-    var methodIterator = type.getDeclaredMethods().iterator();
-    var methodsOfType = 0;
-    while( methodIterator.hasNext()) {
-        methodIterator.next();
-        methodsOfType++;
-    }
-    // Create the row and columns for the result
-    var columns = new java.util.HashMap();
-    columns.put("Class", context.toColumn(type));
-    columns.put("MethodsOfType", context.toColumn(methodsOfType));
-    var row = context.toRow(rule, columns);
-    rows.add(row);
-}
-store.commitTransaction()
-// Return the result
-var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
-----
-....
-
 ==== Rule Parameters
 
 Both concepts and constraints may define required parameters:
@@ -391,29 +284,6 @@ Both concepts and constraints may define required parameters:
 ----
 
 <1> Declaration of a required parameter with a default value.
-<2> Reference to a parameter in a Cypher query.
-
-or in Asciidoc:
-
-[source,asciidoc]
-.my-rules.adoc
-....
-[[my-rules:my-rules:ApplicationRootPackage]]
-.Labels the root package of the application with "Root".
-[role=group,role=concept,requiresParameters="String rootPackage; int limit"] <1>
-----
-MATCH
-  (root:Package)
-WHERE
-  root.name = $rootPackage <2>
-SET
-  root:Root
-RETURN
-  root
-----
-....
-
-<1> requiresParameters is a list of parameter declarations separated by `;`
 <2> Reference to a parameter in a Cypher query.
 
 The following parameter types are supported:
@@ -464,23 +334,6 @@ This behavior can be customized by specifing `min` and `max` thresholds:
 </concept>
 ----
 
-[source,asciidoc]
-....
-
-[[my-rules:MyConstraint]]
-.A human readable description of the constraint.
-[source,cypher,role=constraint,rowCountMax=20]
-----
-MATCH
-  (n)
-WHERE
-  ...
-RETURN
-  n as Element
-----
-
-....
-
 It is also possible to verify aggregated results reported as numeric values in a column, e.g.
 
 [source,xml]
@@ -500,25 +353,6 @@ It is also possible to verify aggregated results reported as numeric values in a
     </verify>
 </concept>
 ----
-
-[source,asciidoc]
-....
-
-[[my-rules:MyConstraint]]
-.A human readable description of the constraint.
-[source,cypher,role=constraint,verify=aggregation,aggregationMax=20,aggregationColumn="Count"]
-----
-MATCH
-  (n)
-WHERE
-  ...
-SET
-  ...
-RETURN
-  count(n) as Count
-----
-
-....
 
 * For each returned row the value of the column "Count" will be verified following the same principles as described above
 * The rule fails if at least one returned row does not match the expected result
@@ -546,22 +380,6 @@ A rule may select a specific report plugin and pass properties to it:
 </concept>
 ----
 
-[source,asciidoc]
-....
-
-[[my-rules:MyConcept]]
-.A human readable description of the concept.
-[source,cypher,role=concept,reportType="myReport",reportProperties="key1=value1;key2=value2"]
-----
-    MATCH
-      (m)-[]->(n)
-      ...
-    RETURN
-      m, n
-----
-
-....
-
 ===== Primary Column
 
 If a rule reports more than one column it might be necessary to specify the column which contains the primary element
@@ -582,21 +400,5 @@ in SonarQube:
     <report primaryColumn="n" />
 </concept>
 ----
-
-[source,asciidoc]
-....
-
-[[my-rules:MyConcept]]
-.A human readable description of the concept.
-[source,cypher,role=concept,primaryReportColumn="n"]
-----
-    MATCH
-      (m)-[]->(n)
-      ...
-    RETURN
-      m, n
-----
-
-....
 
 NOTE: The first column will be used automatically if no primary column is explicitly specified.
