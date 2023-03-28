@@ -28,5 +28,4 @@ public interface Executable<S> {
      * @return The source type.
      */
     Class<S> getType();
-
 }

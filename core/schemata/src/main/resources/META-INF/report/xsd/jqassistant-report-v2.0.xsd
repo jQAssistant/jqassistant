@@ -91,18 +91,10 @@
 
     <xs:complexType name="ColumnsHeaderType">
         <xs:sequence>
-            <xs:element name="column" type="tns:ColumnHeaderType" maxOccurs="unbounded"/>
+            <xs:element name="column" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="count" type="xs:int" use="required"/>
         <xs:attribute name="primary" type="xs:string" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="ColumnHeaderType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="primary" type="xs:boolean" default="false"/>
-            </xs:extension>
-        </xs:simpleContent>
     </xs:complexType>
 
     <xs:complexType name="RowsType">

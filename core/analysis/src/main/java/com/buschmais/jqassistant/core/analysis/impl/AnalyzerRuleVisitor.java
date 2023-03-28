@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import io.smallrye.config.ConfigMapping;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +27,19 @@ import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.
 @Slf4j
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
-    private Analyze configuration;
-    private AnalyzerContext analyzerContext;
-    private ReportPlugin reportPlugin;
-    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+    private final Analyze configuration;
+    private final AnalyzerContext analyzerContext;
+    private final ReportPlugin reportPlugin;
+    private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+    private final Store store;
 
     /**
      * Constructor.
      *
      * @param configuration
      *     The configuration
+     * @param analyzerContext
+     *     The {@link AnalyzerContext}
      * @param ruleInterpreterPlugins
      *     The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
@@ -47,37 +51,33 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         this.analyzerContext = analyzerContext;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
+        this.store = analyzerContext.getStore();
     }
 
     @Override
     public void beforeRules() throws RuleException {
-        reportPlugin.begin();
+        store.requireTransaction(() -> reportPlugin.begin());
     }
 
     @Override
     public void afterRules() throws RuleException {
-        reportPlugin.end();
+        store.requireTransaction(() -> reportPlugin.end());
     }
 
     @Override
     public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        ConceptDescriptor conceptDescriptor = analyzerContext.getStore()
-            .find(ConceptDescriptor.class, concept.getId());
+        ConceptDescriptor conceptDescriptor = findConcept(concept);
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
         if (conceptDescriptor == null || isExecuteAppliedConcepts) {
             log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
-            reportPlugin.beginConcept(concept);
-            Result<Concept> result = execute(concept, effectiveSeverity);
-            reportPlugin.setResult(result);
+            store.requireTransaction(() -> reportPlugin.beginConcept(concept));            Result<Concept> result = execute(concept, effectiveSeverity);
+            store.requireTransaction(() -> reportPlugin.setResult(result));
+            store.requireTransaction(() -> reportPlugin.endConcept());
             status = result.getStatus();
             if (conceptDescriptor == null) {
-                conceptDescriptor = analyzerContext.getStore()
-                    .create(ConceptDescriptor.class);
-                conceptDescriptor.setId(concept.getId());
-                conceptDescriptor.setStatus(status);
+                createConcept(concept, status);
             }
-            reportPlugin.endConcept();
         } else {
             if (!isExecuteAppliedConcepts) {
                 log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
@@ -91,45 +91,46 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
 
     @Override
     public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        reportPlugin.beginConcept(concept);
+        store.requireTransaction(() -> reportPlugin.beginConcept(concept));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .status(Result.Status.SKIPPED)
             .severity(effectiveSeverity)
             .build();
-        reportPlugin.setResult(result);
-        reportPlugin.endConcept();
+        store.requireTransaction(() -> reportPlugin.setResult(result));
+        store.requireTransaction(() -> reportPlugin.endConcept());
     }
 
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         log.info("Validating constraint '" + constraint.getId() + "' with severity: '" + effectiveSeverity.getInfo(constraint.getSeverity()) + "'.");
-        reportPlugin.beginConstraint(constraint);
-        reportPlugin.setResult(execute(constraint, effectiveSeverity));
-        reportPlugin.endConstraint();
+        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
+        Result<Constraint> result = execute(constraint, effectiveSeverity);
+        store.requireTransaction(() -> reportPlugin.setResult(result));
+        store.requireTransaction(() -> reportPlugin.endConstraint());
     }
 
     @Override
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
-        reportPlugin.beginConstraint(constraint);
+        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
         Result<Constraint> result = Result.<Constraint>builder()
             .rule(constraint)
             .status(Result.Status.SKIPPED)
             .severity(effectiveSeverity)
             .build();
-        reportPlugin.setResult(result);
-        reportPlugin.endConstraint();
+        store.requireTransaction(() -> reportPlugin.setResult(result));
+        store.requireTransaction(() -> reportPlugin.endConstraint());
     }
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
         log.info("Executing group '" + group.getId() + "'");
-        reportPlugin.beginGroup(group);
+        store.requireTransaction(() -> reportPlugin.beginGroup(group));
     }
 
     @Override
     public void afterGroup(Group group) throws RuleException {
-        reportPlugin.endGroup();
+        store.requireTransaction(() -> reportPlugin.endGroup());
     }
 
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {
@@ -165,6 +166,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
                 log.warn("Execution of rule with id '{}' took {} seconds.", executableRule.getSource()
                     .getId(), ruleExecutionTime);
             }
+            if (store.hasActiveTransaction()) {
+                store.rollbackTransaction();
+                throw new RuleException(
+                    String.format("Rule with id '%s' returned with an active transaction, performing rollback. Please check the implementation.", executableRule.getSource()
+                        .getId()));
+            }
         }
         return null;
     }
@@ -194,6 +201,21 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             ruleParameters.put(parameterName, parameterValue);
         }
         return ruleParameters;
+    }
+
+    private ConceptDescriptor findConcept(Concept concept) {
+        ConceptDescriptor conceptDescriptor = store.requireTransaction(() -> store
+            .find(ConceptDescriptor.class, concept.getId()));
+        return conceptDescriptor;
+    }
+
+    private void createConcept(Concept concept, Result.Status status) {
+        store.requireTransaction(() -> {
+            ConceptDescriptor conceptDescriptor = store
+                .create(ConceptDescriptor.class);
+            conceptDescriptor.setId(concept.getId());
+            conceptDescriptor.setStatus(status);
+        });
     }
 
 }

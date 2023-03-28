@@ -21,9 +21,7 @@
 
     <xs:complexType name="abstractSourceType">
         <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="transactional" type="xs:boolean" default="true"/>
-            </xs:extension>
+            <xs:extension base="xs:string" />
         </xs:simpleContent>
     </xs:complexType>
 

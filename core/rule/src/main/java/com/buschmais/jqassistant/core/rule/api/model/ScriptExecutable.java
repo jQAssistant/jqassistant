@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
  */
 public class ScriptExecutable extends SourceExecutable<String> {
 
-    public ScriptExecutable(String language, String source, boolean transactional) {
-        super(language, source, String.class, transactional);
+    public ScriptExecutable(String language, String source) {
+        super(language, source, String.class);
     }
 }

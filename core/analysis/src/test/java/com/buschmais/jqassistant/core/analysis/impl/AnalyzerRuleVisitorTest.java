@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
+import com.buschmais.jqassistant.core.shared.transaction.Transactional;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
@@ -94,6 +95,14 @@ class AnalyzerRuleVisitorTest {
 
         doReturn(store).when(analyzerContext)
             .getStore();
+        doAnswer(invocation -> {
+            ((Transactional.TransactionalAction<?>) invocation.getArgument(0)).execute();
+            return null;
+        }).when(store)
+            .requireTransaction(any(Transactional.TransactionalAction.class));
+        doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
+            .requireTransaction(any(Transactional.TransactionalSupplier.class));
+
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
@@ -277,7 +286,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Concept createConcept(String statement) {
-        Executable executable = new CypherExecutable(statement, true);
+        Executable executable = new CypherExecutable(statement);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
@@ -299,7 +308,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Constraint createConstraint(String statement) {
-        Executable executable = new CypherExecutable(statement, true);
+        Executable executable = new CypherExecutable(statement);
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();

@@ -21,6 +21,4 @@ public class SourceExecutable<S> implements Executable<S>  {
 
     private Class<S> type;
 
-    private boolean transactional;
-
 }
