@@ -2,8 +2,8 @@
 
     <group id="default">
         <includeConcept refId="java:TypeAssignableFrom" />
-        <includeConstraint refId="dependency:PackageCycles"/>
-        <includeConstraint refId="dependency:ArtifactCycles" />
+        <includeConstraint refId="java:AvoidCyclicPackageDependencies"/>
+        <includeConstraint refId="java:AvoidCyclicArtifactDependencies"/>
     </group>
 
 </jqa:jqassistant-rules>
