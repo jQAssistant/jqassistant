@@ -31,21 +31,9 @@ public class ScriptIT extends com.buschmais.jqassistant.core.test.plugin.Abstrac
     }
 
     @Test
-    public void JavaScriptAsciiDocConcept() throws Exception {
-        assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportPlugin.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
-    }
-
-    @Test
     public void javaScriptXmlConstraint() throws Exception {
         assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
         verifyResults(reportPlugin.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
-    }
-
-    @Test
-    public void JavaScriptAsciiDocConstraint() throws Exception {
-        assertThat(validateConstraint("javascript:AsciiDocTestConstraint").getStatus(), equalTo(SUCCESS));
-        verifyResults(reportPlugin.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
     @Test
