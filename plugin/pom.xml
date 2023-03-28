@@ -49,6 +49,7 @@
         <jqa-neo4jbackend.version>2.0.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-own-constraints.version>2.0.0-SNAPSHOT</jqa-own-constraints.version>
         <org.codehaus.groovy.version>3.0.0-rc-1</org.codehaus.groovy.version>
+        <org.jruby.version>9.2.13.0</org.jruby.version>
         <mockito.version>3.3.3</mockito.version>
     </properties>
 
@@ -464,6 +465,12 @@
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-jsr223</artifactId>
                 <version>${org.codehaus.groovy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jruby</groupId>
+                <artifactId>jruby-core</artifactId>
+                <version>${org.jruby.version}</version>
                 <scope>test</scope>
             </dependency>
 
