@@ -40,6 +40,8 @@
   </scm>
 
     <properties>
+        <org.codehaus.groovy.version>3.0.0-rc-1</org.codehaus.groovy.version>
+        <org.jruby.version>9.3.8.0</org.jruby.version>
         <commons-compress.version>1.19</commons-compress.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
     </properties>
@@ -146,11 +148,19 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
+            <version>${org.codehaus.groovy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-core</artifactId>
+            <version>${org.jruby.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-stdlib</artifactId>
+            <version>${org.jruby.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
