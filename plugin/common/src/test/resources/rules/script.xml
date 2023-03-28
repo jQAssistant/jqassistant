@@ -3,6 +3,7 @@
     <concept id="javascript:XmlTestConcept" severity="major">
         <description>JavaScript test concept.</description>
        <script language="JavaScript">
+           store.beginTransaction()
            // create a test descriptor
            var testDescriptor =
            store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
@@ -14,6 +15,7 @@
            var rows = java.util.Arrays.asList(context.toRow(rule, row));
            // return the result
            var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+           store. commitTransaction()
            new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
        </script>
     </concept>
@@ -22,6 +24,7 @@
         <requiresConcept refId="javascript:XmlTestConcept"/>
         <description>JavaScript test constraint.</description>
         <script language="JavaScript">
+            store.beginTransaction()
             var columnNames = java.util.Arrays.asList("test");
             var queryResult = store.executeQuery("match (t:TestLabel) return t");
             var testDescriptor = queryResult.getSingleResult().get("t",
@@ -30,6 +33,7 @@
             row.put("test", context.toColumn(testDescriptor));
             var rows = java.util.Arrays.asList(context.toRow(rule, row));
             var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+            store.commitTransaction()
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
         </script>
     </constraint>
@@ -37,6 +41,7 @@
     <concept id="groovy:XmlTestConcept" severity="major">
         <description>Groovy test concept.</description>
         <script language="Groovy">
+            store.beginTransaction()
             // create a test descriptor
             def testDescriptor =
             store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.class);
@@ -48,6 +53,7 @@
             def rows = java.util.Arrays.asList(context.toRow(rule, row));
             // return the result
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+            store.commitTransaction()
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
         </script>
     </concept>
@@ -56,6 +62,7 @@
         <requiresConcept refId="groovy:XmlTestConcept"/>
         <description>Groovy test constraint.</description>
         <script language="Groovy">
+            store.beginTransaction()
             def columnNames = java.util.Arrays.asList("test");
             def queryResult = store.executeQuery("match (t:TestLabel) return t");
             def testDescriptor = queryResult.getSingleResult().get("t",
@@ -64,6 +71,7 @@
             row.put("test", context.toColumn(testDescriptor));
             def rows = java.util.Arrays.asList(context.toRow(rule, row));
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+            store.commitTransaction()
             new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
         </script>
     </constraint>
@@ -71,6 +79,7 @@
     <concept id="ruby:XmlTestConcept" severity="major">
         <description>Ruby test concept.</description>
         <script language="ruby">
+            store.beginTransaction
             # create a test descriptor
             testDescriptor = store.create com.buschmais.jqassistant.plugin.common.test.rule.model.TestLabelDescriptor.java_class
             testDescriptor.setName "test"
@@ -83,6 +92,7 @@
             rows = java.util.Arrays.asList row
             # return the result
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::SUCCESS
+            store.commitTransaction
             com.buschmais.jqassistant.core.report.api.model.Result.new rule,status,severity,columnNames,rows
         </script>
     </concept>
@@ -91,6 +101,7 @@
         <requiresConcept refId="ruby:XmlTestConcept"/>
         <description>Ruby test constraint.</description>
         <script language="ruby">
+            store.beginTransaction
             columnNames = java.util.Arrays.asList "test"
             queryResult = store.executeQuery "match (t:TestLabel) return t"
             testDescriptor =
@@ -101,6 +112,7 @@
             row = context.toRow rule, columns
             rows = java.util.Arrays.asList row
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::FAILURE
+            store.commitTransaction
             com.buschmais.jqassistant.core.report.api.model.Result.new rule,status,severity,columnNames,rows
         </script>
     </constraint>

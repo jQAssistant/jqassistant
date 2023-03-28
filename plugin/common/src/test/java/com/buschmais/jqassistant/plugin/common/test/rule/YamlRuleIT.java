@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.rule.JavaRule;
 
@@ -23,7 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Verifies YAML rule execution.
  */
-public class YamlRuleIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
+public class YamlRuleIT extends AbstractPluginIT {
 
     @Test
     public void adocJavaRule() throws RuleException {
@@ -44,19 +45,22 @@ public class YamlRuleIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
         @Override
         public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> properties, Map<String, Object> ruleParameters,
             Severity severity, AnalyzerContext context) {
-            PropertyDescriptor propertyDescriptor = context.getStore()
-                .create(PropertyDescriptor.class);
-            propertyDescriptor.setName("testProperty");
-            propertyDescriptor.setValue("testValue");
+            return context.getStore()
+                .requireTransaction(() -> {
+                    PropertyDescriptor propertyDescriptor = context.getStore()
+                        .create(PropertyDescriptor.class);
+                    propertyDescriptor.setName("testProperty");
+                    propertyDescriptor.setValue("testValue");
             Map<String, Column<?>> columns = new HashMap<>();
             columns.put("Property", context.toColumn(propertyDescriptor));
-            return Result.<T>builder()
-                .rule(executableRule)
-                .severity(severity)
-                .columnNames(singletonList("Property"))
+                    return Result.<T>builder()
+                        .rule(executableRule)
+                        .severity(severity)
+                        .columnNames(singletonList("Property"))
                 .rows(singletonList(ReportHelper.toRow(executableRule, columns)))
-                .status(SUCCESS)
-                .build();
+                        .status(SUCCESS)
+                        .build();
+                });
         }
     }
 }
