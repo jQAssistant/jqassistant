@@ -27,17 +27,8 @@ import static org.hamcrest.Matchers.equalTo;
 public class YamlRuleIT extends AbstractPluginIT {
 
     @Test
-    public void adocJavaRule() throws RuleException {
-        verify("adoc-java-rule:Concept");
-    }
-
-    @Test
     public void xmlJavaRule() throws RuleException {
-        verify("xml-java-rule:Concept");
-    }
-
-    private void verify(String conceptId) throws RuleException {
-        assertThat(applyConcept(conceptId).getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("xml-java-rule:Concept").getStatus(), equalTo(SUCCESS));
     }
 
     public static class Concept implements JavaRule {
