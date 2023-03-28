@@ -1,17 +1,24 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.0"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v2.0.xsd">
 
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
         <cypher><![CDATA[
             MATCH
               (:Java:Type)-[:DECLARES]->(innerType:Java:Type)
-            SET
-              innerType:Inner
+            CALL {
+              WITH
+                innerType
+              SET
+                innerType:Inner
+            } IN TRANSACTIONS
             RETURN
-              innerType AS InnerType
+              count(innerType) AS InnerTypes
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:AnonymousInnerType">
@@ -19,35 +26,39 @@
         <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
         <cypher><![CDATA[
             MATCH
-              (innerType:Inner:Java:Type)
+              (anonymousInnerTypes:Inner:Java:Type)
             WHERE
-              innerType.name =~ ".*\\$[0-9]*"
-            SET
-              innerType:Anonymous
+              anonymousInnerTypes.name =~ ".*\\$[0-9]*"
+            CALL {
+              WITH
+                anonymousInnerTypes
+              SET
+                anonymousInnerTypes:Anonymous
+            } IN TRANSACTIONS
             RETURN
-              innerType AS AnonymousInnerType
+              count(anonymousInnerTypes) AS AnonymousInnerTypes
         ]]></cypher>
     </concept>
 
     <concept id="java:TypeAssignableFrom">
         <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable
-            from the other (i.e. a super class or
-            interface).
+            from the other (i.e. a super class or interface).
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Java:Type)
-            MERGE
-              (type)-[:ASSIGNABLE_FROM]->(type)
-            WITH
-              type
-            MATCH
-              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Java:Type)
-            MERGE
-              (superType)-[:ASSIGNABLE_FROM]->(type)
+              (type:Java:Type)-[:IMPLEMENTS|EXTENDS*0..]->(superType:Java:Type)
+            CALL {
+                WITH
+                  type, superType
+                MERGE
+                  (superType)-[:ASSIGNABLE_FROM]->(type)
+            } IN TRANSACTIONS
             RETURN
-              type.fqn AS AssignableType, superType.fqn AS AssignableFrom
+              count(*) AS AssignableTypes
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:MemberInheritedFrom">
@@ -71,8 +82,12 @@
               depth asc
             WITH
               member, head(collect(superMember)) as inheritedMember
-            MERGE
-              (member)-[:INHERITED_FROM]->(inheritedMember)
+            CALL {
+              WITH
+                member, inheritedMember
+              MERGE
+                (member)-[:INHERITED_FROM]->(inheritedMember)
+            } IN TRANSACTIONS
             RETURN
               count(*) as InheritedMembers
         ]]></cypher>
@@ -104,8 +119,12 @@
               depth asc
             WITH
               method, head(collect(superMethod)) as overriddenMethod
-            MERGE
-              (method)-[:OVERRIDES]->(overriddenMethod)
+            CALL {
+              WITH
+                method, overriddenMethod
+              MERGE
+                (method)-[:OVERRIDES]->(overriddenMethod)
+            } IN TRANSACTIONS
             RETURN
               count(*) as OverriddenMethods
         ]]></cypher>
@@ -130,10 +149,14 @@
             )
             WITH
               method, overridingMethod, coalesce(invokes.lineNumber, -1) as lineNumber
-            MERGE
-              (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]->(overridingMethod)
+            CALL {
+              WITH
+                method, overridingMethod, lineNumber
+              MERGE
+                (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]->(overridingMethod)
+            } IN TRANSACTIONS
             RETURN
-              count(virtualInvokes) as VirtualInvokes
+              count(*) as VirtualInvokes
             ]]></cypher>
         <verify>
             <aggregation/>
@@ -156,10 +179,14 @@
               dependent, collect(distinct type) as types
             UNWIND
               types as type
-            MERGE
-              (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
+            CALL {
+              WITH
+                dependent, type
+              MERGE
+                (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
+            } IN TRANSACTIONS
             RETURN
-              count(virtualDependsOn) AS VirtualDependsOn
+              count(*) AS VirtualDependsOn
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -179,10 +206,17 @@
               method <> otherMethod
               AND method.name = otherMethod.name
               AND method.signature <> otherMethod.signature
-            MERGE
-              (method)-[:OVERLOADS]->(otherMethod)
-            RETURN method AS OverloadedMethod, type AS DeclaringType
+            CALL {
+              WITH method, otherMethod
+              MERGE
+                (method)-[:OVERLOADS]->(otherMethod)
+            } IN TRANSACTIONS
+            RETURN
+              count(method) AS OverloadedMethods
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:Deprecated">
@@ -300,11 +334,18 @@
                 i, count(m) AS methods
             WHERE
                 methods = 1
-            SET
+            CALL {
+              WITH
+                i
+              SET
                 i:FunctionalInterface
+            } IN TRANSACTIONS
             RETURN
-                i AS FunctionInterface
+              count(i) AS FunctionInterfaces
         ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
     </concept>
 
     <concept id="java:DefaultMethod">
@@ -318,24 +359,6 @@
               defaultMethod:Default
             RETURN
               defaultMethod AS DefaultMethod, type AS Interface
-        ]]></cypher>
-    </concept>
-
-    <concept id="java:LambdaMethod">
-        <description>Creates a relation `DECLARES_LAMBDA` from the declaring method.</description>
-        <deprecated>The :Lambda label is now generated by the Java scanner, the `DECLARES_LAMBDA` relation adds very limited value. Therefore this concept will be removed.</deprecated>
-        <cypher><![CDATA[
-            MATCH
-              (type:Java:Type)-[:DECLARES]->(lambda:Lambda:Method),
-              (type)-[:DECLARES]->(method:Method)
-            WHERE
-              method <> lambda
-              and method.firstLineNumber <= lambda.firstLineNumber
-              and method.lastLineNumber >= lambda.lastLineNumber
-            MERGE
-              (method)-[:DECLARES_LAMBDA]->(lambda)
-            RETURN
-              method, collect(lambda)
         ]]></cypher>
     </concept>
 
@@ -405,10 +428,14 @@
             WHERE
               outer <> inner
               and declaredTypeParameter.name = requiredTypeParameter.name
-            MERGE
-              (requiredTypeParameter)-[declaredBy:DECLARED_BY]->(declaredTypeParameter)
+            CALL {
+              WITH
+                requiredTypeParameter, declaredTypeParameter
+              MERGE
+                (requiredTypeParameter)-[:DECLARED_BY]->(declaredTypeParameter)
+            } IN TRANSACTIONS
             RETURN
-              count(declaredBy) as OuterTypeDeclarations
+              count(*) as OuterTypeDeclarations
         ]]></cypher>
         <verify>
             <aggregation/>
@@ -425,8 +452,12 @@
               (rawType)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER]->(typeParameter)
             WHERE
               hasActualTypeArgument.index = declaresTypeParameter.index
-            MERGE
-              (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            CALL {
+              WITH
+                typeArgument, typeParameter
+              MERGE
+                (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            } IN TRANSACTIONS
             RETURN
               count(*) as TypeParameterDeclarations
         ]]></cypher>
@@ -434,6 +465,90 @@
             <aggregation/>
         </verify>
     </concept>
+
+    <concept id="java:PackageDependency">
+        <description>
+            Creates a DEPENDS_ON_PACKAGE relationship between a packages if there are type dependencies between them.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:CONTAINS]->(t1:Java:Type)-[dependsOn:DEPENDS_ON]->(t2:Java:Type)<-[:CONTAINS]-(p2:Package)
+            WHERE
+                p1 <> p2
+            WITH
+              p1, count(dependsOn) as weight, p2
+            CALL {
+              WITH
+                p1, weight, p2
+              MERGE
+                (p1)-[d:DEPENDS_ON_PACKAGE]->(p2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              p1 AS package, COUNT(p2) AS PackageDependencies
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:ArtifactDependency">
+        <description>
+            Creates a new DEPENDS_ON_ARTIFACT relationship between artifacts or updates an existing one with a 'used'
+            property if there are type dependencies between them, i.e. if an artifact contains a type with a fully
+            qualified name which a type from another artifact requires.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a1:Artifact)-[:CONTAINS]->(:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type),
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+            WHERE
+              a1 <> a2
+              and t1.fqn = t2.fqn
+            WITH
+              a1, count(dependsOn) as weight, a2
+            CALL {
+              WITH
+                a1, weight, a2
+              MERGE
+                (a1)-[d:DEPENDS_ON_ARTIFACT]->(a2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:AvoidCyclicPackageDependencies">
+        <requiresConcept refId="java:PackageDependency"/>
+        <description>Cyclic package dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:DEPENDS_ON_PACKAGE]->(p2:Package),
+                path=shortestPath((p2)-[:DEPENDS_ON_PACKAGE*]->(p1))
+            WHERE
+                p1<>p2
+            RETURN
+                p1 as Package, nodes(path) as Cycle
+            ORDER BY
+                Package.fqn
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java:AvoidCyclicArtifactDependencies">
+        <requiresConcept refId="java:ArtifactDependency"/>
+        <description>Cyclic artifact dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (a1:Artifact)-[:DEPENDS_ON_ARTIFACT]->(a2:Artifact),
+                path=shortestPath((a2)-[:DEPENDS_ON_ARTIFACT*]->(a1))
+            WHERE
+                a1<>a2
+            RETURN
+                a1 as Artifact, nodes(path) as Cycle
+            ORDER BY
+                Artifact.fqn
+        ]]></cypher>
+    </constraint>
 
 </jqassistant-rules>
 

@@ -30,14 +30,14 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 class ClasspathIT extends AbstractJavaPluginIT {
 
     /**
-     * Verifies the concept "classpath:resolveType".
+     * Verifies the concept "java-classpath:resolveType".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveType() throws Exception {
-        scanClassesAndApply("classpath:ResolveType");
+        scanClassesAndApply("java-classpath:ResolveType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("a1", "b").entry("a2", "a").build();
         List<TypeDescriptor> resolvedTypes = query(
@@ -50,14 +50,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveMember".
+     * Verifies the concept "java-classpath:resolveMember".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveMember() throws Exception {
-        scanClassesAndApply("classpath:ResolveMember");
+        scanClassesAndApply("java-classpath:ResolveMember");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("a1", "b").entry("a2", "a").build();
         // Methods
@@ -76,25 +76,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveDependency".
-     *
-     * @throws IOException
-     *             If the test fails.
-     */
-    @Test
-    void resolveDependency() throws Exception {
-        resolver("classpath:ResolveDependency");
-    }
-
-    /**
-     * Verifies the concept "classpath:resolveDependsOn".
+     * Verifies the concept "java-classpath:resolveDependsOn".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveDependsOn() throws Exception {
-        resolver("classpath:ResolveDependsOn");
+        resolver("java-classpath:ResolveDependsOn");
     }
 
     private void resolver(String concept) throws Exception {
@@ -111,14 +100,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveExtends".
+     * Verifies the concept "java-classpath:resolveExtends".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveExtends() throws Exception {
-        scanClassesAndApply("classpath:ResolveExtends");
+        scanClassesAndApply("java-classpath:ResolveExtends");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("a", "a").build();
         List<TypeDescriptor> extendedTypes = query(
@@ -130,14 +119,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveImplements".
+     * Verifies the concept "java-classpath:resolveImplements".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveImplements() throws Exception {
-        scanClassesAndApply("classpath:ResolveImplements");
+        scanClassesAndApply("java-classpath:ResolveImplements");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("a", "a").build();
         List<TypeDescriptor> implementedTypes = query(
@@ -149,14 +138,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveFieldType".
+     * Verifies the concept "java-classpath:resolveFieldType".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveFieldType() throws Exception {
-        scanClassesAndApply("classpath:ResolveFieldType");
+        scanClassesAndApply("java-classpath:ResolveFieldType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("f", "field").entry("a", "a").build();
         List<TypeDescriptor> fieldTypes = query(
@@ -168,14 +157,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveThrows".
+     * Verifies the concept "java-classpath:resolveThrows".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveThrows() throws Exception {
-        scanClassesAndApply("classpath:ResolveThrows");
+        scanClassesAndApply("java-classpath:ResolveThrows");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "signature").entry("a", "a")
                 .build();
@@ -188,14 +177,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveReturns".
+     * Verifies the concept "java-classpath:resolveReturns".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveReturns() throws Exception {
-        scanClassesAndApply("classpath:ResolveReturns");
+        scanClassesAndApply("java-classpath:ResolveReturns");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "signature").entry("a", "a")
                 .build();
@@ -208,14 +197,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveParameterType".
+     * Verifies the concept "java-classpath:resolveParameterType".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveParameterType() throws Exception {
-        scanClassesAndApply("classpath:ResolveParameterType");
+        scanClassesAndApply("java-classpath:ResolveParameterType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "signature").entry("a", "a")
                 .build();
@@ -228,14 +217,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveAnnotationType".
+     * Verifies the concept "java-classpath:resolveAnnotationType".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveAnnotationType() throws Exception {
-        scanClassesAndApply("classpath:ResolveAnnotationType");
+        scanClassesAndApply("java-classpath:ResolveAnnotationType");
         store.beginTransaction();
         // type annotation
         Map<String, Object> typeParams = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("a", "a").build();
@@ -270,14 +259,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveOfRawType".
+     * Verifies the concept "java-classpath:resolveOfRawType".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveOfRawType() throws Exception {
-        scanClassesAndApply("classpath:ResolveOfRawType");
+        scanClassesAndApply("java-classpath:ResolveOfRawType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("f", "genericType").entry("a", "a")
                 .build();
@@ -290,14 +279,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveValue".
+     * Verifies the concept "java-classpath:resolveValue".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveValue() throws Exception {
-        scanClassesAndApply("classpath:ResolveValue");
+        scanClassesAndApply("java-classpath:ResolveValue");
         store.beginTransaction();
         // type value
         Map<String, Object> typeParams = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("a", "a").build();
@@ -317,14 +306,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveReads".
+     * Verifies the concept "java-classpath:resolveReads".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveReads() throws Exception {
-        scanClassesAndApply("classpath:ResolveReads");
+        scanClassesAndApply("java-classpath:ResolveReads");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "fieldAccess").entry("a", "a")
@@ -338,7 +327,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveReads".
+     * Verifies the concept "java-classpath:resolveReads".
      *
      * @throws IOException
      *             If the test fails.
@@ -350,7 +339,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         query("MATCH (:Method)-[r:READS]->(:Field) REMOVE r.lineNumber");
         store.commitTransaction();
-        applyConcept("classpath:ResolveReads");
+        applyConcept("java-classpath:ResolveReads");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "fieldAccess").entry("a", "a")
@@ -364,14 +353,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveWrites".
+     * Verifies the concept "java-classpath:resolveWrites".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveWrites() throws Exception {
-        scanClassesAndApply("classpath:ResolveWrites");
+        scanClassesAndApply("java-classpath:ResolveWrites");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "fieldAccess").entry("a", "a")
@@ -385,7 +374,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveWrites" without line number
+     * Verifies the concept "java-classpath:resolveWrites" without line number
      * information.
      *
      * @throws IOException
@@ -398,7 +387,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         query("MATCH (:Method)-[w:WRITES]->(:Field) REMOVE w.lineNumber");
         store.commitTransaction();
-        applyConcept("classpath:ResolveWrites");
+        applyConcept("java-classpath:ResolveWrites");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "fieldAccess").entry("a", "a")
@@ -412,14 +401,14 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveInvokes".
+     * Verifies the concept "java-classpath:resolveInvokes".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolveInvokes() throws Exception {
-        scanClassesAndApply("classpath:ResolveInvokes");
+        scanClassesAndApply("java-classpath:ResolveInvokes");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "methodInvocation")
@@ -433,7 +422,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:resolveInvokes" without line number
+     * Verifies the concept "java-classpath:resolveInvokes" without line number
      * information.
      *
      * @throws IOException
@@ -445,7 +434,7 @@ class ClasspathIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         query("MATCH (:Method)-[i:INVOKES]->(:Method) REMOVE i.lineNumber");
         store.commitTransaction();
-        applyConcept("classpath:ResolveInvokes");
+        applyConcept("java-classpath:ResolveInvokes");
         store.beginTransaction();
         // type value
         Map<String, Object> params = MapBuilder.<String, Object> builder().entry("dependentType", DependentType.class.getName()).entry("m", "methodInvocation")
@@ -465,20 +454,20 @@ class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "classpath:Resolve".
+     * Verifies the concept "java-classpath:Resolve".
      *
      * @throws IOException
      *             If the test fails.
      */
     @Test
     void resolve() throws Exception {
-        scanClassesAndApply("classpath:Resolve");
+        scanClassesAndApply("java-classpath:Resolve");
         store.beginTransaction();
         List<String> concepts = query("MATCH (c:Concept) RETURN c.id as id").getColumn("id");
         assertThat(concepts,
-                hasItems("classpath:ResolveDependsOn", "classpath:ResolveExtends", "classpath:ResolveImplements", "classpath:ResolveFieldType",
-                        "classpath:ResolveThrows", "classpath:ResolveReturns", "classpath:ResolveParameterType", "classpath:ResolveAnnotationType",
-                        "classpath:ResolveValue", "classpath:ResolveReads", "classpath:ResolveWrites", "classpath:ResolveInvokes"));
+                hasItems("java-classpath:ResolveDependsOn", "java-classpath:ResolveExtends", "java-classpath:ResolveImplements", "java-classpath:ResolveFieldType",
+                        "java-classpath:ResolveThrows", "java-classpath:ResolveReturns", "java-classpath:ResolveParameterType", "java-classpath:ResolveAnnotationType",
+                        "java-classpath:ResolveValue", "java-classpath:ResolveReads", "java-classpath:ResolveWrites", "java-classpath:ResolveInvokes"));
         store.commitTransaction();
     }
 
