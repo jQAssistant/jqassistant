@@ -84,7 +84,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
                         Analyze.class.getAnnotation(ConfigMapping.class)
                             .prefix(), EXECUTE_APPLIED_CONCEPTS);
             }
-            status = conceptDescriptor.getStatus();
+            status = store.requireTransaction(()-> conceptDescriptor.getStatus());
         }
         return Result.Status.SUCCESS.equals(status);
     }
