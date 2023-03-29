@@ -21,7 +21,6 @@ class AvailableRulesIT extends AbstractCLIIT {
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
         assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT_WITH_PARAMETER));
-        assertThat(console).anyMatch(item -> item.contains(CUSTOM_TEST_CONCEPT));
         assertThat(console).anyMatch(item -> item.contains("junit4:TestMethod"));
     }
 }

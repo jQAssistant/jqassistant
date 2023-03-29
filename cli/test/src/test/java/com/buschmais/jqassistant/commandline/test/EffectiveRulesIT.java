@@ -20,7 +20,6 @@ class EffectiveRulesIT extends AbstractCLIIT {
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
         assertThat(console).anyMatch(item -> item.contains(TEST_CONSTRAINT));
-        assertThat(console).noneMatch(item -> item.contains(CUSTOM_TEST_CONCEPT));
         assertThat(console).noneMatch(item -> item.contains("junit4:TestMethod"));
     }
 
@@ -33,7 +32,6 @@ class EffectiveRulesIT extends AbstractCLIIT {
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
         assertThat(console).anyMatch(item -> item.contains(TEST_CONSTRAINT));
-        assertThat(console).anyMatch(item -> item.contains(CUSTOM_TEST_CONCEPT));
         assertThat(console).noneMatch(item -> item.contains("junit4:TestMethod"));
     }
 

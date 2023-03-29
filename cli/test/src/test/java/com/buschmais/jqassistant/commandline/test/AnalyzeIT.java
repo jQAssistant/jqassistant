@@ -31,7 +31,7 @@ class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.groups=" + CUSTOM_GROUP };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
-        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
@@ -45,9 +45,9 @@ class AnalyzeIT extends AbstractCLIIT {
     @Test
     void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
-            "jqassistant.analyze.concepts=" + TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
+            "jqassistant.analyze.concepts=" + TEST_CONCEPT};
         assertThat(execute(args).getExitCode()).isEqualTo(0);
-        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT, CUSTOM_TEST_CONCEPT));
+        withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test

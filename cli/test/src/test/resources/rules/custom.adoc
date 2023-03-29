@@ -1,9 +1,0 @@
-[[default:CustomTestConcept]]
-.Custom Test concept
-[source,cypher,role=concept]
-----
-create
- (n:CustomTestConcept)
-return
-  n
-----
