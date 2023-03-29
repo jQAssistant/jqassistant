@@ -1,8 +1,6 @@
 assert !new File(basedir, 'site/target/customReport.txt.1').exists()
 assert new File(basedir, 'site/target/customReport.txt.2').exists()
 
-assert new File(basedir, 'site/target/jqassistant/report/csv/custom_CSVReport.csv').exists()
-assert new File(basedir, 'site/target/jqassistant/report/csv/custom_CSVReportRelative.csv').exists()
 
 // XML report
 def reportFile = new File(basedir, 'site/target/jqassistant/jqassistant-report.xml')

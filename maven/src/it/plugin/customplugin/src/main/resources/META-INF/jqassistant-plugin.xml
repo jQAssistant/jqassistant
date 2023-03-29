@@ -9,11 +9,6 @@
     <scanner>
         <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomScannerPlugin</class>
     </scanner>
-    <rules>
-        <resource>custom/index.adoc</resource>
-        <resource>custom/include.adoc</resource>
-        <resource>include.adoc</resource>
-    </rules>
     <report>
         <class id="custom">com.buschmais.jqassistant.scm.maven.integration.plugin.CustomReportPlugin</class>
     </report>
