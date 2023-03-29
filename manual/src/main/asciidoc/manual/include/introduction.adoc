@@ -29,7 +29,7 @@ conditions, e.g. file name extensions or a provided scope. The latter is an extr
 like "java:classpath" for a directory containing Java classes or "maven:repository" for a URL.
 
 === Rules
-Rules are expressed as Cypher queries and are specified either in XML files:
+Rules are expressed as Cypher queries and are specified in XML files:
 
 [source,xml]
 .my-rules.xml
