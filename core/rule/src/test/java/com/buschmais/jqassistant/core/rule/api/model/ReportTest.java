@@ -47,18 +47,8 @@ class ReportTest {
     }
 
     @Test
-    void asciidocReport() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.adoc", rule);
-        verifyReport(ruleSet);
-    }
-
-    @Test
     void xmlReport() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/report.xml", rule);
-        verifyReport(ruleSet);
-    }
-
-    private void verifyReport(RuleSet ruleSet) throws RuleException {
         verifyRule(ruleSet.getConceptBucket().getById("test:Concept"));
         verifyRule(ruleSet.getConstraintBucket().getById("test:Constraint"));
     }

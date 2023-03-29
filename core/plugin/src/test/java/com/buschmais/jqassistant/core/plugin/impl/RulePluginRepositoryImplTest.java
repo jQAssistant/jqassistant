@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
-import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
@@ -50,15 +49,6 @@ class RulePluginRepositoryImplTest {
 
         assertThat(plugins).anySatisfy(ruleParserPlugin -> {
             assertThat(ruleParserPlugin).isExactlyInstanceOf(XmlRuleParserPlugin.class);
-        });
-    }
-
-    @Test
-    void asciidoctorRuleReaderIsAvailable() throws RuleException {
-        Collection<RuleParserPlugin> plugins = ruleParserPluginRepository.getRuleParserPlugins(rule);
-
-        assertThat(plugins).anySatisfy(ruleParserPlugin -> {
-            assertThat(ruleParserPlugin).isExactlyInstanceOf(AsciidocRuleParserPlugin.class);
         });
     }
 }

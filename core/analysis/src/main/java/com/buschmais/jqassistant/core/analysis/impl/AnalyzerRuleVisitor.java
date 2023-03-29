@@ -71,7 +71,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
         if (conceptDescriptor == null || isExecuteAppliedConcepts) {
             log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
-            store.requireTransaction(() -> reportPlugin.beginConcept(concept));            Result<Concept> result = execute(concept, effectiveSeverity);
+            store.requireTransaction(() -> reportPlugin.beginConcept(concept));
+            Result<Concept> result = execute(concept, effectiveSeverity);
             store.requireTransaction(() -> reportPlugin.setResult(result));
             store.requireTransaction(() -> reportPlugin.endConcept());
             status = result.getStatus();

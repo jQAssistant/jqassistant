@@ -64,15 +64,6 @@ class SeverityTest {
     }
 
     @Test
-    void asciidocSeverity() throws Exception {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
-        verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
-        verifySeverities(ruleSet, "test:GroupWithSeverity", BLOCKER, "test:Concept", null, "test:Constraint", null);
-        verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint",
-                Severity.CRITICAL);
-    }
-
-    @Test
     void xmlSeverity() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
@@ -99,15 +90,6 @@ class SeverityTest {
     }
 
     @Test
-    void asciidocDefaultSeverity() throws RuleException {
-        doReturn(of(Severity.CRITICAL)).when(rule).defaultConceptSeverity();
-        doReturn(of(Severity.CRITICAL)).when(rule).defaultConstraintSeverity();
-        doReturn(of(Severity.CRITICAL)).when(rule).defaultGroupSeverity();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
-        verifyDefaultSeverities(ruleSet, Severity.CRITICAL);
-    }
-
-    @Test
     void xmlDefaultSeverity() throws RuleException {
         doReturn(of(Severity.CRITICAL)).when(rule).defaultConceptSeverity();
         doReturn(of(Severity.CRITICAL)).when(rule).defaultConstraintSeverity();
@@ -130,12 +112,6 @@ class SeverityTest {
     @Test
     void xmlRuleDefaultSeverity() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
-        verifyRuleDefaultSeverity(ruleSet);
-    }
-
-    @Test
-    void asciidocRuleDefaultSeverity() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.adoc", rule);
         verifyRuleDefaultSeverity(ruleSet);
     }
 

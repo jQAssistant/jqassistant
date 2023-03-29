@@ -18,38 +18,6 @@
             <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj-diagram</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.eclipse.elk</groupId>
-			<artifactId>org.eclipse.elk.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.elk</groupId>
-			<artifactId>org.eclipse.elk.alg.layered</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.elk</groupId>
-			<artifactId>org.eclipse.elk.alg.mrtree</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.eclipse.elk</groupId>
-            <artifactId>org.eclipse.elk.graph</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>compile</scope>

@@ -19,18 +19,8 @@ class VerificationTest {
     private Rule rule;
 
     @Test
-    void adoc() throws RuleException {
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.adoc", rule);
-        verifyRuleSet(ruleSet);
-    }
-
-    @Test
     void xml() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/resultVerification.xml", rule);
-        verifyRuleSet(ruleSet);
-    }
-
-    private void verifyRuleSet(RuleSet ruleSet) throws RuleException {
         verifyDefault(ruleSet);
         verifyCustomizedDefault(ruleSet);
         verifyAggregation(ruleSet);

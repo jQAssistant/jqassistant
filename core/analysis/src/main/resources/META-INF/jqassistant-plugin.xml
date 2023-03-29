@@ -8,7 +8,6 @@
     </model>
     <ruleParser>
         <class>com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin</class>
-        <class>com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin</class>
         <class>com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin</class>
     </ruleParser>
     <ruleInterpreter>

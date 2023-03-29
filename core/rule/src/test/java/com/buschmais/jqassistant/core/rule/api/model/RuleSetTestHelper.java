@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.rule.impl.reader.AsciidocRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
@@ -17,6 +15,7 @@ import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
 import org.hamcrest.Matchers;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -31,7 +30,7 @@ public final class RuleSetTestHelper {
         URL url = RuleSetTestHelper.class.getResource(resource);
         assertThat("Cannot read resource URL:" + resource, url, notNullValue());
         RuleSource ruleSource = new UrlRuleSource(url);
-        return ruleParser.parse(Collections.singletonList(ruleSource));
+        return ruleParser.parse(singletonList(ruleSource));
     }
 
     public static <T> void verifyParameter(Map<String, Parameter> parameters, String name, Parameter.Type type, T defaultValue) {
@@ -43,8 +42,7 @@ public final class RuleSetTestHelper {
     }
 
     public static List<RuleParserPlugin> getDefaultRuleParserPlugins(Rule rule) throws RuleException {
-        List<RuleParserPlugin> ruleParserPlugins = asList(new AsciidocRuleParserPlugin(), new XmlRuleParserPlugin(),
-                                                          new YamlRuleParserPlugin());
+        List<RuleParserPlugin> ruleParserPlugins = asList(new XmlRuleParserPlugin(), new YamlRuleParserPlugin());
         for (RuleParserPlugin ruleParserPlugin : ruleParserPlugins) {
             ruleParserPlugin.initialize();
             ruleParserPlugin.configure(rule);

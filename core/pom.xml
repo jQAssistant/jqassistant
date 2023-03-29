@@ -48,11 +48,6 @@
         <jqa-neo4jbackend.version>2.0.0-SNAPSHOT</jqa-neo4jbackend.version>
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
-        <org.asciidoctor.version>2.5.7</org.asciidoctor.version>
-        <org.asciidoctorj-diagram.version>2.2.3</org.asciidoctorj-diagram.version>
-        <net.sourceforge.plantuml.version>1.2022.12</net.sourceforge.plantuml.version>
-        <org.eclipse.elk.version>0.7.1</org.eclipse.elk.version>
-        <org.jruby.version>9.3.8.0</org.jruby.version>
         <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
         <org.mockito.version>2.23.4</org.mockito.version>
         <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
@@ -137,61 +132,9 @@
                 <version>${org.glassfish.jaxb.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctorj</artifactId>
-                <version>${org.asciidoctor.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby</artifactId>
-                <version>${org.jruby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctorj-diagram</artifactId>
-                <version>${org.asciidoctorj-diagram.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.snakeyaml</groupId>
                 <artifactId>snakeyaml-engine</artifactId>
                 <version>${snakeyaml-engine.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.plantuml</groupId>
-                <artifactId>plantuml</artifactId>
-                <version>${net.sourceforge.plantuml.version}</version>
-            </dependency>
-            <dependency>
-				<groupId>org.eclipse.elk</groupId>
-				<artifactId>org.eclipse.elk.core</artifactId>
-				<version>${org.eclipse.elk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.elk</groupId>
-				<artifactId>org.eclipse.elk.alg.layered</artifactId>
-				<version>${org.eclipse.elk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.elk</groupId>
-				<artifactId>org.eclipse.elk.alg.mrtree</artifactId>
-				<version>${org.eclipse.elk.version}</version>
-			</dependency>
-            <dependency>
-                <groupId>org.eclipse.elk</groupId>
-                <artifactId>org.eclipse.elk.graph</artifactId>
-                <version>${org.eclipse.elk.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
