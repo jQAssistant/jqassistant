@@ -180,9 +180,6 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeAttribute("primary", primaryColumn);
             for (String column : columnNames) {
                 xmlStreamWriter.writeStartElement("column");
-                if (primaryColumn.equals(column)) {
-                    xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
-                }
                 xmlStreamWriter.writeCharacters(column);
                 xmlStreamWriter.writeEndElement(); // column
             }
