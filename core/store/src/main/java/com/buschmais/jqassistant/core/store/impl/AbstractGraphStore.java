@@ -264,25 +264,14 @@ public abstract class AbstractGraphStore implements Store {
         LOGGER.info("Resetting store.");
         // clear all caches assigned to that store
         caches.clear();
-        // remove nodes and relations in batches
-        Map<String, Object> params = new HashMap<>();
-        params.put("batchSize", 65536);
-        long totalNodes = 0;
-        long nodes;
         Instant start = Instant.now();
-        do {
-            beginTransaction();
-            Result.CompositeRowObject result = executeQuery("MATCH (n) " + //
-                "OPTIONAL MATCH (n)-[r]-() " + //
-                "WITH n, r " + //
-                "LIMIT $batchSize " + //
-                "WITH distinct n " + //
-                "DETACH DELETE n " + //
-                "RETURN count(n) as nodes", params).getSingleResult();
-            nodes = result.get("nodes", Long.class);
-            totalNodes = totalNodes + nodes;
-            commitTransaction();
-        } while (nodes > 0);
+        Result.CompositeRowObject result = executeQuery("MATCH (n) " + //
+            "CALL { " +  //
+            "  WITH n " + //
+            "  DETACH DELETE n " + //
+            "} IN TRANSACTIONS " + //
+            "RETURN count(n) as nodes").getSingleResult();
+        long totalNodes = result.get("nodes", Long.class);
         Instant end = Instant.now();
         LOGGER.info("Reset finished (removed {} nodes, duration: {}s).", totalNodes, Duration.between(start, end)
             .get(ChronoUnit.SECONDS));
