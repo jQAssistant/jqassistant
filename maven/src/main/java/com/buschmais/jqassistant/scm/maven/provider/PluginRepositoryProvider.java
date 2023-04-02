@@ -2,14 +2,14 @@ package com.buschmais.jqassistant.scm.maven.provider;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
-import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
-import com.buschmais.jqassistant.core.plugin.impl.AetherPluginResolverImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherPluginResolverImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
+import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
@@ -30,11 +30,11 @@ public class PluginRepositoryProvider implements Disposable {
     }
 
     public synchronized PluginRepository getPluginRepository(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
-        List<RemoteRepository> repositories, List<Plugin> plugins) {
+        List<RemoteRepository> repositories, MavenConfiguration configuration) {
         if (pluginRepository == null) {
 
             PluginResolver pluginResolver = new AetherPluginResolverImpl(repositorySystem, repositorySystemSession, repositories);
-            PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Thread.currentThread().getContextClassLoader(), plugins);
+            PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Thread.currentThread().getContextClassLoader(), configuration);
 
             // do a lazy init of the plugin repo to speed-up if the plugin execution shall be skipped
             PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);

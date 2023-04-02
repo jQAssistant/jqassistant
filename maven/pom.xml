@@ -351,10 +351,6 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>shared</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>configuration</artifactId>
-        </dependency>
         <!--
          ! Depedencies to artifacts from the jQAssistant ecosystem
          ! which are not jQAssistant plugins must be added here!
@@ -366,7 +362,7 @@
 
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>plugin</artifactId>
+            <artifactId>runtime</artifactId>
             <!--
              ! Inherit the version information of this dependency from
              ! the distribution specification after solving

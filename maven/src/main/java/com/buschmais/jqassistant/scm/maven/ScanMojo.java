@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;

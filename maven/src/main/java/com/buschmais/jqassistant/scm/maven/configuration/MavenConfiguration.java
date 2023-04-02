@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.maven.configuration;
 
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
+import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;

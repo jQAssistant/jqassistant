@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
-import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.codehaus.plexus.component.annotations.Component;

@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.*;
 import java.util.function.Supplier;
 
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
@@ -269,7 +269,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return the {@link PluginRepository}.
      */
     protected PluginRepository getPluginRepository(MavenConfiguration configuration) {
-        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, configuration.plugins());
+        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, configuration);
     }
 
     /**

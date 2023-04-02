@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginInfo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
