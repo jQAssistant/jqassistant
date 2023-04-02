@@ -4,6 +4,7 @@
 * Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
 +
 NOTE: It is still possible to scan applications compiled with older Java versions.
+* migrated `configuration` and `plugin` APIs to new `runtime` module
 * Added a `key` attribute to each row in the XML report (`jqassistant-report.xml`) to allow matching results between subsequent analysis executions
 * Added rule reports to the XML report (`jqassistant-report.xml`)
 * Changed the reporting API for scripts to have explicit rows and columns

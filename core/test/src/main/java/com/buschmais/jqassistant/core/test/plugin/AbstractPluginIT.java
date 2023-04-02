@@ -15,14 +15,6 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.configuration.api.Configuration;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
-import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
@@ -35,6 +27,14 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
+import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
@@ -52,8 +52,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyMap;
 import static lombok.AccessLevel.PRIVATE;
@@ -67,9 +65,6 @@ public abstract class AbstractPluginIT {
     public static final File TEST_STORE_DIRECTORY = new File("target/jqassistant/test-store");
 
     protected static final String ARTIFACT_ID = "artifact";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
-
 
     private static PluginRepositoryImpl pluginRepository;
 

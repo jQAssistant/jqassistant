@@ -258,8 +258,7 @@
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>
-        <module>plugin</module>
-        <module>configuration</module>
+        <module>runtime</module>
         <module>test</module>
     </modules>
 

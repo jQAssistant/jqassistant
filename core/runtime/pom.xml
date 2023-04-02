@@ -6,26 +6,46 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>test</artifactId>
-    <name>jQAssistant Test Framework</name>
+    <artifactId>runtime</artifactId>
+    <name>jQAssistant Core Runtime</name>
 
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>scanner</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>store</artifactId>
-            <type>test-jar</type>
+            <artifactId>schemata</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
-            <type>test-jar</type>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>report</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config-source-yaml</artifactId>
+        </dependency>
+        <!-- Required by smallrye-config -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -34,32 +54,40 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>1.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
