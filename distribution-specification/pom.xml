@@ -130,11 +130,6 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>configuration</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>analysis</artifactId>
                 <version>${jqa-core-framework.version}</version>
             </dependency>
@@ -165,7 +160,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>plugin</artifactId>
+                <artifactId>runtime</artifactId>
                 <version>${jqa-core-framework.version}</version>
             </dependency>
             <dependency>
