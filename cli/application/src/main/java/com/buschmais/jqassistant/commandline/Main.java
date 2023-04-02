@@ -15,15 +15,15 @@ import java.util.Optional;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationLoader;
-import com.buschmais.jqassistant.core.configuration.impl.ConfigurationLoaderImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginClassLoader;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
@@ -115,8 +115,8 @@ public class Main {
         ClassLoader pluginDirectoryClassLoader = createPluginClassLoader();
         PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();
         PluginResolver pluginResolver = pluginResolverFactory.create(configuration);
-        // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved frol PluginResolver
-        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration.plugins());
+        // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved from PluginResolver
+        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration);
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         return new PluginRepositoryImpl(pluginConfigurationReader);
     }

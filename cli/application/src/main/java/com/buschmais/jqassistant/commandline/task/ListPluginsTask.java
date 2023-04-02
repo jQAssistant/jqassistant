@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.plugin.api.PluginInfo;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginInfo;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;

@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 
 import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.BeforeEach;

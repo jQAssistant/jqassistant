@@ -9,9 +9,9 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.configuration.Proxy;
 import com.buschmais.jqassistant.commandline.configuration.Remote;
 import com.buschmais.jqassistant.commandline.configuration.Repositories;
-import com.buschmais.jqassistant.core.plugin.api.PluginResolver;
-import com.buschmais.jqassistant.core.plugin.api.configuration.Plugin;
-import com.buschmais.jqassistant.core.plugin.impl.AetherPluginResolverImpl;
+import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherPluginResolverImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;

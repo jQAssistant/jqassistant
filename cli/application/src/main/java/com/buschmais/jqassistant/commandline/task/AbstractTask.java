@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.commandline.Task;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;

@@ -69,10 +69,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>configuration</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>analysis</artifactId>
         </dependency>
         <dependency>
@@ -93,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>plugin</artifactId>
+            <artifactId>runtime</artifactId>
         </dependency>
 
         <!-- Maven Resolver -->

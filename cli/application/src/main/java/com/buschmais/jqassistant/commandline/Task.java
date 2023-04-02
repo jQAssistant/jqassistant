@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.commandline;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 
 import org.apache.commons.cli.Options;
 

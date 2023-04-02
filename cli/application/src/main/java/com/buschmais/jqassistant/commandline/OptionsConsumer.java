@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.commandline;
 
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 
 import org.apache.commons.cli.CommandLine;
 
