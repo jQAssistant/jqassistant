@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import com.buschmais.jqassistant.core.configuration.api.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
