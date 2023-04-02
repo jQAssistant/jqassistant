@@ -343,13 +343,6 @@
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>configuration</artifactId>
-                <version>${jqa-core-framework.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
                 <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
@@ -358,13 +351,6 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>report</artifactId>
-                <version>${jqa-core-framework.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>plugin</artifactId>
                 <version>${jqa-core-framework.version}</version>
                 <scope>provided</scope>
             </dependency>
