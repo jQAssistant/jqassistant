@@ -34,7 +34,7 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**

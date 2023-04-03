@@ -336,69 +336,22 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqa-distribution-specification</artifactId>
-                <version>${jqa-distribution-spec.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>shared</artifactId>
-        </dependency>
-        <!--
-         ! Depedencies to artifacts from the jQAssistant ecosystem
-         ! which are not jQAssistant plugins must be added here!
-         !-->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>report</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>runtime</artifactId>
-            <!--
-             ! Inherit the version information of this dependency from
-             ! the distribution specification after solving
-             ! https://github.com/buschmais/jqa-distribution-specification/issues/1
-             ! Oliver B. Fischer, 2016-10-27
-             !-->
             <version>${jqa-core-framework.version}</version>
         </dependency>
 
-        <!--
-         ! Dependencies to plugins of jQAssistant must be added here!
-         !-->
         <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>java</artifactId>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>jqa-distribution-specification</artifactId>
+            <version>${jqa-distribution-spec.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>maven3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>yaml2</artifactId>
-        </dependency>
+
         <!--
          ! I M P O R T A N T
          !
@@ -450,7 +403,6 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-dependency-tree</artifactId>
             <version>${org.apache.maven_dependency-tree.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
@@ -478,6 +430,11 @@
             <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
             <artifactId>slf4j-maven-plugin-log</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
