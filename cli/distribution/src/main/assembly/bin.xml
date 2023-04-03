@@ -4,9 +4,6 @@
     <id>bin</id>
     <formats>
         <format>zip</format>
-        <!-- The dir format is used to debug the content of the distribution without
-             unpacking it. -->
-        <format>dir</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
     <dependencySets>
@@ -30,15 +27,6 @@
             <outputFileNameMapping>
                 ${artifact.groupId}-${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}
             </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>plugins</outputDirectory>
-            <includes>
-                <include>com.buschmais.jqassistant.cli:plugins:zip:distribution:${project.version}</include>
-            </includes>
-            <scope>provided</scope>
-            <useStrictFiltering>true</useStrictFiltering>
-            <unpack>true</unpack>
         </dependencySet>
     </dependencySets>
 </assembly>

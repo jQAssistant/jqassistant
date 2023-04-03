@@ -106,7 +106,7 @@ specified further by scopes, e.g.
 
 [source]
 ----
-jqassistant.sh scan -f lib/,plugins/
+jqassistant.sh scan -f lib/
 jqassistant.sh scan -f java:classpath::classes/
 jqassistant.sh scan -u http://host/artifact.jar
 jqassistant.sh scan -u http://user:secret@host/artifact.jar

@@ -44,7 +44,7 @@
         <jqa-asciidoctor-utilities.version>2.0.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.0.0-SNAPSHOT</jqa-bom.version>
         <jqa-distribution-spec.version>2.0.0-SNAPSHOT</jqa-distribution-spec.version>
-        <jqa-neo4jbackend.version>2.0.0-SNAPSHOT</jqa-neo4jbackend.version>
+        <jqa-core-framework.version>2.0.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-own-constraints.version>2.0.0-SNAPSHOT</jqa-own-constraints.version>
         <junit.version>5.8.1</junit.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
@@ -173,6 +173,11 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>runtime</artifactId>
+                <version>${jqa-core-framework.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.cli</groupId>
@@ -197,8 +202,6 @@
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqa-distribution-specification</artifactId>
                 <version>${jqa-distribution-spec.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -217,7 +220,6 @@
 
     <modules>
         <module>application</module>
-        <module>plugins</module>
         <module>distribution</module>
         <module>test</module>
     </modules>
