@@ -20,12 +20,10 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -107,8 +105,16 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String projectPath, Scope scope, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenSession mavenSession = context.peek(MavenSession.class);
+
+        File localRepositoryDirectory = mavenSession.getProjectBuildingRequest()
+            .getRepositorySession()
+            .getLocalRepository()
+            .getBasedir();
+
+        FileResolver fileResolver = context.peek(FileResolver.class);
+        MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver);
+
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
-        ArtifactResolver artifactResolver = context.peek(ArtifactResolver.class);
         // main artifact
         Artifact artifact = project.getArtifact();
         MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, false),
