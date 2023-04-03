@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
@@ -18,17 +19,20 @@ import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assume.assumeTrue;
 
 /**
  * Abstract base implementation for CLI tests.
  */
+@Slf4j
 public abstract class AbstractCLIIT {
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
@@ -135,13 +139,16 @@ public abstract class AbstractCLIIT {
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
 
+        log.info("Executing '{}'.", command.stream().collect(joining(" ")));
         Process process = builder.start();
 
         ConsoleReader standardConsole = new ConsoleReader(process.getInputStream(), System.out);
         ConsoleReader errorConsole = new ConsoleReader(process.getErrorStream(), System.err);
-        Executors.newCachedThreadPool().submit(standardConsole);
-        Executors.newCachedThreadPool().submit(errorConsole);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(standardConsole);
+        executorService.submit(errorConsole);
         int exitCode = process.waitFor();
+        log.info("Process finished with exit code '{}'.", exitCode);
         return new ExecutionResult(exitCode, standardConsole.getOutput(), errorConsole.getOutput());
     }
 
@@ -234,7 +241,7 @@ public abstract class AbstractCLIIT {
             try {
                 while ((line = br.readLine()) != null) {
                     output.add(line);
-                    printStream.println(line);
+                    printStream.println(">> " + line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
