@@ -15,12 +15,11 @@
     <name>jQAssistant Distribution Specification</name>
     <url>https://jqassistant.org/</url>
 
-    <packaging>pom</packaging>
     <inceptionYear>2016</inceptionYear>
 
     <description>
-        This POM specifies the version of all modules of jQAssistant which will be part of the commandline distribution
-        of jQAssistant and dependencies of the Maven plugin of jQAssistant.
+        This module specifies the version of jQAssistant plugins be part of the distributions,
+        e.g. the Maven plugin and the command line utility.
     </description>
 
     <organization>
@@ -42,38 +41,37 @@
       <tag>HEAD</tag>
   </scm>
 
-
     <properties>
-        <!--
-         ! Version of the commandline tool
-         ! It is used only to include the correct version of
-         ! the documentation of the commandline tool in the user manual.
-         !-->
-        <jqa-commandline-tool.version>2.0.0-SNAPSHOT</jqa-commandline-tool.version>
-
-        <!--
-         ! Version of the Plugin of Apache Maven.
-         ! It is used only to include the correct version of
-         ! the documentation of the commandline tool in the user manual.
-         !-->
-        <jqa-maven-plugin.version>2.0.0-SNAPSHOT</jqa-maven-plugin.version>
-
         <!--
          ! Versions of the plugins to be included in a release.
          !-->
-        <jqa-core-framework.version>2.0.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-java-plugin.version>2.0.0-SNAPSHOT</jqa-java-plugin.version>
         <jqa-json-plugin.version>2.0.0-SNAPSHOT</jqa-json-plugin.version>
         <jqa-junit-plugin.version>2.0.0-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-own-constraints.version>2.0.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-maven3-plugin.version>2.0.0-SNAPSHOT</jqa-maven3-plugin.version>
-        <jqa-neo4jbackend.version>2.0.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-plugin-common.version>2.0.0-SNAPSHOT</jqa-plugin-common.version>
         <jqa-yaml2-plugin.version>2.0.0-SNAPSHOT</jqa-yaml2-plugin.version>
         <jqa-xml-plugin.version>2.0.0-SNAPSHOT</jqa-xml-plugin.version>
+        <!-- Constraints -->
+        <jqa-own-constraints.version>2.0.0-SNAPSHOT</jqa-own-constraints.version>
     </properties>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>.jqassistant.yml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>.jqassistant.yml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
@@ -115,249 +113,41 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>parent</artifactId>
-                <version>${jqa-core-framework.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>analysis</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>scanner</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>store</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>report</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>rule</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>shared</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>runtime</artifactId>
-                <version>${jqa-core-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.neo4j</groupId>
-                <artifactId>embedded</artifactId>
-                <version>${jqa-neo4jbackend.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.neo4j</groupId>
-                <artifactId>embedded</artifactId>
-                <version>${jqa-neo4jbackend.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-
-            <!--
-             ! Plugin dependencies for the command line distribution
-             ! and of the jQAssistant Maven plugin
-             !-->
-            <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>yaml2</artifactId>
-                <version>${jqa-yaml2-plugin.version}</version>
+                <artifactId>java</artifactId>
+                <version>${jqa-java-plugin.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>yaml2</artifactId>
                 <version>${jqa-yaml2-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>json</artifactId>
                 <version>${jqa-json-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>json</artifactId>
-                <version>${jqa-json-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>junit</artifactId>
                 <version>${jqa-junit-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>junit</artifactId>
-                <version>${jqa-junit-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>xml</artifactId>
                 <version>${jqa-xml-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>xml</artifactId>
-                <version>${jqa-xml-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>common</artifactId>
-                <version>${jqa-plugin-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>common</artifactId>
-                <version>${jqa-plugin-common.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>java</artifactId>
-                <version>${jqa-java-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>java</artifactId>
-                <version>${jqa-java-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>maven3</artifactId>
                 <version>${jqa-maven3-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>maven3</artifactId>
-                <version>${jqa-maven3-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
-
-            <!--
-             ! Dependency to the documentation sources of the commandline tool.
-             !-->
-            <dependency>
-                <groupId>com.buschmais.jqassistant.cli</groupId>
-                <artifactId>parent</artifactId>
-                <version>${jqa-commandline-tool.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!--
-             ! Dependency to the documentation sources of the Maven plugin.
-             !-->
-            <dependency>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-                <version>${jqa-maven-plugin.version}</version>
-                <type>zip</type>
-                <classifier>asciidoc</classifier>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>*</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
