@@ -13,7 +13,6 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import io.smallrye.config.SysPropConfigSource;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
@@ -38,8 +37,12 @@ class ConfigurationLoaderImplTest {
 
         assertThat(configuration).isNotNull();
 
+        List<Plugin> defaultPlugins = configuration.defaultPlugins();
+        assertThat(defaultPlugins).isNotNull()
+            .hasSize(1);
+
         List<Plugin> plugins = configuration.plugins();
-        Assertions.assertThat(plugins).isNotNull()
+        assertThat(plugins).isNotNull()
             .hasSize(2);
 
         Scan scan = configuration.scan();
@@ -49,6 +52,7 @@ class ConfigurationLoaderImplTest {
         Store store = configuration.store();
         assertThat(store).isNotNull();
         assertThat(store.uri()).isEqualTo(of(new URI("bolt://localhost:7687")));
+
     }
 
     /**
@@ -61,7 +65,7 @@ class ConfigurationLoaderImplTest {
         assertThat(configuration).isNotNull();
 
         List<Plugin> plugins = configuration.plugins();
-        Assertions.assertThat(plugins).isEmpty();
+        assertThat(plugins).isEmpty();
 
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();

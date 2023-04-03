@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
@@ -44,7 +45,9 @@ public class AetherPluginResolverImpl implements PluginResolver {
 
     @Override
     public PluginClassLoader createClassLoader(ClassLoader parent, Configuration configuration) {
-        List<Plugin> plugins = configuration.plugins();
+        List<Plugin> plugins = new ArrayList<>();
+        plugins.addAll(configuration.defaultPlugins());
+        plugins.addAll(configuration.plugins());
         if (!plugins.isEmpty()) {
             log.info("Resolving {} plugins and required dependencies.", plugins.size());
             List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
