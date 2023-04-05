@@ -113,7 +113,22 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
 
         FileResolver fileResolver = context.peek(FileResolver.class);
         MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver);
+        context.push(ArtifactResolver.class, artifactResolver);
+        try {
+            MavenProjectDirectoryDescriptor projectDescriptor = scanClasses(project, scanner, mavenSession, artifactResolver);
+            // project information
+            addProjectDetails(project, projectDescriptor, scanner);
+            scanTestReports(project, scanner);
+            scanIncludes(project, scanner, projectDescriptor);
+            return projectDescriptor;
+        } finally {
+            context.pop(ArtifactResolver.class);
+        }
+    }
 
+    private MavenProjectDirectoryDescriptor scanClasses(MavenProject project, Scanner scanner, MavenSession mavenSession,
+        MavenRepositoryArtifactResolver artifactResolver) {
+        ScannerContext context = scanner.getContext();
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         // main artifact
         Artifact artifact = project.getArtifact();
@@ -134,6 +149,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             projectDescriptor.getCreatesArtifacts()
                 .add(testArtifactDescriptor);
         }
+
         resolveDependencyGraph(project, mainArtifactDescriptor, testArtifactDescriptor, scanner, mavenSession);
 
         // Scan classes
@@ -142,9 +158,10 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         if (testOutputDirectory != null) {
             scanClassesDirectory(testArtifactDescriptor, testOutputDirectory, scanner);
         }
+        return projectDescriptor;
+    }
 
-        // project information
-        addProjectDetails(project, projectDescriptor, scanner);
+    private void scanTestReports(MavenProject project, Scanner scanner) {
         // add test reports
         String surefireReports = project.getBuild()
             .getDirectory() + "/surefire-reports";
@@ -152,7 +169,9 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         String failsafeReports = project.getBuild()
             .getDirectory() + "/failsafe-reports";
         scanFile(new File(failsafeReports), failsafeReports, TESTREPORTS, scanner);
+    }
 
+    private void scanIncludes(MavenProject project, Scanner scanner, MavenProjectDirectoryDescriptor projectDescriptor) {
         File basedir = project.getBasedir();
         Consumer<Descriptor> scanIncludeConsumer = descriptor -> {
             if (descriptor instanceof FileDescriptor) {
@@ -180,11 +199,10 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                     }
                 }, scanIncludeConsumer, scanner);
             });
-        return projectDescriptor;
     }
 
-    private void scanInclude(Optional<List<String>> resources, BiFunction<String, Scope, Descriptor> scanAction,
-        Consumer<Descriptor> descriptorConsumer, Scanner scanner) {
+    private void scanInclude(Optional<List<String>> resources, BiFunction<String, Scope, Descriptor> scanAction, Consumer<Descriptor> descriptorConsumer,
+        Scanner scanner) {
         resources.ifPresent(r -> {
             for (ScopeHelper.ScopedResource scopedResource : scopeHelper.getScopedResources(r)) {
                 String resource = scopedResource.getResource();
@@ -378,8 +396,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *     The scanner.
      */
-    private void scanClassesDirectory(MavenArtifactDescriptor artifactDescriptor, final String directoryName,
-        Scanner scanner) {
+    private void scanClassesDirectory(MavenArtifactDescriptor artifactDescriptor, final String directoryName, Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
             scanArtifact(artifactDescriptor, directory, directoryName, scanner);
@@ -398,8 +415,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *     The {@link Scanner}.
      */
-    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file,
-        String path, Scanner scanner) {
+    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
         JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
             .getStore()
             .addDescriptorType(artifactDescriptor, JavaClassesDirectoryDescriptor.class);

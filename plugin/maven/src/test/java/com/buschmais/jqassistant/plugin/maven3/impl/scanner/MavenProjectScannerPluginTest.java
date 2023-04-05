@@ -17,7 +17,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -216,6 +218,9 @@ class MavenProjectScannerPluginTest {
         scannerPlugin.scan(project, null, null, scanner);
 
         // verify
+        verify(scannerContext).push(eq(ArtifactResolver.class), any(MavenRepositoryArtifactResolver.class));
+        verify(scannerContext).pop(eq(ArtifactResolver.class));
+
         verify(scanner).scan(any(File.class), eq("target/classes"), eq(CLASSPATH));
         verify(scanner).scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
