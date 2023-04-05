@@ -24,6 +24,15 @@ class MavenSettingsConfigSourceBuilderTest {
         assertThat(configSource.getValue("jqassistant.repositories.remote[1].url")).isEqualTo("https://private-repo.acme.com/");
         assertThat(configSource.getValue("jqassistant.repositories.remote[1].username")).isEqualTo("foo@bar.com");
         assertThat(configSource.getValue("jqassistant.repositories.remote[1].password")).isEqualTo("top-secret");
+        assertThat(configSource.getValue("custom")).isEqualTo("my-value");
     }
 
+    @Test
+    void withoutMavenSettings() throws CliConfigurationException {
+        File userHome = new File("invalid-userhome");
+
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createConfigSource(userHome);
+
+        configSource.getPropertyNames().isEmpty();
+    }
 }

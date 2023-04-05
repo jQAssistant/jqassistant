@@ -77,7 +77,7 @@ jqassistant:
 ----
 
 NOTE: Plugins will be downloaded using the configured local and remote Maven repositories (default:
-Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven settings) the configuration from there will be used. Note that only repositories from the `pluginRepositories` section are considered.
+Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven settings) the configuration from there will be used. Note that only repositories from the `pluginRepositories` section are considered. Furthermore any properties configured in the Maven settings will be imported.
 
 === Options
 
