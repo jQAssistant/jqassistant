@@ -20,7 +20,7 @@
     </description>
 
     <properties>
-        <org.neo4j.version>4.4.18</org.neo4j.version>
+        <org.neo4j.version>4.4.19</org.neo4j.version>
         <org.neo4j.browser.version>5.0.0</org.neo4j.browser.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>2.0.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
