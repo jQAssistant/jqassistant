@@ -95,8 +95,8 @@
         <maven.dependency.version>3.3.0</maven.dependency.version>
         <maven.deploy.version>3.0.0-M1</maven.deploy.version>
         <maven.enforcer.version>3.0.0</maven.enforcer.version>
-        <maven.failsafe.version>3.0.0-M6</maven.failsafe.version>
-        <maven.install.version>3.0.0-M1</maven.install.version>
+        <maven.failsafe.version>3.0.0</maven.failsafe.version>
+        <maven.install.version>3.1.1</maven.install.version>
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.4.0</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.15.1</maven.jaxb2-plugin.version>
@@ -127,7 +127,7 @@
         <maven.source.plugin>3.2.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0.2</maven.xml.version>
-        <org.asciidoctor-plugin.version>2.2.1</org.asciidoctor-plugin.version>
+        <org.asciidoctor-plugin.version>2.2.3</org.asciidoctor-plugin.version>
         <junit.version>5.9.1</junit.version>
     </properties>
 
