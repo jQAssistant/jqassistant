@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class CliPluginResolverIT {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
         CliConfiguration cliConfiguration = configurationLoader.load(CliConfiguration.class, testConfigSource);
 
-        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();
+        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory(new File("target/it/userhome"));
         PluginResolver pluginResolver = pluginResolverFactory.create(cliConfiguration);
 
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(PluginResolverFactory.class.getClassLoader(), cliConfiguration);

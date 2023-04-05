@@ -14,6 +14,7 @@
     <properties>
         <maven-resolver.version>1.7.3</maven-resolver.version>
         <maven-resolver-provider.version>3.5.0</maven-resolver-provider.version>
+        <maven-settings-builder.version>3.5.0</maven-settings-builder.version>
     </properties>
 
     <build>
@@ -68,14 +69,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>runtime</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>
         </dependency>
 
+        <!-- Maven Settings -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+            <version>${maven-settings-builder.version}</version>
+        </dependency>
         <!-- Maven Resolver -->
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>

@@ -119,7 +119,6 @@ public abstract class AbstractCLIIT {
                    SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
         String jqaHomeProperty = properties.getProperty("jqassistant.home");
         String projectVersionProperty = properties.getProperty("project.version");
-        String localRepository = properties.getProperty("jqassistant.repositories.local");
         String jqaHome = new File(jqaHomeProperty + "jqassistant-commandline-distribution-" + projectVersionProperty).getAbsolutePath();
         List<String> command = new ArrayList<>();
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -133,8 +132,11 @@ public abstract class AbstractCLIIT {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHome);
-        environment.put("JQASSISTANT_REPOSITORIES_LOCAL", localRepository);
-//        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
+        // The user home contains a Maven settings.xml to configure the local repository
+        String userHome = AbstractCLIIT.class.getResource("/userhome/")
+            .getFile();
+        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
+        //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);

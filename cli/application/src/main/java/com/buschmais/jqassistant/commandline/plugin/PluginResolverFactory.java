@@ -49,10 +49,9 @@ public class PluginResolverFactory {
     public static final String CENTRAL_ID = "central";
     public static final String REPOSITORY_LAYOUT_DEFAULT = "default";
 
-    private File jqassistantUserDir;
+    private final File jqassistantUserDir;
 
-    public PluginResolverFactory() {
-        File userHome = new File(System.getProperty("user.home"));
+    public PluginResolverFactory(File userHome) {
         this.jqassistantUserDir = new File(userHome, ".jqassistant");
     }
 

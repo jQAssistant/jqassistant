@@ -76,6 +76,9 @@ jqassistant:
     password:
 ----
 
+NOTE: Plugins will be downloaded using the configured local and remote Maven repositories (default:
+Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven settings) the configuration from there will be used. Note that only repositories from the `pluginRepositories` section are considered.
+
 === Options
 
 [[cli:configurationLocations]]

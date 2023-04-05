@@ -4,6 +4,8 @@
 == 2.0.0
 
 * Removed configuration options from command line, as they have been completely replaced by the YAML/properties based configuration mechanism
+* Removed plugins from distribution and migrated provision of core plugin to dynamic, configuration based resolution on startup
+* Use Maven settings from `~/.m2/settings.xml` automatically configure local and remote repositories to download plugins
 
 == 1.12.0
 

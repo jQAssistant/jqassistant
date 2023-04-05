@@ -28,9 +28,11 @@ import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import org.apache.commons.cli.*;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createConfigSource;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
@@ -110,10 +112,10 @@ public class Main {
      * @throws CliExecutionException
      *     If initialization fails.
      */
-    private PluginRepository getPluginRepository(CliConfiguration configuration) throws CliExecutionException {
+    private PluginRepository getPluginRepository(CliConfiguration configuration, File userHome) throws CliExecutionException {
         // create classloader for the plugins/ directory.
         ClassLoader pluginDirectoryClassLoader = createPluginClassLoader();
-        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory();
+        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory(userHome);
         PluginResolver pluginResolver = pluginResolverFactory.create(configuration);
         // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved from PluginResolver
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration);
@@ -180,18 +182,20 @@ public class Main {
      */
     private void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         File workingDirectory = new File(".");
+        File userHome = new File(System.getProperty("user.home"));
         Optional<List<String>> configLocations = getConfigLocations(commandLine);
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, configLocations);
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
+        ConfigSource mavenSettings = createConfigSource(userHome);
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build(), new SysPropConfigSource(),
-            commandLineProperties);
+            commandLineProperties, mavenSettings);
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
             List<String> taskNames = commandLine.getArgList();
             List<Task> tasks = getTasks(taskNames, commandLine, configurationBuilder);
-            PluginRepository pluginRepository = getPluginRepository(configuration);
+            PluginRepository pluginRepository = getPluginRepository(configuration, userHome);
             executeTasks(tasks, configuration, pluginRepository, options);
         }
     }
