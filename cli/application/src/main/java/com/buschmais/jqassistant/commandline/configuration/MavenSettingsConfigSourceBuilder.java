@@ -36,7 +36,7 @@ public class MavenSettingsConfigSourceBuilder {
             put(properties, Repositories.PREFIX + "." + Repositories.LOCAL, localRepository);
             List<Profile> activeProfiles = getActiveProfiles(settings);
             if (isNotEmpty(activeProfiles)) {
-                getPluginRepositories(properties, settings, activeProfiles);
+                applyProfileSettings(properties, settings, activeProfiles);
             }
         }
         return new PropertiesConfigSource(properties, "Maven Settings", 90);
@@ -56,7 +56,19 @@ public class MavenSettingsConfigSourceBuilder {
         return activeProfiles;
     }
 
-    private static void getPluginRepositories(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
+    private static void applyProfileSettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
+        applyProperties(properties, activeProfiles);
+        applyPluginRepositorySettings(properties, settings, activeProfiles);
+    }
+
+    private static void applyProperties(Map<String, String> properties, List<Profile> activeProfiles) {
+        activeProfiles.stream()
+            .map(activeProfile -> activeProfile.getProperties())
+            .forEach(activeProfileProperties -> activeProfileProperties.stringPropertyNames()
+                .forEach(propertyName -> properties.put(propertyName, activeProfileProperties.getProperty(propertyName))));
+    }
+
+    private static void applyPluginRepositorySettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
         List<Repository> pluginRepositories = activeProfiles.stream()
             .flatMap(activeProfile -> activeProfile.getPluginRepositories()
                 .stream())
