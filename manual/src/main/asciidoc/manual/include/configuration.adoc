@@ -17,10 +17,12 @@ The configuration options can be passed in different ways:
 
 === YAML files
 
-jQAssistant automatically loads YAML files from the following locations (relative to the working directory):
+jQAssistant automatically loads YAML files from the following locations of the user home and the working directory:
 
 * `.jqassistant.yml` or `.jqassistant.yaml`
 * `.yml` or `.yaml` files located in the directory or sub-directories of `.jqassistant/`
+
+NOTE: Configuration files in the user home directory have a lower priority than those in the working directory.
 
 TIP: The locations can be overridden by command line parameters of the Command Line Utility or the Maven plugin.
 
