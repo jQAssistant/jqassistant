@@ -10,7 +10,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
@@ -34,9 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createConfigSource;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -183,8 +181,8 @@ public class Main {
     private void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         File workingDirectory = new File(".");
         File userHome = new File(System.getProperty("user.home"));
-        Optional<List<String>> configLocations = getConfigLocations(commandLine);
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(workingDirectory, configLocations);
+        List<String> configLocations = getConfigLocations(commandLine);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(userHome, workingDirectory, configLocations);
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
         ConfigSource mavenSettings = createConfigSource(userHome);
@@ -218,12 +216,12 @@ public class Main {
         return tasks;
     }
 
-    private Optional<List<String>> getConfigLocations(CommandLine commandLine) {
+    private List<String> getConfigLocations(CommandLine commandLine) {
         if (commandLine.hasOption(CMDLINE_OPTION_CONFIG_LOCATIONS)) {
-            return of(stream(commandLine.getOptionValues(CMDLINE_OPTION_CONFIG_LOCATIONS)).filter(configLocation -> !configLocation.isEmpty())
-                .collect(toList()));
+            return stream(commandLine.getOptionValues(CMDLINE_OPTION_CONFIG_LOCATIONS)).filter(configLocation -> !configLocation.isEmpty())
+                .collect(toList());
         }
-        return empty();
+        return emptyList();
     }
 
     protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Options options)
