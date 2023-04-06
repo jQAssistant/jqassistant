@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.scm.maven.provider;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
@@ -30,14 +29,15 @@ public class ConfigurationProvider {
      * @param executionRoot
      *     The Session execution root.
      * @param configLocations
-     *     The optional config locations directory.
+     *     The config locations directory.
      * @param configSources
      *     Additional {@link ConfigSource}s.
      * @return The {@link MavenConfiguration}.
      */
-    public synchronized MavenConfiguration getConfiguration(File executionRoot, Optional<List<String>> configLocations, ConfigSource... configSources) {
+    public synchronized MavenConfiguration getConfiguration(File executionRoot, List<String> configLocations, ConfigSource... configSources) {
         if (configurationLoader == null) {
-            configurationLoader = new ConfigurationLoaderImpl(executionRoot, configLocations);
+            File userHome = new File(System.getProperty("user.home"));
+            configurationLoader = new ConfigurationLoaderImpl(userHome, executionRoot, configLocations);
         }
         return configurationLoader.load(MavenConfiguration.class, configSources);
     }

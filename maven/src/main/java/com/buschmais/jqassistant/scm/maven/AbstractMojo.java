@@ -32,9 +32,6 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -254,9 +251,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
 
-        return configurationProvider.getConfiguration(executionRoot, isEmpty(configurationLocations) ? empty() : of(configurationLocations),
-            configurationBuilder.build(), projectConfigSource, settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource,
-            systemPropertiesConfigSource, getMavenPluginConfiguration());
+        return configurationProvider.getConfiguration(executionRoot, configurationLocations, configurationBuilder.build(), projectConfigSource,
+            settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, getMavenPluginConfiguration());
     }
 
     private ConfigSource getMavenPluginConfiguration() {
