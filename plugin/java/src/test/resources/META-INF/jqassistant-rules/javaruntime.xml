@@ -5,7 +5,7 @@
         MATCH
             (:Artifact)-[:CONTAINS]->(t:Type)
         WHERE
-            exists(t.fqn)
+            t.fqn is not null
         WITH
             t, substring(t.fqn, 0, length(t.fqn)-length(t.name)-1) as packageName
         MERGE

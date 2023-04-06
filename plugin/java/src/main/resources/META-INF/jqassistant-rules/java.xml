@@ -72,8 +72,8 @@
               path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
             WHERE
               type <> superType
-              and not exists(member.name)
-              and exists(superMember.name)
+              and member.name is null
+              and superMember.name is not null
               and member.signature = superMember.signature
               and superMember.visibility <> "private"
             WITH
@@ -144,7 +144,7 @@
               (method:Method)-[invokes:INVOKES]->(:Method)-[:INHERITED_FROM*0..1]->(invokedMethod:Method),
               (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
             WHERE NOT (                                     // exclude...
-              exists(overridingMethod.abstract)             // ...abstract methods
+              overridingMethod.abstract is not null         // ...abstract methods
               or (overridingMethod)-[:INHERITED_FROM]->()   // ...inherited methods
             )
             WITH
@@ -361,7 +361,7 @@
             MATCH
               (type:Type:Java:Interface)-[:DECLARES]->(defaultMethod:Java:Method)
             WHERE NOT
-              exists(defaultMethod.abstract)
+              defaultMethod.abstract is not null
             SET
               defaultMethod:Default
             RETURN
