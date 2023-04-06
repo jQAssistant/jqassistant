@@ -6,4 +6,4 @@ jqassistant:
       files:
         - java:classpath::~/my-project/build/classes
     properties:
-      m2repo.artifacts.scan: true
+      overwritten-user-value: "overwritten"

@@ -12,7 +12,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
@@ -49,13 +48,15 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
      * Constructor using a configuration directory for looking up YAML config files.
      *
      * @param workingDirectory
-     *     The working directory for loading YAML config files.
+     *         The working directory for loading YAML config files.
      * @param configLocations
-     *     The name of the configuration directory relative to the working directory.
+     *         The name of the configuration directory relative to the working directory.
      */
-    public ConfigurationLoaderImpl(File workingDirectory, Optional<List<String>> configLocations) {
+    public ConfigurationLoaderImpl(File userHome, File workingDirectory, List<String> configLocations) {
         List<ConfigSource> configSources = new ArrayList<>();
-        configSources.addAll(getExternalYamlConfigSources(workingDirectory, configLocations));
+        configSources.addAll(getExternalYamlConfigSources(userHome, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USER));
+        configSources.addAll(getExternalYamlConfigSources(workingDirectory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations,
+                ORDINAL_WORKING_DIRECTORY));
         configSources.addAll(getYamlConfigSourceFromClasspath());
         this.yamlConfigSources = configSources;
     }
@@ -70,40 +71,40 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     @Override
     public <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources) {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-            .withSources(yamlConfigSources)
-            .withSources(new EnvConfigSource() {
-            })
-            .withSources(configSources)
-            .withValidateUnknown(false)
-            .withInterceptors(new ExpressionConfigSourceInterceptor())
-            .build();
+                .withSources(yamlConfigSources)
+                .withSources(new EnvConfigSource() {
+                })
+                .withSources(configSources)
+                .withValidateUnknown(false)
+                .withInterceptors(new ExpressionConfigSourceInterceptor())
+                .build();
         return config.getConfigMapping(configurationMapping);
     }
 
-    private List<ConfigSource> getExternalYamlConfigSources(File workingDirectory, Optional<List<String>> optionalConfigLocations) {
+    private List<ConfigSource> getExternalYamlConfigSources(File directory, List<String> configLocations, int ordinal) {
         List<ConfigSource> configSources = new ArrayList<>();
-        for (String configLocations : optionalConfigLocations.orElse(DEFAULT_CONFIG_LOCATIONS)) {
-            File file = workingDirectory.toPath()
-                .resolve(Paths.get(configLocations))
-                .toFile();
+        for (String configLocation : configLocations) {
+            File file = directory.toPath()
+                    .resolve(Paths.get(configLocation))
+                    .toFile();
             if (file.isDirectory()) {
-                configSources.addAll(getYamlConfigSources(file));
+                configSources.addAll(getYamlConfigSources(file, ordinal));
             } else if (file.exists()) {
-                configSources.add(getYamlConfigSource(file.toPath()));
+                configSources.add(getYamlConfigSource(file.toPath(), ordinal));
             }
         }
         return configSources;
     }
 
-    private List<ConfigSource> getYamlConfigSources(File configurationDirectory) {
+    private List<ConfigSource> getYamlConfigSources(File configurationDirectory, int ordinal) {
         if (configurationDirectory.exists()) {
             log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
             List<Path> configurationFiles = getYamlConfigurationFiles(configurationDirectory);
             return configurationFiles.stream()
-                .map(path -> {
-                    return getYamlConfigSource(path);
-                })
-                .collect(toList());
+                    .map(path -> {
+                        return getYamlConfigSource(path, ordinal);
+                    })
+                    .collect(toList());
         }
         log.info("Configuration directory '{}' does not exist, skipping.", configurationDirectory);
         return emptyList();
@@ -117,7 +118,7 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     String fileName = file.toFile()
-                        .getName();
+                            .getName();
                     if (fileName.endsWith(YAML) || fileName.endsWith(YML)) {
                         configurationFiles.add(file);
                     }
@@ -131,10 +132,10 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
         return configurationFiles;
     }
 
-    private YamlConfigSource getYamlConfigSource(Path path) {
+    private YamlConfigSource getYamlConfigSource(Path path, int ordinal) {
         try {
             return getYamlConfigSource(path.toUri()
-                .toURL());
+                    .toURL(), ordinal);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Cannot convert path '" + path + "' ot URL.");
         }
@@ -143,18 +144,14 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     private List<ConfigSource> getYamlConfigSourceFromClasspath() {
         try {
             Enumeration<URL> resources = Thread.currentThread()
-                .getContextClassLoader()
-                .getResources(CLASSPATH_RESOURCE);
+                    .getContextClassLoader()
+                    .getResources(CLASSPATH_RESOURCE);
             return list(resources).stream()
-                .map(resource -> getYamlConfigSource(resource))
-                .collect(toUnmodifiableList());
+                    .map(resource -> getYamlConfigSource(resource, ORDINAL_CLASSPATH))
+                    .collect(toUnmodifiableList());
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot get classpath resources for " + CLASSPATH_RESOURCE, e);
         }
-    }
-
-    private YamlConfigSource getYamlConfigSource(URL url) {
-        return getYamlConfigSource(url, YamlConfigSource.DEFAULT_ORDINAL);
     }
 
     private YamlConfigSource getYamlConfigSource(URL url, int ordinal) {

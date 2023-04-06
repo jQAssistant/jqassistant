@@ -4,10 +4,12 @@
 * Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
 +
 NOTE: It is still possible to scan applications compiled with older Java versions.
-* migrated `configuration` and `plugin` APIs to new `runtime` module
+* Added support for default configurations in the user home directory
+* Migrated `configuration` and `plugin` APIs to new `runtime` module
 * Added a `key` attribute to each row in the XML report (`jqassistant-report.xml`) to allow matching results between subsequent analysis executions
-* Added rule reports to the XML report (`jqassistant-report.xml`)
+* Added custom reports (e.g. images, CSV files, etc) to the XML report (`jqassistant-report.xml`)
 * Changed the reporting API for scripts to have explicit rows and columns
+* Removed Asciidoc & PlantUML related support from core
 
 == 1.12.1
 * Upgraded to AsciidoctorJ 2.5.7 and PlantUML 1.2022.12

@@ -18,6 +18,21 @@ public interface ConfigurationLoader {
     List<String> DEFAULT_CONFIG_LOCATIONS = Arrays.asList(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant");
 
     /**
+     * The ordinal for config sources from the user home.
+     */
+    int ORDINAL_USER = 50;
+
+    /**
+     * The ordinal for config sources from classpath.
+     */
+    int ORDINAL_CLASSPATH = 80;
+
+    /**
+     * The ordinal for config sources from the working directory.
+     */
+    int ORDINAL_WORKING_DIRECTORY = 100;
+
+    /**
      * Load the {@link Configuration} using the given working directory including
      * <p>
      * - yml/yaml files present in the given configuration directory
