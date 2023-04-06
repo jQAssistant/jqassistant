@@ -19,7 +19,7 @@ public class NullValueHandlingIT extends AbstractYAMLPluginIT {
 
 
         String query = "MATCH (:Yaml:Sequence)-[HAS_ITEM]->(item:Yaml:Scalar) " +
-                       "WHERE EXISTS(item.value) " +
+                       "WHERE item.value IS NOT NULL " +
                        "RETURN item";
 
         TestResult testResult = query(query);
