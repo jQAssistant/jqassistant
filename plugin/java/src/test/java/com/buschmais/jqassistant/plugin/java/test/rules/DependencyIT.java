@@ -110,7 +110,7 @@ class DependencyIT extends AbstractJavaPluginIT {
         File classesDirectory = getClassesDirectory(DependencyIT.class);
         store.beginTransaction();
         getScanner(pluginConfig).scan(classesDirectory, "/", JavaScope.CLASSPATH);
-        List<Map<String, Object>> rows = query("MATCH (:Type)-[d:DEPENDS_ON]->(:Type) WHERE exists(d.weight) RETURN d").getRows();
+        List<Map<String, Object>> rows = query("MATCH (:Type)-[d:DEPENDS_ON]->(:Type) WHERE d.weight is not null RETURN d").getRows();
         assertThat(rows.size(), equalTo(0));
         store.commitTransaction();
     }
