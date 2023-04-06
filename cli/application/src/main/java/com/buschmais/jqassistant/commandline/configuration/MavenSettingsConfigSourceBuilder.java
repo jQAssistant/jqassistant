@@ -1,18 +1,13 @@
 package com.buschmais.jqassistant.commandline.configuration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 
 import io.smallrye.config.PropertiesConfigSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.settings.Profile;
-import org.apache.maven.settings.Repository;
-import org.apache.maven.settings.Server;
-import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.*;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
@@ -47,43 +42,54 @@ public class MavenSettingsConfigSourceBuilder {
     }
 
     private static List<Profile> getActiveProfiles(Settings settings) {
-        List<Profile> activeProfiles = settings.getActiveProfiles()
+        List<Profile> activeProfiles = new ArrayList<>();
+        activeProfiles.addAll(settings.getActiveProfiles()
             .stream()
             .map(activeProfile -> settings.getProfilesAsMap()
                 .get(activeProfile))
-            .filter(profile -> profile != null)
-            .collect(toList());
+            .filter(Objects::nonNull)
+            .collect(toList()));
+        activeProfiles.addAll(settings.getProfiles()
+            .stream()
+            .filter(profile -> {
+                Activation activation = profile.getActivation();
+                return activation != null && activation.isActiveByDefault();
+            })
+            .collect(toList()));
         return activeProfiles;
     }
 
     private static void applyProfileSettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
         applyProperties(properties, activeProfiles);
-        applyPluginRepositorySettings(properties, settings, activeProfiles);
+        applyRepositorySettings(properties, settings, activeProfiles);
     }
 
     private static void applyProperties(Map<String, String> properties, List<Profile> activeProfiles) {
         activeProfiles.stream()
-            .map(activeProfile -> activeProfile.getProperties())
+            .map(Profile::getProperties)
             .forEach(activeProfileProperties -> activeProfileProperties.stringPropertyNames()
                 .forEach(propertyName -> properties.put(propertyName, activeProfileProperties.getProperty(propertyName))));
     }
 
-    private static void applyPluginRepositorySettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
-        List<Repository> pluginRepositories = activeProfiles.stream()
+    private static void applyRepositorySettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
+        List<Repository> repositories = new ArrayList<>();
+        repositories.addAll(activeProfiles.stream()
+            .flatMap(activeProfile -> activeProfile.getRepositories()
+                .stream())
+            .collect(toList()));
+        repositories.addAll(activeProfiles.stream()
             .flatMap(activeProfile -> activeProfile.getPluginRepositories()
                 .stream())
-            .collect(toList());
-        int index = 0;
-        for (Repository pluginRepository : pluginRepositories) {
-            String remotePrefix = Remote.PREFIX + "[" + index + "]" + ".";
-            put(properties, remotePrefix + Remote.URL, pluginRepository.getUrl());
-            String id = pluginRepository.getId();
+            .collect(toList()));
+        for (Repository repository : repositories) {
+            String remotePrefix = Remote.PREFIX + "." + repository.getId() + ".";
+            put(properties, remotePrefix + Remote.URL, repository.getUrl());
+            String id = repository.getId();
             Server server = settings.getServer(id);
             if (server != null) {
                 put(properties, remotePrefix + Remote.USERNAME, server.getUsername());
                 put(properties, remotePrefix + Remote.PASSWORD, server.getPassword());
             }
-            index++;
         }
     }
 

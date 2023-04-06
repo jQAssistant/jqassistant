@@ -10,7 +10,7 @@ import io.smallrye.config.ConfigMapping;
 @ConfigMapping(prefix = Remote.PREFIX)
 public interface Remote {
 
-    String PREFIX = "jqassistant.repositories.remote";
+    String PREFIX = "jqassistant.repositories.remotes";
 
     String URL = "url";
 
