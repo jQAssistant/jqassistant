@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import io.smallrye.config.PropertiesConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.settings.*;
+import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -15,6 +16,7 @@ import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import static com.buschmais.jqassistant.commandline.configuration.Mirror.*;
 import static com.buschmais.jqassistant.commandline.configuration.Proxy.*;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -31,6 +33,7 @@ public class MavenSettingsConfigSourceBuilder {
             Settings settings = loadMavenSettings(settingsFile);
             String localRepository = settings.getLocalRepository();
             put(properties, Repositories.PREFIX + "." + Repositories.LOCAL, localRepository);
+            applyMirrors(properties, settings);
             applyProxy(properties, settings);
             List<Profile> activeProfiles = getActiveProfiles(settings);
             if (isNotEmpty(activeProfiles)) {
@@ -38,6 +41,18 @@ public class MavenSettingsConfigSourceBuilder {
             }
         }
         return new PropertiesConfigSource(properties, "Maven Settings", 90);
+    }
+
+    private static void applyMirrors(Map<String, String> properties, Settings settings) {
+        for (Mirror mirror : settings.getMirrors()) {
+            String id = mirror.getId();
+            if (id != null) {
+                put(properties, PREFIX + "." + id + "." + URL, mirror.getUrl());
+                put(properties, PREFIX + "." + id + "." + MIRROR_OF, mirror.getMirrorOf());
+            } else {
+                log.warn("Cannot configure mirror from Maven settings without id (url={}).", mirror.getUrl());
+            }
+        }
     }
 
     private static void applyProxy(Map<String, String> properties, Settings settings) {

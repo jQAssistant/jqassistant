@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.commandline.configuration.Proxy;
-import com.buschmais.jqassistant.commandline.configuration.Remote;
-import com.buschmais.jqassistant.commandline.configuration.Repositories;
+import com.buschmais.jqassistant.commandline.configuration.*;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherPluginResolverImpl;
@@ -30,6 +27,7 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
@@ -76,7 +74,7 @@ public class PluginResolverFactory {
         log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
             .map(remoteRepository -> "'" + remoteRepository.getId() + " (" + remoteRepository.getUrl() + ")'")
             .collect(joining(", ")));
-        RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository);
+        RepositorySystemSession session = newRepositorySystemSession(repositories, repositorySystem, localRepository);
 
         return new AetherPluginResolverImpl(repositorySystem, session, remoteRepositories);
     }
@@ -170,12 +168,27 @@ public class PluginResolverFactory {
      *     the {@link RepositorySystem}
      * @return a new {@link RepositorySystemSession}.
      */
-    private RepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory) {
+    private RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-                session.setTransferListener(new TransferListener());
+        session.setTransferListener(new TransferListener());
         LocalRepository localRepo = new LocalRepository(localDirectory);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+        addMirrors(repositories, session);
         return session;
+    }
+
+    private static void addMirrors(Repositories repositories, DefaultRepositorySystemSession session) {
+        if (!repositories.mirrors()
+            .isEmpty()) {
+            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
+            for (Map.Entry<String, Mirror> entry : repositories.mirrors()
+                .entrySet()) {
+                String id = entry.getKey();
+                Mirror mirror = entry.getValue();
+                mirrorSelector.add(id, mirror.url(), null, false, mirror.mirrorOf(), null);
+            }
+            session.setMirrorSelector(mirrorSelector);
+        }
     }
 
     /**

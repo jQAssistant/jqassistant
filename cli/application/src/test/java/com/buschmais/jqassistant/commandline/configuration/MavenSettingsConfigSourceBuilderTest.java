@@ -41,6 +41,17 @@ class MavenSettingsConfigSourceBuilderTest {
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/local-repo")));
 
+        Map<String, Mirror> mirrors = repositories.mirrors();
+        assertThat(mirrors).hasSize(2);
+        Mirror defaultMirror = mirrors.get("default");
+        assertThat(defaultMirror).isNotNull();
+        assertThat(defaultMirror.url()).isEqualTo("default-mirror-host");
+        assertThat(defaultMirror.mirrorOf()).isEqualTo("*");
+        Mirror otherMirror = mirrors.get("other");
+        assertThat(otherMirror).isNotNull();
+        assertThat(otherMirror.url()).isEqualTo("other-mirror-host");
+        assertThat(otherMirror.mirrorOf()).isEqualTo("central");
+
         Map<String, Remote> remotes = repositories.remotes();
         assertThat(remotes).hasSize(2);
 

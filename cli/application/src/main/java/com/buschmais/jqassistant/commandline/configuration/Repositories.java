@@ -13,6 +13,10 @@ import io.smallrye.config.ConfigMapping;
 public interface Repositories {
 
     String PREFIX = "jqassistant.repositories";
+
+    @Description("The mirrors to use for remote repositories.")
+    Map<String, Mirror> mirrors();
+
     String LOCAL = "local";
 
     @Description("The path to the local repository.")
