@@ -32,7 +32,7 @@ public class MavenSettingsConfigSourceBuilder {
         if (settingsFile.exists()) {
             Settings settings = loadMavenSettings(settingsFile);
             String localRepository = settings.getLocalRepository();
-            put(properties, Repositories.PREFIX + "." + Repositories.LOCAL, localRepository);
+            put(localRepository, properties, Repositories.PREFIX, Repositories.LOCAL);
             applyMirrors(properties, settings);
             applyProxy(properties, settings);
             List<Profile> activeProfiles = getActiveProfiles(settings);
@@ -47,8 +47,8 @@ public class MavenSettingsConfigSourceBuilder {
         for (Mirror mirror : settings.getMirrors()) {
             String id = mirror.getId();
             if (id != null) {
-                put(properties, PREFIX + "." + id + "." + URL, mirror.getUrl());
-                put(properties, PREFIX + "." + id + "." + MIRROR_OF, mirror.getMirrorOf());
+                put(mirror.getUrl(), properties, PREFIX, id, URL);
+                put(mirror.getMirrorOf(), properties, PREFIX, id, MIRROR_OF);
             } else {
                 log.warn("Cannot configure mirror from Maven settings without id (url={}).", mirror.getUrl());
             }
@@ -61,16 +61,18 @@ public class MavenSettingsConfigSourceBuilder {
             .filter(Proxy::isActive)
             .findFirst()
             .ifPresent(proxy -> {
-                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PROTOCOL, proxy.getProtocol());
-                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + HOST, proxy.getHost());
-                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PORT, Integer.toString(proxy.getPort()));
-                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + USERNAME, proxy.getUsername());
-                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PASSWORD, proxy.getPassword());
+                put(proxy.getProtocol(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PROTOCOL);
+                put(proxy.getHost(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, HOST);
+                put(Integer.toString(proxy.getPort()), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PORT);
+                put(proxy.getUsername(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, USERNAME);
+                put(proxy.getPassword(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PASSWORD);
             });
     }
 
-    private static void put(Map<String, String> properties, String property, String value) {
-        properties.put(property, value);
+    private static void put(String value, Map<String, String> properties, String... propertyPath) {
+        if (value != null) {
+            properties.put(String.join(".", propertyPath), value);
+        }
     }
 
     private static List<Profile> getActiveProfiles(Settings settings) {
@@ -114,13 +116,12 @@ public class MavenSettingsConfigSourceBuilder {
                 .stream())
             .collect(toList()));
         for (Repository repository : repositories) {
-            String remotePrefix = Remote.PREFIX + "." + repository.getId() + ".";
-            put(properties, remotePrefix + Remote.URL, repository.getUrl());
+            put(repository.getUrl(), properties, Remote.PREFIX, repository.getId(), Remote.URL);
             String id = repository.getId();
             Server server = settings.getServer(id);
             if (server != null) {
-                put(properties, remotePrefix + Remote.USERNAME, server.getUsername());
-                put(properties, remotePrefix + Remote.PASSWORD, server.getPassword());
+                put(server.getUsername(), properties, Remote.PREFIX, repository.getId(), Remote.USERNAME);
+                put(server.getPassword(), properties, Remote.PREFIX, repository.getId(), Remote.PASSWORD);
             }
         }
     }
