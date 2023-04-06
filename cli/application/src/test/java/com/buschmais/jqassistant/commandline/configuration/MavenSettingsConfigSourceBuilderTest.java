@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.commandline.configuration;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
@@ -26,19 +27,28 @@ class MavenSettingsConfigSourceBuilderTest {
         ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
         CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configSource);
 
+        Optional<Proxy> proxyOptional = configuration.proxy();
+        assertThat(proxyOptional.isPresent()).isTrue();
+        Proxy proxy = proxyOptional.get();
+        assertThat(proxy.protocol()).isEqualTo("https");
+        assertThat(proxy.host()).isEqualTo("active-proxy-host");
+        assertThat(proxy.port()).isEqualTo(3128);
+        assertThat(proxy.username()).get()
+            .isEqualTo("foo");
+        assertThat(proxy.password()).get()
+            .isEqualTo("bar");
+
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/local-repo")));
 
         Map<String, Remote> remotes = repositories.remotes();
         assertThat(remotes).hasSize(2);
 
-        Remote publicRemote = remotes
-            .get("public");
+        Remote publicRemote = remotes.get("public");
         assertThat(publicRemote).isNotNull();
         assertThat(publicRemote.url()).isEqualTo("https://public-repo.acme.com/");
 
-        Remote privateRemote = remotes
-            .get("private");
+        Remote privateRemote = remotes.get("private");
         assertThat(privateRemote).isNotNull();
         assertThat(privateRemote.url()).isEqualTo("https://private-repo.acme.com/");
         assertThat(privateRemote.username()).isEqualTo(of("foo@bar.com"));

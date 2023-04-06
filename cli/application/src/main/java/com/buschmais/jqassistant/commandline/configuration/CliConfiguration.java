@@ -13,6 +13,8 @@ import static com.buschmais.jqassistant.core.runtime.api.configuration.Configura
 @Description("The configuration for the Command Line Utility.")
 public interface CliConfiguration extends Configuration {
 
+    String PROXY = "proxy";
+
     @Description("The proxy to use for connecting to repositories.")
     Optional<Proxy> proxy();
 

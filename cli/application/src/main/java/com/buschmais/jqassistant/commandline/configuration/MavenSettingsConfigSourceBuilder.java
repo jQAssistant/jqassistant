@@ -8,12 +8,14 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import io.smallrye.config.PropertiesConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.settings.*;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import static com.buschmais.jqassistant.commandline.configuration.Proxy.*;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
@@ -29,12 +31,27 @@ public class MavenSettingsConfigSourceBuilder {
             Settings settings = loadMavenSettings(settingsFile);
             String localRepository = settings.getLocalRepository();
             put(properties, Repositories.PREFIX + "." + Repositories.LOCAL, localRepository);
+            applyProxy(properties, settings);
             List<Profile> activeProfiles = getActiveProfiles(settings);
             if (isNotEmpty(activeProfiles)) {
                 applyProfileSettings(properties, settings, activeProfiles);
             }
         }
         return new PropertiesConfigSource(properties, "Maven Settings", 90);
+    }
+
+    private static void applyProxy(Map<String, String> properties, Settings settings) {
+        settings.getProxies()
+            .stream()
+            .filter(Proxy::isActive)
+            .findFirst()
+            .ifPresent(proxy -> {
+                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PROTOCOL, proxy.getProtocol());
+                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + HOST, proxy.getHost());
+                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PORT, Integer.toString(proxy.getPort()));
+                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + USERNAME, proxy.getUsername());
+                put(properties, CliConfiguration.PREFIX + "." + CliConfiguration.PROXY + "." + PASSWORD, proxy.getPassword());
+            });
     }
 
     private static void put(Map<String, String> properties, String property, String value) {

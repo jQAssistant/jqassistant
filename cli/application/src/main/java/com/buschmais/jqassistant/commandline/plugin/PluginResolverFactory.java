@@ -172,7 +172,7 @@ public class PluginResolverFactory {
      */
     private RepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setTransferListener(new TransferListener());
+                session.setTransferListener(new TransferListener());
         LocalRepository localRepo = new LocalRepository(localDirectory);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
         return session;
