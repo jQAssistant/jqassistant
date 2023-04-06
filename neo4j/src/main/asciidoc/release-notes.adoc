@@ -3,6 +3,7 @@
 
 == 2.0.0
 * Upgraded to Neo4j 4.4.19
+* Added support for connecting to remote Neo4j 5.x instances
 
 == 1.12.1
 * Upgraded to Neo4j 3.5.35
