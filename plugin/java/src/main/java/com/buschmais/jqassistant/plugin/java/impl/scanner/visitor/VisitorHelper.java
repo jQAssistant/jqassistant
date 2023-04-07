@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassModelConfiguration;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.TypeVariableResolver;
 
 import org.objectweb.asm.AnnotationVisitor;
@@ -30,8 +29,6 @@ public class VisitorHelper {
 
     private final ScannerContext scannerContext;
 
-    private final ClassModelConfiguration classModelConfiguration;
-
     private final TypeVariableResolver typeVariableResolver;
 
     /**
@@ -39,21 +36,14 @@ public class VisitorHelper {
      *
      * @param scannerContext
      *            The scanner context
-     * @param classModelConfiguration
-     *            The {@link ClassModelConfiguration}.
      */
-    public VisitorHelper(ScannerContext scannerContext, ClassModelConfiguration classModelConfiguration) {
+    public VisitorHelper(ScannerContext scannerContext) {
         this.scannerContext = scannerContext;
-        this.classModelConfiguration = classModelConfiguration;
         this.typeVariableResolver = new TypeVariableResolver();
     }
 
     public Store getStore() {
         return scannerContext.getStore();
-    }
-
-    ClassModelConfiguration getClassModelConfiguration() {
-        return classModelConfiguration;
     }
 
     public TypeVariableResolver getTypeVariableResolver() {
@@ -265,9 +255,7 @@ public class VisitorHelper {
             final Integer weight = entry.getValue();
             TypeDescriptor dependent = cachedType.getTypeDescriptor();
             TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(dependent, TypeDependsOnDescriptor.class, dependency);
-            if (classModelConfiguration.isTypeDependsOnWeight()) {
-                dependsOnDescriptor.setWeight(weight);
-            }
+            dependsOnDescriptor.setWeight(weight);
         }
     }
 }

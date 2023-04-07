@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,8 +15,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
@@ -101,17 +98,6 @@ class DependencyIT extends AbstractJavaPluginIT {
         Map<String, Object> row = rows.get(0);
         TypeDependsOnDescriptor dependsOn = (TypeDependsOnDescriptor) row.get("d");
         assertThat(dependsOn.getWeight(), equalTo(7));
-        store.commitTransaction();
-    }
-
-    @Test
-    void weightDisabled() {
-        Map<String, Object> pluginConfig = MapBuilder.<String, Object> builder().entry(ClassFileScannerPlugin.PROPERTY_TYPE_DEPENDS_ON_WEIGHT, "false").build();
-        File classesDirectory = getClassesDirectory(DependencyIT.class);
-        store.beginTransaction();
-        getScanner(pluginConfig).scan(classesDirectory, "/", JavaScope.CLASSPATH);
-        List<Map<String, Object>> rows = query("MATCH (:Type)-[d:DEPENDS_ON]->(:Type) WHERE d.weight is not null RETURN d").getRows();
-        assertThat(rows.size(), equalTo(0));
         store.commitTransaction();
     }
 

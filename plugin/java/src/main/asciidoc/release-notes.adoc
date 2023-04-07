@@ -13,6 +13,7 @@
 * Migrated expensive Java concepts (e.g. `java:VirtualDependsOn`, `java-classpath:*`) to be executed in batches
 * Fixed a problem for support of generic type variables (only last usage of the variable within a class was referenced e.g. for multiple declarations like `List<X>`)
 * Upgraded ASM to 9.5 to enable support for Java 21 bytecode
+* Removed `md5` property from `:Class` nodes
 
 == 1.12.0
 

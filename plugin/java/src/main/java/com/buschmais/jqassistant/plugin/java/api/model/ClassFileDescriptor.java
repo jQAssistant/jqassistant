@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.MD5Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.report.Java;
@@ -11,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Java(Java.JavaLanguageElement.Type)
 public interface ClassFileDescriptor
-        extends TypeDescriptor, FileDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, MD5Descriptor, AbstractDescriptor, ValidDescriptor {
+        extends TypeDescriptor, FileDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor, ValidDescriptor {
 
     /**
      * Return the super class.

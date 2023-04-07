@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.MD5DigestDelegate;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
@@ -29,19 +28,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
-    public static final String PROPERTY_TYPE_DEPENDS_ON_WEIGHT = "java.class.model.Type.DEPENDS_ON.weight";
-
-    public static final String PROPERTY_METHOD_DECLARES_VARIABLE = "java.class.model.Method.DECLARES.Variable";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
-
-    private ClassModelConfiguration classModelConfiguration;
-
-    @Override
-    protected void configure() {
-        classModelConfiguration = ClassModelConfiguration.builder().typeDependsOnWeight(getBooleanProperty(PROPERTY_TYPE_DEPENDS_ON_WEIGHT, true))
-                .methodDeclaresVariable(getBooleanProperty(PROPERTY_METHOD_DECLARES_VARIABLE, true)).build();
-    }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
@@ -58,14 +45,12 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
         final FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
-        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), classModelConfiguration);
+        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
         ClassFileDescriptor classFileDescriptor;
-        try (InputStream stream = file.createStream()) {
-            classFileDescriptor = MD5DigestDelegate.getInstance().digest(stream, inputStream -> {
-                new ClassReader(inputStream).accept(visitor, 0);
-                return visitor.getTypeDescriptor();
-            });
+        try (InputStream inputStream = file.createStream()) {
+            new ClassReader(inputStream).accept(visitor, 0);
+            classFileDescriptor = visitor.getTypeDescriptor();
             classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
             LOGGER.warn("Cannot scan class '" + path + "'.", e);
