@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.Metho
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.signature.SignatureReader;
 
 import static java.util.Arrays.asList;
@@ -21,16 +22,6 @@ import static java.util.Arrays.asList;
  * A class visitor implementation.
  */
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
-
-    /**
-     * The name of constructor methods.
-     */
-    private static final String CONSTRUCTOR_METHOD = "<init>";
-
-    /**
-     * The prefix of lambda methods.
-     */
-    private static final String LAMBDA_METHOD = "lambda$";
 
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
     private FileDescriptor fileDescriptor;
@@ -83,6 +74,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         } else {
             new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
         }
+    }
+
+    @Override
+    public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
+        cachedType.getTypeDescriptor().setStatic(true);
+        cachedType.getTypeDescriptor().setFinal(true);
+        return null;
     }
 
     @Override
@@ -277,6 +275,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             return EnumTypeDescriptor.class;
         } else if (hasFlag(flags, Opcodes.ACC_INTERFACE)) {
             return InterfaceTypeDescriptor.class;
+        } else if (hasFlag(flags, Opcodes.ACC_RECORD)) {
+            return RecordTypeDescriptor.class;
         }
         return ClassTypeDescriptor.class;
     }

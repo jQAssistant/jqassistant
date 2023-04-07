@@ -12,6 +12,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</class>

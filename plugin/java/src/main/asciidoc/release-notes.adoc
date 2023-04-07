@@ -3,6 +3,7 @@
 
 == 2.0.0
 
+* Added support for Java Records, i.e. types labeled with `:Type:Record`
 * Renamed concepts and constraints
 ** `classpath:*` -> `java-classpath:*`
 ** `dependency:Package` -> `java:PackageDependency`

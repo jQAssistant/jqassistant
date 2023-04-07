@@ -80,7 +80,7 @@ property `fqn` and `DECLARES` relations to their members. These are `:Field` or
 
 [[:Java:Type]]
 === Nodes labeled with :Java:Type
-A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum` or `:Annotation`
+A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum`, `:Record` or `:Annotation`
 
 .Properties of `:Java:Type`
 [options="header"]
@@ -152,6 +152,9 @@ Qualifies a Java type node as interface.
 
 === Nodes labeled with `:Java:Type:Enum`
 Qualifies a Java type as enumeration.
+
+=== Nodes labeled with `:Java:Type:Record`
+Qualifies a Java type as record.
 
 === Nodes labeled with `:Java:Type:Annotation`
 Qualifies a Java type as annotation.
