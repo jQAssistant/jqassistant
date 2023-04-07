@@ -283,19 +283,6 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Deletes the node representing the test class and all its relationships from
-     * the store.
-     */
-    protected void removeTestClass() {
-        store.beginTransaction();
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("className", this.getClass().getName());
-        store.executeQuery("MATCH (t:Type)-[r]-() WHERE t.fqn=$className DELETE r", parameters).close();
-        store.executeQuery("MATCH (t:Type) WHERE t.fqn=$className DELETE t", parameters).close();
-        store.commitTransaction();
-    }
-
-    /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
