@@ -2,7 +2,7 @@
 = Neo4j Backend
 
 == 2.0.0
-* Upgraded to Neo4j 4.4.19
+* Upgraded to Neo4j 4.4.19 and Neo4j Browser 5.6.0
 * Added support for connecting to remote Neo4j 5.x instances
 
 == 1.12.1
