@@ -4,7 +4,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
  * Interface that describes java elements with access modifiers.
- * 
+ *
  * @author Herklotz
  */
 public interface AccessModifierDescriptor {
@@ -28,4 +28,10 @@ public interface AccessModifierDescriptor {
     Boolean isSynthetic();
 
     void setSynthetic(Boolean s);
+
+    Boolean isTransitive();
+    void setTransitive(Boolean transitive);
+
+    Boolean isMandated();
+    void setMandated(Boolean mandated);
 }

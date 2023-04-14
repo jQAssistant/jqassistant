@@ -16,7 +16,7 @@ public interface TypeResolver {
      * If a the descriptor already exists it will be used and migrated to the
      * given type.
      * </p>
-     * 
+     *
      * @param <T>
      *            The expected type of the descriptor.
      * @param fullQualifiedName
@@ -34,7 +34,7 @@ public interface TypeResolver {
     /**
      * Resolve or create the descriptor for Java type name to be used as
      * dependency.
-     * 
+     *
      * @param fullQualifiedName
      *            The fully qualified type name, e.g. "java.lang.Object".
      * @param context
@@ -42,4 +42,18 @@ public interface TypeResolver {
      */
     TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context);
 
+    /**
+     * Resolves a {@link FileDescriptor} from the class path.
+     *
+     * @param requiredFileName
+     *     The file name.
+     * @param requiredFileType
+     *     The required file type.
+     * @param context
+     *     The {@link ScannerContext}.
+     * @param <T>
+     *     The {@link FileDescriptor} type.
+     * @return The resolved {@link FileDescriptor}.
+     */
+    <T extends FileDescriptor> T require(String requiredFileName, Class<T> requiredFileType, ScannerContext context);
 }

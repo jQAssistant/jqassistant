@@ -42,6 +42,10 @@ public class VisitorHelper {
         this.typeVariableResolver = new TypeVariableResolver();
     }
 
+    public ScannerContext getScannerContext() {
+        return scannerContext;
+    }
+
     public Store getStore() {
         return scannerContext.getStore();
     }
@@ -54,13 +58,25 @@ public class VisitorHelper {
      * Return the type descriptor for the given type name.
      *
      * @param typeName The full qualified name of the type (e.g. java.lang.Object).
+     * @param dependentType The containing type which depends on the resolved type.
+     * @return The resolved CachedType.
      */
     public TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
-        TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
+        TypeCache.CachedType<?> cachedType = resolveType(fullQualifiedName);
         if (!dependentType.equals(cachedType)) {
             dependentType.addDependency(cachedType.getTypeDescriptor());
         }
         return cachedType;
+    }
+
+    /*
+     * Return the type descriptor for the given type name.
+     *
+     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
+     * @return The resolved CachedType.
+     */
+    public TypeCache.CachedType<?> resolveType(String fullQualifiedName) {
+        return getTypeResolver().resolve(fullQualifiedName, scannerContext);
     }
 
     /*
@@ -257,5 +273,19 @@ public class VisitorHelper {
             TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(dependent, TypeDependsOnDescriptor.class, dependency);
             dependsOnDescriptor.setWeight(weight);
         }
+    }
+
+    /**
+     * Checks whether the value contains the flag.
+     *
+     * @param value
+     *     the value
+     * @param flag
+     *     the flag
+     * @return <code>true</code> if (value & flag) == flag, otherwise
+     * <code>false</code>.
+     */
+    public boolean hasFlag(int value, int flag) {
+        return (value & flag) == flag;
     }
 }

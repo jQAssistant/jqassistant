@@ -58,8 +58,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         visitorHelper.getTypeVariableResolver().push();
         ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
         classFileDescriptor.setByteCodeVersion(version);
-        if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
-            classFileDescriptor.setAbstract(Boolean.TRUE);
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT)) {
+            if (!visitorHelper.hasFlag(access, Opcodes.ACC_INTERFACE)) {
+                classFileDescriptor.setAbstract(Boolean.TRUE);
+            }
         }
         setModifiers(access, classFileDescriptor);
         if (signature == null) {
@@ -77,6 +79,18 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     @Override
+    public ModuleVisitor visitModule(String name, int access, String version) {
+        ClassFileDescriptor typeDescriptor = cachedType.getTypeDescriptor();
+        ModuleDescriptor moduleDescriptor = visitorHelper.getStore()
+            .addDescriptorType(typeDescriptor, ModuleDescriptor.class);
+        moduleDescriptor.setModuleName(name);
+        moduleDescriptor.setVersion(version);
+        moduleDescriptor.setOpen(visitorHelper.hasFlag(access, Opcodes.ACC_OPEN));
+        moduleDescriptor.setSynthetic(visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC));
+        return new ModuleVisitor(moduleDescriptor, visitorHelper);
+    }
+
+    @Override
     public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
         cachedType.getTypeDescriptor().setStatic(true);
         cachedType.getTypeDescriptor().setFinal(true);
@@ -87,8 +101,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
         final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedType, SignatureHelper.getFieldSignature(name, desc));
         fieldDescriptor.setName(name);
-        fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
-        fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
+        fieldDescriptor.setVolatile(visitorHelper.hasFlag(access, Opcodes.ACC_VOLATILE));
+        fieldDescriptor.setTransient(visitorHelper.hasFlag(access, Opcodes.ACC_TRANSIENT));
         setModifiers(access, fieldDescriptor);
         if (signature == null) {
             TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType).getTypeDescriptor();
@@ -124,10 +138,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         visitorHelper.getTypeVariableResolver().push();
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);
-        if (hasFlag(access, Opcodes.ACC_ABSTRACT)) {
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT)) {
             methodDescriptor.setAbstract(Boolean.TRUE);
         }
-        if (hasFlag(access, Opcodes.ACC_NATIVE)) {
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_NATIVE)) {
             methodDescriptor.setNative(Boolean.TRUE);
         }
         if (signature == null) {
@@ -161,19 +175,22 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * @return <code>true</code> if the method represents a lambda expression.
      */
     private boolean isLambda(String name, int access) {
-        return (hasFlag(access, Opcodes.ACC_SYNTHETIC) && (hasFlag(access, Opcodes.ACC_STATIC) && name.startsWith("lambda$")));
+        if (!visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
+            return false;
+        }
+        return (visitorHelper.hasFlag(access, Opcodes.ACC_STATIC) && name.startsWith("lambda$"));
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
         VisibilityModifier visibility = getVisibility(access);
         descriptor.setVisibility(visibility.getValue());
-        if (hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
             descriptor.setSynthetic(Boolean.TRUE);
         }
-        if (hasFlag(access, Opcodes.ACC_FINAL)) {
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_FINAL)) {
             descriptor.setFinal(Boolean.TRUE);
         }
-        if (hasFlag(access, Opcodes.ACC_STATIC)) {
+        if (visitorHelper.hasFlag(access, Opcodes.ACC_STATIC)) {
             descriptor.setStatic(Boolean.TRUE);
         }
     }
@@ -229,20 +246,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     /**
-     * Checks whether the value contains the flag.
-     *
-     * @param value
-     *     the value
-     * @param flag
-     *     the flag
-     * @return <code>true</code> if (value & flag) == flag, otherwise
-     * <code>false</code>.
-     */
-    private boolean hasFlag(int value, int flag) {
-        return (value & flag) == flag;
-    }
-
-    /**
      * Returns the AccessModifier for the flag pattern.
      *
      * @param flags
@@ -250,14 +253,18 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * @return the AccessModifier
      */
     private VisibilityModifier getVisibility(int flags) {
-        if (hasFlag(flags, Opcodes.ACC_PRIVATE)) {
+        if (visitorHelper.hasFlag(flags, Opcodes.ACC_PRIVATE)) {
             return VisibilityModifier.PRIVATE;
-        } else if (hasFlag(flags, Opcodes.ACC_PROTECTED)) {
-            return VisibilityModifier.PROTECTED;
-        } else if (hasFlag(flags, Opcodes.ACC_PUBLIC)) {
-            return VisibilityModifier.PUBLIC;
         } else {
-            return VisibilityModifier.DEFAULT;
+            if (visitorHelper.hasFlag(flags, Opcodes.ACC_PROTECTED)) {
+                return VisibilityModifier.PROTECTED;
+            } else {
+                if (visitorHelper.hasFlag(flags, Opcodes.ACC_PUBLIC)) {
+                    return VisibilityModifier.PUBLIC;
+                } else {
+                    return VisibilityModifier.DEFAULT;
+                }
+            }
         }
     }
 
@@ -269,14 +276,20 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * @return The types label.
      */
     private Class<? extends ClassFileDescriptor> getJavaType(int flags) {
-        if (hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
+        if (visitorHelper.hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
             return AnnotationTypeDescriptor.class;
-        } else if (hasFlag(flags, Opcodes.ACC_ENUM)) {
-            return EnumTypeDescriptor.class;
-        } else if (hasFlag(flags, Opcodes.ACC_INTERFACE)) {
-            return InterfaceTypeDescriptor.class;
-        } else if (hasFlag(flags, Opcodes.ACC_RECORD)) {
-            return RecordTypeDescriptor.class;
+        } else {
+            if (visitorHelper.hasFlag(flags, Opcodes.ACC_ENUM)) {
+                return EnumTypeDescriptor.class;
+            } else {
+                if (visitorHelper.hasFlag(flags, Opcodes.ACC_INTERFACE)) {
+                    return InterfaceTypeDescriptor.class;
+                } else {
+                    if (visitorHelper.hasFlag(flags, Opcodes.ACC_RECORD)) {
+                        return RecordTypeDescriptor.class;
+                    }
+                }
+            }
         }
         return ClassTypeDescriptor.class;
     }
