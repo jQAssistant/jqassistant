@@ -46,7 +46,7 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
      * @return The {@link ModuleDescriptor} or <code>null</code>
      */
     @ResultOf
-    @Cypher("MATCH (artifact:Artifact)-[:DEPENDS_ON*..]->(:Artifact)-[:CONTAINS]->(:Module)-[:REQUIRES_MODULE*0..1]->(requiredModule:Java:Module{moduleName:$moduleName,version:$version}) WHERE id(artifact)=$artifact RETURN requiredModule")
+    @Cypher("MATCH (artifact:Artifact)-[:DEPENDS_ON*..]->(:Artifact)-[:CONTAINS]->(:Module)-[:REQUIRES_MODULE*0..1]->(module:Java:Module{moduleName:$moduleName}) WHERE id(artifact)=$artifact and ($version is null or module.version=$version) RETURN module")
     ModuleDescriptor findModuleInDependencies(@Parameter("artifact") JavaArtifactFileDescriptor artifact, @Parameter("moduleName") String moduleName,
         @Parameter("version") String version);
 
@@ -55,4 +55,13 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
 
     @Incoming
     List<RequiresModuleDescriptor> getRequiringModules();
+
+    @Relation("EXPORTS_PACKAGE")
+    List<ExportedPackageDescriptor> getExportedPackages();
+
+    @Relation("OPENS_PACKAGE")
+    List<OpenPackageDescriptor> getOpenPackages();
+
+    @Relation("PROVIDES_SERVICE")
+    List<ProvidesServiceDescriptor> getProvidesServices();
 }
