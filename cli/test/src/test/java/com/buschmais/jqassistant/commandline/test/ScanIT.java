@@ -49,6 +49,24 @@ class ScanIT extends AbstractCLIIT {
     }
 
     @Test
+    void filesFromConfigFile() throws IOException, InterruptedException {
+        File configFile = new File(ScanIT.class.getResource("/.jqassistant-with-scan-include.yml")
+            .getFile());
+        String[] args = new String[] { "scan", "-configurationLocations", configFile.getAbsolutePath() };
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
+
+        Store store = getStore(getDefaultStoreDirectory());
+        store.start();
+        Map<String, Object> params = new HashMap<>();
+        params.put("fileName", "/META-INF");
+        String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
+        Long count = executeQuery(store, query, params, "count", Long.class);
+        store.stop();
+        assertThat(count).isEqualTo(1L);
+    }
+
+
+    @Test
     void reset() throws IOException, InterruptedException {
         URL file = getResource(AnalyzeIT.class);
         String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.scan.reset=true" };

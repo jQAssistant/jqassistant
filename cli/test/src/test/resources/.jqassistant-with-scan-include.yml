@@ -1,0 +1,6 @@
+# config file for scanning
+jqassistant:
+  scan:
+    include:
+      files:
+        - ${project.build.testOutputDirectory}
