@@ -56,8 +56,6 @@ public class Main {
      *
      * @param args
      *     The command line arguments.
-     * @throws IOException
-     *     If an error occurs.
      */
     public static void main(String[] args) {
         try {
@@ -91,7 +89,7 @@ public class Main {
      * @return The error message.
      */
     private static String getErrorMessage(CliExecutionException e) {
-        StringBuffer messageBuilder = new StringBuffer();
+        StringBuilder messageBuilder = new StringBuilder();
         Throwable current = e;
         do {
             messageBuilder.append("-> ");
@@ -139,7 +137,6 @@ public class Main {
      * @param options
      *     The standard options.
      */
-    @SuppressWarnings("static-access")
     private void gatherStandardOptions(final Options options) {
         options.addOption(Option.builder("C")
             .longOpt("configurationLocations")
@@ -181,24 +178,18 @@ public class Main {
     private void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         File workingDirectory = new File(".");
         File userHome = new File(System.getProperty("user.home"));
-        List<String> configLocations = getConfigLocations(commandLine);
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(userHome, workingDirectory, configLocations);
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
-        PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
-        ConfigSource mavenSettings = createConfigSource(userHome);
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build(), new SysPropConfigSource(),
-            commandLineProperties, mavenSettings);
+        List<Task> tasks = getTasks(commandLine);
+        CliConfiguration configuration = getCliConfiguration(commandLine, workingDirectory, userHome, tasks);
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
-            List<String> taskNames = commandLine.getArgList();
-            List<Task> tasks = getTasks(taskNames, commandLine, configurationBuilder);
             PluginRepository pluginRepository = getPluginRepository(configuration, userHome);
             executeTasks(tasks, configuration, pluginRepository, options);
         }
     }
 
-    private List<Task> getTasks(List<String> taskNames, CommandLine commandLine, ConfigurationBuilder configurationBuilder) {
+    private List<Task> getTasks(CommandLine commandLine) {
+        List<String> taskNames = commandLine.getArgList();
         if (taskNames.isEmpty()) {
             return singletonList(RegisteredTask.HELP.getTask());
         }
@@ -206,7 +197,6 @@ public class Main {
         for (String taskName : taskNames) {
             try {
                 Task task = RegisteredTask.fromName(taskName);
-                task.configure(commandLine, configurationBuilder);
                 tasks.add(task);
             } catch (CliExecutionException e) {
                 printUsage(e.getMessage());
@@ -214,6 +204,22 @@ public class Main {
             }
         }
         return tasks;
+    }
+
+    private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
+        throws CliConfigurationException {
+        List<String> configLocations = getConfigLocations(commandLine);
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(userHome, workingDirectory, configLocations);
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
+        PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
+        ConfigSource mavenSettings = createConfigSource(userHome);
+        ConfigSource configSource = configurationBuilder.build();
+        for (Task task : tasks) {
+            task.configure(commandLine, configurationBuilder);
+        }
+        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configSource, new SysPropConfigSource(),
+            commandLineProperties, mavenSettings);
+        return configuration;
     }
 
     private List<String> getConfigLocations(CommandLine commandLine) {
@@ -264,8 +270,8 @@ public class Main {
      *     The task.
      * @param configuration
      *     The {@link CliConfiguration}-
-     * @param options
-     * @throws IOException
+     * @param options The CLI options.
+     * @throws CliExecutionException If the execution fails.
      */
     private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, Options options) throws CliExecutionException {
         task.initialize(pluginRepository);
@@ -294,14 +300,14 @@ public class Main {
         if (dirName != null) {
             File dir = new File(dirName);
             if (dir.exists()) {
-                LOGGER.debug("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
+                LOGGER.debug("Using {} '{}'.", ENV_JQASSISTANT_HOME, dir.getAbsolutePath());
                 return dir;
             } else {
-                LOGGER.warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
+                LOGGER.warn("{} '{}' points to a non-existing directory.", ENV_JQASSISTANT_HOME, dir.getAbsolutePath());
                 return null;
             }
         }
-        LOGGER.warn("JQASSISTANT_HOME is not set.");
+        LOGGER.warn("{} is not set.", ENV_JQASSISTANT_HOME);
         return null;
     }
 

@@ -14,9 +14,6 @@ public interface Task extends OptionsProvider, OptionsConsumer {
     String DEFAULT_STORE_DIRECTORY = "jqassistant/store";
     String DEFAULT_RULE_DIRECTORY = "jqassistant/rules";
     String DEFAULT_REPORT_DIRECTORY = "jqassistant/report";
-
-    String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
-
     String REPORT_FILE_XML = "jqassistant-report.xml";
 
     void initialize(PluginRepository pluginRepository) throws CliExecutionException;
