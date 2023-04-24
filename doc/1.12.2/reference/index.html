@@ -1,0 +1,3594 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 2.0.15"/>
+<title>jQAssistant Reference</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment @import statement to use as custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details>summary:first-of-type{cursor:pointer;display:list-item;outline:none;margin-bottom:.75em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid currentColor;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid currentColor;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{display:-ms-flexbox;display:-webkit-box;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:50%;border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media print,amzn-kf8{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+<style>
+/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+pre.CodeRay{background:#f7f7f8}
+.CodeRay .line-numbers{border-right:1px solid currentColor;opacity:.35;padding:0 .5em 0 0}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.75em}
+.CodeRay .line-numbers strong{color:#000}
+table.CodeRay{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.CodeRay td{vertical-align:top;line-height:inherit}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.code{padding:0 0 0 .75em}
+.CodeRay .debug{color:#fff !important;background:#000080 !important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:#000080}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:#008080}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:#008080}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#000}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:#008080}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword {color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:#008080}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>jQAssistant Reference</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_supported_formats_for_rule_documents">1. Supported Formats for Rule Documents</a>
+<ul class="sectlevel2">
+<li><a href="#_yaml">1.1. YAML</a>
+<ul class="sectlevel3">
+<li><a href="#_toplevel_structure">1.1.1. Toplevel Structure</a></li>
+<li><a href="#_concepts_and_constraints">1.1.2. Concepts and Constraints</a></li>
+<li><a href="#_groups">1.1.3. Groups</a></li>
+<li><a href="#_examples">1.1.4. Examples</a></li>
+</ul>
+</li>
+<li><a href="#_xml">1.2. XML</a></li>
+<li><a href="#_asciidoctor">1.3. Asciidoctor</a></li>
+</ul>
+</li>
+<li><a href="#_asciidoc_report_plugin">2. AsciiDoc Report Plugin</a></li>
+<li><a href="#_cdi_plugin">3. CDI Plugin</a></li>
+<li><a href="#_ejb_3_plugin">4. EJB 3 Plugin</a></li>
+<li><a href="#_graphml_plugin">5. GraphML Plugin</a></li>
+<li><a href="#_graphql_plugin">6. GraphQL Plugin</a>
+<ul class="sectlevel2">
+<li><a href="#_features">6.1. Features</a></li>
+<li><a href="#_feature_requests_and_bugs">6.2. Feature Requests and Bugs</a></li>
+<li><a href="#_the_model">6.3. The Model</a></li>
+<li><a href="#GraphQLSchema">6.4. Schema</a></li>
+<li><a href="#_schema_file">6.5. Schema File</a></li>
+<li><a href="#_schema_url">6.6. Schema Url</a></li>
+<li><a href="#GraphQLType">6.7. Type</a></li>
+<li><a href="#GraphQLValue">6.8. Value</a></li>
+<li><a href="#GraphQLScalarType">6.9. Scalar Type</a></li>
+<li><a href="#GraphQLScalarValue">6.10. Scalar Value</a></li>
+<li><a href="#GraphQLEnumType">6.11. Enum Type</a></li>
+<li><a href="#GraphQLEnumValue">6.12. Enum Value</a></li>
+<li><a href="#GraphQLInterfaceType">6.13. Interface Type</a></li>
+<li><a href="#GraphQLObjectType">6.14. Object Type</a></li>
+<li><a href="#GraphQLField">6.15. Field</a></li>
+<li><a href="#GraphQLOfType">6.16. Of Type Relation</a></li>
+<li><a href="#GraphQLInputObjectType">6.17. Input Object Type</a></li>
+<li><a href="#GraphQLInputField">6.18. Input Field</a></li>
+<li><a href="#GraphQLInputValueDefinition">6.19. Input Value Definition</a></li>
+<li><a href="#GraphQLInterfaceType">6.20. Union Type</a></li>
+<li><a href="#GraphQLUnionDeclaresType">6.21. Union Declares Type</a></li>
+<li><a href="#GraphQLListType">6.22. List Type</a></li>
+<li><a href="#GraphQLOfElementType">6.23. Of Element Type Relation</a></li>
+<li><a href="#GraphQLDirectiveType">6.24. Directive Type</a></li>
+<li><a href="#GraphQLDirectiveValue">6.25. Directive Value</a></li>
+<li><a href="#GraphQLDirectiveLocation">6.26. Directive Location</a></li>
+<li><a href="#GraphQLArgument">6.27. Argument</a></li>
+</ul>
+</li>
+<li><a href="#_java_plugin">7. Java Plugin</a></li>
+<li><a href="#_java_ee_6_plugin">8. Java EE 6 Plugin</a></li>
+<li><a href="#_jax_rs_plugin">9. JAX-RS Plugin</a></li>
+<li><a href="#_jpa_2_plugin">10. JPA 2 Plugin</a></li>
+<li><a href="#_json_plugin">11. JSON Plugin</a></li>
+<li><a href="#_junit_plugin">12. JUnit Plugin</a></li>
+<li><a href="#_maven_2_repository_plugin">13. Maven 2 Repository Plugin</a></li>
+<li><a href="#_maven_3_plugin">14. Maven 3 Plugin</a></li>
+<li><a href="#_osgi_plugin">15. OSGi Plugin</a></li>
+<li><a href="#_rdbms_plugin">16. RDBMS Plugin</a></li>
+<li><a href="#_spring_plugin">17. Spring Plugin</a></li>
+<li><a href="#_testng_plugin">18. TestNG Plugin</a></li>
+<li><a href="#_tycho_plugin">19. Tycho Plugin</a></li>
+<li><a href="#_xml_plugin">20. XML Plugin</a></li>
+<li><a href="#_yaml_plugin">21. YAML Plugin</a></li>
+<li><a href="#_yaml_ii_plugin">22. YAML II Plugin</a>
+<ul class="sectlevel2">
+<li><a href="#yaml2file">22.1. File</a></li>
+<li><a href="#yaml2document">22.2. Document</a></li>
+<li><a href="#yaml2scalar">22.3. Scalar</a></li>
+<li><a href="#yaml2sequence">22.4. Sequence</a></li>
+<li><a href="#yaml2item">22.5. Sequence Item</a></li>
+<li><a href="#yaml2map">22.6. Map</a></li>
+<li><a href="#yaml2simplekey">22.7. Simple Key</a></li>
+<li><a href="#yaml2complexKey">22.8. Complex Key</a></li>
+<li><a href="#yaml2value">22.9. Map Value</a></li>
+<li><a href="#yaml2anchor">22.10. Anchor</a></li>
+<li><a href="#yaml2alias">22.11. Alias</a></li>
+</ul>
+</li>
+<li><a href="#apdx-json-schema">Appendix A: JSON Schema for rule documents</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_supported_formats_for_rule_documents">1. Supported Formats for Rule Documents</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>jQAssistant allows you to write your own rules, contraints and
+concepts, in three different format: XML, YAML, and Asciidoctor.
+This allows you to choose the document format which fits at best
+to your project and your environment. XML was the first and orginal
+document format supported by jQAssistant. Later jQAssistant allowed
+you embed rules in Asciidoctor documents, because Asciidoctor
+allows you to document your constraints and concepts and the ideas
+behind them much better than XML. YAML as document format is the latest
+addition to the set of supported formats. People how read and write
+a lot of YAML documents during their daily work might prefer it
+because of its clear structure.</p>
+</div>
+<div class="paragraph">
+<p>The following sections provide a guidance how to embedded jQAssistant rules
+in these formats. How to write rules is described in the manual.</p>
+</div>
+<div class="sect2">
+<h3 id="_yaml">1.1. YAML</h3>
+<div class="paragraph">
+<p>YAML is a markup language optimized to be human readable and supported
+by many editors and programming languages. YAML is basically based on
+three elements: scalar, sequence, and map. As a sequence and a map
+can contain any other element. Therefore YAML allows to build tree structures,
+a feature which allows jQAssistant to embed contraints, concepts, and
+groups in one document. The structure used for this is very much aligned
+to the XML Schema used by jQAssistant to embed rules in XML documents.</p>
+</div>
+<div class="paragraph">
+<p>jQAssistant supports YAML 1.2. To take advantage of all YAML features,
+it is recommended to read the YAML specification available at
+<a href="https://yaml.org/spec/1.2/spec.html" class="bare" target="_blank" rel="noopener">https://yaml.org/spec/1.2/spec.html</a>.</p>
+</div>
+<div class="paragraph">
+<p>YAML 1.2 is a subset of JSON, that means any YAML 1.2 data structure can be
+represented by an equivalent JSON data structure. This allows to provide and
+to validate a YAML document against a <a href="https://json-schema.org/" target="_blank" rel="noopener">JSON Schema</a>.</p>
+</div>
+<div class="paragraph">
+<p>Therefore jQAssistant provides a JSON Schema for rule documents,
+which can be found in the <a href="#apdx-json-schema">appendix</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+This schema can be used in
+an IDE like IntelliJ IDEA to check the validity of a rule document
+while writing it.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_toplevel_structure">1.1.1. Toplevel Structure</h4>
+<div class="paragraph">
+<p>A YAML rule document can have three keys: <code>concepts</code>, <code>constraints</code>, and
+<code>groups</code>. <code>concepts</code> and <code>constraints</code> can take a sequence with valid rule
+definitions and <code>groups</code> can take a sequence with group definitions.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>concepts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of concept definitions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>constraints</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of constraint definitions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of group definitions.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="title">A rule document with one concept, one constraint and one group definition</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">concepts</span>:
+  - <span class="string"><span class="content">id: spring-boot:Application</span></span>
+    <span class="key">description</span>: <span class="string"><span class="delimiter">&gt;</span><span class="content">
+      All types of of a Spring Boot application must be located in the same
+      package or a sub-package of the application class.</span></span>
+    <span class="key">source</span>: <span class="string"><span class="delimiter">|</span><span class="content">
+      MATCH
+        (application:Type:Class)-[:ANNOTATED_BY]-&gt;
+          ()-[:OF_TYPE]-&gt;(annotationType:Type)
+      WHERE
+        annotationType.fqn = &quot;org.springframework.boot.autoconfigure.SpringBootApplication&quot;
+      SET
+        application:Spring:Boot:Application:Configuration:Component
+      RETURN
+        application AS Application</span></span>
+
+<span class="key">constraints</span>:
+  - <span class="string"><span class="content">id: spring-component:ControllerMustOnlyDependOnServicesRepositories</span></span>
+    <span class="key">description</span>: <span class="string"><span class="delimiter">&gt;</span><span class="content">
+      A Spring controller can only have dependencies to other Spring components
+      that are services or repositories.</span></span>
+    <span class="key">requiredConcepts</span>:
+      - <span class="string"><span class="content">refId: java:VirtualDependsOn</span></span>
+      - <span class="string"><span class="content">refId: spring-component:AnnotatedInjectables</span></span>
+    <span class="key">source</span>: <span class="string"><span class="delimiter">|</span><span class="content">
+      MATCH
+        (artifact:Artifact)-[:CONTAINS]-&gt;
+          (controller:Spring:Controller)-[:DEPENDS_ON|VIRTUAL_DEPENDS_ON]-&gt;
+            (other:Spring:Injectable)
+      WHERE NOT (artifact:Test OR other:Service OR other:Repository )
+      RETURN
+        controller AS Controller, collect(other) AS InvalidDependencies</span></span>
+
+<span class="key">groups</span>:
+  - <span class="string"><span class="content">id: spring</span></span>
+    <span class="key">includedConstraints</span>:
+      - <span class="string"><span class="content">spring-component:ControllerMustOnlyDependOnServicesRepositories</span></span>
+    <span class="key">includedConcepts</span>:
+      - <span class="string"><span class="content">spring-boot:Application</span></span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_concepts_and_constraints">1.1.2. Concepts and Constraints</h4>
+<div class="paragraph">
+<p>Concepts and contraints are used differently by jQAssistant, but they
+share the same structure. Therefore contraints and concepts are document
+together. Due to the different usage of concepts and contraints, different
+default values are used for some of the available options.
+Since concepts and constraints are both rules, the term rule is
+used for both in this chapter.</p>
+</div>
+<div class="paragraph">
+<p>A rule in a YAML rule document is represented as a map of keys. The keynames
+are the same or very similar to the element and attribute names used in
+jQAssistants&#8217;s XML Schema.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Keys of a map to specify a rule in a YAML rule document</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unique id of the rule.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deprecated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Marks a rule as deprecated. A given text should be used to inform the
+  user of the deprecation and the consequences of the deprecation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the rule.  Intended to be shown to the user in case
+  the verification of the rule failed and to document the rule itself.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>language</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies the language the actual rule is written in.</p>
+<p class="tableblock">  If not specified it is assumed that the actual rule is written
+  in Cypher.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>report</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies a report which should be generated based on the
+  result of the of rule.
+  See <a href="#yaml-report-specification">Keys of a map to specify a report</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requiresConcepts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of rule references to concepts required by the rule.
+  Required conceptswill be executed before the rule itself will be executed.
+  See <a href="#yaml-keys-required-concepts">Keys of a map to specify the required concepts</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requiresParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of required parameters of the rule.
+  See <a href="#yaml-keys-required-parameters">Keys of a map to specify the required parameters</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>severity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The serverity of the rule. Must be one of <code>blocker</code>, <code>critical</code>,
+  <code>major</code>, <code>minor</code>, or <code>info</code>.</p>
+<p class="tableblock">  If not specified, the default severity
+  for a concept is <code>minor</code>, for constraint it is <code>major</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>verify</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The verification method of the rule.
+  See <a href="#yaml-keys-verification-method">Keys of a map to specify the verification method</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>source</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The statement representing the rule.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-keys-required-concepts" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Keys of a map to specify the required concepts</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The id of a concept which must be executed before this rule.
+  jQAssistant will ensure the required execution order of all concepts.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>severity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The severity to be applied to the referenced rule, overwriting
+  the actual specified severity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optional</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies if a rule is optional or not. Possible values are <code>true</code>
+  and <code>false</code>. The default value is <code>false</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-keys-required-parameters" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Keys of a map to specify the required parameters</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the required parameter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The data type of the parameter. Must be one of: <code>boolean</code>, <code>byte</code>,
+  <code>char</code>, <code>double</code>, <code>float</code>, <code>int</code>, <code>long</code>, <code>short</code>, <code>String</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defaultValue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The default value for the parameter if not specified.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-keys-verification-method" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Keys of a map to specify the verification method</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>aggregation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verification should be performed by aggregating the value of a
+  specific column. See
+  <a href="#yaml-aggregation-options">Keys of a map to specify a result verification via aggregation</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rowCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verification should be performed by counting the results rows.
+  See <a href="#yaml-rowcount-options">Keys of a map to specify a result verification via row counting</a> for details.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If no verification method has been specified, the default
+result verification will be performed via rowcounting.</p>
+</div>
+<table id="yaml-aggregation-options" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. Keys of a map to specify a result verification via aggregation</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>column</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The column those value will be used to perform the verification.
+  If omitted the first column of the result set will be used for the
+  verification.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>max</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The allowed inclusive maximal value for the verification used column.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>min</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The allowed inclusive minimal value for the verification used column.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-rowcount-options" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. Keys of a map to specify a result verification via row counting</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>max</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allowed maximal inclusive number of rows in the result set of a rule.</p>
+<p class="tableblock"> For a constraint, the default value is 0, since a constraint may not
+ have any results. For a concept, <code>max</code> has no default value, that
+ means that there is no upper limit for the size of the result set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>min</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required minimal inclusive number of rows in the result set of a rule.</p>
+<p class="tableblock"> For a constraint, the default value is 0, since a constraint may not
+ have any results. For a concept, <code>min</code> has a default value of 1, as
+ a concept must have at least one match to be concidered as successful.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-report-specification" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. Keys of a map to specify a report</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>primaryColumn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies the column of the result set, which will be overhanded as
+  primary column to the plugin generating the report.</p>
+<p class="tableblock">  If not specified the first column of the result set will be
+  taken als primary column.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map with properties, which will be overhanded to the
+  plugin generating the report.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies the report to be generated. Which reports are available
+  depends on the used report plugins.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_groups">1.1.3. Groups</h4>
+<div class="paragraph">
+<p>A group in a YAML rule document is represented as a map of keys.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Keys of a map to specify a group in a YAML rule document</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unique id for this group.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>severity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Severity for all included groups, constraints, and concept, overwriting
+  the specified severity for those.
+  Must be one of <code>blocker</code>, <code>critical</code>, <code>major</code>, <code>minor</code>, or <code>info</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>includedConcepts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of rule references to concepts to be included in this group.
+  See <a href="#yaml-rule-references">Keys of a map to specify a rule reference</a> for details</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>includedConstraints</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of rule references to constraints to be included in this group.
+  See <a href="#yaml-rule-references">Keys of a map to specify a rule reference</a> for details</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>includedGroups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence of references to other groups to be included in this group.
+  See <a href="#yaml-rule-references">Keys of a map to specify a rule reference</a> for details</p></td>
+</tr>
+</tbody>
+</table>
+<table id="yaml-rule-references" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. Keys of a map to specify a rule reference</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 12.5%;"/>
+<col style="width: 62.5%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The id of a rule or group which should be included in the containing group.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>severity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The severity to be applied to the referenced rule or group, overwriting
+  the actual specified severity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optional</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies if the rule or group is optional or not. Possible values are <code>true</code>
+  and <code>false</code>. The default value is <code>false</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_examples">1.1.4. Examples</h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="_xml">1.2. XML</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_asciidoctor">1.3. Asciidoctor</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_asciidoc_report_plugin">2. AsciiDoc Report Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#asciidoc-report-plugin">Asciidoc Report Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cdi_plugin">3. CDI Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#cdi-plugin">CDI Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ejb_3_plugin">4. EJB 3 Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#ejb-plugin">EJB 3 Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphml_plugin">5. GraphML Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#graphml-plugin">GraphML Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphql_plugin">6. GraphQL Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>The GraphQL plugin provides scanners for GraphQL schemas provided via</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SDL files (having the extension <code>.graphql</code> or <code>.graphqls</code>)</p>
+</li>
+<li>
+<p>Introspection queries to HTTP endpoints by scanning an URL, e.g. <code>jqassistant scan -u graphql:schema::https://bahnql.herokuapp.com/graphql</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+For an introduction into GraphQL, its schema and elements refer to <a href="http://graphql.org" class="bare">http://graphql.org</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_features">6.1. Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Scanning of</p>
+<div class="ulist">
+<ul>
+<li>
+<p>SDL files</p>
+</li>
+<li>
+<p>HTTP endpoints by executing an introspection query using scope <code>graphql:schema</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Supported schema elements</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Object types including fields and implemented interfaces</p>
+</li>
+<li>
+<p>Input object types including fields</p>
+</li>
+<li>
+<p>Enum types including defined values</p>
+</li>
+<li>
+<p>Scalar types</p>
+</li>
+<li>
+<p>Interface types including fields</p>
+</li>
+<li>
+<p>Union types including the types</p>
+</li>
+<li>
+<p>Directive types</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>All supported elements provide additional information</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The source location (i.e. line and column numbers)</p>
+</li>
+<li>
+<p>Specifed directives and their values</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_feature_requests_and_bugs">6.2. Feature Requests and Bugs</h3>
+<div class="paragraph">
+<p>In case of a missing feature or any kind of unexpected or faulty behaviour, please
+<a href="https://github.com/jqassistant/jqa-graphql-plugin/issues" target="_blank" rel="noopener">file an issue via Github</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_model">6.3. The Model</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Entity</th>
+<th class="tableblock halign-left valign-top">Used Combination of Labels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Schema</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Schema File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema:File</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Schema URL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema:URL</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Value</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalar Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Scalar:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalar Value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Scalar:Value</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Enum:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum Value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Enum:Value</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interface Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Interface:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Object:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Field</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input Object Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:Object:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input Field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:Field</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input Value Definition</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:ValueDefinition</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Union Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Union:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:List:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Directive Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Directive Value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Value</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Directive Location</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Location</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Argument</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Argument</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLSchema">6.4. Schema</h3>
+<div class="paragraph">
+<p>Represents a GraphQL schema.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. Relations of a GraphQL Schema</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLType">Type</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References all GraphQL types which are declared in the schema</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>REQUIRES_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLType">Type</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References all GraphQL types which are required by the schema (i.e. referenced but not declared)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_schema_file">6.5. Schema File</h3>
+<div class="paragraph">
+<p>A file with the the extension <code>.graphql</code> or <code>.graphqls</code> containing a GraphQL <a href="#GraphQLSchema">Schema</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 12. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema:File</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_schema_url">6.6. Schema Url</h3>
+<div class="paragraph">
+<p>A URL (i.e. endpoint) providing a GraphQL <a href="#GraphQLSchema">Schema</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 13. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Schema:URL</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 14. Properties of :GraphQL:Schema:URL</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The URL.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLType">6.7. Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL type.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 15. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 16. Relations of a GraphQL Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_DIRECTIVE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLDirectiveValue">Directive Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References to the declared directive values</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 17. Properties of :GraphQL:Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional description as provided in the GraphQL schema.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>line</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional line number of the source location within the GraphQL schema.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>column</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional column of the source location within the GraphQL schema.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLValue">6.8. Value</h3>
+<div class="paragraph">
+<p>Represents a value (e.g. a scalar or enum).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 18. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Value</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLScalarType">6.9. Scalar Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Scalar <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 19. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Scalar:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLScalarValue">6.10. Scalar Value</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Scalar value.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 20. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Scalar:Value</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 21. Properties of :GraphQL:Scalar:Value</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The scalar value.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLEnumType">6.11. Enum Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Enum <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 22. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Enum:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 23. Relations of an Enum Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLEnumValue">Enum Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References an enum value declared by the type.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLEnumValue">6.12. Enum Value</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Enum value.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 24. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Enum:Value</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 25. Relations of an Enum Value</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_DIRECTIVE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLDirectiveValue">Directive Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References to the declared directive values</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 26. Properties of :GraphQL:Enum:Value</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional description as provided in the GraphQL schema.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLInterfaceType">6.13. Interface Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Interface <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 27. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Interface:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 28. Relations of an Interface Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_FIELD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLField">Field</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared GraphQL fields</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLObjectType">6.14. Object Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Object <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 29. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Object:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 30. Relations of an Object Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IMPLEMENTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLInterfaceType">Interface Type</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the implemented interface types.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_FIELD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLField">Field</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared GraphQL fields</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLField">6.15. Field</h3>
+<div class="paragraph">
+<p>Represents a field of an object or interface type.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 31. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Field</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 32. Relations of a Field</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLOfType">Of Type (Relation)</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the field type</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DEFINES_INPUT_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLInputValueDefinition">Input Value Definition</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared GraphQL input value definitions</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 33. Properties of :GraphQL:Field</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional description as provided in the GraphQL schema.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLOfType">6.16. Of Type Relation</h3>
+<div class="paragraph">
+<p>References a GraphQL type indicating if this reference is nullable.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 34. Relation to a GraphQL Type</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLType">Type</a></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 35. Properties of :OF_TYPE</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nonNull</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <code>true</code> the reference is not nullable.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLInputObjectType">6.17. Input Object Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Input Object <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 36. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:Object:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 37. Relations of an Input Object Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_FIELD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLInputField">Input Field</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared input fields.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLInputField">6.18. Input Field</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Input <a href="#GraphQLField">Field</a>, having similar properties and relations.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 38. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:Field</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLInputValueDefinition">6.19. Input Value Definition</h3>
+<div class="paragraph">
+<p>Defines an input value.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 39. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Input:ValueDefinition</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 40. Relations of an Input Value Definition</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLOfType">Of Type (Relation)</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The relation to the type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_DEFAULT_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLValue">Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the default value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_DIRECTIVE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLDirectiveValue">Directive Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References to the declared directive values</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 41. Properties of :GraphQL:Input:ValueDefinition</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The index number (starting with 0).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional description as provided in the GraphQL schema.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>line</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional line number of the source location within the GraphQL schema.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>column</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The optional column of the source location within the GraphQL schema.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLInterfaceType">6.20. Union Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL Union <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 42. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Union:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 43. Relations of an Union Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLUnionDeclaresType">Union Declares Type</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared GraphQL fields</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLUnionDeclaresType">6.21. Union Declares Type</h3>
+<div class="paragraph">
+<p>References a GraphQL type indicating the index of the relation.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 44. Relation to a GraphQL Type</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLType">Type</a></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 45. Properties of :DECLARES_TYPE</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The index number (starting with 0).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLListType">6.22. List Type</h3>
+<div class="paragraph">
+<p>Represents a GraphQL list <a href="#GraphQLType">Type</a> that declares an element <a href="#GraphQLType">Type</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 46. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:List:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 47. Relations of a GraphQL List Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_ELEMENT_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLOfElementType">Of Type (Relation)</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the field type</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLOfElementType">6.23. Of Element Type Relation</h3>
+<div class="paragraph">
+<p>References a GraphQL type indicating if this reference is nullable.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 48. Relation to a GraphQL Type</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_ELEMENT_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLType">Type</a></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 49. Properties of :OF_TYPE</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nonNull</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <code>true</code> the reference is not nullable.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLDirectiveType">6.24. Directive Type</h3>
+<div class="paragraph">
+<p>Represents a directive <a href="#GraphQLType">Type</a> that is defined within a GraphQL schema.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 50. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Type</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 51. Relations of a GraphQL Directive Type</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DECLARES_LOCATION</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLDirectiveLocation">Directive Location</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the allowed locations the directive can be applied to.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DEFINES_INPUT_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLInputValueDefinition">Input Value Definition</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the declared GraphQL input value definitions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLDirectiveValue">6.25. Directive Value</h3>
+<div class="paragraph">
+<p>Represents a directive that is present at an element of the GraphQL schema.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 52. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Value</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 53. Relations of a GraphQL Directive Value</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_TYPE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLDirectiveType">Directive Type</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the type of the directive</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_ARGUMENT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLArgument">Argument</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References arguments of the directive</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLDirectiveLocation">6.26. Directive Location</h3>
+<div class="paragraph">
+<p>Represents the allowed locations for a directive.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 54. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Directive:Location</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 55. Properties of :GraphQL:Directive:Location</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="GraphQLArgument">6.27. Argument</h3>
+<div class="paragraph">
+<p>Represents an argument of a GraphQL directive.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 56. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:GraphQL:Argument</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 57. Relations of a GraphQL Argument</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLValue">Value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the argument value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OF_INPUT_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#GraphQLInputValueDefinition">Input Value Definition</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the input value defined for this argument.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 58. Properties of :GraphQL:Argument</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The index number (starting with 0).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_java_plugin">7. Java Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#java-plugin">Java Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_java_ee_6_plugin">8. Java EE 6 Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#javaee-plugin">Java EE 6 Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jax_rs_plugin">9. JAX-RS Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#jaxrs-plugin">JAX-RS Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jpa_2_plugin">10. JPA 2 Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#jpa2-plugin">JPA 2 Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_json_plugin">11. JSON Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#json-plugin">JSON Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_junit_plugin">12. JUnit Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#junit-plugin">JUnit Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_maven_2_repository_plugin">13. Maven 2 Repository Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#m2repo-plugin">Maven 2 Repository Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_maven_3_plugin">14. Maven 3 Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#maven3-plugin">Maven 3 Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_osgi_plugin">15. OSGi Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#osgi-plugin">OSGi Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_rdbms_plugin">16. RDBMS Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#rdbms-plugin">RDBMS Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_plugin">17. Spring Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#spring-plugin">Spring Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testng_plugin">18. TestNG Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#testng-plugin">TestNG Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tycho_plugin">19. Tycho Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#tycho-plugin">Tycho Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_xml_plugin">20. XML Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#xml-plugin">XML Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_yaml_plugin">21. YAML Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation of this plugin is still only the section
+<a href="../manual/index.html.html#yaml-plugin">YAML Plugin</a>
+of the jQAssistant Manual available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_yaml_ii_plugin">22. YAML II Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>The jQAssistant YAML 2 Plugin allows jQAssistant scan
+YAML documents and to build a graph model out of any
+valid YAML 1.2 document.</p>
+</div>
+<div class="paragraph">
+<p>The YAML 2 Plugin is the successor of the jQAssistant
+YAML Plugin which suffers from a faulty graph model.
+As soon the YAML 2 Plugin is ready for production,
+it will replace the YAML Plugin.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+It is highly recommended to read the <a href="https://yaml.org/spec/1.2/spec.html">YAML 1.2 specification</a>
+and to become more familiar with the possibilities of YAML.
+</td>
+</tr>
+</table>
+</div>
+<h3 id="_features_2" class="discrete">Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Support of <a href="https://yaml.org/spec/1.2/spec.html" target="_blank" rel="noopener">YAML 1.2 specification</a></p>
+</li>
+<li>
+<p>Full support for maps, scalars,and sequences</p>
+</li>
+<li>
+<p>Support for aliases and anchors</p>
+</li>
+</ul>
+</div>
+<h3 id="_feature_requests_and_bugs_2" class="discrete">Feature Requests and Bugs</h3>
+<div class="paragraph">
+<p>In case of a missing feature or any kind of unexpected or
+faulty behaviour, please
+<a href="https://github.com/jqassistant/jqa-yaml2-plugin/issues" target="_blank" rel="noopener">file an issue via Github</a>.</p>
+</div>
+<h3 id="_configuration" class="discrete">Configuration</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 59. Configuration properties</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 75%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yaml.file.include</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A comma separated list of file name patterns, wildcards (?,*) are allowed,
+e.g. <code>/playbooks/*</code>, and work recursively if you they cover directories.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The default value is <code>*.yaml, *.yml</code>.
+If you override the value and want the defaults to be scanned as well, you have to explicitely list them in the <code>yaml.file.include</code> patterns.
+</td>
+</tr>
+</table>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yaml.file.exclude</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma separated list of file name patterns, wildcards (?,*) are allowed,
+e.g. <code>*.j2</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_compatibility_with_the_jqassistant_yaml_plugin" class="discrete">Compatibility with the jQAssistant YAML Plugin</h3>
+<div class="paragraph">
+<p>The graph model build by the YAML 2 Plugin is different
+from the one of the YAML Plugin and not compatible. Therefore,
+existing constraints and reports, which make use of the graph
+model generated by the previous plugin must be reworked.
+== The Model</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Entity</th>
+<th class="tableblock halign-left valign-top">Used Combination of Labels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2alias">Alias</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Alias</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2value">Anchor</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Anchor</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2complexKey">Complex Key</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Key:Complex</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2document">Document</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Document</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2file">File</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:File</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2map">Map</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Map</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2value">Map value</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Value</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2sequence">Sequence</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Sequence</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2item">Simple Key</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Key:Simple</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2item">Sequence Item</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Item</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="yaml2file">22.1. File</h3>
+<div class="paragraph">
+<p>A file with the the extension <code>.yaml</code> or <code>.yml</code>, which can contain
+multiple <a href="#yaml2document">YAML documents</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 60. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:File</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 61. Relations of a YAML file</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_DOCUMENT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2document">Document</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References all YAML documents contained in this file</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 62. Properties of a YAML File</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>valid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates whether or not the item underlying the
+       node was successfully scanned.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>In case the scanner of the YAML 2 plugin is not able to scan all documents
+of the YAML file, the file will be marked as not valid by setting
+the property <code>valid</code> of the node representing the YAML file to <code>false</code>.
+This is done on the file level even if only one document of many is not valid.
+This behavior is due to the used
+<a href="https://bitbucket.org/asomov/snakeyaml-engine" target="_blank" rel="noopener">SnakeYAML Engine</a> library.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="yaml2document">22.2. Document</h3>
+<div class="paragraph">
+<p>A single YAML document as specified in the <a href="https://yaml.org/spec/1.2/spec.html#id2800132" target="_blank" rel="noopener">YAML 1.2 specification</a>.
+A document can contain either a <a href="#yaml2scalar">scalar</a>,
+a <a href="#yaml2sequence">sequence</a> or a <a href="#yaml2map">map</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">A YAML document with document prefix <code>---</code> and suffix <code>&#8230;&#8203;</code></div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="head"><span class="head">---</span></span>
+<span class="comment"># Comments are not handled by jQAssistant</span>
+<span class="key">NX-01</span>: <span class="string"><span class="content">Jonathan Archer</span></span>
+<span class="key">NCC-1701-A</span>: <span class="string"><span class="content">James Tiberius Kirk</span></span>
+<span class="key">NCC-1701-D</span>: <span class="string"><span class="content">Jean-Luc Picard</span></span>
+<span class="head"><span class="head">...</span></span></code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 63. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Document</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 64. Relations of :Yaml:Document</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_SEQUENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2sequence">Sequence</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to a sequence in the YAML document</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_MAP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2map">Map</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to a map in the YAML document</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_SCALAR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2scalar">Scalar</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to a scalar in the YAML document</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2scalar">22.3. Scalar</h3>
+<div class="paragraph">
+<p>A scalar value as described in the <a href="https://yaml.org/spec/1.2/spec.html#id2760844" target="_blank" rel="noopener">YAML 1.2 specification</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 65. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Scalar</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 66. Properties of :Yaml:Map</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The scalar value itself</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2sequence">22.4. Sequence</h3>
+<div class="paragraph">
+<p>A sequence as specified in the <a href="https://yaml.org/spec/1.2/spec.html#id2759963" target="_blank" rel="noopener">YAML 1.2 specification</a>.
+Each item of sequence <a href="#yaml2item">has an additional label <code>:Item</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">A Sequence with two maps as items</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml">- <span class="string"><span class="content">Humans: Earth</span></span>
+- <span class="string"><span class="content">Hirogen: Delta quadrant</span></span></code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 67. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Sequence</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 68. Relations of a Sequence</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_ITEM</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2scalar">Scalar</a>, <a href="#yaml2sequence">Sequence</a> or <a href="#yaml2map">Map</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to an item in the sequence. The item can be either a
+  scalar, a sequence or a map.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 69. Properties of :Yaml:Sequence</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2item">22.5. Sequence Item</h3>
+<div class="paragraph">
+<p>Each item of a sequence is also labeled with <code>:Item</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 70. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Item</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 71. Additional Labels of an Item</caption>
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 25%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Label</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Last</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The last item in a sequence in document order carries also the
+  label <code>:Last</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:First</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The first item in a sequence in document order
+  carries also the label <code>:First</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2map">22.6. Map</h3>
+<div class="paragraph">
+<p>A map as specified in the <a href="https://yaml.org/spec/1.2/spec.html#id2759963" target="_blank" rel="noopener">YAML 1.2 specification</a>
+with a set of key-value pairs. The key of a key-value pair can be
+either a <a href="#yaml2simpleKey">simple key</a> or a <a href="#yaml2complexKey">complex key</a>.
+The value of the key-value pair can be an arbitrary YAML structure.
+Each value of a map has <a href="#:yaml2value">an additional <code>Value</code> label</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">A map in a YAML document with three key-value-pairs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">weight</span>: <span class="string"><span class="content">91</span></span>
+<span class="key">length</span>: <span class="string"><span class="content">103</span></span>
+<span class="key">height</span>: <span class="string"><span class="content">44</span></span></code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 72. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Map</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 73. Relations of a map</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_KEY</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:yaml2simplekey">Simple key</a> or
+      <a href="#:yaml2complexkey">complex key</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to key or a compley key in the map</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 74. Properties of a Map</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2simplekey">22.7. Simple Key</h3>
+<div class="paragraph">
+<p>A simple key of a key-value pair in a map represented by a scalar
+value. Beside the simple key there is also the
+<a href="#yaml2complexkey">complex key</a>, which can also be used as key
+for maps.
+Usage examples can be found in <a href="https://yaml.org/spec/1.2/spec.html#id2760395" target="_blank" rel="noopener">chapter 2.2
+of the YAML specification</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">A map with a simple key and a complex key in the same map</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>simpleKey: &quot;Value for a simple key&quot;
+? - complex
+  - key
+: &quot;Value for a complex key&quot;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 75. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Key:Simple</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 76. Relations of a simple key</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2map">Map</a>, <a href="#yaml2sequence">Sequence</a> or <a href="#yaml2scalar">Scalar</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to the value of this key-value pair</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 77. Properties of simple key</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a key as scalar value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2complexKey">22.8. Complex Key</h3>
+<div class="paragraph">
+<p>A complex key of a key-value pair in a map. A complex key
+starts with an <code>?</code> and can be any valid YAML structure.
+Besides the complex key there is also the
+<a href="#yaml2simpleKey">simple key</a>, which is represented by
+a single scalar value.</p>
+</div>
+<div class="listingblock">
+<div class="title">A map with two complex keys</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>simpleKey: &quot;Value for a simple key&quot;
+? - Vulcan
+  - ShiKahr District
+: Spock
+? - Earth
+  - North America
+: James T. Kirk</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 78. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Key:Complex</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 79. Relations of a complex key</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HAS_VALUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2map">Map</a>, <a href="#yaml2sequence">Sequence</a> or <a href="#yaml2scalar">Scalar</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to the value of this key-value pair</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2value">22.9. Map Value</h3>
+<div class="paragraph">
+<p>A value of a key-value pair in a map can be any valid YAML structure.
+The YAML 2 Plugin assigns each structure its standard labels, e.g.
+<code>:Yaml:Map</code> for a map used as value or <code>:Yaml:Scalar</code> to a simple
+scalar value like <code>Romulan Star Empire</code>. Any YAML structure
+used as value of a key-value pair is also labeled with <code>:Value</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 80. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Value</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2anchor">22.10. Anchor</h3>
+<div class="paragraph">
+<p>An anchor as specified in the <a href="https://yaml.org/spec/1.2/spec.html#id2785586">YAML 1.2 specification</a>,
+used to mark content in a YAML document for future reuse via an alias
+in the same document.</p>
+</div>
+<div class="listingblock">
+<div class="title">A Map with reused Content</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key"><span class="delimiter">&quot;</span><span class="content">James T. Kirk</span><span class="delimiter">&quot;</span></span> : <span class="variable">&amp;ufp</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">United Federation of Planets</span><span class="delimiter">&quot;</span></span>
+<span class="key"><span class="delimiter">&quot;</span><span class="content">Hikaru Kato Sulu</span><span class="delimiter">&quot;</span></span> : <span class="global-variable">*ufp</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">The resulting Map after processing all Anchors and Aliases</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key"><span class="delimiter">&quot;</span><span class="content">James T. Kirk</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">United Federation of Planets</span><span class="delimiter">&quot;</span></span>
+<span class="key"><span class="delimiter">&quot;</span><span class="content">Hikaru Kato Sulu</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">United Federation of Planets</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 81. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Anchor</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 82. Properties of an Anchor</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>anchorName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the anchor</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="yaml2alias">22.11. Alias</h3>
+<div class="paragraph">
+<p>An alias as specified in the <a href="https://yaml.org/spec/1.2/spec.html#id2786196" target="_blank" rel="noopener">YAML 1.2 specification</a>,
+used to reuse previously marked content in a document.</p>
+</div>
+<div class="listingblock">
+<div class="title">A Map with reused Content</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key"><span class="delimiter">&quot;</span><span class="content">James T. Kirk</span><span class="delimiter">&quot;</span></span> : <span class="variable">&amp;ufp</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">United Federation of Planets</span><span class="delimiter">&quot;</span></span>
+<span class="key"><span class="delimiter">&quot;</span><span class="content">Hikaru Kato Sulu</span><span class="delimiter">&quot;</span></span> : <span class="global-variable">*ufp</span></code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 83. Used Combination of Labels</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 66.6667%;"/>
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Used labels</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Yaml:Alias</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 84. Relations of an Alias</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 10%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Relation Name</th>
+<th class="tableblock halign-left valign-top">Target Node Type</th>
+<th class="tableblock halign-left valign-top">Cardinality</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IS_ALIAS_FOR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#yaml2anchor">Anchor</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to the anchor of this alias in the YAML document</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 85. Properties of an Alias</caption>
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 20%;"/>
+<col style="width: 60%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property Name</th>
+<th class="tableblock halign-left valign-top">Existence</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not always</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position of the element in document order in a sequence.<br/>
+  The <code>index</code> property is only a available if this element
+is an item in a sequence.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="apdx-json-schema">Appendix A: JSON Schema for rule documents</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">JSON Schema 1.8 for jQAssitant rule documents</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+</pre></td>
+  <td class="code"><pre><span class="error">U</span><span class="error">n</span><span class="error">r</span><span class="error">e</span><span class="error">s</span><span class="error">o</span><span class="error">l</span><span class="error">v</span><span class="error">e</span><span class="error">d</span> <span class="error">d</span><span class="error">i</span><span class="error">r</span><span class="error">e</span><span class="error">c</span><span class="error">t</span><span class="error">i</span><span class="error">v</span><span class="error">e</span> <span class="error">i</span><span class="error">n</span> <span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">t</span><span class="error">a</span><span class="error">r</span><span class="error">g</span><span class="error">e</span><span class="error">t</span><span class="error">/</span><span class="error">a</span><span class="error">s</span><span class="error">c</span><span class="error">i</span><span class="error">i</span><span class="error">d</span><span class="error">o</span><span class="error">c</span><span class="error">-</span><span class="error">m</span><span class="error">o</span><span class="error">d</span><span class="error">u</span><span class="error">l</span><span class="error">e</span><span class="error">s</span><span class="error">-</span><span class="error">d</span><span class="error">o</span><span class="error">c</span><span class="error">u</span><span class="error">m</span><span class="error">e</span><span class="error">n</span><span class="error">t</span><span class="error">a</span><span class="error">t</span><span class="error">i</span><span class="error">o</span><span class="error">n</span><span class="error">/</span><span class="error">c</span><span class="error">o</span><span class="error">m</span><span class="error">/</span><span class="error">b</span><span class="error">u</span><span class="error">s</span><span class="error">c</span><span class="error">h</span><span class="error">m</span><span class="error">a</span><span class="error">i</span><span class="error">s</span><span class="error">/</span><span class="error">j</span><span class="error">q</span><span class="error">a</span><span class="error">s</span><span class="error">s</span><span class="error">i</span><span class="error">s</span><span class="error">t</span><span class="error">a</span><span class="error">n</span><span class="error">t</span><span class="error">/</span><span class="error">c</span><span class="error">o</span><span class="error">r</span><span class="error">e</span><span class="error">/</span><span class="error">r</span><span class="error">u</span><span class="error">l</span><span class="error">e</span><span class="error">/</span><span class="error">y</span><span class="error">a</span><span class="error">m</span><span class="error">l</span><span class="error">-</span><span class="error">s</span><span class="error">c</span><span class="error">h</span><span class="error">e</span><span class="error">m</span><span class="error">a</span><span class="error">.</span><span class="error">a</span><span class="error">d</span><span class="error">o</span><span class="error">c</span> <span class="error">-</span> <span class="error">i</span><span class="error">n</span><span class="error">c</span><span class="error">l</span><span class="error">u</span><span class="error">d</span><span class="error">e</span>::<span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">.</span><span class="error">.</span><span class="error">/</span><span class="error">M</span><span class="error">E</span><span class="error">T</span><span class="error">A</span><span class="error">-</span><span class="error">I</span><span class="error">N</span><span class="error">F</span><span class="error">/</span><span class="error">j</span><span class="error">s</span><span class="error">o</span><span class="error">n</span><span class="error">s</span><span class="error">c</span><span class="error">h</span><span class="error">e</span><span class="error">m</span><span class="error">a</span><span class="error">/</span><span class="error">j</span><span class="error">q</span><span class="error">a</span><span class="error">s</span><span class="error">s</span><span class="error">i</span><span class="error">s</span><span class="error">t</span><span class="error">a</span><span class="error">n</span><span class="error">t</span><span class="error">-</span><span class="error">r</span><span class="error">u</span><span class="error">l</span><span class="error">e</span><span class="error">-</span><span class="error">v</span><span class="float">1.8</span><span class="error">.</span><span class="error">s</span><span class="error">c</span><span class="error">h</span><span class="error">e</span><span class="error">m</span><span class="error">a</span><span class="error">.</span><span class="error">j</span><span class="error">s</span><span class="error">o</span><span class="error">n</span>[]</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-11-09 10:32:08 +0100
+</div>
+</div>
+</body>
+</html>
