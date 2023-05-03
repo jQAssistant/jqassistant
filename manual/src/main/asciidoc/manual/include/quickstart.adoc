@@ -113,7 +113,7 @@ export MAVEN_OPTS=--add-opens java.base/java.nio=ALL-UNNAMED
 An alternative option is to place these settings into a file `.mvn/jvm.config` in the root Maven module:
 +
 [source]
-.mvn/jvm.config
+..mvn/jvm.config
 ----
 --add-opens java.base/java.nio=ALL-UNNAMED
 ----
