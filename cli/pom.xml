@@ -45,10 +45,8 @@
         <jqa-bom.version>2.1.0-SNAPSHOT</jqa-bom.version>
         <jqa-distribution-spec.version>2.1.0-SNAPSHOT</jqa-distribution-spec.version>
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
-        <junit.version>5.8.1</junit.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
-        <mockito.version>2.23.4</mockito.version>
     </properties>
 
     <build>
@@ -196,12 +194,6 @@
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqa-distribution-specification</artifactId>
                 <version>${jqa-distribution-spec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit-pioneer</groupId>
