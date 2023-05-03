@@ -41,31 +41,15 @@
 
     <properties>
         <checkstyle.version>8.29</checkstyle.version>
-        <jackson.version>2.13.2</jackson.version>
         <jqa-asciidoctor-utilities.version>2.1.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.1.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>2.1.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <json-schema-validator.version>1.0.36</json-schema-validator.version>
-        <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
-        <org.glassfish.jaxb.version>2.4.0-b180830.0438</org.glassfish.jaxb.version>
-        <org.mockito.version>2.23.4</org.mockito.version>
-        <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
         <maven-resolver.version>1.7.3</maven-resolver.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>2.1.1</version>
-            </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>bom</artifactId>
@@ -83,58 +67,6 @@
                 <artifactId>maven-resolver-util</artifactId>
                 <version>${maven-resolver.version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.7</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.networknt</groupId>
-                <artifactId>json-schema-validator</artifactId>
-                <version>${json-schema-validator.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>java-hamcrest</artifactId>
-                <version>${org.hamcrest.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${org.mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>${org.glassfish.jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.snakeyaml</groupId>
-                <artifactId>snakeyaml-engine</artifactId>
-                <version>${snakeyaml-engine.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
