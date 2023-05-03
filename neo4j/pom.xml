@@ -20,14 +20,10 @@
     </description>
 
     <properties>
-        <org.neo4j.version>4.4.19</org.neo4j.version>
-        <org.neo4j.browser.version>5.6.0</org.neo4j.browser.version>
         <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>2.1.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.1.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
-        <org.mockito.version>2.24.0</org.mockito.version>
-        <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
     </properties>
 
     <organization>
@@ -164,18 +160,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>java-hamcrest</artifactId>
-                <version>${org.hamcrest.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${org.mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -183,59 +167,18 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
-            <version>${org.neo4j.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-nop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.neo4j.community</groupId>
             <artifactId>it-test-support</artifactId>
-            <version>${org.neo4j.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>mockito-core</artifactId>
-                    <groupId>org.mockito</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>assertj-core</artifactId>
-                    <groupId>org.assertj</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>awaitility</artifactId>
-                    <groupId>org.awaitility</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.neo4j.client</groupId>
             <artifactId>neo4j-browser</artifactId>
-            <version>${org.neo4j.browser.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.neo4j.embedded</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.neo4j</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.smallrye.config</groupId>
