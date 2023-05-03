@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.plugin.common.api.rule.JavaRule;
 
 import lombok.Data;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.Property;
@@ -52,7 +53,7 @@ public class YamlRuleInterpreterPlugin implements RuleInterpreterPlugin {
             throws RuleException {
         SourceExecutable<String> executable = (SourceExecutable<String>) executableRule.getExecutable();
         String source = executable.getSource();
-        Constructor c = new Constructor(YamlRuleSource.class);
+        Constructor c = new Constructor(YamlRuleSource.class, new LoaderOptions());
         c.setPropertyUtils(new PropertyUtils() {
             @Override
             public Property getProperty(Class<? extends Object> type, String name) {
