@@ -22,18 +22,18 @@ export JQASSISTANT_OPTS=-Xmx1024M
 +
 .Windows
 ----
-set JQASSISTANT_OPTS=--add-opens java.base/java.nio=ALL-UNNAMED
+set JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
 ----
 +
 .Linux
 ----
-export JQASSISTANT_OPTS=--add-opens java.base/java.nio=ALL-UNNAMED
+export JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
 ----
 
 ==== Installation
 
 * Download and unpack the distribution, a directory
-  `jqassistant-commandline-neo4jvx-_version_` will be created.
+  `jqassistant-commandline-distribution-_version_` will be created.
 
 ==== Scan
 
@@ -83,7 +83,7 @@ LIMIT 20
 
 ==== Requirements
 - Maven 3.5 or later
-- Java Development Kit 8 or later
+- Java Development Kit 11 or later
 - the environment variable MAVEN_OPTS can be used to provide JVM arguments
 +
 [source]
@@ -102,12 +102,12 @@ export MAVEN_OPTS=-Xmx1024M
 +
 .Windows
 ----
-set MAVEN_OPTS=--add-opens java.base/java.nio=ALL-UNNAMED
+set MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
 ----
 +
 .Linux
 ----
-export MAVEN_OPTS=--add-opens java.base/java.nio=ALL-UNNAMED
+export MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
 ----
 +
 An alternative option is to place these settings into a file `.mvn/jvm.config` in the root Maven module:
@@ -115,7 +115,7 @@ An alternative option is to place these settings into a file `.mvn/jvm.config` i
 [source]
 ..mvn/jvm.config
 ----
---add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
 ----
 
 
@@ -141,9 +141,6 @@ Add the following lines to the parent pom.xml file of your project:
                         <goal>scan</goal>
                         <goal>analyze</goal>
                     </goals>
-                    <configuration>
-                        <failOnSeverity>MAJOR</failOnSeverity>
-                    </configuration>
                 </execution>
             </executions>
         </plugin>
