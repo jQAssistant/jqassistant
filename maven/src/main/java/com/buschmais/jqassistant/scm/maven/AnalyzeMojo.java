@@ -48,16 +48,6 @@ public class AnalyzeMojo extends AbstractRuleMojo {
     private MavenProjectHelper mavenProjectHelper;
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         withStore(store -> analyze(store, mojoExecutionContext), mojoExecutionContext);
     }

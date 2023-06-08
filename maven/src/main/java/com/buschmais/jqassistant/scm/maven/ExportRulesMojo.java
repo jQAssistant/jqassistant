@@ -18,16 +18,6 @@ import org.apache.maven.project.MavenProject;
 public class ExportRulesMojo extends AbstractRuleMojo {
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");

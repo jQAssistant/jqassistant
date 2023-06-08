@@ -121,7 +121,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 ClassLoader contextClassLoader = currentThread().getContextClassLoader();
                 currentThread().setContextClassLoader(pluginRepository.getClassLoader());
                 try {
-                    if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
+                    if (isResetStoreBeforeExecution(configuration) && executedModules.isEmpty()) {
                         withStore(store -> store.reset(), mojoExecutionContext);
                     }
                     execute(mojoExecutionContext, executedModules);
@@ -149,18 +149,22 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         throws MojoExecutionException, MojoFailureException;
 
     /**
-     * Determine if the store shall be reset before execution of the mofo.
+     * Determine if the store shall be reset before execution of the mojo,can be overwritten by subclasses.
      *
      * @return `true` if the store shall be reset.
      */
-    protected abstract boolean isResetStoreBeforeExecution();
+    protected boolean isResetStoreBeforeExecution(MavenConfiguration configuration) {
+        return false;
+    }
 
     /**
-     * Determines if the executed MOJO requires enabled connectors.
+     * Determines if the executed MOJO requires enabled connectors, can be overwritten by subclasses.
      *
      * @return <code>true</code> If connectors must be enabled.
      */
-    protected abstract boolean isConnectorRequired();
+    protected boolean isConnectorRequired() {
+        return false;
+    }
 
     /**
      * Execute an operation with the store.

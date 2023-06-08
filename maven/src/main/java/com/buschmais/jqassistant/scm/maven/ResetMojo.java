@@ -11,16 +11,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class ResetMojo extends AbstractProjectMojo {
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         withStore(store -> store.reset(), mojoExecutionContext);
     }

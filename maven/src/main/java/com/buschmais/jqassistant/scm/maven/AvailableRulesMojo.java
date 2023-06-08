@@ -19,16 +19,6 @@ public class AvailableRulesMojo extends AbstractRuleMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesMojo.class);
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");

@@ -17,11 +17,6 @@ import org.apache.maven.project.MavenProject;
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
     protected boolean isConnectorRequired() {
         return true;
     }

@@ -18,16 +18,6 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     private Logger logger = LoggerFactory.getLogger(AvailableScopesMojo.class);
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         getLog().info("Available scopes for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");

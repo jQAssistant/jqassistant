@@ -1,0 +1,23 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <group id="default">
+        <includeConstraint refId="it:*"/>
+    </group>
+
+    <constraint id="it:VerifyModules">
+        <description>Verifies that modules 2 and 3 are available in the database after scanning</description>
+        <cypher>
+            <![CDATA[
+            MATCH
+              (module:Maven:Project)-[:CREATES]->(:Artifact{type:"jar"})
+            WHERE
+              module.artifactId in ["module2", "module3"]
+            RETURN
+              count(module) as modules
+        ]]></cypher>
+        <verify>
+            <aggregation column="modules" min="2" max="2"/>
+        </verify>
+    </constraint>
+
+</jqa:jqassistant-rules>

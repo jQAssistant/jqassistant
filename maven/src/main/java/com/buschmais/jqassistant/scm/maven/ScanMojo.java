@@ -33,13 +33,10 @@ public class ScanMojo extends AbstractModuleMojo {
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return true;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
+    protected boolean isResetStoreBeforeExecution(MavenConfiguration configuration) {
+        return configuration.scan()
+            .reset()
+            .orElse(true);
     }
 
     @Override

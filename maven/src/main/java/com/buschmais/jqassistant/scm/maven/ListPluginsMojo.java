@@ -16,16 +16,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class ListPluginsMojo extends AbstractProjectMojo {
 
     @Override
-    protected boolean isResetStoreBeforeExecution() {
-        return false;
-    }
-
-    @Override
-    protected boolean isConnectorRequired() {
-        return false;
-    }
-
-    @Override
     protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         getLog().info("Available plugins for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");

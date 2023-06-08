@@ -1,6 +1,11 @@
 
 = Plugin for Maven
 
+== 2.0.2
+
+* Fixed a bug where setting the configuration option `jqassistant.scan.reset` to `false` still resetted the existing store
+* Fixed issues when using plugins related to the TCCL not being able to find classes from plugins (e.g. APOC)
+
 == 2.0.0
 
 * The configuration section has been removed from pom.xml in favor of using the settings in `.jqassistant.yml` and according system properties or environment variables
