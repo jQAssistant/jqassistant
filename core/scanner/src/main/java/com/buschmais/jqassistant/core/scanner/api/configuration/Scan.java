@@ -14,8 +14,7 @@ public interface Scan {
     String RESET = "reset";
 
     @Description("Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning.")
-    @WithDefault("false")
-    boolean reset();
+    Optional<Boolean> reset();
 
     String CONTINUE_ON_ERROR = "continue-on-error";
 
