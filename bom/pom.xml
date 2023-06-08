@@ -41,8 +41,8 @@
     </scm>
 
     <properties>
-        <org.neo4j.version>4.4.20</org.neo4j.version>
-        <org.neo4j.browser.version>5.6.0</org.neo4j.browser.version>
+        <org.neo4j.version>4.4.21</org.neo4j.version>
+        <org.neo4j.browser.version>5.9.0</org.neo4j.browser.version>
         <io.smallrye.config.version>3.1.1</io.smallrye.config.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <caffeine.version>2.8.4</caffeine.version>
