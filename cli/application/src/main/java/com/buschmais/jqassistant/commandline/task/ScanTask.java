@@ -52,7 +52,7 @@ public class ScanTask extends AbstractStoreTask {
         withStore(configuration, store -> {
             ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_OUTPUT_DIRECTORY));
             if (configuration.scan()
-                .reset()) {
+                .reset().orElse(false)) {
                 store.reset();
             }
             configuration.scan()
