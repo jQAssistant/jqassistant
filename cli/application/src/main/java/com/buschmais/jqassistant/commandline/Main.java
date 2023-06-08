@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createConfigSource;
+import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -184,7 +185,14 @@ public class Main {
             LOGGER.info("Skipping execution.");
         } else {
             PluginRepository pluginRepository = getPluginRepository(configuration, userHome);
-            executeTasks(tasks, configuration, pluginRepository, options);
+            ClassLoader contextClassLoader = currentThread()
+                .getContextClassLoader();
+            currentThread().setContextClassLoader(pluginRepository.getClassLoader());
+            try {
+                executeTasks(tasks, configuration, pluginRepository, options);
+            } finally {
+                currentThread().setContextClassLoader(contextClassLoader);
+            }
         }
     }
 
