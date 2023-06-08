@@ -44,7 +44,6 @@ public class AnalyzeMojo extends AbstractRuleMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeMojo.class);
 
-
     @Component
     private MavenProjectHelper mavenProjectHelper;
 
@@ -60,26 +59,24 @@ public class AnalyzeMojo extends AbstractRuleMojo {
 
     @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
-        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        withStore(store -> analyze(store, mojoExecutionContext), mojoExecutionContext);
+    }
+
+    private void analyze(Store store, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         RuleSet ruleSet = readRules(mojoExecutionContext);
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
         Analyze analyze = configuration.analyze();
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
         File outputDirectory = mojoExecutionContext.getOutputDirectory();
-        withStore(store -> analyze(configuration, rootModule, ruleSet, ruleSelection, store, outputDirectory), mojoExecutionContext);
-    }
 
-    private void analyze(MavenConfiguration configuration, MavenProject rootModule, RuleSet ruleSet, RuleSelection ruleSelection, Store store,
-        File outputDirectory) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         Report report = configuration.analyze()
             .report();
-        getLog().info("Will warn on violations starting from severity '" + report
-            .warnOnSeverity() + "'");
-        getLog().info("Will fail on violations starting from severity '" + report
-            .failOnSeverity() + "'.");
+        getLog().info("Will warn on violations starting from severity '" + report.warnOnSeverity() + "'");
+        getLog().info("Will fail on violations starting from severity '" + report.failOnSeverity() + "'.");
 
-        PluginRepository pluginRepository = getPluginRepository(configuration);
+        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
@@ -92,9 +89,8 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         } catch (RuleException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
-        if (report
-            .createArchive()) {
-            attachReportArchive(rootModule, reportContext);
+        if (report.createArchive()) {
+            attachReportArchive(mojoExecutionContext, reportContext);
         }
         ReportHelper reportHelper = new ReportHelper(report, LOGGER);
         store.beginTransaction();
@@ -107,7 +103,9 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         }
     }
 
-    private void attachReportArchive(MavenProject rootModule, ReportContext reportContext) throws MojoExecutionException {
+    private void attachReportArchive(MojoExecutionContext mojoExecutionContext, ReportContext reportContext) throws MojoExecutionException {
+        MavenProject currentModule = mojoExecutionContext.getCurrentModule();
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
         File reportArchive;
         try {
             reportArchive = reportContext.createReportArchive();
@@ -116,7 +114,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         }
         LOGGER.info("Created report archive {}.", reportArchive);
         mavenProjectHelper.attachArtifact(rootModule, "zip", JQASSISTANT_REPORT_CLASSIFIER, reportArchive);
-        if (!currentProject.equals(rootModule)) {
+        if (!currentModule.equals(rootModule)) {
             LOGGER.info(
                 "Report archive has been attached to module '{}:{}:{}'. Use 'installAtEnd' (maven-install-plugin) or 'deployAtEnd' (maven-deploy-plugin) to ensure deployment to local or remote repositories.",
                 rootModule.getGroupId(), rootModule.getArtifactId(), rootModule.getVersion());

@@ -43,18 +43,19 @@ public class ScanMojo extends AbstractModuleMojo {
     }
 
     @Override
-    public void execute(MojoExecutionContext mojoExecutionContext, MavenProject mavenProject) throws MojoExecutionException, MojoFailureException {
-        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
-        File outputDirectory = mojoExecutionContext.getOutputDirectory();
-        withStore(store -> scan(mavenProject, configuration, store, outputDirectory), mojoExecutionContext);
+    public void execute(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        withStore(store -> scan(mojoExecutionContext, store), mojoExecutionContext);
     }
 
-    private void scan(MavenProject mavenProject, MavenConfiguration configuration, Store store, File outputDirectory) {
-        PluginRepository pluginRepository = getPluginRepository(configuration);
+    private void scan(MojoExecutionContext mojoExecutionContext, Store store) {
+        MavenProject mavenProject = mojoExecutionContext.getCurrentModule();
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        File outputDirectory = mojoExecutionContext.getOutputDirectory();
+        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
-        scannerContext.push(MavenSession.class, session);
+        scannerContext.push(MavenSession.class, mojoExecutionContext.getMavenSession());
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
         try {
             scanner.scan(mavenProject, mavenProject.getFile()

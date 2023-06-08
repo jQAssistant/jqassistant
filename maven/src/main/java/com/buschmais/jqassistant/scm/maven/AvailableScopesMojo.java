@@ -32,7 +32,8 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
         getLog().info("Available scopes for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");
         ScopeHelper scopeHelper = new ScopeHelper(logger);
-        ScannerPluginRepository scannerPluginRepository = getPluginRepository(mojoExecutionContext.getConfiguration()).getScannerPluginRepository();
+        ScannerPluginRepository scannerPluginRepository = mojoExecutionContext.getPluginRepository()
+            .getScannerPluginRepository();
         scopeHelper.printScopes(scannerPluginRepository.getScopes());
     }
 }

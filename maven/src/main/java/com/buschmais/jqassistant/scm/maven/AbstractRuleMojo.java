@@ -30,7 +30,7 @@ public abstract class AbstractRuleMojo extends AbstractProjectMojo {
      */
     protected final RuleSet readRules(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
-        PluginRepository pluginRepository = getPluginRepository(mojoExecutionContext.getConfiguration());
+        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         // read rules from rules directory
         addRuleFiles(sources, mojoExecutionContext.getRuleDirectory());
         List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()

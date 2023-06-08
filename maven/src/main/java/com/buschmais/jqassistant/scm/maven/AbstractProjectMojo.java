@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -32,22 +33,24 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         Map<MavenProject, List<MavenProject>> projects = mojoExecutionContext.getProjects();
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         List<MavenProject> projectModules = projects.get(rootModule);
-        getLog().debug("Verifying if '" + currentProject + "' is last module for project '" + rootModule + (" (project modules='" + projectModules + "')."));
+        MavenProject currentModule = mojoExecutionContext.getCurrentModule();
+        getLog().debug("Verifying if '" + currentModule + "' is last module for project '" + rootModule + (" (project modules='" + projectModules + "')."));
         Set<MavenProject> remainingModules = new HashSet<>();
-        if (execution.getPlugin()
+        MojoExecution mojoExecution = mojoExecutionContext.getMojoExecution();
+        if (mojoExecution.getPlugin()
             .getExecutions()
             .isEmpty()) {
             getLog().debug("No configured executions found, assuming CLI invocation.");
             remainingModules.addAll(projectModules);
         } else {
             for (MavenProject projectModule : projectModules) {
-                if (mojoExecutionContext.containsBuildPlugin(projectModule, execution.getPlugin())) {
+                if (mojoExecutionContext.containsBuildPlugin(projectModule, mojoExecution.getPlugin())) {
                     remainingModules.add(projectModule);
                 }
             }
         }
         remainingModules.removeAll(executedModules);
-        remainingModules.remove(currentProject);
+        remainingModules.remove(currentModule);
         if (remainingModules.isEmpty()) {
             getLog().debug("Did not find any subsequent module with a plugin configuration, considering this module as the last one.");
             return true;

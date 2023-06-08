@@ -34,7 +34,7 @@ public class ConfigurationProvider {
      *     Additional {@link ConfigSource}s.
      * @return The {@link MavenConfiguration}.
      */
-    public synchronized MavenConfiguration getConfiguration(File executionRoot, List<String> configLocations, ConfigSource... configSources) {
+    public MavenConfiguration getConfiguration(File executionRoot, List<String> configLocations, ConfigSource... configSources) {
         if (configurationLoader == null) {
             File userHome = new File(System.getProperty("user.home"));
             configurationLoader = new ConfigurationLoaderImpl(userHome, executionRoot, configLocations);

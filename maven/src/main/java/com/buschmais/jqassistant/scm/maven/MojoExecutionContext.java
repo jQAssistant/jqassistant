@@ -6,16 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
+import lombok.Getter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Resolver for root modules in a multi-module hierarchy.
  */
+@Getter
 public final class MojoExecutionContext {
 
     /**
@@ -30,22 +34,24 @@ public final class MojoExecutionContext {
 
     private final MavenSession mavenSession;
 
+    private final MavenProject currentModule;
+
     private final MavenProject rootModule;
+
+    private final MojoExecution mojoExecution;
 
     private final MavenConfiguration configuration;
 
-    MojoExecutionContext(MavenSession session, MavenProject module, MavenConfiguration configuration) throws MojoExecutionException {
+    private final PluginRepository pluginRepository;
+
+    MojoExecutionContext(MavenSession session, MavenProject currentModule, MojoExecution mojoExecution, MavenConfiguration configuration,
+        PluginRepository pluginRepository) throws MojoExecutionException {
         this.mavenSession = session;
+        this.currentModule = currentModule;
+        this.mojoExecution = mojoExecution;
         this.configuration = configuration;
-        this.rootModule = getRootModule(module, session.getProjects());
-    }
-
-    public MavenConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public MavenProject getRootModule() {
-        return rootModule;
+        this.pluginRepository = pluginRepository;
+        this.rootModule = getRootModule(currentModule, session.getProjects());
     }
 
     /**

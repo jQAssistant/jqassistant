@@ -53,7 +53,7 @@ public class CachingStoreProvider implements Disposable {
      *     The pluginRepository.
      * @return The store.
      */
-    public synchronized Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
+    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
         PluginRepository pluginRepository) {
         URI uri = storeConfiguration.uri()
             .orElseGet(() -> {

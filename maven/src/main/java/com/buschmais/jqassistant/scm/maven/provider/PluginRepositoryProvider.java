@@ -23,13 +23,13 @@ public class PluginRepositoryProvider implements Disposable {
     private PluginRepository pluginRepository;
 
     @Override
-    public synchronized void dispose() {
+    public void dispose() {
         if (this.pluginRepository != null) {
             this.pluginRepository.destroy();
         }
     }
 
-    public synchronized PluginRepository getPluginRepository(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
+    public PluginRepository getPluginRepository(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
         List<RemoteRepository> repositories, MavenConfiguration configuration) {
         if (pluginRepository == null) {
 

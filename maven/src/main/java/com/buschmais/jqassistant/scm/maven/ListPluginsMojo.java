@@ -30,7 +30,8 @@ public class ListPluginsMojo extends AbstractProjectMojo {
         getLog().info("Available plugins for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");
 
-        List<PluginInfo> sortedInfos = getPluginRepository(mojoExecutionContext.getConfiguration()).getPluginOverview()
+        List<PluginInfo> sortedInfos = mojoExecutionContext.getPluginRepository()
+            .getPluginOverview()
             .stream()
             .sorted(PluginInfo.NAME_COMPARATOR)
             .collect(Collectors.toList());

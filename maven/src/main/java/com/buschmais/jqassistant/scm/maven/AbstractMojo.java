@@ -32,6 +32,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -60,19 +61,19 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The Maven Session.
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    protected MavenSession session;
+    private MavenSession session;
 
     /**
      * The Maven project.
      */
     @Parameter(property = "project")
-    protected MavenProject currentProject;
+    private MavenProject currentProject;
 
     /**
      * The current execution.
      */
     @Parameter(property = "mojoExecution")
-    protected MojoExecution execution;
+    private MojoExecution execution;
 
     /**
      * The Maven runtime information.
@@ -106,20 +107,27 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (!runtimeInformation.isMavenVersion("[3.5,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.5.x or above.");
         }
-        // Synchronize on this class as multiple instances of the plugin may exist in
-        // parallel builds
+        // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
             MavenConfiguration configuration = getConfiguration();
-            MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, configuration);
+            PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories,
+                configuration);
+            MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, execution, configuration, pluginRepository);
             MavenProject rootModule = mojoExecutionContext.getRootModule();
             Set<MavenProject> executedModules = getExecutedModules(rootModule);
             if (configuration.skip()) {
                 getLog().info("Skipping execution.");
             } else {
-                if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
-                    withStore(store -> store.reset(), mojoExecutionContext);
+                ClassLoader contextClassLoader = currentThread().getContextClassLoader();
+                currentThread().setContextClassLoader(pluginRepository.getClassLoader());
+                try {
+                    if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
+                        withStore(store -> store.reset(), mojoExecutionContext);
+                    }
+                    execute(mojoExecutionContext, executedModules);
+                } finally {
+                    currentThread().setContextClassLoader(contextClassLoader);
                 }
-                execute(mojoExecutionContext, executedModules);
             }
             executedModules.add(currentProject);
         }
@@ -166,10 +174,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoFailureException
      *     On execution failures.
      */
-    protected final void withStore(StoreOperation storeOperation, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+    protected final void withStore(StoreOperation storeOperation, MojoExecutionContext mojoExecutionContext)
+        throws MojoExecutionException, MojoFailureException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
-        Store store = getStore(configuration, () -> new File(rootModule.getBuild()
+        Store store = getStore(mojoExecutionContext, () -> new File(rootModule.getBuild()
             .getDirectory(), STORE_DIRECTORY));
         try {
             storeOperation.run(store);
@@ -208,8 +217,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *     If the store cannot be opened.
      */
-    private Store getStore(MavenConfiguration configuration, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
-        Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, getPluginRepository(configuration));
+    private Store getStore(MojoExecutionContext mojoExecutionContext, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
+        Object existingStore = cachingStoreProvider.getStore(mojoExecutionContext.getConfiguration()
+            .store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository());
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                 "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D" + Maven.REUSE_STORE
@@ -257,15 +267,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     private ConfigSource getMavenPluginConfiguration() {
         return isNotEmpty(yaml) ? new YamlConfigSource("Maven plugin configuration", yaml) : EmptyConfigSource.INSTANCE;
-    }
-
-    /**
-     * Retrieve the {@link PluginRepository}.
-     *
-     * @return the {@link PluginRepository}.
-     */
-    protected PluginRepository getPluginRepository(MavenConfiguration configuration) {
-        return pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories, configuration);
     }
 
     /**
