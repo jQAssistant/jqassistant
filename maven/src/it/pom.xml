@@ -5,7 +5,8 @@
 	<version>@project.version@</version>
     <properties>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
+        <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
+        <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
     </properties>
     <packaging>pom</packaging>
 
@@ -16,6 +17,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -44,7 +50,7 @@
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${maven-project-info-reports-plugin.version}</version>
 			</plugin>
-			<plugin>
+            <plugin>
 				<groupId>@project.groupId@</groupId>
 				<artifactId>@project.artifactId@</artifactId>
 				<version>@project.version@</version>
