@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.3
+
+* Fixed issues regarding outdated Google Guice/Guava libraries provided by the jQAssistant Maven plugin (upgraded dependency to Reporting API to 3.2.0 and explicitly managed used Google Guava version)
+
 == 2.0.2
 
 * Fixed a bug where setting the configuration option `jqassistant.scan.reset` to `false` still resetted the existing store

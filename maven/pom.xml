@@ -49,7 +49,7 @@
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
-        <org.apache.maven.reporting_version>3.0.0</org.apache.maven.reporting_version>
+        <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
         <maven-invoker-plugin.version>3.2.2</maven-invoker-plugin.version>
 
         <!--
@@ -377,6 +377,18 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${org.apache.maven.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Contains outdated Google Guice/Guava APIs -->
+                    <groupId>org.eclipse.sisu</groupId>
+                    <artifactId>org.eclipse.sisu.inject</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -400,26 +412,17 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-dependency-tree</artifactId>
             <version>${org.apache.maven_dependency-tree.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-impl</artifactId>
             <version>${org.apache.maven.reporting_version}</version>
-            <exclusions>
-                <exclusion>
-                    <!-- Conflicts with httpcore from jQAssistnt M2 Repo Plugin -->
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-beanutils</artifactId>
-                    <groupId>commons-beanutils</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
