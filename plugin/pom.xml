@@ -393,21 +393,21 @@
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.api</artifactId>
-                <version>${com.buschmais.xo.version}</version>
+                <version>${xo.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.spi</artifactId>
-                <version>${com.buschmais.xo.version}</version>
+                <version>${xo.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4.api</artifactId>
-                <version>${com.buschmais.xo.version}</version>
+                <version>${xo.version}</version>
                 <scope>provided</scope>
             </dependency>
 
