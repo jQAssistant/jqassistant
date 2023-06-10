@@ -78,7 +78,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <com.buschmais.xo.version>2.1.1</com.buschmais.xo.version>
+        <xo.version>2.1.1</xo.version>
         <doxia-markdown.version>1.9</doxia-markdown.version>
         <maven.ant.version>3.1.0</maven.ant.version>
         <maven.assembly.version>3.3.0</maven.assembly.version>
