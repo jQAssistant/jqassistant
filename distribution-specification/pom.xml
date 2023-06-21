@@ -77,14 +77,6 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <configuration>
-                    <groups>
-                        <group>jqa-legal</group>
-                        <group>jqa-maven-constraints</group>
-                        <group>jqa-maven-dependency-constraints</group>
-                        <group>jqa-project-layout</group>
-                    </groups>
-                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
