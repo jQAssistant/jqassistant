@@ -107,22 +107,6 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <configuration>
-                    <!--
-                     ! To not configure failOnSeverity and warnOnSeverity
-                     ! directly. Please control these parameters via
-                     ! the user properties set in the properties section
-                     ! of the Ueber Parant of jQAssistant.
-                     ! Oliver B. Fischer, 2017-06-07
-                     !-->
-                    <groups>
-                        <group>jqa-core-framework</group>
-                        <group>jqa-legal</group>
-                        <group>jqa-maven-constraints</group>
-                        <group>jqa-maven-dependency-constraints</group>
-                        <group>jqa-project-layout</group>
-                    </groups>
-                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
