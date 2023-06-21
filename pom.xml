@@ -114,7 +114,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>1.12.2</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>2.0.3</maven.jqassistant.previous.version>
         <maven.min.version>3.5.0</maven.min.version>
         <maven.resources.version>3.0.2</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
@@ -147,27 +147,21 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!--
-                         ! To not configure failOnSeverity and warnOnSeverity
-                         ! directly. Please control these parameters via
-                         ! the user properties set in the properties section
-                         ! of the Ueber Parent of jQAssistant.
-                         ! Oliver B. Fischer, 2017-06-07
-                         !-->
-                        <scanIncludes>
-                            <scanInclude>
-                                <path>${project.basedir}/readme.adoc</path>
-                            </scanInclude>
-                            <scanInclude>
-                                <path>${project.basedir}/src/main/asciidoc</path>
-                            </scanInclude>
-                            <scanInclude>
-                                <path>${project.basedir}/.editorconfig</path>
-                            </scanInclude>
-                            <scanInclude>
-                                <path>${project.basedir}/LICENSE</path>
-                            </scanInclude>
-                        </scanIncludes>
+                      <yaml>
+                        jqassistant:
+                          scan:
+                            include:
+                              files:
+                                - ${project.basedir}/readme.adoc
+                                - ${project.basedir}/src/main/asciidoc
+                                - ${project.basedir}/.editorconfig
+                                - ${project.basedir}/LICENSE
+                              properties:
+                                xml.file.include: /META-INF/jqassistant-plugin.xml
+                          analyze:
+                            groups:
+                              - jqa-*
+                      </yaml>
                     </configuration>
                 </plugin>
                 <plugin>
