@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.4
+
+* Fixed an NPE if the goal `jqassistant:report` has been used from the command line
+
 == 2.0.3
 
 * Fixed issues regarding outdated Google Guice/Guava libraries provided by the jQAssistant Maven plugin (upgraded dependency to Reporting API to 3.2.0 and explicitly managed used Google Guava version)

@@ -8,4 +8,5 @@ assert  rows.@count == 1
 def value = rows.row[0].column.find{it.@name='umlauts'}.value
 assert value == 'ÄÖÜß'
 assert new File(basedir, 'target/site/jqassistant.html').exists()
+assert new File(basedir, 'target/custom-site/jqassistant.html').exists()
 assert !new File(basedir, 'target/surefire-reports/TEST-default.xml').exists()

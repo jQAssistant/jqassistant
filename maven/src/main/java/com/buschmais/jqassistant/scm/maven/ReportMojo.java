@@ -15,11 +15,9 @@ import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
@@ -30,25 +28,10 @@ import org.apache.maven.reporting.MavenReportException;
 public class ReportMojo extends AbstractMavenReport {
 
     /**
-     * Directory where reports will go.
-     */
-    @Parameter(property = "project.reporting.outputDirectory")
-    protected String outputDirectory;
-
-    /**
      * The file to read the XML report from.
      */
     @Parameter(property = "jqassistant.report.xml")
     protected File xmlReportFile;
-
-    /**
-     * The Maven project.
-     */
-    @Parameter(property = "project")
-    protected MavenProject project;
-
-    @Component
-    protected Renderer siteRenderer;
 
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
@@ -87,20 +70,6 @@ public class ReportMojo extends AbstractMavenReport {
     @Override
     public String getOutputName() {
         return "jqassistant";
-    }
-
-    @Override
-    protected String getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    @Override
-    protected MavenProject getProject() {
-        return project;
-    }
-
-    public void setProject(MavenProject project) {
-        this.project = project;
     }
 
     @Override
