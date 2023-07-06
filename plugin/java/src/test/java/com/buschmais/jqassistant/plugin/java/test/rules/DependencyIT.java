@@ -114,7 +114,7 @@ class DependencyIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
-        List<Map<String, Object>> rows = query("MATCH (p1:Package)-[d:DEPENDS_ON_PACKAGE]->(p2:Package) WHERE p1.fqn=$package RETURN p2, d.weight as weight",
+        List<Map<String, Object>> rows = query("MATCH (p1:Package)-[d:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2, d.weight as weight",
             parameters).getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
@@ -122,7 +122,7 @@ class DependencyIT extends AbstractJavaPluginIT {
         assertThat(row.get("weight"), equalTo(1L));
         parameters.put("package", B.class.getPackage()
             .getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON_PACKAGE]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
+        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn=$package RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(A.class.getPackage())));
         store.commitTransaction();
     }
@@ -153,7 +153,7 @@ class DependencyIT extends AbstractJavaPluginIT {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", from);
         List<Map<String, Object>> rows = query(
-            "MATCH (a1:Artifact)-[dependsOn:DEPENDS_ON_ARTIFACT]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2, dependsOn.weight as weight",
+            "MATCH (a1:Artifact)-[dependsOn:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn=$artifact RETURN a2, dependsOn.weight as weight",
             parameters).getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
