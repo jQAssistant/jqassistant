@@ -31,6 +31,8 @@ import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -78,15 +80,15 @@ class ReportHelperTest {
             .warn(Mockito.anyString());
         doAnswer(new LogAnswer(errorMessages)).when(logger)
             .error(Mockito.anyString());
-        doReturn(Severity.Threshold.from(Severity.MINOR)).when(report)
+        doReturn(Severity.Threshold.from(MINOR)).when(report)
             .warnOnSeverity();
-        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report)
+        doReturn(Severity.Threshold.from(MAJOR)).when(report)
             .failOnSeverity();
     }
 
     @Test
     void successfulConcept() {
-        Result<Concept> conceptResult = mockResult("test:concept", Concept.class, Result.Status.SUCCESS, Severity.MAJOR);
+        Result<Concept> conceptResult = mockResult("test:concept", Concept.class, SUCCESS, MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:concept", conceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
@@ -101,9 +103,9 @@ class ReportHelperTest {
 
     @Test
     void failedConcepts() {
-        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.SUCCESS, Severity.INFO);
-        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.WARNING, Severity.MINOR);
-        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
+        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, SUCCESS, INFO);
+        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, WARNING, MINOR);
+        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, FAILURE, MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:infoConcept", infoConceptResult);
         conceptResults.put("test:minorConcept", minorConceptResult);
@@ -120,13 +122,13 @@ class ReportHelperTest {
 
     @Test
     void failedConceptsWithOverriddenSeverity() {
-        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report)
+        doReturn(Severity.Threshold.from(MAJOR)).when(report)
             .warnOnSeverity();
-        doReturn(Severity.Threshold.from(Severity.CRITICAL)).when(report)
+        doReturn(Severity.Threshold.from(CRITICAL)).when(report)
             .failOnSeverity();
-        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, Result.Status.SUCCESS, Severity.INFO, Severity.MINOR);
-        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.WARNING, Severity.MINOR, Severity.MAJOR);
-        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MAJOR, Severity.CRITICAL);
+        Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, SUCCESS, INFO, MINOR);
+        Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, WARNING, MINOR, MAJOR);
+        Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, FAILURE, MAJOR, CRITICAL);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:infoConcept", infoConceptResult);
         conceptResults.put("test:minorConcept", minorConceptResult);
@@ -143,9 +145,9 @@ class ReportHelperTest {
 
     @Test
     void validatedConstraint() {
-        doReturn(Severity.Threshold.from(Severity.MINOR)).when(report)
+        doReturn(Severity.Threshold.from(MINOR)).when(report)
             .failOnSeverity();
-        Result<Constraint> constraintResult = mockResult("test:constraint", Constraint.class, Result.Status.SUCCESS, Severity.MAJOR);
+        Result<Constraint> constraintResult = mockResult("test:constraint", Constraint.class, SUCCESS, MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:constraint", constraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
@@ -162,21 +164,21 @@ class ReportHelperTest {
     void failedConstraints() {
         Map<String, Column<?>> infoRow = new HashMap<>();
         infoRow.put("InfoElement", toColumn("InfoValue"));
-        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.SUCCESS, Severity.INFO, singletonList(
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, singletonList(
             Row.builder()
                 .key("1")
                 .columns(infoRow)
                 .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
-        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, Result.Status.WARNING, Severity.MINOR, singletonList(
+        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, singletonList(
             Row.builder()
                 .key("2")
                 .columns(minorRow)
                 .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
-        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR, singletonList(
+        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, singletonList(
             Row.builder()
                 .key("3")
                 .columns(majorRow)
@@ -201,22 +203,21 @@ class ReportHelperTest {
     void failedConstraintsWithOverriddenSeverity() {
         Map<String, Column<?>> infoRow = new HashMap<>();
         infoRow.put("InfoElement", toColumn("InfoValue"));
-        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, Result.Status.SUCCESS, Severity.INFO, Severity.MINOR,
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, MINOR,
             singletonList(Row.builder()
                 .key("1")
                 .columns(infoRow)
                 .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
-        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, Result.Status.WARNING, Severity.MINOR, Severity.MAJOR,
+        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, MAJOR,
             singletonList(Row.builder()
                 .key("2")
                 .columns(minorRow)
                 .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
-        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR,
-            Severity.CRITICAL, singletonList(Row.builder()
+        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, CRITICAL, singletonList(Row.builder()
                 .key("3")
                 .columns(majorRow)
                 .build()));
@@ -239,17 +240,17 @@ class ReportHelperTest {
 
     @Test
     void continueOnFailureEnabled() throws ReportException {
-        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report)
+        doReturn(Severity.Threshold.from(MAJOR)).when(report)
             .failOnSeverity();
         doReturn(true).when(report)
             .continueOnFailure();
 
-        Result<Concept> conceptResult = mockResult("test:concept", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
+        Result<Concept> conceptResult = mockResult("test:concept", Concept.class, FAILURE, MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:concept", conceptResult);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
 
-        Result<Constraint> constraintResult = mockResult("test:constraint", Constraint.class, Result.Status.FAILURE, Severity.MAJOR);
+        Result<Constraint> constraintResult = mockResult("test:constraint", Constraint.class, FAILURE, MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:constraint", constraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
@@ -263,25 +264,25 @@ class ReportHelperTest {
 
     @Test
     void continueOnFailureDisabled() {
-        doReturn(Severity.Threshold.from(Severity.MINOR)).when(report)
+        doReturn(Severity.Threshold.from(MINOR)).when(report)
             .warnOnSeverity();
-        doReturn(Severity.Threshold.from(Severity.MAJOR)).when(report)
+        doReturn(Severity.Threshold.from(MAJOR)).when(report)
             .failOnSeverity();
         doReturn(false).when(report)
             .continueOnFailure();
 
-        Result<Concept> conceptResult1 = mockResult("test:concept1", Concept.class, Result.Status.SUCCESS, Severity.MAJOR);
-        Result<Concept> conceptResult2 = mockResult("test:concept2", Concept.class, Result.Status.WARNING, Severity.MINOR);
-        Result<Concept> conceptResult3 = mockResult("test:concept3", Concept.class, Result.Status.FAILURE, Severity.MAJOR);
+        Result<Concept> conceptResult1 = mockResult("test:concept1", Concept.class, SUCCESS, MAJOR);
+        Result<Concept> conceptResult2 = mockResult("test:concept2", Concept.class, WARNING, MINOR);
+        Result<Concept> conceptResult3 = mockResult("test:concept3", Concept.class, FAILURE, MAJOR);
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:concept1", conceptResult1);
         conceptResults.put("test:concept2", conceptResult2);
         conceptResults.put("test:concept3", conceptResult3);
         when(inMemoryReportWriter.getConceptResults()).thenReturn(conceptResults);
 
-        Result<Constraint> constraintResult1 = mockResult("test:constraint1", Constraint.class, Result.Status.SUCCESS, Severity.MAJOR);
-        Result<Constraint> constraintResult2 = mockResult("test:constraint2", Constraint.class, Result.Status.WARNING, Severity.MINOR);
-        Result<Constraint> constraintResult3 = mockResult("test:constraint3", Constraint.class, Result.Status.FAILURE, Severity.MAJOR);
+        Result<Constraint> constraintResult1 = mockResult("test:constraint1", Constraint.class, SUCCESS, MAJOR);
+        Result<Constraint> constraintResult2 = mockResult("test:constraint2", Constraint.class, WARNING, MINOR);
+        Result<Constraint> constraintResult3 = mockResult("test:constraint3", Constraint.class, FAILURE, MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:constraint1", constraintResult1);
         constraintResults.put("test:constraint2", constraintResult2);
@@ -326,6 +327,23 @@ class ReportHelperTest {
 
     }
 
+    @Test
+    void ruleWithoutDescription() {
+        Result<Constraint> constraintResult = mockResult("test:constraint", null, Constraint.class, FAILURE, MAJOR, MAJOR, emptyList());
+        Map<String, Result<Constraint>> constraintResults = new HashMap<>();
+        constraintResults.put("test:constraint", constraintResult);
+        when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
+
+        try {
+            reportHelper.verify(inMemoryReportWriter, message -> {
+                throw new ReportException(message);
+            });
+            fail("Expecting a " + ReportException.class);
+        } catch (ReportException e) {
+            assertThat(e.getMessage(), equalTo("Failed rules detected: " + 0 + " concepts, " + 1 + " constraints"));
+        }
+    }
+
     private void verifyMessages(List<String> messages, String expectedHeader, String expectedRule, String expectedSeverity, String expectedRow) {
         verifyMessages(messages, expectedHeader, expectedRule, expectedSeverity);
         assertThat(messages, hasItem(containsString(expectedRow)));
@@ -352,10 +370,16 @@ class ReportHelperTest {
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity, Severity resultSeverity,
         List<Row> rows) {
+        return mockResult(id, "A\ndescription\r\n.\r", ruleType, status, ruleSeverity, resultSeverity, rows);
+    }
+
+    private <T extends ExecutableRule> Result<T> mockResult(String id, String description, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
+        Severity resultSeverity,
+        List<Row> rows) {
         Result<T> ruleResult = mock(Result.class);
         T rule = mock(ruleType);
         when(rule.getId()).thenReturn(id);
-        when(rule.getDescription()).thenReturn("A\ndescription\r\n.\r");
+        when(rule.getDescription()).thenReturn(description);
         when(rule.getSeverity()).thenReturn(ruleSeverity);
         when(ruleResult.getRule()).thenReturn(rule);
         when(ruleResult.getStatus()).thenReturn(status);

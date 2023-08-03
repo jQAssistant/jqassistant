@@ -308,10 +308,12 @@ public final class ReportHelper {
      */
     private void logDescription(LoggingStrategy loggingStrategy, Rule rule) {
         String description = rule.getDescription();
-        StringTokenizer tokenizer = new StringTokenizer(description, "\n");
-        while (tokenizer.hasMoreTokens()) {
-            loggingStrategy.log(tokenizer.nextToken()
-                .replaceAll("(\\r|\\n|\\t)", ""));
+        if (description != null) {
+            StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+            while (tokenizer.hasMoreTokens()) {
+                loggingStrategy.log(tokenizer.nextToken()
+                    .replaceAll("(\\r|\\n|\\t)", ""));
+            }
         }
     }
 

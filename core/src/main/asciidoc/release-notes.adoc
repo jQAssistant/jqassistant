@@ -1,5 +1,9 @@
 = Core Framework
 
+== 2.0.5
+
+* Fixed NPE for logging results for rules without description
+
 == 2.0.0
 * Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
 +
