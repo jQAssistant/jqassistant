@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.5
+
+* The goal `jqassistant:report` no longer creates empty an HTML report for Maven modules without `jqassistant-report.xml`
+
 == 2.0.4
 
 * Fixed an NPE if the goal `jqassistant:report` has been used from the command line

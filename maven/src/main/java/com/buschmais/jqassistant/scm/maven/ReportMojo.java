@@ -34,27 +34,36 @@ public class ReportMojo extends AbstractMavenReport {
     protected File xmlReportFile;
 
     @Override
+    public boolean canGenerateReport() {
+        return getXmlReportFile().exists();
+    }
+
+    @Override
     protected void executeReport(Locale locale) throws MavenReportException {
+        File reportFile = getXmlReportFile();
+        StringWriter writer = new StringWriter();
+        // Transform
+        Source xmlSource = new StreamSource(reportFile);
+        Result htmlTarget = new StreamResult(writer);
+        getLog().info("Transforming " + reportFile.getAbsolutePath() + ".");
+        ReportTransformer transformer = new HtmlReportTransformer();
+        try {
+            transformer.toEmbedded(xmlSource, htmlTarget);
+        } catch (ReportTransformerException e) {
+            throw new MavenReportException("Cannot transform report '" + reportFile + "'.", e);
+        }
+        getSink().rawText(writer.toString());
+    }
+
+    private File getXmlReportFile() {
         File selectedXmlReportFile;
         if (xmlReportFile != null) {
             selectedXmlReportFile = xmlReportFile;
         } else {
-            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + MojoExecutionContext.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
+            selectedXmlReportFile = new File(project.getBuild()
+                .getDirectory() + "/" + MojoExecutionContext.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
         }
-        if (selectedXmlReportFile.exists()) {
-            StringWriter writer = new StringWriter();
-            // Transform
-            Source xmlSource = new StreamSource(selectedXmlReportFile);
-            Result htmlTarget = new StreamResult(writer);
-            getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
-            ReportTransformer transformer = new HtmlReportTransformer();
-            try {
-                transformer.toEmbedded(xmlSource, htmlTarget);
-            } catch (ReportTransformerException e) {
-                throw new MavenReportException("Cannot transform report.", e);
-            }
-            getSink().rawText(writer.toString());
-        }
+        return selectedXmlReportFile;
     }
 
     @Override
