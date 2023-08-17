@@ -40,7 +40,6 @@
     </scm>
 
     <properties>
-        <checkstyle.version>8.29</checkstyle.version>
         <jqa-asciidoctor-utilities.version>2.1.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.1.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
@@ -76,31 +75,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>checkstyle</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <logViolationsToConsole>true</logViolationsToConsole>
                     <configLocation>checkstyle/jqa-code-style.xml</configLocation>
                     <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
-                    <excludes>**/generated-sources/**/*</excludes>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>checkstyle-config</artifactId>
                         <version>${project.parent.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>${checkstyle.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
