@@ -1,6 +1,10 @@
 
 = Common Plugin
 
+== 2.0.6
+
+* Added infrastructure for MapStruct based scanner plugins
+
 == 1.12.2
 
 * Added support for scanning resources from jQAssistant plugins using URLs with the protocol prefix `jqassistant-plugin`, e.g. a file `/my-resource.xml` packaged within a jQAssistant plugin can be scanned using the URL `jqassistant-plugin:my-resource.xml`
