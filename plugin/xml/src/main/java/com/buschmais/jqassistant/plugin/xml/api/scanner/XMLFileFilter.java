@@ -2,7 +2,9 @@ package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -51,43 +53,22 @@ public final class XMLFileFilter {
      *             If the file resource cannot be read.
      */
     public static boolean rootElementMatches(FileResource fileResource, String path, String expectedRootElement) throws IOException {
-        try (InputStream stream = fileResource.createStream()) {
-            XMLStreamReader reader = factory.createXMLStreamReader(stream);
-            while (reader.hasNext()) {
-                int event = reader.next();
-                switch (event) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        String rootElement = reader.getLocalName();
-                        return expectedRootElement.equals(rootElement);
-                }
-            }
-        } catch (XMLStreamException e) {
-            LOGGER.warn("Cannot parse XML file '{}'.", path);
-        }
-        return false;
-
+        return rootElementMatches(fileResource, path, namespace -> expectedRootElement.equals(namespace.getLocalPart()));
     }
 
     public static Boolean rootElementMatches(FileResource fileResource, String path, String expectedRootElement,
                                              String expectedNameSpace) throws IOException {
+        return rootElementMatches(fileResource, path, rootElement -> new QName(expectedNameSpace, expectedRootElement).equals(rootElement));
+    }
+
+    public static boolean rootElementMatches(FileResource fileResource, String path, Predicate<QName> rootElementPredicate) throws IOException {
         try (InputStream stream = fileResource.createStream()) {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             while (reader.hasNext()) {
                 int event = reader.next();
                 switch (event) {
                     case XMLStreamConstants.START_ELEMENT:
-                        String rootElement = reader.getLocalName();
-                        int namespaces = reader.getNamespaceCount();
-                        if (expectedRootElement.equals(rootElement)) {
-                            // In case of Java 8 -> for-loops are faster!
-                            for (int i = 0; i < namespaces; i++) {
-                                String namespaceURI = reader.getNamespaceURI(i);
-                                if (expectedNameSpace.equals(namespaceURI)) {
-                                    return true;
-                                }
-                            }
-                        }
-                        return false;
+                        return rootElementPredicate.test(reader.getName());
                 }
             }
         } catch (XMLStreamException e) {
