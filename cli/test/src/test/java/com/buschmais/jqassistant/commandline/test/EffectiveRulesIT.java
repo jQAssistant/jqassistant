@@ -37,8 +37,6 @@ class EffectiveRulesIT extends AbstractCLIIT {
 
     @Test
     void concept() throws IOException, InterruptedException {
-        String rulesDirectory = EffectiveRulesIT.class.getResource("/rules")
-            .getFile();
         String[] args = new String[] { "effective-rules", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.concepts=junit4:TestMethod" };
         ExecutionResult executionResult = execute(args);

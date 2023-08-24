@@ -64,7 +64,17 @@ public enum RegisteredTask {
     },
 
     /**
-     * Available rules.
+     * Effective configuration.
+     */
+    EFFECTIVE_CONFIGURATION {
+        @Override
+        public Task getTask() {
+            return new EffectiveConfigurationTask();
+        }
+    },
+
+    /**
+     * Effective rules.
      */
     EFFECTIVE_RULES {
         @Override

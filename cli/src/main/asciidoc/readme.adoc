@@ -95,6 +95,7 @@ Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven 
 * <<cli:analyze>>
 * <<cli:available-rules>>
 * <<cli:available-scopes>>
+* <<cli:effective-configuration>>
 * <<cli:effective-rules>>
 * <<cli:list-plugins>>
 * <<cli:report>>
@@ -130,6 +131,11 @@ Executes an analysis.
 ==== available-rules
 
 List all available rules.
+
+[[cli:effective-configuration]]
+==== effective-configuration
+
+Print the current configuration as YAML representation on the console.
 
 [[cli:effective-rules]]
 ==== effective-rules

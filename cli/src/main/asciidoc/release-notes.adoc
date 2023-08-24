@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 2.0.7
+
+* Added task `effective-configuration` to print the current configuration as YAML representation on the console
+
 == 2.0.0
 
 * Removed configuration options from command line, as they have been completely replaced by the YAML/properties based configuration mechanism
