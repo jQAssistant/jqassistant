@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.7
+
+* Added goal `jqassistant:effective-configuration` to print the current configuration as YAML representation on the console
+
 == 2.0.5
 
 * The goal `jqassistant:report` no longer creates empty an HTML report for Maven modules without `jqassistant-report.xml`

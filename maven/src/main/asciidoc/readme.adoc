@@ -204,6 +204,7 @@ mvn jqassistant:available-rules
 * <<reset>>
 * <<server>>
 * <<analyze>>
+* <<effective-configuration>>
 * <<effective-rules>>
 * <<available-rules>>
 * <<report>>
@@ -238,6 +239,11 @@ NOTE: If for a multi-module project a report archive shall be created and instal
 https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven Install Plugin] must be configured to use
 `installAtEnd`.
 In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
+
+[[effective-configuration]]
+==== jqassistant:effective-configuration
+
+Print the current configuration as YAML representation on the console.
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
