@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationSerializer;
 
 import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.ExpressionConfigSourceInterceptor;
@@ -35,12 +36,16 @@ import static java.util.stream.Collectors.toUnmodifiableList;
  * Implementation of the {@link ConfigurationLoader}.
  */
 @Slf4j
-public class ConfigurationLoaderImpl implements ConfigurationLoader {
+public class ConfigurationLoaderImpl<C extends Configuration> implements ConfigurationLoader<C> {
 
     public static final String YAML = ".yaml";
     public static final String YML = ".yml";
 
     public static final String CLASSPATH_RESOURCE = ".jqassistant.yml";
+
+    private final ConfigurationSerializer<C> configurationSerializer = new ConfigurationSerializerImpl<>();
+
+    private final Class<C> configurationMapping;
 
     private final List<ConfigSource> yamlConfigSources;
 
@@ -52,7 +57,8 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
      * @param configLocations
      *         The name of the configuration directory relative to the working directory.
      */
-    public ConfigurationLoaderImpl(File userHome, File workingDirectory, List<String> configLocations) {
+    public ConfigurationLoaderImpl(Class<C> configurationMapping, File userHome, File workingDirectory, List<String> configLocations) {
+        this.configurationMapping = configurationMapping;
         List<ConfigSource> configSources = new ArrayList<>();
         configSources.addAll(getExternalYamlConfigSources(userHome, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USER));
         configSources.addAll(getExternalYamlConfigSources(workingDirectory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations,
@@ -64,12 +70,13 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
     /**
      * Constructor.
      */
-    public ConfigurationLoaderImpl() {
+    public ConfigurationLoaderImpl(Class<C> configurationMapping) {
+        this.configurationMapping = configurationMapping;
         this.yamlConfigSources = emptyList();
     }
 
     @Override
-    public <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources) {
+    public C load(ConfigSource... configSources) {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
                 .withSources(yamlConfigSources)
                 .withSources(new EnvConfigSource() {
@@ -78,7 +85,11 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
                 .withValidateUnknown(false)
                 .withInterceptors(new ExpressionConfigSourceInterceptor())
                 .build();
-        return config.getConfigMapping(configurationMapping);
+        C configMapping = config.getConfigMapping(configurationMapping);
+        if (log.isDebugEnabled()) {
+            log.info("Loaded configuration from {} config sources:\n{}", configSources.length, configurationSerializer.toYaml(configMapping));
+        }
+        return configMapping;
     }
 
     private List<ConfigSource> getExternalYamlConfigSources(File directory, List<String> configLocations, int ordinal) {
@@ -161,5 +172,4 @@ public class ConfigurationLoaderImpl implements ConfigurationLoader {
             throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
         }
     }
-
 }

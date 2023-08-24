@@ -161,8 +161,8 @@ public abstract class AbstractPluginIT {
      * @return The  configuration.
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
-        return configurationLoader.load(Configuration.class, configurationBuilder.build());
+        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(Configuration.class);
+        return configurationLoader.load(configurationBuilder.build());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {

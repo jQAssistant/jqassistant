@@ -9,8 +9,10 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
  * Defines the interface for loading runtime configuration.
  * <p>
  * The mechanism is based on Eclipse Micro Profile configuration.
+ * @param <C>
+ *     The configuration mapping type.
  */
-public interface ConfigurationLoader {
+public interface ConfigurationLoader<C extends Configuration> {
 
     /**
      * The default names of configuration files
@@ -39,14 +41,9 @@ public interface ConfigurationLoader {
      * - system properties
      * - environment variables
      *
-     * @param <C>
-     *     The configuration mapping type.
-     * @param configurationMapping
-     *     The class to be returned as configuration mapping.
      * @param configSources
      *     Additional {@link ConfigSource}s to consider, e.g. from a CLI or Maven Mojo.
      * @return The {@link Configuration}.
      */
-    <C extends Configuration> C load(Class<C> configurationMapping, ConfigSource... configSources);
-
+    C load(ConfigSource... configSources);
 }

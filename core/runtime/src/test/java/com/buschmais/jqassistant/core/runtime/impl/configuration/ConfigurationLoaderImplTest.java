@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
@@ -34,7 +33,7 @@ class ConfigurationLoaderImplTest {
      */
     @Test
     void loadFromDefaultConfigLocations() throws URISyntaxException {
-        Configuration configuration = getConfiguration(emptyList());
+        TestConfiguration configuration = getConfiguration(emptyList());
 
         assertThat(configuration).isNotNull();
 
@@ -63,7 +62,7 @@ class ConfigurationLoaderImplTest {
      */
     @Test
     void loadFromConfigLocation() {
-        Configuration configuration = getConfiguration(singletonList(".jqassistant/scan/scan.yaml"));
+        TestConfiguration configuration = getConfiguration(singletonList(".jqassistant/scan/scan.yaml"));
 
         assertThat(configuration).isNotNull();
 
@@ -84,7 +83,7 @@ class ConfigurationLoaderImplTest {
     @Test
     @SetEnvironmentVariable(key = "jqassistant_scan_continue_on_error", value = "false")
     void overrideFromEnvVariable() {
-        Configuration configuration = getConfiguration(emptyList());
+        TestConfiguration configuration = getConfiguration(emptyList());
         assertThat(configuration.scan()
             .continueOnError()).isEqualTo(false);
     }
@@ -102,7 +101,7 @@ class ConfigurationLoaderImplTest {
     private void overrideFromSystemProperty(String continueOnError) {
         System.setProperty(continueOnError, "false");
         try {
-            Configuration configuration = getConfiguration(emptyList());
+            TestConfiguration configuration = getConfiguration(emptyList());
             assertThat(configuration.scan()
                 .continueOnError()).isEqualTo(false);
         } finally {
@@ -110,8 +109,9 @@ class ConfigurationLoaderImplTest {
         }
     }
 
-    private Configuration getConfiguration(List<String> configLocations) {
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(USER_HOME, WORKING_DIRECTORY, configLocations);
-        return configurationLoader.load(Configuration.class, new SysPropConfigSource());
+    private TestConfiguration getConfiguration(List<String> configLocations) {
+        ConfigurationLoader<TestConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(TestConfiguration.class, USER_HOME, WORKING_DIRECTORY,
+            configLocations);
+        return configurationLoader.load(new SysPropConfigSource());
     }
 }
