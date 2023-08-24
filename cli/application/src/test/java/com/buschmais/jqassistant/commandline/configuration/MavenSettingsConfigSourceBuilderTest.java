@@ -24,8 +24,8 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createConfigSource(userHome);
 
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl();
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configSource);
+        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
+        CliConfiguration configuration = configurationLoader.load(configSource);
 
         Optional<Proxy> proxyOptional = configuration.proxy();
         assertThat(proxyOptional.isPresent()).isTrue();

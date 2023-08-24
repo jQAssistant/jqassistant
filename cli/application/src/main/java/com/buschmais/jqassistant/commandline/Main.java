@@ -217,7 +217,8 @@ public class Main {
     private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
         throws CliConfigurationException {
         List<String> configLocations = getConfigLocations(commandLine);
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(userHome, workingDirectory, configLocations);
+        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class, userHome, workingDirectory,
+            configLocations);
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
         ConfigSource mavenSettings = createConfigSource(userHome);
@@ -225,7 +226,7 @@ public class Main {
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
         }
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configSource, new SysPropConfigSource(),
+        CliConfiguration configuration = configurationLoader.load(configSource, new SysPropConfigSource(),
             commandLineProperties, mavenSettings);
         return configuration;
     }

@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
@@ -192,8 +193,8 @@ public abstract class AbstractCLIIT {
      */
     protected Store getStore(File directory) {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
-        ConfigurationLoaderImpl configurationLoader = new ConfigurationLoaderImpl();
-        CliConfiguration configuration = configurationLoader.load(CliConfiguration.class, configurationBuilder.build());
+        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
+        CliConfiguration configuration = configurationLoader.load(configurationBuilder.build());
         return StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository());
     }
 
