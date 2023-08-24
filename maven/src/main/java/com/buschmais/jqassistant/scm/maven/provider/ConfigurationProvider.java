@@ -21,7 +21,7 @@ public class ConfigurationProvider {
     /**
      * Cached {@link ConfigurationLoader} instance.
      */
-    private ConfigurationLoader configurationLoader;
+    private ConfigurationLoader<MavenConfiguration> configurationLoader;
 
     /**
      * Return the Configuration.
@@ -37,9 +37,9 @@ public class ConfigurationProvider {
     public MavenConfiguration getConfiguration(File executionRoot, List<String> configLocations, ConfigSource... configSources) {
         if (configurationLoader == null) {
             File userHome = new File(System.getProperty("user.home"));
-            configurationLoader = new ConfigurationLoaderImpl(userHome, executionRoot, configLocations);
+            configurationLoader = new ConfigurationLoaderImpl<>(MavenConfiguration.class, userHome, executionRoot, configLocations);
         }
-        return configurationLoader.load(MavenConfiguration.class, configSources);
+        return configurationLoader.load(configSources);
     }
 
 }
