@@ -21,7 +21,6 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -42,10 +41,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             Analyze analyze = configuration.analyze();
             Report report = analyze
                 .report();
-            Severity.Threshold warnOnSeverity = report.warnOnSeverity();
-            Severity.Threshold failOnSeverity = report.failOnSeverity();
-            LOGGER.info("Will warn on violations starting from severity '" + warnOnSeverity + "'");
-            LOGGER.info("Will fail on violations starting from severity '" + failOnSeverity + "'.");
+            LOGGER.info("Will warn on violations starting from severity '" + report.warnOnSeverity() + "'");
+            LOGGER.info("Will fail on violations starting from severity '" + report.failOnSeverity() + "'.");
             LOGGER.info("Executing analysis.");
             File reportDirectory = new File(report.directory()
                 .orElse(DEFAULT_REPORT_DIRECTORY));
@@ -66,7 +63,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 createReportArchive(reportContext);
             }
             store.beginTransaction();
-            LOGGER.info("Verifying results: failOnSeverity=" + failOnSeverity + ", warnOnSeverity=" + warnOnSeverity);
+            LOGGER.info("Verifying results: failOnSeverity=" + report.failOnSeverity() + ", warnOnSeverity=" + report.warnOnSeverity());
             try {
                 final ReportHelper reportHelper = new ReportHelper(report, LOGGER);
                 reportHelper.verify(inMemoryReportPlugin, message -> {
