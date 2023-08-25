@@ -4,15 +4,18 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
-import lombok.RequiredArgsConstructor;
-
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
-import static lombok.AccessLevel.PROTECTED;
 
-@RequiredArgsConstructor(access = PROTECTED)
 public abstract class AbstractMinMaxVerificationStrategy<T extends Verification> implements VerificationStrategy<T> {
 
-    private final Report configuration;
+    private final Severity.Threshold warnOnSeverity;
+
+    private final Severity.Threshold failOnSeverity;
+
+    protected AbstractMinMaxVerificationStrategy(Report configuration) {
+        this.warnOnSeverity = Severity.Threshold.from(configuration.warnOnSeverity());
+        this.failOnSeverity = Severity.Threshold.from(configuration.failOnSeverity());
+    }
 
     protected <T extends ExecutableRule> Result.Status getStatus(T executable, Severity severity, int value, Integer min, Integer max) {
         if (min == null && max == null) {
@@ -29,8 +32,6 @@ public abstract class AbstractMinMaxVerificationStrategy<T extends Verification>
 
     private Result.Status getStatus(Severity severity, boolean success) {
         if (!success) {
-            Severity.Threshold failOnSeverity = configuration.failOnSeverity();
-            Severity.Threshold warnOnSeverity = configuration.warnOnSeverity();
             if (severity.exceeds(failOnSeverity)) {
                 return FAILURE;
             } else {

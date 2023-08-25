@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 
 @ConfigMapping(prefix = "jqassistant.analyze.report")
@@ -27,13 +26,13 @@ public interface Report {
 
     @Description("Determines the severity level to report warnings for rules with equal or higher severities.")
     @WithDefault("MINOR")
-    @WithConverter(SeverityThresholdConverter.class) Severity.Threshold warnOnSeverity();
+    Severity warnOnSeverity();
 
     String FAIL_ON_SEVERITY = "fail-on-severity";
 
     @Description("Determines the severity level to report failures for rules with equal or higher severities.")
     @WithDefault("MAJOR")
-    @WithConverter(SeverityThresholdConverter.class) Severity.Threshold failOnSeverity();
+    Severity failOnSeverity();
 
     String CONTINUE_ON_FAILURE = "continue-on-failure";
 

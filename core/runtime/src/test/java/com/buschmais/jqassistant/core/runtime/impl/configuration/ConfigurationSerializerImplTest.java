@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.source.yaml.YamlConfigSource;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImplTest.USER_HOME;
@@ -18,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests for the {@link ConfigurationSerializerImpl}.
  */
+@Slf4j
 class ConfigurationSerializerImplTest {
-
 
     private final ConfigurationSerializer<TestConfiguration> configurationSerializer = new ConfigurationSerializerImpl<>();
 
@@ -28,14 +29,15 @@ class ConfigurationSerializerImplTest {
         Properties properties = new Properties();
         properties.put("jqassistant.store.uri", "bolt://localhost:7687");
         properties.put("jqassistant.analyze.rule.directory", "target/rules");
+        properties.put("jqassistant.analyze.report.fail-on-severity", "BLOCKER");
         PropertiesConfigSource configSource = new PropertiesConfigSource(properties, "test");
         TestConfiguration configuration = new ConfigurationLoaderImpl<>(TestConfiguration.class).load(configSource);
 
-        String yaml = configurationSerializer.toYaml(configuration);
-        System.out.println(yaml);
+        String yaml = toYaml(configuration);
 
         assertThat(yaml).contains("uri: bolt://localhost:7687");
         assertThat(yaml).contains("directory: target/rules");
+        assertThat(yaml).contains("fail-on-severity: BLOCKER");
     }
 
     @Test
@@ -44,8 +46,7 @@ class ConfigurationSerializerImplTest {
             emptyList());
         TestConfiguration configuration = configurationLoader.load();
 
-        String yaml = configurationSerializer.toYaml(configuration);
-        System.out.println(yaml);
+        String yaml = toYaml(configuration);
 
         YamlConfigSource yamlConfigSource = new YamlConfigSource("yaml", yaml);
         assertThat(yamlConfigSource.getValue("jqassistant.analyze.execute-applied-concepts")).isEqualTo("false");
@@ -56,4 +57,11 @@ class ConfigurationSerializerImplTest {
         assertThat(scan.properties()
             .get("overwritten-user-value")).isEqualTo("overwritten");
     }
+
+    private String toYaml(TestConfiguration configuration) {
+        String yaml = configurationSerializer.toYaml(configuration);
+        log.info("\n{}", yaml);
+        return yaml;
+    }
+
 }
