@@ -45,11 +45,11 @@ class RowCountVerificationStrategyTest {
 
     @BeforeEach
     void setUp() {
-        strategy = new RowCountVerificationStrategy(configuration);
-        doReturn(Severity.Threshold.from(MAJOR)).when(configuration)
-            .failOnSeverity();
-        doReturn(Severity.Threshold.from(MINOR)).when(configuration)
+        doReturn(Severity.MINOR).when(configuration)
             .warnOnSeverity();
+        doReturn(Severity.MAJOR).when(configuration)
+            .failOnSeverity();
+        strategy = new RowCountVerificationStrategy(configuration);
     }
 
     @Test

@@ -5,9 +5,11 @@ import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -19,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyzerContextImplTest {
@@ -29,10 +32,19 @@ class AnalyzerContextImplTest {
     private Analyze configuration;
 
     @Mock
+    private Report report;
+
+    @Mock
     private Store store;
 
     @BeforeEach
     void setUp() {
+        doReturn(report).when(configuration)
+            .report();
+        doReturn(Severity.MINOR).when(report)
+            .warnOnSeverity();
+        doReturn(Severity.MAJOR).when(report)
+            .failOnSeverity();
         analyzerContext = new AnalyzerContextImpl(configuration, this.getClass()
             .getClassLoader(), store);
     }
