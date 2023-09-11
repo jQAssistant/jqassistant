@@ -102,8 +102,8 @@
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
-        <neo4j.version>4.4.24</neo4j.version>
-        <neo4j-browser.version>5.9.0</neo4j-browser.version>
+        <neo4j.version>4.4.25</neo4j.version>
+        <neo4j-browser.version>5.11.0</neo4j-browser.version>
         <slf4j.version>1.7.36</slf4j.version>
         <smallrye-config.version>3.1.1</smallrye-config.version>
         <snakeyaml.version>2.0</snakeyaml.version>
@@ -133,7 +133,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>2.0.5</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>2.0.7</maven.jqassistant.previous.version>
         <maven.resources.version>3.0.2</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
