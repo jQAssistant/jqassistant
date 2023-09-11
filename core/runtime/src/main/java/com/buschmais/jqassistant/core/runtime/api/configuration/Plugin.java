@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
+import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
+@ConfigMapping
 @Description("The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version. Furthermore a plugin can be declared as active or inactive.")
 public interface Plugin {
 

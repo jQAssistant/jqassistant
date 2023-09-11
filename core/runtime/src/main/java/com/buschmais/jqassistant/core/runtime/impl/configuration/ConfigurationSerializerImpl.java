@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationSer
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.ConfigMappingInterface;
+import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -29,6 +30,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK;
 
+@Slf4j
 public class ConfigurationSerializerImpl<C> implements ConfigurationSerializer<C> {
 
     @Override
@@ -94,6 +96,7 @@ public class ConfigurationSerializerImpl<C> implements ConfigurationSerializer<C
         ConfigRepresenter(DumperOptions options, PropertyUtils propertyUtils) {
             super(options);
             super.setPropertyUtils(propertyUtils);
+            setDefaultFlowStyle(options.getDefaultFlowStyle());
             representers.put(Optional.class, new RepresentOptional());
             RepresentString representString = new RepresentString();
             representers.put(URI.class, representString);
@@ -166,7 +169,10 @@ public class ConfigurationSerializerImpl<C> implements ConfigurationSerializer<C
                     }
                     return properties;
                 })
-                .orElse(emptyMap());
+                .orElseGet(() -> {
+                    log.warn("Type '{}' does not implement an interface annotated by '{}'.", type.getName(), ConfigMapping.class.getName());
+                    return emptyMap();
+                });
         }
 
         private Property getProperty(String propertyName, Method method) {

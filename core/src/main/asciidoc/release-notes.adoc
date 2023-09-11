@@ -1,5 +1,9 @@
 = Core Framework
 
+== 2.0.8
+
+* Fixed missing plugins when printing effective configuration
+
 == 2.0.5
 
 * Fixed NPE for logging results for rules without description

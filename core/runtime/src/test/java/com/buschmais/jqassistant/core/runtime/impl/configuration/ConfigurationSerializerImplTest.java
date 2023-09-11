@@ -30,11 +30,16 @@ class ConfigurationSerializerImplTest {
         properties.put("jqassistant.store.uri", "bolt://localhost:7687");
         properties.put("jqassistant.analyze.rule.directory", "target/rules");
         properties.put("jqassistant.analyze.report.fail-on-severity", "BLOCKER");
+        properties.put("jqassistant.plugins[0].group-id", "org.jqassistant.plugin");
+        properties.put("jqassistant.plugins[0].artifact-id", "test-plugin");
+        properties.put("jqassistant.plugins[0].version", "1.0.0");
         PropertiesConfigSource configSource = new PropertiesConfigSource(properties, "test");
         TestConfiguration configuration = new ConfigurationLoaderImpl<>(TestConfiguration.class).load(configSource);
 
         String yaml = toYaml(configuration);
 
+        assertThat(yaml).contains("group-id: org.jqassistant.plugin");
+        assertThat(yaml).contains("version: 1.0.0");
         assertThat(yaml).contains("uri: bolt://localhost:7687");
         assertThat(yaml).contains("directory: target/rules");
         assertThat(yaml).contains("fail-on-severity: BLOCKER");
