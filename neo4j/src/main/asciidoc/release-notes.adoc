@@ -1,6 +1,9 @@
 
 = Neo4j Backend
 
+== 2.0.8
+* Upgraded to Neo4j 4.4.25 and Neo4j Browser 5.11.0
+
 == 2.0.6
 * Upgraded to Neo4j 4.4.24
 
