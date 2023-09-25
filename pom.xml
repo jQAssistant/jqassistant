@@ -102,8 +102,8 @@
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
-        <neo4j.version>4.4.25</neo4j.version>
-        <neo4j-browser.version>5.11.0</neo4j-browser.version>
+        <neo4j.version>4.4.26</neo4j.version>
+        <neo4j-browser.version>5.12.0</neo4j-browser.version>
         <slf4j.version>1.7.36</slf4j.version>
         <smallrye-config.version>3.1.1</smallrye-config.version>
         <snakeyaml.version>2.0</snakeyaml.version>
