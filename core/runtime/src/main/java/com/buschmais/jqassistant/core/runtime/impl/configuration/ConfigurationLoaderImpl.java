@@ -60,7 +60,7 @@ public class ConfigurationLoaderImpl<C extends Configuration> implements Configu
     public ConfigurationLoaderImpl(Class<C> configurationMapping, File userHome, File workingDirectory, List<String> configLocations) {
         this.configurationMapping = configurationMapping;
         List<ConfigSource> configSources = new ArrayList<>();
-        configSources.addAll(getExternalYamlConfigSources(userHome, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USER));
+        configSources.addAll(getExternalYamlConfigSources(userHome, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USERHOME));
         configSources.addAll(getExternalYamlConfigSources(workingDirectory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations,
                 ORDINAL_WORKING_DIRECTORY));
         configSources.addAll(getYamlConfigSourceFromClasspath());

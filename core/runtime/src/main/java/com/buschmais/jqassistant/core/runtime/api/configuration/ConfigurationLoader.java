@@ -22,7 +22,7 @@ public interface ConfigurationLoader<C extends Configuration> {
     /**
      * The ordinal for config sources from the user home.
      */
-    int ORDINAL_USER = 50;
+    int ORDINAL_USERHOME = 50;
 
     /**
      * The ordinal for config sources from classpath.
