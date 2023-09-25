@@ -110,14 +110,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
             MavenConfiguration configuration = getConfiguration();
-            PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories,
-                configuration);
-            MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, execution, configuration, pluginRepository);
-            MavenProject rootModule = mojoExecutionContext.getRootModule();
-            Set<MavenProject> executedModules = getExecutedModules(rootModule);
             if (configuration.skip()) {
                 getLog().info("Skipping execution.");
             } else {
+                PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories,
+                    configuration);
+                MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, execution, configuration, pluginRepository);
+                MavenProject rootModule = mojoExecutionContext.getRootModule();
+                Set<MavenProject> executedModules = getExecutedModules(rootModule);
                 ClassLoader contextClassLoader = currentThread().getContextClassLoader();
                 currentThread().setContextClassLoader(pluginRepository.getClassLoader());
                 try {
@@ -128,8 +128,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 } finally {
                     currentThread().setContextClassLoader(contextClassLoader);
                 }
+                executedModules.add(currentProject);
             }
-            executedModules.add(currentProject);
         }
     }
 
