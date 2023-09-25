@@ -13,7 +13,14 @@ public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
     public final void execute(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
-        execute(mojoExecutionContext);
+        if (mojoExecutionContext.getConfiguration()
+            .maven()
+            .module()
+            .skip()) {
+            getLog().info("Skipping module.");
+        } else {
+            execute(mojoExecutionContext);
+        }
     }
 
     protected abstract void execute(MojoExecutionContext mojoExecutionContext)

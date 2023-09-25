@@ -5,8 +5,18 @@ import com.buschmais.jqassistant.core.shared.annotation.Description;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
+/**
+ * The Maven configuration.
+ */
 @ConfigMapping(prefix = "jqassistant.maven")
 public interface Maven {
+
+    /**
+     * The per-{@link Module} configuration.
+     *
+     * @return The {@link Module} configuration.
+     */
+    Module module();
 
     String USE_EXECUTION_ROOT_AS_PROJECT_ROOT = "use-execution-root-as-project-root";
 

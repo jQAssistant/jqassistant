@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.0.8
+
+* Added configuration property `jqassistant.maven.module.skip` to skip module level goals (e.g. `scan`) without affecting project level goals (e.g. `analyze`)
+
 == 2.0.7
 
 * Added goal `jqassistant:effective-configuration` to print the current configuration as YAML representation on the console

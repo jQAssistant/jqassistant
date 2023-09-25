@@ -6,8 +6,4 @@
 		<version>@project.version@</version>
 	</parent>
 	<artifactId>@project.artifactId@.integration.multimodule.singleparent.skip.module1</artifactId>
-
-	<properties>
-		<jqa.skip>true</jqa.skip>
-	</properties>
 </project>
