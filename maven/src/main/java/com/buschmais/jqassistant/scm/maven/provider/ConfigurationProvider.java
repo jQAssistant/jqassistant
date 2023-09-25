@@ -19,6 +19,11 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 public class ConfigurationProvider {
 
     /**
+     * The ordinal for config sources from the plugin execution configuration.
+     */
+    public static final int ORDINAL_PLUGIN_EXECUTION = 90;
+
+    /**
      * Cached {@link ConfigurationLoader} instance.
      */
     private ConfigurationLoader<MavenConfiguration> configurationLoader;

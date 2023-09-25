@@ -15,6 +15,7 @@
                     <execution>
                         <goals>
                             <goal>scan</goal>
+                            <goal>analyze</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -22,7 +23,12 @@
                     <yaml>
                         jqassistant:
                           store:
+                            # used
                             uri: file:target/custom-store
+                          analyze:
+                            # overwritten by .jqassistant.yml
+                            groups:
+                              - plugin-execution-configuration
                     </yaml>
                 </configuration>
             </plugin>

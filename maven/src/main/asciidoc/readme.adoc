@@ -181,6 +181,8 @@ yaml::
 * embedded YAML configuration
 * can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
 
+NOTE: Properties of the embedded YAML configuration can be overwritten by the file based configuration within the project.
+
 ==== Command Line
 
 Goals may also be executed from the command line:

@@ -270,7 +270,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     private ConfigSource getMavenPluginConfiguration() {
-        return isNotEmpty(yaml) ? new YamlConfigSource("Maven plugin configuration", yaml) : EmptyConfigSource.INSTANCE;
+        return isNotEmpty(yaml) ?
+            new YamlConfigSource("Maven plugin execution configuration", yaml, ConfigurationProvider.ORDINAL_PLUGIN_EXECUTION) :
+            EmptyConfigSource.INSTANCE;
     }
 
     /**
