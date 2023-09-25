@@ -96,29 +96,27 @@ public class ConfigurationLoaderImpl<C extends Configuration> implements Configu
         List<ConfigSource> configSources = new ArrayList<>();
         for (String configLocation : configLocations) {
             File file = directory.toPath()
-                    .resolve(Paths.get(configLocation))
-                    .toFile();
-            if (file.isDirectory()) {
-                configSources.addAll(getYamlConfigSources(file, ordinal));
-            } else if (file.exists()) {
-                configSources.add(getYamlConfigSource(file.toPath(), ordinal));
+                .resolve(Paths.get(configLocation))
+                .toFile();
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    configSources.addAll(getYamlConfigSources(file, ordinal));
+                } else {
+                    configSources.add(getYamlConfigSource(file.toPath(), ordinal));
+                }
             }
         }
         return configSources;
     }
 
     private List<ConfigSource> getYamlConfigSources(File configurationDirectory, int ordinal) {
-        if (configurationDirectory.exists()) {
-            log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
-            List<Path> configurationFiles = getYamlConfigurationFiles(configurationDirectory);
-            return configurationFiles.stream()
-                    .map(path -> {
-                        return getYamlConfigSource(path, ordinal);
-                    })
-                    .collect(toList());
-        }
-        log.info("Configuration directory '{}' does not exist, skipping.", configurationDirectory);
-        return emptyList();
+        log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
+        List<Path> configurationFiles = getYamlConfigurationFiles(configurationDirectory);
+        return configurationFiles.stream()
+            .map(path -> {
+                return getYamlConfigSource(path, ordinal);
+            })
+            .collect(toList());
     }
 
     private List<Path> getYamlConfigurationFiles(File configurationDirectory) {
@@ -144,6 +142,7 @@ public class ConfigurationLoaderImpl<C extends Configuration> implements Configu
     }
 
     private YamlConfigSource getYamlConfigSource(Path path, int ordinal) {
+        log.info("Using configuration from file '{}'.", path.toAbsolutePath());
         try {
             return getYamlConfigSource(path.toUri()
                     .toURL(), ordinal);
