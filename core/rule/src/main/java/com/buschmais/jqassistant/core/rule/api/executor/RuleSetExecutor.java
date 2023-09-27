@@ -92,7 +92,7 @@ public class RuleSetExecutor {
         List<Concept> matchingConcepts = ruleSet.getConceptBucket()
             .match(conceptPattern);
         if (matchingConcepts.isEmpty()) {
-            LOGGER.warn("Could not find concepts matching to '{}'.", matchingConcepts);
+            LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
                 applyConcept(ruleSet, matchingConcept, parentSeverity, requestedSeverity, new LinkedHashSet<>());
