@@ -32,7 +32,7 @@ export JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens 
 
 ==== Installation
 
-* The latest command line distribution is available on https://search.maven.org/search?q=a:jqassistant-commandline-distribution[Maven Central], select `bin.zip` from the `Download` menu {projectVersion}.
+* The latest command line distribution is available on https://search.maven.org/search?q=a:jqassistant-commandline-distribution[Maven Central], select `bin.zip` from the `Download` menu.
 * Download and unpack the distribution, a directory
   `jqassistant-commandline-distribution-_version_` will be created.
 
