@@ -548,7 +548,7 @@ It works in a similar way like `java.lang.SuppressWarnings` provided by Java.
 
 For using it the jQAssistant Java plugin must be declared as compile-time dependency for your project, e.g. in case of Maven:
 
-[source,xml]
+[source,xml,subs=attributes+]
 .pom.xml
 ----
 <dependency>
