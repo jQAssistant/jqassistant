@@ -32,6 +32,7 @@ export JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens 
 
 ==== Installation
 
+* The latest command line distribution is available on https://search.maven.org/search?q=a:jqassistant-commandline-distribution[Maven Central], select `bin.zip` from the `Download` menu {projectVersion}.
 * Download and unpack the distribution, a directory
   `jqassistant-commandline-distribution-_version_` will be created.
 
@@ -123,29 +124,31 @@ An alternative option is to place these settings into a file `.mvn/jvm.config` i
 
 Add the following lines to the parent pom.xml file of your project:
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
-<properties>
-  <!-- Define your desired jQAssistant version here -->
-  <jqassistant.version>...</jqassistant.version>
-</properties>
-<build>
-    <plugins>
-        <plugin>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>jqassistant-maven-plugin</artifactId>
-            <version>${jqassistant.version}</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>scan</goal>
-                        <goal>analyze</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+<project>
+    <properties>
+        <!-- Define your desired jQAssistant version here -->
+        <jqassistant.version>{projectVersion}</jqassistant.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>${jqassistant.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ----
 
 ==== Add a rule
