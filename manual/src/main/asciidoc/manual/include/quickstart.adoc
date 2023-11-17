@@ -3,22 +3,12 @@
 === Command Line
 
 ==== Requirements
-- Java Development Kit 11 or later
-- the environment variable JQASSISTANT_OPTS can be used to provide JVM arguments:
-+
-[source]
-.Windows
-----
-set JQASSISTANT_OPTS=-Xmx1024M
-----
-+
-[source]
-.Linux
-----
-export JQASSISTANT_OPTS=-Xmx1024M
-----
 
-- the following JVM parameters are required if `Java 17` or later is used as runtime environment:
+- Java Development Kit 11 or 17
++
+NOTE: Java 21 is currently not supported if the embedded Neo4j database is used.
+
+- The following JVM parameters are required if `Java 17` is used as runtime environment:
 +
 .Windows
 ----
@@ -83,23 +73,13 @@ LIMIT 20
 === Maven
 
 ==== Requirements
-- Maven 3.5 or later
-- Java Development Kit 11 or later
-- the environment variable MAVEN_OPTS can be used to provide JVM arguments
-+
-[source]
-.Windows
-----
-set MAVEN_OPTS=-Xmx1024M
-----
-+
-[source]
-.Linux
-----
-export MAVEN_OPTS=-Xmx1024M
-----
 
-- the following JVM parameters are required if `Java 16` or later is used as runtime environment:
+- Maven 3.5 or later
+- Java Development Kit 11 or 17
++
+NOTE: Java 21 is currently not supported if the embedded Neo4j database is used.
+
+- The following JVM parameters are required if `Java 17` is used as runtime environment:
 +
 .Windows
 ----
