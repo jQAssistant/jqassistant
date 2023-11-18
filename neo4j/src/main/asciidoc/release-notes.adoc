@@ -1,7 +1,7 @@
 
 = Neo4j Backend
 
-== 2.0.10
+== 2.0.9
 * Upgraded to Neo4j 4.4.28
 
 == 2.0.8
