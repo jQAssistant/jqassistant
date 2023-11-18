@@ -12,7 +12,6 @@
     <name>jQAssistant Commandline Application</name>
 
     <properties>
-        <maven-resolver.version>1.7.3</maven-resolver.version>
         <maven-resolver-provider.version>3.5.0</maven-resolver-provider.version>
         <maven-settings-builder.version>3.5.0</maven-settings-builder.version>
     </properties>
@@ -83,22 +82,18 @@
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-impl</artifactId>
-            <version>${maven-resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-connector-basic</artifactId>
-            <version>${maven-resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-transport-file</artifactId>
-            <version>${maven-resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-transport-http</artifactId>
-            <version>${maven-resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
