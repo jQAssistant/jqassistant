@@ -18,7 +18,6 @@
     <properties>
         <jqa-xml-plugin.version>2.1.0-SNAPSHOT</jqa-xml-plugin.version>
         <jqa-plugin-common.version>2.1.0-SNAPSHOT</jqa-plugin-common.version>
-        <org.ow2.asm.version>9.5</org.ow2.asm.version>
     </properties>
 
     <organization>
@@ -66,12 +65,10 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>${org.ow2.asm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-util</artifactId>
-            <version>${org.ow2.asm.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
