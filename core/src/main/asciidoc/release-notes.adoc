@@ -1,5 +1,9 @@
 = Core Framework
 
+== 2.0.9
+
+* Upgraded to Maven Resolver 1.9.16 (used for plugin provisioning)
+
 == 2.0.8
 
 * Fixed missing plugins when printing effective configuration
