@@ -44,7 +44,6 @@
         <jqa-bom.version>2.1.0-SNAPSHOT</jqa-bom.version>
         <jqa-own-constraints.version>2.1.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>2.1.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <maven-resolver.version>1.7.3</maven-resolver.version>
     </properties>
 
     <dependencyManagement>
@@ -60,12 +59,6 @@
                 <groupId>com.buschmais.jqassistant.neo4j</groupId>
                 <artifactId>embedded</artifactId>
                 <version>${jqa-neo4jbackend.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.resolver</groupId>
-                <artifactId>maven-resolver-util</artifactId>
-                <version>${maven-resolver.version}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
