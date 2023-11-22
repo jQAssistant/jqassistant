@@ -12,6 +12,7 @@ import org.neo4j.configuration.GraphDatabaseSettings;
 import org.neo4j.configuration.connectors.BoltConnector;
 import org.neo4j.configuration.helpers.SocketAddress;
 import org.neo4j.graphdb.config.Setting;
+import org.neo4j.io.ByteUnit;
 
 import static java.lang.Boolean.FALSE;
 
@@ -27,7 +28,7 @@ public class Neo4jV4ServerFactory implements EmbeddedNeo4jServerFactory {
         Neo4jPropertiesBuilder builder = Neo4jPropertiesBuilder.builder();
         builder.property(GraphDatabaseSettings.allow_upgrade, true);
         builder.property(GraphDatabaseSettings.keep_logical_logs, FALSE.toString());
-        builder.property(GraphDatabaseSettings.logical_log_rotation_threshold, 5 * 10124 * 1024L);
+        builder.property(GraphDatabaseSettings.logical_log_rotation_threshold, ByteUnit.mebiBytes(25L));
         builder.property(GraphDatabaseSettings.procedure_unrestricted, List.of("*"));
         builder.property(GraphDatabaseInternalSettings.dump_diagnostics, false);
         if (embedded.connectorEnabled()){
