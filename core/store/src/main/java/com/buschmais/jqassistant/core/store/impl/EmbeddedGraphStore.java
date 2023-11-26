@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.jqassistant.neo4j.embedded.neo4jv4.Neo4jV4ServerFactory;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
+import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
@@ -67,7 +68,14 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
         server.initialize(embeddedDatastore, embedded, storePluginRepository.getClassLoader(), storePluginRepository.getProcedureTypes(),
             storePluginRepository.getFunctionTypes());
-        LOGGER.info("Initialized embedded Neo4j database v'{}'.", embeddedDatastore.createSession().getNeo4jVersion());
+        logVersion(embeddedDatastore);
+    }
+
+    private void logVersion(EmbeddedDatastore embeddedDatastore) {
+        try (EmbeddedNeo4jDatastoreSession session = embeddedDatastore.createSession()) {
+            String neo4jVersion = session.getNeo4jVersion();
+            LOGGER.info("Initialized embedded Neo4j database '{}'.", neo4jVersion);
+        }
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
