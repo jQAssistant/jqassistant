@@ -51,17 +51,6 @@
         </repository>
     </distributionManagement>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <developers>
         <developer>
             <id>dirk-mahler</id>
@@ -102,15 +91,18 @@
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
+        <!--
+        <neo4j.version>5.14.0</neo4j.version>
+        -->
         <neo4j.version>4.4.28</neo4j.version>
         <neo4j-browser.version>5.12.0</neo4j-browser.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <smallrye-config.version>3.1.1</smallrye-config.version>
+        <smallrye-config.version>3.4.4</smallrye-config.version>
         <maven-resolver.version>1.9.16</maven-resolver.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xo.version>2.1.2</xo.version>
+        <xo.version>2.2.0-SNAPSHOT</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.9</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
