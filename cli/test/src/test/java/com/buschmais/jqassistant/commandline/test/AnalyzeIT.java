@@ -20,14 +20,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AnalyzeIT extends AbstractCLIIT {
 
     @Test
-    public void defaultGroup() throws IOException, InterruptedException {
+    void defaultGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     @Test
-    public void customGroup() throws IOException, InterruptedException {
+    void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.groups=" + CUSTOM_GROUP };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
@@ -46,7 +46,7 @@ class AnalyzeIT extends AbstractCLIIT {
     void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.concepts=" + TEST_CONCEPT};
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
@@ -54,7 +54,7 @@ class AnalyzeIT extends AbstractCLIIT {
     void conceptWithParameter() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.concepts=" + TEST_CONCEPT_WITH_PARAMETER, "-D", "jqassistant.analyze.rule-parameters.\"testParam\"=TestValue" };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT_WITH_PARAMETER));
     }
 
@@ -70,28 +70,24 @@ class AnalyzeIT extends AbstractCLIIT {
     void continueOnFailure() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.continue-on-failure=true" };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
     /**
      * Warn on a violated constraint but do not fail.
-     *
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
     void constraintWarnOnSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
-            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "-Djqassistant.analyze.warn-on-severity=major", "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.warn-on-severity=major", "-D",
             "jqassistant.analyze.report.fail-on-severity=critical" };
         ExecutionResult executionResult = execute(args);
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
         List<String> console = executionResult.getErrorConsole();
-        assertThat(console).anyMatch(item -> item.contains("Test constraint."));
-        assertThat(console).anyMatch(item -> item.contains(TEST_CONCEPT));
-
+        assertThat(console).anyMatch(item -> item.contains("Test constraint."))
+            .anyMatch(item -> item.contains(TEST_CONCEPT));
     }
 
     @Test
@@ -99,7 +95,7 @@ class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.fail-on-severity=minor", "-D",
             "jqassistant.analyze.rule.default-constraint-severity=info" };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
@@ -107,7 +103,7 @@ class AnalyzeIT extends AbstractCLIIT {
     void defaultGroupSeverity() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.report.fail-on-severity=minor", "-D", "jqassistant.analyze.rule.default-group-severity=info" };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyConcepts(store, TEST_CONCEPT));
     }
 
