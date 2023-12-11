@@ -6,6 +6,7 @@ import java.util.*;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 
 import io.smallrye.config.PropertiesConfigSource;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.settings.*;
 import org.apache.maven.settings.Mirror;
@@ -16,19 +17,24 @@ import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
-import static com.buschmais.jqassistant.commandline.configuration.Mirror.*;
+import static com.buschmais.jqassistant.commandline.configuration.CliConfiguration.PROXY;
+import static com.buschmais.jqassistant.commandline.configuration.Mirror.MIRROR_OF;
+import static com.buschmais.jqassistant.commandline.configuration.Mirror.URL;
 import static com.buschmais.jqassistant.commandline.configuration.Proxy.*;
+import static com.buschmais.jqassistant.core.runtime.api.configuration.Configuration.PREFIX;
 import static java.util.stream.Collectors.toList;
+import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Slf4j
+@NoArgsConstructor(access = PRIVATE)
 public class MavenSettingsConfigSourceBuilder {
 
     private static final String USER_MAVEN_SETTINGS = ".m2/settings.xml";
 
-    public static ConfigSource createConfigSource(File userHome) throws CliConfigurationException {
+    public static ConfigSource createMavenSettingsConfigSource(File userHome, Optional<File> mavenSettingsFile) throws CliConfigurationException {
         Map<String, String> properties = new HashMap<>();
-        File settingsFile = new File(userHome, USER_MAVEN_SETTINGS);
+        File settingsFile = mavenSettingsFile.orElseGet(() -> new File(userHome, USER_MAVEN_SETTINGS));
         if (settingsFile.exists()) {
             Settings settings = loadMavenSettings(settingsFile);
             String localRepository = settings.getLocalRepository();
@@ -47,8 +53,8 @@ public class MavenSettingsConfigSourceBuilder {
         for (Mirror mirror : settings.getMirrors()) {
             String id = mirror.getId();
             if (id != null) {
-                put(mirror.getUrl(), properties, PREFIX, id, URL);
-                put(mirror.getMirrorOf(), properties, PREFIX, id, MIRROR_OF);
+                put(mirror.getUrl(), properties, com.buschmais.jqassistant.commandline.configuration.Mirror.PREFIX, id, URL);
+                put(mirror.getMirrorOf(), properties, com.buschmais.jqassistant.commandline.configuration.Mirror.PREFIX, id, MIRROR_OF);
             } else {
                 log.warn("Cannot configure mirror from Maven settings without id (url={}).", mirror.getUrl());
             }
@@ -61,11 +67,11 @@ public class MavenSettingsConfigSourceBuilder {
             .filter(Proxy::isActive)
             .findFirst()
             .ifPresent(proxy -> {
-                put(proxy.getProtocol(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PROTOCOL);
-                put(proxy.getHost(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, HOST);
-                put(Integer.toString(proxy.getPort()), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PORT);
-                put(proxy.getUsername(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, USERNAME);
-                put(proxy.getPassword(), properties, CliConfiguration.PREFIX, CliConfiguration.PROXY, PASSWORD);
+                put(proxy.getProtocol(), properties, PREFIX, PROXY, PROTOCOL);
+                put(proxy.getHost(), properties, PREFIX, PROXY, HOST);
+                put(Integer.toString(proxy.getPort()), properties, PREFIX, PROXY, PORT);
+                put(proxy.getUsername(), properties, PREFIX, PROXY, USERNAME);
+                put(proxy.getPassword(), properties, PREFIX, PROXY, PASSWORD);
             });
     }
 

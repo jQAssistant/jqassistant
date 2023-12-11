@@ -12,23 +12,24 @@ import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLo
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MavenSettingsConfigSourceBuilderTest {
 
     @Test
-    void mavenSettings() throws CliConfigurationException {
+    void defaultMavenSettings() throws CliConfigurationException {
         URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
         File userHome = new File(userHomeUrl.getFile());
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createConfigSource(userHome);
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
         ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
         CliConfiguration configuration = configurationLoader.load(configSource);
 
         Optional<Proxy> proxyOptional = configuration.proxy();
-        assertThat(proxyOptional.isPresent()).isTrue();
+        assertThat(proxyOptional).isPresent();
         Proxy proxy = proxyOptional.get();
         assertThat(proxy.protocol()).isEqualTo("https");
         assertThat(proxy.host()).isEqualTo("active-proxy-host");
@@ -69,12 +70,27 @@ class MavenSettingsConfigSourceBuilderTest {
     }
 
     @Test
+    void customMavenSettings() throws CliConfigurationException {
+        URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
+        File userHome = new File(userHomeUrl.getFile());
+        File customSettings = new File(userHome, "custom-maven-settings.xml");
+
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, Optional.of(customSettings));
+
+        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
+        CliConfiguration configuration = configurationLoader.load(configSource);
+
+        Repositories repositories = configuration.repositories();
+        assertThat(repositories.local()).isEqualTo(of(new File("~/custom-repo")));
+    }
+
+    @Test
     void withoutMavenSettings() throws CliConfigurationException {
         File userHome = new File("invalid-userhome");
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createConfigSource(userHome);
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        configSource.getPropertyNames()
+        assertThat(configSource.getPropertyNames())
             .isEmpty();
     }
 }

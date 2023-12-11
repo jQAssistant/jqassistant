@@ -10,6 +10,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
@@ -31,11 +32,13 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createConfigSource;
+import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -51,6 +54,8 @@ public class Main {
     private static final String DIRECTORY_PLUGINS = "plugins";
 
     private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
+
+    private static final String CMDLINE_OPTION_MAVEN_SETTINGS = "-mavenSettings";
 
     /**
      * The main method.
@@ -145,6 +150,12 @@ public class Main {
             .hasArgs()
             .valueSeparator(',')
             .build());
+        options.addOption(Option.builder("M")
+            .longOpt("mavenSettings")
+            .desc("The location of a Maven settings.xml file to use for repository, proxy and mirror configurations.")
+            .hasArg()
+            .valueSeparator(',')
+            .build());
         options.addOption(Option.builder("D")
             .desc("Additional configuration property.")
             .hasArgs()
@@ -221,14 +232,19 @@ public class Main {
             configLocations);
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
-        ConfigSource mavenSettings = createConfigSource(userHome);
+        ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine));
         ConfigSource configSource = configurationBuilder.build();
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
         }
-        CliConfiguration configuration = configurationLoader.load(configSource, new SysPropConfigSource(),
-            commandLineProperties, mavenSettings);
-        return configuration;
+        return configurationLoader.load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+    }
+
+    private Optional<File> getMavenSettings(CommandLine commandLine) {
+        if (commandLine.hasOption(CMDLINE_OPTION_MAVEN_SETTINGS)) {
+            return of(new File(commandLine.getOptionValue(CMDLINE_OPTION_MAVEN_SETTINGS)));
+        }
+        return empty();
     }
 
     private List<String> getConfigLocations(CommandLine commandLine) {
@@ -261,7 +277,7 @@ public class Main {
      * @return The command line.
      */
     private CommandLine getCommandLine(String[] args, Options options) {
-        final CommandLineParser parser = new BasicParser();
+        final CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = null;
         try {
             commandLine = parser.parse(options, args);
@@ -354,7 +370,7 @@ public class Main {
                 } catch (IOException e) {
                     throw new CliExecutionException("Cannot read plugin directory.", e);
                 }
-                LOGGER.debug("Using plugin URLs: " + urls);
+                LOGGER.debug("Using plugin URLs: {}.", urls);
                 return new PluginClassLoader(parentClassLoader, urls);
             }
         }

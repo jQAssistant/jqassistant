@@ -24,11 +24,11 @@ class ScanIT extends AbstractCLIIT {
     private static final String CLASSPATH_SCOPE_SUFFIX = "java:classpath::";
 
     @Test
-    public void classFromDirectory() throws IOException, InterruptedException {
+    void classFromDirectory() throws IOException, InterruptedException {
         String directory = ScanIT.class.getResource("/")
             .getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
     }
 
@@ -36,7 +36,7 @@ class ScanIT extends AbstractCLIIT {
     void files() throws IOException, InterruptedException {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
 
         Store store = getStore(getDefaultStoreDirectory());
         store.start();
@@ -53,7 +53,7 @@ class ScanIT extends AbstractCLIIT {
         File configFile = new File(ScanIT.class.getResource("/.jqassistant-with-scan-include.yml")
             .getFile());
         String[] args = new String[] { "scan", "-configurationLocations", configFile.getAbsolutePath() };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
 
         Store store = getStore(getDefaultStoreDirectory());
         store.start();
@@ -65,13 +65,23 @@ class ScanIT extends AbstractCLIIT {
         assertThat(count).isEqualTo(1L);
     }
 
+    @Test
+    void customMavenSettings() throws IOException, InterruptedException {
+        File customRepository = new File(getWorkingDirectory(), "custom-repository/");
+        File mavenSettings = new File(ScanIT.class.getResource("/userhome/custom-maven-settings.xml")
+            .getFile());
+        String[] args = new String[] { "scan", "-mavenSettings", mavenSettings.getAbsolutePath()};
+        execute(args);
+
+        assertThat(customRepository).exists();
+    }
 
     @Test
     void reset() throws IOException, InterruptedException {
         URL file = getResource(AnalyzeIT.class);
         String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.scan.reset=true" };
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(0);
+        assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains("Resetting store"));
         withStore(getDefaultStoreDirectory(), store -> {
@@ -85,7 +95,7 @@ class ScanIT extends AbstractCLIIT {
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);
         String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.store.uri=" + directory.toURI() };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
         withStore(directory, store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 

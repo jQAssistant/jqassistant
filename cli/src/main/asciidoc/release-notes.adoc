@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 2.0.10
+
+* Added command line parameter `-mavenSettings` for specifying the location of a Maven `settings.xml` file to use for repository, proxy and mirror configurations
+
 == 2.0.7
 
 * Added task `effective-configuration` to print the current configuration as YAML representation on the console

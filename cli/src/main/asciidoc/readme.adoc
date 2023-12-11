@@ -86,6 +86,10 @@ Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven 
 ** the list of configuration locations, e.g. YAML files and directories
 ** default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
 
+[[cli:mavenSettings]]
+* -mavenSettings <file>
+** the location of a Maven settings.xml file to use for repository, proxy and mirror configurations
+
 [[cli:configurationProperty]]
 * -D key1=value1 [-D key2=value]
 ** one or more configuration properties to extend or overwrite the existing configuration
