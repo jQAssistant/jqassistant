@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.RepositorySystem;
@@ -34,6 +35,7 @@ import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
  * Implementation of a {@link PluginResolver} based on Eclipse Aether.
  */
 @Slf4j
+@Getter
 @RequiredArgsConstructor
 public class AetherPluginResolverImpl implements PluginResolver {
 

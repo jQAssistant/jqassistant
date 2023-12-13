@@ -113,9 +113,7 @@ public class ConfigurationLoaderImpl<C extends Configuration> implements Configu
         log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
         List<Path> configurationFiles = getYamlConfigurationFiles(configurationDirectory);
         return configurationFiles.stream()
-            .map(path -> {
-                return getYamlConfigSource(path, ordinal);
-            })
+            .map(path -> getYamlConfigSource(path, ordinal))
             .collect(toList());
     }
 
