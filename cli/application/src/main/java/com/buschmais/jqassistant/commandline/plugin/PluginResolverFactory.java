@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.commandline.plugin;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.MirrorSelector;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
@@ -29,7 +31,7 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 
-import static java.util.Collections.singletonList;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
@@ -41,11 +43,30 @@ import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY
 @Slf4j
 public class PluginResolverFactory {
 
+    public static final String MAVEN_CENTRAL_ID = "central";
+
+    public static final String MAVEN_CENTRAL_URL = "https://repo1.maven.org/maven2";
+
     private static final RepositoryPolicy SNAPSHOT_REPOSITORY_POLICY = new RepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_FAIL);
 
-    private static final String CENTRAL_URL = "https://repo1.maven.org/maven2";
-    public static final String CENTRAL_ID = "central";
-    public static final String REPOSITORY_LAYOUT_DEFAULT = "default";
+    private static final String REPOSITORY_LAYOUT_DEFAULT = "default";
+
+    private static final Remote MAVEN_CENTRAL = new Remote() {
+        @Override
+        public String url() {
+            return MAVEN_CENTRAL_URL;
+        }
+
+        @Override
+        public Optional<String> username() {
+            return empty();
+        }
+
+        @Override
+        public Optional<String> password() {
+            return empty();
+        }
+    };
 
     private final File jqassistantUserDir;
 
@@ -58,7 +79,7 @@ public class PluginResolverFactory {
      * <p>
      * The default local repository is ~/.jqassistant/repository.
      * <p>
-     * If no remote repository is specified the resolver will use Maven Central, see {@link #CENTRAL_URL}.
+     * If no remote repository is specified the resolver will use Maven Central.
      *
      * @param configuration
      *     The {@link CliConfiguration}.
@@ -68,13 +89,14 @@ public class PluginResolverFactory {
         Repositories repositories = configuration.repositories();
         File localRepository = getLocalRepository(repositories);
         Optional<org.eclipse.aether.repository.Proxy> proxy = getProxy(configuration.proxy());
-        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxy);
+        Optional<MirrorSelector> mirrorSelector = getMirrorSelector(repositories);
+        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxy, mirrorSelector);
 
         RepositorySystem repositorySystem = newRepositorySystem();
         log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
             .map(remoteRepository -> "'" + remoteRepository.getId() + " (" + remoteRepository.getUrl() + ")'")
             .collect(joining(", ")));
-        RepositorySystemSession session = newRepositorySystemSession(repositories, repositorySystem, localRepository);
+        RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector);
 
         return new AetherPluginResolverImpl(repositorySystem, session, remoteRepositories);
     }
@@ -120,32 +142,35 @@ public class PluginResolverFactory {
      * @param repositories
      *     The {@link Repositories} configuration.
      * @param optionalProxy
+     * @param mirrorSelector
      * @return The list of configured {@link RemoteRepository}s.
      */
-    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
-        Map<String, Remote> remotes = repositories.remotes();
-        if (remotes.isEmpty()) {
-            RemoteRepository.Builder builder = new RemoteRepository.Builder(CENTRAL_ID, REPOSITORY_LAYOUT_DEFAULT, CENTRAL_URL);
-            optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
-            return singletonList(builder.build());
-        }
+    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, Optional<org.eclipse.aether.repository.Proxy> optionalProxy,
+        Optional<MirrorSelector> mirrorSelector) {
+        // Use Maven Central as default
+        Map<String, Remote> remotes = new HashMap<>();
+        remotes.put(MAVEN_CENTRAL_ID, MAVEN_CENTRAL);
+        // Add configured remotes
+        remotes.putAll(repositories.remotes());
         return remotes.entrySet()
             .stream()
-            .map(remoteEntry -> {
-                String id = remoteEntry.getKey();
-                Remote remote = remoteEntry.getValue();
-                AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-                remote.username()
-                    .ifPresent(username -> authBuilder.addUsername(username));
-                remote.password()
-                    .ifPresent(password -> authBuilder.addPassword(password));
-                RemoteRepository.Builder builder = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(
-                        authBuilder.build())
-                    .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY);
-                optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
-                return builder.build();
-            })
+            .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), optionalProxy))
+            // apply any configured mirrors to the remote repository
+            .map(remoteRepository -> mirrorSelector.map(selector -> ofNullable(selector.getMirror(remoteRepository)).orElse(remoteRepository))
+                .orElse(remoteRepository))
             .collect(toList());
+    }
+
+    private static RemoteRepository getRemoteRepository(String id, Remote remote, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
+        AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+        remote.username()
+            .ifPresent(username -> authBuilder.addUsername(username));
+        remote.password()
+            .ifPresent(password -> authBuilder.addPassword(password));
+        RemoteRepository.Builder builder = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(authBuilder.build())
+            .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY);
+        optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
+        return builder.build();
     }
 
     /**
@@ -168,27 +193,28 @@ public class PluginResolverFactory {
      *     the {@link RepositorySystem}
      * @return a new {@link RepositorySystemSession}.
      */
-    private RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory) {
+    private RepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory, Optional<MirrorSelector> mirrorSelector) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setTransferListener(new TransferListener());
         LocalRepository localRepo = new LocalRepository(localDirectory);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        addMirrors(repositories, session);
+        mirrorSelector.ifPresent(selector -> session.setMirrorSelector(selector));
         return session;
     }
 
-    private static void addMirrors(Repositories repositories, DefaultRepositorySystemSession session) {
-        if (!repositories.mirrors()
+    private Optional<MirrorSelector> getMirrorSelector(Repositories repositories) {
+        if (repositories.mirrors()
             .isEmpty()) {
-            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
-            for (Map.Entry<String, Mirror> entry : repositories.mirrors()
-                .entrySet()) {
-                String id = entry.getKey();
-                Mirror mirror = entry.getValue();
-                mirrorSelector.add(id, mirror.url(), null, false, mirror.mirrorOf(), null);
-            }
-            session.setMirrorSelector(mirrorSelector);
+            return empty();
         }
+        DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
+        for (Map.Entry<String, Mirror> entry : repositories.mirrors()
+            .entrySet()) {
+            String id = entry.getKey();
+            Mirror mirror = entry.getValue();
+            mirrorSelector.add(id, mirror.url(), null, false, mirror.mirrorOf(), null);
+        }
+        return of(mirrorSelector);
     }
 
     /**
