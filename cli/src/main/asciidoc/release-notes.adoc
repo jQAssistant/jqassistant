@@ -5,6 +5,7 @@
 
 * Added command line parameter `-mavenSettings` for specifying the location of a Maven `settings.xml` file to use for repository, proxy and mirror configurations
 * Improved support for mirrors of remote repositories for plugin provisioning
+* Added setting `non-proxy-host` to proxy configuration for plugin provisioning
 
 == 2.0.7
 

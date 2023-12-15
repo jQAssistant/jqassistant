@@ -38,6 +38,8 @@ class MavenSettingsConfigSourceBuilderTest {
             .isEqualTo("foo");
         assertThat(proxy.password()).get()
             .isEqualTo("bar");
+        assertThat(proxy.nonProxyHosts())
+            .isEqualTo("internal-host");
 
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/local-repo")));

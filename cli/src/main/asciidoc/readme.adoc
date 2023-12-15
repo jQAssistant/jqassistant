@@ -66,10 +66,10 @@ jqassistant:
     #
     # -Djqassistant.proxy.port
     port:
-    # The proxy user name for authentication
+    # The list of hosts which should not be proxied, separated by ',' or '|', the wildcard '*' is allowed.
     #
-    # -Djqassistant.proxy.username (optional)
-    username:
+    # -Djqassistant.proxy.non-proxy-hosts (optional)
+    non-proxy-hosts:
     # The proxy password for authentication
     #
     # -Djqassistant.proxy.password (optional)

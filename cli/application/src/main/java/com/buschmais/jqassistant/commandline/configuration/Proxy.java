@@ -20,6 +20,12 @@ public interface Proxy {
 
     Integer port();
 
+    String NON_PROXY_HOSTS = "non-proxy-hosts";
+
+    @Description("The list of hosts which should not be proxied, separated by ',' or '|', the wildcard '*' is allowed.")
+    @WithDefault("")
+    String nonProxyHosts();
+
     String USERNAME = "username";
     @Description("The user name for authenticating against the proxy.")
     Optional<String> username();

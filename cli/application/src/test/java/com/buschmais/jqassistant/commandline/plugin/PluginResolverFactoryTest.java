@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.configuration.Mirror;
+import com.buschmais.jqassistant.commandline.configuration.Proxy;
 import com.buschmais.jqassistant.commandline.configuration.Repositories;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory.MAVEN_CENTRAL_ID;
 import static com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory.MAVEN_CENTRAL_URL;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -51,7 +53,6 @@ public class PluginResolverFactoryTest {
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mavenCentral = remoteRepositories.get(0);
         verify(mavenCentral, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL);
-
     }
 
     @Test
@@ -74,7 +75,34 @@ public class PluginResolverFactoryTest {
         RemoteRepository mirroredRepository = mirroredRepositories.get(0);
         verify(mirroredRepository, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL);
     }
-    
+
+    @Test
+    void proxy() {
+        String proxyHost = "proxy-host";
+        int proxyPort = 80;
+        String proxyUser = "foo";
+        String proxyPassword = "bar";
+        Proxy proxy = mock(Proxy.class);
+        doReturn(proxyHost).when(proxy)
+            .host();
+        doReturn(proxyPort).when(proxy)
+            .port();
+        doReturn(of(proxyUser)).when(proxy).username();
+        doReturn(of(proxyPassword)).when(proxy).password();
+        doReturn(of(proxy)).when(configuration)
+            .proxy();
+
+        PluginResolver pluginResolver = pluginResolverFactory.create(configuration);
+
+        List<RemoteRepository> remoteRepositories = pluginResolver.getRepositories();
+        assertThat(remoteRepositories).hasSize(1);
+        RemoteRepository mavenCentral = remoteRepositories.get(0);
+        org.eclipse.aether.repository.Proxy centralProxy = mavenCentral.getProxy();
+        assertThat(centralProxy.getHost()).isEqualTo(proxyHost);
+        assertThat(centralProxy.getPort()).isEqualTo(proxyPort);
+        assertThat(centralProxy.getAuthentication()).isNotNull();
+    }
+
     private static void verify(RemoteRepository repository, String expectedId, String expectedUrl) {
         assertThat(repository.getId()).isEqualTo(expectedId);
         assertThat(repository.getUrl()).isEqualTo(expectedUrl);
