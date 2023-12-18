@@ -90,10 +90,16 @@ public class PluginResolverFactory {
         Optional<org.eclipse.aether.repository.Proxy> proxy = getProxy(configuration.proxy());
         ProxySelector proxySelector = getProxySelector(configuration, proxy);
         Optional<MirrorSelector> mirrorSelector = getMirrorSelector(repositories);
-        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxy, mirrorSelector);
+        List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxySelector, mirrorSelector);
         RepositorySystem repositorySystem = newRepositorySystem();
         log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
-            .map(remoteRepository -> "'" + remoteRepository.getId() + " (" + remoteRepository.getUrl() + ")'")
+            .map(repository -> {
+                org.eclipse.aether.repository.Proxy repositoryProxy = repository.getProxy();
+                String repositoryInfo = "'" + repository.getId() + " (" + repository.getUrl() + (repositoryProxy != null ?
+                    " via proxy " + repositoryProxy.getHost() + ":" + repositoryProxy.getPort() :
+                    "") + ")'";
+                return repositoryInfo;
+            })
             .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector, proxySelector);
 
@@ -132,10 +138,11 @@ public class PluginResolverFactory {
         });
     }
 
-    private ProxySelector getProxySelector(CliConfiguration configuration, Optional<org.eclipse.aether.repository.Proxy> proxy) {
+    private ProxySelector getProxySelector(CliConfiguration configuration, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
         DefaultProxySelector proxySelector = new DefaultProxySelector();
-        proxy.ifPresent(p -> proxySelector.add(p, configuration.proxy()
-            .map(Proxy::nonProxyHosts)
+        optionalProxy.ifPresent(proxy -> proxySelector.add(proxy, configuration.proxy()
+            .map(proxyConfiguration -> proxyConfiguration.nonProxyHosts()
+                .orElse(null))
             .orElse(null)));
         return proxySelector;
     }
@@ -145,12 +152,11 @@ public class PluginResolverFactory {
      *
      * @param repositories
      *     The {@link Repositories} configuration.
-     * @param optionalProxy
+     * @param proxySelector
      * @param mirrorSelector
      * @return The list of configured {@link RemoteRepository}s.
      */
-    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, Optional<org.eclipse.aether.repository.Proxy> optionalProxy,
-        Optional<MirrorSelector> mirrorSelector) {
+    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, ProxySelector proxySelector, Optional<MirrorSelector> mirrorSelector) {
         // Use Maven Central as default
         Map<String, Remote> remotes = new HashMap<>();
         remotes.put(MAVEN_CENTRAL_ID, MAVEN_CENTRAL);
@@ -158,23 +164,25 @@ public class PluginResolverFactory {
         remotes.putAll(repositories.remotes());
         return remotes.entrySet()
             .stream()
-            .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), optionalProxy))
+            .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), proxySelector))
             // apply any configured mirrors to the remote repository
             .map(remoteRepository -> mirrorSelector.map(selector -> ofNullable(selector.getMirror(remoteRepository)).orElse(remoteRepository))
                 .orElse(remoteRepository))
             .collect(toList());
     }
 
-    private static RemoteRepository getRemoteRepository(String id, Remote remote, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
+    private static RemoteRepository getRemoteRepository(String id, Remote remote, ProxySelector proxySelector) {
         AuthenticationBuilder authBuilder = new AuthenticationBuilder();
         remote.username()
             .ifPresent(username -> authBuilder.addUsername(username));
         remote.password()
             .ifPresent(password -> authBuilder.addPassword(password));
-        RemoteRepository.Builder builder = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(authBuilder.build())
-            .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY);
-        optionalProxy.ifPresent(proxy -> builder.setProxy(proxy));
-        return builder.build();
+        RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(authBuilder.build())
+            .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY)
+            .build();
+        org.eclipse.aether.repository.Proxy proxy = proxySelector.getProxy(remoteRepository);
+        return new RemoteRepository.Builder(remoteRepository).setProxy(proxy)
+            .build();
     }
 
     /**
