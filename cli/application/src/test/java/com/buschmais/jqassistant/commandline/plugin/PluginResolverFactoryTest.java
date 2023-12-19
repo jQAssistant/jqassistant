@@ -83,6 +83,8 @@ public class PluginResolverFactoryTest {
         String proxyUser = "foo";
         String proxyPassword = "bar";
         Proxy proxy = mock(Proxy.class);
+        doReturn("https").when(proxy)
+            .protocol();
         doReturn(proxyHost).when(proxy)
             .host();
         doReturn(proxyPort).when(proxy)
