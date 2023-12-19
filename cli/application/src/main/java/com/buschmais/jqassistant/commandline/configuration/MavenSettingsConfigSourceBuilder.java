@@ -72,6 +72,7 @@ public class MavenSettingsConfigSourceBuilder {
                 put(Integer.toString(proxy.getPort()), properties, PREFIX, PROXY, PORT);
                 put(proxy.getUsername(), properties, PREFIX, PROXY, USERNAME);
                 put(proxy.getPassword(), properties, PREFIX, PROXY, PASSWORD);
+                put(proxy.getNonProxyHosts(), properties, PREFIX, PROXY, NON_PROXY_HOSTS);
             });
     }
 
