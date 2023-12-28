@@ -88,6 +88,7 @@
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <junit.version>5.9.1</junit.version>
+        <junit-pioneer.version>2.2.0</junit-pioneer.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
@@ -126,7 +127,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>2.0.9</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>2.0.10</maven.jqassistant.previous.version>
         <maven.resources.version>3.0.2</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
