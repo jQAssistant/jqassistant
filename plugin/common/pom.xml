@@ -40,10 +40,10 @@
   </scm>
 
     <properties>
-        <org.codehaus.groovy.version>3.0.0-rc-1</org.codehaus.groovy.version>
-        <org.jruby.version>9.3.8.0</org.jruby.version>
-        <commons-compress.version>1.19</commons-compress.version>
-        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <org.codehaus.groovy.version>3.0.20</org.codehaus.groovy.version>
+        <org.jruby.version>9.4.5.0</org.jruby.version>
+        <org.openjdk.nashorn.version>15.4</org.openjdk.nashorn.version>
+        <commons-compress.version>1.25.0</commons-compress.version>
     </properties>
 
     <build>
@@ -131,6 +131,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -145,6 +146,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>${org.openjdk.nashorn.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

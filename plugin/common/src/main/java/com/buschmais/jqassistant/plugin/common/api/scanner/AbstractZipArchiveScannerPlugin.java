@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.IOException;
-import java.util.zip.ZipException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -50,7 +49,7 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
         try (ZipFileResource zipFile = new ZipFileResource(file.getFile())) {
             scanner.scan(zipFile, path, archiveScope);
             archive.setValid(true);
-        } catch (ZipException e) {
+        } catch (IOException e) {
             LOGGER.warn("Cannot read ZIP file '" + path + "'.", e);
             archive.setValid(false);
         }
