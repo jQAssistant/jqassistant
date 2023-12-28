@@ -116,7 +116,7 @@
         <maven.dependency.version>3.3.0</maven.dependency.version>
         <maven.deploy.version>3.1.1</maven.deploy.version>
         <maven.enforcer.version>3.0.0</maven.enforcer.version>
-        <maven.failsafe.version>3.0.0</maven.failsafe.version>
+        <maven.failsafe.version>3.2.3</maven.failsafe.version>
         <maven.install.version>3.1.1</maven.install.version>
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.4.0</maven.javadoc.version>
@@ -216,12 +216,18 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven.failsafe.version}</version>
+                    <configuration>
+                        <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED</argLine>
+                    </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.version}</version>
+                    <configuration>
+                        <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -414,7 +420,7 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>[11,)</version>
+                                        <version>[17,)</version>
                                     </requireJavaVersion>
                                 </rules>
                             </configuration>
@@ -524,11 +530,6 @@
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
-                                <configuration>
-                                    <argLine>-Xmx768M -XX:+HeapDumpOnOutOfMemoryError</argLine>
-                                    <forkCount>1</forkCount>
-                                    <reuseForks>false</reuseForks>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
