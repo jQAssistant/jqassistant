@@ -163,12 +163,6 @@
                 <artifactId>jqa-distribution-specification</artifactId>
                 <version>${jqa-distribution-spec.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.junit-pioneer</groupId>
-                <artifactId>junit-pioneer</artifactId>
-                <version>1.6.2</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
