@@ -102,7 +102,7 @@
         <snakeyaml.version>2.0</snakeyaml.version>
         <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xo.version>2.2.1</xo.version>
+        <xo.version>2.2.2</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.9</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
@@ -270,10 +270,7 @@
                     <version>${maven.compiler.version}</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>11</source>
-                        <target>11</target>
-                        <testSource>11</testSource>
-                        <testTarget>11</testTarget>
+                        <release>11</release>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
