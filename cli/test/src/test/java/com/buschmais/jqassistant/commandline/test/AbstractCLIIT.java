@@ -136,7 +136,8 @@ public abstract class AbstractCLIIT {
         // The user home contains a Maven settings.xml to configure the local repository
         String userHome = AbstractCLIIT.class.getResource("/userhome/")
             .getFile();
-        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
+        // Add JVM parameters for Neo4jx and Java 17
+        environment.put("JQASSISTANT_OPTS", "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED -Duser.home=" + userHome);
         //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
