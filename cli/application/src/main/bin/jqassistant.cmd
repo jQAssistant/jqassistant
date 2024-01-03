@@ -7,4 +7,4 @@ if "%JAVA_HOME%" == "" (
 )
 
 set JQASSISTANT_HOME=%~dp0%\..
-%JAVA_CMD% %JQASSISTANT_OPTS% -jar "%JQASSISTANT_HOME%\lib\${project.groupId}-${project.artifactId}-${project.version}.${project.packaging}" %*
+%JAVA_CMD% --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED %JQASSISTANT_OPTS% -jar "%JQASSISTANT_HOME%\lib\${project.groupId}-${project.artifactId}-${project.version}.${project.packaging}" %*

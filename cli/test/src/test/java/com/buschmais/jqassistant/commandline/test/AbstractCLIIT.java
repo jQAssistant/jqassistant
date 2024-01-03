@@ -57,7 +57,7 @@ public abstract class AbstractCLIIT {
      */
     static class DistributionParameterResolver implements ParameterResolver {
 
-        private int index = 0;
+        private int distributionIndex = 0;
 
         @Override
         public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
@@ -67,8 +67,9 @@ public abstract class AbstractCLIIT {
 
         @Override
         public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-            String distribution = parameterContext.getIndex() == 0 ? DISTRIBUTIONS[index] : null;
-            index = ++index % 2;
+            String distribution = parameterContext.getIndex() == 0 ? DISTRIBUTIONS[distributionIndex] : null;
+            // increment index per execution and reset after # of distributions is reached (current repetition per method is not available via API)
+            distributionIndex = ++distributionIndex % DISTRIBUTIONS.length;
             return distribution;
         }
     }
@@ -172,8 +173,7 @@ public abstract class AbstractCLIIT {
         // The user home contains a Maven settings.xml to configure the local repository
         String userHome = AbstractCLIIT.class.getResource("/userhome/")
             .getFile();
-        // Add JVM parameters for Neo4jx and Java 17
-        environment.put("JQASSISTANT_OPTS", "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED -Duser.home=" + userHome);
+        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
         //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
