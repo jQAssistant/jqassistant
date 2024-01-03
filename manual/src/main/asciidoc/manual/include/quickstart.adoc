@@ -4,27 +4,18 @@
 
 ==== Requirements
 
-- Java Development Kit 11 or 17
-+
-NOTE: Java 21 is currently not supported if the embedded Neo4j database is used.
-
-- The following JVM parameters are required if `Java 17` is used as runtime environment:
-+
-.Windows
-----
-set JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
-----
-+
-.Linux
-----
-export JQASSISTANT_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
-----
+- Java Development Kit 11 or later
+- optional _JAVA_HOME_ environment variable pointing to the JDK to be used for jQAssistant
 
 ==== Installation
 
-* The latest command line distribution is available on https://search.maven.org/search?q=a:jqassistant-commandline-distribution[Maven Central], select `bin.zip` from the `Download` menu.
+* The latest command line distributions are available for download from Maven Central by selecting `distribution.zip` from the `Download` menu:
+** https://search.maven.org/search?q=a:jqassistant-commandline-neo4jv4[JDK 11], provides Neo4j v4.x]
+** https://search.maven.org/search?q=a:jqassistant-commandline-neo4jv5[JDK 17 or later], provides, Neo4j v5.x
 * Download and unpack the distribution, a directory
-  `jqassistant-commandline-distribution-_version_` will be created.
+  `jqassistant-commandline-_neo4jv?_-_version_` will be created.
+
+NOTE: jQAssistant releases until 2.0.x are available https://search.maven.org/search?q=a:jqassistant-commandline-distributions[here].
 
 ==== Scan
 
@@ -76,29 +67,6 @@ LIMIT 20
 
 - Maven 3.5 or later
 - Java Development Kit 11 or 17
-+
-NOTE: Java 21 is currently not supported if the embedded Neo4j database is used.
-
-- The following JVM parameters are required if `Java 17` is used as runtime environment:
-+
-.Windows
-----
-set MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
-----
-+
-.Linux
-----
-export MAVEN_OPTS=--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
-----
-+
-An alternative option is to place these settings into a file `.mvn/jvm.config` in the root Maven module:
-+
-[source]
-..mvn/jvm.config
-----
---add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED
-----
-
 
 ==== Add the plugin
 
