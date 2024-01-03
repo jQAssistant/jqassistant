@@ -65,6 +65,24 @@
 
     <profiles>
         <profile>
+            <id>neo4jv4</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <neo4j.version>${neo4j_4x.version}</neo4j.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>neo4jv5</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <properties>
+                <neo4j.version>${neo4j_5x.version}</neo4j.version>
+            </properties>
+        </profile>
+        <profile>
             <id>IT</id>
             <properties>
                 <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
@@ -302,6 +320,16 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j.community</groupId>
+            <artifactId>it-test-support</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>
