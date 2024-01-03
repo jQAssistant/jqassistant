@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.commandline.test;
 
 import java.io.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +22,66 @@ import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.extension.*;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
+import static lombok.AccessLevel.PRIVATE;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.junit.Assume.assumeTrue;
 
 /**
  * Abstract base implementation for CLI tests.
  */
 @Slf4j
+@ExtendWith(AbstractCLIIT.DistributionParameterResolver.class)
 public abstract class AbstractCLIIT {
+
+    private static final String[] DISTRIBUTIONS = new String[] { "neo4jv4", "neo4jv5" };
+
+    /**
+     * Resolves the distribution parameter of the method {@link AbstractCLIIT#before(String)} (String)}.
+     */
+    static class DistributionParameterResolver implements ParameterResolver {
+
+        private int distributionIndex = 0;
+
+        @Override
+        public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+            return parameterContext.getIndex() == 0 && parameterContext.getParameter()
+                .getType() == String.class;
+        }
+
+        @Override
+        public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+            String distribution = parameterContext.getIndex() == 0 ? DISTRIBUTIONS[distributionIndex] : null;
+            // increment index per execution and reset after # of distributions is reached (current repetition per method is not available via API)
+            distributionIndex = ++distributionIndex % DISTRIBUTIONS.length;
+            return distribution;
+        }
+    }
+
+    /**
+     * Meta-annotation for test to executed for multiple distributions
+     */
+    @RepeatedTest(value = 2) // Must match the length of #DistributionParameterResolver.DISTRIBUTIONS
+    @Retention(RUNTIME)
+    @Target(METHOD)
+    @interface DistributionTest {
+    }
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
 
@@ -45,44 +92,29 @@ public abstract class AbstractCLIIT {
 
     private PluginRepository pluginRepository;
 
-    private Properties properties = new Properties();
+    private String jqaHome;
 
     /**
      * Represents the result of a CLI execution containing exit code and console
      * output.
      */
+    @Builder
+    @Getter
+    @RequiredArgsConstructor(access = PRIVATE)
     protected static class ExecutionResult {
 
-        private int exitCode;
-        private List<String> standardConsole;
-        private List<String> errorConsole;
-
-        /**
-         * Constructor.
-         *
-         * @param exitCode
-         *            The exit code.
-         * @param standardConsole
-         *            The standard console output.
-         * @param errorConsole
-         *            The error console output.
-         */
-        public ExecutionResult(int exitCode, List<String> standardConsole, List<String> errorConsole) {
-            this.exitCode = exitCode;
-            this.standardConsole = standardConsole;
-            this.errorConsole = errorConsole;
-        }
+        private final Process process;
+        private final List<String> standardConsole;
+        private final List<String> errorConsole;
 
         public int getExitCode() {
-            return exitCode;
-        }
-
-        public List<String> getStandardConsole() {
-            return standardConsole;
-        }
-
-        public List<String> getErrorConsole() {
-            return errorConsole;
+            try {
+                int exitCode = process.waitFor();
+                log.info("Process finished with exit code '{}'.", exitCode);
+                return exitCode;
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Interrupted while waiting for process to exit.", e);
+            }
         }
     }
 
@@ -90,12 +122,20 @@ public abstract class AbstractCLIIT {
      * Reset the default store.
      */
     @BeforeEach
-    public void before() throws IOException {
-        properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
+    public void before(String neo4jVersion) throws IOException {
+        this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
         pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())));
         pluginRepository.initialize();
+    }
+
+    private String getjQAHomeDirectory(String neo4jVersion) throws IOException {
+        Properties properties = new Properties();
+        properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
+        String jqaHomeProperty = properties.getProperty("jqassistant.home");
+        String projectVersionProperty = properties.getProperty("project.version");
+        return new File(jqaHomeProperty + "jqassistant-commandline-" + neo4jVersion + "-" + projectVersionProperty).getAbsolutePath();
     }
 
     @AfterEach
@@ -115,12 +155,9 @@ public abstract class AbstractCLIIT {
      * @throws InterruptedException
      *             If an error occurs.
      */
-    protected ExecutionResult execute(String... args) throws IOException, InterruptedException {
+    protected ExecutionResult execute(String... args) {
         assumeTrue("Test cannot be executed on this operating system.",
                    SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
-        String jqaHomeProperty = properties.getProperty("jqassistant.home");
-        String projectVersionProperty = properties.getProperty("project.version");
-        String jqaHome = new File(jqaHomeProperty + "jqassistant-commandline-distribution-" + projectVersionProperty).getAbsolutePath();
         List<String> command = new ArrayList<>();
         if (SystemUtils.IS_OS_WINDOWS) {
             command.add("cmd.exe");
@@ -136,24 +173,29 @@ public abstract class AbstractCLIIT {
         // The user home contains a Maven settings.xml to configure the local repository
         String userHome = AbstractCLIIT.class.getResource("/userhome/")
             .getFile();
-        // Add JVM parameters for Neo4jx and Java 17
-        environment.put("JQASSISTANT_OPTS", "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED -Duser.home=" + userHome);
+        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
         //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
 
         log.info("Executing '{}'.", command.stream().collect(joining(" ")));
-        Process process = builder.start();
-
+        Process process;
+        try {
+            process = builder.start();
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not execute command", e);
+        }
         ConsoleReader standardConsole = new ConsoleReader(process.getInputStream(), System.out);
         ConsoleReader errorConsole = new ConsoleReader(process.getErrorStream(), System.err);
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.submit(standardConsole);
         executorService.submit(errorConsole);
-        int exitCode = process.waitFor();
-        log.info("Process finished with exit code '{}'.", exitCode);
-        return new ExecutionResult(exitCode, standardConsole.getOutput(), errorConsole.getOutput());
+        return ExecutionResult.builder()
+            .process(process)
+            .standardConsole(standardConsole.getOutput())
+            .errorConsole(errorConsole.getOutput())
+            .build();
     }
 
     /**
@@ -168,15 +210,6 @@ public abstract class AbstractCLIIT {
     }
 
     /**
-     * Return the default store directory of the test.
-     *
-     * @return The default store directory.
-     */
-    protected File getDefaultStoreDirectory() throws IOException {
-        return new File(getWorkingDirectory(), Task.DEFAULT_STORE_DIRECTORY);
-    }
-
-    /**
      * Return the default report directory of the test.
      *
      * @return The default report directory.
@@ -185,28 +218,34 @@ public abstract class AbstractCLIIT {
         return new File(getWorkingDirectory(), Task.DEFAULT_REPORT_DIRECTORY);
     }
 
-    /**
-     * Return the {@link Store}.
-     *
-     * @param directory
-     *            The directory.
-     * @return The {@link Store}.
-     */
-    protected Store getStore(File directory) {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration configuration = configurationLoader.load(configurationBuilder.build());
-        return StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository());
+    protected void withStore(File directory, StoreOperation storeOperation) {
+        ExecutionResult serverExecutionResult = execute("server", "-Djqassistant.store.uri=" + directory.toURI());
+        try {
+            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
+            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
+            CliConfiguration configuration = ((ConfigurationLoader<CliConfiguration>) new ConfigurationLoaderImpl<>(CliConfiguration.class)).load(
+                configurationBuilder.build());
+            Store remoteStore = StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository());
+            waitAtMost(30, SECONDS).untilAsserted(() -> assertThatNoException().isThrownBy(() -> remoteStore.start()));
+            try {
+                storeOperation.run(remoteStore);
+            } finally {
+                remoteStore.stop();
+            }
+        } finally {
+            PrintWriter printWriter = new PrintWriter(serverExecutionResult.getProcess()
+                .getOutputStream());
+            printWriter.println();
+            printWriter.flush();
+            if (serverExecutionResult.getExitCode() != 0) {
+                throw new IllegalStateException("Cannot stop Neo4j server.");
+            }
+        }
     }
 
-    protected void withStore(File directory, StoreOperation storeOperation) {
-        Store store = getStore(directory);
-        store.start();
-        try {
-            storeOperation.run(store);
-        } finally {
-            store.stop();
-        }
+    protected void withStore(StoreOperation storeOperation) {
+        withStore(new File(getWorkingDirectory(), Task.DEFAULT_STORE_DIRECTORY), storeOperation);
     }
 
     interface StoreOperation {

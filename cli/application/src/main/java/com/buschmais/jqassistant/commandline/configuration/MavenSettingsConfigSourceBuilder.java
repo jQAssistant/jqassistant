@@ -24,7 +24,6 @@ import static com.buschmais.jqassistant.commandline.configuration.Proxy.*;
 import static com.buschmais.jqassistant.core.runtime.api.configuration.Configuration.PREFIX;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Slf4j
 @NoArgsConstructor(access = PRIVATE)
@@ -42,7 +41,7 @@ public class MavenSettingsConfigSourceBuilder {
             applyMirrors(properties, settings);
             applyProxy(properties, settings);
             List<Profile> activeProfiles = getActiveProfiles(settings);
-            if (isNotEmpty(activeProfiles)) {
+            if (!activeProfiles.isEmpty()) {
                 applyProfileSettings(properties, settings, activeProfiles);
             }
         }

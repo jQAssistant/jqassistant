@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,19 +9,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class HelpIT extends AbstractCLIIT {
 
-    @Test
-    void runWithoutTask() throws IOException, InterruptedException {
+    @DistributionTest
+    void runWithoutTask()  {
         verify(new String[0]);
     }
 
-    @Test
-    void helpOption() throws IOException, InterruptedException {
+    @DistributionTest
+    void helpOption()  {
         verify(new String[] { "help" });
     }
 
-    private void verify(String[] args) throws IOException, InterruptedException {
+    private void verify(String[] args)  {
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(0);
+        assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getStandardConsole();
         assertThat(console).anyMatch(item -> item.contains("usage: com.buschmais.jqassistant.commandline.Main <task> [options]"));
     }

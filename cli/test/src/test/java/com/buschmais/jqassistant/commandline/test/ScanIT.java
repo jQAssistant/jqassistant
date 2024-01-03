@@ -12,7 +12,6 @@ import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,74 +22,70 @@ class ScanIT extends AbstractCLIIT {
 
     private static final String CLASSPATH_SCOPE_SUFFIX = "java:classpath::";
 
-    @Test
-    void classFromDirectory() throws IOException, InterruptedException {
+    @DistributionTest
+    void classFromDirectory() {
         String directory = ScanIT.class.getResource("/")
             .getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
         assertThat(execute(args).getExitCode()).isZero();
-        withStore(getDefaultStoreDirectory(), store -> verifyTypesScanned(store, ScanIT.class));
+        withStore(store -> verifyTypesScanned(store, ScanIT.class));
     }
 
-    @Test
-    void files() throws IOException, InterruptedException {
+    @DistributionTest
+    void files() {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
         assertThat(execute(args).getExitCode()).isZero();
 
-        Store store = getStore(getDefaultStoreDirectory());
-        store.start();
-        Map<String, Object> params = new HashMap<>();
-        params.put("fileName", "/META-INF");
-        String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
-        Long count = executeQuery(store, query, params, "count", Long.class);
-        store.stop();
-        assertThat(count).isEqualTo(1L);
+        withStore(store -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put("fileName", "/META-INF");
+            String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
+            Long count = executeQuery(store, query, params, "count", Long.class);
+            assertThat(count).isEqualTo(1L);
+        });
     }
 
-    @Test
-    void filesFromConfigFile() throws IOException, InterruptedException {
+    @DistributionTest
+    void filesFromConfigFile() {
         File configFile = new File(ScanIT.class.getResource("/.jqassistant-with-scan-include.yml")
             .getFile());
         String[] args = new String[] { "scan", "-configurationLocations", configFile.getAbsolutePath() };
         assertThat(execute(args).getExitCode()).isZero();
-
-        Store store = getStore(getDefaultStoreDirectory());
-        store.start();
-        Map<String, Object> params = new HashMap<>();
-        params.put("fileName", "/META-INF");
-        String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
-        Long count = executeQuery(store, query, params, "count", Long.class);
-        store.stop();
-        assertThat(count).isEqualTo(1L);
+        withStore(store -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put("fileName", "/META-INF");
+            String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
+            Long count = executeQuery(store, query, params, "count", Long.class);
+            assertThat(count).isEqualTo(1L);
+        });
     }
 
-    @Test
-    void customMavenSettings() throws IOException, InterruptedException {
+    @DistributionTest
+    void customMavenSettings() throws InterruptedException {
         File customRepository = new File(getWorkingDirectory(), "custom-repository/");
         File mavenSettings = new File(ScanIT.class.getResource("/userhome/custom-maven-settings.xml")
             .getFile());
-        String[] args = new String[] { "scan", "-mavenSettings", mavenSettings.getAbsolutePath()};
-        execute(args);
+
+        execute("scan", "-mavenSettings", mavenSettings.getAbsolutePath()).getProcess()
+            .waitFor();
 
         assertThat(customRepository).exists();
     }
 
-    @Test
-    void reset() throws IOException, InterruptedException {
+    @DistributionTest
+    void reset() {
         URL file = getResource(AnalyzeIT.class);
         String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.scan.reset=true" };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains("Resetting store"));
-        withStore(getDefaultStoreDirectory(), store -> {
-            verifyFilesScanned(store, new File(file.getFile()));
-        });
+        withStore(store -> verifyFilesScanned(store, new File(file.getFile())));
     }
 
-    @Test
-    void storeUri() throws IOException, InterruptedException {
+    @DistributionTest
+    void storeUri() throws IOException {
         File directory = new File(getWorkingDirectory(), "store2");
         FileUtils.deleteDirectory(directory);
         URL file = getResource(ScanIT.class);

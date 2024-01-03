@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 2.1.0
+
+* Provide different distributions for JDK 11 (Neo4j 4.x) and JDK 17 or later (Neo4j 5.x)
+
 == 2.0.10
 
 * Added command line parameter `-mavenSettings` for specifying the location of a Maven `settings.xml` file to use for repository, proxy and mirror configurations
