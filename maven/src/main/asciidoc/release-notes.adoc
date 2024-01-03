@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.1.0
+
+* Automatically select embedded Neo4j version depending on Java runtime: Neo4j 4.x for JDK 11, Neo4j 5.x for JDK 17 or later
+
 == 2.0.8
 
 * Added configuration property `jqassistant.maven.module.skip` to skip module level goals (e.g. `scan`) without affecting project level goals (e.g. `analyze`)
