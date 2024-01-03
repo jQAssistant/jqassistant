@@ -43,9 +43,16 @@
         <!-- Distributions -->
         <dependency>
             <groupId>com.buschmais.jqassistant.cli</groupId>
-            <artifactId>jqassistant-commandline-distribution</artifactId>
+            <artifactId>jqassistant-commandline-neo4jv4</artifactId>
             <type>zip</type>
-            <classifier>bin</classifier>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.cli</groupId>
+            <artifactId>jqassistant-commandline-neo4jv5</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
             <version>${project.version}</version>
         </dependency>
         <!-- Test -->
@@ -71,8 +78,13 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

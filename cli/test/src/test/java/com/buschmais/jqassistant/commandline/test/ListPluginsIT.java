@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,14 +9,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ListPluginsIT extends AbstractCLIIT {
 
-    @Test
-    void supportsListingOfPlugins() throws IOException, InterruptedException {
+    @DistributionTest
+    void supportsListingOfPlugins()  {
         verify(new String[] { "list-plugins" });
     }
 
-    private void verify(String[] args) throws IOException, InterruptedException {
+    private void verify(String[] args)  {
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(0);
+        assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getStandardConsole();
         assertThat(console).hasSize(9);
         assertThat(console).anyMatch(item -> item.contains("jQAssistant Common Plugin (jqa.plugin.common)"));

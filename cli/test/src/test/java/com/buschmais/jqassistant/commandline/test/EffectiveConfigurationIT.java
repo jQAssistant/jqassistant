@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,11 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class EffectiveConfigurationIT extends AbstractCLIIT {
 
-    @Test
-    void effectiveConfiguration() throws IOException, InterruptedException {
+    @DistributionTest
+    void effectiveConfiguration() {
         String[] args = new String[] { "effective-configuration", "-D", "jqassistant.scan.continue-on-error=true"};
         ExecutionResult executionResult = execute(args);
-        assertThat(executionResult.getExitCode()).isEqualTo(0);
+        assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains("    continue-on-error: true"));
     }

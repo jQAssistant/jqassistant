@@ -167,6 +167,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>assembly</module>
         <module>application</module>
         <module>distribution</module>
         <module>test</module>
