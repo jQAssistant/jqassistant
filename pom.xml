@@ -127,12 +127,13 @@
          !                          Oliver B. Fischer, 2015-11-27
          !-->
         <maven.jqassistant.previous.version>2.0.10</maven.jqassistant.previous.version>
-        <maven.resources.version>3.0.2</maven.resources.version>
+        <maven.resources.version>3.3.0</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
         <maven.source.plugin>3.2.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0.2</maven.xml.version>
+        <maven.invoker.version>3.2.2</maven.invoker.version>
         <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
         <!-- Maven config -->
         <maven.min.version>3.5.0</maven.min.version>
@@ -225,7 +226,6 @@
                         </argLine>
                     </configuration>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -238,6 +238,27 @@
                             --add-opens java.base/java.util=ALL-UNNAMED
                         </argLine>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${maven.invoker.version}</version>
+                    <configuration>
+                        <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                        <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+                        <mergeUserSettings>false</mergeUserSettings>
+                        <postBuildHookScript>verify</postBuildHookScript>
+                        <streamLogs>true</streamLogs>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>install</goal>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
