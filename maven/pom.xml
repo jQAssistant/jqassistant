@@ -49,7 +49,6 @@
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
-        <maven-invoker-plugin.version>3.2.2</maven-invoker-plugin.version>
 
         <!--
          ! Properties used for the IT with the Maven Invoker Plugin.
@@ -84,9 +83,6 @@
         </profile>
         <profile>
             <id>IT</id>
-            <properties>
-                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -107,14 +103,8 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>${maven-invoker-plugin.version}</version>
                         <configuration>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <settingsFile>src/it/settings.xml</settingsFile>
-                            <mergeUserSettings>false</mergeUserSettings>
-                            <localRepositoryPath>${maven.invoker.localRepositoryPath}</localRepositoryPath>
-                            <postBuildHookScript>verify</postBuildHookScript>
-                            <streamLogs>true</streamLogs>
                             <pomIncludes>
                                 <!-- Use -Dinvoker.test=<pattern> to override the configuration below on the commandline -->
                                 <include>configuration/*/pom.xml</include>
@@ -126,15 +116,6 @@
                                 <include>yaml/*/pom.xml</include>
                             </pomIncludes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <goals>
-                                    <goal>install</goal>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
