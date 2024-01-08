@@ -1,0 +1,41 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <group id="it">
+        <includeConcept refId="it:*" severity="blocker" />
+    </group>
+
+    <concept id="it:Module1ExportsApiPackage">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
+              (module1)-[:EXPORTS_PACKAGE]->(packageExport:Java:ExportedPackage),
+              (packageExport)-[:PACKAGE]->(api)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1ExportsImplPackageToModule2">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
+              (module1)-[:EXPORTS_PACKAGE]->(packageExport:Java:ExportedPackage),
+              (packageExport)-[:PACKAGE]->(impl),
+              (packageExport)-[:TO_MODULE]->(:Java:Module{moduleName:"java.it.jpms.module2"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount max="1"/>
+        </verify>
+    </concept>
+</jqassistant-rules>

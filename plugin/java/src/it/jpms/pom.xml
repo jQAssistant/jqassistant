@@ -27,6 +27,9 @@
                                     - group-id: @project.groupId@
                                       artifact-id: @project.artifactId@
                                       version: @project.version@
+                                  analyze:
+                                    groups:
+                                      - it
                             </yaml>
                         </configuration>
                     </execution>

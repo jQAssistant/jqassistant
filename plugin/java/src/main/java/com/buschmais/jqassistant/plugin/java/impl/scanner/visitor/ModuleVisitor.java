@@ -105,10 +105,12 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     }
 
     private void addToModules(PackageToModuleDescriptor packageToModuleDescriptor, String[] modules) {
-        for (String module : modules) {
-            ModuleDescriptor toModule = resolveModule(artifactFileDescriptor, module, null);
-            packageToModuleDescriptor.getToModules()
-                .add(toModule);
+        if (modules != null) {
+            for (String module : modules) {
+                ModuleDescriptor toModule = resolveModule(artifactFileDescriptor, module, null);
+                packageToModuleDescriptor.getToModules()
+                    .add(toModule);
+            }
         }
     }
 
