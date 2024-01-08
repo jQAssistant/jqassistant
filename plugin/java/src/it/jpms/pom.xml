@@ -3,27 +3,38 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@</groupId>
-    <artifactId>@project.artifactId@.it.jpms</artifactId>
+    <artifactId>@project.artifactId@.it.jpms.parent</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
-    <!--
-    <properties>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    </properties>
-
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>@maven.jqassistant.previous.version@</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                        <configuration>
+                            <yaml>
+                                jqassistant:
+                                  default-plugins:
+                                    - group-id: @project.groupId@
+                                      artifact-id: @project.artifactId@
+                                      version: @project.version@
+                            </yaml>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
-    -->
+
     <modules>
         <module>module1</module>
         <module>module2</module>

@@ -4,9 +4,9 @@
 
     <parent>
         <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@.it.jpms</artifactId>
+        <artifactId>@project.artifactId@.it.jpms.parent</artifactId>
         <version>@project.version@</version>
     </parent>
 
-    <artifactId>jpms.module1</artifactId>
+    <artifactId>@project.artifactId@.it.jpms.module1</artifactId>
 </project>
