@@ -56,12 +56,12 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
     @Incoming
     List<RequiresModuleDescriptor> getRequiringModules();
 
-    @Relation("EXPORTS_PACKAGE")
+    @Relation("EXPORTS")
     List<ExportedPackageDescriptor> getExportedPackages();
 
-    @Relation("OPENS_PACKAGE")
+    @Relation("OPENS")
     List<OpenPackageDescriptor> getOpenPackages();
 
-    @Relation("PROVIDES_SERVICE")
+    @Relation("PROVIDES")
     List<ProvidesServiceDescriptor> getProvidesServices();
 }

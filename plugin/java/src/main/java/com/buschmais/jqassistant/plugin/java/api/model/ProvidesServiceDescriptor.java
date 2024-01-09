@@ -6,9 +6,8 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Label("ProvidesService")
+@Label("ProvidedService")
 public interface ProvidesServiceDescriptor extends JavaDescriptor, Descriptor {
-
 
     @Relation("OF_TYPE")
     TypeDescriptor getService();

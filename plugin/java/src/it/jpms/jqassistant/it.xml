@@ -12,13 +12,13 @@
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
-              (module1)-[:EXPORTS_PACKAGE]->(packageExport:Java:ExportedPackage),
-              (packageExport)-[:PACKAGE]->(api)
+              (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
+              (exportedPackage)-[:OF_PACKAGE]->(api)
             RETURN
               *
         ]]></cypher>
         <verify>
-            <rowCount max="1"/>
+            <rowCount min="1" max="1"/>
         </verify>
     </concept>
 
@@ -28,14 +28,66 @@
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
-              (module1)-[:EXPORTS_PACKAGE]->(packageExport:Java:ExportedPackage),
-              (packageExport)-[:PACKAGE]->(impl),
-              (packageExport)-[:TO_MODULE]->(:Java:Module{moduleName:"java.it.jpms.module2"})
+              (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
+              (exportedPackage)-[:OF_PACKAGE]->(impl),
+              (exportedPackage)-[:TO_MODULE]->(:Java:Module{moduleName:"java.it.jpms.module2"})
             RETURN
               *
         ]]></cypher>
         <verify>
-            <rowCount max="1"/>
+            <rowCount min="1" max="1"/>
         </verify>
     </concept>
+
+    <concept id="it:Module1OpensApiPackage">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
+              (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
+              (openPackage)-[:OF_PACKAGE]->(api)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1OpensImplPackageToModule2">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
+              (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
+              (openPackage)-[:OF_PACKAGE]->(impl),
+              (openPackage)-[:TO_MODULE]->(:Java:Module{moduleName:"java.it.jpms.module2"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1ProvidesService">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService"}),
+              (artifact1)-[:CONTAINS]->(providerType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl"}),
+              (module1)-[:PROVIDES]->(providedService:Java:ProvidedService),
+              (providedService)-[:OF_TYPE]->(serviceType),
+              (providedService)-[:WITH_PROVIDER]->(providerType)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
 </jqassistant-rules>

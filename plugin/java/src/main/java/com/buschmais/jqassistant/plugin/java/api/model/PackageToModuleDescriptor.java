@@ -9,6 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Abstract
 public interface PackageToModuleDescriptor extends AccessModifierDescriptor, Descriptor {
 
+    @Relation("OF_PACKAGE")
     PackageDescriptor getPackage();
 
     void setPackage(PackageDescriptor target);
