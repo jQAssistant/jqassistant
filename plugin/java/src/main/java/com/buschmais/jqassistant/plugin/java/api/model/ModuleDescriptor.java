@@ -51,10 +51,10 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
         @Parameter("version") String version);
 
     @Outgoing
-    List<RequiresModuleDescriptor> getRequiredModules();
+    List<RequiresDescriptor> getRequiredModules();
 
     @Incoming
-    List<RequiresModuleDescriptor> getRequiringModules();
+    List<RequiresDescriptor> getRequiringModules();
 
     @Relation("EXPORTS")
     List<ExportedPackageDescriptor> getExportedPackages();

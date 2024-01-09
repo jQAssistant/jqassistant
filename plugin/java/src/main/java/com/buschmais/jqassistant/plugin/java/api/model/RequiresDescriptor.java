@@ -5,8 +5,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
-@Relation("REQUIRES_MODULE")
-public interface RequiresModuleDescriptor extends AccessModifierDescriptor, Descriptor {
+@Relation("REQUIRES")
+public interface RequiresDescriptor extends AccessModifierDescriptor, Descriptor {
 
     @Outgoing
     ModuleDescriptor getRequiringModule();

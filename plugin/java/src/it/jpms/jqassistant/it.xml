@@ -90,4 +90,34 @@
         </verify>
     </concept>
 
+    <concept id="it:Module2RequiresModule1">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module1"}),
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module2"}),
+              (module2)-[:REQUIRES]->(module1)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module2RequiresStaticTransitiveModuleJavaSE">
+        <cypher><![CDATA[
+            MATCH
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", moduleName:"java.it.jpms.module2"}),
+              (module2)-[:REQUIRES{static:true, transitive:true}]->(:Java:Module{moduleName:"java.se"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
 </jqassistant-rules>

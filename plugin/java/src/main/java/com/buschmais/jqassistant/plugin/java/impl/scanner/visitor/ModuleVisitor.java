@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import org.objectweb.asm.Opcodes;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper.getObjectType;
+import static java.lang.Boolean.TRUE;
 
 public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
@@ -33,9 +34,9 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     @Override
     public void visitRequire(String module, int access, String version) {
         ModuleDescriptor requiredModule = resolveModule(artifactFileDescriptor, module, version);
-        RequiresModuleDescriptor requiresModuleDescriptor = visitorHelper.getStore()
-            .create(moduleDescriptor, RequiresModuleDescriptor.class, requiredModule);
-        applyFlags(requiresModuleDescriptor, access);
+        RequiresDescriptor requiresDescriptor = visitorHelper.getStore()
+            .create(moduleDescriptor, RequiresDescriptor.class, requiredModule);
+        applyFlags(requiresDescriptor, access);
     }
 
     @Override
@@ -122,16 +123,16 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     private void applyFlags(AccessModifierDescriptor accessModifierDescriptor, int access) {
         if (visitorHelper.hasFlag(access, Opcodes.ACC_STATIC_PHASE)) {
-            accessModifierDescriptor.setStatic(Boolean.TRUE);
+            accessModifierDescriptor.setStatic(TRUE);
         }
         if (visitorHelper.hasFlag(access, Opcodes.ACC_TRANSITIVE)) {
-            accessModifierDescriptor.setTransitive(Boolean.TRUE);
+            accessModifierDescriptor.setTransitive(TRUE);
         }
         if (visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
-            accessModifierDescriptor.setSynthetic(Boolean.TRUE);
+            accessModifierDescriptor.setSynthetic(TRUE);
         }
         if (visitorHelper.hasFlag(access, Opcodes.ACC_MANDATED)) {
-            accessModifierDescriptor.setMandated(Boolean.TRUE);
+            accessModifierDescriptor.setMandated(TRUE);
         }
     }
 }
