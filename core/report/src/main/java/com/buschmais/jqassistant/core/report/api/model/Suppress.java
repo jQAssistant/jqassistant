@@ -11,4 +11,7 @@ public interface Suppress {
 
     void setSuppressIds(String[] suppressIds);
 
+    String getSuppressColumn();
+    void setSuppressColumn(String suppressColumn);
+
 }

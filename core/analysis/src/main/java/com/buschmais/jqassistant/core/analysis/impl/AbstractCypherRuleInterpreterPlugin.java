@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -20,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher
@@ -56,14 +55,8 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                     primaryColumn = columnNames.get(0);
                 }
             }
-            Map<String, Column<?>> columns = new LinkedHashMap<>();
-            for (String columnName : columnNames) {
-                    Object value = rowObject.get(columnName, Object.class);
-                    columns.put(columnName, context.toColumn(value));
-            }
-                if (!isSuppressedRow(executableRule.getId(), columns, primaryColumn)) {
-                    rows.add(context.toRow(executableRule, columns));
-            }
+            getColumns(executableRule.getId(), columnNames, primaryColumn, rowObject, context).ifPresent(
+                columns -> rows.add(context.toRow(executableRule, columns)));
         }
         Status status = getStatus(executableRule, severity, columnNames, rows, context);
         return Result.<T>builder()
@@ -75,27 +68,42 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             .build();
     }
 
+    private static Optional<Map<String, Column<?>>> getColumns(String ruleId, List<String> columnNames, String primaryColumn,
+        Query.Result.CompositeRowObject rowObject, AnalyzerContext context) {
+        Map<String, Column<?>> columns = new LinkedHashMap<>();
+        for (String columnName : columnNames) {
+            Object columnValue = rowObject.get(columnName, Object.class);
+            if (isSuppressed(columnName, columnValue, ruleId, primaryColumn)) {
+                return empty();
+            }
+            columns.put(columnName, context.toColumn(columnValue));
+        }
+        return of(columns);
+    }
+
     /**
-     * Verifies if the given row shall be suppressed.
+     * Verifies if the given column indicates that the row shall be suppressed.
      * <p>
      * The primary column is checked if it contains a suppression that matches the
      * current rule id.
      *
+     * @param columnName
+     *     The column name.
+     * @param columnValue
+     *     The column value.
      * @param ruleId
      *     The rule id.
-     * @param columns
-     *     The columns.
      * @param primaryColumn
      *     The name of the primary column.
      * @return <code>true</code> if the row shall be suppressed.
      */
-    private boolean isSuppressedRow(String ruleId, Map<String, Column<?>> columns, String primaryColumn) {
-        Column column = columns.get(primaryColumn);
-        if (column != null) {
-            Object value = column.getValue();
-            if (value != null && Suppress.class.isAssignableFrom(value.getClass())) {
-                Suppress suppress = (Suppress) value;
-                for (String suppressId : suppress.getSuppressIds()) {
+    private static boolean isSuppressed(String columnName, Object columnValue, String ruleId, String primaryColumn) {
+        if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
+            Suppress suppress = (Suppress) columnValue;
+            String suppressColumn = suppress.getSuppressColumn();
+            if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
+                String[] suppressIds = suppress.getSuppressIds();
+                for (String suppressId : suppressIds) {
                     if (ruleId.equals(suppressId)) {
                         return true;
                     }
