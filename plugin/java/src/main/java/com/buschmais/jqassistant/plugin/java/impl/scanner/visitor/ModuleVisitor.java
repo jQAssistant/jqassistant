@@ -72,8 +72,8 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (:Module)-[:PROVIDES]->(ps:ProvidedService)
         // (providedService)-[:OF_TYPE]->(:Type)
         // (providedService)-[:WITH_PROVIDER]->(:Type)
-        ProvidesServiceDescriptor providesService = visitorHelper.getStore()
-            .create(ProvidesServiceDescriptor.class);
+        ProvidedServiceDescriptor providesService = visitorHelper.getStore()
+            .create(ProvidedServiceDescriptor.class);
         providesService.setService(visitorHelper.resolveType(getObjectType(service))
             .getTypeDescriptor());
         for (String provider : providers) {
@@ -90,8 +90,9 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         if (requiredModule == null) {
             requiredModule = visitorHelper.getStore()
                 .create(ModuleDescriptor.class);
-            requiredModule.setModuleName(module);
+            requiredModule.setName(module);
             requiredModule.setVersion(version);
+            artifactFileDescriptor.getRequires().add(requiredModule);
         }
         return requiredModule;
     }

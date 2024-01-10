@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("ProvidedService")
-public interface ProvidesServiceDescriptor extends JavaDescriptor, Descriptor {
+public interface ProvidedServiceDescriptor extends JavaDescriptor, Descriptor {
 
     @Relation("OF_TYPE")
     TypeDescriptor getService();

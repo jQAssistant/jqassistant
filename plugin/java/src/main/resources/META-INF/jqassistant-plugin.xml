@@ -43,7 +43,7 @@
         <!-- JPMS -->
         <class>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.ProvidesServiceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</class>
     </model>
     <scope>

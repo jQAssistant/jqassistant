@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -12,11 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Label("Module")
-public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescriptor, Descriptor {
-
-    String getModuleName();
-
-    void setModuleName(String moduleName);
+public interface ModuleDescriptor extends ClassFileDescriptor {
 
     String getVersion();
 
@@ -30,9 +25,6 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
     TypeDescriptor getMainClass();
 
     void setMainClass(TypeDescriptor mainClassType);
-
-    @Relation("USES")
-    List<TypeDescriptor> getUsesServices();
 
     /**
      * Find a contained or required {@link ModuleDescriptor} for the given module name and version in the dependencies of the current artifact
@@ -59,9 +51,12 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
     @Relation("EXPORTS")
     List<ExportedPackageDescriptor> getExportedPackages();
 
-    @Relation("OPENS")
-    List<OpenPackageDescriptor> getOpenPackages();
+    @Relation("USES")
+    List<TypeDescriptor> getUsesServices();
 
     @Relation("PROVIDES")
-    List<ProvidesServiceDescriptor> getProvidesServices();
+    List<ProvidedServiceDescriptor> getProvidesServices();
+
+    @Relation("OPENS")
+    List<OpenPackageDescriptor> getOpenPackages();
 }

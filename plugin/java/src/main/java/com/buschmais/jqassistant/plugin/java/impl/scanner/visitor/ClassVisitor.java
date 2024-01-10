@@ -83,7 +83,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         ClassFileDescriptor typeDescriptor = cachedType.getTypeDescriptor();
         ModuleDescriptor moduleDescriptor = visitorHelper.getStore()
             .addDescriptorType(typeDescriptor, ModuleDescriptor.class);
-        moduleDescriptor.setModuleName(name);
+        moduleDescriptor.setName(name);
         moduleDescriptor.setVersion(version);
         moduleDescriptor.setOpen(visitorHelper.hasFlag(access, Opcodes.ACC_OPEN));
         moduleDescriptor.setSynthetic(visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC));
