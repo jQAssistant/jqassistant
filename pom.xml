@@ -247,8 +247,14 @@
                         <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                         <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
                         <mergeUserSettings>false</mergeUserSettings>
-                        <postBuildHookScript>verify</postBuildHookScript>
+                        <properties>
+                            <maven.compiler.release>11</maven.compiler.release>
+                        </properties>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
                         <streamLogs>true</streamLogs>
+                        <postBuildHookScript>verify</postBuildHookScript>
                     </configuration>
                     <executions>
                         <execution>
