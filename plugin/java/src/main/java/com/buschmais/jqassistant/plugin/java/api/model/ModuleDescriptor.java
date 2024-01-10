@@ -31,7 +31,7 @@ public interface ModuleDescriptor extends JavaDescriptor, AccessModifierDescript
 
     void setMainClass(TypeDescriptor mainClassType);
 
-    @Relation("USES_SERVICE")
+    @Relation("USES")
     List<TypeDescriptor> getUsesServices();
 
     /**

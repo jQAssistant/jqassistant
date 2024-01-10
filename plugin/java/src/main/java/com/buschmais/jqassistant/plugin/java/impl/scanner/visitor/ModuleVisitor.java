@@ -41,7 +41,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitExport(String packaze, int access, String... modules) {
-        // (:Module)-[:EXPORTS_PACKAGE]->(pe:ExportedPackage)
+        // (:Module)-[:EXPORTS]->(pe:ExportedPackage)
         // (pe)-[:OF_PACKAGE]->(:Package);
         // (pe)-[:TO_MODULE]->(:Module);
         ExportedPackageDescriptor exportedPackage = packageToModule(packaze, access, modules, ExportedPackageDescriptor.class);
@@ -51,7 +51,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitOpen(String packaze, int access, String... modules) {
-        // (:Module)-[:OPENS_PACKAGE]->(op:OpenPackage)
+        // (:Module)-[:OPENS]->(op:OpenPackage)
         // (op)-[:OF_PACKAGE]->(:Package);
         // (op)-[:TO_MODULE]->(:Module);
         OpenPackageDescriptor openPackage = packageToModule(packaze, access, modules, OpenPackageDescriptor.class);
@@ -61,7 +61,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitUse(String service) {
-        TypeDescriptor serviceType = visitorHelper.resolveType(service)
+        TypeDescriptor serviceType = visitorHelper.resolveType(getObjectType(service))
             .getTypeDescriptor();
         moduleDescriptor.getUsesServices()
             .add(serviceType);
@@ -69,7 +69,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitProvide(String service, String... providers) {
-        // (:Module)-[:PROVIDES_SERVICE]->(ps:ProvidedService)
+        // (:Module)-[:PROVIDES]->(ps:ProvidedService)
         // (providedService)-[:OF_TYPE]->(:Type)
         // (providedService)-[:WITH_PROVIDER]->(:Type)
         ProvidesServiceDescriptor providesService = visitorHelper.getStore()
