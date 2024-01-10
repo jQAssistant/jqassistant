@@ -8,7 +8,8 @@ public class Suppress {
     @jQASuppress({ "suppress:Field" })
     private String value;
 
-    @jQASuppress({ "suppress:Method", "suppress:MethodInPrimaryColumn" })
+    @jQASuppress(value = { "suppress:Method", "suppress:MethodInPrimaryColumn", "suppress:MethodInNonPrimaryColumn" }, column = "method")
     public void doSomething() {
     }
+
 }

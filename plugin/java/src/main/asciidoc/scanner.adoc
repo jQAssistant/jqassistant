@@ -564,15 +564,20 @@ The annotation can now be used to suppress annotated elements like classes, fiel
 In the following example the class will not be reported by the constraint with the id `my-rules:MyConstraint`:
 
 [source,java]
-.ClassViolatingMyConstraint
 ----
 @jQASuppress("my-rules:MyConstraint")
 public class ClassViolatingMyConstraint {
-
-  //...
-
 }
 ----
 
-NOTE: Suppression only applies to the primary column of a rule result.
+Suppression by default applies to the primary column of a rule result.
 If not explicitly specified this is the first column specified in the return clause of a concept or constraint.
+
+If needed a custom column can be specified as well:
+
+[source,java]
+----
+@jQASuppress(value = "my-rules:MyConstraint", column="method")
+public class ClassViolatingMyConstraint {
+}
+----

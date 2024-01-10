@@ -18,6 +18,8 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     private List<String> suppressIds = new ArrayList<>();
 
+    private String suppressColumn;
+
     public SuppressAnnotationVisitor(JavaSuppressDescriptor suppressDescriptor) {
         super(VisitorHelper.ASM_OPCODES);
         this.suppressDescriptor = suppressDescriptor;
@@ -25,12 +27,24 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visit(String name, Object value) {
-        switch (currentAttribute) {
-        case "value":
-            suppressIds.add(value.toString());
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown attribute '" + currentAttribute + "' for " + jQASuppress.class.getName());
+        if (name != null) {
+            switch (name) {
+            case "column":
+                this.suppressColumn = value.toString();
+                break;
+            case "reason":
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown attribute '" + name + "' for " + jQASuppress.class.getName());
+            }
+        } else {
+            switch (currentAttribute) {
+            case "value":
+                suppressIds.add(value.toString());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown attribute '" + currentAttribute + "' for " + jQASuppress.class.getName());
+            }
         }
     }
 
@@ -43,5 +57,6 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     @Override
     public void visitEnd() {
         suppressDescriptor.setSuppressIds(suppressIds.toArray(new String[suppressIds.size()]));
+        suppressDescriptor.setSuppressColumn(suppressColumn);
     }
 }

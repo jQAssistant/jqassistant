@@ -19,7 +19,14 @@ public @interface jQASuppress {
     String[] value();
 
     /**
-     * The human readable reason for this suppression.
+     * The column to be used to identify the suppressed elements
+     *
+     * @return The column to be used to identify the suppressed elements
+     */
+    String column() default "";
+
+    /**
+     * The human-readable reason for this suppression.
      */
     String reason() default "";
 }
