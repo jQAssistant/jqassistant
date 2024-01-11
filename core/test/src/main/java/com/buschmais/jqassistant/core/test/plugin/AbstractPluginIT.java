@@ -41,7 +41,6 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
@@ -66,6 +65,10 @@ public abstract class AbstractPluginIT {
 
     protected static final String ARTIFACT_ID = "artifact";
 
+    private static final String STORE_URI_MEMORY = "memory:///";
+
+    private static final String STORE_URI_REMOTE = "bolt://localhost:7687";
+
     private static PluginRepositoryImpl pluginRepository;
 
     private File outputDirectory;
@@ -73,7 +76,6 @@ public abstract class AbstractPluginIT {
     private TestStore testStore;
 
     protected Store store;
-    protected Analyzer analyzer;
     protected ReportContext reportContext;
     protected InMemoryReportPlugin reportPlugin;
     protected RuleSet ruleSet;
@@ -94,7 +96,7 @@ public abstract class AbstractPluginIT {
     }
 
     @BeforeEach
-    public void beforeEach(TestInfo testInfo) throws Exception {
+    public void beforeEach(TestInfo testInfo) throws IOException, RuleException {
         Method method = testInfo.getTestMethod()
             .orElseThrow(() -> new AssertionError("Unable to get the test method for test '" + testInfo.getDisplayName() + "'."));
         testStore = method.getAnnotation(TestStore.class);
@@ -105,7 +107,7 @@ public abstract class AbstractPluginIT {
         outputDirectory.mkdirs();
         startStore(configuration.store(), testStore);
         initializeRuleSet(configuration);
-        initializeAnalyzer(configuration);
+        initializeAnalyzer();
     }
 
     protected void configure(ConfigurationBuilder configurationBuilder) {
@@ -120,7 +122,7 @@ public abstract class AbstractPluginIT {
         case MEMORY:
             try {
                 configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("memory:///"));
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI(STORE_URI_MEMORY));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
@@ -128,7 +130,7 @@ public abstract class AbstractPluginIT {
         case REMOTE:
             try {
                 configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI("bolt://localhost:7687"));
+                    com.buschmais.jqassistant.core.store.api.configuration.Store.URI, new URI(STORE_URI_REMOTE));
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Cannot create store URI", e);
             }
@@ -161,7 +163,7 @@ public abstract class AbstractPluginIT {
      * @return The  configuration.
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        ConfigurationLoader configurationLoader = new ConfigurationLoaderImpl(Configuration.class);
+        ConfigurationLoader<Configuration> configurationLoader = new ConfigurationLoaderImpl<>(Configuration.class);
         return configurationLoader.load(configurationBuilder.build());
     }
 
@@ -181,10 +183,9 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    private void initializeAnalyzer(Configuration configuration) {
+    private void initializeAnalyzer() {
         this.reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         this.reportPlugin = getReportPlugin();
-        this.analyzer = getAnalyzer(configuration);
     }
 
     /**
@@ -277,8 +278,11 @@ public abstract class AbstractPluginIT {
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
-        File directory = ClasspathResource.getFile(rootClass, "/");
-        assertThat(directory.isDirectory()).describedAs("Expected %s to be a directory", directory.toString()).isTrue();
+        File directory = new File(rootClass.getClassLoader()
+            .getResource(".")
+            .getFile());
+        assertThat(directory).isDirectory()
+            .describedAs("Expected %s to be a directory", directory.toString());
         return directory;
     }
 
