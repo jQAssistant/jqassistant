@@ -95,6 +95,7 @@
         <neo4j_4x.version>4.4.29</neo4j_4x.version>
         <neo4j_5x.version>5.15.0</neo4j_5x.version>
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
+        <neo4j.neo4j-java-driver.version>4.4.13</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.15.0</neo4j-browser.version>
         <slf4j.version>1.7.36</slf4j.version>
         <smallrye-config.version>3.1.3</smallrye-config.version>
@@ -110,7 +111,7 @@
         <maven.assembly.version>3.3.0</maven.assembly.version>
         <maven.buildhelper.version>3.2.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.1.0</maven.checkstyle.version>
-        <maven.owasp-dependency-check.version>8.2.1</maven.owasp-dependency-check.version>
+        <maven.owasp-dependency-check.version>9.0.8</maven.owasp-dependency-check.version>
         <maven.clean.version>3.1.0</maven.clean.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
         <maven.dependency.version>3.3.0</maven.dependency.version>
@@ -522,6 +523,17 @@
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
                     <version>${maven.owasp-dependency-check.version}</version>
+                    <configuration>
+                        <skipSystemScope>true</skipSystemScope>
+                        <skipTestScope>true</skipTestScope>
+                        <failBuildOnCVSS>7</failBuildOnCVSS>
+                        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        <formats>
+                            <format>CSV</format>
+                            <format>XML</format>
+                            <format>HTML</format>
+                        </formats>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -583,16 +595,6 @@
                                 <goals>
                                     <goal>check</goal>
                                 </goals>
-                                <configuration>
-                                    <skipSystemScope>true</skipSystemScope>
-                                    <skipTestScope>true</skipTestScope>
-                                    <failBuildOnCVSS>7</failBuildOnCVSS>
-                                    <formats>
-                                        <format>CSV</format>
-                                        <format>XML</format>
-                                        <format>HTML</format>
-                                    </formats>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
