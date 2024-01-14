@@ -32,6 +32,10 @@
             <artifactId>xo.neo4j.remote</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.impl</artifactId>
         </dependency>
