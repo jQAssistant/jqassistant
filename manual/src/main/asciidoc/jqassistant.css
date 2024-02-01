@@ -738,8 +738,6 @@ p a > code:hover {
     border-bottom: 2px solid #1b1a19;
     margin-bottom: -28px;
     padding-bottom: 32px;
-    /*    background-image:url("img/jQA_logo.png");
-        background-repeat:no-repeat;*/
 }
 
 #header span {
@@ -805,7 +803,7 @@ p a > code:hover {
         padding-right: 0;
     }
 
-    #toc.toc {  
+    #toc.toc {
         margin-top: 0!important;
         position: fixed;
         width: 15em;
@@ -851,7 +849,7 @@ p a > code:hover {
         left: auto;
         right: 0;
     }
-    
+
     #content, #footnotes, #footer {
     width: 100%;
     max-width: 62.5em;

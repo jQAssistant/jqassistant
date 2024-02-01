@@ -96,53 +96,6 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>overview</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
-                            <backend>xhtml5</backend>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>userguide</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>src/main/asciidoc/userguide</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/userguide</outputDirectory>
-                            <backend>xhtml5</backend>
-                            <attributes>
-                                <toc>left</toc>
-                                <docRoot>${sourcedoc.directory}</docRoot>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>reference</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>src/main/asciidoc/reference</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/reference</outputDirectory>
-                            <attributes>
-                                <toc>left</toc>
-                                <docRoot>${sourcedoc.directory}</docRoot>
-                            </attributes>
-                        </configuration>
-                    </execution>
-
-                    <execution>
                         <id>manual</id>
                         <phase>process-resources</phase>
                         <goals>
@@ -151,16 +104,16 @@
                         <configuration>
                             <attributes>
                                 <toc>auto</toc>
-                                <stylesheet>../jqassistant.css</stylesheet>
+                                <stylesheet>jqassistant.css</stylesheet>
                                 <docRoot>${asciidoc.directory}</docRoot>
                             </attributes>
-                            <sourceDirectory>src/main/asciidoc/manual</sourceDirectory>
+                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/manual</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/asciidoc</directory>
-                                    <targetPath>${project.build.directory}/generated-docs/manual</targetPath>
+                                    <targetPath>${project.build.directory}/generated-docs/</targetPath>
                                     <includes>
                                         <include>**/*.png</include>
                                     </includes>
@@ -176,24 +129,12 @@
                         </goals>
                         <configuration>
                             <attributes>
-                                <stylesheet>../jqassistant.css</stylesheet>
+                                <stylesheet>jqassistant.css</stylesheet>
                                 <docRoot>/${asciidoc.directory}</docRoot>
                             </attributes>
-                            <sourceDirectory>src/main/asciidoc/releasenotes-overview</sourceDirectory>
+                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
                             <sourceDocumentName>release-notes.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/releasenotes-overview</outputDirectory>
-
-
-                            <!-- todo #7 Wozu brauche ich das? -->
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/asciidoc</directory>
-                                    <targetPath>${project.build.directory}/generated-docs/releasenotes-overview</targetPath>
-                                    <excludes>
-                                        <exclude>**/*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
+                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -202,9 +143,6 @@
                     <attributes>
                         <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
-                        <!--
-                        <stylesheet>../jqassistant.css</stylesheet>
-                        -->
                         <docRoot>${asciidoc.directory}</docRoot>
                         <source-highlighter>coderay</source-highlighter>
                         <projectGroupId>${project.groupId}</projectGroupId>
@@ -255,131 +193,6 @@
                             <includeClassifiers>asciidoc</includeClassifiers>
                             <stripVersion>true</stripVersion>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack-jqa-sources</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.core</groupId>
-                                    <artifactId>rule</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.plugin</groupId>
-                                    <artifactId>yaml2</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.plugin</groupId>
-                                    <artifactId>common</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${sourcedoc.directory}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-java-to-asciidoc-files</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target name="copy-and-rename-java-to-asciidoctor">
-                                <copy todir="${sourcedoc.directory}">
-                                    <fileset dir="${sourcedoc.directory}"/>
-                                    <globmapper from="*.java" to="*.adoc"/>
-                                </copy>
-                                <replaceregexp byline="true">
-                                    <regexp pattern="include::(.*)\.java\[(.*)\]"/>
-                                    <substitution expression="include::\1.adoc\[\2\]"/>
-                                    <fileset dir="${sourcedoc.directory}">
-                                        <include name="**/*.adoc"/>
-                                    </fileset>
-                                </replaceregexp>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!--
-                 ! We need this JAR to pass the validations performed when
-                 ! deploying via OSS Sonatype to Maven Central.
-                 ! Oliver B. Fischer, 2017-01-01
-                 !-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-apidocs</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${asciidoc.directory}</directory>
-                                    <includes>
-                                        <include>*/apidocs/**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!--
-                 ! We need this JAR to pass the validations performed when
-                 ! deploying via OSS Sonatype to Maven Central.
-                 ! Oliver B. Fischer, 2017-01-01
-                 !-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <configuration>
-                    <forceCreation>true</forceCreation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
