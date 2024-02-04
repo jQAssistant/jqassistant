@@ -567,24 +567,6 @@
 
     <profiles>
         <profile>
-            <id>neo4jv4</id>
-            <activation>
-                <jdk>11</jdk>
-            </activation>
-            <properties>
-                <neo4j.version>${neo4j_4x.version}</neo4j.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>neo4jv5</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <properties>
-                <neo4j.version>${neo4j_5x.version}</neo4j.version>
-            </properties>
-        </profile>
-        <profile>
             <id>IT</id>
             <build>
                 <plugins>
