@@ -543,6 +543,24 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>purge-local-repo</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>purge-local-repository</goal>
+                        </goals>
+                        <configuration>
+                            <actTransitively>false</actTransitively>
+                            <reResolve>false</reResolve>
+                            <snapshotsOnly>true</snapshotsOnly>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
             </plugin>
