@@ -47,10 +47,11 @@ public class ScanMojo extends AbstractModuleMojo {
     private void scan(MojoExecutionContext mojoExecutionContext, Store store) {
         MavenProject mavenProject = mojoExecutionContext.getCurrentModule();
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        File workingDirectory = mavenProject.getBasedir();
         File outputDirectory = mojoExecutionContext.getOutputDirectory();
         PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, workingDirectory, outputDirectory);
         Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
         scannerContext.push(MavenSession.class, mojoExecutionContext.getMavenSession());
         scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
