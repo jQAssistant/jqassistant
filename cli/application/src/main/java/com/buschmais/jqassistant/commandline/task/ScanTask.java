@@ -46,11 +46,11 @@ public class ScanTask extends AbstractStoreTask {
         return false;
     }
 
-    @SuppressWarnings("static-access")
     @Override
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
-            ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_OUTPUT_DIRECTORY));
+            ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_WORKING_DIRECTORY),
+                new File(DEFAULT_OUTPUT_DIRECTORY));
             if (configuration.scan()
                 .reset().orElse(false)) {
                 store.reset();

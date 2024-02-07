@@ -10,6 +10,7 @@ import org.apache.commons.cli.Options;
  */
 public interface Task extends OptionsProvider, OptionsConsumer {
 
+    String DEFAULT_WORKING_DIRECTORY = ".";
     String DEFAULT_OUTPUT_DIRECTORY = "jqassistant";
     String DEFAULT_STORE_DIRECTORY = "jqassistant/store";
     String DEFAULT_RULE_DIRECTORY = "jqassistant/rules";
