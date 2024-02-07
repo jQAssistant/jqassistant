@@ -112,6 +112,52 @@
                 <version>${xo.version}</version>
             </dependency>
             <!-- End of XO dependencies -->
+
+            <!-- Neo4j -->
+            <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j</artifactId>
+                <version>${neo4j.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-nop</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.neo4j.community</groupId>
+                <artifactId>it-test-support</artifactId>
+                <version>${neo4j.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>mockito-core</artifactId>
+                        <groupId>org.mockito</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>assertj-core</artifactId>
+                        <groupId>org.assertj</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>awaitility</artifactId>
+                        <groupId>org.awaitility</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.neo4j.driver</groupId>
                 <artifactId>neo4j-java-driver</artifactId>
@@ -427,117 +473,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>neo4jv4</id>
-            <activation>
-                <jdk>11</jdk>
-            </activation>
-            <dependencyManagement>
-                <dependencies>
-                    <!-- Neo4j -->
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${neo4j_4x.version}</version>
-                        <scope>provided</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-nop</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>commons-logging</artifactId>
-                                <groupId>commons-logging</groupId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j.community</groupId>
-                        <artifactId>it-test-support</artifactId>
-                        <version>${neo4j_4x.version}</version>
-                        <scope>provided</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.junit.jupiter</groupId>
-                                <artifactId>*</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>org.hamcrest</groupId>
-                                <artifactId>*</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>mockito-core</artifactId>
-                                <groupId>org.mockito</groupId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>assertj-core</artifactId>
-                                <groupId>org.assertj</groupId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>awaitility</artifactId>
-                                <groupId>org.awaitility</groupId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-        <profile>
-            <id>neo4jv5</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <dependencyManagement>
-                <dependencies>
-                    <!-- Neo4j -->
-                    <dependency>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>neo4j</artifactId>
-                        <version>${neo4j_5x.version}</version>
-                        <scope>provided</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-nop</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>commons-logging</artifactId>
-                                <groupId>commons-logging</groupId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.neo4j.community</groupId>
-                        <artifactId>it-test-support</artifactId>
-                        <version>${neo4j_5x.version}</version>
-                        <scope>provided</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.junit.jupiter</groupId>
-                                <artifactId>*</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>org.hamcrest</groupId>
-                                <artifactId>*</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>mockito-core</artifactId>
-                                <groupId>org.mockito</groupId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>assertj-core</artifactId>
-                                <groupId>org.assertj</groupId>
-                            </exclusion>
-                            <exclusion>
-                                <artifactId>awaitility</artifactId>
-                                <groupId>org.awaitility</groupId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-    </profiles>
 </project>
