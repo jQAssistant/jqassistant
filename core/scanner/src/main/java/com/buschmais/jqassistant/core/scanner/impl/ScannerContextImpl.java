@@ -22,6 +22,8 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
 
+    private final File workingDirectory;
+
     private final File dataDirectory;
 
     private Descriptor current;
@@ -35,12 +37,15 @@ public class ScannerContextImpl implements ScannerContext {
      *     The {@link ClassLoader}.
      * @param store
      *     The store.
+     * @param workingDirectory
+     *     The working directory
      * @param outputDirectory
      *     The output directory
      */
-    public ScannerContextImpl(ClassLoader classLoader, Store store, File outputDirectory) {
+    public ScannerContextImpl(ClassLoader classLoader, Store store, File workingDirectory, File outputDirectory) {
         this.classLoader = classLoader;
         this.store = store;
+        this.workingDirectory = workingDirectory;
         this.dataDirectory = new File(outputDirectory, DATA_DIRECTORY);
     }
 
@@ -89,12 +94,7 @@ public class ScannerContextImpl implements ScannerContext {
      * @return The stack.
      */
     private <T> Deque<T> getValues(Class<T> key) {
-        Deque<T> values = (Deque<T>) contextValuesPerKey.get(key);
-        if (values == null) {
-            values = new LinkedList<>();
-            contextValuesPerKey.put(key, values);
-        }
-        return values;
+        return (Deque<T>) contextValuesPerKey.computeIfAbsent(key, k -> new LinkedList<>());
     }
 
     @Override
@@ -114,5 +114,10 @@ public class ScannerContextImpl implements ScannerContext {
             log.debug("Created data directory '{}'.", directory.getAbsolutePath());
         }
         return directory;
+    }
+
+    @Override
+    public File getWorkingDirectory() {
+        return workingDirectory;
     }
 }

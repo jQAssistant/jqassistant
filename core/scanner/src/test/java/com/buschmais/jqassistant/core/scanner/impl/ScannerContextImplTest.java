@@ -21,7 +21,9 @@ import static org.junit.Assert.fail;
 @ExtendWith(MockitoExtension.class)
 class ScannerContextImplTest {
 
-    public static final File OUTPUT_DIRECTORY = new File(".");
+    private static final File WORKING_DIRECTORY = new File(".");
+
+    private static final File OUTPUT_DIRECTORY = new File(WORKING_DIRECTORY, "jqassistant");
 
     @Mock
     private Store store;
@@ -30,7 +32,7 @@ class ScannerContextImplTest {
 
     @BeforeEach
     void setUp() {
-        scannerContext = new ScannerContextImpl(ScannerContextImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
+        scannerContext = new ScannerContextImpl(ScannerContextImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
     }
 
     @Test

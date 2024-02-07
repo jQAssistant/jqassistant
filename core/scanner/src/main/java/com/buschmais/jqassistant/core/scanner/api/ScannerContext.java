@@ -103,4 +103,9 @@ public interface ScannerContext {
     * Return the directory for storing data using a given relative
      */
     File getDataDirectory(String path);
+
+    /**
+     * Return the current working directory.
+     */
+    File getWorkingDirectory();
 }

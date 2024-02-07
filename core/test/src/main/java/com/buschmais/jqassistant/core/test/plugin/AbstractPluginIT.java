@@ -71,6 +71,8 @@ public abstract class AbstractPluginIT {
 
     private static PluginRepositoryImpl pluginRepository;
 
+    private File workingDirectory;
+
     private File outputDirectory;
 
     private TestStore testStore;
@@ -102,7 +104,8 @@ public abstract class AbstractPluginIT {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         Configuration configuration = createConfiguration(configurationBuilder);
-        outputDirectory = new File("target/jqassistant");
+        workingDirectory = new File(".");
+        outputDirectory = new File(workingDirectory, "target/jqassistant");
         outputDirectory.mkdirs();
         startStore(configuration.store(), testStore);
         initializeRuleSet(configuration);
@@ -241,7 +244,7 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.class, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(configurationBuilder);
-        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, workingDirectory, outputDirectory);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }

@@ -25,14 +25,16 @@ import org.mockito.stubbing.Answer;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 class ScannerImplTest {
 
-    private static final File OUTPUT_DIRECTORY = new File(".");
+    private static final File WORKING_DIRECTORY = new File(".");
+
+    private static final File OUTPUT_DIRECTORY = new File(WORKING_DIRECTORY, "jqassistant");
 
     @Mock
     private Store store;
@@ -78,7 +80,7 @@ class ScannerImplTest {
             return null;
         }).when(store).rollbackTransaction();
         // context
-        context = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
+        context = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
         plugins.put("testPlugin", scannerPlugin);
         doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(configuration, context);
@@ -188,7 +190,7 @@ class ScannerImplTest {
     @Test
     void pluginPipeline() {
         Store store = mock(Store.class);
-        ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, OUTPUT_DIRECTORY);
+        ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
             Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];
             return mock(descriptorType);
@@ -207,7 +209,7 @@ class ScannerImplTest {
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 
         assertThat(descriptor, instanceOf(DependentTestItemDescriptor.class));
-        verify(store).create(eq(TestItemDescriptor.class));
+        verify(store).create(TestItemDescriptor.class);
         verify(store).addDescriptorType(any(TestItemDescriptor.class), eq(NestedTestItemDescriptor.class));
         verify(store).addDescriptorType(any(NestedTestItemDescriptor.class), eq(DependentTestItemDescriptor.class));
     }
