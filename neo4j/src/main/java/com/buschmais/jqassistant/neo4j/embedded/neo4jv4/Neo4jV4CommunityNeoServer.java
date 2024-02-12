@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
-import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
 import org.eclipse.jetty.server.Server;
@@ -25,11 +24,11 @@ class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV4CommunityNeoServer.class);
     private EmbeddedDatastore embeddedDatastore;
 
-    private Embedded embedded;
-
     private ClassLoader classLoader;
 
     private Server server;
+    private String listenAddress;
+    private Integer httpPort;
 
     @Override
     public String getVersion() {
@@ -37,17 +36,19 @@ class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
     }
 
     @Override
-    public final void initialize(EmbeddedDatastore embeddedDatastore, Embedded embedded, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
+    public final void initialize(EmbeddedDatastore embeddedDatastore, String listenAddress, Integer httpPort, ClassLoader classLoader,
+        Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes) {
         this.embeddedDatastore = embeddedDatastore;
-        this.embedded = embedded;
         this.classLoader = classLoader;
+        this.listenAddress = listenAddress;
+        this.httpPort = httpPort;
         registerProceduresAndFunctions(procedureTypes, functionTypes);
     }
 
     @Override
     public void start() {
-        this.server = new Server(new InetSocketAddress(embedded.listenAddress(), embedded.httpPort()));
+        this.server = new Server(new InetSocketAddress(listenAddress, httpPort));
         WebAppContext rootContext = getWebAppContext("/", "browser/");
         WebAppContext pluginContext = getWebAppContext("/jqassistant", "META-INF/jqassistant-static-content/");
         server.setHandler(new HandlerCollection(rootContext, pluginContext));
@@ -57,7 +58,7 @@ class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
         } catch (Exception e) {
             throw new RuntimeException("Cannot start embedded server.", e);
         }
-        LOGGER.info("Neo4j browser available at http://{}:{}.", embedded.listenAddress(), embedded.httpPort());
+        LOGGER.info("Neo4j browser available at http://{}:{}.", listenAddress, httpPort);
     }
 
     private WebAppContext getWebAppContext(String contextPath, String resourceRoot) {
