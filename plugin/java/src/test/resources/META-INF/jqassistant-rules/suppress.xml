@@ -96,4 +96,27 @@
         <report primaryColumn="method" />
     </constraint>
 
+    <concept id="suppress:SuppressedMethodInNonPrimaryColumn">
+        <description>Return all suppressed methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="type" />
+    </concept>
+
+    <constraint id="suppress:MethodInNonPrimaryColumn">
+        <description>Return all methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:Method)
+        WHERE
+          not method:Constructor
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="type" />
+    </constraint>
 </jqa:jqassistant-rules>

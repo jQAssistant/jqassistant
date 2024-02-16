@@ -49,14 +49,19 @@ class SuppressIT extends AbstractJavaPluginIT {
         verifySuppress("suppress:MethodInPrimaryColumn", "suppress:SuppressedMethodInPrimaryColumn", "method");
     }
 
+    @Test
+    void suppressedMethodInNonPrimaryColumn() throws RuleException {
+        verifySuppress("suppress:MethodInNonPrimaryColumn", "suppress:SuppressedMethodInNonPrimaryColumn", "method");
+    }
+
     private void verifySuppress(String constraintId, String conceptId, String column) throws RuleException {
         scanClasses(Suppress.class);
         assertThat(validateConstraint(constraintId).getStatus(), equalTo(SUCCESS));
-        Result<Concept> suppressClasses = applyConcept(conceptId);
-        assertThat(suppressClasses.getStatus(), equalTo(SUCCESS));
+        Result<Concept> supressedItems = applyConcept(conceptId);
+        assertThat(supressedItems.getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        assertThat(suppressClasses.getRows().size(), equalTo(1));
-        Row row = suppressClasses.getRows().get(0);
+        assertThat(supressedItems.getRows().size(), equalTo(1));
+        Row row = supressedItems.getRows().get(0);
         JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.getColumns()
             .get(column)
             .getValue();
