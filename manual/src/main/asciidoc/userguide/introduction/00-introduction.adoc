@@ -1,4 +1,0 @@
-== Introduction
-
-include::../../shared/to-be-written.adoc[]
-
