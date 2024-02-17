@@ -1,6 +1,10 @@
 
 = Java Plugin
 
+== 2.1.0
+
+* Added attribute `column` to `@jQASuppress` annotation to allow specifying a non-primary column to be evaluated
+
 == 2.0.4
 
 * Reverted `DEPENDS_ON_PACKAGE` and `DEPENDS_ON_ARTIFACT` relations to `DEPENDS_ON` for the concepts `java:PackageDependency` and `java:ArtifactDependency`
