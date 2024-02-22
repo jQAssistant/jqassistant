@@ -53,6 +53,7 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(0);
         }
 
+
         @Test
         void oneConceptWithParameterEmptyListOfParameters() throws Exception {
             RuleSet ruleSet = readRuleSet("/yaml/concept-with-parameter-empty-list-of-parameters.yml");

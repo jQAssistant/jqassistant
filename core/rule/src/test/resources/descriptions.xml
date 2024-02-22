@@ -1,0 +1,71 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <concept id="test:WithoutDescription">
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:EmptyDescription">
+        <description></description>
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:SingleLineDescription">
+        <description>  Cal took a long, deep breath, struggling to control his own emotions.  </description>
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:MultiMixEmptyLineDescription">
+        <description>
+
+            Cal took a long, deep breath,
+
+            struggling to control his own emotions.
+
+        </description>
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <constraint id="test:WithoutDescription">
+        <cypher><![CDATA[
+            Cypher Constraint
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:EmptyDescription">
+        <description></description>
+        <cypher><![CDATA[
+            Cypher Constraint
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:SingleLineDescription">
+        <description>  When he arrived at the station, the bus had already left.  </description>
+        <cypher><![CDATA[
+            Cypher Constraint
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:MultiMixEmptyLineDescription">
+        <description>
+
+            When he arrived at the station,
+
+            the bus had already left.
+
+
+        </description>
+        <cypher><![CDATA[
+            Cypher Constraint
+        ]]></cypher>
+    </constraint>
+</jqassistant-rules>

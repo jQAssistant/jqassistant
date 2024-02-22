@@ -2,12 +2,28 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.xml.validation.Schema;
 
-import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.CypherExecutable;
+import com.buschmais.jqassistant.core.rule.api.model.Executable;
+import com.buschmais.jqassistant.core.rule.api.model.Group;
+import com.buschmais.jqassistant.core.rule.api.model.Parameter;
+import com.buschmais.jqassistant.core.rule.api.model.Report;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.RuleSetBuilder;
+import com.buschmais.jqassistant.core.rule.api.model.ScriptExecutable;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
@@ -15,15 +31,30 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
-import org.jqassistant.schema.rule.v2.*;
+import org.jqassistant.schema.rule.v2.AggregationVerificationType;
+import org.jqassistant.schema.rule.v2.ConceptType;
+import org.jqassistant.schema.rule.v2.ConstraintType;
+import org.jqassistant.schema.rule.v2.CypherType;
+import org.jqassistant.schema.rule.v2.GroupType;
+import org.jqassistant.schema.rule.v2.IncludedReferenceType;
+import org.jqassistant.schema.rule.v2.JqassistantRules;
+import org.jqassistant.schema.rule.v2.OptionalReferenceType;
+import org.jqassistant.schema.rule.v2.ParameterType;
+import org.jqassistant.schema.rule.v2.PropertyType;
+import org.jqassistant.schema.rule.v2.ReferenceType;
+import org.jqassistant.schema.rule.v2.ReportType;
+import org.jqassistant.schema.rule.v2.RowCountVerificationType;
+import org.jqassistant.schema.rule.v2.SeverityEnumType;
+import org.jqassistant.schema.rule.v2.SeverityRuleType;
+import org.jqassistant.schema.rule.v2.SourceType;
+import org.jqassistant.schema.rule.v2.VerificationType;
 
+import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
 import static java.util.stream.Collectors.toSet;
-
 /**
  * A {@link RuleParserPlugin} implementation.
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
-
     private static final String NAMESPACE_RULE_1_10 = "http://schema.jqassistant.org/rule/v2.0";
     private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v2.0.xsd";
 
@@ -103,15 +134,15 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType conceptType) throws RuleException {
-        String description = conceptType.getDescription();
-        Executable executable = createExecutable(conceptType, conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
+        String description = removeIndent(conceptType.getDescription());
+        Executable<?> executable = createExecutable(conceptType, conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
         Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultConceptSeverity);
         List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         List<ReferenceType> providesConcept = conceptType.getProvidesConcept();
-        Set<String> providesConcepts = providesConcept.stream().map(referenceType -> referenceType.getRefId()).collect(toSet());
+        Set<String> providesConcepts = providesConcept.stream().map(ReferenceType::getRefId).collect(toSet());
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
@@ -121,7 +152,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType constraintType) throws RuleException {
         Executable<?> executable = createExecutable(constraintType, constraintType.getSource(), constraintType.getCypher(), constraintType.getScript());
-        String description = constraintType.getDescription();
+        String description = removeIndent(constraintType.getDescription());
         Map<String, Parameter> parameters = getRequiredParameters(constraintType.getRequiresParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultConstraintSeverity);
