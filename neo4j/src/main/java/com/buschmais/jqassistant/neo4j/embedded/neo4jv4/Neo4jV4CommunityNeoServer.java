@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.resource.Resource;
@@ -19,6 +20,7 @@ import org.neo4j.kernel.internal.GraphDatabaseAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Slf4j
 class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV4CommunityNeoServer.class);
@@ -81,11 +83,16 @@ class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
         }
     }
 
+    @Deprecated
     private void registerProceduresAndFunctions(Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
         GraphDatabaseService graphDatabaseService = embeddedDatastore.getManagementService()
             .database(GraphDatabaseSettings.DEFAULT_DATABASE_NAME);
         GlobalProcedures procedures = ((GraphDatabaseAPI) graphDatabaseService).getDependencyResolver()
             .resolveDependency(GlobalProcedures.class, DependencyResolver.SelectionStrategy.SINGLE);
+        if (!procedureTypes.isEmpty() || !functionTypes.isEmpty()) {
+            log.warn(
+                "Explicit registration of Neo4j procedures and functions has been deprecated, please use the plugin mechanism provided by the embedded store.");
+        }
         for (Class<?> procedureType : procedureTypes) {
             try {
                 LOGGER.debug("Registering procedure class " + procedureType.getName());
