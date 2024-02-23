@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.neo4j.embedded.neo4jv4;
+package com.buschmais.jqassistant.neo4j.embedded.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.embedded.InstrumentationProvider;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
 import org.neo4j.configuration.GraphDatabaseInternalSettings;
@@ -25,11 +28,11 @@ import org.neo4j.io.ByteUnit;
 
 import static java.lang.Boolean.FALSE;
 
-public class Neo4jV4ServerFactory implements EmbeddedNeo4jServerFactory {
+public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
 
     @Override
     public EmbeddedNeo4jServer getServer() {
-        return new Neo4jV4CommunityNeoServer();
+        return new Neo4jCommunityNeoServer();
     }
 
     @Override
@@ -50,56 +53,69 @@ public class Neo4jV4ServerFactory implements EmbeddedNeo4jServerFactory {
         return propertiesBuilder.build();
     }
 
+    /**
+     * Scans the given plugin directory for JAR files and adds them to the {@link ClassLoader} used by Neo4j.
+     *
+     * @param pluginDir
+     *     The plugin directory.
+     */
     private static void prepareClassloader(Path pluginDir) {
-        Consumer<Path> consumer = getClasspathAppender();
-        try {
-            Files.find(pluginDir, 1, (p, a) -> p.getFileName()
-                    .toString()
-                    .endsWith(".jar"))
-                .forEach(file -> consumer.accept(file));
+        Consumer<Path> classpathAppender = getClasspathAppender();
+        try (Stream<Path> pathStream = Files.find(pluginDir, 1, (p, a) -> p.getFileName()
+            .toString()
+            .endsWith(".jar"))) {
+            pathStream.forEach(classpathAppender::accept);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot list plugin directory " + pluginDir, e);
         }
     }
 
+    /**
+     * Provides a {@link Consumer} to add the {@link Path} of a JAR file to the {@link ClassLoader} used by Neo4j.
+     */
     private static Consumer<Path> getClasspathAppender() {
         ClassLoader neo4jClassLoader = GraphDatabaseSettings.class.getClassLoader();
-        try {
             if (neo4jClassLoader instanceof URLClassLoader) {
                 return getURLClassLoaderAppender(neo4jClassLoader);
             } else {
-                return getAppClassLoaderAppender(neo4jClassLoader);
+                return getInstrumentationAppender();
             }
+    }
+
+    /**
+     * Uses an existing {@link URLClassLoader} (e.g. Maven) by making the method addURL accessible.
+     */
+    private static Consumer<Path> getURLClassLoaderAppender(ClassLoader classLoader) {
+        try {
+            Method method = classLoader.getClass()
+                .getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            return path -> {
+                try {
+                    method.invoke(classLoader, path.toUri()
+                        .toURL());
+                } catch (ReflectiveOperationException | MalformedURLException e) {
+                    throw new IllegalStateException(e);
+                }
+            };
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Cannot use URLClassLoader to extend classpath.", e);
         }
     }
 
-    private static Consumer<Path> getURLClassLoaderAppender(ClassLoader classLoader) throws NoSuchMethodException {
-        Method method = classLoader.getClass()
-            .getDeclaredMethod("addURL", URL.class);
-        method.setAccessible(true);
-        return path -> {
-            try {
-                method.invoke(classLoader, path.toUri()
-                    .toURL());
-            } catch (ReflectiveOperationException | MalformedURLException e) {
-                throw new IllegalStateException(e);
-            }
-        };
-    }
-
-    private static Consumer<Path> getAppClassLoaderAppender(ClassLoader classLoader) throws NoSuchMethodException {
-        Method method = classLoader.getClass()
-            .getDeclaredMethod("appendToClassPathForInstrumentation", String.class);
-        method.setAccessible(true);
-        return path -> {
-            try {
-                method.invoke(classLoader, path.toAbsolutePath()
-                    .toString());
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
-            }
-        };
+    /**
+     * Uses {@link java.lang.instrument.Instrumentation} if available (e.g. CLI).
+     */
+    private static Consumer<Path> getInstrumentationAppender() {
+        return path -> InstrumentationProvider.INSTANCE.getInstrumentation()
+            .ifPresent(instrumentation -> {
+                JarFile jarFile;
+                try {
+                    jarFile = new JarFile(path.toFile());
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot create JAR from file " + path.toAbsolutePath(), e);
+                }
+                instrumentation.appendToSystemClassLoaderSearch(jarFile);
+            });
     }
 }

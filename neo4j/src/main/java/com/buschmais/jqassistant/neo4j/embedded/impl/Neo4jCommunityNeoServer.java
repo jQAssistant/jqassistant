@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.neo4j.embedded.neo4jv4;
+package com.buschmais.jqassistant.neo4j.embedded.impl;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Slf4j
-class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
+class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jV4CommunityNeoServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jCommunityNeoServer.class);
     private EmbeddedDatastore embeddedDatastore;
 
     private ClassLoader classLoader;
@@ -83,6 +83,9 @@ class Neo4jV4CommunityNeoServer implements EmbeddedNeo4jServer {
         }
     }
 
+    /**
+     * @deprecated Replaced by Neo4j plugins mechanism.
+     */
     @Deprecated
     private void registerProceduresAndFunctions(Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
         GraphDatabaseService graphDatabaseService = embeddedDatastore.getManagementService()
