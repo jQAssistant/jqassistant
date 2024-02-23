@@ -36,7 +36,7 @@ jqassistant:
   # -Djqassistant.skip: true|false
   skip: false
 
-  # The list of plugins to load and activate.
+  # The list of jQAssistant plugins to load and activate.
   #
   # Each plugin is identified using its Maven coordinates:
   #
@@ -45,12 +45,17 @@ jqassistant:
   # -Djqassistant.plugins[0].version
   # -Djqassistant.plugins[0].classifier (optional)
   # -Djqassistant.plugins[0].type (optional)
+  # -Djqassistant.plugins[0].exclusions[0].group-id (optional)
+  # -Djqassistant.plugins[0].exclusions[0].artifact-id (optional)
   plugins:
     - group-id:
       artifact-id:
       version:
       classifier:
       type:
+      exclusions:
+        - group-id:
+          artifact-id:
 
 
   # The store configuration
@@ -81,8 +86,35 @@ jqassistant:
 
       # The HTTP connector port
       #
-      # -Djqassistant.store.embedded.http-port: 7474
+      # -Djqassistant.store.embedded.http-port
       http-port: 7474
+
+      # The directory from which Neo4j shall load plugins (e.g. APOC)
+      #
+      # -Djqassistant.store.embedded.neo4j-plugin-directory
+      neo4j-plugin-directory:
+
+      # The list of Neo4j plugins to load and activate.
+      # It uses the "neo4j-plugin-directory" (see above) if provided, otherwise a temporary directory is created.
+      neo4j-plugins:
+        # Each plugin is identified using its Maven coordinates:
+        #
+        # -Djqassistant.store.embedded.neo4j-plugins[0].group-id
+        # -Djqassistant.store.embedded.neo4j-plugins[0].artifact-id
+        # -Djqassistant.store.embedded.neo4j-plugins[0].version
+        # -Djqassistant.store.embedded.neo4j-plugins[0].classifier (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].type (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].exclusions[0].group-id (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].exclusions[0].artifact-id (optional)
+        - group-id:
+          artifact-id:
+          version:
+          classifier:
+          type:
+          exclusions:
+            - group-id:
+              artifact-id:
+
 
     # Settings for connecting to a remote Neo4j store
     remote:
