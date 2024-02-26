@@ -272,7 +272,9 @@ public final class ReportHelper {
         String description = rule.getDescription();
         if (description != null) {
             loggingStrategy.log(""); // empty line
-            loggingStrategy.log(description);
+            for (String line : description.split("\\n")) {
+                loggingStrategy.log(line);
+            }
         }
         if (!resultRows.isEmpty()) {
             loggingStrategy.log(""); // empty line
