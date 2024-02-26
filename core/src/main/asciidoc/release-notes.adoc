@@ -1,5 +1,9 @@
 = Core Framework
 
+== 2.1.0
+
+* Remove leading and trailing lines as well as indent of rule descriptions
+
 == 2.0.10
 
 * Upgraded to Maven Resolver 1.9.18 (used for plugin provisioning)

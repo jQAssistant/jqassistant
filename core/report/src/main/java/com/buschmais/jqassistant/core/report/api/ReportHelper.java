@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
 import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
@@ -9,7 +13,11 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -261,10 +269,16 @@ public final class ReportHelper {
         loggingStrategy.log(type + ": " + rule.getId());
         loggingStrategy.log("Severity: " + severityInfo);
         loggingStrategy.log("Number of rows: " + resultRows.size());
-        logDescription(loggingStrategy, rule);
-        // we need lambdas...
-        for (String row : resultRows) {
-            loggingStrategy.log(row);
+        String description = rule.getDescription();
+        if (description != null) {
+            loggingStrategy.log(""); // empty line
+            loggingStrategy.log(description);
+        }
+        if (!resultRows.isEmpty()) {
+            loggingStrategy.log(""); // empty line
+            for (String row : resultRows) {
+                loggingStrategy.log(row);
+            }
         }
         loggingStrategy.log(FOOTER);
         loggingStrategy.log(System.lineSeparator());
@@ -294,27 +308,9 @@ public final class ReportHelper {
                         .getLabel();
                     value.append(stringValue);
                 }
-                rows.add("  " + value);
+                rows.add(value.toString());
             }
         }
         return rows;
     }
-
-    /**
-     * Log the description of a rule.
-     *
-     * @param rule
-     *     The rule.
-     */
-    private void logDescription(LoggingStrategy loggingStrategy, Rule rule) {
-        String description = rule.getDescription();
-        if (description != null) {
-            StringTokenizer tokenizer = new StringTokenizer(description, "\n");
-            while (tokenizer.hasMoreTokens()) {
-                loggingStrategy.log(tokenizer.nextToken()
-                    .replaceAll("(\\r|\\n|\\t)", ""));
-            }
-        }
-    }
-
 }
