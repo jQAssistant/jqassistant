@@ -42,6 +42,9 @@ public class StoreFactory {
         case "bolt":
         case "neo4j":
         case "neo4j+s":
+            configuration.remote()
+                .username()
+                .ifPresent(username -> LOGGER.info("Authenticating with user '{}'", username));
             return new RemoteGraphStore(uri, configuration, storePluginRepository);
         default:
             throw new IllegalArgumentException("Cannot determine store type from URI '" + uri + "'.");
