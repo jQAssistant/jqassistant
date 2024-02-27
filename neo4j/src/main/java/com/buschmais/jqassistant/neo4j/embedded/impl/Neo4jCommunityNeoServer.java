@@ -33,11 +33,6 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
     private Integer httpPort;
 
     @Override
-    public String getVersion() {
-        return "4.x";
-    }
-
-    @Override
     public final void initialize(EmbeddedDatastore embeddedDatastore, String listenAddress, Integer httpPort, ClassLoader classLoader,
         Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes) {
@@ -58,7 +53,7 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
         try {
             server.start();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot start embedded server.", e);
+            throw new IllegalStateException("Cannot start embedded server.", e);
         }
         LOGGER.info("Neo4j browser available at http://{}:{}.", listenAddress, httpPort);
     }
@@ -78,7 +73,7 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
             try {
                 server.stop();
             } catch (Exception e) {
-                throw new RuntimeException("Cannot stop embedded server.", e);
+                throw new IllegalStateException("Cannot stop embedded server.", e);
             }
         }
     }
@@ -86,7 +81,7 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
     /**
      * @deprecated Replaced by Neo4j plugins mechanism.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     private void registerProceduresAndFunctions(Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
         GraphDatabaseService graphDatabaseService = embeddedDatastore.getManagementService()
             .database(GraphDatabaseSettings.DEFAULT_DATABASE_NAME);

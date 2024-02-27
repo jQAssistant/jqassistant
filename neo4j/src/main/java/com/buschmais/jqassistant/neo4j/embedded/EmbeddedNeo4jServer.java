@@ -10,8 +10,6 @@ import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
  */
 public interface EmbeddedNeo4jServer {
 
-    String getVersion();
-
     void initialize(EmbeddedDatastore embeddedDatastore, String listenAddress, Integer httpPort, ClassLoader classLoader, Collection<Class<?>> procedureTypes,
         Collection<Class<?>> functionTypes);
 
