@@ -6,8 +6,9 @@ import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
+import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.jqassistant.scm.maven.configuration.source.EmptyConfigSource;
@@ -113,8 +114,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             if (configuration.skip()) {
                 getLog().info("Skipping execution.");
             } else {
-                PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(repositorySystem, repositorySystemSession, repositories,
-                    configuration);
+                AetherArtifactProvider artifactResolver = new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories);
+                PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(configuration, artifactResolver);
                 MojoExecutionContext mojoExecutionContext = new MojoExecutionContext(session, currentProject, execution, configuration, pluginRepository);
                 MavenProject rootModule = mojoExecutionContext.getRootModule();
                 Set<MavenProject> executedModules = getExecutedModules(rootModule);
@@ -223,7 +224,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private Store getStore(MojoExecutionContext mojoExecutionContext, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
         Object existingStore = cachingStoreProvider.getStore(mojoExecutionContext.getConfiguration()
-            .store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository());
+                .store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository(),
+            new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                 "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D" + Maven.REUSE_STORE

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
@@ -54,7 +55,7 @@ public class CachingStoreProvider implements Disposable {
      * @return The store.
      */
     public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
-        PluginRepository pluginRepository) {
+        PluginRepository pluginRepository, ArtifactProvider artifactProvider) {
         URI uri = storeConfiguration.uri()
             .orElseGet(() -> {
                 File storeDirectory = storeDirectorySupplier.get();
@@ -70,7 +71,7 @@ public class CachingStoreProvider implements Disposable {
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            store = StoreFactory.getStore(storeConfiguration, storeDirectorySupplier, pluginRepository.getStorePluginRepository());
+            store = StoreFactory.getStore(storeConfiguration, storeDirectorySupplier, pluginRepository.getStorePluginRepository(), artifactProvider);
             store.start();
             storesByKey.put(key, store);
             keysByStore.put(store, key);
