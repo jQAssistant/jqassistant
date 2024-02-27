@@ -38,7 +38,7 @@ public interface ModuleDescriptor extends ClassFileDescriptor {
      * @return The {@link ModuleDescriptor} or <code>null</code>
      */
     @ResultOf
-    @Cypher("MATCH (artifact:Artifact)-[:DEPENDS_ON*..]->(:Artifact)-[:CONTAINS]->(:Module)-[:REQUIRES_MODULE*0..1]->(module:Java:Module{moduleName:$moduleName}) WHERE id(artifact)=$artifact and ($version is null or module.version=$version) RETURN module")
+    @Cypher("MATCH (artifact:Artifact)-[:DEPENDS_ON*..]->(:Artifact)-[:CONTAINS]->(:Java:Module)-[:REQUIRES*0..1]->(module:Java:Module{name:$moduleName}) WHERE id(artifact)=$artifact and ($version is null or module.version=$version) RETURN module")
     ModuleDescriptor findModuleInDependencies(@Parameter("artifact") JavaArtifactFileDescriptor artifact, @Parameter("moduleName") String moduleName,
         @Parameter("version") String version);
 
