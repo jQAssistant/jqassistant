@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.neo4j.embedded;
 
+import java.io.File;
+import java.util.Optional;
 import java.util.Properties;
-
-import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 public interface EmbeddedNeo4jServerFactory {
 
-    Properties getProperties(Embedded embedded);
+    Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Optional<File> pluginDirectory);
 
     EmbeddedNeo4jServer getServer();
 

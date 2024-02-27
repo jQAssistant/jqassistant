@@ -3,6 +3,8 @@
 
 == 2.1.0
 * Upgraded to Neo4j 4.4.30 and Neo4j 5.16.0
+* Added configuration settings `jqassistant.store.embedded.neo4j-plugin-dir` and `jqassistant.store.embedded.neo4j-plugins` for adding Neo4j plugins, e.g. APOC
+* Added `exclusions` using `group-id`/`artifact-id` patterns for jQAssistant and Neo4j plugin declarations
 
 == 2.0.11
 * Upgraded to Neo4j 4.4.29 and Neo4j Browser 5.15.0
