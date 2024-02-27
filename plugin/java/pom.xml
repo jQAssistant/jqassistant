@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -34,8 +35,8 @@
         <connection>scm:git:git@github.com:jqassistant/jqa-java-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jqassistant/jqa-java-plugin.git</developerConnection>
         <url>https://github.com/jqassistant/jqa-java-plugin</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
 
     <licenses>
@@ -91,13 +92,14 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
             <version>${jqa-plugin-common.version}</version>
-			<scope>test</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -142,5 +144,22 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>IT</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

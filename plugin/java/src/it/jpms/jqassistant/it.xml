@@ -1,0 +1,153 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <group id="it">
+        <includeConcept refId="it:*" severity="blocker" />
+    </group>
+
+    <concept id="it:Module1ExportsApiPackage">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
+              (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
+              (exportedPackage)-[:OF_PACKAGE]->(api)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1ExportsImplPackageToModule2">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
+              (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
+              (exportedPackage)-[:OF_PACKAGE]->(impl),
+              (exportedPackage)-[:TO_MODULE]->(:Java:Module{name:"java.it.jpms.module2"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1OpensApiPackage">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
+              (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
+              (openPackage)-[:OF_PACKAGE]->(api)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1OpensImplPackageToModule2">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
+              (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
+              (openPackage)-[:OF_PACKAGE]->(impl),
+              (openPackage)-[:TO_MODULE]->(:Java:Module{name:"java.it.jpms.module2"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module1ProvidesService">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService"}),
+              (artifact1)-[:CONTAINS]->(providerType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl"}),
+              (module1)-[:PROVIDES]->(providedService:Java:ProvidedService),
+              (providedService)-[:OF_TYPE]->(serviceType),
+              (providedService)-[:WITH_PROVIDER]->(providerType)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module2UsesService">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (module1)-[:PROVIDES]->(providedService:Java:ProvidedService)-[:OF_TYPE]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService"}),
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
+              (module2)-[:USES]->(serviceType)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module2RequiresModule1">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
+              (module2)-[:REQUIRES]->(module1)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:OpenModule2">
+        <cypher><![CDATA[
+            MATCH
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2", open:true})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="it:Module2RequiresStaticTransitiveModuleJavaSE">
+        <cypher><![CDATA[
+            MATCH
+              (artifact2:Artifact{name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
+              (module2)-[:REQUIRES{static:true, transitive:true}]->(:Java:Module{name:"java.se"})
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
+</jqassistant-rules>

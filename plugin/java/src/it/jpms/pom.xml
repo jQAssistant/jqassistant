@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>@project.groupId@</groupId>
+    <artifactId>@project.artifactId@.it.jpms.parent</artifactId>
+    <version>@project.version@</version>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>@maven.jqassistant.previous.version@</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                        <configuration>
+                            <yaml>
+                                jqassistant:
+                                  default-plugins:
+                                    - group-id: @project.groupId@
+                                      artifact-id: @project.artifactId@
+                                      version: @project.version@
+                                  analyze:
+                                    groups:
+                                      - it
+                            </yaml>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <modules>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+
+</project>

@@ -1,3 +1,13 @@
+The Java plugin provides the following scanners:
+
+* <<ArtifactScanner>>
+* <<PackageScanner>>
+* <<ClassFileScanner>>
+* <<ManifestFileScanner>>
+* <<PropertyFileScanner>>
+* <<ServiceLoaderFileScanner>>
+
+[[ArtifactScanner]]
 == Artifact Scanner
 
 [[:Java:Artifact]]
@@ -57,8 +67,8 @@ A Java package, i.e. a directory containing `.class` files or other directories.
 | CONTAINS     | <<:Java:Package>> | 0..n        | References a package located in the package
 |====
 
-[[ClassScanner]]
-== Class Scanner
+[[ClassFileScanner]]
+== Class File Scanner
 Imports Java classes, i.e. all scanned files having a `.class` suffix. Nodes with following labels will be created:
 
 *NOTE* Some of these labels may be further qualified with other labels, see the description below.
@@ -398,7 +408,7 @@ Represents a parameterized type, e.g.
 |====
 
 [[:Java:Bound:WildcardType]]
-=== Nodes labeled with `Java:Bound:WildcardType`
+=== Nodes labeled with `:Java:Bound:WildcardType`
 Represents a wildcard type, e.g. `?` in
 
 * `java.util.List<?>` for an unbound wildcard
@@ -416,7 +426,7 @@ Represents a wildcard type, e.g. `?` in
 NOTE: There can be either upper or lower bounds. An unbound wildcard has neither upper nor lower bounds.
 
 [[:Java:Bound:GenericArrayType]]
-=== Nodes labeled with `Java:Bound:GenericArrayType`
+=== Nodes labeled with `:Java:Bound:GenericArrayType`
 Represents a generic array type, i.e.
 
 * `[]` in `java.util.List<java.util.List[]>`
@@ -427,6 +437,77 @@ Represents a generic array type, i.e.
 | Name                 | Target label(s) | Cardinality | Description
 | HAS_COMPONENT_TYPE   | <<:Java:Bound,:Java:Bound>> | 1           | References the bound of the component type.
 |====
+
+[[:Java:Module]]
+=== Nodes labeled with `:Java:Module`
+Represents a module declaration according the Java Platform Module Specification (JPMS)
+
+.Properties of `:Java:Module`
+[options="header"]
+|====
+| Name       | Description
+| name       | The name of the module
+| version    | The version of the module
+| open       | `true` indicates that the module is open for access by reflection
+|====
+
+.Relations of `:Java:Module`
+[options="header"]
+|====
+| Name                   | Target label(s)           | Cardinality | Description
+| OF_DECLARES_MAIN_CLASS | <<:Java:Type>>            | 1           | References the declared main class of the module
+| REQUIRES               | <<:Java:Module>>          | 0..n        | References the required modules
+| EXPORTS                | <<:Java:ExportedPackage>> | 0..n        | References the exported package declarations
+| USES                   | <<:Java:Type>>            | 0..n        | References used services
+| PROVIDES               | <<:Java:ProvidedService>> | 0..n        | References the provided service declarations
+| OPENS                  | <<:Java:OpenPackage>>     | 0..n        | References the open package declarations
+|====
+
+.Properties of `:REQUIRES`
+[options="header"]
+|====
+| Name       | Description
+| static     | `true` indicates a static reference, i.e. only at compile time
+| transitive | `true` indicates that the module is required including its transitive module dependencies
+|====
+
+[[:Java:ExportedPackage]]
+=== Nodes labeled with `:Java:ExportedPackage`
+Represents an exported package declaration of a Java module.
+
+.Relations of `:Java:ExportedPackage`
+[options="header"]
+|====
+| Name       | Target label(s)   | Cardinality | Description
+| OF_PACKAGE | <<:Java:Package>> | 1           | References the exported Java package
+| TO_MODULE  | <<:Java:Module>>  | 0..n        | References the modules to which the Java package is exported
+|====
+
+[[:Java:ProvidedService]]
+=== Nodes labeled with `:Java:ProvidedService`
+Represents a provided service declaration of a Java module.
+
+.Relations of `:Java:ProvidedService`
+[options="header"]
+|====
+| Name          | Target label(s)   | Cardinality | Description
+| OF_TYPE       | <<:Java:Type>>    | 1           | References the provided service interface
+| WITH_PROVIDER | <<:Java:Type>>    | 1..n        | References the service providers implementing the service interface
+|====
+
+[[:Java:OpenPackage]]
+=== Nodes labeled with `:Java:OpenPackage`
+Represents an open package declaration of a Java module.
+
+.Relations of `:Java:OpenPackage`
+[options="header"]
+|====
+| Name       | Target label(s)   | Cardinality | Description
+| OF_PACKAGE | <<:Java:Package>> | 1           | References the open Java package (i.e. to allow access via reflection)
+| TO_MODULE  | <<:Java:Module>>  | 0..n        | References the modules to which the Java packages are open
+|====
+
+
 
 [[ManifestFileScanner]]
 == Manifest File Scanner
