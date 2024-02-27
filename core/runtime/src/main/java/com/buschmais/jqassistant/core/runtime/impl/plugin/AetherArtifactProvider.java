@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
-import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
-import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
-import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,7 @@ import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
@@ -31,13 +29,10 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 
-/**
- * Implementation of a {@link PluginResolver} based on Eclipse Aether.
- */
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-public class AetherPluginResolverImpl implements PluginResolver {
+public class AetherArtifactProvider implements ArtifactProvider {
 
     private final RepositorySystem repositorySystem;
 
@@ -45,18 +40,16 @@ public class AetherPluginResolverImpl implements PluginResolver {
 
     private final List<RemoteRepository> repositories;
 
-    @Override
-    public PluginClassLoader createClassLoader(ClassLoader parent, Configuration configuration) {
-        List<Plugin> plugins = new ArrayList<>();
-        plugins.addAll(configuration.defaultPlugins());
-        plugins.addAll(configuration.plugins());
-        if (!plugins.isEmpty()) {
-            log.info("Resolving {} plugins and required dependencies.", plugins.size());
-            List<Dependency> requiredPlugins = getRequiredPluginDependencies(plugins);
-            DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
-            return new PluginClassLoader(parent, getDependencyURLs(dependencyResult));
-        }
-        return new PluginClassLoader(parent);
+    public List<File> resolve(List<Plugin> plugins) {
+        List<Dependency> requiredPlugins = getDependencies(plugins);
+        DependencyResult dependencyResult = resolvePlugins(requiredPlugins);
+        return asFiles(dependencyResult);
+    }
+
+    private List<Dependency> getDependencies(List<Plugin> plugins) {
+        return plugins.stream()
+            .flatMap(plugin -> getPluginDependencies(plugin).stream())
+            .collect(toList());
     }
 
     private DependencyResult resolvePlugins(List<Dependency> dependencies) {
@@ -68,14 +61,29 @@ public class AetherPluginResolverImpl implements PluginResolver {
         return dependencyResult;
     }
 
-    private List<Dependency> getRequiredPluginDependencies(List<Plugin> plugins) {
-        return plugins.stream().flatMap(plugin -> createPluginDependencies(plugin).stream()).collect(toList());
+    private List<Dependency> getPluginDependencies(Plugin plugin) {
+        List<Exclusion> exlusions = plugin.exclusions()
+            .stream()
+            .map(AetherArtifactProvider::getPluginExclusions)
+            .flatMap(Collection::stream)
+            .collect(toList());
+        return plugin.artifactId()
+            .stream()
+            .map(artifactId -> getDependency(plugin, artifactId.trim(), exlusions))
+            .collect(toList());
     }
 
-    private List<Dependency> createPluginDependencies(Plugin plugin) {
-        return plugin.artifactId().stream().map(
-            artifactId -> new Dependency(new DefaultArtifact(plugin.groupId(), artifactId, plugin.classifier().orElse(null), plugin.type(), plugin.version()),
-                RUNTIME)).collect(toList());
+    private static Dependency getDependency(Plugin plugin, String artifactId, List<Exclusion> exlusions) {
+        return new Dependency(new DefaultArtifact(plugin.groupId(), artifactId, plugin.classifier()
+            .orElse(null), plugin.type(), plugin.version()), RUNTIME, false, exlusions);
+    }
+
+    private static List<Exclusion> getPluginExclusions(com.buschmais.jqassistant.core.shared.configuration.Exclusion exclusion) {
+        return exclusion.artifactId()
+            .stream()
+            .map(artifactId -> new Exclusion(exclusion.groupId(), artifactId.trim(), exclusion.classifier()
+                .orElse(null), exclusion.type()))
+            .collect(toList());
     }
 
     private DependencyResult resolveDependencies(DependencyFilter classpathFilter, List<Dependency> dependencies) {
@@ -104,13 +112,11 @@ public class AetherPluginResolverImpl implements PluginResolver {
         }
     }
 
-    private List<URL> getDependencyURLs(DependencyResult dependencyResult) {
-        return dependencyResult.getArtifactResults().stream().map(artifactResult -> {
-            try {
-                return artifactResult.getArtifact().getFile().toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new PluginRepositoryException("Cannot convert artifact " + artifactResult.getArtifact() + " to URL", e);
-            }
-        }).collect(toList());
+    private List<File> asFiles(DependencyResult dependencyResult) {
+        return dependencyResult.getArtifactResults()
+            .stream()
+            .map(artifactResult -> artifactResult.getArtifact()
+                .getFile())
+            .collect(toList());
     }
 }

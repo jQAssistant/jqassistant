@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
-import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 import io.smallrye.config.ConfigMapping;
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.function.Supplier;
 
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
@@ -22,15 +23,12 @@ public class StoreFactory {
     }
 
     public static Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Supplier<File> storeDirectorySupplier,
-        StorePluginRepository storePluginRepository) {
+        StorePluginRepository storePluginRepository, ArtifactProvider artifactProvider) {
         URI uri = configuration.uri()
             .orElse(storeDirectorySupplier.get()
                 .toURI())
             .normalize();
-        LOGGER.info("Connecting to store at '" + uri + "'" + configuration.remote()
-            .username()
-            .map(username -> " (username=" + username + ")")
-            .orElse(""));
+        LOGGER.info("Connecting to store at {}'", uri);
         String scheme = uri.getScheme();
         if (scheme == null) {
             throw new IllegalArgumentException("Cannot determine scheme from URI '" + uri + "'.");
@@ -38,7 +36,7 @@ public class StoreFactory {
         switch (scheme.toLowerCase()) {
         case "file":
         case "memory":
-            return new EmbeddedGraphStore(uri, configuration, storePluginRepository);
+            return new EmbeddedGraphStore(uri, configuration, storePluginRepository, artifactProvider);
         case "bolt":
         case "neo4j":
         case "neo4j+s":

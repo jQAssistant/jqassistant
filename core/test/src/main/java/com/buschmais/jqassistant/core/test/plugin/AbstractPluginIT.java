@@ -52,6 +52,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.junit.jupiter.api.*;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -220,7 +221,7 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, TestStore testStore) {
-        store = StoreFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY, pluginRepository.getStorePluginRepository());
+        store = StoreFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY, pluginRepository.getStorePluginRepository(), plugins -> emptyList());
         store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();

@@ -23,7 +23,7 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOUnit configure(XOUnit.XOUnitBuilder builder, Store configuration) {
+    protected XOUnit configure(XOUnit.XOUnitBuilder builder) {
         builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
         Remote remote = this.configuration.remote();

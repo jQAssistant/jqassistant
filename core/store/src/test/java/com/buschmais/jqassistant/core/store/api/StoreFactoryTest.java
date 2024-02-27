@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
@@ -31,37 +32,49 @@ class StoreFactoryTest {
     @Mock
     private StorePluginRepository storePluginRepository;
 
+    @Mock
+    private ArtifactProvider artifactProvider;
+
     @Test
     void file() throws URISyntaxException {
-        verify(of(new URI("file://target/jqassistant/store")), EmbeddedGraphStore.class);
+        verifyEmbedded("file://target/jqassistant/store");
     }
 
     @Test
     void memory() throws URISyntaxException {
-        verify(of(new URI("memory:///")), EmbeddedGraphStore.class);
+        verifyEmbedded("memory:///");
     }
 
     @Test
     void bolt() throws URISyntaxException {
-        verify(of(new URI("bolt://localhost:7687")), RemoteGraphStore.class);
+        verifyRemote("bolt://localhost:7687");
     }
+
 
     @Test
     void neo4j() throws URISyntaxException {
-        verify(of(new URI("neo4j://localhost:7687")), RemoteGraphStore.class);
+        verifyRemote("neo4j://localhost:7687");
     }
 
     @Test
     void neo4js() throws URISyntaxException {
-        verify(of(new URI("neo4j+s://localhost:7687")), RemoteGraphStore.class);
+        verifyRemote("neo4j+s://localhost:7687");
+    }
+
+    private void verifyEmbedded(String str) throws URISyntaxException {
+        verify(of(new URI(str)), EmbeddedGraphStore.class);
+    }
+
+    private void verifyRemote(String str) throws URISyntaxException {
+        doReturn(remote).when(configuration)
+            .remote();
+        verify(of(new URI(str)), RemoteGraphStore.class);
     }
 
     private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
         doReturn(uri).when(configuration)
             .uri();
-        doReturn(remote).when(configuration)
-            .remote();
-        assertThat(StoreFactory.getStore(configuration, () -> new File("store"), storePluginRepository)).isInstanceOf(expectedStoreType);
+        assertThat(StoreFactory.getStore(configuration, () -> new File("store"), storePluginRepository, artifactProvider)).isInstanceOf(expectedStoreType);
     }
 
 }

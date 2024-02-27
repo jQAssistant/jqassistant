@@ -6,8 +6,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
-import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
+import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import io.smallrye.config.SysPropConfigSource;

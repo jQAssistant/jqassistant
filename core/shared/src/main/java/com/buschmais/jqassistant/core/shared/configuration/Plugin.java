@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.runtime.api.configuration;
+package com.buschmais.jqassistant.core.shared.configuration;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +11,6 @@ import io.smallrye.config.WithDefault;
 @ConfigMapping
 @Description("The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version. Furthermore a plugin can be declared as active or inactive.")
 public interface Plugin {
-
-    @Description("Activate the plugin.")
-    @WithDefault("true")
-    boolean active();
 
     @Description("The groupId of the plugin.")
     String groupId();
@@ -32,4 +28,5 @@ public interface Plugin {
     @Description("The version of the plugin.")
     String version();
 
+    List<Exclusion> exclusions();
 }
