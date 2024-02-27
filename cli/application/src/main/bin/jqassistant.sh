@@ -8,4 +8,5 @@ else
 fi
 
 export JQASSISTANT_HOME=`cd "$BIN_DIR/.." && pwd -P`
-exec "$JAVA_CMD" --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED $JQASSISTANT_OPTS -jar "$JQASSISTANT_HOME/lib/${project.groupId}-${project.artifactId}-${project.version}.${project.packaging}" "$@"
+
+exec "$JAVA_CMD" $JQASSISTANT_OPTS -jar "$JQASSISTANT_HOME/lib/${project.groupId}-${project.artifactId}-${project.version}.${project.packaging}" "$@"

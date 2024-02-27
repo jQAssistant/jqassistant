@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Server;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
@@ -34,6 +34,9 @@ class ServerTaskTest {
     private PluginRepository pluginRepository;
 
     @Mock
+    private ArtifactProvider artifactProvider;
+
+    @Mock
     private EmbeddedGraphStore store;
 
     @Mock
@@ -47,8 +50,9 @@ class ServerTaskTest {
             .getServer();
         doReturn(server).when(configuration).server();
         serverTask = new ServerTask() {
-            protected Store getStore(CliConfiguration configuration) {
-                return store;
+            @Override
+            void withStore(CliConfiguration configuration, StoreOperation storeOperation) throws CliExecutionException {
+                storeOperation.run(store);
             }
         };
     }
@@ -69,7 +73,7 @@ class ServerTaskTest {
         InputStream stdin = System.in;
         try {
             System.setIn(new ByteArrayInputStream(data.getBytes()));
-            startServer(new String[] {});
+            startServer();
         } finally {
             System.setIn(stdin);
 
@@ -87,7 +91,7 @@ class ServerTaskTest {
         CommandLineParser parser = new BasicParser();
         CommandLine commandLine = parser.parse(options, arguments);
 
-        serverTask.initialize(pluginRepository);
+        serverTask.initialize(pluginRepository, artifactProvider);
         serverTask.configure(commandLine, mock(ConfigurationBuilder.class));
         serverTask.run(configuration, options);
     }

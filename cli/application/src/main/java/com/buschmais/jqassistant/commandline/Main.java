@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
+import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
@@ -24,6 +24,8 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
@@ -110,15 +112,17 @@ public class Main {
      *
      * @param configuration
      *     The {@link CliConfiguration}
+     * @param userHome The user home directory
+     * @param artifactProvider The {@link ArtifactProvider}
      * @return The repository.
      * @throws CliExecutionException
      *     If initialization fails.
      */
-    private PluginRepository getPluginRepository(CliConfiguration configuration, File userHome) throws CliExecutionException {
+    private PluginRepository getPluginRepository(CliConfiguration configuration, File userHome, ArtifactProvider artifactProvider)
+        throws CliExecutionException {
         // create classloader for the plugins/ directory.
         ClassLoader pluginDirectoryClassLoader = createPluginClassLoader();
-        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory(userHome);
-        PluginResolver pluginResolver = pluginResolverFactory.create(configuration);
+        PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
         // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved from PluginResolver
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration);
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
@@ -195,12 +199,14 @@ public class Main {
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
-            PluginRepository pluginRepository = getPluginRepository(configuration, userHome);
+            ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(userHome);
+            ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+            PluginRepository pluginRepository = getPluginRepository(configuration, userHome, artifactProvider);
             ClassLoader contextClassLoader = currentThread()
                 .getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, pluginRepository, options);
+                executeTasks(tasks, configuration, pluginRepository, artifactProvider, options);
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
             }
@@ -255,12 +261,13 @@ public class Main {
         return emptyList();
     }
 
-    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Options options)
+    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider,
+        Options options)
         throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
-                executeTask(task, configuration, pluginRepository, options);
+                executeTask(task, configuration, pluginRepository, artifactProvider, options);
             }
         } finally {
             pluginRepository.destroy();
@@ -298,8 +305,9 @@ public class Main {
      * @param options The CLI options.
      * @throws CliExecutionException If the execution fails.
      */
-    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, Options options) throws CliExecutionException {
-        task.initialize(pluginRepository);
+    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider, Options options)
+        throws CliExecutionException {
+        task.initialize(pluginRepository, artifactProvider);
         task.run(configuration, options);
     }
 

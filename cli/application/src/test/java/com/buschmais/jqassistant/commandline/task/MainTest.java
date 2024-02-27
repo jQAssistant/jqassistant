@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
 import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,8 @@ class MainTest {
     void setUp() {
         this.main = new com.buschmais.jqassistant.commandline.Main() {
             @Override
-            protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, Options options) {
+            protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider,
+                Options options) {
                 fail("(No task must be executed");
             }
         };

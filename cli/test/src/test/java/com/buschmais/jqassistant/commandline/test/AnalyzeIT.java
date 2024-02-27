@@ -115,10 +115,20 @@ class AnalyzeIT extends AbstractCLIIT {
 
     @DistributionTest
     void createReportArchive()  {
-        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY,
-            "-Djqassistant.analyze.report.create-archive" };
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.report.create-archive" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(store -> verifyConcepts(store, TEST_CONCEPT));
+    }
+
+    @DistributionTest
+    void apoc() {
+        File configFile = new File(ScanIT.class.getResource("/.jqassistant-analyze-apoc-" + getNeo4jVersion() + ".yml")
+            .getFile());
+        String[] args = new String[] { "analyze", "-configurationLocations", configFile.getAbsolutePath(), "-D",
+            "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D", "jqassistant.analyze.concepts=it-apoc:APOCHelp", "-D",
+            "jqassistant.store.embedded.neo4j-plugin-directory=jqassistant/plugins/" };
+        assertThat(execute(args).getExitCode()).isEqualTo(0);
     }
 
     /**

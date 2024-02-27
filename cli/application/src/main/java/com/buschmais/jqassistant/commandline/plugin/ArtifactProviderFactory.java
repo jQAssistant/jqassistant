@@ -8,9 +8,9 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.*;
 import com.buschmais.jqassistant.commandline.configuration.Proxy;
-import com.buschmais.jqassistant.core.runtime.api.configuration.Plugin;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
-import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherPluginResolverImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -40,7 +40,7 @@ import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY
  * Factory for the {@link PluginResolver} to be used in standalone in the CLI.
  */
 @Slf4j
-public class PluginResolverFactory {
+public class ArtifactProviderFactory {
 
     public static final String MAVEN_CENTRAL_ID = "central";
 
@@ -69,7 +69,7 @@ public class PluginResolverFactory {
 
     private final File jqassistantUserDir;
 
-    public PluginResolverFactory(File userHome) {
+    public ArtifactProviderFactory(File userHome) {
         this.jqassistantUserDir = new File(userHome, ".jqassistant");
     }
 
@@ -84,7 +84,7 @@ public class PluginResolverFactory {
      *     The {@link CliConfiguration}.
      * @return The {@link PluginResolver}.
      */
-    public PluginResolver create(CliConfiguration configuration) {
+    public AetherArtifactProvider create(CliConfiguration configuration) {
         Repositories repositories = configuration.repositories();
         File localRepository = getLocalRepository(repositories);
         Optional<org.eclipse.aether.repository.Proxy> proxy = getProxy(configuration.proxy());
@@ -103,7 +103,7 @@ public class PluginResolverFactory {
             .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector, proxySelector);
 
-        return new AetherPluginResolverImpl(repositorySystem, session, remoteRepositories);
+        return new AetherArtifactProvider(repositorySystem, session, remoteRepositories);
     }
 
     /**

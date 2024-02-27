@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
@@ -19,6 +20,7 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
@@ -29,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.*;
@@ -90,9 +93,18 @@ public abstract class AbstractCLIIT {
     public static final String TEST_CONSTRAINT = "default:TestConstraint";
     public static final String CUSTOM_GROUP = "customGroup";
 
+    private static String userHome;
+
+    private static CliConfiguration configuration;
+
+    private static ArtifactProvider artifactProvider;
+
     private PluginRepository pluginRepository;
 
+    private String neo4jVersion;
+
     private String jqaHome;
+
 
     /**
      * Represents the result of a CLI execution containing exit code and console
@@ -118,11 +130,25 @@ public abstract class AbstractCLIIT {
         }
     }
 
+    @BeforeAll
+    public static void beforeAll() {
+        userHome = AbstractCLIIT.class.getResource("/userhome/")
+            .getFile();
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
+        configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
+        configuration = ((ConfigurationLoader<CliConfiguration>) new ConfigurationLoaderImpl<>(CliConfiguration.class)).load(configurationBuilder.build());
+        // The user home contains a Maven settings.xml to configure the local repository
+        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));
+        artifactProvider = artifactProviderFactory.create(configuration);
+    }
+
     /**
      * Reset the default store.
      */
     @BeforeEach
     public void before(String neo4jVersion) throws IOException {
+        this.neo4jVersion = neo4jVersion;
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
@@ -143,6 +169,10 @@ public abstract class AbstractCLIIT {
         if (pluginRepository != null) {
             pluginRepository.destroy();
         }
+    }
+
+    protected String getNeo4jVersion() {
+        return neo4jVersion;
     }
 
     /**
@@ -170,11 +200,9 @@ public abstract class AbstractCLIIT {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHome);
-        // The user home contains a Maven settings.xml to configure the local repository
-        String userHome = AbstractCLIIT.class.getResource("/userhome/")
-            .getFile();
-        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
-        //        environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
+        // add-opens is required by Neo4jv4 on JDK17
+        environment.put("JQASSISTANT_OPTS", "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED -Duser.home=" + userHome);
+        // environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
@@ -221,12 +249,7 @@ public abstract class AbstractCLIIT {
     protected void withStore(File directory, StoreOperation storeOperation) {
         ExecutionResult serverExecutionResult = execute("server", "-Djqassistant.store.uri=" + directory.toURI());
         try {
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
-            configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
-            CliConfiguration configuration = ((ConfigurationLoader<CliConfiguration>) new ConfigurationLoaderImpl<>(CliConfiguration.class)).load(
-                configurationBuilder.build());
-            Store remoteStore = StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository());
+            Store remoteStore = StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository(), artifactProvider);
             waitAtMost(30, SECONDS).untilAsserted(() -> assertThatNoException().isThrownBy(() -> remoteStore.start()));
             try {
                 storeOperation.run(remoteStore);

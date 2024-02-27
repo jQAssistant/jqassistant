@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.commandline.plugin.PluginResolverFactory;
+import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
 import io.smallrye.config.PropertiesConfigSource;
 import org.junit.jupiter.api.Test;
@@ -29,10 +31,11 @@ public class CliPluginResolverIT {
         ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
         CliConfiguration cliConfiguration = configurationLoader.load(testConfigSource);
 
-        PluginResolverFactory pluginResolverFactory = new PluginResolverFactory(new File("target/it/userhome"));
-        PluginResolver pluginResolver = pluginResolverFactory.create(cliConfiguration);
+        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File("target/it/userhome"));
+        ArtifactProvider artifactProvider = artifactProviderFactory.create(cliConfiguration);
+        PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
 
-        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(PluginResolverFactory.class.getClassLoader(), cliConfiguration);
+        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(ArtifactProviderFactory.class.getClassLoader(), cliConfiguration);
 
         assertThat(pluginClassLoader).isNotNull();
     }

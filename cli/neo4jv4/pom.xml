@@ -25,6 +25,10 @@
                                 </customClasspathLayout>
                                 <mainClass>com.buschmais.jqassistant.commandline.Main</mainClass>
                             </manifest>
+                            <manifestEntries>
+                                <!-- Required for loading Neo4j plugins with embedded store -->
+                                <Launcher-Agent-Class>com.buschmais.jqassistant.neo4j.embedded.InstrumentationProvider</Launcher-Agent-Class>
+                            </manifestEntries>
                         </archive>
                     </configuration>
                 </plugin>

@@ -15,10 +15,11 @@ import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.jqassistant.neo4j.embedded.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -62,6 +63,9 @@ class AnalyzeTaskTest {
     private PluginRepository pluginRepository;
 
     @Mock
+    private ArtifactProvider artifactProvider;
+
+    @Mock
     private StorePluginRepository storePluginRepository;
 
     @Mock
@@ -99,7 +103,7 @@ class AnalyzeTaskTest {
     @Test
     void loadPlugins() throws CliExecutionException, RuleException {
         AnalyzeTask analyzeTask = new AnalyzeTask();
-        analyzeTask.initialize(pluginRepository);
+        analyzeTask.initialize(pluginRepository, artifactProvider);
         CommandLine options = mock(CommandLine.class);
         stubOption(options, "reportDirectory", "target/jqassistant/test/report");
         analyzeTask.configure(options, mock(ConfigurationBuilder.class));
