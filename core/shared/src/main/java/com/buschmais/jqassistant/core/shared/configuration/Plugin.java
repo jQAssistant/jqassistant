@@ -9,7 +9,7 @@ import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
 @ConfigMapping
-@Description("The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version. Furthermore a plugin can be declared as active or inactive.")
+@Description("The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version.")
 public interface Plugin {
 
     @Description("The groupId of the plugin.")
@@ -28,5 +28,6 @@ public interface Plugin {
     @Description("The version of the plugin.")
     String version();
 
+    @Description("The exclusions of the plugin.")
     List<Exclusion> exclusions();
 }
