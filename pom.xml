@@ -94,8 +94,8 @@
         <mockito.version>2.23.4</mockito.version>
         <neo4j_4x.version>4.4.30</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.24</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.16.0</neo4j_5x.version>
-        <neo4j_5x_apoc.version>5.16.1</neo4j_5x_apoc.version>
+        <neo4j_5x.version>5.17.0</neo4j_5x.version>
+        <neo4j_5x_apoc.version>5.17.1</neo4j_5x_apoc.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
