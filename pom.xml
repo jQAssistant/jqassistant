@@ -89,7 +89,7 @@
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <junit.version>5.9.1</junit.version>
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
         <neo4j_4x.version>4.4.30</neo4j_4x.version>
@@ -131,7 +131,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>2.1.0-M1</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>2.1.0-RC1</maven.jqassistant.previous.version>
         <maven.resources.version>3.3.0</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
