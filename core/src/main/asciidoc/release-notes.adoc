@@ -3,6 +3,7 @@
 == 2.1.0
 
 * Remove leading and trailing lines as well as indent of rule descriptions
+* Fixed sorting of constraints and concepts in HTML report, now sorting by status (failure/warning/success), severity and rule id
 
 == 2.0.10
 

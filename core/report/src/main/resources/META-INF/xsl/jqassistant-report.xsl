@@ -135,10 +135,17 @@
                     <th style="width:15%;">Severity</th>
                     <th style="width:15%;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//tns:constraint">
-                    <xsl:sort select="count(tns:result)" order="descending"
-                              data-type="number"/>
-                    <xsl:sort select="tns:severity/@level" order="ascending"/>
+                <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
+                </xsl:apply-templates>
+                <xsl:apply-templates select="//tns:constraint[tns:status='warning']">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
+                </xsl:apply-templates>
+                <xsl:apply-templates select="//tns:constraint[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
                 </xsl:apply-templates>
             </table>
         </div>
@@ -158,10 +165,17 @@
                     <th style="width:10%;">Severity</th>
                     <th style="width:10%;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//tns:concept">
-                    <xsl:sort select="count(tns:result)" order="descending"
-                              data-type="number"/>
-                    <xsl:sort select="tns:severity/@level" order="ascending"/>
+                <xsl:apply-templates select="//tns:concept[tns:status='failure']">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
+                </xsl:apply-templates>
+                <xsl:apply-templates select="//tns:concept[tns:status='warning']">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
+                </xsl:apply-templates>
+                <xsl:apply-templates select="//tns:concept[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:severity/@level"/>
+                    <xsl:sort select="@id"/>
                 </xsl:apply-templates>
             </table>
         </div>
