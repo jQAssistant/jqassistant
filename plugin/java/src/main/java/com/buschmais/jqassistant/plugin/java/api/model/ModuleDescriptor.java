@@ -2,9 +2,6 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 
 import java.util.List;
 
-import com.buschmais.xo.api.annotation.ResultOf;
-import com.buschmais.xo.api.annotation.ResultOf.Parameter;
-import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
@@ -25,22 +22,6 @@ public interface ModuleDescriptor extends ClassFileDescriptor {
     TypeDescriptor getMainClass();
 
     void setMainClass(TypeDescriptor mainClassType);
-
-    /**
-     * Find a contained or required {@link ModuleDescriptor} for the given module name and version in the dependencies of the current artifact
-     *
-     * @param artifact
-     *     The artifact.
-     * @param moduleName
-     *     the module name.
-     * @param version
-     *     the module version.
-     * @return The {@link ModuleDescriptor} or <code>null</code>
-     */
-    @ResultOf
-    @Cypher("MATCH (artifact:Artifact)-[:DEPENDS_ON*..]->(:Artifact)-[:CONTAINS]->(:Java:Module)-[:REQUIRES*0..1]->(module:Java:Module{name:$moduleName}) WHERE id(artifact)=$artifact and ($version is null or module.version=$version) RETURN module")
-    ModuleDescriptor findModuleInDependencies(@Parameter("artifact") JavaArtifactFileDescriptor artifact, @Parameter("moduleName") String moduleName,
-        @Parameter("version") String version);
 
     @Outgoing
     List<RequiresDescriptor> getRequiredModules();

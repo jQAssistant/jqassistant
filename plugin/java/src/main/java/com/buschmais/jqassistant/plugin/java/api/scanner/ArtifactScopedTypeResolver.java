@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescripto
  */
 public class ArtifactScopedTypeResolver extends AbstractArtifactScopedTypeResolver {
 
-    private String classPathDirectory;
+    private final String classPathDirectory;
 
     /**
      * Constructor.

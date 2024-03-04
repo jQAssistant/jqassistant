@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache.CachedType;
 
@@ -26,8 +27,9 @@ public abstract class AbstractTypeResolver implements TypeResolver {
 
     @Override
     public final <T extends ClassFileDescriptor> CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
-                                                                ScannerContext context) {
-        T typeDescriptor = context.getStore().addDescriptorType(fileDescriptor, descriptorType);
+        ScannerContext context) {
+        T typeDescriptor = context.getStore()
+            .addDescriptorType(fileDescriptor, descriptorType);
         setTypeProperties(typeDescriptor, fullQualifiedName);
         removeRequiredType(fullQualifiedName, typeDescriptor);
         addContainedType(fullQualifiedName, typeDescriptor);
@@ -60,7 +62,18 @@ public abstract class AbstractTypeResolver implements TypeResolver {
             .require(requiredFileName, containedFileName, requiredFileType, context);
     }
 
-    protected abstract String getContainedFileName(String requiredFileName);
+    @Override
+    public final ModuleDescriptor resolveModule(String moduleName, String version, ScannerContext context) {
+        ModuleDescriptor requiredModule = findModuleInDependencies(moduleName, version);
+        if (requiredModule == null) {
+            requiredModule = context.getStore()
+                .create(ModuleDescriptor.class);
+            requiredModule.setName(moduleName);
+            requiredModule.setVersion(version);
+            addRequiredModule(requiredModule);
+        }
+        return requiredModule;
+    }
 
     private <T extends TypeDescriptor> CachedType<T> getCachedType(String fullQualifiedName, TypeDescriptor typeDescriptor) {
         CachedType<T> cachedType = new CachedType(typeDescriptor);
@@ -81,13 +94,28 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     }
 
     /**
+     * Find the given module in the dependencies of the current artifact
+     *
+     * @param moduleName
+     *     The module name.
+     * @param version
+     *     The version.
+     * @return The {@link ModuleDescriptor} or <code>null</code>.
+     */
+    protected abstract ModuleDescriptor findModuleInDependencies(String moduleName, String version);
+
+    protected abstract void addRequiredModule(ModuleDescriptor moduleDescriptor);
+
+    protected abstract String getContainedFileName(String requiredFileName);
+
+    /**
      * Find a type descriptor in the current scope (e.g. the containing
      * artifact).
      *
      * @param fullQualifiedName
-     *            The name.
+     *     The name.
      * @param context
-     *            The scanner context.
+     *     The scanner context.
      * @return The type descriptor.
      */
     protected abstract TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context);
@@ -97,9 +125,9 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      * dependencies).
      *
      * @param fullQualifiedName
-     *            The name.
+     *     The name.
      * @param context
-     *            The scanner context.
+     *     The scanner context.
      * @return The type descriptor.
      */
     protected abstract TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context);
@@ -108,9 +136,9 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      * Mark a type descriptor as required by the current scope.
      *
      * @param fqn
-     *            The name.
+     *     The name.
      * @param typeDescriptor
-     *            The descriptor.
+     *     The descriptor.
      */
     protected abstract void addRequiredType(String fqn, TypeDescriptor typeDescriptor);
 
@@ -118,9 +146,9 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      * Mark a type descriptor as contained by the current scope.
      *
      * @param fqn
-     *            The name.
+     *     The name.
      * @param typeDescriptor
-     *            The descriptor.
+     *     The descriptor.
      */
     protected abstract void addContainedType(String fqn, TypeDescriptor typeDescriptor);
 
@@ -128,9 +156,10 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      * Mark a type descriptor as no longer required by the current scope.
      *
      * @param fqn
-     *            The name.
+     *     The name.
      * @param typeDescriptor
-     *            The descriptor.
+     *     The descriptor.
      */
     protected abstract <T extends TypeDescriptor> void removeRequiredType(String fqn, T typeDescriptor);
+
 }

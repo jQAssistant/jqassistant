@@ -6,6 +6,22 @@
         <includeConcept refId="it:*" severity="blocker" />
     </group>
 
+    <concept id="it:Module1RequiresJacksonCore">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (jacksonCore:Artifact{name:"jackson-core"}),
+              (jacksonCore)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"com.fasterxml.jackson.core"}),
+              (module1)-[:REQUIRES]->(module2)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
     <concept id="it:Module1ExportsApiPackage">
         <cypher><![CDATA[
             MATCH

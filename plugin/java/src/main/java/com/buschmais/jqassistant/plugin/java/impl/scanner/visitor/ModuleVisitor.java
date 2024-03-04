@@ -14,14 +14,10 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     private final ModuleDescriptor moduleDescriptor;
     private final VisitorHelper visitorHelper;
 
-    private final JavaArtifactFileDescriptor artifactFileDescriptor;
-
     public ModuleVisitor(ModuleDescriptor moduleDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
         this.moduleDescriptor = moduleDescriptor;
         this.visitorHelper = visitorHelper;
-        this.artifactFileDescriptor = visitorHelper.getScannerContext()
-            .peek(JavaArtifactFileDescriptor.class);
     }
 
     @Override
@@ -33,7 +29,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitRequire(String module, int access, String version) {
-        ModuleDescriptor requiredModule = resolveModule(artifactFileDescriptor, module, version);
+        ModuleDescriptor requiredModule = resolveModule(module, version);
         RequiresDescriptor requiresDescriptor = visitorHelper.getStore()
             .create(moduleDescriptor, RequiresDescriptor.class, requiredModule);
         applyFlags(requiresDescriptor, access);
@@ -85,16 +81,10 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
             .add(providesService);
     }
 
-    private ModuleDescriptor resolveModule(JavaArtifactFileDescriptor artifactFileDescriptor, String module, String version) {
-        ModuleDescriptor requiredModule = moduleDescriptor.findModuleInDependencies(artifactFileDescriptor, module, version);
-        if (requiredModule == null) {
-            requiredModule = visitorHelper.getStore()
-                .create(ModuleDescriptor.class);
-            requiredModule.setName(module);
-            requiredModule.setVersion(version);
-            artifactFileDescriptor.getRequires().add(requiredModule);
-        }
-        return requiredModule;
+    private ModuleDescriptor resolveModule(String module, String version) {
+        return visitorHelper.getScannerContext()
+            .peek(TypeResolver.class)
+            .resolveModule(module, version, visitorHelper.getScannerContext());
     }
 
     private <D extends PackageToModuleDescriptor> D packageToModule(String packaze, int access, String[] modules, Class<D> descriptorType) {
@@ -109,7 +99,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     private void addToModules(PackageToModuleDescriptor packageToModuleDescriptor, String[] modules) {
         if (modules != null) {
             for (String module : modules) {
-                ModuleDescriptor toModule = resolveModule(artifactFileDescriptor, module, null);
+                ModuleDescriptor toModule = resolveModule(module, null);
                 packageToModuleDescriptor.getToModules()
                     .add(toModule);
             }

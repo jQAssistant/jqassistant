@@ -7,6 +7,18 @@
     <packaging>pom</packaging>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <release>11</release>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
@@ -26,6 +38,9 @@
                                     - group-id: @project.groupId@
                                       artifact-id: @project.artifactId@
                                       version: @project.version@
+                                  scan:
+                                    properties:
+                                      maven3.dependencies.scan: true
                                   analyze:
                                     groups:
                                       - it

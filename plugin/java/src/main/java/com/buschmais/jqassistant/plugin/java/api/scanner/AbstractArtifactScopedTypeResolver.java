@@ -7,6 +7,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeResolver {
@@ -31,6 +32,16 @@ public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeRes
                 artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
             }
         }
+    }
+
+    @Override
+    protected ModuleDescriptor findModuleInDependencies(String moduleName, String version) {
+        return artifact.findModuleInDependencies(moduleName, version);
+    }
+
+    @Override
+    protected void addRequiredModule(ModuleDescriptor moduleDescriptor) {
+        artifact.getRequires().add(moduleDescriptor);
     }
 
     protected JavaArtifactFileDescriptor getArtifact() {
