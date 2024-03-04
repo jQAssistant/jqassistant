@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.report;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -29,12 +27,13 @@ class HtmlReportTransformerTest {
     @Test
     void reportWithSeverities() throws ReportTransformerException, IOException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
-        Source xmlSource = new StreamSource(new FileReader(new File("target/test-classes/jqassistant-report.xml")));
+        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-severities.xml"));
         StringWriter htmlWriter = new StringWriter();
         javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
-        transformer.toEmbedded(xmlSource, htmlTarget);
-        String html = htmlWriter.toString();
 
+        transformer.toEmbedded(xmlSource, htmlTarget);
+
+        String html = htmlWriter.toString();
         assertThat(getRuleIds(html, "constraint:(.*Severity)")).containsExactly("constraint:FailureCriticalMajorSeverity",
             "constraint:WarningWithMajorSeverity", "constraint:SuccessWithMinorSeverity");
         assertThat(getRuleIds(html, "concept:(.*Severity)")).containsExactly("concept:FailureCriticalMajorSeverity", "concept:WarningWithMajorSeverity",
