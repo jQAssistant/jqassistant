@@ -1,7 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageToModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 import org.objectweb.asm.Opcodes;
@@ -82,9 +90,10 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     }
 
     private ModuleDescriptor resolveModule(String module, String version) {
-        return visitorHelper.getScannerContext()
+        ScannerContext scannerContext = visitorHelper.getScannerContext();
+        return scannerContext
             .peek(TypeResolver.class)
-            .resolveModule(module, version, visitorHelper.getScannerContext());
+            .requireModule(module, version, scannerContext);
     }
 
     private <D extends PackageToModuleDescriptor> D packageToModule(String packaze, int access, String[] modules, Class<D> descriptorType) {

@@ -446,7 +446,7 @@ Represents a module declaration according the Java Platform Module Specification
 [options="header"]
 |====
 | Name       | Description
-| name       | The name of the module
+| fqn        | The fully qualified name of the module
 | version    | The version of the module
 | open       | `true` indicates that the module is open for access by reflection
 |====
@@ -455,7 +455,7 @@ Represents a module declaration according the Java Platform Module Specification
 [options="header"]
 |====
 | Name                   | Target label(s)           | Cardinality | Description
-| OF_DECLARES_MAIN_CLASS | <<:Java:Type>>            | 1           | References the declared main class of the module
+| DECLARES_MAIN_CLASS    | <<:Java:Type>>            | 1           | References the declared main class of the module
 | REQUIRES               | <<:Java:Module>>          | 0..n        | References the required modules
 | EXPORTS                | <<:Java:ExportedPackage>> | 0..n        | References the exported package declarations
 | USES                   | <<:Java:Type>>            | 0..n        | References used services

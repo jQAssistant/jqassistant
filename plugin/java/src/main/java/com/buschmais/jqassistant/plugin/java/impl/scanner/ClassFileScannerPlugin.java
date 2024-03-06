@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -44,20 +45,17 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
-        final FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
-        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
+        ScannerContext context = scanner.getContext();
+        final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
+        ClassFileDescriptor classFileDescriptor = context.getStore()
+            .addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
+        VisitorHelper visitorHelper = new VisitorHelper(context);
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
-        ClassFileDescriptor classFileDescriptor;
         try (InputStream inputStream = file.createStream()) {
             new ClassReader(inputStream).accept(visitor, 0);
-            classFileDescriptor = visitor.getTypeDescriptor();
             classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
             LOGGER.warn("Cannot scan class '" + path + "'.", e);
-            classFileDescriptor = visitor.getTypeDescriptor();
-            if (classFileDescriptor == null) {
-                classFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
-            }
             classFileDescriptor.setValid(false);
         }
         return classFileDescriptor;

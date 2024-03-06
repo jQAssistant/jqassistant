@@ -10,9 +10,9 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (jacksonCore:Artifact{name:"jackson-core"}),
-              (jacksonCore)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"com.fasterxml.jackson.core"}),
+              (jacksonCore)-[:CONTAINS]->(module2:Java:Module{fqn:"com.fasterxml.jackson.core"}),
               (module1)-[:REQUIRES]->(module2)
             RETURN
               *
@@ -26,7 +26,7 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
               (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
               (exportedPackage)-[:OF_PACKAGE]->(api)
@@ -42,11 +42,12 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
               (module1)-[:EXPORTS]->(exportedPackage:Java:ExportedPackage),
               (exportedPackage)-[:OF_PACKAGE]->(impl),
-              (exportedPackage)-[:TO_MODULE]->(:Java:Module{name:"java.it.jpms.module2"})
+              (exportedPackage)-[:TO_MODULE]->(module2:Java:Module{fqn:"java.it.jpms.module2"}),
+              (artifact1)-[:REQUIRES]->(module2)
             RETURN
               *
         ]]></cypher>
@@ -59,7 +60,7 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(api:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api"}),
               (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
               (openPackage)-[:OF_PACKAGE]->(api)
@@ -75,11 +76,12 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(impl:Java:Package{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl"}),
               (module1)-[:OPENS]->(openPackage:Java:OpenPackage),
               (openPackage)-[:OF_PACKAGE]->(impl),
-              (openPackage)-[:TO_MODULE]->(:Java:Module{name:"java.it.jpms.module2"})
+              (openPackage)-[:TO_MODULE]->(module2:Java:Module{fqn:"java.it.jpms.module2"}),
+              (artifact1)-[:REQUIRES]->(module2)
             RETURN
               *
         ]]></cypher>
@@ -92,7 +94,7 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact1)-[:CONTAINS]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService"}),
               (artifact1)-[:CONTAINS]->(providerType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl"}),
               (module1)-[:PROVIDES]->(providedService:Java:ProvidedService),
@@ -110,10 +112,10 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (module1)-[:PROVIDES]->(providedService:Java:ProvidedService)-[:OF_TYPE]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService"}),
               (artifact2:Artifact{name:"java.it.jpms.module2"}),
-              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"java.it.jpms.module2"}),
               (module2)-[:USES]->(serviceType)
             RETURN
               *
@@ -127,9 +129,9 @@
         <cypher><![CDATA[
             MATCH
               (artifact1:Artifact{name:"java.it.jpms.module1"}),
-              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"module-info", name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
               (artifact2:Artifact{name:"java.it.jpms.module2"}),
-              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"java.it.jpms.module2"}),
               (module2)-[:REQUIRES]->(module1)
             RETURN
               *
@@ -143,7 +145,7 @@
         <cypher><![CDATA[
             MATCH
               (artifact2:Artifact{name:"java.it.jpms.module2"}),
-              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2", open:true})
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"java.it.jpms.module2", open:true})
             RETURN
               *
         ]]></cypher>
@@ -156,8 +158,8 @@
         <cypher><![CDATA[
             MATCH
               (artifact2:Artifact{name:"java.it.jpms.module2"}),
-              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"module-info", name:"java.it.jpms.module2"}),
-              (module2)-[:REQUIRES{static:true, transitive:true}]->(:Java:Module{name:"java.se"})
+              (artifact2)-[:CONTAINS]->(module2:Java:Module{fqn:"java.it.jpms.module2"}),
+              (module2)-[:REQUIRES{static:true, transitive:true}]->(:Java:Module{fqn:"java.se"})
             RETURN
               *
         ]]></cypher>

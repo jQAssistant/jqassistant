@@ -59,15 +59,15 @@ public interface TypeResolver {
     <T extends FileDescriptor> T require(String requiredFileName, Class<T> requiredFileType, ScannerContext context);
 
     /**
-     * Resolve the required {@link ModuleDescriptor.
+     * Resolve the required {@link ModuleDescriptor}.
      *
      * @param moduleName
      *     The module name.
      * @param version
      *     The module version.
-     * @param context
+     * @param scannerContext
      *     The {@link ScannerContext}
      * @return The resolved {@link ModuleDescriptor}.
      */
-    ModuleDescriptor resolveModule(String moduleName, String version, ScannerContext context);
+    ModuleDescriptor requireModule(String moduleName, String version, ScannerContext scannerContext);
 }

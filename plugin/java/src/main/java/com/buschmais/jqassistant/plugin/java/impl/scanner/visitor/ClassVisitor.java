@@ -1,7 +1,23 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.VisibilityModifier;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -11,7 +27,6 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.Class
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.MethodSignatureVisitor;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.signature.SignatureReader;
@@ -23,9 +38,17 @@ import static java.util.Arrays.asList;
  */
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
+    private final FileDescriptor fileDescriptor;
+
+    private final VisitorHelper visitorHelper;
+
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
-    private FileDescriptor fileDescriptor;
-    private VisitorHelper visitorHelper;
+
+    private JavaByteCodeDescriptor javaByteCodeDescriptor;
+
+    private String sourceFileName;
+
+    private int byteCodeVersion;
 
     /**
      * Constructor.
@@ -52,41 +75,47 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
-        String fullQualifiedName = SignatureHelper.getObjectType(name);
-        cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, javaType);
-        visitorHelper.getTypeVariableResolver().push();
-        ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
-        classFileDescriptor.setByteCodeVersion(version);
-        if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT)) {
-            if (!visitorHelper.hasFlag(access, Opcodes.ACC_INTERFACE)) {
+        this.byteCodeVersion = version;
+        Class<? extends JavaByteCodeDescriptor> javaByteCodeType = getJavaByteCodeType(access);
+        if (ClassFileDescriptor.class.isAssignableFrom(javaByteCodeType)) {
+            String fullQualifiedName = SignatureHelper.getObjectType(name);
+            cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, (Class<? extends ClassFileDescriptor>) javaByteCodeType);
+            visitorHelper.getTypeVariableResolver()
+                .push();
+            ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
+            this.javaByteCodeDescriptor = classFileDescriptor;
+            if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT) && !visitorHelper.hasFlag(access, Opcodes.ACC_INTERFACE)) {
                 classFileDescriptor.setAbstract(Boolean.TRUE);
             }
-        }
-        setModifiers(access, classFileDescriptor);
-        if (signature == null) {
-            if (superName != null) {
-                TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType).getTypeDescriptor();
-                classFileDescriptor.setSuperClass(superClassType);
+            setModifiers(access, classFileDescriptor);
+            if (signature == null) {
+                if (superName != null) {
+                    TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
+                        .getTypeDescriptor();
+                    classFileDescriptor.setSuperClass(superClassType);
+                }
+                for (int i = 0; interfaces != null && i < interfaces.length; i++) {
+                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType)
+                        .getTypeDescriptor();
+                    classFileDescriptor.getInterfaces()
+                        .add(interfaceType);
+                }
+            } else {
+                new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
             }
-            for (int i = 0; interfaces != null && i < interfaces.length; i++) {
-                TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType).getTypeDescriptor();
-                classFileDescriptor.getInterfaces().add(interfaceType);
-            }
-        } else {
-            new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
         }
     }
 
     @Override
     public ModuleVisitor visitModule(String name, int access, String version) {
-        ClassFileDescriptor typeDescriptor = cachedType.getTypeDescriptor();
-        ModuleDescriptor moduleDescriptor = visitorHelper.getStore()
-            .addDescriptorType(typeDescriptor, ModuleDescriptor.class);
-        moduleDescriptor.setName(name);
+        ScannerContext scannerContext = visitorHelper.getScannerContext();
+        ModuleDescriptor moduleDescriptor = scannerContext.getStore()
+            .addDescriptorType(fileDescriptor, ModuleDescriptor.class);
+        moduleDescriptor.setFullQualifiedName(name);
         moduleDescriptor.setVersion(version);
         moduleDescriptor.setOpen(visitorHelper.hasFlag(access, Opcodes.ACC_OPEN));
         moduleDescriptor.setSynthetic(visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC));
+        this.javaByteCodeDescriptor = moduleDescriptor;
         return new ModuleVisitor(moduleDescriptor, visitorHelper);
     }
 
@@ -197,7 +226,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitSource(final String source, final String debug) {
-        cachedType.getTypeDescriptor().setSourceFileName(source);
+        this.sourceFileName = source;
     }
 
     @Override
@@ -218,7 +247,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
         String outerTypeName = SignatureHelper.getObjectType(owner);
-        TypeCache.CachedType cachedOuterType = visitorHelper.resolveType(outerTypeName, this.cachedType);
+        TypeCache.CachedType<?> cachedOuterType = visitorHelper.resolveType(outerTypeName, this.cachedType);
         TypeDescriptor innerType = this.cachedType.getTypeDescriptor();
         cachedOuterType.getTypeDescriptor().getDeclaredInnerClasses().add(innerType);
         if (name != null) {
@@ -236,13 +265,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     @Override
-    public void visitAttribute(Attribute attribute) {
-    }
-
-    @Override
     public void visitEnd() {
-        visitorHelper.storeDependencies(cachedType);
-        visitorHelper.getTypeVariableResolver().pop();
+        javaByteCodeDescriptor.setByteCodeVersion(byteCodeVersion);
+        javaByteCodeDescriptor.setSourceFileName(sourceFileName);
+        if (cachedType != null) {
+            visitorHelper.storeDependencies(cachedType);
+            visitorHelper.getTypeVariableResolver()
+                .pop();
+        }
     }
 
     /**
@@ -275,21 +305,17 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *     The access flags.
      * @return The types label.
      */
-    private Class<? extends ClassFileDescriptor> getJavaType(int flags) {
+    private Class<? extends JavaByteCodeDescriptor> getJavaByteCodeType(int flags) {
         if (visitorHelper.hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
             return AnnotationTypeDescriptor.class;
-        } else {
-            if (visitorHelper.hasFlag(flags, Opcodes.ACC_ENUM)) {
-                return EnumTypeDescriptor.class;
-            } else {
-                if (visitorHelper.hasFlag(flags, Opcodes.ACC_INTERFACE)) {
-                    return InterfaceTypeDescriptor.class;
-                } else {
-                    if (visitorHelper.hasFlag(flags, Opcodes.ACC_RECORD)) {
-                        return RecordTypeDescriptor.class;
-                    }
-                }
-            }
+        } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_ENUM)) {
+            return EnumTypeDescriptor.class;
+        } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_INTERFACE)) {
+            return InterfaceTypeDescriptor.class;
+        } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_RECORD)) {
+            return RecordTypeDescriptor.class;
+        } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_MODULE)) {
+            return ModuleDescriptor.class;
         }
         return ClassTypeDescriptor.class;
     }

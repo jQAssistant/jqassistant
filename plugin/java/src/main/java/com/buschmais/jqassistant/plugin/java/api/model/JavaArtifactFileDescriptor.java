@@ -29,9 +29,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      */
     @ResultOf
     @Cypher("MATCH\n" +
-        "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(type:Type)\n" +
-        "WHERE\n" +
-        "  type.fqn=$fqn\n" +
+        "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(type:Type{fqn:$fqn})\n" +
         "WITH\n" +
         "  dependency, type\n" +
         "MATCH\n" +
@@ -51,14 +49,30 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      * @return The {@link ModuleDescriptor} or <code>null</code>
      */
     @ResultOf
-    @Cypher("MATCH\n"
-        + "  (artifact:Artifact)-[:DEPENDS_ON*]->(:Artifact)-[:CONTAINS]->(:Java:Module)-[:REQUIRES*0..1]->(module:Java:Module{name:$moduleName})\n"
-        + "WHERE\n"
-        + "  id(artifact)=$this and ($version is null or module.version=$version)\n"
-        + "RETURN\n"
-        + "  module\n"
-        + "LIMIT 1")
+    @Cypher("MATCH\n" +
+        "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(module:Java:Module{fqn:$moduleName})\n" +
+        "WITH\n" +
+        "  dependency, module\n" +
+        "MATCH\n" +
+        "  shortestPath((artifact)-[:DEPENDS_ON*0..]->(dependency))\n" +
+        "WHERE\n" +
+        "  id(artifact)=$this\n" +
+        "RETURN\n" +
+        "  module\n" +
+        "LIMIT 1")
     ModuleDescriptor findModuleInDependencies(@Parameter("moduleName") String moduleName,
                                               @Parameter("version") String version);
 
+    @ResultOf
+    @Cypher("MATCH\n" +
+        "  (artifact:Artifact)\n" +
+        "WHERE\n" +
+        "  id(artifact)=$this\n" +
+        "MERGE\n" +
+        "  (artifact)-[:REQUIRES]->(module:Java:ByteCode:Module{fqn:$moduleName})\n" +
+        "SET\n" +
+        "  module.version=$version\n" +
+        "RETURN\n" +
+        "  module")
+    ModuleDescriptor requireModule(@Parameter("moduleName") String moduleName, @Parameter("version") String version);
 }
