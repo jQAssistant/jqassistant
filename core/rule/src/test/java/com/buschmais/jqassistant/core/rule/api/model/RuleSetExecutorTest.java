@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,9 +16,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.CRITICAL;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static java.util.Collections.emptyMap;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class RuleSetExecutorTest {
@@ -401,19 +407,23 @@ class RuleSetExecutorTest {
 
     @Test
     void providedConcepts() throws RuleException {
+        Concept requiredConcept = Concept.builder()
+            .id("concept:RequiredConcept")
+            .severity(MINOR)
+            .requiresConcepts(emptyMap())
+            .build();
         Concept baseConcept = Concept.builder()
             .id("concept:BaseConcept")
             .severity(CRITICAL)
-            .requiresConcepts(emptyMap())
+            .requiresConcepts(Map.of("concept:RequiredConcept", true))
             .build();
-        Set<String> providedConcepts = new HashSet<>();
-        providedConcepts.add("concept:BaseConcept");
         Concept providingConcept = Concept.builder()
             .id("concept:ProvidingConcept")
             .severity(MINOR)
-            .providesConcepts(providedConcepts)
+            .providesConcepts(Set.of("concept:BaseConcept"))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(requiredConcept)
             .addConcept(baseConcept)
             .addConcept(providingConcept)
             .getRuleSet();
@@ -424,6 +434,8 @@ class RuleSetExecutorTest {
         ruleExecutor.execute(ruleSet, ruleSelection);
 
         InOrder inOrder = inOrder(visitor);
+        inOrder.verify(visitor)
+            .visitConcept(requiredConcept, MINOR);
         inOrder.verify(visitor)
             .visitConcept(providingConcept, MINOR);
         inOrder.verify(visitor)

@@ -4,6 +4,7 @@
 
 * Remove leading and trailing lines as well as indent of rule descriptions
 * Fixed sorting of constraints and concepts in HTML report, now sorting by status (failure/warning/success), severity and rule id
+* Changed execution order for provided and required concepts for a base concept: required concepts -> providing concepts -> base concept
 
 == 2.0.10
 

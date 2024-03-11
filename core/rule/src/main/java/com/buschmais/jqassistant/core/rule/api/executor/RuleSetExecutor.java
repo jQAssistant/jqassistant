@@ -188,9 +188,9 @@ public class RuleSetExecutor {
         Boolean result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
-            applyProvidedConcepts(ruleSet, concept, executionStack);
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
+                applyProvidedConcepts(ruleSet, concept, executionStack);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity);
