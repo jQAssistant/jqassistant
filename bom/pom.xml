@@ -126,6 +126,10 @@
                         <artifactId>slf4j-nop</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-slf4j-provider</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
