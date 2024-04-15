@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
@@ -34,10 +34,15 @@ public class GZIPFileScannerPlugin
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         GZipFileDescriptor gZipFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
         String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
-        try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {
+        try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new GZIPInputStream(item.createStream());
+            }
+
+            @Override
+            protected String getName() {
+                return uncompressedPath;
             }
         })) {
             FileDescriptor entryDescriptor = scanner.scan(fileResource, uncompressedPath, scope);

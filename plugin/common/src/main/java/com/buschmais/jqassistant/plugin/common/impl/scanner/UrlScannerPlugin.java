@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
 
     @Override
     public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {
+        try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
                 URLConnection urlConnection = item.openConnection();
@@ -39,6 +39,11 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
                     urlConnection.setRequestProperty("Authorization", basicAuth);
                 }
                 return urlConnection.getInputStream();
+            }
+
+            @Override
+            protected String getName() {
+                return item.getPath();
             }
         })) {
             return scanner.scan(fileResource, getPath(item), scope);

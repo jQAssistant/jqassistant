@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for archive scanners based on commons compress.
- * 
+ *
  * @param <S>
  *            The ArchiveInputStream type.
  * @param <E>
@@ -106,9 +106,9 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
         if (entry.isDirectory()) {
             return new AbstractDirectoryResource(container.toString()) {};
         } else {
-            return new AbstractFileResource() {
+            return new AbstractVirtualFileResource() {
                 @Override
-                public InputStream createStream() throws IOException {
+                public InputStream createStream() {
                     return new InputStream() {
 
                         int read = 0;
@@ -122,6 +122,11 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
                             return -1;
                         }
                     };
+                }
+
+                @Override
+                protected String getName() {
+                    return entry.getName();
                 }
             };
         }

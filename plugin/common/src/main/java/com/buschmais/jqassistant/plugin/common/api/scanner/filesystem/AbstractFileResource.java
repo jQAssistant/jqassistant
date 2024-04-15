@@ -1,36 +1,13 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
 
-import java.io.*;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
-import org.apache.commons.io.IOUtils;
-
-/**
- * Abstract base implementation of a file resource which uses a temporary file.
- */
-public abstract class AbstractFileResource implements FileResource {
-
-    public static final String TMP_FILE_PREFIX = "jqassistant-";
-    public static final String TMP_FILE_SUFFIX = ".tmp";
-
-    private File file = null;
+@Deprecated
+@ToBeRemovedInVersion(major = 2, minor = 3)
+public abstract class AbstractFileResource extends AbstractVirtualFileResource {
 
     @Override
-    public File getFile() throws IOException {
-        if (this.file == null) {
-            this.file = File.createTempFile(TMP_FILE_PREFIX, TMP_FILE_SUFFIX);
-            try (InputStream input = createStream()) {
-                try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
-                    IOUtils.copy(input, output);
-                }
-            }
-        }
-        return file;
-    }
-
-    @Override
-    public void close() {
-        if (file != null) {
-            file.delete();
-        }
+    protected final String getName() {
+        return "file-resource.tmp";
     }
 }

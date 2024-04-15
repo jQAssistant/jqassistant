@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
 
@@ -80,7 +80,7 @@ public class ZipFileScannerPlugin
         }
     }
 
-    private static class ZipArchiveEntryResource extends AbstractFileResource {
+    private static class ZipArchiveEntryResource extends AbstractVirtualFileResource {
         private final ZipFileResource container;
         private final ZipArchiveEntry entry;
 
@@ -88,6 +88,7 @@ public class ZipFileScannerPlugin
             this.container = container;
             this.entry = entry;
         }
+
 
         @Override
         public InputStream createStream() throws IOException {
@@ -100,6 +101,11 @@ public class ZipFileScannerPlugin
             String inContainerPath = entry.getName();
 
             return String.format("%s!%s", containerPath, inContainerPath);
+        }
+
+        @Override
+        protected String getName() {
+            return entry.getName();
         }
     }
 
