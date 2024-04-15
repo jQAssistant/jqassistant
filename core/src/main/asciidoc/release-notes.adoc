@@ -1,5 +1,9 @@
 = Core Framework
 
+== 2.2.0
+
+* Added support for providing concepts from concepts included in group definitions
+
 == 2.1.0
 
 * Remove leading and trailing lines as well as indent of rule descriptions
