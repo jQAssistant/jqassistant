@@ -1,145 +1,34 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2">
 
-    <concept id="test:Concept1">
-        <description>Test concept 1.</description>
+    <group id="test">
+        <includeGroup refId="test:Constraints" />
+        <includeGroup refId="test:Concepts" />
+    </group>
+
+    <group id="test:Constraints">
+        <includeConstraint refId="test:Constraint" />
+    </group>
+
+    <group id="test:Concepts">
+        <includeConcept refId="test:ProvidingConcept2">
+            <providesConcept refId="test:AbstractConcept"/>
+        </includeConcept>
+    </group>
+
+    <constraint id="test:Constraint">
+        <requiresConcept refId="test:Concept" />
+        <description>Test constraint</description>
         <cypher><![CDATA[
             match
               (n)
-            where
-              n.name = {name}
             return
               n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <concept id="test:Concept2">
-        <description>Test concept 2.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <concept id="test:Concept3">
-        <description>Test concept 3.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <concept id="test:ConceptWithRequiredDependency">
-        <requiresConcept refId="test:Concept1" optional="false"/>
-        <description>Test concept with required dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <concept id="test:ConceptWithOptionalDependency">
-        <requiresConcept refId="test:Concept1" optional="true"/>
-        <description>Test concept with optional dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <concept id="test:ConceptWithMixedDependencies">
-        <requiresConcept refId="test:Concept1" optional="true"/>
-        <requiresConcept refId="test:Concept2" optional="false"/>
-        <requiresConcept refId="test:Concept3"/>
-        <description>Test concept with optional dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </concept>
-
-    <constraint id="test:ConstraintWithRequiredDependency">
-        <requiresConcept refId="test:Concept1" optional="false"/>
-        <description>Test constraint with required dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
         ]]></cypher>
     </constraint>
 
-    <constraint id="test:ConstraintWithOptionalDependency">
-        <requiresConcept refId="test:Concept1" optional="true"/>
-        <description>Test constraint with optional dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="test:ConstraintWithMixedDependencies">
-        <requiresConcept refId="test:Concept1" optional="true"/>
-        <requiresConcept refId="test:Concept2" optional="false"/>
-        <requiresConcept refId="test:Concept3"/>
-        <description>Test constraint with optional dependency.</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            where
-              n.name = {name}
-            return
-              n
-            limit
-              {limit}
-        ]]></cypher>
-    </constraint>
-
-    <concept id="test:ProvidingConcept">
-        <providesConcept refId="test:Concept1"/>
-        <providesConcept refId="test:Concept2"/>
-        <description>Test concept extending test:Concept1.</description>
+    <concept id="test:Concept">
+        <requiresConcept refId="test:AbstractConcept" />
+        <description>Test concept</description>
         <cypher><![CDATA[
             match
               (n)
@@ -148,4 +37,34 @@
         ]]></cypher>
     </concept>
 
+    <concept id="test:AbstractConcept">
+        <description>Abstract test concept</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept1">
+        <providesConcept refId="test:AbstractConcept"/>
+        <description>Providing test concept 1</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept2">
+        <description>Providing test concept 2</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
 </jqassistant-rules>

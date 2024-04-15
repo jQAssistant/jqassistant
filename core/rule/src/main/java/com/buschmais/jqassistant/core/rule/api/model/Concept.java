@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.Singular;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 
@@ -18,8 +17,7 @@ public class Concept extends AbstractExecutableRule {
 
     public static Severity DEFAULT_SEVERITY = MINOR;
 
-    @Singular
-    private Set<String> providesConcepts = new HashSet<>();
+    private final Set<String> providedConcepts = new LinkedHashSet<>();
 
     public static class ConceptBuilder extends AbstractExecutableRule.Builder<ConceptBuilder, Concept> {
         private ConceptBuilder(Concept rule) {
@@ -31,9 +29,9 @@ public class Concept extends AbstractExecutableRule {
             return this;
         }
 
-        public ConceptBuilder providesConcepts(Set<String> requiresConcepts) {
+        public ConceptBuilder providedConcepts(Set<String> providedConcepts) {
             Concept r = build();
-            r.providesConcepts.addAll(requiresConcepts);
+            r.providedConcepts.addAll(providedConcepts);
             return this;
         }
     }

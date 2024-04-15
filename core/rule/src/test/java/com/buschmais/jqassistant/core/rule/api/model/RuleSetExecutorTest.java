@@ -407,38 +407,54 @@ class RuleSetExecutorTest {
 
     @Test
     void providedConcepts() throws RuleException {
+        Concept abstractConcept = Concept.builder()
+            .id("concept:Concept")
+            .severity(CRITICAL)
+            .requiresConcepts(Map.of("concept:AbstractConcept", true))
+            .build();
         Concept requiredConcept = Concept.builder()
-            .id("concept:RequiredConcept")
+            .id("concept:AbstractConcept")
             .severity(MINOR)
             .requiresConcepts(emptyMap())
             .build();
-        Concept baseConcept = Concept.builder()
-            .id("concept:BaseConcept")
-            .severity(CRITICAL)
-            .requiresConcepts(Map.of("concept:RequiredConcept", true))
-            .build();
-        Concept providingConcept = Concept.builder()
-            .id("concept:ProvidingConcept")
+        // provides the required concept directly
+        Concept providingConcept1 = Concept.builder()
+            .id("concept:ProvidingConcept1")
             .severity(MINOR)
-            .providesConcepts(Set.of("concept:BaseConcept"))
+            .providedConcepts(Set.of("concept:AbstractConcept"))
+            .build();
+        // provides the required concept indirectly via the group below
+        Concept providingConcept2 = Concept.builder()
+            .id("concept:ProvidingConcept2")
+            .severity(MINOR)
+            .build();
+        Group group = Group.builder()
+            .id("group")
+            .concept("concept:Concept", CRITICAL)
+            .concept("concept:ProvidingConcept2", MINOR)
+            .providedConcepts(Map.of("concept:AbstractConcept", Set.of("concept:ProvidingConcept2")))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(abstractConcept)
             .addConcept(requiredConcept)
-            .addConcept(baseConcept)
-            .addConcept(providingConcept)
+            .addConcept(providingConcept1)
+            .addConcept(providingConcept2)
+            .addGroup(group)
             .getRuleSet();
         RuleSelection ruleSelection = RuleSelection.builder()
-            .conceptId("concept:BaseConcept")
+            .groupId("group")
             .build();
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
         InOrder inOrder = inOrder(visitor);
         inOrder.verify(visitor)
+            .visitConcept(providingConcept1, MINOR);
+        inOrder.verify(visitor)
+            .visitConcept(providingConcept2, MINOR);
+        inOrder.verify(visitor)
             .visitConcept(requiredConcept, MINOR);
         inOrder.verify(visitor)
-            .visitConcept(providingConcept, MINOR);
-        inOrder.verify(visitor)
-            .visitConcept(baseConcept, CRITICAL);
+            .visitConcept(abstractConcept, CRITICAL);
     }
 }

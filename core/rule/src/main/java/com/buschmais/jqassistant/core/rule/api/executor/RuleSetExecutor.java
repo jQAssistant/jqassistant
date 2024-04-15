@@ -8,6 +8,8 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptySet;
+
 /**
  * Controls execution of {@link RuleSet}s.
  * <p/>
@@ -203,22 +205,23 @@ public class RuleSetExecutor {
     }
 
     /**
-     * Executes all concepts that provide to the given base concept applying its severity.
+     * Executes all concepts that provide to the given concept applying its severity.
      *
      * @param ruleSet
      *     The {@link RuleSet}.
      * @param concept
-     *     The base {@link Concept}.
+     *     The {@link Concept}.
      * @param stack
      *     The current execution stack.
      * @throws RuleException
      *     If execution fails.
      */
     private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
-        Set<Concept> providedConcepts = ruleSet.getConceptBucket()
-            .getProvidedConcepts(concept.getId());
-        for (Concept providedConcept : providedConcepts) {
-            applyConcept(ruleSet, providedConcept, null, null, stack);
+        for (String providingConceptId : ruleSet.getProvidedConcepts()
+            .getOrDefault(concept.getId(), emptySet())) {
+            Concept providingConcept = ruleSet.getConceptBucket()
+                .getById(providingConceptId);
+            applyConcept(ruleSet, providingConcept, null, null, stack);
         }
     }
 

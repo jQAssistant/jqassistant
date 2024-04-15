@@ -111,7 +111,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             for (Map<String, Object> executableRule : executableRules) {
                 Concept.ConceptBuilder builder = Concept.builder();
                 Set<String> provided = this.extractProvidedConcepts(executableRule);
-                builder.providesConcepts(provided);
+                builder.providedConcepts(provided);
                 this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder, this::getDefaultConceptSeverity);
             }
         }
@@ -140,12 +140,13 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         throws RuleException {
 
         String id = (String)map.get(ID);
-        List<Map<String, String>> concepts = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_CONCEPTS,
+        List<Map<String, Object>> concepts = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONCEPTS,
                                                                                              key -> emptyList());
-        List<Map<String, String>> constraints = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS,
+        Map<String, Set<String>> providedConcepts = new HashMap<>();
+        List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS,
                                                                                                 key -> emptyList());
 
-        List<Map<String, String>> groups = (List<Map<String, String>>) map.computeIfAbsent(INCLUDED_GROUPS,
+        List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS,
                                                                                            key -> emptyList());
 
 
@@ -153,17 +154,20 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         SeverityMap includedConstraints = new SeverityMap();
         SeverityMap includedConcepts = new SeverityMap();
 
-        for (Map<String, String> refSpec : concepts) {
+        for (Map<String, Object> refSpec : concepts) {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(refSpec);
+            for (String providedConceptId : extractProvidedConcepts(refSpec)) {
+                providedConcepts.computeIfAbsent(providedConceptId, key -> new LinkedHashSet<>()).add(reference.getRuleName());
+            }
             includedConcepts.add(reference);
         }
 
-        for (Map<String, String> refSpec : constraints) {
+        for (Map<String, Object> refSpec : constraints) {
             RuleSeverityAssociation references = extractRuleReferencesFrom(refSpec);
             includedConstraints.add(references);
         }
 
-        for (Map<String, String> refSpec : groups) {
+        for (Map<String, Object> refSpec : groups) {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(refSpec);
             includedGroups.add(reference);
         }
@@ -171,18 +175,22 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         String severityVal = (String) map.get(SEVERITY);
         Severity severity = getSeverity(severityVal, this::getDefaultGroupSeverity);
 
-        Group group = Group.builder().id(id).severity(severity)
-                           .ruleSource(context.getSource())
-                           .concepts(includedConcepts).constraints(includedConstraints)
-                           .groups(includedGroups)
-                           .build();
+        Group group = Group.builder()
+            .id(id)
+            .severity(severity)
+            .ruleSource(context.getSource())
+            .concepts(includedConcepts)
+            .constraints(includedConstraints)
+            .providedConcepts(providedConcepts)
+            .groups(includedGroups)
+            .build();
 
         context.getBuilder().addGroup(group);
     }
 
-    private RuleSeverityAssociation extractRuleReferencesFrom(Map<String, String> refSpec) throws RuleException {
-        String refId = refSpec.get(REF_ID);
-        String severityVal = refSpec.get(SEVERITY);
+    private RuleSeverityAssociation extractRuleReferencesFrom(Map<String, Object> refSpec) throws RuleException {
+        String refId = (String) refSpec.get(REF_ID);
+        String severityVal = (String) refSpec.get(SEVERITY);
         Severity severity = getSeverity(severityVal, this::getDefaultIncludeSeverity);
 
         return new RuleSeverityAssociation(refId, severity);

@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import lombok.Getter;
 
@@ -18,12 +20,17 @@ public class Group extends AbstractSeverityRule {
     /**
      * The set of rules contained in the group.
      */
-    private Map<String, Severity> concepts = new LinkedHashMap<>();
+    private final Map<String, Severity> concepts = new LinkedHashMap<>();
+
+    /**
+     * The provided concepts, where the key represents the id of the provided concept and the value the set of providing concepts,
+     */
+    private final Map<String, Set<String>> providedConcepts = new HashMap<>();
 
     /**
      * The set of constraints contained in the group.
      */
-    private Map<String, Severity> constraints = new LinkedHashMap<>();
+    private final Map<String, Severity> constraints = new LinkedHashMap<>();
 
     /**
      * The set of groups contained in the group.
@@ -42,38 +49,37 @@ public class Group extends AbstractSeverityRule {
 
         public GroupBuilder concepts(Map<String, Severity> concepts) {
             rule.concepts.putAll(concepts);
+            return this;
+        }
 
-            return getThis();
+        public GroupBuilder providedConcepts(Map<String, Set<String>> providedConcepts) {
+            rule.providedConcepts.putAll(providedConcepts);
+            return this;
         }
 
         public GroupBuilder constraints(Map<String, Severity> constraints) {
             rule.constraints.putAll(constraints);
-
-            return getThis();
+            return this;
         }
 
         public GroupBuilder groups(Map<String, Severity> groups) {
             rule.groups.putAll(groups);
-
-            return getThis();
+            return this;
         }
 
         public GroupBuilder concept(String id, Severity severity) {
             rule.concepts.put(id, severity);
-
-            return getThis();
+            return this;
         }
 
         public GroupBuilder constraint(String id, Severity severity) {
             rule.constraints.put(id, severity);
-
-            return getThis();
+            return this;
         }
 
         public GroupBuilder group(String id, Severity severity) {
             rule.groups.put(id, severity);
-
-            return getThis();
+            return this;
         }
     }
 

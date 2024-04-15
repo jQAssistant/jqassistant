@@ -331,7 +331,7 @@ class YamlRuleParserPluginTest {
 
             Concept concept = ruleSet.getConceptBucket().getById("test:ProvidingConcept");
 
-            assertThat(concept.getProvidesConcepts()).containsExactlyInAnyOrder("test:Concept1", "test:Concept2");
+            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrder("test:Concept1", "test:Concept2");
 
         }
     }

@@ -2,28 +2,12 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 import javax.xml.validation.Schema;
 
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.CypherExecutable;
-import com.buschmais.jqassistant.core.rule.api.model.Executable;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Parameter;
-import com.buschmais.jqassistant.core.rule.api.model.Report;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.RuleSetBuilder;
-import com.buschmais.jqassistant.core.rule.api.model.ScriptExecutable;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.model.Verification;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
@@ -31,23 +15,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
-import org.jqassistant.schema.rule.v2.AggregationVerificationType;
-import org.jqassistant.schema.rule.v2.ConceptType;
-import org.jqassistant.schema.rule.v2.ConstraintType;
-import org.jqassistant.schema.rule.v2.CypherType;
-import org.jqassistant.schema.rule.v2.GroupType;
-import org.jqassistant.schema.rule.v2.IncludedReferenceType;
-import org.jqassistant.schema.rule.v2.JqassistantRules;
-import org.jqassistant.schema.rule.v2.OptionalReferenceType;
-import org.jqassistant.schema.rule.v2.ParameterType;
-import org.jqassistant.schema.rule.v2.PropertyType;
-import org.jqassistant.schema.rule.v2.ReferenceType;
-import org.jqassistant.schema.rule.v2.ReportType;
-import org.jqassistant.schema.rule.v2.RowCountVerificationType;
-import org.jqassistant.schema.rule.v2.SeverityEnumType;
-import org.jqassistant.schema.rule.v2.SeverityRuleType;
-import org.jqassistant.schema.rule.v2.SourceType;
-import org.jqassistant.schema.rule.v2.VerificationType;
+import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
 import static java.util.stream.Collectors.toSet;
@@ -55,8 +23,9 @@ import static java.util.stream.Collectors.toSet;
  * A {@link RuleParserPlugin} implementation.
  */
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
-    private static final String NAMESPACE_RULE_1_10 = "http://schema.jqassistant.org/rule/v2.0";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v2.0.xsd";
+
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.2";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v2.2.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -64,7 +33,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     @Override
     public void initialize() {
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE_1_10);
+        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE);
     }
 
     @Override
@@ -123,13 +92,21 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
     }
 
-    private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
-        SeverityEnumType severityType = referenceableType.getSeverity();
+    private Group createGroup(String id, RuleSource ruleSource, GroupType referencableType) throws RuleException {
+        SeverityEnumType severityType = referencableType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
-        Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
-        Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
-        Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
-        return Group.builder().id(id).severity(severity).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints).groups(includeGroups)
+        Map<String, Severity> includeConcepts = getIncludedReferences(referencableType.getIncludeConcept());
+        Map<String, Set<String>> providedConcepts = getProvidedConcepts(referencableType.getIncludeConcept());
+        Map<String, Severity> includeConstraints = getIncludedReferences(referencableType.getIncludeConstraint());
+        Map<String, Severity> includeGroups = getIncludedReferences(referencableType.getIncludeGroup());
+        return Group.builder()
+            .id(id)
+            .severity(severity)
+            .ruleSource(ruleSource)
+            .concepts(includeConcepts)
+            .providedConcepts(providedConcepts)
+            .constraints(includeConstraints)
+            .groups(includeGroups)
                 .build();
     }
 
@@ -146,8 +123,19 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
-        return Concept.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).providesConcepts(providesConcepts).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
+        return Concept.builder()
+            .id(id)
+            .description(description)
+            .ruleSource(ruleSource)
+            .severity(severity)
+            .deprecation(deprecated)
+            .executable(executable)
+            .parameters(parameters)
+            .providedConcepts(providesConcepts)
+            .requiresConcepts(requiresConcepts)
+            .verification(verification)
+            .report(report)
+            .build();
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType constraintType) throws RuleException {
@@ -161,8 +149,18 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         String deprecated = constraintType.getDeprecated();
         Verification verification = getVerification(constraintType.getVerify());
         Report report = getReport(constraintType.getReport());
-        return Constraint.builder().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable)
-                .parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).build();
+        return Constraint.builder()
+            .id(id)
+            .description(description)
+            .ruleSource(ruleSource)
+            .severity(severity)
+            .deprecation(deprecated)
+            .executable(executable)
+            .parameters(parameters)
+            .requiresConcepts(requiresConcepts)
+            .verification(verification)
+            .report(report)
+            .build();
     }
 
     private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, CypherType cypherType, SourceType scriptType) throws RuleException {
@@ -232,7 +230,19 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         return references;
     }
 
-    private Map<String, Severity> getIncludedReferences(List<IncludedReferenceType> referenceType) throws RuleException {
+    private Map<String, Set<String>> getProvidedConcepts(List<IncludeConceptType> conceptTypes) {
+        Map<String, Set<String>> providedConcepts = new HashMap<>();
+        for (IncludeConceptType conceptType : conceptTypes) {
+            for (ReferenceType referenceType : conceptType.getProvidesConcept()) {
+                String providingConceptId = conceptType.getRefId();
+                providedConcepts.computeIfAbsent(referenceType.getRefId(), providedConceptId -> new HashSet<>())
+                    .add(providingConceptId);
+            }
+        }
+        return providedConcepts;
+    }
+
+    private Map<String, Severity> getIncludedReferences(List<? extends IncludedReferenceType> referenceType) throws RuleException {
         Map<String, Severity> references = new HashMap<>();
         for (IncludedReferenceType includedReferenceType : referenceType) {
             Severity severity = getSeverity(includedReferenceType.getSeverity(), this::getDefaultIncludeSeverity);

@@ -20,21 +20,21 @@ import static java.lang.String.format;
 import static java.util.Collections.emptySet;
 
 class JsonSchemaValidator {
-    private static final String JSON_SCHEMA_1_10 = "/META-INF/rule/jsonschema/jqassistant-rule-v1.10.schema.json";
+    private static final String JSON_SCHEMA = "/META-INF/rule/jsonschema/jqassistant-rule-v2.2.schema.json";
     private final ObjectMapper mapper;
-    private  JsonSchema schema;
+    private final JsonSchema schema;
 
     public JsonSchemaValidator() throws RuleException {
         mapper = new ObjectMapper(new YAMLFactory());
         JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
-                                                           .objectMapper(mapper)
-                                                           .build();
+            .objectMapper(mapper)
+            .build();
 
-        try (InputStream inputStream = JsonSchemaValidator.class.getResourceAsStream(JSON_SCHEMA_1_10)) {
+        try (InputStream inputStream = JsonSchemaValidator.class.getResourceAsStream(JSON_SCHEMA)) {
             schema = schemaFactory.getSchema(inputStream);
         } catch (IOException e) {
-            String message = format("Failed to load schema from %s", JSON_SCHEMA_1_10);
+            String message = format("Failed to load schema from %s", JSON_SCHEMA);
             throw new RuleException(message);
         }
     }

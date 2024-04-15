@@ -1,12 +1,5 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptySet;
-
 /**
  * Container for a set of unique concepts.
  * <p>
@@ -15,25 +8,9 @@ import static java.util.Collections.emptySet;
  */
 public class ConceptBucket extends AbstractRuleBucket<Concept> {
 
-    /**
-     * Contains the concepts (as values) that are provided for a concept id (key).
-     */
-    private Map<String, Set<Concept>> providedConcepts = new HashMap();
-
     @Override
     protected String getRuleTypeName() {
         return "concept";
     }
 
-    @Override
-    protected void add(Concept rule) throws RuleException {
-        super.add(rule);
-        for (String providesConcept : rule.getProvidesConcepts()) {
-            providedConcepts.computeIfAbsent(providesConcept, id -> new HashSet<>()).add(rule);
-        }
-    }
-
-    public Set<Concept> getProvidedConcepts(String id) {
-        return providedConcepts.getOrDefault(id, emptySet());
-    }
 }
