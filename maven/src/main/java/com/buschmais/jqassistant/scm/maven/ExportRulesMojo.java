@@ -38,5 +38,4 @@ public class ExportRulesMojo extends AbstractRuleMojo {
             throw new MojoExecutionException("Cannot write rules.", e);
         }
     }
-
 }
