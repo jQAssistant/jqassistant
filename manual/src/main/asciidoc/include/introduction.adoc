@@ -34,9 +34,9 @@ Rules are expressed as Cypher queries and are specified in XML files:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 https://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -155,6 +155,25 @@ In this case it can become necessary to extend such concepts with project-specif
 * Constraints defined by the Spring plugin delivered with jQAssistant verify correct usage of dependency injection
 * These constraints exclude all Java types labeled with `:Type:Generated` and therefore require the concept `java:GeneratedType` which is defined by the Java plugin
 * This concept may be extended by project specific concepts adding labels `:Type:Generated` and declaring the provided concept `java:GeneratedType` using `providesConcept(s)`
+
+There might be cases where a concept is provided by a rule plugin which provides the same labels or relationships as an (abstract) concept from another plugin.
+In these cases it is possible to perform a dynamic extension (duck-typing) to the abstract by specifying `providesConcept` in a group definition:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <group id="default">
+        <includeConcept refId="plugin1:ConcreteConcept">
+            <providesConcept refId="plugin2:AbstractConcept"/>
+        </includeConcept>
+    </group>
+
+</jqassistant-rules>
+----
 
 ==== Severity Of Rules
 
