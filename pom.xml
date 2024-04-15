@@ -73,7 +73,7 @@
         <commons-codec.version>1.15</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-digester.version>1.8</commons-digester.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.16.1</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-text.version>1.10.0</commons-text.version>
@@ -89,13 +89,13 @@
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <junit.version>5.9.1</junit.version>
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
-        <neo4j_4x.version>4.4.31</neo4j_4x.version>
-        <neo4j_4x_apoc.version>4.4.0.25</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.18.0</neo4j_5x.version>
-        <neo4j_5x_apoc.version>5.18.0</neo4j_5x_apoc.version>
+        <neo4j_4x.version>4.4.32</neo4j_4x.version>
+        <neo4j_4x_apoc.version>4.4.0.26</neo4j_4x_apoc.version>
+        <neo4j_5x.version>5.19.0</neo4j_5x.version>
+        <neo4j_5x_apoc.version>5.19.0</neo4j_5x_apoc.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
