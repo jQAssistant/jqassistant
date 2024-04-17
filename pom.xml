@@ -107,7 +107,7 @@
         <snakeyaml.version>2.0</snakeyaml.version>
         <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xo.version>2.3.0-SNAPSHOT</xo.version>
+        <xo.version>2.2.3</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.9</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
