@@ -36,7 +36,7 @@ class InvalidClassFileIT extends AbstractJavaPluginIT {
             }
 
             @Override
-            protected String getName() {
+            protected String getRelativePath() {
                 return path;
             }
         }) {

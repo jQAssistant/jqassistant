@@ -30,7 +30,7 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, Clas
             }
 
             @Override
-            protected String getName() {
+            protected String getRelativePath() {
                 return path;
             }
         };
