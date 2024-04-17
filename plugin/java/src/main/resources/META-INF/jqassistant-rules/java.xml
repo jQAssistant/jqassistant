@@ -1,6 +1,6 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.0"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v2.0.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 http://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
 
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
@@ -410,17 +410,6 @@
 
     <concept id="java:GeneratedType" severity="minor">
         <description>Reports the count of types labeled with `Generated`, grouped by containing artifact.</description>
-        <cypher><![CDATA[
-            MATCH
-              (artifact:Artifact)-[:CONTAINS]->(generatedType:Java:Type:Generated)
-            RETURN
-              artifact as Artifact, count(generatedType) as GeneratedTypes
-            ORDER BY
-              GeneratedTypes desc
-        ]]></cypher>
-        <verify>
-            <aggregation column="GeneratedTypes"/>
-        </verify>
     </concept>
 
     <concept id="java:InnerTypeParameterDeclaredByOuterType">
