@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static java.util.Collections.emptyList;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -87,7 +90,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             }
             status = store.requireTransaction(()-> conceptDescriptor.getStatus());
         }
-        return Result.Status.SUCCESS.equals(status);
+        return SUCCESS.equals(status);
     }
 
     @Override
@@ -134,22 +137,32 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
         store.requireTransaction(() -> reportPlugin.endGroup());
     }
 
-    private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity) throws RuleException {
-        Map<String, Object> ruleParameters = getRuleParameters(executableRule);
+    private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {
         Executable<?> executable = executableRule.getExecutable();
-        Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
-        if (languagePlugins == null) {
-            throw new RuleException("Could not determine plugin to execute " + executableRule);
-        }
-        for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
-            if (languagePlugin.accepts(executableRule)) {
-                Result<T> result = execute(executableRule, severity, ruleParameters, languagePlugin);
-                if (result != null) {
-                    return result;
+        if (executable == null) {
+            return Result.<T>builder()
+                .rule(executableRule)
+                .status(SUCCESS)
+                .severity(severity)
+                .columnNames(emptyList())
+                .rows(emptyList())
+                .build();
+        } else {
+            Map<String, Object> ruleParameters = getRuleParameters(executableRule);
+            Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
+            if (languagePlugins == null) {
+                throw new RuleException("Could not determine plugin to execute " + executableRule);
+            }
+            for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
+                if (languagePlugin.accepts(executableRule)) {
+                    Result<T> result = execute(executableRule, severity, ruleParameters, languagePlugin);
+                    if (result != null) {
+                        return result;
+                    }
                 }
             }
+            throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
         }
-        throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
     }
 
     private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,

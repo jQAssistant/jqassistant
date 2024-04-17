@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -35,6 +36,7 @@ import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -158,13 +160,21 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
         assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
 
-        verify(reportWriter).beginConcept(concept);
-        ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
-        verify(reportWriter).setResult(resultCaptor.capture());
-        Result result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(Result.Status.SUCCESS));
-        assertThat(result.getSeverity(), equalTo(MAJOR));
-        verify(reportWriter).endConcept();
+        verifyConceptResult(Result.Status.SUCCESS, MAJOR);
+        verify(store).create(ConceptDescriptor.class);
+    }
+
+    @Test
+    void abstractConcept() throws RuleException {
+        Concept abstractConcept = createConcept(null);
+
+        boolean visitConcept = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR);
+
+        assertThat(visitConcept, equalTo(true));
+        verify(store, never()).executeQuery(anyString(), anyMap());
+        Result<Concept> result = verifyConceptResult(Result.Status.SUCCESS, MAJOR);
+        assertThat(result.getColumnNames(), empty());
+        assertThat(result.getRows(), empty());
         verify(store).create(ConceptDescriptor.class);
     }
 
@@ -173,15 +183,19 @@ class AnalyzerRuleVisitorTest {
         analyzerRuleVisitor.skipConcept(concept, MAJOR);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
-
-        verify(reportWriter).beginConcept(concept);
-        ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
-        verify(reportWriter).setResult(resultCaptor.capture());
-        Result result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(Result.Status.SKIPPED));
-        assertThat(result.getSeverity(), equalTo(MAJOR));
-        verify(reportWriter).endConcept();
+        verifyConceptResult(Result.Status.SKIPPED, MAJOR);
         verify(store, never()).create(ConceptDescriptor.class);
+    }
+
+    private Result<Concept> verifyConceptResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
+        verify(reportWriter).beginConcept(concept);
+        ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
+        verify(reportWriter).setResult(resultCaptor.capture());
+        Result<Concept> result = resultCaptor.getValue();
+        assertThat(result.getStatus(), equalTo(expectedStatus));
+        assertThat(result.getSeverity(), equalTo(expectedSeverity));
+        verify(reportWriter).endConcept();
+        return result;
     }
 
     @Test
@@ -196,29 +210,38 @@ class AnalyzerRuleVisitorTest {
         Map<String, Object> parameters = argumentCaptor.getValue();
         assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
         assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
-
-        verify(reportWriter).beginConstraint(constraint);
-        ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
-        verify(reportWriter).setResult(resultCaptor.capture());
-        Result result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(Result.Status.FAILURE));
-        assertThat(result.getSeverity(), equalTo(BLOCKER));
-        verify(reportWriter).endConstraint();
+        verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
     }
+
+    @Test
+    void abstractConstraint() throws RuleException {
+        Constraint abstractConstraint = createConstraint(null);
+
+        analyzerRuleVisitor.visitConstraint(abstractConstraint, BLOCKER);
+
+        Result<?> result = verifyConstraintResult(Result.Status.SUCCESS, BLOCKER);
+        assertThat(result.getColumnNames(), empty());
+        assertThat(result.getRows(), empty());
+    }
+
 
     @Test
     void skipConstraint() throws RuleException {
         analyzerRuleVisitor.skipConstraint(constraint, BLOCKER);
 
         verify(store, never()).executeQuery(eq(statement), anyMap());
+        verifyConstraintResult(Result.Status.SKIPPED, BLOCKER);
+    }
 
+    private Result<?> verifyConstraintResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
         verify(reportWriter).beginConstraint(constraint);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
-        Result result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(Result.Status.SKIPPED));
-        assertThat(result.getSeverity(), equalTo(BLOCKER));
+        Result<?> result = resultCaptor.getValue();
+        assertThat(result.getStatus(), equalTo(expectedStatus));
+        assertThat(result.getSeverity(), equalTo(expectedSeverity));
         verify(reportWriter).endConstraint();
+        return result;
     }
 
     @Test
@@ -286,7 +309,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Concept createConcept(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable<?> executable = statement != null ? new CypherExecutable(statement) : null;
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
@@ -308,7 +331,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Constraint createConstraint(String statement) {
-        Executable executable = new CypherExecutable(statement);
+        Executable<?> executable = statement != null ? new CypherExecutable(statement) : null;
         Parameter parameterWithoutDefaultValue = new Parameter(PARAMETER_WITHOUT_DEFAULT, Parameter.Type.STRING, null);
         Parameter parameterWithDefaultValue = new Parameter(PARAMETER_WITH_DEFAULT, Parameter.Type.STRING, "defaultValue");
         Map<String, Parameter> parameters = new HashMap<>();
