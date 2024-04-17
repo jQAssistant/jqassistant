@@ -26,10 +26,10 @@ public abstract class AbstractVirtualFileResource implements FileResource {
         if (this.file == null) {
             // create a temp directory which will contain the extracted file (structure)
             this.directory = Files.createTempDirectory(TMP_DIR_PREFIX).toFile();
-            this.file = new File(this.directory, getName());
+            this.file = new File(this.directory, getRelativePath());
             // The file name itself may contain a directory structure, create this structure within the temp dir
             File parentDirectory = this.file.getParentFile();
-            if (!parentDirectory.mkdirs()) {
+            if (!(this.directory.equals(parentDirectory) || parentDirectory.mkdirs())) {
                 throw new IllegalStateException("Cannot create directory " + parentDirectory);
             }
             try (InputStream input = createStream(); BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
@@ -39,7 +39,7 @@ public abstract class AbstractVirtualFileResource implements FileResource {
         return file;
     }
 
-    protected abstract String getName();
+    protected abstract String getRelativePath() throws IOException;
 
     @Override
     public final void close() {
@@ -47,7 +47,7 @@ public abstract class AbstractVirtualFileResource implements FileResource {
             try {
                 FileUtils.deleteDirectory(this.directory);
             } catch (IOException e) {
-                log.warn("Cannot delete file resource directory " + this.directory, e);
+                log.warn("Cannot delete file resource directory {}", this.directory, e);
             }
         }
     }

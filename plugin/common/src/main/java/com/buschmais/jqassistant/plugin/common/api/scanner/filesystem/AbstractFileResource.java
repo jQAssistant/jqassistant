@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 public abstract class AbstractFileResource extends AbstractVirtualFileResource {
 
     @Override
-    protected final String getName() {
+    protected final String getRelativePath() {
         return "file-resource.tmp";
     }
 }

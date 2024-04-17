@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -20,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Scanner plugin which handles URLs as input, using standard Java mechanisms to handle protocols.
  */
-public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
+public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
 
     @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
@@ -28,13 +30,13 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
     }
 
     @Override
-    public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(final URL url, String path, Scope scope, Scanner scanner) throws IOException {
         try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
-                URLConnection urlConnection = item.openConnection();
-                if (item.getUserInfo() != null) {
-                    String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(item.getUserInfo()
+                URLConnection urlConnection = url.openConnection();
+                if (url.getUserInfo() != null) {
+                    String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(url.getUserInfo()
                         .getBytes());
                     urlConnection.setRequestProperty("Authorization", basicAuth);
                 }
@@ -42,11 +44,18 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
             }
 
             @Override
-            protected String getName() {
-                return item.getPath();
+            protected String getRelativePath() throws IOException {
+                URI uri;
+                try {
+                    uri = new URI(path);
+                } catch (URISyntaxException e) {
+                    throw new IOException("Cannot create URI from " + path, e);
+                }
+                String uriPath = uri.getPath();
+                return uriPath != null ? uriPath : uri.getSchemeSpecificPart();
             }
         })) {
-            return scanner.scan(fileResource, getPath(item), scope);
+            return scanner.scan(fileResource, getPath(url), scope);
         }
     }
 

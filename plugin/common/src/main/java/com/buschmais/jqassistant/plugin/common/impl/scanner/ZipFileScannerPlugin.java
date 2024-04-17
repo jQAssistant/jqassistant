@@ -104,7 +104,7 @@ public class ZipFileScannerPlugin
         }
 
         @Override
-        protected String getName() {
+        protected String getRelativePath() {
             return entry.getName();
         }
     }

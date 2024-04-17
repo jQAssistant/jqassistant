@@ -125,7 +125,7 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
                 }
 
                 @Override
-                protected String getName() {
+                protected String getRelativePath() {
                     return entry.getName();
                 }
             };

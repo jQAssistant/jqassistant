@@ -1,17 +1,16 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
+import java.nio.charset.StandardCharsets;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.URLScannerPlugin;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class URLScannerPluginTest {
 
-    private UrlScannerPlugin plugin = new UrlScannerPlugin();
+    private URLScannerPlugin plugin = new URLScannerPlugin();
 
     @Mock
     private Scanner scanner;
@@ -50,10 +50,21 @@ class URLScannerPluginTest {
 
     @Test
     void authentication() throws IOException {
-        FileResource fileResource = scan("test://user:secret@myhost:8080/path?value1=test1&value2=test2#anchor",
-                "test://myhost:8080/path?value1=test1&value2=test2#anchor");
-        String content = IOUtils.toString(fileResource.createStream());
-        assertThat(content, startsWith("Basic "));
+        try (FileResource fileResource = scan("test://user:secret@myhost:8080/path?value1=test1&value2=test2#anchor",
+            "test://myhost:8080/path?value1=test1&value2=test2#anchor")) {
+            String content = IOUtils.toString(fileResource.createStream(), StandardCharsets.UTF_8);
+            assertThat(content, startsWith("Basic "));
+        }
+    }
+
+    @Test
+    void getFileFromResource() throws IOException {
+        String testResource = URLScannerPluginTest.class.getResource("/test-resource.txt")
+            .toString();
+        try (FileResource fileResource = scan(testResource, testResource)) {
+            File file = fileResource.getFile();
+            assertThat(file.getPath(), endsWith("/test-resource.txt"));
+        }
     }
 
     private FileResource scan(String path, String expectedPath) throws IOException {
@@ -71,11 +82,11 @@ class URLScannerPluginTest {
         }
 
         @Override
-        public void connect() throws IOException {
+        public void connect() {
         }
 
         @Override
-        public InputStream getInputStream() throws IOException {
+        public InputStream getInputStream() {
             String authorization = getRequestProperty("Authorization");
             return new ByteArrayInputStream(authorization.getBytes());
         }
@@ -83,7 +94,7 @@ class URLScannerPluginTest {
 
     public static class TestURLStreamHandler extends URLStreamHandler {
         @Override
-        protected URLConnection openConnection(URL url) throws IOException {
+        protected URLConnection openConnection(URL url) {
             return new TestURLConnection(url);
         }
     }

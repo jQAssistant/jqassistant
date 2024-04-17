@@ -24,7 +24,7 @@ class AbstractVirtualFileResourceTest {
             }
 
             @Override
-            protected String getName() {
+            protected String getRelativePath() {
                 return path;
             }
         }) {

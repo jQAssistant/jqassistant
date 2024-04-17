@@ -41,7 +41,7 @@ public class GZIPFileScannerPlugin
             }
 
             @Override
-            protected String getName() {
+            protected String getRelativePath() {
                 return uncompressedPath;
             }
         })) {
