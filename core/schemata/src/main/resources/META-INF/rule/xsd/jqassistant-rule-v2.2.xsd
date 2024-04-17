@@ -134,7 +134,7 @@
             <xs:element name="description" type="xs:string" minOccurs="0"/>
             <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
             <xs:element name="transactional" type="xs:boolean" default="true" minOccurs="0"/>
-            <xs:choice>
+            <xs:choice minOccurs="0">
                 <xs:element name="source" type="tns:sourceType"/>
                 <xs:element name="cypher" type="tns:cypherType"/>
                 <xs:element name="script" type="tns:sourceType"/>

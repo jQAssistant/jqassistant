@@ -152,7 +152,7 @@
             "additionalProperties" : false
           }
         },
-        "required" : [ "id", "source" ],
+        "required" : [ "id" ],
         "additionalProperties" : false
       },
       "additionalProperties" : false

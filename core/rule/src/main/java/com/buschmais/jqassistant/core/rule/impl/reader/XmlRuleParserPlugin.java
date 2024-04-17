@@ -164,7 +164,6 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, CypherType cypherType, SourceType scriptType) throws RuleException {
-
         if (source != null) {
             return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
         }
@@ -175,7 +174,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         if (scriptType != null) {
             return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
         }
-        throw new RuleException("Cannot determine executable for " + severityRuleType.getId());
+        return null;
     }
 
     /**
