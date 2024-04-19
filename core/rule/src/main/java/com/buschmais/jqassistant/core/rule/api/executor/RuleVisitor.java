@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 /**
@@ -33,11 +35,12 @@ public interface RuleVisitor<R> {
      *     The concept.
      * @param effectiveSeverity
      *     The severity to use.
+     * @param results
      * @return The result of the visitor.
      * @throws RuleException
      *     If an error occurred.
      */
-    R visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException;
+    R visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, R> results) throws RuleException;
 
     /**
      * Skip a concept.

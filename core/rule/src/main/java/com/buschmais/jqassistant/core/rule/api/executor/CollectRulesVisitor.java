@@ -23,7 +23,7 @@ public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public Boolean visitConcept(Concept concept, Severity effectiveSeverity) {
+    public Boolean visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Boolean> results) {
         concepts.put(concept, effectiveSeverity);
         return true;
     }

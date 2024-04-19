@@ -132,7 +132,7 @@ class AnalyzerRuleVisitorTest {
         }).when(analyzerContext)
             .toRow(any(ExecutableRule.class), anyMap());
 
-        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
+        analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap());
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
@@ -150,7 +150,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(Result.Status.SUCCESS).when(analyzerContext)
             .verify(eq(concept), eq(MAJOR), anyList(), anyList());
 
-        Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR);
+        Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR, emptyMap());
 
         assertThat(status, equalTo(Result.Status.SUCCESS));
 
@@ -168,7 +168,7 @@ class AnalyzerRuleVisitorTest {
     void abstractConcept() throws RuleException {
         Concept abstractConcept = createConcept(null);
 
-        Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR);
+        Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR, emptyMap());
 
         assertThat(status, equalTo(Result.Status.SUCCESS));
         verify(store, never()).executeQuery(anyString(), anyMap());
@@ -251,7 +251,7 @@ class AnalyzerRuleVisitorTest {
             .getStatus();
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(Result.Status.SUCCESS));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap()), equalTo(Result.Status.SUCCESS));
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
@@ -268,7 +268,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(Result.Status.SUCCESS));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap()), equalTo(Result.Status.SUCCESS));
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);
@@ -283,7 +283,7 @@ class AnalyzerRuleVisitorTest {
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
-            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
+            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap());
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
@@ -300,7 +300,7 @@ class AnalyzerRuleVisitorTest {
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
-            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR);
+            analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap());
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();

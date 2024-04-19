@@ -192,8 +192,8 @@ public class RuleSetExecutor<R> {
             executionStack.add(concept);
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
-                applyProvidedConcepts(ruleSet, concept, executionStack);
-                result = ruleVisitor.visitConcept(concept, effectiveSeverity);
+                Map<Concept, R> providedConceptResults = applyProvidedConcepts(ruleSet, concept, executionStack);
+                result = ruleVisitor.visitConcept(concept, effectiveSeverity, providedConceptResults);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity);
             }
@@ -215,13 +215,16 @@ public class RuleSetExecutor<R> {
      * @throws RuleException
      *     If execution fails.
      */
-    private void applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+    private Map<Concept, R> applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+        Map<Concept, R> results = new LinkedHashMap<>();
         for (String providingConceptId : ruleSet.getProvidedConcepts()
             .getOrDefault(concept.getId(), emptySet())) {
             Concept providingConcept = ruleSet.getConceptBucket()
                 .getById(providingConceptId);
-            applyConcept(ruleSet, providingConcept, null, null, stack);
+            R result = applyConcept(ruleSet, providingConcept, null, null, stack);
+            results.put(providingConcept, result);
         }
+        return results;
     }
 
     private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {

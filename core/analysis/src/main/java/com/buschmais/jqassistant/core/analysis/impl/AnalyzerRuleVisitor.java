@@ -72,7 +72,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
+    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Result.Status> results) throws RuleException {
         ConceptDescriptor conceptDescriptor = findConcept(concept);
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();

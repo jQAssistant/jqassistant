@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 /**
@@ -21,7 +23,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public R visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
+    public R visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, R> results) throws RuleException {
         throw new RuleException("Cannot visit concept" + concept);
     }
 
