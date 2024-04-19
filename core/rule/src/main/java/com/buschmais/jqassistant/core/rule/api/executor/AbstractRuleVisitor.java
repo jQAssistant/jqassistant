@@ -5,7 +5,12 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 /**
  * Abstract base implementation of a {@link RuleVisitor}.
  */
-public abstract class AbstractRuleVisitor implements RuleVisitor {
+public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
+
+    @Override
+    public boolean isSuccess(R result) {
+        return true;
+    }
 
     @Override
     public void beforeRules() throws RuleException {
@@ -16,8 +21,8 @@ public abstract class AbstractRuleVisitor implements RuleVisitor {
     }
 
     @Override
-    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        return true;
+    public R visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
+        throw new RuleException("Cannot visit concept" + concept);
     }
 
     @Override
@@ -25,7 +30,8 @@ public abstract class AbstractRuleVisitor implements RuleVisitor {
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
+    public R visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
+        throw new RuleException("Cannot visit constraint" + constraint);
     }
 
     @Override

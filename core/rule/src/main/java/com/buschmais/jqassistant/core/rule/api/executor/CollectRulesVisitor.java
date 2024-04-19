@@ -4,12 +4,13 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
-public class CollectRulesVisitor extends AbstractRuleVisitor {
+public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
 
     private static final Comparator<Rule> RULE_COMPARATOR = new Comparator<Rule>() {
         @Override
         public int compare(Rule o1, Rule o2) {
-            return o1.getId().compareTo(o2.getId());
+            return o1.getId()
+                .compareTo(o2.getId());
         }
     };
 
@@ -22,14 +23,15 @@ public class CollectRulesVisitor extends AbstractRuleVisitor {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public boolean visitConcept(Concept concept, Severity effectiveSeverity) {
+    public Boolean visitConcept(Concept concept, Severity effectiveSeverity) {
         concepts.put(concept, effectiveSeverity);
         return true;
     }
 
     @Override
-    public void  visitConstraint(Constraint constraint, Severity effectiveSeverity) {
+    public Boolean visitConstraint(Constraint constraint, Severity effectiveSeverity) {
         constraints.put(constraint, effectiveSeverity);
+        return true;
     }
 
     @Override

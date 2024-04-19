@@ -20,23 +20,18 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.CRITICAL;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static java.util.Collections.emptyMap;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RuleSetExecutorTest {
 
     @Mock
-    private RuleVisitor visitor;
+    private RuleVisitor<Boolean> visitor;
 
     @Mock
     private Rule configuration;
 
-    private RuleSetExecutor ruleExecutor;
+    private RuleSetExecutor<Boolean> ruleExecutor;
 
     private Concept defaultConcept;
     private Concept overriddenConcept;
@@ -45,7 +40,7 @@ class RuleSetExecutorTest {
 
     @BeforeEach
     void setUp() {
-        ruleExecutor = new RuleSetExecutor(visitor, configuration);
+        ruleExecutor = new RuleSetExecutor<>(visitor, configuration);
         defaultConcept = Concept.builder()
             .id("concept:Default")
             .severity(MAJOR)
@@ -383,6 +378,9 @@ class RuleSetExecutorTest {
             .thenReturn(status);
         lenient().when(visitor.visitConcept(dependencyConcept2, MINOR))
             .thenReturn(status);
+        lenient().doAnswer(i -> i.getArgument(0))
+            .when(visitor)
+            .isSuccess(any());
 
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(dependencyConcept1)

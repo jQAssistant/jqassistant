@@ -24,21 +24,21 @@ import static java.util.Collections.emptySet;
  * dependencies between rules, e.g. a constraint relying on a specific label may
  * include results of concepts that are not explicitly required.
  */
-public class RuleSetExecutor {
+public class RuleSetExecutor<R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleSetExecutor.class);
 
-    private Map<Concept, Boolean> executedConcepts = new HashMap<>();
+    private final Map<Concept, R> executedConcepts = new HashMap<>();
 
-    private Set<Constraint> executedConstraints = new LinkedHashSet<>();
+    private final Set<Constraint> executedConstraints = new LinkedHashSet<>();
 
-    private Set<Group> executedGroups = new LinkedHashSet<>();
+    private final Set<Group> executedGroups = new LinkedHashSet<>();
 
-    private RuleVisitor ruleVisitor;
+    private final RuleVisitor<R> ruleVisitor;
 
-    private Rule configuration;
+    private final Rule configuration;
 
-    public RuleSetExecutor(RuleVisitor ruleVisitor, Rule configuration) {
+    public RuleSetExecutor(RuleVisitor<R> ruleVisitor, Rule configuration) {
         this.ruleVisitor = ruleVisitor;
         this.configuration = configuration;
     }
@@ -185,9 +185,9 @@ public class RuleSetExecutor {
      * @throws RuleException
      *     If the concept cannot be applied.
      */
-    private boolean applyConcept(RuleSet ruleSet, Concept concept, Severity groupSeverity, Severity includeSeverity, Set<Concept> executionStack)
+    private R applyConcept(RuleSet ruleSet, Concept concept, Severity groupSeverity, Severity includeSeverity, Set<Concept> executionStack)
         throws RuleException {
-        Boolean result = executedConcepts.get(concept);
+        R result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
@@ -196,7 +196,6 @@ public class RuleSetExecutor {
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity);
-                result = false;
             }
             executionStack.remove(concept);
             executedConcepts.put(concept, result);
@@ -233,12 +232,12 @@ public class RuleSetExecutor {
                 .match(entry.getKey());
             for (Concept requiredConcept : requiredConcepts) {
                 if (!stack.contains(requiredConcept)) {
-                    boolean conceptResult = applyConcept(ruleSet, requiredConcept, null, null, stack);
+                    R conceptResult = applyConcept(ruleSet, requiredConcept, null, null, stack);
                     Boolean optional = entry.getValue();
                     if (optional == null) {
                         optional = configuration.requiredConceptsAreOptionalByDefault();
                     }
-                    requiredConceptsApplied = requiredConceptsApplied && (conceptResult || optional);
+                    requiredConceptsApplied = ruleVisitor.isSuccess(conceptResult) || optional;
                 }
             }
         }

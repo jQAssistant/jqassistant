@@ -27,7 +27,7 @@ import static java.util.Collections.emptyList;
  * Implementation of a rule visitor for analysis execution.
  */
 @Slf4j
-public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
+public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
@@ -57,17 +57,22 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
     }
 
     @Override
+    public boolean isSuccess(Result.Status result) {
+        return SUCCESS.equals(result);
+    }
+
+    @Override
     public void beforeRules() throws RuleException {
-        store.requireTransaction(() -> reportPlugin.begin());
+        store.requireTransaction(reportPlugin::begin);
     }
 
     @Override
     public void afterRules() throws RuleException {
-        store.requireTransaction(() -> reportPlugin.end());
+        store.requireTransaction(reportPlugin::end);
     }
 
     @Override
-    public boolean visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
+    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         ConceptDescriptor conceptDescriptor = findConcept(concept);
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
@@ -76,20 +81,18 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             store.requireTransaction(() -> reportPlugin.beginConcept(concept));
             Result<Concept> result = execute(concept, effectiveSeverity);
             store.requireTransaction(() -> reportPlugin.setResult(result));
-            store.requireTransaction(() -> reportPlugin.endConcept());
+            store.requireTransaction(reportPlugin::endConcept);
             status = result.getStatus();
             if (conceptDescriptor == null) {
                 createConcept(concept, status);
             }
         } else {
-            if (!isExecuteAppliedConcepts) {
-                log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
-                        Analyze.class.getAnnotation(ConfigMapping.class)
-                            .prefix(), EXECUTE_APPLIED_CONCEPTS);
-            }
-            status = store.requireTransaction(()-> conceptDescriptor.getStatus());
+            log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
+                Analyze.class.getAnnotation(ConfigMapping.class)
+                    .prefix(), EXECUTE_APPLIED_CONCEPTS);
+            status = store.requireTransaction(conceptDescriptor::getStatus);
         }
-        return SUCCESS.equals(status);
+        return status;
     }
 
     @Override
@@ -101,16 +104,17 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             .severity(effectiveSeverity)
             .build();
         store.requireTransaction(() -> reportPlugin.setResult(result));
-        store.requireTransaction(() -> reportPlugin.endConcept());
+        store.requireTransaction(reportPlugin::endConcept);
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
-        log.info("Validating constraint '" + constraint.getId() + "' with severity: '" + effectiveSeverity.getInfo(constraint.getSeverity()) + "'.");
+    public Result.Status visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
+        log.info("Validating constraint '{}' with severity: '{}'.", constraint.getId(), effectiveSeverity.getInfo(constraint.getSeverity()));
         store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
         Result<Constraint> result = execute(constraint, effectiveSeverity);
         store.requireTransaction(() -> reportPlugin.setResult(result));
-        store.requireTransaction(() -> reportPlugin.endConstraint());
+        store.requireTransaction(reportPlugin::endConstraint);
+        return result.getStatus();
     }
 
     @Override
@@ -122,18 +126,18 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor {
             .severity(effectiveSeverity)
             .build();
         store.requireTransaction(() -> reportPlugin.setResult(result));
-        store.requireTransaction(() -> reportPlugin.endConstraint());
+        store.requireTransaction(reportPlugin::endConstraint);
     }
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
-        log.info("Executing group '" + group.getId() + "'");
+        log.info("Executing group '{}'", group.getId());
         store.requireTransaction(() -> reportPlugin.beginGroup(group));
     }
 
     @Override
     public void afterGroup(Group group) throws RuleException {
-        store.requireTransaction(() -> reportPlugin.endGroup());
+        store.requireTransaction(reportPlugin::endGroup);
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {

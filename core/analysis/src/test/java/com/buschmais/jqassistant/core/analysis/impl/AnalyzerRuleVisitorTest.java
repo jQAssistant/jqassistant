@@ -150,11 +150,11 @@ class AnalyzerRuleVisitorTest {
         doReturn(Result.Status.SUCCESS).when(analyzerContext)
             .verify(eq(concept), eq(MAJOR), anyList(), anyList());
 
-        boolean visitConcept = analyzerRuleVisitor.visitConcept(concept, MAJOR);
+        Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR);
 
-        assertThat(visitConcept, equalTo(true));
+        assertThat(status, equalTo(Result.Status.SUCCESS));
 
-        ArgumentCaptor<Map> argumentCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(statement), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
         assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
@@ -168,9 +168,9 @@ class AnalyzerRuleVisitorTest {
     void abstractConcept() throws RuleException {
         Concept abstractConcept = createConcept(null);
 
-        boolean visitConcept = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR);
+        Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR);
 
-        assertThat(visitConcept, equalTo(true));
+        assertThat(status, equalTo(Result.Status.SUCCESS));
         verify(store, never()).executeQuery(anyString(), anyMap());
         Result<Concept> result = verifyConceptResult(Result.Status.SUCCESS, MAJOR);
         assertThat(result.getColumnNames(), empty());
@@ -251,7 +251,7 @@ class AnalyzerRuleVisitorTest {
             .getStatus();
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(true));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(Result.Status.SUCCESS));
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
@@ -268,7 +268,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(true));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR), equalTo(Result.Status.SUCCESS));
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);
