@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -20,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -72,7 +75,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Result.Status> results) throws RuleException {
+    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Result.Status> providedConceptResults) throws RuleException {
         ConceptDescriptor conceptDescriptor = findConcept(concept);
         Result.Status status;
         boolean isExecuteAppliedConcepts = configuration.executeAppliedConcepts();
@@ -82,7 +85,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             Result<Concept> result = execute(concept, effectiveSeverity);
             store.requireTransaction(() -> reportPlugin.setResult(result));
             store.requireTransaction(reportPlugin::endConcept);
-            status = result.getStatus();
+            status = evaluateConceptStatus(result, providedConceptResults);
             if (conceptDescriptor == null) {
                 createConcept(concept, status);
             }
@@ -93,6 +96,14 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             status = store.requireTransaction(conceptDescriptor::getStatus);
         }
         return status;
+    }
+
+    private static Result.Status evaluateConceptStatus(Result<Concept> result, Map<Concept, Result.Status> providedConceptResults) {
+        return Stream.of(singletonList(result.getStatus()), providedConceptResults.values())
+            .flatMap(Collection::stream)
+            .filter(SUCCESS::equals)
+            .findAny()
+            .orElse(FAILURE);
     }
 
     @Override
@@ -168,14 +179,11 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         }
     }
 
-    private <T extends ExecutableRule> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,
+    private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,
         RuleInterpreterPlugin languagePlugin) throws RuleException {
         StopWatch stopWatch = StopWatch.createStarted();
         try {
-            Result<T> result = languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
-            if (result != null) {
-                return result;
-            }
+            return languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
         } finally {
             stopWatch.stop();
             long ruleExecutionTime = stopWatch.getTime(TimeUnit.SECONDS);
@@ -184,13 +192,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                     .getId(), ruleExecutionTime);
             }
             if (store.hasActiveTransaction()) {
+                log.warn("Rule with id '{}' returned with an active transaction, performing rollback. Please check the implementation.",
+                    executableRule.getSource()
+                        .getId());
                 store.rollbackTransaction();
-                throw new RuleException(
-                    String.format("Rule with id '%s' returned with an active transaction, performing rollback. Please check the implementation.", executableRule.getSource()
-                        .getId()));
             }
         }
-        return null;
     }
 
     private Map<String, Object> getRuleParameters(ExecutableRule executableRule) throws RuleException {
