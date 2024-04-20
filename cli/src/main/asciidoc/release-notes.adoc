@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 2.2.0
+
+* Added support to specify authentication credentials for mirrors of plugin repositories in `.jqassistant.yml` and Maven settings.
+
 == 2.1.0
 
 * Provide different distributions for JDK 11 (Neo4j 4.x) and JDK 17 or later (Neo4j 5.x)

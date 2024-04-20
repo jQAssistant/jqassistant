@@ -54,6 +54,8 @@ public class MavenSettingsConfigSourceBuilder {
             if (id != null) {
                 put(mirror.getUrl(), properties, com.buschmais.jqassistant.commandline.configuration.Mirror.PREFIX, id, URL);
                 put(mirror.getMirrorOf(), properties, com.buschmais.jqassistant.commandline.configuration.Mirror.PREFIX, id, MIRROR_OF);
+                applyServerCredentials(id, settings, properties, com.buschmais.jqassistant.commandline.configuration.Mirror.PREFIX,
+                    com.buschmais.jqassistant.commandline.configuration.Mirror.USERNAME, com.buschmais.jqassistant.commandline.configuration.Mirror.PASSWORD);
             } else {
                 log.warn("Cannot configure mirror from Maven settings without id (url={}).", mirror.getUrl());
             }
@@ -123,12 +125,16 @@ public class MavenSettingsConfigSourceBuilder {
             .collect(toList()));
         for (Repository repository : repositories) {
             put(repository.getUrl(), properties, Remote.PREFIX, repository.getId(), Remote.URL);
-            String id = repository.getId();
-            Server server = settings.getServer(id);
-            if (server != null) {
-                put(server.getUsername(), properties, Remote.PREFIX, repository.getId(), Remote.USERNAME);
-                put(server.getPassword(), properties, Remote.PREFIX, repository.getId(), Remote.PASSWORD);
-            }
+            applyServerCredentials(repository.getId(), settings, properties, Remote.PREFIX, Remote.USERNAME, Remote.PASSWORD);
+        }
+    }
+
+    private static void applyServerCredentials(String serverId, Settings settings, Map<String, String> properties, String serverPropertyPrefix,
+        String serverUsernameProperty, String serverPasswordProperty) {
+        Server server = settings.getServer(serverId);
+        if (server != null) {
+            put(server.getUsername(), properties, serverPropertyPrefix, serverId, serverUsernameProperty);
+            put(server.getPassword(), properties, serverPropertyPrefix, serverId, serverPasswordProperty);
         }
     }
 

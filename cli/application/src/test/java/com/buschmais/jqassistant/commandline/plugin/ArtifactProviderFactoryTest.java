@@ -4,14 +4,15 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.configuration.Mirror;
 import com.buschmais.jqassistant.commandline.configuration.Proxy;
 import com.buschmais.jqassistant.commandline.configuration.Repositories;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherArtifactProvider;
-import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
+import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ public class ArtifactProviderFactoryTest {
         List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mavenCentral = remoteRepositories.get(0);
-        verify(mavenCentral, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL);
+        verify(mavenCentral, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL, authentication -> assertThat(authentication).isNull());
     }
 
     @Test
@@ -61,20 +62,25 @@ public class ArtifactProviderFactoryTest {
         Mirror mirror = mock(Mirror.class);
         doReturn(MAVEN_CENTRAL_ID).when(mirror)
             .mirrorOf();
+        doReturn(of("foo")).when(mirror)
+            .username();
+        doReturn(of("bar")).when(mirror)
+            .password();
         doReturn("https://mirror/central").when(mirror)
             .url();
         doReturn(Map.of("central-mirror", mirror)).when(repositories)
             .mirrors();
 
-        AetherArtifactProvider artifactResolver = getArtifactResolver();
+        AetherArtifactProvider artifactResolver = artifactProviderFactory.create(configuration);
         List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
+
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mirrorRepository = remoteRepositories.get(0);
-        verify(mirrorRepository, "central-mirror", "https://mirror/central");
+        verify(mirrorRepository, "central-mirror", "https://mirror/central", authentication -> assertThat(authentication).isNotNull());
         List<RemoteRepository> mirroredRepositories = mirrorRepository.getMirroredRepositories();
         assertThat(mirroredRepositories).hasSize(1);
         RemoteRepository mirroredRepository = mirroredRepositories.get(0);
-        verify(mirroredRepository, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL);
+        verify(mirroredRepository, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL, authentication -> assertThat(authentication).isNull());
     }
 
     @Test
@@ -90,12 +96,14 @@ public class ArtifactProviderFactoryTest {
             .host();
         doReturn(proxyPort).when(proxy)
             .port();
-        doReturn(of(proxyUser)).when(proxy).username();
-        doReturn(of(proxyPassword)).when(proxy).password();
+        doReturn(of(proxyUser)).when(proxy)
+            .username();
+        doReturn(of(proxyPassword)).when(proxy)
+            .password();
         doReturn(of(proxy)).when(configuration)
             .proxy();
 
-        AetherArtifactProvider artifactResolver = getArtifactResolver();
+        AetherArtifactProvider artifactResolver = artifactProviderFactory.create(configuration);
         List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mavenCentral = remoteRepositories.get(0);
@@ -105,14 +113,9 @@ public class ArtifactProviderFactoryTest {
         assertThat(centralProxy.getAuthentication()).isNotNull();
     }
 
-    private AetherArtifactProvider getArtifactResolver() {
-        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
-        assertThat(artifactProvider).isInstanceOf(AetherArtifactProvider.class);
-        return (AetherArtifactProvider) artifactProvider;
-    }
-
-    private static void verify(RemoteRepository repository, String expectedId, String expectedUrl) {
+    private static void verify(RemoteRepository repository, String expectedId, String expectedUrl, Consumer<? super Authentication> authCondition) {
         assertThat(repository.getId()).isEqualTo(expectedId);
         assertThat(repository.getUrl()).isEqualTo(expectedUrl);
+        assertThat(repository.getAuthentication()).satisfies(authCondition);
     }
 }

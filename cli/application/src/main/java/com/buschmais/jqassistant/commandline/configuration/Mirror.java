@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline.configuration;
 
+import java.util.Optional;
+
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;
@@ -19,5 +21,15 @@ public interface Mirror {
 
     @Description("The identifier(s) of remote repositories to mirror.")
     String mirrorOf();
+
+    String USERNAME = "username";
+
+    @Description("The user name for authenticating against the mirror.")
+    Optional<String> username();
+
+    String PASSWORD = "password";
+
+    @Description("The password for authenticating against the mirror.")
+    Optional<String> password();
 
 }
