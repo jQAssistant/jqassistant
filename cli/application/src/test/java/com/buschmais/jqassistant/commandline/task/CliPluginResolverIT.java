@@ -23,9 +23,9 @@ public class CliPluginResolverIT {
     @Test
     void resolve() {
         Map<String, String> configurationProperties = new HashMap<>();
-        configurationProperties.put("jqassistant.plugins[0].group-id","org.jqassistant.contrib.plugin");
+        configurationProperties.put("jqassistant.plugins[0].group-id","org.jqassistant.plugin");
         configurationProperties.put("jqassistant.plugins[0].artifact-id","jqassistant-docker-plugin");
-        configurationProperties.put("jqassistant.plugins[0].version","1.11.0");
+        configurationProperties.put("jqassistant.plugins[0].version","2.1.0");
         PropertiesConfigSource testConfigSource = new PropertiesConfigSource(configurationProperties, "TestConfigSource", 110);
 
         ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
