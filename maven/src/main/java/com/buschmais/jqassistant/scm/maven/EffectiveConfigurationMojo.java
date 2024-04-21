@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationSerializer;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationSerializerImpl;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,7 +18,7 @@ public class EffectiveConfigurationMojo extends AbstractRuleMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveConfigurationMojo.class);
 
-    private final ConfigurationSerializer<MavenConfiguration> configurationSerializer = new ConfigurationSerializerImpl<>();
+    private final ConfigurationSerializer<MavenConfiguration> configurationSerializer = new ConfigurationSerializer<>();
 
     @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {

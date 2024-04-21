@@ -259,7 +259,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (isConnectorRequired()) {
             configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, true);
         }
-        File executionRoot = new File(session.getExecutionRootDirectory());
         MavenProjectConfigSource projectConfigSource = new MavenProjectConfigSource(currentProject);
         SettingsConfigSource settingsConfigSource = new SettingsConfigSource(session.getSettings());
         MavenPropertiesConfigSource projectPropertiesConfigSource = new MavenPropertiesConfigSource(currentProject.getProperties(), "Maven Project Properties");
@@ -267,6 +266,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
 
+        File executionRoot = new File(session.getExecutionRootDirectory());
         return configurationProvider.getConfiguration(executionRoot, configurationLocations, configurationBuilder.build(), projectConfigSource,
             settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, getMavenPluginConfiguration());
     }
