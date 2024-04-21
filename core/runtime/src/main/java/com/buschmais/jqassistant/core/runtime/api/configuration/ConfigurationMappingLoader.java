@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.toUnmodifiableList;
  * Defines the interface for loading runtime configuration.
  * <p>
  * The mechanism is based on Eclipse Micro Profile configuration.
- *
  */
 @Slf4j
 public class ConfigurationMappingLoader {
@@ -98,9 +97,6 @@ public class ConfigurationMappingLoader {
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
             this.configLocations = configLocations;
-            this.configSources.addAll(getYamlConfigSourceFromClasspath());
-            this.configSources.add(new EnvConfigSource() {
-            });
         }
 
         /**
@@ -137,6 +133,27 @@ public class ConfigurationMappingLoader {
          */
         public Builder<C> withDirectory(File directory, int ordinal) {
             configSources.addAll(getExternalYamlConfigSources(directory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations, ordinal));
+            return this;
+        }
+
+        /**
+         * Add YAML configs from the classpath.
+         *
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withClasspath() {
+            this.configSources.addAll(getYamlConfigSourceFromClasspath());
+            return this;
+        }
+
+        /**
+         * Add YAML configs from the environment variables.
+         *
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withEnvVariables() {
+            this.configSources.add(new EnvConfigSource() {
+            });
             return this;
         }
 

@@ -117,6 +117,8 @@ class ConfigurationMappingLoaderTest {
         return ConfigurationMappingLoader.builder(TestConfiguration.class, configLocations)
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
+            .withClasspath()
+            .withEnvVariables()
             .load(new SysPropConfigSource());
     }
 }
