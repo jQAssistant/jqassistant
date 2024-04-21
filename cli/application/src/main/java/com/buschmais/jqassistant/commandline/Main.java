@@ -16,12 +16,11 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
@@ -112,8 +111,10 @@ public class Main {
      *
      * @param configuration
      *     The {@link CliConfiguration}
-     * @param userHome The user home directory
-     * @param artifactProvider The {@link ArtifactProvider}
+     * @param userHome
+     *     The user home directory
+     * @param artifactProvider
+     *     The {@link ArtifactProvider}
      * @return The repository.
      * @throws CliExecutionException
      *     If initialization fails.
@@ -202,8 +203,7 @@ public class Main {
             ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(userHome);
             ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
             PluginRepository pluginRepository = getPluginRepository(configuration, userHome, artifactProvider);
-            ClassLoader contextClassLoader = currentThread()
-                .getContextClassLoader();
+            ClassLoader contextClassLoader = currentThread().getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
                 executeTasks(tasks, configuration, pluginRepository, artifactProvider, options);
@@ -234,8 +234,6 @@ public class Main {
     private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
         throws CliConfigurationException {
         List<String> configLocations = getConfigLocations(commandLine);
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class, userHome, workingDirectory,
-            configLocations);
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
         ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine));
@@ -243,7 +241,10 @@ public class Main {
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
         }
-        return configurationLoader.load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+        return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
+            .withUserHome(userHome)
+            .withWorkingDirectory(workingDirectory)
+            .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
     }
 
     private Optional<File> getMavenSettings(CommandLine commandLine) {
@@ -262,8 +263,7 @@ public class Main {
     }
 
     protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider,
-        Options options)
-        throws CliExecutionException {
+        Options options) throws CliExecutionException {
         try {
             pluginRepository.initialize();
             for (Task task : tasks) {
@@ -302,8 +302,10 @@ public class Main {
      *     The task.
      * @param configuration
      *     The {@link CliConfiguration}-
-     * @param options The CLI options.
-     * @throws CliExecutionException If the execution fails.
+     * @param options
+     *     The CLI options.
+     * @throws CliExecutionException
+     *     If the execution fails.
      */
     private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider, Options options)
         throws CliExecutionException {

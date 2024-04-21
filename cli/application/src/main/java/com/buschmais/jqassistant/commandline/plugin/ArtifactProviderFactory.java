@@ -30,7 +30,8 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
 
-import static java.util.Optional.*;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
@@ -166,22 +167,37 @@ public class ArtifactProviderFactory {
             .stream()
             .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), proxySelector))
             // apply any configured mirrors to the remote repository
-            .map(remoteRepository -> mirrorSelector.map(selector -> ofNullable(selector.getMirror(remoteRepository)).orElse(remoteRepository))
+            .map(remoteRepository -> mirrorSelector.map(
+                    selector -> selectMirror(remoteRepository, selector, repositories.mirrors(), proxySelector).orElse(remoteRepository))
                 .orElse(remoteRepository))
             .collect(toList());
     }
 
+    private static Optional<RemoteRepository> selectMirror(RemoteRepository remoteRepository, MirrorSelector selector, Map<String, Mirror> mirrors,
+        ProxySelector proxySelector) {
+        RemoteRepository mirrorRepository = selector.getMirror(remoteRepository);
+        if (mirrorRepository == null) {
+            return empty();
+        }
+        Mirror mirror = mirrors.get(mirrorRepository.getId());
+        return of(getRemoteRepository(mirrorRepository, proxySelector, mirror.username(), mirror.password()));
+    }
+
     private static RemoteRepository getRemoteRepository(String id, Remote remote, ProxySelector proxySelector) {
-        AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-        remote.username()
-            .ifPresent(username -> authBuilder.addUsername(username));
-        remote.password()
-            .ifPresent(password -> authBuilder.addPassword(password));
-        RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setAuthentication(authBuilder.build())
-            .setSnapshotPolicy(SNAPSHOT_REPOSITORY_POLICY)
+        RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setSnapshotPolicy(
+                SNAPSHOT_REPOSITORY_POLICY)
             .build();
+        return getRemoteRepository(remoteRepository, proxySelector, remote.username(), remote.password());
+    }
+
+    private static RemoteRepository getRemoteRepository(RemoteRepository remoteRepository, ProxySelector proxySelector, Optional<String> optionalUsername,
+        Optional<String> optionalPassword) {
+        AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+        optionalUsername.ifPresent(username -> authBuilder.addUsername(username));
+        optionalPassword.ifPresent(password -> authBuilder.addPassword(password));
         org.eclipse.aether.repository.Proxy proxy = proxySelector.getProxy(remoteRepository);
         return new RemoteRepository.Builder(remoteRepository).setProxy(proxy)
+            .setAuthentication(authBuilder.build())
             .build();
     }
 
@@ -203,8 +219,10 @@ public class ArtifactProviderFactory {
      *
      * @param system
      *     the {@link RepositorySystem}
-     * @param mirrorSelector The optional {@link MirrorSelector}.
-     * @param proxySelector The {@link ProxySelector}.
+     * @param mirrorSelector
+     *     The optional {@link MirrorSelector}.
+     * @param proxySelector
+     *     The {@link ProxySelector}.
      * @return a new {@link RepositorySystemSession}.
      */
     private RepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory, Optional<MirrorSelector> mirrorSelector,
@@ -228,7 +246,7 @@ public class ArtifactProviderFactory {
             .entrySet()) {
             String id = entry.getKey();
             Mirror mirror = entry.getValue();
-            mirrorSelector.add(id, mirror.url(), null,false, false, mirror.mirrorOf(), null);
+            mirrorSelector.add(id, mirror.url(), null, false, false, mirror.mirrorOf(), null);
         }
         return of(mirrorSelector);
     }

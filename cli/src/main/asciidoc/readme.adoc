@@ -51,6 +51,24 @@ jqassistant:
         #
         # -Djqassistant.repositories.central.password (optional)
         password:
+    mirrors:
+      mirror-repository:
+        # The mirror URL.
+        #
+        # -Djqassistant.mirrors.mirror-repository.url
+        url:
+        # The identifier(s) of remote repositories to mirror.
+        #
+        # -Djqassistant.mirrors.mirror-repository.url
+        mirror-of:
+        # The user name for authenticating against the mirror.
+        #
+        # -Djqassistant.mirrors.mirror-repository.username
+        username:
+        # The password for authenticating against the mirror.
+        #
+        # -Djqassistant.mirrors.mirror-repository.password
+        password:
 
   # The optional proxy to use for downloading additional plugins
   proxy:

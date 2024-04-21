@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,8 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration configuration = configurationLoader.load(configSource);
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
+            .load(configSource);
 
         Optional<Proxy> proxyOptional = configuration.proxy();
         assertThat(proxyOptional).isPresent();
@@ -48,11 +47,15 @@ class MavenSettingsConfigSourceBuilderTest {
         Mirror defaultMirror = mirrors.get("default");
         assertThat(defaultMirror).isNotNull();
         assertThat(defaultMirror.url()).isEqualTo("default-mirror-host");
-        assertThat(defaultMirror.mirrorOf()).isEqualTo("*");
-        Mirror otherMirror = mirrors.get("other");
-        assertThat(otherMirror).isNotNull();
-        assertThat(otherMirror.url()).isEqualTo("other-mirror-host");
-        assertThat(otherMirror.mirrorOf()).isEqualTo("central");
+        assertThat(defaultMirror.mirrorOf()).isEqualTo("central");
+        assertThat(defaultMirror.username()).isNotPresent();
+        assertThat(defaultMirror.password()).isNotPresent();
+        Mirror privateMirror = mirrors.get("private-mirror");
+        assertThat(privateMirror).isNotNull();
+        assertThat(privateMirror.url()).isEqualTo("private-mirror-host");
+        assertThat(privateMirror.mirrorOf()).isEqualTo("*");
+        assertThat(privateMirror.username()).isEqualTo(of("mirror-foo@bar.com"));
+        assertThat(privateMirror.password()).isEqualTo(of("mirror-top-secret"));
 
         Map<String, Remote> remotes = repositories.remotes();
         assertThat(remotes).hasSize(2);
@@ -61,13 +64,12 @@ class MavenSettingsConfigSourceBuilderTest {
         assertThat(publicRemote).isNotNull();
         assertThat(publicRemote.url()).isEqualTo("https://public-repo.acme.com/");
 
-        Remote privateRemote = remotes.get("private");
+        Remote privateRemote = remotes.get("private-repo");
         assertThat(privateRemote).isNotNull();
         assertThat(privateRemote.url()).isEqualTo("https://private-repo.acme.com/");
-        assertThat(privateRemote.username()).isEqualTo(of("foo@bar.com"));
-        assertThat(privateRemote.password()).isEqualTo(of("top-secret"));
+        assertThat(privateRemote.username()).isEqualTo(of("repo-foo@bar.com"));
+        assertThat(privateRemote.password()).isEqualTo(of("repo-top-secret"));
         assertThat(configSource.getValue("custom")).isEqualTo("my-value");
-
     }
 
     @Test
@@ -78,8 +80,8 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, Optional.of(customSettings));
 
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration configuration = configurationLoader.load(configSource);
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
+            .load(configSource);
 
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/custom-repo")));
@@ -91,7 +93,6 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        assertThat(configSource.getPropertyNames())
-            .isEmpty();
+        assertThat(configSource.getPropertyNames()).isEmpty();
     }
 }
