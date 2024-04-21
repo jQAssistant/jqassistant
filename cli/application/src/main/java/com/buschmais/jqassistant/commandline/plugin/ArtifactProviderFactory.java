@@ -96,10 +96,9 @@ public class ArtifactProviderFactory {
         log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
             .map(repository -> {
                 org.eclipse.aether.repository.Proxy repositoryProxy = repository.getProxy();
-                String repositoryInfo = "'" + repository.getId() + " (" + repository.getUrl() + (repositoryProxy != null ?
+                return "'" + repository.getId() + " (" + repository.getUrl() + (repositoryProxy != null ?
                     " via proxy " + repositoryProxy.getHost() + ":" + repositoryProxy.getPort() :
                     "") + ")'";
-                return repositoryInfo;
             })
             .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector, proxySelector);

@@ -244,6 +244,8 @@ public class Main {
         return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
             .withUserHome(userHome)
             .withWorkingDirectory(workingDirectory)
+            .withClasspath()
+            .withEnvVariables()
             .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
     }
 
