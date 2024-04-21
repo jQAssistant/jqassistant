@@ -5,7 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
@@ -20,9 +20,9 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for the {@link ConfigurationLoader}.
+ * Tests for the {@link ConfigurationMappingLoader}.
  */
-class ConfigurationLoaderTest {
+class ConfigurationMappingLoaderTest {
 
     public static final File USER_HOME = new File("src/test/resources/userhome");
 
@@ -114,7 +114,7 @@ class ConfigurationLoaderTest {
     }
 
     private TestConfiguration getConfiguration(List<String> configLocations) {
-        return ConfigurationLoader.builder(TestConfiguration.class, configLocations)
+        return ConfigurationMappingLoader.builder(TestConfiguration.class, configLocations)
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
             .load(new SysPropConfigSource());

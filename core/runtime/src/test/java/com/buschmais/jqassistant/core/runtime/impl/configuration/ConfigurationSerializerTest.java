@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.runtime.impl.configuration;
 
 import java.util.Properties;
 
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationSerializer;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 
@@ -11,8 +11,8 @@ import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderTest.USER_HOME;
-import static com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderTest.WORKING_DIRECTORY;
+import static com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationMappingLoaderTest.USER_HOME;
+import static com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationMappingLoaderTest.WORKING_DIRECTORY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -33,7 +33,7 @@ class ConfigurationSerializerTest {
         properties.put("jqassistant.plugins[0].artifact-id", "test-plugin");
         properties.put("jqassistant.plugins[0].version", "1.0.0");
         PropertiesConfigSource configSource = new PropertiesConfigSource(properties, "test");
-        TestConfiguration configuration = ConfigurationLoader.builder(TestConfiguration.class)
+        TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(configSource);
 
         String yaml = toYaml(configuration);
@@ -47,7 +47,7 @@ class ConfigurationSerializerTest {
 
     @Test
     void serializeAndRestoreConfiguration() {
-        TestConfiguration configuration = ConfigurationLoader.builder(TestConfiguration.class)
+        TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
             .load();
@@ -56,7 +56,7 @@ class ConfigurationSerializerTest {
 
         YamlConfigSource yamlConfigSource = new YamlConfigSource("yaml", yaml);
         assertThat(yamlConfigSource.getValue("jqassistant.analyze.execute-applied-concepts")).isEqualTo("false");
-        TestConfiguration restoredConfiguration = ConfigurationLoader.builder(TestConfiguration.class)
+        TestConfiguration restoredConfiguration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(yamlConfigSource);
         Scan scan = restoredConfiguration.scan();
         assertThat(scan.properties()

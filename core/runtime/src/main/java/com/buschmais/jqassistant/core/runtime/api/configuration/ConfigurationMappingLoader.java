@@ -34,11 +34,9 @@ import static java.util.stream.Collectors.toUnmodifiableList;
  * <p>
  * The mechanism is based on Eclipse Micro Profile configuration.
  *
- * @param <C>
- *     The configuration mapping type.
  */
 @Slf4j
-public class ConfigurationLoader<C extends Configuration> {
+public class ConfigurationMappingLoader {
 
     /**
      * The default names of configuration files
@@ -105,14 +103,40 @@ public class ConfigurationLoader<C extends Configuration> {
             });
         }
 
+        /**
+         * Add YAML configs from the user home directory.
+         *
+         * @param userHome
+         *     The user home.
+         * @return The {@link Builder}.
+         */
         public Builder<C> withUserHome(File userHome) {
             configSources.addAll(getExternalYamlConfigSources(userHome, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USERHOME));
             return this;
         }
 
-        public Builder<C> withWorkingDirectory(File directory) {
-            configSources.addAll(
-                getExternalYamlConfigSources(directory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations, ORDINAL_WORKING_DIRECTORY));
+        /**
+         * Add YAML configs from the working workingDirectory.
+         *
+         * @param workingDirectory
+         *     The working workingDirectory.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withWorkingDirectory(File workingDirectory) {
+            return withDirectory(workingDirectory, ORDINAL_WORKING_DIRECTORY);
+        }
+
+        /**
+         * Add YAML configs from the given directory.
+         *
+         * @param directory
+         *     The directory.
+         * @param ordinal
+         *     The ordinal to apply.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withDirectory(File directory, int ordinal) {
+            configSources.addAll(getExternalYamlConfigSources(directory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations, ordinal));
             return this;
         }
 
@@ -189,7 +213,7 @@ public class ConfigurationLoader<C extends Configuration> {
         }
 
         private static YamlConfigSource getYamlConfigSource(Path path, int ordinal) {
-            log.info("Using configuration from file '{}'.", path.toAbsolutePath());
+            log.info("Loading configuration from file '{}'.", path.toAbsolutePath());
             try {
                 return getYamlConfigSource(path.toUri()
                     .toURL(), ordinal);
@@ -218,7 +242,6 @@ public class ConfigurationLoader<C extends Configuration> {
                 throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
             }
         }
-    }
 
-    // C load(ConfigSource... configSources);
+    }
 }

@@ -29,7 +29,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
@@ -166,7 +166,7 @@ public abstract class AbstractPluginIT {
      * @return The  configuration.
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        return ConfigurationLoader.builder(Configuration.class)
+        return ConfigurationMappingLoader.builder(Configuration.class)
             .load(configurationBuilder.build());
     }
 
