@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
@@ -136,7 +136,7 @@ public abstract class AbstractCLIIT {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
-        configuration = ConfigurationLoader.builder(CliConfiguration.class)
+        configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configurationBuilder.build());
         // The user home contains a Maven settings.xml to configure the local repository
         ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));

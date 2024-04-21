@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
@@ -241,7 +241,7 @@ public class Main {
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
         }
-        return ConfigurationLoader.builder(CliConfiguration.class, configLocations)
+        return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
             .withUserHome(userHome)
             .withWorkingDirectory(workingDirectory)
             .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        CliConfiguration configuration = ConfigurationLoader.builder(CliConfiguration.class)
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
 
         Optional<Proxy> proxyOptional = configuration.proxy();
@@ -80,7 +80,7 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, Optional.of(customSettings));
 
-        CliConfiguration configuration = ConfigurationLoader.builder(CliConfiguration.class)
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
 
         Repositories repositories = configuration.repositories();
