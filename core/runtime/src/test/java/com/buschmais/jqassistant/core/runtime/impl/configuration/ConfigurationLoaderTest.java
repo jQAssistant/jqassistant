@@ -20,9 +20,9 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for the {@link ConfigurationLoaderImpl}.
+ * Tests for the {@link ConfigurationLoader}.
  */
-class ConfigurationLoaderImplTest {
+class ConfigurationLoaderTest {
 
     public static final File USER_HOME = new File("src/test/resources/userhome");
 
@@ -48,8 +48,10 @@ class ConfigurationLoaderImplTest {
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
         assertThat(scan.continueOnError()).isEqualTo(true);
-        assertThat(scan.properties().get("user-value")).isEqualTo("default");
-        assertThat(scan.properties().get("overwritten-user-value")).isEqualTo("overwritten");
+        assertThat(scan.properties()
+            .get("user-value")).isEqualTo("default");
+        assertThat(scan.properties()
+            .get("overwritten-user-value")).isEqualTo("overwritten");
 
         Store store = configuration.store();
         assertThat(store).isNotNull();
@@ -72,8 +74,10 @@ class ConfigurationLoaderImplTest {
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
         assertThat(scan.continueOnError()).isEqualTo(true);
-        assertThat(scan.properties().get("user-value")).isEqualTo("default");
-        assertThat(scan.properties().get("overwritten-user-value")).isEqualTo("overwritten");
+        assertThat(scan.properties()
+            .get("user-value")).isEqualTo("default");
+        assertThat(scan.properties()
+            .get("overwritten-user-value")).isEqualTo("overwritten");
 
         Store store = configuration.store();
         assertThat(store).isNotNull();
@@ -110,8 +114,9 @@ class ConfigurationLoaderImplTest {
     }
 
     private TestConfiguration getConfiguration(List<String> configLocations) {
-        ConfigurationLoader<TestConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(TestConfiguration.class, USER_HOME, WORKING_DIRECTORY,
-            configLocations);
-        return configurationLoader.load(new SysPropConfigSource());
+        return ConfigurationLoader.builder(TestConfiguration.class, configLocations)
+            .withUserHome(USER_HOME)
+            .withWorkingDirectory(WORKING_DIRECTORY)
+            .load(new SysPropConfigSource());
     }
 }

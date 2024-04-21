@@ -32,7 +32,6 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBui
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -167,8 +166,8 @@ public abstract class AbstractPluginIT {
      * @return The  configuration.
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        ConfigurationLoader<Configuration> configurationLoader = new ConfigurationLoaderImpl<>(Configuration.class);
-        return configurationLoader.load(configurationBuilder.build());
+        return ConfigurationLoader.builder(Configuration.class)
+            .load(configurationBuilder.build());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
@@ -179,7 +178,8 @@ public abstract class AbstractPluginIT {
             sources.addAll(FileRuleSource.getRuleSources(selectedDirectory));
         }
         // read rules from plugins
-        sources.addAll(pluginRepository.getRulePluginRepository().getRuleSources());
+        sources.addAll(pluginRepository.getRulePluginRepository()
+            .getRuleSources());
         Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository()
             .getRuleParserPlugins(configuration.analyze()
                 .rule());
@@ -210,7 +210,8 @@ public abstract class AbstractPluginIT {
     }
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
-        return pluginRepository.getAnalyzerPluginRepository().getRuleInterpreterPlugins(getRuleInterpreterProperties());
+        return pluginRepository.getAnalyzerPluginRepository()
+            .getRuleInterpreterPlugins(getRuleInterpreterProperties());
     }
 
     protected Map<String, Object> getRuleInterpreterProperties() {
@@ -260,7 +261,7 @@ public abstract class AbstractPluginIT {
      * Determines the directory a class is located in (e.g. target/test-classes).
      *
      * @param rootClass
-     *            The class.
+     *     The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
@@ -276,7 +277,7 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *            The query.
+     *     The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
@@ -287,9 +288,9 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *            The query.
+     *     The query.
      * @param parameters
-     *            The query parameters.
+     *     The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -318,81 +319,95 @@ public abstract class AbstractPluginIT {
      * Applies the concept identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id) throws RuleException {
-        return applyConcept(id, Collections.<String, String> emptyMap());
+        return applyConcept(id, Collections.<String, String>emptyMap());
     }
 
     /**
      * Applies the concept identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      * @param parameters
-     *            The rule parameters.
+     *     The rule parameters.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         Analyzer analyzer = getAnalyzer(parameters);
-        RuleSelection ruleSelection = RuleSelection.builder().conceptId(id).build();
-        Concept concept = ruleSet.getConceptBucket().getById(id);
-        assertThat(concept).describedAs("The requested concept cannot be found: " + id).isNotNull();
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .conceptId(id)
+            .build();
+        Concept concept = ruleSet.getConceptBucket()
+            .getById(id);
+        assertThat(concept).describedAs("The requested concept cannot be found: " + id)
+            .isNotNull();
         analyzer.execute(ruleSet, ruleSelection);
-        return reportPlugin.getConceptResults().get(id);
+        return reportPlugin.getConceptResults()
+            .get(id);
     }
 
     /**
      * Validates the constraint identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id) throws RuleException {
-        return validateConstraint(id, Collections.<String, String> emptyMap());
+        return validateConstraint(id, Collections.<String, String>emptyMap());
     }
 
     /**
      * Validates the constraint identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      * @param parameters
-     *            The rule parameters.
+     *     The rule parameters.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.builder().constraintId(id).build();
-        Constraint constraint = ruleSet.getConstraintBucket().getById(id);
-        assertThat(constraint).describedAs("The requested constraint cannot be found: " + id).isNotNull();
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .constraintId(id)
+            .build();
+        Constraint constraint = ruleSet.getConstraintBucket()
+            .getById(id);
+        assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
+            .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
-        return reportPlugin.getConstraintResults().get(id);
+        return reportPlugin.getConstraintResults()
+            .get(id);
     }
 
     /**
      * Executes the group identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      */
     protected void executeGroup(String id) throws RuleException {
-        executeGroup(id, Collections.<String, String> emptyMap());
+        executeGroup(id, Collections.<String, String>emptyMap());
     }
 
     /**
      * Executes the group identified by id.
      *
      * @param id
-     *            The id.
+     *     The id.
      * @param parameters
-     *            The rule parameters.
+     *     The rule parameters.
      */
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
-        RuleSelection ruleSelection = RuleSelection.builder().groupId(id).build();
-        Group group = ruleSet.getGroupsBucket().getById(id);
-        assertThat(group).describedAs("The request group cannot be found: " + id).isNotNull();
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId(id)
+            .build();
+        Group group = ruleSet.getGroupsBucket()
+            .getById(id);
+        assertThat(group).describedAs("The request group cannot be found: " + id)
+            .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
     }
 
@@ -405,7 +420,9 @@ public abstract class AbstractPluginIT {
         Type type() default Type.FILE;
 
         enum Type {
-            FILE, MEMORY, REMOTE;
+            FILE,
+            MEMORY,
+            REMOTE;
         }
     }
 
@@ -424,7 +441,7 @@ public abstract class AbstractPluginIT {
          * Return a column identified by its name.
          *
          * @param <T>
-         *            The expected type.
+         *     The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
