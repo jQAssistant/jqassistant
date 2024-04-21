@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,8 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration configuration = configurationLoader.load(configSource);
+        CliConfiguration configuration = ConfigurationLoader.builder(CliConfiguration.class)
+            .load(configSource);
 
         Optional<Proxy> proxyOptional = configuration.proxy();
         assertThat(proxyOptional).isPresent();
@@ -81,8 +80,8 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, Optional.of(customSettings));
 
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration configuration = configurationLoader.load(configSource);
+        CliConfiguration configuration = ConfigurationLoader.builder(CliConfiguration.class)
+            .load(configSource);
 
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/custom-repo")));
@@ -94,7 +93,6 @@ class MavenSettingsConfigSourceBuilderTest {
 
         ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
 
-        assertThat(configSource.getPropertyNames())
-            .isEmpty();
+        assertThat(configSource.getPropertyNames()).isEmpty();
     }
 }

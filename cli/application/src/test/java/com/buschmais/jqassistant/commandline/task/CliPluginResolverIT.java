@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
@@ -23,13 +22,13 @@ public class CliPluginResolverIT {
     @Test
     void resolve() {
         Map<String, String> configurationProperties = new HashMap<>();
-        configurationProperties.put("jqassistant.plugins[0].group-id","org.jqassistant.contrib.plugin");
-        configurationProperties.put("jqassistant.plugins[0].artifact-id","jqassistant-docker-plugin");
-        configurationProperties.put("jqassistant.plugins[0].version","1.11.0");
+        configurationProperties.put("jqassistant.plugins[0].group-id", "org.jqassistant.contrib.plugin");
+        configurationProperties.put("jqassistant.plugins[0].artifact-id", "jqassistant-docker-plugin");
+        configurationProperties.put("jqassistant.plugins[0].version", "1.11.0");
         PropertiesConfigSource testConfigSource = new PropertiesConfigSource(configurationProperties, "TestConfigSource", 110);
 
-        ConfigurationLoader<CliConfiguration> configurationLoader = new ConfigurationLoaderImpl<>(CliConfiguration.class);
-        CliConfiguration cliConfiguration = configurationLoader.load(testConfigSource);
+        CliConfiguration cliConfiguration = ConfigurationLoader.builder(CliConfiguration.class)
+            .load(testConfigSource);
 
         ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File("target/it/userhome"));
         ArtifactProvider artifactProvider = artifactProviderFactory.create(cliConfiguration);

@@ -17,7 +17,6 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBui
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.runtime.impl.configuration.ConfigurationLoaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
@@ -86,7 +85,8 @@ public abstract class AbstractCLIIT {
     @interface DistributionTest {
     }
 
-    public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules").getFile();
+    public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules")
+        .getFile();
 
     public static final String TEST_CONCEPT = "default:TestConcept";
     public static final String TEST_CONCEPT_WITH_PARAMETER = "default:TestConceptWithParameter";
@@ -104,7 +104,6 @@ public abstract class AbstractCLIIT {
     private String neo4jVersion;
 
     private String jqaHome;
-
 
     /**
      * Represents the result of a CLI execution containing exit code and console
@@ -137,7 +136,8 @@ public abstract class AbstractCLIIT {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
-        configuration = ((ConfigurationLoader<CliConfiguration>) new ConfigurationLoaderImpl<>(CliConfiguration.class)).load(configurationBuilder.build());
+        configuration = ConfigurationLoader.builder(CliConfiguration.class)
+            .load(configurationBuilder.build());
         // The user home contains a Maven settings.xml to configure the local repository
         ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));
         artifactProvider = artifactProviderFactory.create(configuration);
@@ -179,15 +179,14 @@ public abstract class AbstractCLIIT {
      * Execute the shell script.
      *
      * @param args
-     *            The arguments.
+     *     The arguments.
      * @throws IOException
-     *             If an error occurs.
+     *     If an error occurs.
      * @throws InterruptedException
-     *             If an error occurs.
+     *     If an error occurs.
      */
     protected ExecutionResult execute(String... args) {
-        assumeTrue("Test cannot be executed on this operating system.",
-                   SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
+        assumeTrue("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
         List<String> command = new ArrayList<>();
         if (SystemUtils.IS_OS_WINDOWS) {
             command.add("cmd.exe");
@@ -207,7 +206,8 @@ public abstract class AbstractCLIIT {
         File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
 
-        log.info("Executing '{}'.", command.stream().collect(joining(" ")));
+        log.info("Executing '{}'.", command.stream()
+            .collect(joining(" ")));
         Process process;
         try {
             process = builder.start();
@@ -232,7 +232,8 @@ public abstract class AbstractCLIIT {
      * @return The working directory.
      */
     protected File getWorkingDirectory() {
-        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
+        File workingDirectory = new File("target" + "/" + this.getClass()
+            .getSimpleName());
         workingDirectory.mkdirs();
         return workingDirectory;
     }
@@ -289,9 +290,9 @@ public abstract class AbstractCLIIT {
          * Constructor.
          *
          * @param stream
-         *            The stream to redirect.
+         *     The stream to redirect.
          * @param printStream
-         *            The target stream.
+         *     The target stream.
          */
         private ConsoleReader(InputStream stream, PrintStream printStream) {
             this.stream = stream;
