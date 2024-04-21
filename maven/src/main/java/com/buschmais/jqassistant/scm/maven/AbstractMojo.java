@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -16,7 +17,6 @@ import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConf
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenPropertiesConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
-import com.buschmais.jqassistant.scm.maven.provider.ConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
 import io.smallrye.config.source.yaml.YamlConfigSource;
@@ -42,6 +42,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
+
+    private static final int CONFIGURATION_ORDINAL_EXECUTION_ROOT = 90;
 
     private static String createExecutionKey(MojoExecution mojoExecution) {
         // Do NOT use a custom class for execution keys, as different modules may use
@@ -81,9 +83,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Component
     private RuntimeInformation runtimeInformation;
-
-    @Component
-    private ConfigurationProvider configurationProvider;
 
     @Component
     private PluginRepositoryProvider pluginRepositoryProvider;
@@ -266,14 +265,19 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
 
-        File executionRoot = new File(session.getExecutionRootDirectory());
-        return configurationProvider.getConfiguration(executionRoot, configurationLocations, configurationBuilder.build(), projectConfigSource,
-            settingsConfigSource, projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, getMavenPluginConfiguration());
+        ConfigSource[] configSources = new ConfigSource[] { configurationBuilder.build(), projectConfigSource, settingsConfigSource,
+            projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, getMavenPluginConfiguration() };
+        File userHome = new File(System.getProperty("user.home"));
+        return ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
+            .withUserHome(userHome)
+            .withWorkingDirectory(currentProject.getBasedir())
+            .withDirectory(new File(session.getExecutionRootDirectory()), CONFIGURATION_ORDINAL_EXECUTION_ROOT)
+            .load(configSources);
     }
 
     private ConfigSource getMavenPluginConfiguration() {
         return isNotEmpty(yaml) ?
-            new YamlConfigSource("Maven plugin execution configuration", yaml, ConfigurationProvider.ORDINAL_PLUGIN_EXECUTION) :
+            new YamlConfigSource("Maven plugin execution configuration", yaml, ConfigurationMappingLoader.ORDINAL_WORKING_DIRECTORY) :
             EmptyConfigSource.INSTANCE;
     }
 

@@ -3,6 +3,10 @@
 
 == 2.1.0
 
+* Load YAML configuration files from the Maven execution root (i.e. reactor) and the current module
+
+== 2.1.0
+
 * Automatically select embedded Neo4j version depending on Java runtime: Neo4j 4.x for JDK 11, Neo4j 5.x for JDK 17 or later
 
 == 2.0.8

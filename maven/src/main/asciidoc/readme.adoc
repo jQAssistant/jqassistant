@@ -73,7 +73,8 @@ NOTE: The described mechanism is designed to work for Maven module structures wh
 
 ==== Plugin Configuration
 
-The recommended way of configuring the jQAssistant Maven plugin is using a file `.jqassistant.yml` located in the root directory of the reactor.
+The recommended way of configuring the jQAssistant Maven plugin is using files call `.jqassistant.yml`.
+These are usually located in root directory of the reactor (i.e. where the 'mvn' command is executed) but can as well be placed into modules to add specific configurations (e.g. to include files for scanning).  
 Available options are described in the section <<core:Configuration>>.
 
 Furthermore, the following Maven specific option is supported:
