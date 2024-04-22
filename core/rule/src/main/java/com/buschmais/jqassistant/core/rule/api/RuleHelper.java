@@ -46,9 +46,9 @@ public class RuleHelper {
     }
 
     /**
-     * @param ruleSet
-     * @param ruleSelection
-     * @throws RuleException
+     * @param ruleSet The {@link RuleSet}
+     * @param ruleSelection The {@link RuleSelection}
+     * @throws RuleException If there's a problem.
      */
     public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
         CollectRulesVisitor visitor = getAllRules(ruleSet, ruleSelection, configuration);
@@ -95,7 +95,7 @@ public class RuleHelper {
      */
     private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
-        RuleSetExecutor executor = new RuleSetExecutor(visitor, configuration);
+        RuleSetExecutor<Boolean> executor = new RuleSetExecutor<>(visitor, configuration);
         executor.execute(ruleSet, ruleSelection);
         return visitor;
     }
@@ -106,28 +106,27 @@ public class RuleHelper {
      * @param visitor
      *     The visitor.
      */
-    private boolean printMissingRules(CollectRulesVisitor visitor) {
+    private void printMissingRules(CollectRulesVisitor visitor) {
         Set<String> missingConcepts = visitor.getMissingConcepts();
         if (!missingConcepts.isEmpty()) {
-            logger.info("Missing concepts [" + missingConcepts.size() + "]");
+            logger.info("Missing concepts [{}]", missingConcepts.size());
             for (String missingConcept : missingConcepts) {
-                logger.warn(LOG_LINE_PREFIX + missingConcept);
+                logger.warn(LOG_LINE_PREFIX + "{}", missingConcept);
             }
         }
         Set<String> missingConstraints = visitor.getMissingConstraints();
         if (!missingConstraints.isEmpty()) {
-            logger.info("Missing constraints [" + missingConstraints.size() + "]");
+            logger.info("Missing constraints [{}]", missingConstraints.size());
             for (String missingConstraint : missingConstraints) {
-                logger.warn(LOG_LINE_PREFIX + missingConstraint);
+                logger.warn(LOG_LINE_PREFIX + "{}", missingConstraint);
             }
         }
         Set<String> missingGroups = visitor.getMissingGroups();
         if (!missingGroups.isEmpty()) {
-            logger.info("Missing groups [" + missingGroups.size() + "]");
+            logger.info("Missing groups [{}]", missingGroups.size());
             for (String missingGroup : missingGroups) {
-                logger.warn(LOG_LINE_PREFIX + missingGroup);
+                logger.warn(LOG_LINE_PREFIX + "{}", missingGroup);
             }
         }
-        return missingConcepts.isEmpty() && missingConstraints.isEmpty() && missingGroups.isEmpty();
     }
 }

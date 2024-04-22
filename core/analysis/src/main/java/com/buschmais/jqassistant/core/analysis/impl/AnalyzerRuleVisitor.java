@@ -152,7 +152,6 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {
-        logDeprecation(executableRule);
         Executable<?> executable = executableRule.getExecutable();
         if (executable == null) {
             return Result.<T>builder()
@@ -177,13 +176,6 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                 }
             }
             throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
-        }
-    }
-
-    private void logDeprecation(ExecutableRule<?> executableRule) {
-        String deprecation = executableRule.getDeprecation();
-        if (deprecation != null) {
-            log.warn("Rule '{}' is deprecated: {}", executableRule.getId(), executableRule.getDeprecation());
         }
     }
 

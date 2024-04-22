@@ -5,6 +5,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import static java.util.Collections.emptySet;
  * dependencies between rules, e.g. a constraint relying on a specific label may
  * include results of concepts that are not explicitly required.
  */
+@Slf4j
 public class RuleSetExecutor<R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleSetExecutor.class);
@@ -160,6 +162,7 @@ public class RuleSetExecutor<R> {
         if (!executedConstraints.contains(constraint)) {
             Severity effectiveSeverity = getEffectiveSeverity(constraint, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, constraint, new LinkedHashSet<>())) {
+                checkDeprecation(constraint);
                 ruleVisitor.visitConstraint(constraint, effectiveSeverity);
             } else {
                 ruleVisitor.skipConstraint(constraint, effectiveSeverity);
@@ -193,6 +196,7 @@ public class RuleSetExecutor<R> {
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
             if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
                 Map<Concept, R> providedConceptResults = applyProvidedConcepts(ruleSet, concept, executionStack);
+                checkDeprecation(concept);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity, providedConceptResults);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity);
@@ -245,5 +249,13 @@ public class RuleSetExecutor<R> {
             }
         }
         return requiredConceptsApplied;
+    }
+
+    private void checkDeprecation(ExecutableRule<?> executableRule) {
+        String deprecation = executableRule.getDeprecation();
+        if (deprecation != null) {
+            log.warn("Rule '{}' is deprecated: {} ({})", executableRule.getId(), executableRule.getDeprecation(), executableRule.getSource()
+                .getId());
+        }
     }
 }
