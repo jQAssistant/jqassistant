@@ -93,12 +93,16 @@ public class ArtifactProviderFactory {
         Optional<MirrorSelector> mirrorSelector = getMirrorSelector(repositories);
         List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxySelector, mirrorSelector);
         RepositorySystem repositorySystem = newRepositorySystem();
-        log.info("Using local repository '{}' and remote repositories {}.", localRepository, remoteRepositories.stream()
+        log.info("Local repository: {}", localRepository);
+        log.info("Remote repositories: {}", remoteRepositories.stream()
             .map(repository -> {
                 org.eclipse.aether.repository.Proxy repositoryProxy = repository.getProxy();
-                return "'" + repository.getId() + " (" + repository.getUrl() + (repositoryProxy != null ?
-                    " via proxy " + repositoryProxy.getHost() + ":" + repositoryProxy.getPort() :
-                    "") + ")'";
+                List<RemoteRepository> mirroredRepositories = repository.getMirroredRepositories();
+                return String.format("'%s (%s%s%s)'", repository.getId(), repository.getUrl(), !mirroredRepositories.isEmpty() ?
+                    String.format(", mirror of %s", mirroredRepositories.stream()
+                        .map(r -> r.getId())
+                        .collect(joining(", "))) :
+                    "", repositoryProxy != null ? String.format(" via proxy %s:%d", repositoryProxy.getHost(), repositoryProxy.getPort()) : "");
             })
             .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector, proxySelector);
@@ -153,7 +157,9 @@ public class ArtifactProviderFactory {
      * @param repositories
      *     The {@link Repositories} configuration.
      * @param proxySelector
+     *     The {@link ProxySelector}.
      * @param mirrorSelector
+     *     The {@link MirrorSelector}.
      * @return The list of configured {@link RemoteRepository}s.
      */
     private List<RemoteRepository> getRemoteRepositories(Repositories repositories, ProxySelector proxySelector, Optional<MirrorSelector> mirrorSelector) {
@@ -166,20 +172,19 @@ public class ArtifactProviderFactory {
             .stream()
             .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), proxySelector))
             // apply any configured mirrors to the remote repository
-            .map(remoteRepository -> mirrorSelector.map(
-                    selector -> selectMirror(remoteRepository, selector, repositories.mirrors(), proxySelector).orElse(remoteRepository))
+            .map(remoteRepository -> mirrorSelector.map(selector -> selectMirror(remoteRepository, selector, repositories.mirrors(), proxySelector))
                 .orElse(remoteRepository))
             .collect(toList());
     }
 
-    private static Optional<RemoteRepository> selectMirror(RemoteRepository remoteRepository, MirrorSelector selector, Map<String, Mirror> mirrors,
+    private static RemoteRepository selectMirror(RemoteRepository remoteRepository, MirrorSelector selector, Map<String, Mirror> mirrors,
         ProxySelector proxySelector) {
         RemoteRepository mirrorRepository = selector.getMirror(remoteRepository);
         if (mirrorRepository == null) {
-            return empty();
+            return remoteRepository;
         }
         Mirror mirror = mirrors.get(mirrorRepository.getId());
-        return of(getRemoteRepository(mirrorRepository, proxySelector, mirror.username(), mirror.password()));
+        return getRemoteRepository(mirrorRepository, proxySelector, mirror.username(), mirror.password());
     }
 
     private static RemoteRepository getRemoteRepository(String id, Remote remote, ProxySelector proxySelector) {
