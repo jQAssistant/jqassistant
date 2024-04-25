@@ -1,12 +1,19 @@
 def buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert buildLog.getText().contains("""jQAssistant Common Plugin (jqa.plugin.common)""")
-assert buildLog.getText().contains("""jQAssistant Core Analysis Plugin (jqa.core.analysis.plugin)""")
-assert buildLog.getText().contains("""jQAssistant Core Report Plugin (jqa.core.report.plugin)""")
-assert buildLog.getText().contains("""jQAssistant Java Plugin (jqa.plugin.java)""")
-assert buildLog.getText().contains("""jQAssistant JSON Plugin (jqa.plugin.json)""")
-assert buildLog.getText().contains("""jQAssistant JUnit Plugin (jqa.plugin.junit)""")
-assert buildLog.getText().contains("""jQAssistant Maven 3 Plugin (jqa.plugin.maven3)""")
-assert buildLog.getText().contains("""jQAssistant XML Plugin (jqa.plugin.xml)""")
-assert buildLog.getText().contains("""jQAssistant YAML 2 Plugin (jqa.plugin.yaml2)""")
+def text = buildLog.getText();
+
+verify(text, "jQAssistant Common Plugin", "jqa.plugin.common")
+verify(text, "jQAssistant Core Analysis Plugin", "jqa.core.analysis.plugin")
+verify(text, "jQAssistant Core Report Plugin", "jqa.core.report.plugin")
+verify(text, "jQAssistant Java Plugin", "jqa.plugin.java")
+verify(text, "jQAssistant JSON Plugin", "jqa.plugin.json")
+verify(text, "jQAssistant JUnit Plugin", "jqa.plugin.junit")
+verify(text, "jQAssistant Maven 3 Plugin", "jqa.plugin.maven3")
+verify(text, "jQAssistant XML Plugin", "jqa.plugin.xml")
+verify(text, "jQAssistant YAML 2 Plugin", "jqa.plugin.yaml2")
+
+def verify(text, expectedName, expectedId) {
+    assert text.contains(expectedName);
+    assert text.contains("[" + expectedId + "]");
+}
