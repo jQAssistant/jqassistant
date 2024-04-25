@@ -1,7 +1,9 @@
-<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
-                    name="jQAssistant Java Plugin" id="jqa.plugin.java">
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.java"
+                    name="jQAssistant Java Plugin"
+                    version="${project.version}">
     <description>Provides scanner for Java elements (e.g. packages, classes, manifest and property files) and rules for
         common language concepts (e.g. Deprecation), dependencies and metrics.
     </description>
