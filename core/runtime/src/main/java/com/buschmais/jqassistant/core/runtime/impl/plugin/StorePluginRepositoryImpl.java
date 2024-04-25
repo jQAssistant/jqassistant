@@ -7,8 +7,8 @@ import java.util.function.Function;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
-import org.jqassistant.schema.plugin.v1.ClassListType;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.ClassListType;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 
 /**
  * Scanner plugin repository implementation.

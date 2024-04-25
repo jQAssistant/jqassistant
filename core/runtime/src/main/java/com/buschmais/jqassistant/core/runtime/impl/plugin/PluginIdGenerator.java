@@ -4,12 +4,11 @@ import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginIdGenerator
-    implements Function<JqassistantPlugin, JqassistantPlugin> {
+public class PluginIdGenerator implements Function<JqassistantPlugin, JqassistantPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginIdGenerator.class);
 
@@ -18,7 +17,8 @@ public class PluginIdGenerator
     @Override
     public JqassistantPlugin apply(JqassistantPlugin plugin) {
         if (StringUtils.isBlank(plugin.getId())) {
-            String name = plugin.getName().toLowerCase();
+            String name = plugin.getName()
+                .toLowerCase();
             IntUnaryOperator replacer = i -> (Character.isWhitespace(i)) ? UNDERSCORE : i;
             StringBuilder generate = new StringBuilder();
 
@@ -33,8 +33,7 @@ public class PluginIdGenerator
 
             plugin.setId(generate.toString());
 
-            LOGGER.debug("Assigned generated plugin id '{}' to plugin named '{}'",
-                         plugin.getName(), plugin.getId());
+            LOGGER.debug("Assigned generated plugin id '{}' to plugin named '{}'", plugin.getName(), plugin.getId());
         }
 
         return plugin;

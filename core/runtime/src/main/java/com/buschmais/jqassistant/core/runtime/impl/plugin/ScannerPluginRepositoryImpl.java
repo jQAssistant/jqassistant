@@ -11,10 +11,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
-import org.jqassistant.schema.plugin.v1.ClassListType;
-import org.jqassistant.schema.plugin.v1.IdClassListType;
-import org.jqassistant.schema.plugin.v1.IdClassType;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.ClassListType;
+import org.jqassistant.schema.plugin.v2.IdClassListType;
+import org.jqassistant.schema.plugin.v2.IdClassType;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 
 import static java.util.Collections.unmodifiableMap;
 

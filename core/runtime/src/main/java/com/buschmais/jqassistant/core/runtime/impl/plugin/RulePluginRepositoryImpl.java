@@ -14,10 +14,10 @@ import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
 
-import org.jqassistant.schema.plugin.v1.IdClassListType;
-import org.jqassistant.schema.plugin.v1.IdClassType;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
-import org.jqassistant.schema.plugin.v1.RulesType;
+import org.jqassistant.schema.plugin.v2.IdClassListType;
+import org.jqassistant.schema.plugin.v2.IdClassType;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.RulesType;
 
 /**
  * Rule repository implementation.

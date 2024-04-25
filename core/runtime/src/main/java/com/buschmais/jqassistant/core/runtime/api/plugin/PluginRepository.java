@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.runtime.api.plugin;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
@@ -29,12 +29,7 @@ public interface PluginRepository extends LifecycleAware {
 
     ClassLoader getClassLoader();
 
-    /**
-     * Returns information on all plugins known by jQAssistant,
-     * independently if the plugin is enabled or has been disabled
-     * or of the type of the plugin.
-     *
-     * @return unmodifiable collection of all known plugins.
-     */
-    Collection<PluginInfo> getPluginOverview();
+    List<PluginInfo> getPluginInfos();
+
+    void printPluginInfos();
 }

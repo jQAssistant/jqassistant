@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
 import java.util.stream.Stream;
 
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

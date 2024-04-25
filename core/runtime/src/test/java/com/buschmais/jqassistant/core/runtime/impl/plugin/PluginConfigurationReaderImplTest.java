@@ -6,7 +6,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import com.google.common.collect.Iterators;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

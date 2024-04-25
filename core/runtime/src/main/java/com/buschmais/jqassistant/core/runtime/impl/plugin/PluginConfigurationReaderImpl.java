@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +28,10 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
     private static final Schema SCHEMA = XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE);
-    private static final String NAMESPACE = "http://schema.jqassistant.org/plugin/v1.10";
 
     private final ClassLoader pluginClassLoader;
 
-    private JAXBUnmarshaller<JqassistantPlugin> jaxbUnmarshaller;
+    private final JAXBUnmarshaller<JqassistantPlugin> jaxbUnmarshaller;
 
     private List<JqassistantPlugin> plugins = null;
 
@@ -40,7 +39,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * Constructor.
      *
      * @param pluginClassLoader
-     *            The class loader to use for detecting plugins.
+     *     The class loader to use for detecting plugins.
      */
     public PluginConfigurationReaderImpl(PluginClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
@@ -56,7 +55,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * Read the catalogs from an {@link URL}.
      *
      * @param pluginUrl
-     *            The {@link URL}.
+     *     The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
     protected JqassistantPlugin readPlugin(URL pluginUrl) {
@@ -90,17 +89,17 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
                 if (ids.add(plugin.getId())) {
                     plugins.add(plugin);
-                    LOGGER.info("Loaded plugin '{}' with id '{}'", plugin.getName(),
-                        plugin.getId());
                 } else {
-                    JqassistantPlugin loadedPlugin = plugins.stream().filter(p -> p.getId().equals(plugin.getId()))
-                                                            .findFirst().get();
+                    JqassistantPlugin loadedPlugin = plugins.stream()
+                        .filter(p -> p.getId()
+                            .equals(plugin.getId()))
+                        .findFirst()
+                        .get();
                     LOGGER.warn("Skipping plugin '{}' with id '{}' as it uses the same id as the already loaded plugin '{}'.", plugin.getName(), plugin.getId(),
                         loadedPlugin.getName());
                 }
             }
         }
-
         return plugins;
     }
 
@@ -110,6 +109,5 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
         } catch (IOException e) {
             throw new IllegalStateException("Cannot get plugin resources.", e);
         }
-
     }
 }

@@ -14,9 +14,9 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
 
-import org.jqassistant.schema.plugin.v1.IdClassListType;
-import org.jqassistant.schema.plugin.v1.IdClassType;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.IdClassListType;
+import org.jqassistant.schema.plugin.v2.IdClassType;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
             }
         }
         return ruleInterpreterPlugins;
-    };
+    }
 
     @Override
     public void initialize() {
@@ -84,7 +84,8 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
                     }
                     String id = classType.getId();
                     if (id == null) {
-                        id = reportPlugin.getClass().getSimpleName();
+                        id = reportPlugin.getClass()
+                            .getSimpleName();
                     }
                     reportPlugins.put(id, reportPlugin);
                 }
@@ -112,13 +113,17 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
 
     @Override
     public void destroy() {
-        reportPlugins.values().forEach(plugin -> {
-            try {
-                plugin.destroy();
-            } catch (ReportException e) {
-                LOGGER.warn("Cannot destroy plugin " + plugin, e);
-            }
-        });
-        ruleInterpreterPlugins.values().stream().flatMap(plugins -> plugins.stream()).forEach(plugin -> plugin.destroy());
+        reportPlugins.values()
+            .forEach(plugin -> {
+                try {
+                    plugin.destroy();
+                } catch (ReportException e) {
+                    LOGGER.warn("Cannot destroy plugin {}", plugin, e);
+                }
+            });
+        ruleInterpreterPlugins.values()
+            .stream()
+            .flatMap(plugins -> plugins.stream())
+            .forEach(plugin -> plugin.destroy());
     }
 }

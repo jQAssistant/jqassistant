@@ -1,32 +1,20 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
+import java.util.Optional;
+
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginInfo;
 
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-class PluginInfoImpl implements PluginInfo {
-    private String id;
-    private String name;
-
-    PluginInfoImpl(String pluginId, String pluginName) {
-        id = pluginId;
-        name = pluginName;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public static PluginInfo of(JqassistantPlugin plugin) {
-        String id = plugin.getId();
-        String name = plugin.getName();
-
-        return new PluginInfoImpl(id, name);
-    }
+@Getter
+@Setter
+@ToString
+@Builder
+public class PluginInfoImpl implements PluginInfo {
+    private final String id;
+    private final String name;
+    private final Optional<String> version;
 }

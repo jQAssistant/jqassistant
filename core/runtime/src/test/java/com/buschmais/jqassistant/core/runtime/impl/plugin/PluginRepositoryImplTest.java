@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
 import org.assertj.core.api.SoftAssertions;
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -114,7 +114,7 @@ class PluginRepositoryImplTest {
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
 
-        Collection<PluginInfo> overview = pluginRepository.getPluginOverview();
+        Collection<PluginInfo> overview = pluginRepository.getPluginInfos();
 
         assertThat(overview).hasSize(3);
         assertThat(overview).anyMatch(info -> info.getName().equals("A") && info.getId().equals("jqa.a"));
@@ -143,7 +143,7 @@ class PluginRepositoryImplTest {
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
 
-        Collection<PluginInfo> overview = pluginRepository.getPluginOverview();
+        Collection<PluginInfo> overview = pluginRepository.getPluginInfos();
 
         SoftAssertions.assertSoftly(overviewOfPlugins -> {
             overviewOfPlugins.assertThatThrownBy(() -> overview.clear()).isInstanceOf(RuntimeException.class);

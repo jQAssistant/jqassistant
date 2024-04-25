@@ -1,7 +1,9 @@
-<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
-                    name="jQAssistant Core Analysis Plugin" id="jqa.core.analysis.plugin">
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    name="jQAssistant Core Analysis Plugin"
+                    id="jqa.core.analysis.plugin"
+                    version="${project.version}">
     <description>Provides elements for storing analysis results.</description>
     <model>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>

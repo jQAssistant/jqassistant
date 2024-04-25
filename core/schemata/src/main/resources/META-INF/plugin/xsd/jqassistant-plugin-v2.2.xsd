@@ -19,6 +19,7 @@
                 <xs:element name="report" type="tns:IdClassListType" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="version" type="xs:string"/>
 
             <!--
              ! In a later version of jQAssistant, the id attribute will

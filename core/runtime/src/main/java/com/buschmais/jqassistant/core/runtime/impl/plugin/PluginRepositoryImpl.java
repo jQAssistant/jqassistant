@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.rule.spi.RulePluginRepository;
@@ -12,14 +10,18 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The plugin repository.
  */
+@Slf4j
 public class PluginRepositoryImpl implements PluginRepository {
 
-    private PluginConfigurationReader pluginConfigurationReader;
+    private final PluginConfigurationReader pluginConfigurationReader;
 
     private StorePluginRepository storePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
@@ -32,10 +34,11 @@ public class PluginRepositoryImpl implements PluginRepository {
      * Constructor.
      *
      * @param pluginConfigurationReader
-     *            The plugin configuration reader.
+     *     The plugin configuration reader.
      */
     public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         this.pluginConfigurationReader = pluginConfigurationReader;
+        this.printPluginInfos();
     }
 
     @Override
@@ -84,17 +87,23 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public Collection<PluginInfo> getPluginOverview() {
-        ArrayList<PluginInfo> infos = new ArrayList<>();
-
-        pluginConfigurationReader.getPlugins().forEach(plugin -> {
-            String id = plugin.getId();
-            String name = plugin.getName();
-            PluginInfo info = new PluginInfoImpl(id, name);
-            infos.add(info);
-        });
-
-        return Collections.unmodifiableCollection(infos);
+    public List<PluginInfo> getPluginInfos() {
+        return pluginConfigurationReader.getPlugins()
+            .stream()
+            .map(plugin -> PluginInfoImpl.builder()
+                .id(plugin.getId())
+                .name(plugin.getName())
+                .version(ofNullable(plugin.getVersion()))
+                .build())
+            .sorted(PluginInfo.ID_COMPARATOR)
+            .collect(toList());
     }
 
+    @Override
+    public void printPluginInfos() {
+        for (PluginInfo pluginInfo : getPluginInfos()) {
+            log.info("{} {} [{}]", pluginInfo.getName(), pluginInfo.getVersion()
+                .orElse("<unknown version>"), pluginInfo.getId());
+        }
+    }
 }

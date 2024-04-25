@@ -5,7 +5,7 @@ import java.util.List;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
 
-import org.jqassistant.schema.plugin.v1.JqassistantPlugin;
+import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public abstract class AbstractPluginRepository {
      * Constructor.
      *
      * @param pluginConfigurationReader
-     *            The {@link PluginConfigurationReader} .
+     *     The {@link PluginConfigurationReader} .
      */
     protected AbstractPluginRepository(PluginConfigurationReader pluginConfigurationReader) {
         this.plugins = pluginConfigurationReader.getPlugins();
@@ -39,9 +39,9 @@ public abstract class AbstractPluginRepository {
      * Get the class for the given type name.
      *
      * @param typeName
-     *            The type name.
+     *     The type name.
      * @param <T>
-     *            The type name.
+     *     The type name.
      * @return The class.
      */
     protected <T> Class<T> getType(String typeName) {
@@ -58,9 +58,9 @@ public abstract class AbstractPluginRepository {
      * Create an instance of the given scanner plugin class.
      *
      * @param typeName
-     *            The type name.
+     *     The type name.
      * @param <T>
-     *            The type.
+     *     The type.
      * @return The plugin instance.
      */
     protected <T> T createInstance(String typeName) {
