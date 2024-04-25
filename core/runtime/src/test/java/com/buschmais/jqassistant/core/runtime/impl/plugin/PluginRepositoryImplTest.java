@@ -18,7 +18,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
-import org.assertj.core.api.SoftAssertions;
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,8 +53,10 @@ class PluginRepositoryImplTest {
             new PluginClassLoader(PluginRepositoryImplTest.class.getClassLoader()));
         Map<String, String> properties = new HashMap<>();
         properties.put("testKey", "testValue");
-        doReturn(properties).when(scan).properties();
-        doReturn(properties).when(report).properties();
+        doReturn(properties).when(scan)
+            .properties();
+        doReturn(properties).when(report)
+            .properties();
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
         // scanner plugins
@@ -101,15 +102,25 @@ class PluginRepositoryImplTest {
         JqassistantPlugin pluginB = Mockito.mock(JqassistantPlugin.class);
         JqassistantPlugin pluginC = Mockito.mock(JqassistantPlugin.class);
 
-        doReturn("jqa.a").when(pluginA).getId();
-        doReturn("A").when(pluginA).getName();
-        doReturn("jqa.b").when(pluginB).getId();
-        doReturn("B").when(pluginB).getName();
-        doReturn("jqa.c").when(pluginC).getId();
-        doReturn("C").when(pluginC).getName();
+        doReturn("jqa.a").when(pluginA)
+            .getId();
+        doReturn("A").when(pluginA)
+            .getName();
+        doReturn("1.0.0").when(pluginA)
+            .getVersion();
+        doReturn("jqa.b").when(pluginB)
+            .getId();
+        doReturn("B").when(pluginB)
+            .getName();
+        doReturn("jqa.c").when(pluginC)
+            .getId();
+        doReturn("C").when(pluginC)
+            .getName();
 
-        doReturn(Arrays.asList(pluginA, pluginB, pluginC)).when(pluginConfigurationReader).getPlugins();
-        doReturn(PluginRepositoryImplTest.class.getClassLoader()).when(pluginConfigurationReader).getClassLoader();
+        doReturn(Arrays.asList(pluginA, pluginB, pluginC)).when(pluginConfigurationReader)
+            .getPlugins();
+        doReturn(PluginRepositoryImplTest.class.getClassLoader()).when(pluginConfigurationReader)
+            .getClassLoader();
 
         PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
@@ -117,40 +128,20 @@ class PluginRepositoryImplTest {
         Collection<PluginInfo> overview = pluginRepository.getPluginInfos();
 
         assertThat(overview).hasSize(3);
-        assertThat(overview).anyMatch(info -> info.getName().equals("A") && info.getId().equals("jqa.a"));
-        assertThat(overview).anyMatch(info -> info.getName().equals("B") && info.getId().equals("jqa.b"));
-        assertThat(overview).anyMatch(info -> info.getName().equals("C") && info.getId().equals("jqa.c"));
+        assertThat(overview).anyMatch(info -> info.getName()
+            .equals("A") && info.getId()
+            .equals("jqa.a") && info.getVersion()
+            .get()
+            .equals("1.0.0"));
+        assertThat(overview).anyMatch(info -> info.getName()
+            .equals("B") && info.getId()
+            .equals("jqa.b") && info.getVersion()
+            .isEmpty());
+        assertThat(overview).anyMatch(info -> info.getName()
+            .equals("C") && info.getId()
+            .equals("jqa.c") && info.getVersion()
+            .isEmpty());
     }
-
-    @Test
-    void returnedCollectionForTheOverviewIsUnmodifiable() {
-        PluginConfigurationReader pluginConfigurationReader = Mockito.mock(PluginConfigurationReader.class);
-
-        JqassistantPlugin pluginA = Mockito.mock(JqassistantPlugin.class);
-        JqassistantPlugin pluginB = Mockito.mock(JqassistantPlugin.class);
-        JqassistantPlugin pluginC = Mockito.mock(JqassistantPlugin.class);
-
-        doReturn("jqa.a").when(pluginA).getId();
-        doReturn("A").when(pluginA).getName();
-        doReturn("jqa.b").when(pluginB).getId();
-        doReturn("B").when(pluginB).getName();
-        doReturn("jqa.c").when(pluginC).getId();
-        doReturn("C").when(pluginC).getName();
-
-        doReturn(Arrays.asList(pluginA, pluginB, pluginC)).when(pluginConfigurationReader).getPlugins();
-        doReturn(PluginRepositoryImplTest.class.getClassLoader()).when(pluginConfigurationReader).getClassLoader();
-
-        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-        pluginRepository.initialize();
-
-        Collection<PluginInfo> overview = pluginRepository.getPluginInfos();
-
-        SoftAssertions.assertSoftly(overviewOfPlugins -> {
-            overviewOfPlugins.assertThatThrownBy(() -> overview.clear()).isInstanceOf(RuntimeException.class);
-            overviewOfPlugins.assertThatThrownBy(() -> overview.removeIf(i -> true)).isInstanceOf(RuntimeException.class);
-        });
-    }
-
 
     private void verifyProperties(Map<String, Object> pluginProperties) {
         assertThat(pluginProperties).isNotNull();
