@@ -14,16 +14,6 @@ import com.google.common.base.CaseFormat;
 public enum RegisteredTask {
 
     /**
-     * List all available plugins
-     */
-    LIST_PLUGINS {
-        @Override
-        public Task getTask() {
-            return new ListPluginsTask();
-        }
-    },
-
-    /**
      * Scan.
      */
     SCAN {
@@ -153,6 +143,5 @@ public enum RegisteredTask {
         }
         return taskNames;
     }
-
 
 }
