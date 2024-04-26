@@ -64,7 +64,7 @@
                 <excludes>
                     <exclude>META-INF/jqassistant-plugin.xml</exclude>
                 </excludes>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <pluginManagement>
