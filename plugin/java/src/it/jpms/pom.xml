@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <version>>@maven.jqassistant.previous.version@</version>
+                <version>@maven.jqassistant.previous.version@</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
