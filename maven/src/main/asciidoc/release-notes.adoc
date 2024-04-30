@@ -1,7 +1,11 @@
 
 = Plugin for Maven
 
-== 2.1.0
+== 2.2.1
+
+* Fixed an issue with overriding configuration properties from multiple sources: `.jqassistant.yml` files in project directory should have higher priority than settings in a `pom.xml`
+
+== 2.2.0
 
 * Load YAML configuration files from the Maven execution root (i.e. reactor) and the current module
 

@@ -43,7 +43,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     public static final String STORE_DIRECTORY = "jqassistant/store";
 
-    private static final int CONFIGURATION_ORDINAL_EXECUTION_ROOT = 90;
+    private static final int CONFIGURATION_ORDINAL_EXECUTION_ROOT = 100;
 
     private static String createExecutionKey(MojoExecution mojoExecution) {
         // Do NOT use a custom class for execution keys, as different modules may use
@@ -264,22 +264,26 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource userPropertiesConfigSource = new MavenPropertiesConfigSource(session.getUserProperties(), "Maven Session User Properties ");
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
+        ConfigSource mavenPluginConfiguration = getMavenPluginConfiguration();
 
         ConfigSource[] configSources = new ConfigSource[] { configurationBuilder.build(), projectConfigSource, settingsConfigSource,
-            projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, getMavenPluginConfiguration() };
+            projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, mavenPluginConfiguration };
         File userHome = new File(System.getProperty("user.home"));
-        return ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
+        File executionRootDirectory = new File(session.getExecutionRootDirectory());
+        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
             .withUserHome(userHome)
-            .withWorkingDirectory(currentProject.getBasedir())
-            .withDirectory(new File(session.getExecutionRootDirectory()), CONFIGURATION_ORDINAL_EXECUTION_ROOT)
+            .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
-            .withClasspath()
-            .load(configSources);
+            .withClasspath();
+        if (!executionRootDirectory.equals(currentProject.getBasedir())) {
+            builder.withWorkingDirectory(currentProject.getBasedir());
+        }
+        return builder.load(configSources);
     }
 
     private ConfigSource getMavenPluginConfiguration() {
         return isNotEmpty(yaml) ?
-            new YamlConfigSource("Maven plugin execution configuration", yaml, ConfigurationMappingLoader.ORDINAL_WORKING_DIRECTORY) :
+            new YamlConfigSource("Maven plugin execution configuration", yaml, MavenPropertiesConfigSource.CONFIGURATION_ORDINAL_MAVEN_PROPERTIES) :
             EmptyConfigSource.INSTANCE;
     }
 

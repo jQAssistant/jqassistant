@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@</groupId>
-    <artifactId>@project.artifactId@.integration.configuration.module-override</artifactId>
+    <artifactId>@project.artifactId@.integration.configuration.overrides</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
@@ -15,12 +15,27 @@
                 <version>@project.version@</version>
                 <executions>
                     <execution>
+                        <id>effective-configuration</id>
+                        <goals>
+                            <goal>effective-configuration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-cli</id>
                         <goals>
                             <goal>scan</goal>
                             <goal>analyze</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <yaml>
+                        jqassistant:
+                          analyze:
+                            groups:
+                            - undefined
+                    </yaml>
+                </configuration>
             </plugin>
         </plugins>
     </build>

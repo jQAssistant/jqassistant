@@ -10,10 +10,12 @@ import io.smallrye.config.common.AbstractConfigSource;
  */
 public class MavenPropertiesConfigSource extends AbstractConfigSource {
 
+    public static final int CONFIGURATION_ORDINAL_MAVEN_PROPERTIES = 90;
+
     private Properties properties;
 
     public MavenPropertiesConfigSource(Properties properties, String name) {
-        super(name, 110);
+        super(name, CONFIGURATION_ORDINAL_MAVEN_PROPERTIES);
         this.properties = properties;
     }
 
