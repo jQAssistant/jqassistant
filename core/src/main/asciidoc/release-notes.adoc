@@ -2,7 +2,7 @@
 
 == 2.2.0
 
-* Added support for abstract concepts, i.e. conceps without executable query (e.g. Cypher)
+* Added support for abstract concepts, i.e. concepts without executable query (e.g. Cypher)
 * Added support for providing concepts from concepts included in group definitions
 * Allow plugins to provide a version which is logged on startup
 

@@ -55,7 +55,7 @@ public class ConfigurationMappingLoader {
     /**
      * The ordinal for config sources from the working directory.
      */
-    public static final int ORDINAL_WORKING_DIRECTORY = 100;
+    public static final int ORDINAL_WORKING_DIRECTORY = 150;
 
     private static final String YAML = ".yaml";
     private static final String YML = ".yml";
