@@ -10,6 +10,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
@@ -24,6 +25,7 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 
 import io.smallrye.config.PropertiesConfigSource;
@@ -41,6 +43,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * The main class, i.e. the entry point for the CLI.
@@ -234,8 +237,12 @@ public class Main {
     private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
         throws CliConfigurationException {
         List<String> configLocations = getConfigLocations(commandLine);
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 110);
-        PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(commandLine.getOptionProperties("D"), "Command line properties");
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 200);
+        Map<String, String> properties = commandLine.getOptionProperties("D")
+            .entrySet()
+            .stream()
+            .collect(toMap(entry -> String.valueOf(entry.getKey()), entry -> String.valueOf(entry.getValue())));
+        PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(properties, "Command line properties", 400);
         ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine));
         ConfigSource configSource = configurationBuilder.build();
         for (Task task : tasks) {
@@ -350,11 +357,14 @@ public class Main {
 
     /**
      * Create the class loader to be used for detecting and loading plugins.
+     * @deprecated plugin dir is to be removed
      *
      * @return The plugin class loader.
      * @throws com.buschmais.jqassistant.commandline.CliExecutionException
      *     If the plugins cannot be loaded.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 2, minor = 3)
     private ClassLoader createPluginClassLoader() throws CliExecutionException {
         ClassLoader parentClassLoader = Task.class.getClassLoader();
         File homeDirectory = getHomeDirectory();
