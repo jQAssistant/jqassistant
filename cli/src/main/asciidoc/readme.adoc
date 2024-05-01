@@ -97,6 +97,14 @@ jqassistant:
 NOTE: Plugins will be downloaded using the configured local and remote Maven repositories (default:
 Maven Central). If a file `~/.m2/settings.xml` exists (i.e. user specific Maven settings) the configuration from there will be used including mirrors and proxies as well as repositories, pluginRepositories and properties from active profiles.
 
+If multiple, partially overlapping configurations are provided then the following priorities apply (from lowest to highest):
+
+. `~/.jqassistant.yml` configuration file in the user's home directory
+. `.jqassistant.yml` file in the directory where the command is executed
+. parameters from the command line (`-f <file>` or `-u <URL>` for the scan task)
+. environment variables, e.g. `JQASSISTANT_SKIP=true`
+. System properties provided to the Maven build (e.g. `-D jqassistant.skip=true`)
+
 === Options
 
 [[cli:configurationLocations]]
