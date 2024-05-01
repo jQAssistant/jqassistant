@@ -105,9 +105,7 @@ jqassistant:
     skip: false
 ----
 
-TIP: Maven properties (e.g. `project.basedir`) or user properties defined in pom.xml or settings.xml files can be referenced in YAML files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
-
-The jQAssistant Maven plugin can be configured in the pom.xml of the root module and should not be overwritten by sub-modules.
+TIP: Maven properties (e.g. `project.basedir`) or user properties defined in `pom.xml` or `settings.xml` files can be referenced in `.jqassistant.yml` files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
 
 .Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
 [source,xml]
@@ -182,7 +180,15 @@ yaml::
 * embedded YAML configuration
 * can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
 
-NOTE: Properties of the embedded YAML configuration can be overwritten by the file based configuration within the project.
+If multiple, partially overlapping configurations are provided then the following priorities apply (from lowest to highest):
+
+. `~/.jqassistant.yml` configuration file in the user's home directory
+. `.jqassistant.yml` files embedded in the dependencies of the jQAssistant Maven Plugin
+. Properties or YAML configuration section specified in pom.xml files
+. `.jqassistant.yml` file in the directory where the Maven build is triggered (execution root)
+. `.jqassistant.yml` file in the current Maven module (for multi-module projects)
+. environment variables, e.g. `JQASSISTANT_SKIP=true`
+. System properties provided to the Maven build (e.g. `-Djqassistant.skip`)
 
 ==== Command Line
 
