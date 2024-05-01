@@ -11,7 +11,7 @@
 
     <description>
         Maven Parent POM for all projects of the jQAssistant ecosystem.
-        It provides comman and usefull settings shared by all
+        It provides common and useful settings shared by all
         jQAssistant projects.
     </description>
 
@@ -260,6 +260,7 @@
                         </goals>
                         <streamLogs>true</streamLogs>
                         <postBuildHookScript>verify</postBuildHookScript>
+                        <writeJunitReport>true</writeJunitReport>
                     </configuration>
                     <executions>
                         <execution>
