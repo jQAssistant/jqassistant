@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,17 +33,13 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
         scanClassPathDirectory(scanRoot);
     }
 
-    @Disabled
     @Test
-    void shouldFind8Files() throws Exception {
+    void shouldFind7Files() throws Exception {
         store.beginTransaction();
 
-        List<FileDescriptor> files = query("MATCH (f:File) RETURN f").getColumn("f");
-//        List<FileDescriptor> files = query("MATCH (f:File) WHERE NOT(f:Directory) RETURN f").getColumn("f");
+        List<FileDescriptor> files = query("MATCH (f:Xml:File) RETURN f").getColumn("f");
 
-        files.forEach(fileDescriptor -> { System.out.println(">"+fileDescriptor.getFileName()+"<"); });
-
-        assertThat(files, hasSize(8));
+        assertThat(files, hasSize(7));
     }
 
     @Test
@@ -64,24 +59,6 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
         assertThat(directories.stream().map(d -> d.getFileName()).collect(Collectors.toList()),
                    Matchers.contains("/pom.xml"));
-        assertThat(directories, hasSize(1));
-    }
-
-    @Test
-    void shouldFind1XMLFile() throws Exception {
-        store.beginTransaction();
-
-        /*
-         * Currently we are not able to find arbitrary XML files.
-         * The XML file scanner accepts files only if it is in the
-         * scope XmlScope.DOCUMENT.
-         * See XMLFileScannerPlugin.
-         * Oliver B. Fischer, 2016-03-01
-         */
-        List<FileDescriptor> directories = query("MATCH (x:File:Xml) RETURN x").getColumn("x");
-
-        List<String> filePaths = directories.stream().map(d -> d.getFileName()).collect(Collectors.toList());
-        assertThat(filePaths, Matchers.hasItem("/pom.xml"));
         assertThat(directories, hasSize(1));
     }
 }
