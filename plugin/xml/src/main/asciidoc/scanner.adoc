@@ -15,12 +15,12 @@ The files to scan may be configured using include and exclude filters.
 
 | `xml.file.include`
 | A comma separated list of file name patterns, wildcards (?,\*) are allowed,
-  e.g. `/*-INF/ejb-jar.xml`.
-|
+  e.g. `*.xml,*.my-extension`,
+| `*.xml`
 
 | `xml.file.exclude`
 | A comma separated list of file name patterns, wildcards (?,\*) are allowed,
-  e.g. `/*-INF/ejb-jar.xml`.
+  e.g. `/large-files/*.xml`.
 |
 |====
 

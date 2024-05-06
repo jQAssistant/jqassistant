@@ -1,6 +1,10 @@
 
 = XML Plugin
 
+== 2.3.0
+
+* Scan XML files by default, exclusions must be configured explicitly using `xml.file.exclude`
+
 == 1.12.0
 
 * Activated coalescing for XML parsing to prevent splitted text elements

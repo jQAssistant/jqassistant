@@ -9,9 +9,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.shared.map.MapBuilder;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 import org.junit.jupiter.api.Test;
 
@@ -50,9 +49,16 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     void validXmlFile() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
-        XmlFileDescriptor xmlFileDescriptor = getXmlFileScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
         verifyDocument(xmlFileDescriptor);
         store.commitTransaction();
+    }
+
+    @Test
+    void excludeXmlFile() {
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
+        FileDescriptor fileDescriptor = getScanner(Map.of("xml.file.exclude", "*.xml")).scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        assertThat(fileDescriptor, not(instanceOf(XmlFileDescriptor.class)));
     }
 
     private void verifyDocument(XmlDocumentDescriptor xmlDocumentDescriptor) {
@@ -150,16 +156,10 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     void invalidDocument() {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
-        Scanner scanner = getXmlFileScanner();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
         assertThat(xmlFileDescriptor, notNullValue());
         assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(false));
         store.commitTransaction();
-    }
-
-    private Scanner getXmlFileScanner() {
-        Map<String, Object> properties = MapBuilder.<String, Object> builder().entry("xml.file.include", "*.xml").build();
-        return getScanner(properties);
     }
 
     @Test

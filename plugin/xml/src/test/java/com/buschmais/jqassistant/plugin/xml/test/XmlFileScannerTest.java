@@ -32,7 +32,7 @@ class XmlFileScannerTest {
     void noFilePattern() throws IOException {
         configure(null, null);
         assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(false));
-        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(false));
+        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(true));
     }
 
     @Test
