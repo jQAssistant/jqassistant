@@ -1,6 +1,10 @@
 
 = Common Plugin
 
+== 2.3.0
+
+* Fail if a plugin resource is included for scanning (`jqassistant-plugin:`) but does not exist
+
 == 2.0.6
 
 * Added infrastructure for MapStruct based scanner plugins
