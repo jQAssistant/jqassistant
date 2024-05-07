@@ -20,8 +20,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for XML file scanners
  *
- * @param <D> The descriptor type.
+ * @param <D>
+ *     The descriptor type.
+ * @deprecated XML files are now scanned by default, the according plugins may use @{@link Requires} for {@link XmlFileDescriptor} directly.
  */
+@Deprecated
 @Requires(FileDescriptor.class)
 public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> extends
         AbstractScannerPlugin<FileResource, D> {
