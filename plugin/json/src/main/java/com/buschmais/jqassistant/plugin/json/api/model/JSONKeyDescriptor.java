@@ -9,20 +9,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  */
 @Label("Key")
 public interface JSONKeyDescriptor extends JSONDescriptor {
-    @Relation("HAS_VALUE")
-    JSONArrayDescriptor getArray();
-
-    void setArray(JSONArrayDescriptor array);
 
     @Relation("HAS_VALUE")
-    JSONObjectDescriptor getObject();
+    JSONValueDescriptor getValue();
 
-    void setObject(JSONObjectDescriptor object);
-
-    @Relation("HAS_VALUE")
-    JSONScalarValueDescriptor getScalarValue();
-
-    void setScalarValue(JSONScalarValueDescriptor scalar);
+    void setValue(JSONValueDescriptor value);
 
     @Property("name")
     String getName();

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
+class JSONFileScannerPluginQueriesIT extends AbstractPluginIT {
 
     @BeforeEach
     void startTransaction() {
@@ -31,7 +31,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsFileDescriptorWithCorrectFileName() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -40,13 +40,12 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                 "WHERE f.fileName =~ '.*/true-false-null.json' " +
                                 "RETURN f"
         ).getColumn("f");
-
         assertThat(results).hasSize(1);
     }
 
     @Test
     void scanReturnsObjectWithOneKeyValuePair() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/object-one-key-value-pair.json");
 
         Scanner scanner = getScanner();
@@ -66,7 +65,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithTwoKeyValuePairs() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/object-two-key-value-pairs.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -83,7 +82,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithThreeKeysWithTrueFalseAndNullValue() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -103,7 +102,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectThereOneValueIsNull() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/true-false-null.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -121,7 +120,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsSingleInteger() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                                  "/probes/valid/single-int.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -131,19 +130,14 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
                                                         "WHERE o.value = 123 " +
                                                         "RETURN o"
         ).getColumn("o");
-
         assertThat(results).hasSize(1);
-
         JSONScalarValueDescriptor valueDescriptor= results.get(0);
-
-        // Assertion uses a double value because internally the value is
-        // stored a double
-        assertThat(valueDescriptor.getValue()).isEqualTo(123.0D);
+        assertThat(valueDescriptor.getValue()).isEqualTo(123);
     }
 
     @Test
     void rootObjectIsNotAValueOthersAre() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                 "/probes/valid/object-with-object-empty.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -151,7 +145,6 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         // Get the first array
         List<JSONDescriptor> resultsA = query("MATCH (f:Json:File) " +
                 "-[:CONTAINS]->(o:Json:Object) " +
-                "WHERE NOT o:Value " +
                 "RETURN o"
         ).getColumn("o");
 
@@ -168,7 +161,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
 
     @Test
     void rootArrayIsNotAValueOthersAre() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginCompleyQueriesIT.class),
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginQueriesIT.class),
                 "/probes/valid/array-of-arrays.json");
 
         getScanner().scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -176,7 +169,7 @@ class JSONFileScannerPluginCompleyQueriesIT extends AbstractPluginIT {
         // Get the first array
         List<JSONDescriptor> resultsA = query("MATCH (f:Json:File) " +
                 "-[:CONTAINS]->(a:Json:Array) " +
-                "WHERE NOT a:Value " +
+          //      "WHERE NOT a:Value " +
                 "RETURN a"
         ).getColumn("a");
 

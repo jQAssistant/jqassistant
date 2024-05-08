@@ -9,10 +9,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Represents an JSON array found within a JSON document.
  */
 @Label("Array")
-public interface JSONArrayDescriptor extends JSONDescriptor
-{
+public interface JSONArrayDescriptor extends JSONValueDescriptor {
+
     @Relation("CONTAINS_VALUE")
     List<JSONDescriptor> getValues();
 
-    void setValues(List<JSONDescriptor> value);
 }

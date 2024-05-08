@@ -7,20 +7,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * Represents a file containing an JSON document.
  */
-public interface JSONFileDescriptor
-        extends JSONDescriptor, FileDescriptor, ValidDescriptor {
-    @Relation("CONTAINS")
-    JSONArrayDescriptor getArray();
-
-    void setArray(JSONArrayDescriptor array);
+public interface JSONFileDescriptor extends JSONDescriptor, FileDescriptor, ValidDescriptor {
 
     @Relation("CONTAINS")
-    JSONObjectDescriptor getObject();
+    JSONValueDescriptor getValue();
 
-    void setObject(JSONObjectDescriptor object);
+    void setValue(JSONValueDescriptor value);
 
-    @Relation("CONTAINS")
-    JSONScalarValueDescriptor getScalarValue();
-
-    void setScalarValue(JSONScalarValueDescriptor value);
 }

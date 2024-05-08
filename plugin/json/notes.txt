@@ -1,7 +1,0 @@
-Problems with numbers? 0.1 etc.
-Order of elements not keept.
-No tests for invalid files.
-Array of objects?
-Is document still needed?
-Array with objects?
-Array with mixed content.

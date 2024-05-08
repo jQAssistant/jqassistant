@@ -9,8 +9,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Represents an object found in a JSON document.
  */
 @Label("Object")
-public interface JSONObjectDescriptor extends JSONDescriptor
-{
+public interface JSONObjectDescriptor extends JSONValueDescriptor {
+
     @Relation("HAS_KEY")
     List<JSONKeyDescriptor> getKeys();
 }

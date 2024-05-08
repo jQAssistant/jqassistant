@@ -35,17 +35,15 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
         }
     }
 
-
     @Test
     void scanReturnsFileDescriptorWithCorrectFileName() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/true-false-null.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/true-false-null.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/true-false-null.json");
@@ -53,47 +51,48 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithOneKeyValuePair() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-one-key-value-pair.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-one-key-value-pair.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-one-key-value-pair.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
-        assertThat(keyDescriptor.getScalarValue().getValue()).isNotNull();
-        assertThat(keyDescriptor.getScalarValue().getValue()).isEqualTo("B");
+        JSONValueDescriptor value = keyDescriptor.getValue();
+        assertThat(value).isNotNull();
+        assertThat(value).isInstanceOfSatisfying(JSONScalarValueDescriptor.class, scalarValue -> assertThat(scalarValue.getValue()).isEqualTo("B"));
+
     }
 
     @Test
     void scanReturnsObjectWithTwoKeyValuePairs() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-two-key-value-pairs.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-two-key-value-pairs.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-two-key-value-pairs.json");
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(2);
 
@@ -101,29 +100,27 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
         JSONKeyDescriptor keyDescriptorB = findKeyInDocument(jsonObject.getKeys(), "C");
 
         assertThat(keyDescriptorA.getName()).isEqualTo("A");
-        assertThat(keyDescriptorA.getScalarValue()).isNotNull();
-        assertThat(keyDescriptorA.getScalarValue().getValue()).isEqualTo("B");
+        assertThat(keyDescriptorA.getValue()).isNotNull();
+        assertThat(keyDescriptorA.getValue()).isInstanceOfSatisfying(JSONScalarValueDescriptor.class, scalar -> assertThat(scalar.getValue()).isEqualTo("B"));
         assertThat(keyDescriptorB.getName()).isEqualTo("C");
-        assertThat(keyDescriptorB.getScalarValue().getValue()).isEqualTo("D");
+        assertThat(keyDescriptorB.getValue()).isInstanceOfSatisfying(JSONScalarValueDescriptor.class, scalar -> assertThat(scalar.getValue()).isEqualTo("D"));
     }
 
     @Test
     void scanReturnsObjectWithTrueFalseAndNullValue() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/true-false-null.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/true-false-null.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/true-false-null.json");
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(3);
 
@@ -132,120 +129,119 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
         JSONKeyDescriptor keyDescriptorC = findKeyInDocument(jsonObject.getKeys(), "C");
 
         assertThat(keyDescriptorA.getName()).isEqualTo("A");
-        assertThat(keyDescriptorA.getScalarValue()).isNotNull();
-        assertThat(keyDescriptorA.getScalarValue().getValue()).isEqualTo(Boolean.TRUE);
+        assertThat(keyDescriptorA.getValue()).isNotNull()
+            .isInstanceOfSatisfying(JSONScalarValueDescriptor.class, scalar -> assertThat(scalar.getValue()).isEqualTo(Boolean.TRUE));
 
         assertThat(keyDescriptorB.getName()).isEqualTo("B");
-        assertThat(keyDescriptorB.getScalarValue()).isNotNull();
-        assertThat(keyDescriptorB.getScalarValue().getValue()).isEqualTo(Boolean.FALSE);
+        assertThat(keyDescriptorB.getValue()).isNotNull();
+        assertThat(keyDescriptorB.getValue()).isInstanceOfSatisfying(JSONScalarValueDescriptor.class,
+            scalar -> assertThat(scalar.getValue()).isEqualTo(Boolean.FALSE));
 
         assertThat(keyDescriptorC.getName()).isEqualTo("C");
-        assertThat(keyDescriptorC.getScalarValue()).isNotNull();
-        assertThat(keyDescriptorC.getScalarValue().getValue()).isNull();
+        assertThat(keyDescriptorC.getValue()).isNotNull();
+        assertThat(keyDescriptorC.getValue()).isInstanceOfSatisfying(JSONScalarValueDescriptor.class, scalar -> assertThat(scalar.getValue()).isNull());
     }
 
     @Test
     void scanReturnsEmptyArray() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/array-empty.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/array-empty.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/array-empty.json");
 
-        assertThat(file.getArray()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONArrayDescriptor jsonArray = file.getArray();
+        JSONArrayDescriptor jsonArray = (JSONArrayDescriptor) file.getValue();
 
         assertThat(jsonArray.getValues()).isEmpty();
     }
 
     @Test
     void scanReturnsArrayWithOneValue() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/array-one-value.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/array-one-value.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/array-one-value.json");
 
-        assertThat(file.getArray()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONArrayDescriptor jsonArray = file.getArray();
+        JSONArrayDescriptor jsonArray = (JSONArrayDescriptor) file.getValue();
 
         assertThat(jsonArray.getValues()).hasSize(1);
 
-        JSONDescriptor valueDescriptor = jsonArray.getValues().get(0);
+        JSONDescriptor valueDescriptor = jsonArray.getValues()
+            .get(0);
 
-        assertThat(valueDescriptor).isInstanceOf(JSONValueDescriptor.class);
-        JSONValueDescriptor jsonValueDescriptor = (JSONValueDescriptor) valueDescriptor;
+        assertThat(valueDescriptor).isInstanceOf(JSONScalarValueDescriptor.class);
+        JSONScalarValueDescriptor jsonValueDescriptor = (JSONScalarValueDescriptor) valueDescriptor;
         assertThat(jsonValueDescriptor.getValue()).isEqualTo("ABC");
     }
 
     @Test
     void scanReturnsObjectWithEmptyArray() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-array-empty.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-array-empty.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-with-array-empty.json");
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONArrayDescriptor arrayValueDescriptor = keyDescriptor.getArray();
+        JSONArrayDescriptor arrayValueDescriptor = (JSONArrayDescriptor) keyDescriptor.getValue();
 
         assertThat(arrayValueDescriptor.getValues()).isEmpty();
     }
 
     @Test
     void scanReturnsObjectWithObject() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-object-empty.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-object-empty.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-with-object-empty.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONObjectDescriptor objectValue = keyDescriptor.getObject();
+        JSONObjectDescriptor objectValue = (JSONObjectDescriptor) keyDescriptor.getValue();
 
         assertThat(objectValue).isNotNull();
         assertThat(objectValue.getKeys()).isEmpty();
@@ -253,21 +249,21 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scannerCanHandleBlockCommentInObject() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/block-comment-in-object.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/block-comment-in-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-        JSONObjectDescriptor object = file.getObject();
+        JSONObjectDescriptor object = (JSONObjectDescriptor) file.getValue();
 
         assertThat(object.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = object.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = object.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object objectTwo = value.getValue();
 
@@ -278,8 +274,7 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test()
     void scannerCanHandleEmptyFile() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/invalid/empty-file.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/invalid/empty-file.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -289,8 +284,7 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void parserCopesWithInvalidJSONFile() throws Exception {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/invalid/json-file-as-template.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/invalid/json-file-as-template.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
@@ -300,29 +294,29 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void parserHandlesLineCommentAfterObjectCorrectly() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/line-comment-after-object.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/line-comment-after-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/line-comment-after-object.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object object = value.getValue();
 
@@ -333,29 +327,29 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void parserHandlesLineCommentBeforeObjectCorrectly() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/line-comment-before-object.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/line-comment-before-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/line-comment-before-object.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object object = value.getValue();
 
@@ -366,29 +360,29 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void parserHandlesLineCommentInObjectCorrectly() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/line-comment-in-object.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/line-comment-in-object.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/line-comment-in-object.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object object = value.getValue();
 
@@ -399,34 +393,35 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithArrayOfTwoElements() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-array-two-elements.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-array-two-elements.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-with-array-two-elements.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONArrayDescriptor array = keyDescriptor.getArray();
+        JSONArrayDescriptor array = (JSONArrayDescriptor) keyDescriptor.getValue();
 
-        List<String> values = array.getValues().stream()
-                                   .map(v -> (JSONValueDescriptor)v)
-                                   .map(v -> (String) v.getValue())
-                                   .collect(toList());
+        List<String> values = array.getValues()
+            .stream()
+            .map(v -> (JSONScalarValueDescriptor) v)
+            .map(v -> (String) v.getValue())
+            .collect(toList());
 
         assertThat(values).hasSize(2);
         assertThat(values).contains("B", "C");
@@ -434,62 +429,62 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithAnArray() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-array.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-array.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-with-array.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONArrayDescriptor array = keyDescriptor.getArray();
+        JSONArrayDescriptor array = (JSONArrayDescriptor) keyDescriptor.getValue();
 
         assertThat(array.getValues()).hasSize(1);
 
         List<String> values = array.getValues()
-                                   .stream()
-                                   .map(v -> (JSONValueDescriptor)v)
-                                   .map(v -> (String) v.getValue())
-                                   .collect(toList());
+            .stream()
+            .map(v -> (JSONScalarValueDescriptor) v)
+            .map(v -> (String) v.getValue())
+            .collect(toList());
         assertThat(values).contains("B");
     }
 
     @Test
     void scanReturnsObjectWithOneNumber() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-number.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-number.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("object-with-number.json");
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor object = file.getObject();
+        JSONObjectDescriptor object = (JSONObjectDescriptor) file.getValue();
 
         assertThat(object.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor jsonKeyDescriptor = object.getKeys().get(0);
+        JSONKeyDescriptor jsonKeyDescriptor = object.getKeys()
+            .get(0);
 
-        Double value = (Double)jsonKeyDescriptor.getScalarValue().getValue();
+        Number value = (Number) ((JSONScalarValueDescriptor) jsonKeyDescriptor.getValue()).getValue();
 
         assertThat(jsonKeyDescriptor.getName()).isEqualTo("A");
         assertThatNumberIsEqual(value, 1);
@@ -497,20 +492,19 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithMultipleNumbers() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-numbers.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-numbers.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor container = file.getObject();
+        JSONObjectDescriptor container = (JSONObjectDescriptor) file.getValue();
 
         assertThat(container.getKeys()).hasSize(5);
 
@@ -520,11 +514,11 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
         JSONKeyDescriptor d = findKeyInDocument(container.getKeys(), "D");
         JSONKeyDescriptor e = findKeyInDocument(container.getKeys(), "E");
 
-        Double aValue = (Double)a.getScalarValue().getValue();
-        Double bValue = (Double)b.getScalarValue().getValue();
-        Double cValue = (Double)c.getScalarValue().getValue();
-        Double dValue = (Double)d.getScalarValue().getValue();
-        Double eValue = (Double)e.getScalarValue().getValue();
+        Number aValue = (Number) ((JSONScalarValueDescriptor) a.getValue()).getValue();
+        Number bValue = (Number) ((JSONScalarValueDescriptor) b.getValue()).getValue();
+        Number cValue = (Number) ((JSONScalarValueDescriptor) c.getValue()).getValue();
+        Number dValue = (Number) ((JSONScalarValueDescriptor) d.getValue()).getValue();
+        Number eValue = (Number) ((JSONScalarValueDescriptor) e.getValue()).getValue();
 
         assertThatNumberIsEqual(aValue, 1);
         assertThatNumberIsEqual(bValue, -1);
@@ -535,61 +529,59 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsObjectWithObjects() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/object-with-objects.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/object-with-objects.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
-
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("probes/valid/object-with-objects.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONObjectDescriptor object = keyDescriptor.getObject();
+        JSONObjectDescriptor object = (JSONObjectDescriptor) keyDescriptor.getValue();
 
         JSONKeyDescriptor keyB = findKeyInDocument(object.getKeys(), "B");
         JSONKeyDescriptor keyD = findKeyInDocument(object.getKeys(), "D");
         assertThat(keyB.getName()).isEqualTo("B");
         assertThat(keyD.getName()).isEqualTo("D");
 
-        JSONObjectDescriptor objectOfKeyD = keyD.getObject();
+        JSONObjectDescriptor objectOfKeyD = (JSONObjectDescriptor) keyD.getValue();
         assertThat(objectOfKeyD.getKeys()).isEmpty();
     }
 
     @Test
     void scanReturnsValueWithQuotationMark() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/string-value-with-quote-mark.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/string-value-with-quote-mark.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
-
-        JSONObjectDescriptor object = file.getObject();
+        JSONObjectDescriptor object = (JSONObjectDescriptor) file.getValue();
 
         assertThat(object.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = object.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = object.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object string = value.getValue();
 
@@ -600,25 +592,24 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void scanReturnsValueWithEscapeSequences() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/string-value-with-possible-escape-sequences.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/string-value-with-possible-escape-sequences.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
-
-        JSONObjectDescriptor jsonObject = file.getObject();
+        JSONObjectDescriptor jsonObject = (JSONObjectDescriptor) file.getValue();
 
         assertThat(jsonObject.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys().get(0);
+        JSONKeyDescriptor keyDescriptor = jsonObject.getKeys()
+            .get(0);
 
         assertThat(keyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor scalarValue = keyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor scalarValue = (JSONScalarValueDescriptor) keyDescriptor.getValue();
 
         Object object = scalarValue.getValue();
 
@@ -626,35 +617,35 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(object).isNotNull();
         assertThat(object).isInstanceOf(String.class);
-        assertThat(((String)object).length()).isEqualTo(expectedResult.length());
+        assertThat(((String) object).length()).isEqualTo(expectedResult.length());
         assertThat(object).isEqualTo(expectedResult);
     }
 
     @Test
     void scanReturnsCorrectedUnicodeString() {
-        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class),
-                                 "/probes/valid/string-value-with-unicode-signs.json");
+        File jsonFile = new File(getClassesDirectory(JSONFileScannerPluginIT.class), "/probes/valid/string-value-with-unicode-signs.json");
 
         Scanner scanner = getScanner();
         JSONFileDescriptor file = scanner.scan(jsonFile, jsonFile.getAbsolutePath(), null);
 
         assertThat(file).as("Scanner must be able to scan the resource and to return a descriptor.")
-                        .isNotNull();
+            .isNotNull();
 
         assertThat(file.getFileName()).isNotNull();
         assertThat(file.getFileName()).endsWith("string-value-with-unicode-signs.json");
 
-        assertThat(file.getObject()).isNotNull();
+        assertThat(file.getValue()).isNotNull();
 
-        JSONObjectDescriptor container = file.getObject();
+        JSONObjectDescriptor container = (JSONObjectDescriptor) file.getValue();
 
         assertThat(container.getKeys()).hasSize(1);
 
-        JSONKeyDescriptor jsonKeyDescriptor = container.getKeys().get(0);
+        JSONKeyDescriptor jsonKeyDescriptor = container.getKeys()
+            .get(0);
 
         assertThat(jsonKeyDescriptor.getName()).isEqualTo("A");
 
-        JSONScalarValueDescriptor value = jsonKeyDescriptor.getScalarValue();
+        JSONScalarValueDescriptor value = (JSONScalarValueDescriptor) jsonKeyDescriptor.getValue();
 
         Object rawValue = value.getValue();
 
@@ -666,7 +657,8 @@ class JSONFileScannerPluginIT extends AbstractPluginIT {
         JSONKeyDescriptor result = null;
 
         for (JSONKeyDescriptor key : keys) {
-            if (key.getName().equals(name)) {
+            if (key.getName()
+                .equals(name)) {
                 result = key;
                 break;
             }

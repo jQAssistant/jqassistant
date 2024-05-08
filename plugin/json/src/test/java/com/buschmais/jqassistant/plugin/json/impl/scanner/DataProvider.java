@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.json.impl.parsing;
+package com.buschmais.jqassistant.plugin.json.impl.scanner;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -39,7 +39,7 @@ public class DataProvider {
             "i_structure_UTF-8_BOM_empty_object.json"
         );
 
-        URL resource = JQAssistantJSONParserForValidJSONFilesOfTestSuiteTest.class.getResource("/json_parsing_test_suite");
+        URL resource = DataProvider.class.getResource("/json_parsing_test_suite");
         File directory = new File(resource.toURI());
 
         File[] jsons = directory.listFiles(f -> f.isFile() && f.getName().endsWith(".json"));
@@ -58,27 +58,6 @@ public class DataProvider {
     public static Stream<String> invalidOwnExamples() {
         return Stream.of("/probes/invalid/empty-file.json",
                          "/probes/invalid/json-file-as-template.json");
-    }
-
-    public static Stream<String> validOwnExamples() {
-        return Stream.of("/probes/valid/array-empty.json",
-                         "/probes/valid/array-one-value.json",
-                         "/probes/valid/array-of-arrays.json",
-                         "/probes/valid/line-comment-before-object.json",
-                         "/probes/valid/line-comment-in-object.json",
-                         "/probes/valid/line-comment-after-object.json",
-                         "/probes/valid/block-comment-in-object.json",
-                         "/probes/valid/true-false-null.json",
-                         "/probes/valid/object-with-objects.json",
-                         "/probes/valid/object-one-key-value-pair.json",
-                         "/probes/valid/object-two-key-value-pairs.json",
-                         "/probes/valid/single-int.json",
-                         "/probes/valid/string-value-with-quote-mark.json",
-                         "/probes/valid/string-value-with-unicode-signs.json",
-                         "/probes/valid/object-with-array-empty.json",
-                         "/probes/valid/object-with-array.json",
-                         "/probes/valid/object-with-array-two-elements.json",
-                         "/probes/valid/object-with-number.json");
     }
 
     public static Stream<File> invalidFilesOfJSONParsingTestSuite() throws URISyntaxException {

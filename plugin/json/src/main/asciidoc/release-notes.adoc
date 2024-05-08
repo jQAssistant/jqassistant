@@ -1,6 +1,10 @@
 
 = JSON Plugin
 
+== 2.3.0
+
+* Migrated JSON-Scanner from ANTLR to Jackson
+
 == 1.6.0
 
 * Fixed https://github.com/buschmais/jqa-json-plugin/issues/8[Cope with null scalar values in arrays^].

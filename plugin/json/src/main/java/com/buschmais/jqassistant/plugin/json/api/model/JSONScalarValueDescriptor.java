@@ -7,13 +7,11 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  * Represents a scalar value found in a JSON document.
  */
 @Label("Scalar")
-public interface JSONScalarValueDescriptor extends JSONValueDescriptor<Object> {
+public interface JSONScalarValueDescriptor extends JSONValueDescriptor {
 
     @Property("value")
-    @Override
     Object getValue();
 
-    @Override
     void setValue(Object value);
 
 }

@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.plugin.json.api.model;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
+import com.buschmais.xo.neo4j.api.annotation.Label;
 
 /**
  * Represents a value found in a JSON document.
  */
-public interface JSONValueDescriptor<V> extends JSONDescriptor, ValueDescriptor<V> {
+@Label("Value")
+public interface JSONValueDescriptor extends JSONDescriptor {
 }
 
