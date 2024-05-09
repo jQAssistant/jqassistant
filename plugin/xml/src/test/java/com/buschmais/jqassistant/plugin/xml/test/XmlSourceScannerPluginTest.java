@@ -24,9 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -86,8 +84,8 @@ class XmlSourceScannerPluginTest {
                                 + "    <ChildElement attribute1=\"attribute1\">\n" + "        Child Text\n" + "    </ChildElement>\n" + "</RootElement>")),
                 "test.xml", DefaultScope.NONE, scanner);
 
-        assertThat(documentDescriptor, notNullValue());
-        assertThat(parents.size(), equalTo(1));
+        assertThat(documentDescriptor).isNotNull();
+        assertThat(parents.size()).isEqualTo(1);
         Map.Entry<XmlElementDescriptor, XmlElementDescriptor> entry = parents.entrySet().iterator().next();
         XmlElementDescriptor childElement = entry.getKey();
         XmlElementDescriptor rootElement = entry.getValue();

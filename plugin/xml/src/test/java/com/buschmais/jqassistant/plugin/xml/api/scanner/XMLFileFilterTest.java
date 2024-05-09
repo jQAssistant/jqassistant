@@ -9,8 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 class XMLFileFilterTest {
@@ -19,70 +18,70 @@ class XMLFileFilterTest {
     void matchUnqualifiedRootElement() throws IOException {
         FileResource resource = stubFileResource("<project><a></<a></project>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(true));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project")).isEqualTo(true);
     }
 
     @Test
     void matchUnqualifiedRootElementWithDocumentDeclaration() throws IOException {
         FileResource resource = stubFileResource("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project><a></<a></project>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(true));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project")).isEqualTo(true);
     }
 
     @Test
     void rejectUnqualifiedRootElement() throws IOException {
         FileResource resource = stubFileResource("<p><a></<a></p>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project")).isEqualTo(false);
     }
 
     @Test
     void rejectEmptyDocument() throws IOException {
         FileResource resource = stubFileResource("");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project")).isEqualTo(false);
     }
 
     @Test
     void rejectInvalidDocument() throws IOException {
         FileResource resource = stubFileResource("<p><a></<a></z>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project")).isEqualTo(false);
     }
 
     @Test
     void matchFullQualifiedRootElement() throws IOException {
         FileResource resource = stubFileResource("<p xmlns=\"http://www\"><a></<a></p>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(true));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www")).isEqualTo(true);
     }
 
     @Test
     void matchFullQualifiedRootElementWithPrefix() throws IOException {
         FileResource resource = stubFileResource("<h:p xmlns:h=\"http://www\"><a></<a>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(true));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www")).isEqualTo(true);
     }
 
     @Test
     void rejectFullQualifiedRootElement() throws IOException {
         FileResource resource = stubFileResource("<e xmlns=\"http://www\"><a></<a></e>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www")).isEqualTo(false);
     }
 
     @Test
     void rejectFullQualifiedRootElementWithoutNamespace() throws IOException {
         FileResource resource = stubFileResource("<p <a></<a></p>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www")).isEqualTo(false);
     }
 
     @Test
     void rejectFullQualifiedRootElementWithDifferentNamespace() throws Exception {
         FileResource resource = stubFileResource("<p xmlns=\"http://www\"><a></<a></z>");
 
-        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "e", "http://yyy"), is(false));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "e", "http://yyy")).isEqualTo(false);
     }
 
 

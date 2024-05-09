@@ -14,8 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class XmlFileScannerTest {
@@ -31,22 +30,22 @@ class XmlFileScannerTest {
     @Test
     void noFilePattern() throws IOException {
         configure(null, null);
-        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(false));
-        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(true));
+        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isEqualTo(false);
+        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE)).isEqualTo(true);
     }
 
     @Test
     void includeFilePattern() throws IOException {
         configure("*.xml", null);
-        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(false));
-        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(true));
+        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isEqualTo(false);
+        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE)).isEqualTo(true);
     }
 
     @Test
     void includeAndExcludeFilePattern() throws IOException {
         configure("test.*", "*.xml");
-        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE), equalTo(true));
-        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE), equalTo(false));
+        assertThat(scannerPlugin.accepts(fileResource, "test.txt", DefaultScope.NONE)).isEqualTo(true);
+        assertThat(scannerPlugin.accepts(fileResource, "test.xml", DefaultScope.NONE)).isEqualTo(false);
     }
 
     private void configure(String includes, String excludes) {
