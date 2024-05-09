@@ -16,9 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class XmlRuleParserPluginTest {
@@ -30,20 +29,20 @@ class XmlRuleParserPluginTest {
     void scriptRule() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.xml", configuration);
         ConceptBucket conceptBucket = ruleSet.getConceptBucket();
-        assertThat(conceptBucket.size(), equalTo(2));
-        assertThat(conceptBucket.getIds(), hasItems("test:JavaScriptConcept", "test:JavaScriptExecutableConcept"));
+        assertThat(conceptBucket.size()).isEqualTo(2);
+        assertThat(conceptBucket.getIds()).contains("test:JavaScriptConcept", "test:JavaScriptExecutableConcept");
         Collection<? extends AbstractRule> all = conceptBucket.getAll();
         verifyExecutableRule(all);
         ConstraintBucket constraintBucket = ruleSet.getConstraintBucket();
-        assertThat(constraintBucket.size(), equalTo(2));
-        assertThat(constraintBucket.getIds(), hasItems("test:JavaScriptConstraint", "test:JavaScriptExecutableConstraint"));
+        assertThat(constraintBucket.size()).isEqualTo(2);
+        assertThat(constraintBucket.getIds()).contains("test:JavaScriptConstraint", "test:JavaScriptExecutableConstraint");
         verifyExecutableRule(constraintBucket.getAll());
     }
 
     private void verifyExecutableRule(Collection<? extends AbstractRule> rules) {
         for (AbstractRule rule : rules) {
-            assertThat(rule, instanceOf(ExecutableRule.class));
-            assertThat(((ExecutableRule<?>) rule).getExecutable().getLanguage(), equalTo("javascript"));
+            assertThat(rule).isInstanceOf(ExecutableRule.class);
+            assertThat(((ExecutableRule<?>) rule).getExecutable().getLanguage()).isEqualTo("javascript");
         }
     }
 
@@ -81,24 +80,24 @@ class XmlRuleParserPluginTest {
         reader.initialize();
         reader.configure(configuration);
         UrlRuleSource ruleSource = new UrlRuleSource(url);
-        assertThat(reader.accepts(ruleSource), equalTo(true));
+        assertThat(reader.accepts(ruleSource)).isEqualTo(true);
         reader.parse(ruleSource, ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
-        assertThat(ruleSet.getConstraintBucket().size(), equalTo(1));
-        assertThat(ruleSet.getConceptBucket().getIds(), contains("java:Throwable"));
-        assertThat(ruleSet.getConstraintBucket().getIds(), contains("example:ConstructorOfDateMustNotBeUsed"));
-        assertThat(ruleSet.getGroupsBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConceptBucket().size()).isEqualTo(1);
+        assertThat(ruleSet.getConstraintBucket().size()).isEqualTo(1);
+        assertThat(ruleSet.getConceptBucket().getIds()).containsExactly("java:Throwable");
+        assertThat(ruleSet.getConstraintBucket().getIds()).containsExactly("example:ConstructorOfDateMustNotBeUsed");
+        assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
 
         Group group = ruleSet.getGroupsBucket().getById("default");
-        assertThat(group.getId(), equalTo("default"));
+        assertThat(group.getId()).isEqualTo("default");
     }
 
     @Test
     void ruleSchema_1_8() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", configuration);
         Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
-        assertThat(conceptIds.size(), equalTo(1));
+        assertThat(conceptIds.size()).isEqualTo(1);
         assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
 }

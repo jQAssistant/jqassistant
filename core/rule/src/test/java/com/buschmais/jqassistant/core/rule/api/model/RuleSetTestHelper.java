@@ -12,13 +12,9 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.impl.reader.YamlRuleParserPlugin;
 
-import org.hamcrest.Matchers;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public final class RuleSetTestHelper {
 
@@ -28,17 +24,17 @@ public final class RuleSetTestHelper {
     public static RuleSet readRuleSet(String resource, Rule rule) throws RuleException {
         RuleParser ruleParser = new RuleParser(getDefaultRuleParserPlugins(rule));
         URL url = RuleSetTestHelper.class.getResource(resource);
-        assertThat("Cannot read resource URL:" + resource, url, notNullValue());
+        assertThat(url).as("Cannot read resource URL:" + resource).isNotNull();
         RuleSource ruleSource = new UrlRuleSource(url);
         return ruleParser.parse(singletonList(ruleSource));
     }
 
     public static <T> void verifyParameter(Map<String, Parameter> parameters, String name, Parameter.Type type, T defaultValue) {
         Parameter parameter = parameters.get(name);
-        assertThat("Expected a parameter with name " + name, parameter, notNullValue());
-        assertThat(parameter.getName(), equalTo(name));
-        assertThat(parameter.getType(), equalTo(type));
-        assertThat(parameter.getDefaultValue(), Matchers.<Object> equalTo(defaultValue));
+        assertThat(parameter).as("Expected a parameter with name " + name).isNotNull();
+        assertThat(parameter.getName()).isEqualTo(name);
+        assertThat(parameter.getType()).isEqualTo(type);
+        assertThat(parameter.getDefaultValue()).isEqualTo(defaultValue);
     }
 
     public static List<RuleParserPlugin> getDefaultRuleParserPlugins(Rule rule) throws RuleException {

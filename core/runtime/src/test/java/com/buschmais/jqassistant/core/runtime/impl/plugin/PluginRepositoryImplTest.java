@@ -26,9 +26,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -77,19 +74,19 @@ class PluginRepositoryImplTest {
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository()
             .getScannerPlugins(scan, scannerContext);
         assertThat(scannerPlugins).hasSize(2);
-        assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName()), notNullValue());
         assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName())).isNotNull();
-        assertThat(scannerPlugins.get("testScanner"), notNullValue());
+        assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName())).isNotNull();
+        assertThat(scannerPlugins.get("testScanner")).isNotNull();
         assertThat(scannerPlugins.get("testScanner")).isNotNull();
         // Report plugins
         ReportContext reportContext = mock(ReportContext.class);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
             .getReportPlugins(report, reportContext);
-        assertThat(reportPlugins.size(), equalTo(3));
+        assertThat(reportPlugins.size()).isEqualTo(3);
         assertThat(reportPlugins).hasSize(3);
-        assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName()), notNullValue());
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName())).isNotNull();
-        assertThat(reportPlugins.get("testReport"), notNullValue());
+        assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName())).isNotNull();
+        assertThat(reportPlugins.get("testReport")).isNotNull();
         assertThat(reportPlugins.get("testReport")).isNotNull();
         pluginRepository.destroy();
     }

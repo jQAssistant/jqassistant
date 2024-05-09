@@ -5,14 +5,12 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class ExecutablesTest {
@@ -40,25 +38,25 @@ class ExecutablesTest {
         throws RuleException {
         Concept concept = ruleSet.getConceptBucket()
             .getById(id);
-        assertThat(concept, notNullValue());
+        assertThat(concept).isNotNull();
         Executable<?> executable = concept.getExecutable();
-        assertThat(concept.getId(), executable, CoreMatchers.<Executable>instanceOf(type));
-        assertThat(concept.getId(), executable.getSource(), instanceOf(expectedSourceType));
-        assertThat(concept.getId(), executable.getLanguage(), equalTo(expectedLanguage));
+        assertThat(executable).as(concept.getId()).isInstanceOf(type);
+        assertThat(executable.getSource()).as(concept.getId()).isInstanceOf(expectedSourceType);
+        assertThat(executable.getLanguage()).as(concept.getId()).isEqualTo(expectedLanguage);
         Map<String, Boolean> requiresConcepts = concept.getRequiresConcepts();
-        assertThat(requiresConcepts, notNullValue());
-        assertThat(requiresConcepts.containsKey("test:RequiredConcept"), equalTo(true));
+        assertThat(requiresConcepts).isNotNull();
+        assertThat(requiresConcepts.containsKey("test:RequiredConcept")).isEqualTo(true);
         return concept;
     }
 
     private Constraint verifyConstraintExecutable(RuleSet ruleSet, String id, Class<? extends Executable> type) throws RuleException {
         Constraint constraint = ruleSet.getConstraintBucket()
             .getById(id);
-        assertThat(constraint, notNullValue());
-        assertThat(constraint.getExecutable(), CoreMatchers.<Executable>instanceOf(type));
+        assertThat(constraint).isNotNull();
+        assertThat(constraint.getExecutable()).isInstanceOf(type);
         Map<String, Boolean> requiresConcepts = constraint.getRequiresConcepts();
-        assertThat(requiresConcepts, notNullValue());
-        assertThat(requiresConcepts.containsKey("test:RequiredConcept"), equalTo(true));
+        assertThat(requiresConcepts).isNotNull();
+        assertThat(requiresConcepts.containsKey("test:RequiredConcept")).isEqualTo(true);
         return constraint;
     }
 

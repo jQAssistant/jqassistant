@@ -9,8 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class VerificationTest {
@@ -30,33 +29,33 @@ class VerificationTest {
     private void verifyDefault(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:DefaultVerification");
         Verification verification = concept.getVerification();
-        assertThat(verification, nullValue());
+        assertThat(verification).isNull();
     }
 
     private void verifyCustomizedDefault(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:CustomizedDefaultVerification");
         Verification verification = concept.getVerification();
-        assertThat(verification, instanceOf(RowCountVerification.class));
+        assertThat(verification).isInstanceOf(RowCountVerification.class);
         RowCountVerification rowCountVerification = (RowCountVerification) verification;
-        assertThat(rowCountVerification.getMin(), equalTo(1));
-        assertThat(rowCountVerification.getMax(), equalTo(2));
+        assertThat(rowCountVerification.getMin()).isEqualTo(1);
+        assertThat(rowCountVerification.getMax()).isEqualTo(2);
     }
 
     private void verifyAggregation(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:AggregationVerification");
         Verification verification = concept.getVerification();
-        assertThat(verification, instanceOf(AggregationVerification.class));
+        assertThat(verification).isInstanceOf(AggregationVerification.class);
         AggregationVerification aggregationVerification = (AggregationVerification) verification;
-        assertThat(aggregationVerification.getMin(), equalTo(1));
-        assertThat(aggregationVerification.getMax(), equalTo(2));
+        assertThat(aggregationVerification.getMin()).isEqualTo(1);
+        assertThat(aggregationVerification.getMax()).isEqualTo(2);
     }
 
     private void verifyRowCount(RuleSet ruleSet) throws RuleException {
         Concept concept = ruleSet.getConceptBucket().getById("test:RowCountVerification");
         Verification verification = concept.getVerification();
-        assertThat(verification, instanceOf(RowCountVerification.class));
+        assertThat(verification).isInstanceOf(RowCountVerification.class);
         RowCountVerification rowCountVerification = (RowCountVerification) verification;
-        assertThat(rowCountVerification.getMin(), equalTo(1));
-        assertThat(rowCountVerification.getMax(), equalTo(2));
+        assertThat(rowCountVerification.getMin()).isEqualTo(1);
+        assertThat(rowCountVerification.getMax()).isEqualTo(2);
     }
 }

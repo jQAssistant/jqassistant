@@ -39,10 +39,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -141,11 +138,11 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap());
         Result<Concept> capturedResult = resultCaptor.getValue();
-        assertThat("The reported column names must match the given column names.", capturedResult.getColumnNames(), equalTo(columnNames));
+        assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.").isEqualTo(columnNames);
         List<Row> capturedRows = capturedResult.getRows();
-        assertThat("Expecting one row.", capturedRows.size(), equalTo(1));
+        assertThat(capturedRows.size()).as("Expecting one row.").isEqualTo(1);
         Row capturedRow = capturedRows.get(0);
-        assertThat("The reported column names must match the given column names.", new ArrayList<>(capturedRow.getColumns().keySet()), equalTo(columnNames));
+        assertThat(new ArrayList<>(capturedRow.getColumns().keySet())).as("The reported column names must match the given column names.").isEqualTo(columnNames);
     }
 
     @Test
@@ -155,13 +152,13 @@ class AnalyzerRuleVisitorTest {
 
         Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR, emptyMap());
 
-        assertThat(status, equalTo(SUCCESS));
+        assertThat(status).isEqualTo(SUCCESS);
 
         ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(STATEMENT), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT)).isEqualTo("value");
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT)).isEqualTo("defaultValue");
 
         verifyConceptResult(concept, SUCCESS, MAJOR);
         verify(store).create(ConceptDescriptor.class);
@@ -173,11 +170,11 @@ class AnalyzerRuleVisitorTest {
 
         Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR, emptyMap());
 
-        assertThat(status, equalTo(SUCCESS));
+        assertThat(status).isEqualTo(SUCCESS);
         verify(store, never()).executeQuery(anyString(), anyMap());
         Result<Concept> result = verifyConceptResult(abstractConcept, SUCCESS, MAJOR);
-        assertThat(result.getColumnNames(), empty());
-        assertThat(result.getRows(), empty());
+        assertThat(result.getColumnNames()).isEmpty();
+        assertThat(result.getRows()).isEmpty();
         verify(store).create(ConceptDescriptor.class);
     }
 
@@ -189,11 +186,11 @@ class AnalyzerRuleVisitorTest {
         doReturn(createEmptyResult()).when(store).executeQuery(eq(STATEMENT), anyMap());
 
         assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
-            ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, FAILURE))), equalTo(FAILURE));
+            ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, FAILURE)))).isEqualTo(FAILURE);
         assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
-            ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, SUCCESS))), equalTo(SUCCESS));
+            ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, SUCCESS)))).isEqualTo(SUCCESS);
         assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
-            ofEntries(entry(providingConcept1, SUCCESS), entry(providingConcept2, SUCCESS))), equalTo(SUCCESS));
+            ofEntries(entry(providingConcept1, SUCCESS), entry(providingConcept2, SUCCESS)))).isEqualTo(SUCCESS);
     }
 
     @Test
@@ -210,8 +207,8 @@ class AnalyzerRuleVisitorTest {
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result<Concept> result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(expectedStatus));
-        assertThat(result.getSeverity(), equalTo(expectedSeverity));
+        assertThat(result.getStatus()).isEqualTo(expectedStatus);
+        assertThat(result.getSeverity()).isEqualTo(expectedSeverity);
         verify(reportWriter).endConcept();
         return result;
     }
@@ -226,8 +223,8 @@ class AnalyzerRuleVisitorTest {
         ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(STATEMENT), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT), equalTo("value"));
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT), equalTo("defaultValue"));
+        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT)).isEqualTo("value");
+        assertThat(parameters.get(PARAMETER_WITH_DEFAULT)).isEqualTo("defaultValue");
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
     }
 
@@ -238,8 +235,8 @@ class AnalyzerRuleVisitorTest {
         analyzerRuleVisitor.visitConstraint(abstractConstraint, BLOCKER);
 
         Result<?> result = verifyConstraintResult(SUCCESS, BLOCKER);
-        assertThat(result.getColumnNames(), empty());
-        assertThat(result.getRows(), empty());
+        assertThat(result.getColumnNames()).isEmpty();
+        assertThat(result.getRows()).isEmpty();
     }
 
 
@@ -256,8 +253,8 @@ class AnalyzerRuleVisitorTest {
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result<?> result = resultCaptor.getValue();
-        assertThat(result.getStatus(), equalTo(expectedStatus));
-        assertThat(result.getSeverity(), equalTo(expectedSeverity));
+        assertThat(result.getStatus()).isEqualTo(expectedStatus);
+        assertThat(result.getSeverity()).isEqualTo(expectedSeverity);
         verify(reportWriter).endConstraint();
         return result;
     }
@@ -269,7 +266,7 @@ class AnalyzerRuleVisitorTest {
             .getStatus();
         when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap()), equalTo(SUCCESS));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
@@ -286,7 +283,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap()), equalTo(SUCCESS));
+        assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter).beginConcept(concept);
         verify(store, never()).create(ConceptDescriptor.class);
@@ -303,8 +300,8 @@ class AnalyzerRuleVisitorTest {
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
-            assertThat(message, containsString(concept.getId()));
-            assertThat(message, containsString(PARAMETER_WITHOUT_DEFAULT));
+            assertThat(message).contains(concept.getId());
+            assertThat(message).contains(PARAMETER_WITHOUT_DEFAULT);
         }
     }
 
@@ -318,7 +315,7 @@ class AnalyzerRuleVisitorTest {
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
-            assertThat(message, containsString("test.xml"));
+            assertThat(message).contains("test.xml");
         }
     }
 

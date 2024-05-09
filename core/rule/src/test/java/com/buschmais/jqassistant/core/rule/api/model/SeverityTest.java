@@ -12,10 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.mockito.Mockito.doReturn;
 
@@ -29,7 +28,7 @@ class SeverityTest {
     public void getSeverityFromName() throws RuleException {
         for (Severity severity : Severity.values()) {
             String name = severity.getValue();
-            assertThat(Severity.fromValue(name), is(severity));
+            assertThat(Severity.fromValue(name)).isEqualTo(severity);
         }
     }
 
@@ -40,7 +39,7 @@ class SeverityTest {
 
     @Test
     void noSeverity() throws RuleException {
-        assertThat(Severity.fromValue(null), nullValue());
+        assertThat(Severity.fromValue(null)).isNull();
     }
 
     @Test
@@ -49,18 +48,18 @@ class SeverityTest {
 
         Severity result = Severity.fromValue(value);
 
-        assertThat(result, equalTo(Severity.INFO));
+        assertThat(result).isEqualTo(Severity.INFO);
     }
 
     @Test
     void severityThreshold() throws RuleException {
-        assertThat(Severity.Threshold.from(BLOCKER.name()).getThreshold(), equalTo(of(BLOCKER)));
-        assertThat(Severity.Threshold.from(CRITICAL.name()).getThreshold(), equalTo(of(CRITICAL)));
-        assertThat(Severity.Threshold.from(MAJOR.name()).getThreshold(), equalTo(of(MAJOR)));
-        assertThat(Severity.Threshold.from(MINOR.name()).getThreshold(), equalTo(of(MINOR)));
-        assertThat(Severity.Threshold.from(INFO.name()).getThreshold(), equalTo(of(INFO)));
-        assertThat(Severity.Threshold.from("never").getThreshold(), equalTo(empty()));
-        assertThat(Severity.Threshold.from("NEVER").getThreshold(), equalTo(empty()));
+        assertThat(Severity.Threshold.from(BLOCKER.name()).getThreshold()).isEqualTo(of(BLOCKER));
+        assertThat(Severity.Threshold.from(CRITICAL.name()).getThreshold()).isEqualTo(of(CRITICAL));
+        assertThat(Severity.Threshold.from(MAJOR.name()).getThreshold()).isEqualTo(of(MAJOR));
+        assertThat(Severity.Threshold.from(MINOR.name()).getThreshold()).isEqualTo(of(MINOR));
+        assertThat(Severity.Threshold.from(INFO.name()).getThreshold()).isEqualTo(of(INFO));
+        assertThat(Severity.Threshold.from("never").getThreshold()).isEqualTo(empty());
+        assertThat(Severity.Threshold.from("NEVER").getThreshold()).isEqualTo(empty());
     }
 
     @Test
@@ -79,14 +78,14 @@ class SeverityTest {
         GroupsBucket groups = ruleSet.getGroupsBucket();
         // Group without any severity definition
         Group group = groups.getById(groupId);
-        assertThat(group, notNullValue());
-        assertThat(group.getSeverity(), equalTo(expectedGroupSeverity));
+        assertThat(group).isNotNull();
+        assertThat(group.getSeverity()).isEqualTo(expectedGroupSeverity);
         Map<String, Severity> includedConcepts = group.getConcepts();
-        assertThat(includedConcepts.containsKey(conceptId), equalTo(true));
-        assertThat(includedConcepts.get(conceptId), equalTo(expectedIncludedConceptSeverity));
+        assertThat(includedConcepts.containsKey(conceptId)).isEqualTo(true);
+        assertThat(includedConcepts.get(conceptId)).isEqualTo(expectedIncludedConceptSeverity);
         Map<String, Severity> includedConstraints = group.getConstraints();
-        assertThat(includedConstraints.containsKey(constraintId), equalTo(true));
-        assertThat(includedConstraints.get(constraintId), equalTo(expectedIncludedConstraintSeverity));
+        assertThat(includedConstraints.containsKey(constraintId)).isEqualTo(true);
+        assertThat(includedConstraints.get(constraintId)).isEqualTo(expectedIncludedConstraintSeverity);
     }
 
     @Test
@@ -100,13 +99,13 @@ class SeverityTest {
 
     private void verifyDefaultSeverities(RuleSet ruleSet, Severity defaultSeverity) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
-        assertThat(groupWithoutSeverity.getSeverity(), equalTo(defaultSeverity));
+        assertThat(groupWithoutSeverity.getSeverity()).isEqualTo(defaultSeverity);
         Group groupWithSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithSeverity");
-        assertThat(groupWithSeverity.getSeverity(), equalTo(BLOCKER));
+        assertThat(groupWithSeverity.getSeverity()).isEqualTo(BLOCKER);
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");
-        assertThat(concept.getSeverity(), equalTo(defaultSeverity));
+        assertThat(concept.getSeverity()).isEqualTo(defaultSeverity);
         Constraint constraint = ruleSet.getConstraintBucket().getById("test:Constraint");
-        assertThat(constraint.getSeverity(), equalTo(defaultSeverity));
+        assertThat(constraint.getSeverity()).isEqualTo(defaultSeverity);
     }
 
     @Test
@@ -117,11 +116,11 @@ class SeverityTest {
 
     private void verifyRuleDefaultSeverity(RuleSet ruleSet) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
-        assertThat(groupWithoutSeverity.getSeverity(), nullValue());
+        assertThat(groupWithoutSeverity.getSeverity()).isNull();
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");
-        assertThat(concept.getSeverity(), equalTo(Severity.MINOR));
+        assertThat(concept.getSeverity()).isEqualTo(Severity.MINOR);
         Constraint constraint = ruleSet.getConstraintBucket().getById("test:Constraint");
-        assertThat(constraint.getSeverity(), equalTo(Severity.MAJOR));
+        assertThat(constraint.getSeverity()).isEqualTo(Severity.MAJOR);
     }
 
 }

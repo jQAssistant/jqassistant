@@ -22,8 +22,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.any;
@@ -62,7 +61,7 @@ class ScannerImplTest {
         doReturn(String.class).when(scannerPlugin).getType();
         when(scannerPlugin.accepts(anyString(), anyString(), eq(scope))).thenReturn(true);
         doAnswer(invocation -> {
-            assertThat(transaction, equalTo(true));
+            assertThat(transaction).isEqualTo(true);
             return mock(Descriptor.class);
         }).when(scannerPlugin).scan(anyString(), anyString(), any(Scope.class), any(Scanner.class));
         // Store
@@ -89,9 +88,9 @@ class ScannerImplTest {
     @Test
     void resolveScope() {
         Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
-        assertThat(scanner.resolveScope("default:none"), equalTo(DefaultScope.NONE));
-        assertThat(scanner.resolveScope("unknown"), equalTo(DefaultScope.NONE));
-        assertThat(scanner.resolveScope(null), equalTo(DefaultScope.NONE));
+        assertThat(scanner.resolveScope("default:none")).isEqualTo(DefaultScope.NONE);
+        assertThat(scanner.resolveScope("unknown")).isEqualTo(DefaultScope.NONE);
+        assertThat(scanner.resolveScope(null)).isEqualTo(DefaultScope.NONE);
     }
 
     @Test
@@ -104,7 +103,7 @@ class ScannerImplTest {
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
-        assertThat(result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -117,7 +116,7 @@ class ScannerImplTest {
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
-        assertThat(result, is(false));
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -129,13 +128,13 @@ class ScannerImplTest {
             fail("Expecting an " + UnrecoverableScannerException.class.getName());
         } catch (UnrecoverableScannerException e) {
             String message = e.getMessage();
-            assertThat(message, containsString("test"));
+            assertThat(message).contains("test");
         }
 
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
         verify(store, never()).commitTransaction();
-        assertThat(transaction, equalTo(false));
+        assertThat(transaction).isEqualTo(false);
     }
 
     @Test
@@ -154,7 +153,7 @@ class ScannerImplTest {
 
     private void stubExceptionDuringScan(Scanner scanner) throws IOException {
         doAnswer(invocation -> {
-            assertThat(transaction, equalTo(true));
+            assertThat(transaction).isEqualTo(true);
             throw new IllegalStateException("Exception in plugin");
         }).when(scannerPlugin).scan("test", "test", scope, scanner);
     }
@@ -208,7 +207,7 @@ class ScannerImplTest {
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 
-        assertThat(descriptor, instanceOf(DependentTestItemDescriptor.class));
+        assertThat(descriptor).isInstanceOf(DependentTestItemDescriptor.class);
         verify(store).create(TestItemDescriptor.class);
         verify(store).addDescriptorType(any(TestItemDescriptor.class), eq(NestedTestItemDescriptor.class));
         verify(store).addDescriptorType(any(NestedTestItemDescriptor.class), eq(DependentTestItemDescriptor.class));

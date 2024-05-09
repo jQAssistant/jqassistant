@@ -19,8 +19,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -57,11 +56,11 @@ class RowCountVerificationStrategyTest {
         RowCountVerification rowCountVerification = RowCountVerification.builder()
             .build();
         when(result.size()).thenReturn(0);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         when(result.size()).thenReturn(1);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -70,11 +69,11 @@ class RowCountVerificationStrategyTest {
             .min(1)
             .build();
         when(result.size()).thenReturn(0);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         when(result.size()).thenReturn(1);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
     }
 
     @Test
@@ -83,11 +82,11 @@ class RowCountVerificationStrategyTest {
             .max(0)
             .build();
         when(result.size()).thenReturn(0);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         when(result.size()).thenReturn(1);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -97,14 +96,14 @@ class RowCountVerificationStrategyTest {
             .max(1)
             .build();
         when(result.size()).thenReturn(0);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         when(result.size()).thenReturn(1);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         when(result.size()).thenReturn(2);
-        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, rowCountVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
 }

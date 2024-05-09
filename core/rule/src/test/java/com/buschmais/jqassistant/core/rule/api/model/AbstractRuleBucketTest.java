@@ -4,15 +4,12 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 class AbstractRuleBucketTest {
@@ -35,14 +32,14 @@ class AbstractRuleBucketTest {
         bucket.add(b);
         bucket.add(c);
 
-        assertThat(bucket.getAll(), containsInAnyOrder(a, b, c));
+        assertThat(bucket.getAll()).containsExactlyInAnyOrder(a, b, c);
     }
 
     // --- All tests for getIds()
 
     @Test
     void getConceptsIdsReturnsEmptySetIfThereAreNoConceptsInTheBucket() {
-        assertThat(bucket.getIds(), empty());
+        assertThat(bucket.getIds()).isEmpty();
     }
 
     @Test
@@ -59,8 +56,8 @@ class AbstractRuleBucketTest {
         bucket.add(b);
         bucket.add(c);
 
-        assertThat(bucket.getIds(), hasSize(3));
-        assertThat(bucket.getIds(), containsInAnyOrder("a", "b", "c"));
+        assertThat(bucket.getIds()).hasSize(3);
+        assertThat(bucket.getIds()).containsExactlyInAnyOrder("a", "b", "c");
     }
 
     @Test
@@ -91,7 +88,7 @@ class AbstractRuleBucketTest {
         bucket.add(b);
         bucket.add(c);
 
-        assertThat(bucket.size(), equalTo(3));
+        assertThat(bucket.size()).isEqualTo(3);
     }
 
     // --- All tests for getConcept()
@@ -105,7 +102,7 @@ class AbstractRuleBucketTest {
 
         Concept b = bucket.getById("a");
 
-        assertThat(b, Matchers.sameInstance(a));
+        assertThat(b).isSameAs(a);
     }
 
     @Test
@@ -135,8 +132,8 @@ class AbstractRuleBucketTest {
 
         newBucket.add(existingBucket);
 
-        assertThat(newBucket.size(), equalTo(3));
-        assertThat(newBucket.getIds(), containsInAnyOrder("a", "b", "c"));
+        assertThat(newBucket.size()).isEqualTo(3);
+        assertThat(newBucket.getIds()).containsExactlyInAnyOrder("a", "b", "c");
     }
 
     @Test
@@ -156,8 +153,8 @@ class AbstractRuleBucketTest {
         newBucket.add(c);
         newBucket.add(new TestBucket());
 
-        assertThat(newBucket.size(), equalTo(3));
-        assertThat(newBucket.getIds(), containsInAnyOrder("a", "b", "c"));
+        assertThat(newBucket.size()).isEqualTo(3);
+        assertThat(newBucket.getIds()).containsExactlyInAnyOrder("a", "b", "c");
     }
 
     @Test
@@ -199,11 +196,11 @@ class AbstractRuleBucketTest {
         bucket.add(c2);
         bucket.add(c3);
 
-        assertThat(bucket.match("concept1"), equalTo(singletonList(c1)));
-        assertThat(bucket.match("c?ncept1"), equalTo(singletonList(c1)));
-        assertThat(bucket.match("concept?"), equalTo(asList(c1, c2, c3)));
-        assertThat(bucket.match("c*ncept1"), equalTo(singletonList(c1)));
-        assertThat(bucket.match("concept*"), equalTo(asList(c1, c2, c3)));
+        assertThat(bucket.match("concept1")).isEqualTo(singletonList(c1));
+        assertThat(bucket.match("c?ncept1")).isEqualTo(singletonList(c1));
+        assertThat(bucket.match("concept?")).isEqualTo(asList(c1, c2, c3));
+        assertThat(bucket.match("c*ncept1")).isEqualTo(singletonList(c1));
+        assertThat(bucket.match("concept*")).isEqualTo(asList(c1, c2, c3));
     }
 
     // --- Helper Classes

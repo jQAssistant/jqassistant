@@ -35,10 +35,8 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.fail;
@@ -95,10 +93,10 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConceptResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(0));
-        assertThat(debugMessages.size(), greaterThan(0));
-        assertThat(warnMessages.size(), equalTo(0));
-        assertThat(errorMessages.size(), equalTo(0));
+        assertThat(violations).isEqualTo(0);
+        assertThat(debugMessages.size()).isGreaterThan(0);
+        assertThat(warnMessages.size()).isEqualTo(0);
+        assertThat(errorMessages.size()).isEqualTo(0);
     }
 
     @Test
@@ -114,7 +112,7 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConceptResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(1));
+        assertThat(violations).isEqualTo(1);
         verifyMessages(debugMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:infoConcept", "Severity: INFO");
         verifyMessages(warnMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:minorConcept", "Severity: MINOR");
         verifyMessages(errorMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:majorConcept", "Severity: MAJOR");
@@ -137,7 +135,7 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConceptResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(1));
+        assertThat(violations).isEqualTo(1);
         verifyMessages(debugMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:infoConcept", "Severity: MINOR (from INFO)");
         verifyMessages(warnMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:minorConcept", "Severity: MAJOR (from MINOR)");
         verifyMessages(errorMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:majorConcept", "Severity: CRITICAL (from MAJOR)");
@@ -154,10 +152,10 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(0));
-        assertThat(debugMessages.size(), greaterThan(0));
-        assertThat(warnMessages.size(), equalTo(0));
-        assertThat(errorMessages.size(), equalTo(0));
+        assertThat(violations).isEqualTo(0);
+        assertThat(debugMessages.size()).isGreaterThan(0);
+        assertThat(warnMessages.size()).isEqualTo(0);
+        assertThat(errorMessages.size()).isEqualTo(0);
     }
 
     @Test
@@ -191,7 +189,7 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(1));
+        assertThat(violations).isEqualTo(1);
         verifyMessages(debugMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:infoConstraint", "Severity: INFO", "InfoElement=InfoValue");
         verifyMessages(warnMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:minorConstraint", "Severity: MINOR",
             "MinorElement=MinorValue");
@@ -229,7 +227,7 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
 
-        assertThat(violations, equalTo(1));
+        assertThat(violations).isEqualTo(1);
         verifyMessages(debugMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:infoConstraint", "Severity: MINOR (from INFO)",
             "InfoElement=InfoValue");
         verifyMessages(warnMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:minorConstraint", "Severity: MAJOR (from MINOR)",
@@ -259,7 +257,7 @@ class ReportHelperTest {
             throw new ReportException(message);
         });
 
-        assertThat(result, equalTo(false));
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -295,7 +293,7 @@ class ReportHelperTest {
             });
             fail("Expecting a " + ReportException.class);
         } catch (ReportException e) {
-            assertThat(e.getMessage(), equalTo("Failed rules detected: " + 1 + " concepts, " + 1 + " constraints"));
+            assertThat(e.getMessage()).isEqualTo("Failed rules detected: " + 1 + " concepts, " + 1 + " constraints");
         }
     }
 
@@ -303,18 +301,18 @@ class ReportHelperTest {
     void label() {
         TestDescriptorWithLanguageElement descriptorWithLabel = mock(TestDescriptorWithLanguageElement.class);
         when(descriptorWithLabel.getValue()).thenReturn("value");
-        assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));
-        assertThat(ReportHelper.getLabel(singletonList(descriptorWithLabel)), equalTo("value"));
-        assertThat(ReportHelper.getLabel(new String[] { "value1", "value2" }), equalTo("value1, value2"));
+        assertThat(ReportHelper.getLabel(descriptorWithLabel)).isEqualTo("value");
+        assertThat(ReportHelper.getLabel(singletonList(descriptorWithLabel))).isEqualTo("value");
+        assertThat(ReportHelper.getLabel(new String[]{"value1", "value2"})).isEqualTo("value1, value2");
         Map<String, Object> singleProperty = new HashMap<>();
         singleProperty.put("key", "Value");
-        assertThat(ReportHelper.getLabel(singleProperty), equalTo("Value"));
+        assertThat(ReportHelper.getLabel(singleProperty)).isEqualTo("Value");
         Map<String, Object> multipleProperties = new HashMap<>();
         multipleProperties.put("key1", descriptorWithLabel);
         multipleProperties.put("key2", "simpleValue");
-        assertThat(ReportHelper.getLabel(multipleProperties), equalTo("key1:value, key2:simpleValue"));
+        assertThat(ReportHelper.getLabel(multipleProperties)).isEqualTo("key1:value, key2:simpleValue");
         TestDescriptorWithLanguageElement descriptorWithEmptyLanguageLabel = mock(TestDescriptorWithLanguageElement.class);
-        assertThat(ReportHelper.getLabel(descriptorWithEmptyLanguageLabel), notNullValue());
+        assertThat(ReportHelper.getLabel(descriptorWithEmptyLanguageLabel)).isNotNull();
 
         // Composite object without supported label
         Neo4jNode neo4jNode = mock(Neo4jNode.class);
@@ -323,7 +321,7 @@ class ReportHelperTest {
         CompositeObject compositeObject = mock(CompositeObject.class);
         doReturn(neo4jNode).when(compositeObject)
             .getDelegate();
-        assertThat(ReportHelper.getLabel(compositeObject), equalTo("key1:value, key2:simpleValue"));
+        assertThat(ReportHelper.getLabel(compositeObject)).isEqualTo("key1:value, key2:simpleValue");
 
     }
 
@@ -340,7 +338,7 @@ class ReportHelperTest {
             });
             fail("Expecting a " + ReportException.class);
         } catch (ReportException e) {
-            assertThat(e.getMessage(), equalTo("Failed rules detected: " + 0 + " concepts, " + 1 + " constraints"));
+            assertThat(e.getMessage()).isEqualTo("Failed rules detected: " + 0 + " concepts, " + 1 + " constraints");
         }
     }
 

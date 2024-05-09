@@ -23,8 +23,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,14 +58,14 @@ class AggregationVerificationStrategyTest {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .build();
         result = asList(createRow(concept, 0), createRow(concept, 0));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         result = asList(createRow(concept, 0), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 1), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -75,14 +74,14 @@ class AggregationVerificationStrategyTest {
             .min(1)
             .build();
         result = asList(createRow(concept, 0), createRow(concept, 0));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 0), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         result = asList(createRow(concept, 1), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
     }
 
     @Test
@@ -91,14 +90,14 @@ class AggregationVerificationStrategyTest {
             .max(0)
             .build();
         result = asList(createRow(concept, 0), createRow(concept, 0));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         result = asList(createRow(concept, 0), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 1), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -108,20 +107,20 @@ class AggregationVerificationStrategyTest {
             .max(1)
             .build();
         result = asList(createRow(concept, 0), createRow(concept, 0));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 0), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         result = asList(createRow(concept, 1), createRow(concept, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 1), createRow(concept, 2));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
         result = asList(createRow(concept, 2), createRow(concept, 2));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(WARNING));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(WARNING);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -130,8 +129,8 @@ class AggregationVerificationStrategyTest {
             .column("c1")
             .build();
         result = asList(createRow(concept, 0, 1), createRow(concept, 0, 1));
-        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
+        assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
     }
 
     @Test
@@ -139,8 +138,8 @@ class AggregationVerificationStrategyTest {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .build();
         result = Collections.emptyList();
-        assertThat(strategy.verify(concept, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(FAILURE));
-        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result), equalTo(SUCCESS));
+        assertThat(strategy.verify(concept, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
+        assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
     }
 
     private Row createRow(ExecutableRule<?> rule, int... values) {

@@ -14,8 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class RuleParserTest {
@@ -38,20 +37,20 @@ class RuleParserTest {
         File rulesDirectory = new File(RuleParserTest.class.getResource("/").getPath());
         RuleSet ruleSet = ruleParser
                 .parse(asList(new FileRuleSource(rulesDirectory, "test-concepts.xml")));
-        assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
-        assertThat(ruleSet.getConstraintBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConceptBucket().size()).isEqualTo(1);
+        assertThat(ruleSet.getConstraintBucket().size()).isEqualTo(1);
 
-        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder("java:Throwable"));
-        assertThat(ruleSet.getConstraintBucket().getIds(), containsInAnyOrder("example:ConstructorOfDateMustNotBeUsed"));
+        assertThat(ruleSet.getConceptBucket().getIds()).containsExactlyInAnyOrder("java:Throwable");
+        assertThat(ruleSet.getConstraintBucket().getIds()).containsExactlyInAnyOrder("example:ConstructorOfDateMustNotBeUsed");
 
-        assertThat(ruleSet.getGroupsBucket().size(), equalTo(1));
+        assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
 
         Group group = ruleSet.getGroupsBucket().getById("default");
 
-        assertThat(group.getId(), equalTo("default"));
-        assertThat(group.getConcepts(), aMapWithSize(1));
-        assertThat(group.getConcepts(), hasKey("java:Throwable"));
-        assertThat(group.getConstraints().size(), equalTo(1));
-        assertThat(group.getConstraints(), hasKey("example:ConstructorOfDateMustNotBeUsed"));
+        assertThat(group.getId()).isEqualTo("default");
+        assertThat(group.getConcepts()).hasSize(1);
+        assertThat(group.getConcepts()).containsKey("java:Throwable");
+        assertThat(group.getConstraints().size()).isEqualTo(1);
+        assertThat(group.getConstraints()).containsKey("example:ConstructorOfDateMustNotBeUsed");
     }
 }

@@ -11,8 +11,7 @@ import com.buschmais.jqassistant.core.report.model.TestLanguage.TestLanguageElem
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 class LanguageHelperTest {
@@ -38,10 +37,10 @@ class LanguageHelperTest {
     private void resolveName(TestDescriptorWithLanguageElement testDescriptor, LanguageElement expectedLanguageElement) {
         when(testDescriptor.getValue()).thenReturn("value");
         LanguageElement languageElement = LanguageHelper.getLanguageElement(testDescriptor);
-        assertThat(languageElement, notNullValue());
-        assertThat(languageElement, is(expectedLanguageElement));
+        assertThat(languageElement).isNotNull();
+        assertThat(languageElement).isEqualTo(expectedLanguageElement);
         SourceProvider<TestDescriptorWithLanguageElement> sourceProvider = languageElement.getSourceProvider();
         String name = sourceProvider.getName(testDescriptor);
-        assertThat(name, equalTo("value"));
+        assertThat(name).isEqualTo("value");
     }
 }

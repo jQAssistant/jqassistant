@@ -10,9 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
@@ -44,12 +43,12 @@ class ScannerContextImplTest {
     @Test
     void peekExistingValues() {
         scannerContext.push(String.class, "Foo");
-        assertThat(scannerContext.peek(String.class), equalTo("Foo"));
+        assertThat(scannerContext.peek(String.class)).isEqualTo("Foo");
         scannerContext.push(String.class, "Bar");
-        assertThat(scannerContext.peek(String.class), equalTo("Bar"));
-        assertThat(scannerContext.pop(String.class), equalTo("Bar"));
-        assertThat(scannerContext.peek(String.class), equalTo("Foo"));
-        assertThat(scannerContext.pop(String.class), equalTo("Foo"));
+        assertThat(scannerContext.peek(String.class)).isEqualTo("Bar");
+        assertThat(scannerContext.pop(String.class)).isEqualTo("Bar");
+        assertThat(scannerContext.peek(String.class)).isEqualTo("Foo");
+        assertThat(scannerContext.pop(String.class)).isEqualTo("Foo");
         try {
             scannerContext.peek(String.class);
             fail("Expecting an " + IllegalStateException.class.getName());
@@ -60,16 +59,16 @@ class ScannerContextImplTest {
 
     @Test
     void peekDefaultValues() {
-        assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Bar"));
+        assertThat(scannerContext.peekOrDefault(String.class, "Bar")).isEqualTo("Bar");
         scannerContext.push(String.class, "Foo");
-        assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Foo"));
-        assertThat(scannerContext.pop(String.class), equalTo("Foo"));
-        assertThat(scannerContext.peekOrDefault(String.class, "Bar"), equalTo("Bar"));
+        assertThat(scannerContext.peekOrDefault(String.class, "Bar")).isEqualTo("Foo");
+        assertThat(scannerContext.pop(String.class)).isEqualTo("Foo");
+        assertThat(scannerContext.peekOrDefault(String.class, "Bar")).isEqualTo("Bar");
     }
 
     @Test
     void dataDirectory() {
         File test = scannerContext.getDataDirectory("test");
-        assertThat(test.getAbsoluteFile(), equalTo(new File(OUTPUT_DIRECTORY, "data/test").getAbsoluteFile()));
+        assertThat(test.getAbsoluteFile()).isEqualTo(new File(OUTPUT_DIRECTORY, "data/test").getAbsoluteFile());
     }
 }
