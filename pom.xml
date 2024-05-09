@@ -92,7 +92,7 @@
         <lombok.version>1.18.32</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
-        <neo4j_4x.version>4.4.32</neo4j_4x.version>
+        <neo4j_4x.version>4.4.33</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.26</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.19.0</neo4j_5x.version>
         <neo4j_5x_apoc.version>5.19.0</neo4j_5x_apoc.version>
