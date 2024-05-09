@@ -8,13 +8,11 @@ import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
@@ -39,7 +37,7 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
         List<FileDescriptor> files = query("MATCH (f:Xml:File) RETURN f").getColumn("f");
 
-        assertThat(files, hasSize(7));
+        assertThat(files).hasSize(7);
     }
 
     @Test
@@ -48,7 +46,7 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
         List<DirectoryDescriptor> directories = query("MATCH (d:Directory) RETURN d").getColumn("d");
 
-        assertThat(directories, hasSize(2));
+        assertThat(directories).hasSize(2);
     }
 
     @Test
@@ -57,8 +55,7 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
 
         List<FileDescriptor> directories = query("MATCH (x:Maven:Pom:Xml) RETURN x").getColumn("x");
 
-        assertThat(directories.stream().map(d -> d.getFileName()).collect(Collectors.toList()),
-                   Matchers.contains("/pom.xml"));
-        assertThat(directories, hasSize(1));
+        assertThat(directories.stream().map(d -> d.getFileName()).collect(Collectors.toList())).containsExactly("/pom.xml");
+        assertThat(directories).hasSize(1);
     }
 }

@@ -47,7 +47,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static org.hamcrest.CoreMatchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -231,7 +231,7 @@ class MavenProjectScannerPluginTest {
         verify(store).create(MavenPomDescriptor.class);
         verify(scannerContext).push(MavenPomDescriptor.class, effectiveModelDescriptor);
         verify(scanner, atLeastOnce()).scan(effectiveModelCaptor.capture(), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
-        assertThat(effectiveModelCaptor.getValue().getDelegate(), is(effectiveModel));
+        assertThat(effectiveModelCaptor.getValue().getDelegate()).isEqualTo(effectiveModel);
         verify(scannerContext).pop(MavenPomDescriptor.class);
         verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
         verify(artifactCache).get(argThat(fqn -> fqn.contains(":jar:")), any());

@@ -13,10 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT {
 
@@ -42,14 +39,14 @@ class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT {
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
 
-        assertThat(mavenPomDescriptors, hasSize(1));
-        assertThat(mavenPomDescriptors.get(0).getArtifactId(), equalTo("with-one-dependency"));
+        assertThat(mavenPomDescriptors).hasSize(1);
+        assertThat(mavenPomDescriptors.get(0).getArtifactId()).isEqualTo("with-one-dependency");
 
         // There should be one declared plugin
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (n:Maven:Plugin) RETURN n").getColumn("n");
 
-        assertThat(pluginDescriptors, hasSize(1));
+        assertThat(pluginDescriptors).hasSize(1);
     }
 
     @Test
@@ -57,14 +54,14 @@ class SingleConfiguredPluginWithDependencyIT extends AbstractJavaPluginIT {
         List<MavenArtifactDescriptor> dependencies =
             query("MATCH (p:Maven:Plugin)-[:DECLARES_DEPENDENCY]->(:Dependency)-[:TO_ARTIFACT]->(d:Maven:Artifact) RETURN d").getColumn("d");
 
-        assertThat(dependencies, hasSize(1));
+        assertThat(dependencies).hasSize(1);
 
         MavenArtifactDescriptor dependency = dependencies.get(0);
 
-        assertThat(dependency.getName(), equalTo("junit"));
-        assertThat(dependency.getGroup(), equalTo("junit"));
-        assertThat(dependency.getVersion(), equalTo("4.12"));
-        assertThat(dependency.getClassifier(), nullValue());
-        assertThat(dependency.getType(), equalTo("jar"));
+        assertThat(dependency.getName()).isEqualTo("junit");
+        assertThat(dependency.getGroup()).isEqualTo("junit");
+        assertThat(dependency.getVersion()).isEqualTo("4.12");
+        assertThat(dependency.getClassifier()).isNull();
+        assertThat(dependency.getType()).isEqualTo("jar");
     }
 }

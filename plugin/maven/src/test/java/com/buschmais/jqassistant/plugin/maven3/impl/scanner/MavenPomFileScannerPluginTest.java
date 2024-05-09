@@ -13,8 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 class MavenPomFileScannerPluginTest {
@@ -36,7 +35,7 @@ class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -53,7 +52,7 @@ class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -70,7 +69,7 @@ class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(false));
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -87,7 +86,7 @@ class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(false));
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -104,7 +103,7 @@ class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(false));
+        assertThat(result).isEqualTo(false);
     }
 
     private static class MethodNotMockedAnswer implements Answer {

@@ -11,9 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     @BeforeEach
@@ -38,7 +36,7 @@ class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
 
-        assertThat(pluginDescriptors, hasSize(1));
+        assertThat(pluginDescriptors).hasSize(1);
     }
 
     @Test
@@ -46,7 +44,7 @@ class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
         List<MavenScmDescriptor> scmDescriptors =
             query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getColumn("s");
 
-        assertThat(scmDescriptors, hasSize(1));
+        assertThat(scmDescriptors).hasSize(1);
     }
 
     @Test
@@ -54,7 +52,7 @@ class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
         List<MavenScmDescriptor> scmDescriptors =
             query("MATCH (s:Maven:Scm) RETURN s").getColumn("s");
 
-        assertThat(scmDescriptors, hasSize(1));
+        assertThat(scmDescriptors).hasSize(1);
     }
 
     @Test
@@ -64,9 +62,9 @@ class WithSourceControlManagementSectionIT extends AbstractJavaPluginIT {
 
         MavenScmDescriptor scmDescriptor = scmDescriptors.get(0);
 
-        assertThat(scmDescriptor.getConnection(), equalTo("abc"));
-        assertThat(scmDescriptor.getDeveloperConnection(), equalTo("def"));
-        assertThat(scmDescriptor.getTag(), equalTo("none"));
-        assertThat(scmDescriptor.getUrl(), equalTo("http://none"));
+        assertThat(scmDescriptor.getConnection()).isEqualTo("abc");
+        assertThat(scmDescriptor.getDeveloperConnection()).isEqualTo("def");
+        assertThat(scmDescriptor.getTag()).isEqualTo("none");
+        assertThat(scmDescriptor.getUrl()).isEqualTo("http://none");
     }
 }

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class Maven3IT extends AbstractPluginIT {
@@ -31,17 +31,17 @@ class Maven3IT extends AbstractPluginIT {
         parent.getModules().add(module2);
         module1.setParent(parent);
         store.commitTransaction();
-        assertThat(validateConstraint("maven3:HierarchicalParentModuleRelation").getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint("maven3:HierarchicalParentModuleRelation").getStatus()).isEqualTo(FAILURE);
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
+        assertThat(constraintViolations.size()).isEqualTo(1);
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("maven3:HierarchicalParentModuleRelation")));
         List<Row> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
+        assertThat(rows.size()).isEqualTo(1);
         Map<String, Column<?>> row = rows.get(0).getColumns();
         Column invalidModuleColumn = row.get("InvalidModule");
-        assertThat((MavenProjectDirectoryDescriptor) invalidModuleColumn.getValue(), equalTo(module2));
+        assertThat((MavenProjectDirectoryDescriptor) invalidModuleColumn.getValue()).isEqualTo(module2);
         store.commitTransaction();
     }
 

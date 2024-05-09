@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -22,7 +21,7 @@ class MavenArtifactHelperTest {
     private void verifyBaseVersion(String version, String expected) {
         Coordinates coordinates = mock(Coordinates.class);
         doReturn(version).when(coordinates).getVersion();
-        assertThat(MavenArtifactHelper.getBaseVersion(coordinates), equalTo(expected));
+        assertThat(MavenArtifactHelper.getBaseVersion(coordinates)).isEqualTo(expected);
     }
 
     @Test
@@ -35,6 +34,6 @@ class MavenArtifactHelperTest {
     private void verifySnapshot(String version, boolean expected) {
         Coordinates coordinates = mock(Coordinates.class);
         doReturn(version).when(coordinates).getVersion();
-        assertThat(MavenArtifactHelper.isSnapshot(coordinates), equalTo(expected));
+        assertThat(MavenArtifactHelper.isSnapshot(coordinates)).isEqualTo(expected);
     }
 }

@@ -11,9 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
     @BeforeEach
@@ -38,7 +36,7 @@ class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom) RETURN p").getColumn("p");
 
-        assertThat(pluginDescriptors, hasSize(1));
+        assertThat(pluginDescriptors).hasSize(1);
     }
 
     @Test
@@ -46,6 +44,6 @@ class WithoutSourceControlManagementSectionIT extends AbstractJavaPluginIT {
 
         List<Map<String, Object>> rows = query("MATCH (p:Maven:Pom)-[:HAS_SCM]->(s:Maven:Scm) RETURN s").getRows();
 
-        assertThat(rows, empty());
+        assertThat(rows).isEmpty();
     }
 }

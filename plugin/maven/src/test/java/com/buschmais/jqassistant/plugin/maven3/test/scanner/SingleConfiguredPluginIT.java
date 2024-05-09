@@ -7,14 +7,11 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
 
@@ -40,7 +37,7 @@ class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (p:Maven:Pom)-[:USES_PLUGIN]->(n:Maven:Plugin) RETURN n").getColumn("n");
 
-        assertThat(pluginDescriptors, hasSize(1));
+        assertThat(pluginDescriptors).hasSize(1);
     }
 
     @Test
@@ -49,14 +46,14 @@ class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
 
-        assertThat(mavenPomDescriptors, hasSize(1));
-        assertThat(mavenPomDescriptors.get(0).getArtifactId(), equalTo("single-configured-plugin"));
+        assertThat(mavenPomDescriptors).hasSize(1);
+        assertThat(mavenPomDescriptors.get(0).getArtifactId()).isEqualTo("single-configured-plugin");
 
         // There should be one declared plugin
         List<MavenPluginDescriptor> pluginDescriptors =
             query("MATCH (n:Maven:Plugin) RETURN n").getColumn("n");
 
-        assertThat(pluginDescriptors, hasSize(1));
+        assertThat(pluginDescriptors).hasSize(1);
     }
 
     @Test
@@ -64,12 +61,12 @@ class SingleConfiguredPluginIT extends AbstractJavaPluginIT {
         List<MavenPomXmlDescriptor> mavenPomDescriptors =
             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
 
-        assertThat(mavenPomDescriptors, hasSize(1));
-        assertThat(mavenPomDescriptors.get(0).getArtifactId(), equalTo("single-configured-plugin"));
+        assertThat(mavenPomDescriptors).hasSize(1);
+        assertThat(mavenPomDescriptors.get(0).getArtifactId()).isEqualTo("single-configured-plugin");
 
         // There should be one declared plugin
         List<Boolean> inherited = query("MATCH (n:Maven:Plugin) RETURN n.inherited AS i").getColumn("i");
 
-        assertThat(inherited, Matchers.containsInAnyOrder(Boolean.FALSE));
+        assertThat(inherited).containsExactlyInAnyOrder(Boolean.FALSE);
     }
 }
