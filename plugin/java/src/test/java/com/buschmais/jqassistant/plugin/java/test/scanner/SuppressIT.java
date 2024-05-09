@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -23,9 +23,9 @@ class SuppressIT extends AbstractJavaPluginIT {
     void suppressAnnotationMustNotBeScanned() throws RuleException {
         scanClasses(Suppress.class);
         Result<Constraint> constraintResult = validateConstraint("suppress:SuppressAnnotationMustNotBeScanned");
-        assertThat(constraintResult.getStatus(), equalTo(SUCCESS));
+        assertThat(constraintResult.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
-        assertThat(constraintResult.getRows().size(), equalTo(0));
+        assertThat(constraintResult.getRows().size()).isEqualTo(0);
         store.commitTransaction();
     }
 
@@ -56,11 +56,11 @@ class SuppressIT extends AbstractJavaPluginIT {
 
     private void verifySuppress(String constraintId, String conceptId, String column) throws RuleException {
         scanClasses(Suppress.class);
-        assertThat(validateConstraint(constraintId).getStatus(), equalTo(SUCCESS));
+        assertThat(validateConstraint(constraintId).getStatus()).isEqualTo(SUCCESS);
         Result<Concept> supressedItems = applyConcept(conceptId);
-        assertThat(supressedItems.getStatus(), equalTo(SUCCESS));
+        assertThat(supressedItems.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
-        assertThat(supressedItems.getRows().size(), equalTo(1));
+        assertThat(supressedItems.getRows().size()).isEqualTo(1);
         Row row = supressedItems.getRows().get(0);
         JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.getColumns()
             .get(column)

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -28,11 +28,11 @@ class MethodOverloadsIT extends AbstractJavaPluginIT {
     @Test
     void methodOverloads() throws Exception {
         scanClasses(InterfaceType.class);
-        assertThat(applyConcept("java:MethodOverloads").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:MethodOverloads").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERLOADS]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature, otherMethod.signature");
         List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(6));
+        assertThat(rows.size()).isEqualTo(6);
         Map<String, Object> row0 = rows.get(0);
         assertThat((MethodDescriptor) row0.get("method"), methodDescriptor(InterfaceType.class, "doSomething", boolean.class));
         assertThat((MethodDescriptor) row0.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", int.class));
@@ -65,12 +65,12 @@ class MethodOverloadsIT extends AbstractJavaPluginIT {
         scanClasses(InterfaceType.class);
         store.beginTransaction();
         // create existing relations with and without properties
-        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(boolean)' MERGE (m1)-[r:OVERLOADS]->(m2) RETURN r").getColumn("r").size(), equalTo(2));
-        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERLOADS {prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(2));
-        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(java.lang.String)' MERGE (m1)-[r:OVERLOADS]->(m2) RETURN r").getColumn("r").size(), equalTo(2));
+        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(boolean)' MERGE (m1)-[r:OVERLOADS]->(m2) RETURN r").getColumn("r").size()).isEqualTo(2);
+        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERLOADS {prop: 'value'}]->(m2) RETURN r").getColumn("r").size()).isEqualTo(2);
+        assertThat(query("MATCH (i:Interface)-[:DECLARES]->(m1:Method), (i)-[:DECLARES]->(m2:Method) WHERE m1 <> m2 AND m1.name = m2.name AND m1.signature <> m2.signature AND m1.signature='void doSomething(java.lang.String)' MERGE (m1)-[r:OVERLOADS]->(m2) RETURN r").getColumn("r").size()).isEqualTo(2);
         verifyUniqueRelation("OVERLOADS", 6);
         store.commitTransaction();
-        assertThat(applyConcept("java:MethodOverloads").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:MethodOverloads").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         verifyUniqueRelation("OVERLOADS", 6);
         store.commitTransaction();
@@ -82,7 +82,7 @@ class MethodOverloadsIT extends AbstractJavaPluginIT {
      * @param total The total of relations with the given name.
      */
     private void verifyUniqueRelation(String relationName, int total) {
-        assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(2));
-        assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
+        assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size()).isEqualTo(2);
+        assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size()).isEqualTo(total);
     }
 }

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -37,7 +37,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     void throwable() throws Exception {
-        assertThat(applyConcept("java:Throwable").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:Throwable").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Throwable) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -54,7 +54,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     void error() throws Exception {
-        assertThat(applyConcept("java:Error").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:Error").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Error) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -71,7 +71,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     void exception() throws Exception {
-        assertThat(applyConcept("java:Exception").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:Exception").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Exception) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -88,7 +88,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     void runtimeException() throws Exception {
-        assertThat(applyConcept("java:RuntimeException").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:RuntimeException").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:RuntimeException) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));

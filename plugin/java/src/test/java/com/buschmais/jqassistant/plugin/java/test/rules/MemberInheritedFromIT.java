@@ -23,8 +23,8 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptor
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
@@ -37,12 +37,12 @@ class MemberInheritedFromIT extends AbstractJavaPluginIT {
     @ParameterizedTest
     void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MemberDescriptor>> memberDescriptorMatchers) throws RuleException {
         scanClasses(ClientType.class, InterfaceType.class, AbstractClassType.class, SubClassType.class);
-        assertThat(applyConcept("java:MemberInheritedFrom").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:MemberInheritedFrom").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query(
                 "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Member{signature:$signature})-[:INHERITED_FROM]->(inheritedMember:Member) RETURN inheritedMember",
                 MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
-        assertThat(result.getRows().size(), equalTo(memberDescriptorMatchers.size()));
+        assertThat(result.getRows().size()).isEqualTo(memberDescriptorMatchers.size());
         for (Map<String, Object> row : result.getRows()) {
             MemberDescriptor memberDescriptor = (MemberDescriptor) row.get("inheritedMember");
             assertThat(memberDescriptor, anyOf(memberDescriptorMatchers));

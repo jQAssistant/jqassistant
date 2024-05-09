@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -82,7 +82,7 @@ class AnonymousInnerClassIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         TestResult testResult = query(
                 "MATCH (outerClass:Type)-[:DECLARES]->(innerClass:Type)<-[:DECLARES]-(method:Method)<-[:DECLARES]-(outerClass) RETURN outerClass, innerClass, method");
-        assertThat(testResult.getRows().size(), equalTo(1));
+        assertThat(testResult.getRows().size()).isEqualTo(1);
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
         assertThat(outerClass, typeDescriptor(AnonymousInnerClass.class));

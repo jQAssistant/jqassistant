@@ -7,14 +7,17 @@ import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link TypeDescriptor}s.
+ *
+ * @deprecated Replaced by {@link com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorCondition}.
  */
+@Deprecated
 public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescriptor> {
 
     /**
      * Constructor.
      *
      * @param type
-     *            The expected class.
+     *     The expected class.
      */
     protected TypeDescriptorMatcher(Class<?> type) {
         super(TypeDescriptor.class, type.getName());
@@ -24,7 +27,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
      * Constructor.
      *
      * @param name
-     *            The expected full qualified types name.
+     *     The expected full qualified types name.
      */
     protected TypeDescriptorMatcher(String name) {
         super(TypeDescriptor.class, name);
@@ -34,7 +37,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
      * Return a {@link TypeDescriptorMatcher} .
      *
      * @param type
-     *            The expected types.
+     *     The expected types.
      * @return The {@link TypeDescriptorMatcher}.
      */
     public static Matcher<? super TypeDescriptor> typeDescriptor(Class<?> type) {
@@ -45,7 +48,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
      * Return a {@link TypeDescriptorMatcher}.
      *
      * @param name
-     *            The expected full qualified types name.
+     *     The expected full qualified types name.
      * @return The {@link TypeDescriptorMatcher}.
      */
     public static Matcher<? super TypeDescriptor> typeDescriptor(String name) {

@@ -8,16 +8,13 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyDescriptorMatcher.propertyDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.containsProperties;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.hasNoProperties;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.hasProperties;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PropertyFileDescriptorMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 
 class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
 
@@ -35,8 +32,8 @@ class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
         List<FileDescriptor> fileDescriptors =
             query("MATCH (f:File:Xml:Properties) RETURN f").getColumn("f");
 
-        assertThat(fileDescriptors, CoreMatchers.notNullValue());
-        assertThat(fileDescriptors, hasSize(1));
+        assertThat(fileDescriptors).isNotNull();
+        assertThat(fileDescriptors).hasSize(1);
 
         PropertyFileDescriptor propertyFileDescriptor = (PropertyFileDescriptor)fileDescriptors.get(0);
         assertThat(propertyFileDescriptor, hasNoProperties());
@@ -49,8 +46,8 @@ class XmlPropertyFileScannerPluginIT extends AbstractJavaPluginIT {
         List<FileDescriptor> fileDescriptors =
             query("MATCH (f:File:Xml:Properties) RETURN f").getColumn("f");
 
-        assertThat(fileDescriptors, CoreMatchers.notNullValue());
-        assertThat(fileDescriptors, hasSize(1));
+        assertThat(fileDescriptors).isNotNull();
+        assertThat(fileDescriptors).hasSize(1);
 
         PropertyFileDescriptor propertyFileDescriptor = (PropertyFileDescriptor)fileDescriptors.get(0);
 

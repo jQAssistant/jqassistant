@@ -12,7 +12,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
-import static org.hamcrest.CoreMatchers.endsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -33,10 +33,10 @@ class PropertyFileIT extends AbstractJavaPluginIT {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/test.properties");
         store.beginTransaction();
         List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
-        assertThat(propertyFileDescriptors.size(), equalTo(1));
+        assertThat(propertyFileDescriptors.size()).isEqualTo(1);
         PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
         Matcher<? super PropertyDescriptor> valueMatcher = valueDescriptor("foo", equalTo("bar"));
-        assertThat(propertyFileDescriptor.getFileName(), endsWith("/META-INF/test.properties"));
+        assertThat(propertyFileDescriptor.getFileName()).endsWith("/META-INF/test.properties");
         assertThat(propertyFileDescriptor.getProperties(), hasItem(valueMatcher));
         store.commitTransaction();
     }
@@ -52,10 +52,10 @@ class PropertyFileIT extends AbstractJavaPluginIT {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/invalid.properties");
         store.beginTransaction();
         List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
-        assertThat(propertyFileDescriptors.size(), equalTo(1));
+        assertThat(propertyFileDescriptors.size()).isEqualTo(1);
         PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
-        assertThat(propertyFileDescriptor.getFileName(), endsWith("/META-INF/invalid.properties"));
-        assertThat(propertyFileDescriptor.getProperties().size(), equalTo(0));
+        assertThat(propertyFileDescriptor.getFileName()).endsWith("/META-INF/invalid.properties");
+        assertThat(propertyFileDescriptor.getProperties().size()).isEqualTo(0);
         store.commitTransaction();
     }
 }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -25,10 +25,10 @@ class DefaultMethodIT extends AbstractJavaPluginIT {
     @Test
     void defaultMethod() throws Exception {
         scanClasses(DefaultMethod.class);
-        assertThat(applyConcept("java:DefaultMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:DefaultMethod").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query("MATCH (m:Method:Default) RETURN m");
-        assertThat(result.getRows().size(), equalTo(1));
+        assertThat(result.getRows().size()).isEqualTo(1);
         assertThat(result.getColumn("m"), hasItem(methodDescriptor(DefaultMethod.class, "add", int.class, int.class)));
         store.commitTransaction();
     }

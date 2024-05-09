@@ -21,8 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -78,9 +77,9 @@ class ServiceLoaderIT extends AbstractJavaPluginIT {
             }
         }, getScanner());
         List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:Properties:File) RETURN s").getColumn("s");
-        assertThat(s.size(), equalTo(1));
+        assertThat(s.size()).isEqualTo(1);
         ServiceLoaderDescriptor serviceLoaderDescriptor = s.get(0);
-        assertThat(serviceLoaderDescriptor.getFileName(), equalTo(path));
+        assertThat(serviceLoaderDescriptor.getFileName()).isEqualTo(path);
         store.commitTransaction();
     }
 
@@ -91,13 +90,13 @@ class ServiceLoaderIT extends AbstractJavaPluginIT {
     private void verifyServiceLoaderDescriptor() {
         store.beginTransaction();
         List<ServiceLoaderDescriptor> serviceLoaderDescriptors = query("MATCH (sd:ServiceLoader:File) RETURN sd").getColumn("sd");
-        assertThat(serviceLoaderDescriptors.size(), equalTo(1));
+        assertThat(serviceLoaderDescriptors.size()).isEqualTo(1);
 
         ServiceLoaderDescriptor serviceLoaderDescriptor = serviceLoaderDescriptors.get(0);
-        assertThat(serviceLoaderDescriptor.getFileName(), endsWith("/META-INF/services/" + Service.class.getName()));
+        assertThat(serviceLoaderDescriptor.getFileName()).endsWith("/META-INF/services/" + Service.class.getName());
         assertThat(serviceLoaderDescriptor.getType(), typeDescriptor(Service.class));
         List<TypeDescriptor> serviceTypes = serviceLoaderDescriptor.getContains();
-        assertThat(serviceTypes.size(), equalTo(2));
+        assertThat(serviceTypes.size()).isEqualTo(2);
         assertThat(serviceTypes, hasItem(typeDescriptor(ServiceImpl.class)));
         assertThat(serviceTypes, hasItem(typeDescriptor(OuterClass.InnerClassServiceImpl.class)));
 

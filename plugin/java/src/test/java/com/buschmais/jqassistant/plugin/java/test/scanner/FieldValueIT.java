@@ -9,8 +9,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.fieldvalue.FieldVa
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Contains test which verify correct scanning static field values.
@@ -25,8 +24,8 @@ class FieldValueIT extends AbstractJavaPluginIT {
     void fieldValues() {
         scanClasses(FieldValue.class);
         store.beginTransaction();
-        assertThat(getFieldValue("stringValue", String.class), equalTo("StringValue"));
-        assertThat(getFieldValue("longValue", Number.class).longValue(), equalTo(1l));
+        assertThat(getFieldValue("stringValue", String.class)).isEqualTo("StringValue");
+        assertThat(getFieldValue("longValue", Number.class).longValue()).isEqualTo(1l);
         store.commitTransaction();
     }
 
@@ -35,7 +34,7 @@ class FieldValueIT extends AbstractJavaPluginIT {
         TestResult testResult = query("MATCH (:Type)-[:DECLARES]->(f:Field)-[:HAS]->(v:Value:Primitive) WHERE f.name=$fieldName RETURN v.value as value",
                 params);
         List<Map<String, Object>> rows = testResult.getRows();
-        assertThat(rows.size(), equalTo(1));
+        assertThat(rows.size()).isEqualTo(1);
         Map<String, Object> row = rows.get(0);
         return type.cast(row.get("value"));
     }

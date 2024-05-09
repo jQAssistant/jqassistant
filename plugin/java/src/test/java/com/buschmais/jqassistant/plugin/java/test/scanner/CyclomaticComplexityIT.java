@@ -10,9 +10,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.metric.CyclomaticC
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CyclomaticComplexityIT extends AbstractJavaPluginIT {
 
@@ -28,13 +26,13 @@ class CyclomaticComplexityIT extends AbstractJavaPluginIT {
         scanClasses(CyclomaticComplexityType.class);
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (:Class)-[:DECLARES]->(m:Method) return m").getColumn("m");
-        assertThat(methods.size(), equalTo(expectedComplexities.size()));
+        assertThat(methods.size()).isEqualTo(expectedComplexities.size());
         for (MethodDescriptor methodDescriptor : methods) {
             String name = methodDescriptor.getName();
             int cyclomaticComplexity = methodDescriptor.getCyclomaticComplexity();
             Integer expectedComplexity = expectedComplexities.get(name);
-            assertThat("Expecting a CC for method " + name, expectedComplexity, notNullValue());
-            assertThat("Invalid CC for method " + name, cyclomaticComplexity, equalTo(expectedComplexity));
+            assertThat(expectedComplexity).as("Expecting a CC for method " + name).isNotNull();
+            assertThat(cyclomaticComplexity).as("Invalid CC for method " + name).isEqualTo(expectedComplexity);
         }
         store.commitTransaction();
     }

@@ -10,9 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 
 /**
  * Verifies functionality related to byte code and java versions.
@@ -24,9 +23,9 @@ class ByteCodeVersionIT extends AbstractJavaPluginIT {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' RETURN t").getColumn("t");
-        assertThat(types.size(), equalTo(1));
+        assertThat(types.size()).isEqualTo(1);
         ClassFileDescriptor pojo = types.get(0);
-        assertThat(pojo.getByteCodeVersion(), greaterThan(52)); // Java 8
+        assertThat(pojo.getByteCodeVersion()).isGreaterThan(52); // Java 8
         store.commitTransaction();
 
     }
@@ -34,10 +33,10 @@ class ByteCodeVersionIT extends AbstractJavaPluginIT {
     @Test
     void javaVersion() throws Exception {
         scanClasses(Pojo.class);
-        assertThat(applyConcept("java:JavaVersion").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:JavaVersion").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion starts with 'Java ' RETURN t").getColumn("t");
-        assertThat(types.size(), equalTo(1));
+        assertThat(types.size()).isEqualTo(1);
         ClassFileDescriptor pojo = types.get(0);
         assertThat(pojo, typeDescriptor(Pojo.class));
         store.commitTransaction();

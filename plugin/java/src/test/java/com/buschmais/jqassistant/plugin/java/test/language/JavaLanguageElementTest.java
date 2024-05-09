@@ -10,8 +10,7 @@ import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguage
 import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Package;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Optional.of;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class JavaLanguageElementTest extends AbstractLanguageElementTest {
@@ -24,7 +23,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(newHashSet(getArtifactFileDescriptor())).when(descriptor).getParents();
 
         SourceProvider<PackageDescriptor> sourceProvider = Package.getSourceProvider();
-        assertThat(sourceProvider.getName(descriptor), equalTo("com.buschmais"));
+        assertThat(sourceProvider.getName(descriptor)).isEqualTo("com.buschmais");
 
         verify(descriptor, Package, "com.buschmais", "/com/buschmais");
     }

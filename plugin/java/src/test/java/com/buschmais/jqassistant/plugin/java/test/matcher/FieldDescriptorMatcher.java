@@ -8,26 +8,30 @@ import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@FieldDescriptor}s.
+ *
+ * @deprecated Replaced by {@link com.buschmais.jqassistant.plugin.java.test.assertj.FieldDescriptorCondition}.
  */
+@Deprecated
 public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<FieldDescriptor> {
 
     /**
      * Constructor.
      *
      * @param field
-     *            The expected field.
+     *     The expected field.
      */
     protected FieldDescriptorMatcher(Field field) {
-        super(FieldDescriptor.class, field, field.getType().getTypeName() + " " + field.getName());
+        super(FieldDescriptor.class, field, field.getType()
+            .getTypeName() + " " + field.getName());
     }
 
     /**
      * Return a {@link FieldDescriptorMatcher}.
      *
      * @param type
-     *            The class containing the expected field.
+     *     The class containing the expected field.
      * @param field
-     *            The name of the expected field.
+     *     The name of the expected field.
      * @return The {@link FieldDescriptorMatcher}.
      */
     public static Matcher<? super FieldDescriptor> fieldDescriptor(Class<?> type, String field) throws NoSuchFieldException {
@@ -38,7 +42,7 @@ public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<Fiel
      * Return a {@link FieldDescriptorMatcher}.
      *
      * @param field
-     *            The expected field.
+     *     The expected field.
      * @return The {@link FieldDescriptorMatcher}.
      */
     public static Matcher<? super FieldDescriptor> fieldDescriptor(Field field) {
@@ -49,7 +53,7 @@ public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<Fiel
      * Return a {@link FieldDescriptorMatcher} for an enumeration value.
      *
      * @param enumeration
-     *            The expected enumeration.
+     *     The expected enumeration.
      * @return The {@link FieldDescriptorMatcher}.
      */
     public static Matcher<? super FieldDescriptor> fieldDescriptor(Enum<? extends Enum<?>> enumeration) throws NoSuchFieldException {

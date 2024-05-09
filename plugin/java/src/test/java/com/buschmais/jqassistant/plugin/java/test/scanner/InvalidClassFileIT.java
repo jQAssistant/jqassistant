@@ -16,9 +16,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies graceful handling of invalid class files.
@@ -46,12 +44,12 @@ class InvalidClassFileIT extends AbstractJavaPluginIT {
             });
         }
         store.beginTransaction();
-        assertThat(fileDescriptors.size(), equalTo(1));
+        assertThat(fileDescriptors.size()).isEqualTo(1);
         FileDescriptor fileDescriptor = fileDescriptors.get(0);
-        assertThat(fileDescriptor, instanceOf(ClassFileDescriptor.class));
+        assertThat(fileDescriptor).isInstanceOf(ClassFileDescriptor.class);
         ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
-        assertThat(classFileDescriptor.getFileName(), equalTo(path));
-        assertThat(classFileDescriptor.isValid(), equalTo(false));
+        assertThat(classFileDescriptor.getFileName()).isEqualTo(path);
+        assertThat(classFileDescriptor.isValid()).isEqualTo(false);
         store.commitTransaction();
 
     }
@@ -61,11 +59,11 @@ class InvalidClassFileIT extends AbstractJavaPluginIT {
         scanClasses(InvalidClassFileIT.class);
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors = query("MATCH (c:Class:File) RETURN c").getColumn("c");
-        assertThat(fileDescriptors.size(), equalTo(1));
+        assertThat(fileDescriptors.size()).isEqualTo(1);
         FileDescriptor fileDescriptor = fileDescriptors.get(0);
-        assertThat(fileDescriptor, instanceOf(ClassFileDescriptor.class));
+        assertThat(fileDescriptor).isInstanceOf(ClassFileDescriptor.class);
         ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
-        assertThat(classFileDescriptor.isValid(), equalTo(true));
+        assertThat(classFileDescriptor.isValid()).isEqualTo(true);
         store.commitTransaction();
 
     }

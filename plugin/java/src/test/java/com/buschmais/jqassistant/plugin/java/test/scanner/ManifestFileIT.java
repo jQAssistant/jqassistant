@@ -10,9 +10,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Contains tests regarding manifest files.
@@ -30,14 +28,14 @@ class ManifestFileIT extends AbstractJavaPluginIT {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         store.beginTransaction();
         List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:Manifest:File) RETURN mf").getColumn("mf");
-        assertThat(manifestFileDescriptors.size(), equalTo(1));
+        assertThat(manifestFileDescriptors.size()).isEqualTo(1);
 
         ManifestFileDescriptor manifestFileDescriptor = manifestFileDescriptors.get(0);
-        assertThat(manifestFileDescriptor.getFileName(), endsWith("/META-INF/MANIFEST.MF"));
+        assertThat(manifestFileDescriptor.getFileName()).endsWith("/META-INF/MANIFEST.MF");
 
         List<ManifestSectionDescriptor> manifestSections = query("MATCH (mf:Manifest:File)-[:DECLARES]->(ms:ManifestSection) WHERE ms.name='Main' RETURN ms")
                 .getColumn("ms");
-        assertThat(manifestSections.size(), equalTo(1));
+        assertThat(manifestSections.size()).isEqualTo(1);
         store.commitTransaction();
     }
 }

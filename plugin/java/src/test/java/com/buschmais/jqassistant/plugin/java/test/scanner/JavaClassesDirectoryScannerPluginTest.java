@@ -19,8 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +69,7 @@ class JavaClassesDirectoryScannerPluginTest {
         verify(context).peekOrDefault(JavaArtifactFileDescriptor.class, null);
         verify(store).create(JavaClassesDirectoryDescriptor.class);
 
-        assertThat(descriptor, is(artifact));
+        assertThat(descriptor).isEqualTo(artifact);
     }
 
     /**
@@ -92,6 +91,6 @@ class JavaClassesDirectoryScannerPluginTest {
         verify(context).peekOrDefault(JavaArtifactFileDescriptor.class, null);
         verify(store, never()).create(JavaClassesDirectoryDescriptor.class);
 
-        assertThat(descriptor, is(artifact));
+        assertThat(descriptor).isEqualTo(artifact);
     }
 }

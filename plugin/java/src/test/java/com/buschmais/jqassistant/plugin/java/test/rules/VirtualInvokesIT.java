@@ -22,8 +22,8 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCC
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
@@ -36,12 +36,12 @@ class VirtualInvokesIT extends AbstractJavaPluginIT {
     @ParameterizedTest
     void virtualInvokes(String clientMethodName, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
         scanClasses(InterfaceType.class, AbstractClassType.class, SubClassType.class, ClientType.class);
-        assertThat(applyConcept("java:VirtualInvokes").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:VirtualInvokes").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query(
                 "MATCH (:Type{name:'ClientType'})-[:DECLARES]->(:Method{name:$clientMethodName})-[:VIRTUAL_INVOKES]->(invokedMethod:Method) RETURN invokedMethod",
                 MapBuilder.<String, Object> builder().entry("clientMethodName", clientMethodName).build());
-        assertThat(result.getRows().size(), equalTo(methodDescriptorMatchers.size()));
+        assertThat(result.getRows().size()).isEqualTo(methodDescriptorMatchers.size());
         for (Map<String, Object> row : result.getRows()) {
             MethodDescriptor methodDescriptor = (MethodDescriptor) row.get("invokedMethod");
             assertThat(methodDescriptor, anyOf(methodDescriptorMatchers));

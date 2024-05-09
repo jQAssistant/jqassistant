@@ -12,8 +12,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.packageannotation.Pa
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the concept java:PackageAnnotatedBy.
@@ -27,11 +26,11 @@ class PackageAnnotatedByIT extends AbstractJavaPluginIT {
     void packageAnnotatedBy() throws Exception {
         scanClassesAndPackages(PackageClass.class);
         Result<Concept> result = applyConcept("java:PackageAnnotatedBy");
-        assertThat(result.getStatus(), equalTo(SUCCESS));
-        assertThat(result.getRows().size(), equalTo(1));
+        assertThat(result.getStatus()).isEqualTo(SUCCESS);
+        assertThat(result.getRows().size()).isEqualTo(1);
 
         store.beginTransaction();
-        assertThat(query("MATCH (p:Package)-[:ANNOTATED_BY]->(:Annotation) RETURN p").getRows().size(), equalTo(1));
+        assertThat(query("MATCH (p:Package)-[:ANNOTATED_BY]->(:Annotation) RETURN p").getRows().size()).isEqualTo(1);
         store.commitTransaction();
     }
 
