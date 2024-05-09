@@ -9,6 +9,8 @@ import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher for {@link FileDescriptor}s.
+ *
+ * @deprecated Replaced by {@link com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition}.
  */
 public class FileDescriptorMatcher extends TypeSafeMatcher<FileDescriptor> {
 
@@ -25,7 +27,9 @@ public class FileDescriptorMatcher extends TypeSafeMatcher<FileDescriptor> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("file descriptor with name '").appendDescriptionOf(fileNameMatcher).appendText("'");
+        description.appendText("file descriptor with name '")
+            .appendDescriptionOf(fileNameMatcher)
+            .appendText("'");
     }
 
     public static Matcher<? super FileDescriptor> fileDescriptorMatcher(String fileName) {

@@ -7,14 +7,17 @@ import org.hamcrest.Matcher;
 
 /**
  * A matcher for {@link ArtifactFileDescriptor}s.
+ *
+ * @deprecated Replaced by {@link com.buschmais.jqassistant.plugin.common.test.assertj.ArtifactDescriptorCondition}
  */
+@Deprecated
 public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<ArtifactFileDescriptor> {
 
     /**
      * Constructor.
      *
      * @param id
-     *            The expected artifact id.
+     *     The expected artifact id.
      */
     protected ArtifactDescriptorMatcher(String id) {
         super(ArtifactFileDescriptor.class, id);
@@ -24,7 +27,7 @@ public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<Artifac
      * Return a {@link ArtifactDescriptorMatcher}.
      *
      * @param id
-     *            The artifact id.
+     *     The artifact id.
      * @return The {@link ArtifactDescriptorMatcher}.
      */
     public static Matcher<? super ArtifactFileDescriptor> artifactDescriptor(String id) {

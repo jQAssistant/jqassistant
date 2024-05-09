@@ -12,10 +12,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
+import static com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition.fileDescriptor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 /**
  * Verifies scanning of ZIP arichves.
@@ -52,8 +50,8 @@ class ZipScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPl
             assertThat(descriptor).isInstanceOf(ZipArchiveDescriptor.class);
             ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
             assertThat(archiveDescriptor.isValid()).isEqualTo(true);
-            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test1.txt")));
-            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test2.txt")));
+            assertThat(archiveDescriptor.getContains()).haveAtLeastOne(fileDescriptor("/test1.txt"));
+            assertThat(archiveDescriptor.getContains()).haveAtLeastOne(fileDescriptor("/test2.txt"));
             store.commitTransaction();
         } finally {
             archive.delete();

@@ -14,10 +14,8 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirec
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
+import static com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition.fileDescriptor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 /**
  * Verifies file/directory scanning.
@@ -26,22 +24,21 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
-     *
-     * @throws IOException
-     *             If the test fails.
      */
     @Test
-    void customDirectory() throws IOException {
+    void customDirectory() {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
         assertThat(descriptor).isInstanceOf(DirectoryDescriptor.class);
         DependentDirectoryDescriptor customDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
-        String expectedFileName = classesDirectory.getAbsolutePath().replace("\\", "/");
-        assertThat(customDirectoryDescriptor.getFileName()).isEqualTo(expectedFileName);
-        String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
-        assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
-        assertThat(customDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
+        String expectedDirectoryName = classesDirectory.getAbsolutePath()
+            .replace("\\", "/");
+        assertThat(customDirectoryDescriptor.getFileName()).isEqualTo(expectedDirectoryName);
+        String expectedFileName = "/" + FileScannerIT.class.getName()
+            .replace('.', '/') + ".class";
+        assertThat(customDirectoryDescriptor.getContains()).haveAtLeastOne(fileDescriptor(expectedFileName));
+        assertThat(customDirectoryDescriptor.getContains()).doNotHave(fileDescriptor("/"));
         assertThat(customDirectoryDescriptor.getValue()).isEqualTo("TEST");
         store.commitTransaction();
     }
@@ -50,20 +47,22 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
      * Scan a directory using two dependent plugins for a custom scope.
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void directoryContainsChildren() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
-        String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
+        String expectedFilename = "/" + FileScannerIT.class.getName()
+            .replace('.', '/') + ".class";
 
         Scanner scanner = new Scanner(expectedFilename).useDelimiter("/");
-        StringBuffer currentName = new StringBuffer();
+        StringBuilder currentName = new StringBuilder();
         FileDescriptor previous = null;
         while (scanner.hasNext()) {
-            currentName.append('/').append(scanner.next());
+            currentName.append('/')
+                .append(scanner.next());
             Map<String, Object> params = new HashMap<>();
             params.put("name", currentName.toString());
             List<FileDescriptor> files = query("match (f:File) where f.fileName=$name return f", params).getColumn("f");

@@ -12,10 +12,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
+import static com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition.fileDescriptor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 /**
  * Verifies scanning of TAR arichves.
@@ -39,9 +37,10 @@ class TarScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPl
             FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), DefaultScope.NONE);
             assertThat(descriptor).isInstanceOf(TarArchiveDescriptor.class);
             TarArchiveDescriptor archiveDescriptor = (TarArchiveDescriptor) descriptor;
-            assertThat(archiveDescriptor.getContains().size()).isEqualTo(2);
-            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test1.txt")));
-            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test2.txt")));
+            assertThat(archiveDescriptor.getContains()
+                .size()).isEqualTo(2);
+            assertThat(archiveDescriptor.getContains()).haveAtLeastOne(fileDescriptor("/test1.txt"));
+            assertThat(archiveDescriptor.getContains()).haveAtLeastOne(fileDescriptor("/test2.txt"));
             store.commitTransaction();
         } finally {
             archive.delete();
