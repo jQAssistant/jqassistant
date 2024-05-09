@@ -1,6 +1,10 @@
 
 = Neo4j Backend
 
+== 2.3.0
+
+* Upgraded to Neo4j 4.4.33
+
 == 2.2.0
 * Upgraded to Neo4j 4.4.32 and 5.19.0
 * Log Cypher warnings provided from Neo4j (e.g. notifications about using deprecated features)
