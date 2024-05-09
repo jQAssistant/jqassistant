@@ -14,10 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies rules execution based of scripts.
@@ -26,55 +23,55 @@ public class ScriptIT extends com.buschmais.jqassistant.core.test.plugin.Abstrac
 
     @Test
     public void javaScriptXmlConcept() throws Exception {
-        assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("javascript:XmlTestConcept").getStatus()).isEqualTo(SUCCESS);
         verifyResults(reportPlugin.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConstraint() throws Exception {
-        assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
+        assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus()).isEqualTo(SUCCESS);
         verifyResults(reportPlugin.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void groovyXmlConcept() throws Exception {
-        assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("groovy:XmlTestConcept").getStatus()).isEqualTo(SUCCESS);
         verifyResults(reportPlugin.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void groovyXmlConstraint() throws Exception {
-        assertThat(validateConstraint("groovy:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
+        assertThat(validateConstraint("groovy:XmlTestConstraint").getStatus()).isEqualTo(SUCCESS);
         verifyResults(reportPlugin.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void rubyXmlConcept() throws Exception {
-        assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("ruby:XmlTestConcept").getStatus()).isEqualTo(SUCCESS);
         verifyResults(reportPlugin.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void rubyXmlConstraint() throws Exception {
-        assertThat(validateConstraint("ruby:XmlTestConstraint").getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint("ruby:XmlTestConstraint").getStatus()).isEqualTo(FAILURE);
         verifyResults(reportPlugin.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
     private <R extends ExecutableRule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {
         store.beginTransaction();
-        assertThat("Expecting one analysis result.", results.size(), equalTo(1));
+        assertThat(results.size()).as("Expecting one analysis result.").isEqualTo(1);
         Result<?> result = results.get(ruleName);
-        assertThat("Expecting a result for " + ruleName, result, notNullValue());
-        assertThat("Expecting severity " + severity, result.getSeverity(), equalTo(severity));
+        assertThat(result).as("Expecting a result for " + ruleName).isNotNull();
+        assertThat(result.getSeverity()).as("Expecting severity " + severity).isEqualTo(severity);
         List<Row> rows = result.getRows();
-        assertThat("Expecting one row for rule " + ruleName, rows.size(), equalTo(1));
+        assertThat(rows.size()).as("Expecting one row for rule " + ruleName).isEqualTo(1);
         Map<String, Column<?>> row = rows.get(0).getColumns();
         Column column = row.get("test");
-        assertThat("Expecting a column test", column, notNullValue());
+        assertThat(column).as("Expecting a column test").isNotNull();
         Object value = column.getValue();
-        assertThat("Expecting a value of type " + TestLabelDescriptor.class.getName(), value, instanceOf(TestLabelDescriptor.class));
+        assertThat(value).as("Expecting a value of type " + TestLabelDescriptor.class.getName()).isInstanceOf(TestLabelDescriptor.class);
         TestLabelDescriptor testLabelDescriptor = (TestLabelDescriptor) value;
-        assertThat("Expecting property with value 'test'", testLabelDescriptor.getName(), equalTo("test"));
+        assertThat(testLabelDescriptor.getName()).as("Expecting property with value 'test'").isEqualTo("test");
         store.commitTransaction();
     }
 }

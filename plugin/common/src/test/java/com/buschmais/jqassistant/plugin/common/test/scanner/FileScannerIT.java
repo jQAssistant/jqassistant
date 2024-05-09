@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirec
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -34,14 +35,14 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
-        assertThat(descriptor, instanceOf(DirectoryDescriptor.class));
+        assertThat(descriptor).isInstanceOf(DirectoryDescriptor.class);
         DependentDirectoryDescriptor customDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
         String expectedFileName = classesDirectory.getAbsolutePath().replace("\\", "/");
-        assertThat(customDirectoryDescriptor.getFileName(), equalTo(expectedFileName));
+        assertThat(customDirectoryDescriptor.getFileName()).isEqualTo(expectedFileName);
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
         assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
         assertThat(customDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
-        assertThat(customDirectoryDescriptor.getValue(), equalTo("TEST"));
+        assertThat(customDirectoryDescriptor.getValue()).isEqualTo("TEST");
         store.commitTransaction();
     }
 
@@ -66,11 +67,11 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
             Map<String, Object> params = new HashMap<>();
             params.put("name", currentName.toString());
             List<FileDescriptor> files = query("match (f:File) where f.fileName=$name return f", params).getColumn("f");
-            assertThat(files.size(), equalTo(1));
+            assertThat(files.size()).isEqualTo(1);
             FileDescriptor current = files.get(0);
             if (previous != null) {
-                assertThat(previous, instanceOf(DirectoryDescriptor.class));
-                assertThat(((DirectoryDescriptor) previous).getContains(), hasItem(current));
+                assertThat(previous).isInstanceOf(DirectoryDescriptor.class);
+                assertThat(((DirectoryDescriptor) previous).getContains()).contains(current);
             }
             previous = current;
         }

@@ -13,8 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -39,9 +38,9 @@ class ZipScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPl
         archive.deleteOnExit();
         store.beginTransaction();
         FileDescriptor descriptor = getScanner().scan(archive, archive.getAbsolutePath(), null);
-        assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
+        assertThat(descriptor).isInstanceOf(ZipArchiveDescriptor.class);
         ZipArchiveDescriptor zipArchiveDescriptor = (ZipArchiveDescriptor) descriptor;
-        assertThat(zipArchiveDescriptor.isValid(), equalTo(false));
+        assertThat(zipArchiveDescriptor.isValid()).isEqualTo(false);
         store.commitTransaction();
     }
 
@@ -50,9 +49,9 @@ class ZipScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPl
         try {
             store.beginTransaction();
             FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), DefaultScope.NONE);
-            assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
+            assertThat(descriptor).isInstanceOf(ZipArchiveDescriptor.class);
             ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
-            assertThat(archiveDescriptor.isValid(), equalTo(true));
+            assertThat(archiveDescriptor.isValid()).isEqualTo(true);
             assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test1.txt")));
             assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test2.txt")));
             store.commitTransaction();

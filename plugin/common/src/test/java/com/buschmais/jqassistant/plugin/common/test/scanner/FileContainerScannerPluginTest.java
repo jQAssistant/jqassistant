@@ -24,9 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -78,13 +76,13 @@ public class FileContainerScannerPluginTest {
     public void contains() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
         DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "B", "C", "reject"), "/", DefaultScope.NONE, scanner);
-        assertThat(directoryDescriptor, notNullValue());
+        assertThat(directoryDescriptor).isNotNull();
 
         verify(directoryDescriptor).setFileName("/");
 
         List<FileDescriptor> contains = scannerPlugin.getContains();
-        assertThat(contains.size(), equalTo(3));
-        assertThat(contains, equalTo(directoryDescriptor.getContains()));
+        assertThat(contains.size()).isEqualTo(3);
+        assertThat(contains).isEqualTo(directoryDescriptor.getContains());
         FileDescriptor a = contains.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = contains.get(1);
@@ -93,8 +91,8 @@ public class FileContainerScannerPluginTest {
         verify(c).setFileName("/C");
 
         List<FileDescriptor> requires = scannerPlugin.getRequires();
-        assertThat(requires.size(), equalTo(1));
-        assertThat(requires, equalTo(directoryDescriptor.getRequires()));
+        assertThat(requires.size()).isEqualTo(1);
+        assertThat(requires).isEqualTo(directoryDescriptor.getRequires());
         FileDescriptor requiredFileDescriptor = requires.get(0);
         verify(requiredFileDescriptor).setFileName("/D");
     }
@@ -103,21 +101,21 @@ public class FileContainerScannerPluginTest {
     public void requires() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
         DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/", DefaultScope.NONE, scanner);
-        assertThat(directoryDescriptor, notNullValue());
+        assertThat(directoryDescriptor).isNotNull();
 
         verify(directoryDescriptor).setFileName("/");
 
         List<FileDescriptor> contains = scannerPlugin.getContains();
-        assertThat(contains.size(), equalTo(2));
-        assertThat(contains, equalTo(directoryDescriptor.getContains()));
+        assertThat(contains.size()).isEqualTo(2);
+        assertThat(contains).isEqualTo(directoryDescriptor.getContains());
         FileDescriptor a = contains.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = contains.get(1);
         verify(b).setFileName("/D");
 
         List<FileDescriptor> requires = scannerPlugin.getRequires();
-        assertThat(requires.size(), equalTo(0));
-        assertThat(requires, equalTo(directoryDescriptor.getRequires()));
+        assertThat(requires.size()).isEqualTo(0);
+        assertThat(requires).isEqualTo(directoryDescriptor.getRequires());
     }
 
     private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {

@@ -20,9 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
@@ -53,7 +51,7 @@ class URLScannerPluginTest {
         try (FileResource fileResource = scan("test://user:secret@myhost:8080/path?value1=test1&value2=test2#anchor",
             "test://myhost:8080/path?value1=test1&value2=test2#anchor")) {
             String content = IOUtils.toString(fileResource.createStream(), StandardCharsets.UTF_8);
-            assertThat(content, startsWith("Basic "));
+            assertThat(content).startsWith("Basic ");
         }
     }
 
@@ -63,7 +61,7 @@ class URLScannerPluginTest {
             .toString();
         try (FileResource fileResource = scan(testResource, testResource)) {
             File file = fileResource.getFile();
-            assertThat(file.getPath(), endsWith("/test-resource.txt"));
+            assertThat(file.getPath()).endsWith("/test-resource.txt");
         }
     }
 

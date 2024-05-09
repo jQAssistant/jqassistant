@@ -27,10 +27,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAIL
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class JUnitReportPluginTest extends AbstractReportPluginTest {
@@ -76,7 +73,7 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
         plugin.end();
 
         File junitReportDirectory = reportContext.getReportDirectory("junit");
-        assertThat(junitReportDirectory.exists(), equalTo(true));
+        assertThat(junitReportDirectory.exists()).isEqualTo(true);
 
         Testsuite rootTestSuite = getTestsuite(junitReportDirectory, "TEST-jqassistant.Group.xml");
         verifyTestSuite(rootTestSuite, 2, 0, 0);
@@ -102,48 +99,48 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
     }
 
     private void verifyTestSuite(Testsuite testSuite, int expectedTests, int expectedFailures, int expectedErrors) {
-        assertThat(testSuite.getTests(), equalTo(Integer.toString(expectedTests)));
-        assertThat(testSuite.getFailures(), equalTo(Integer.toString(expectedFailures)));
-        assertThat(testSuite.getErrors(), equalTo(Integer.toString(expectedErrors)));
-        assertThat(testSuite.getTestcase().size(), equalTo(expectedTests));
-        assertThat(Double.valueOf(testSuite.getTime()), greaterThanOrEqualTo(0.0));
+        assertThat(testSuite.getTests()).isEqualTo(Integer.toString(expectedTests));
+        assertThat(testSuite.getFailures()).isEqualTo(Integer.toString(expectedFailures));
+        assertThat(testSuite.getErrors()).isEqualTo(Integer.toString(expectedErrors));
+        assertThat(testSuite.getTestcase().size()).isEqualTo(expectedTests);
+        assertThat(Double.valueOf(testSuite.getTime())).isGreaterThanOrEqualTo(0.0);
     }
 
     private Testsuite getTestsuite(File junitReportDirectory, String fileName) throws IOException {
         File report = new File(junitReportDirectory, fileName);
-        assertThat(report.exists(), equalTo(true));
+        assertThat(report.exists()).isEqualTo(true);
         return unmarshaller.unmarshal(new FileInputStream(report));
     }
 
     private void verifyTestCaseSuccess(Testcase testCase, String expectedClassName) {
         verifyTestCase(testCase, expectedClassName);
-        assertThat(testCase.getFailure().size(), equalTo(0));
-        assertThat(testCase.getError().size(), equalTo(0));
+        assertThat(testCase.getFailure().size()).isEqualTo(0);
+        assertThat(testCase.getError().size()).isEqualTo(0);
     }
 
     private void verifyTestCaseFailure(Testcase testCase, String expectedClassName, String expectedMessage) {
         verifyTestCase(testCase, expectedClassName);
         List<Failure> failures = testCase.getFailure();
-        assertThat(failures.size(), equalTo(1));
-        assertThat(testCase.getError().size(), equalTo(0));
+        assertThat(failures.size()).isEqualTo(1);
+        assertThat(testCase.getError().size()).isEqualTo(0);
         Failure failure = failures.get(0);
-        assertThat(failure.getMessage(), equalTo(expectedMessage));
-        assertThat(failure.getContent(), equalTo(EXPECTED_CONTENT));
+        assertThat(failure.getMessage()).isEqualTo(expectedMessage);
+        assertThat(failure.getContent()).isEqualTo(EXPECTED_CONTENT);
     }
 
     private void verifyTestCaseError(Testcase testCase, String expectedClassName, String expectedMessage) {
         verifyTestCase(testCase, expectedClassName);
-        assertThat(testCase.getFailure().size(), equalTo(0));
-        assertThat(testCase.getError().size(), equalTo(1));
+        assertThat(testCase.getFailure().size()).isEqualTo(0);
+        assertThat(testCase.getError().size()).isEqualTo(1);
         Error error = testCase.getError().get(0);
-        assertThat(error.getMessage(), equalTo(expectedMessage));
-        assertThat(error.getContent(), equalTo(EXPECTED_CONTENT));
+        assertThat(error.getMessage()).isEqualTo(expectedMessage);
+        assertThat(error.getContent()).isEqualTo(EXPECTED_CONTENT);
     }
 
     private void verifyTestCase(Testcase testCase, String expectedClassName) {
-        assertThat(testCase, notNullValue());
-        assertThat(testCase.getClassname(), equalTo(expectedClassName));
-        assertThat(Double.valueOf(testCase.getTime()), greaterThanOrEqualTo(0.0));
+        assertThat(testCase).isNotNull();
+        assertThat(testCase.getClassname()).isEqualTo(expectedClassName);
+        assertThat(Double.valueOf(testCase.getTime())).isGreaterThanOrEqualTo(0.0);
     }
 
     @Override

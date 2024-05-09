@@ -6,8 +6,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatter
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FilePatternMatcherTest {
 
@@ -16,71 +15,71 @@ class FilePatternMatcherTest {
     @Test
     public void includeSingleFilePattern() throws IOException {
         configure("*.xml", null);
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(true));
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml")).isEqualTo(true);
     }
 
     @Test
     void excludeSingleFilePattern() throws IOException {
         configure(null, "*.xml");
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(false));
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml")).isEqualTo(false);
     }
 
     @Test
     void includeAndExcludeSingleFilePatterns() throws IOException {
         configure("test.*", "*.xml");
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("other.txt"), equalTo(false));
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("other.txt")).isEqualTo(false);
     }
 
     @Test
     void includeMultipleFilePatterns() throws IOException {
         configure("*.xml, *.xsd", null);
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test.xsd"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(false));
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test.xsd")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(false);
     }
 
     @Test
     void excludeMultipleFilePatterns() throws IOException {
         configure(null, "*.xml, *.xsd");
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.xsd"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.xsd")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(true);
     }
 
     @Test
     void includeAndExcludeMultipleFilePatterns() throws IOException {
         configure("test1.*,test2.*", "*.xml, *.xsd");
-        assertThat(filePatternMatcher.accepts("test1.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test2.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test1.xsd"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test2.xsd"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test1.txt"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test2.txt"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("other.txt"), equalTo(false));
+        assertThat(filePatternMatcher.accepts("test1.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test2.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test1.xsd")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test2.xsd")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test1.txt")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test2.txt")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("other.txt")).isEqualTo(false);
     }
 
     @Test
     void includeMultipleFilePatternsWithFolder() throws IOException {
         configure("/META-INF/*.xml,/WEB-INF/*.xml", null);
-        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(false));
+        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(false);
     }
 
     @Test
     void excludeMultipleFilePatternsWithFolder() throws IOException {
         configure(null, "/META-INF/*.xml,/WEB-INF/*.xml");
-        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml"), equalTo(false));
-        assertThat(filePatternMatcher.accepts("test.xml"), equalTo(true));
-        assertThat(filePatternMatcher.accepts("test.txt"), equalTo(true));
+        assertThat(filePatternMatcher.accepts("/META-INF/persistence.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("/WEB-INF/persistence.xml")).isEqualTo(false);
+        assertThat(filePatternMatcher.accepts("test.xml")).isEqualTo(true);
+        assertThat(filePatternMatcher.accepts("test.txt")).isEqualTo(true);
     }
 
     private void configure(String includes, String excludes) {

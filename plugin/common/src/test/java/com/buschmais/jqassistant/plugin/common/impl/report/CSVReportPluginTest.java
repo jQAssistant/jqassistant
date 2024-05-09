@@ -27,9 +27,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class CSVReportPluginTest extends AbstractReportPluginTest {
@@ -51,21 +49,21 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         plugin.end();
 
         File csvReportDirectory = reportContext.getReportDirectory("csv");
-        assertThat(csvReportDirectory.exists(), equalTo(true));
+        assertThat(csvReportDirectory.exists()).isEqualTo(true);
 
         File reportFile = new File(csvReportDirectory, "test_ConceptWithRows.csv");
-        assertThat(reportFile.exists(), equalTo(true));
+        assertThat(reportFile.exists()).isEqualTo(true);
 
         List<ReportContext.Report<?>> reports = reportContext.getReports(conceptWithRows);
-        assertThat(reports.size(), equalTo(1));
+        assertThat(reports.size()).isEqualTo(1);
         ReportContext.Report<?> report = reports.get(0);
-        assertThat(report.getRule(), is(conceptWithRows));
-        assertThat(report.getLabel(), equalTo("CSV"));
-        assertThat(report.getReportType(), equalTo(ReportContext.ReportType.LINK));
-        assertThat(report.getUrl(), equalTo(reportFile.toURI().toURL()));
+        assertThat(report.getRule()).isEqualTo(conceptWithRows);
+        assertThat(report.getLabel()).isEqualTo("CSV");
+        assertThat(report.getReportType()).isEqualTo(ReportContext.ReportType.LINK);
+        assertThat(report.getUrl()).isEqualTo(reportFile.toURI().toURL());
 
         String content = FileUtils.readFileToString(reportFile);
-        assertThat(content, equalTo("\"String\",\"Double\",\"Named\",\"EscapedString\"\n" + "\"foo\",\"42.0\",\"Test\",\"\"\"'\"\n"));
+        assertThat(content).isEqualTo("\"String\",\"Double\",\"Named\",\"EscapedString\"\n" + "\"foo\",\"42.0\",\"Test\",\"\"\"'\"\n");
     }
 
     @Test
@@ -80,13 +78,13 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         plugin.end();
 
         File csvReportDirectory = reportContext.getReportDirectory("csv");
-        assertThat(csvReportDirectory.exists(), equalTo(true));
+        assertThat(csvReportDirectory.exists()).isEqualTo(true);
 
         File report = new File(csvReportDirectory, "test_ConceptWithRows.csv");
-        assertThat(report.exists(), equalTo(true));
+        assertThat(report.exists()).isEqualTo(true);
 
         String content = FileUtils.readFileToString(report);
-        assertThat(content, equalTo("'String';'Double';'Named';'EscapedString'\n" + "'foo';'42.0';'Test';'\"'''\n"));
+        assertThat(content).isEqualTo("'String';'Double';'Named';'EscapedString'\n" + "'foo';'42.0';'Test';'\"'''\n");
     }
 
     @Test
@@ -98,13 +96,13 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
         plugin.end();
 
         File csvReportDirectory = reportContext.getReportDirectory("csv");
-        assertThat(csvReportDirectory.exists(), equalTo(true));
+        assertThat(csvReportDirectory.exists()).isEqualTo(true);
 
         File report = new File(csvReportDirectory, "test_ConceptWithoutRows.csv");
-        assertThat(report.exists(), equalTo(true));
+        assertThat(report.exists()).isEqualTo(true);
 
         String content = FileUtils.readFileToString(report);
-        assertThat(content, equalTo("\n"));
+        assertThat(content).isEqualTo("\n");
     }
 
     @Override

@@ -18,8 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies YAML rule execution.
@@ -28,7 +27,7 @@ public class YamlRuleIT extends AbstractPluginIT {
 
     @Test
     public void xmlJavaRule() throws RuleException {
-        assertThat(applyConcept("xml-java-rule:Concept").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("xml-java-rule:Concept").getStatus()).isEqualTo(SUCCESS);
     }
 
     public static class Concept implements JavaRule {

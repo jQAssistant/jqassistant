@@ -15,9 +15,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies scanning of gzipped files.
@@ -41,14 +39,13 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
         gzipOutputStream.close();
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
-        assertThat("Expecting a GZIP descriptor.", descriptor, instanceOf(GZipFileDescriptor.class));
+        assertThat(descriptor).as("Expecting a GZIP descriptor.").isInstanceOf(GZipFileDescriptor.class);
         String expectedGZFileName = gzFile.getAbsolutePath().replace('\\', '/');
-        assertThat("Expecting an valid valid file name.", descriptor.getFileName(), equalTo(expectedGZFileName));
+        assertThat(descriptor.getFileName()).as("Expecting an valid valid file name.").isEqualTo(expectedGZFileName);
         GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
-        assertThat("Expecting one entry.", gZipFileDescriptor.getContains().size(), equalTo(1));
+        assertThat(gZipFileDescriptor.getContains().size()).as("Expecting one entry.").isEqualTo(1);
         FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
-        assertThat("Expecting a valid entry file name, e.g. without .gz", fileDescriptor.getFileName(),
-                equalTo(expectedGZFileName.substring(0, expectedGZFileName.length() - 3)));
+        assertThat(fileDescriptor.getFileName()).as("Expecting a valid entry file name, e.g. without .gz").isEqualTo(expectedGZFileName.substring(0, expectedGZFileName.length() - 3));
         store.commitTransaction();
     }
 
@@ -75,12 +72,12 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
         os.close();
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
-        assertThat(descriptor, instanceOf(GZipFileDescriptor.class));
-        assertThat(descriptor.getFileName(), equalTo(gzFile.getAbsolutePath().replace('\\', '/')));
+        assertThat(descriptor).isInstanceOf(GZipFileDescriptor.class);
+        assertThat(descriptor.getFileName()).isEqualTo(gzFile.getAbsolutePath().replace('\\', '/'));
         GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
-        assertThat(gZipFileDescriptor.getContains().size(), equalTo(1));
+        assertThat(gZipFileDescriptor.getContains().size()).isEqualTo(1);
         FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
-        assertThat(fileDescriptor, instanceOf(ArchiveDescriptor.class));
+        assertThat(fileDescriptor).isInstanceOf(ArchiveDescriptor.class);
         store.commitTransaction();
     }
 

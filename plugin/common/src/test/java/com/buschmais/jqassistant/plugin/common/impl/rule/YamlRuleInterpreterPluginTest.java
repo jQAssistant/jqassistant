@@ -26,8 +26,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class YamlRuleInterpreterPluginTest {
@@ -51,16 +50,16 @@ public class YamlRuleInterpreterPluginTest {
 
         Result<Concept> result = plugin.execute(concept, emptyMap(), Severity.MAJOR, analyzerContext);
 
-        assertThat(result, notNullValue());
-        assertThat(result.getRule(), is(concept));
-        assertThat(result.getSeverity(), is(Severity.MAJOR));
-        assertThat(result.getStatus(), equalTo(Result.Status.SUCCESS));
-        assertThat(result.getColumnNames(), equalTo(asList("Property", "Value")));
+        assertThat(result).isNotNull();
+        assertThat(result.getRule()).isEqualTo(concept);
+        assertThat(result.getSeverity()).isEqualTo(Severity.MAJOR);
+        assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
+        assertThat(result.getColumnNames()).isEqualTo(asList("Property", "Value"));
         List<Row> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
+        assertThat(rows.size()).isEqualTo(1);
         Map<String, Column<?>> row = rows.get(0).getColumns();
-        assertThat(row.get("Property").getValue(), equalTo("testProperty"));
-        assertThat(row.get("Value").getValue(), equalTo("testValue"));
+        assertThat(row.get("Property").getValue()).isEqualTo("testProperty");
+        assertThat(row.get("Value").getValue()).isEqualTo("testValue");
     }
 
     /**

@@ -12,8 +12,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies file/directory scanning.
@@ -26,8 +25,8 @@ class DefaultUriScannerPluginIT extends AbstractPluginIT {
         URL resource = DefaultUriScannerPluginIT.class.getResource("/");
         URI uri = resource.toURI();
         Descriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
-        assertThat(descriptor, instanceOf(FileDescriptor.class));
-        assertThat(((FileDescriptor) descriptor).getFileName(), equalTo(uri.toString()));
+        assertThat(descriptor).isInstanceOf(FileDescriptor.class);
+        assertThat(((FileDescriptor) descriptor).getFileName()).isEqualTo(uri.toString());
         store.commitTransaction();
     }
 
@@ -37,7 +36,7 @@ class DefaultUriScannerPluginIT extends AbstractPluginIT {
         URL resource = DefaultUriScannerPluginIT.class.getResource("/");
         URI uri = resource.toURI();
         Descriptor descriptor = getScanner().scan(uri, uri.toString(), CustomScope.TEST);
-        assertThat(descriptor, nullValue());
+        assertThat(descriptor).isNull();
         store.commitTransaction();
     }
 

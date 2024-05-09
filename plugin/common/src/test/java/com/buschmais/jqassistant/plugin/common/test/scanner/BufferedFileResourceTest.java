@@ -10,8 +10,7 @@ import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BufferedFileResourceTest {
 
@@ -39,7 +38,7 @@ class BufferedFileResourceTest {
     private void readAndVerify(BufferedFileResource bufferedFileResource, byte[] target, String expectedStream) throws IOException {
         InputStream inputStream = bufferedFileResource.createStream();
         inputStream.read(target);
-        assertThat(new String(target), equalTo(expectedStream));
+        assertThat(new String(target)).isEqualTo(expectedStream);
         inputStream.close();
     }
 
