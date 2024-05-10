@@ -410,15 +410,20 @@ class RuleSetExecutorTest {
 
     @Test
     void providedConcepts() throws RuleException {
-        Concept abstractConcept = Concept.builder()
+        Concept concept = Concept.builder()
             .id("concept:Concept")
             .severity(CRITICAL)
             .requiresConcepts(Map.of("concept:AbstractConcept", true))
             .build();
         Concept requiredConcept = Concept.builder()
-            .id("concept:AbstractConcept")
+            .id("concept:RequiredConcept")
             .severity(MINOR)
             .requiresConcepts(emptyMap())
+            .build();
+        Concept abstractConcept = Concept.builder()
+            .id("concept:AbstractConcept")
+            .severity(MINOR)
+            .requiresConcepts(Map.of("concept:RequiredConcept", true))
             .build();
         // provides the required concept directly
         Concept providingConcept1 = Concept.builder()
@@ -433,13 +438,14 @@ class RuleSetExecutorTest {
             .build();
         Group group = Group.builder()
             .id("group")
-            .concept("concept:Concept", CRITICAL)
-            .concept("concept:ProvidingConcept2", MINOR)
+            .concept("concept:ProvidingConcept1", null)
+            .concept("concept:Concept", null)
             .providedConcepts(Map.of("concept:AbstractConcept", Set.of("concept:ProvidingConcept2")))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
-            .addConcept(abstractConcept)
+            .addConcept(concept)
             .addConcept(requiredConcept)
+            .addConcept(abstractConcept)
             .addConcept(providingConcept1)
             .addConcept(providingConcept2)
             .addGroup(group)
@@ -452,12 +458,14 @@ class RuleSetExecutorTest {
 
         InOrder inOrder = inOrder(visitor);
         inOrder.verify(visitor)
+            .visitConcept(requiredConcept, MINOR, emptyMap());
+        inOrder.verify(visitor)
             .visitConcept(providingConcept1, MINOR, emptyMap());
         inOrder.verify(visitor)
             .visitConcept(providingConcept2, MINOR, emptyMap());
         inOrder.verify(visitor)
-            .visitConcept(requiredConcept, MINOR, ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
+            .visitConcept(abstractConcept, MINOR, ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
         inOrder.verify(visitor)
-            .visitConcept(abstractConcept, CRITICAL, emptyMap());
+            .visitConcept(concept, CRITICAL, emptyMap());
     }
 }

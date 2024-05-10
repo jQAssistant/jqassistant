@@ -194,8 +194,8 @@ public class RuleSetExecutor<R> {
         if (result == null) {
             executionStack.add(concept);
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
-            if (applyRequiredConcepts(ruleSet, concept, executionStack)) {
-                Map<Concept, R> providedConceptResults = applyProvidedConcepts(ruleSet, concept, executionStack);
+            if (applyAllRequiredConcepts(ruleSet, concept, executionStack)) {
+                Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, executionStack);
                 checkDeprecation(concept);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity, providedConceptResults);
             } else {
@@ -219,7 +219,7 @@ public class RuleSetExecutor<R> {
      * @throws RuleException
      *     If execution fails.
      */
-    private Map<Concept, R> applyProvidedConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+    private Map<Concept, R> applyProvidingConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
         Map<Concept, R> results = new LinkedHashMap<>();
         for (String providingConceptId : ruleSet.getProvidedConcepts()
             .getOrDefault(concept.getId(), emptySet())) {
@@ -231,6 +231,29 @@ public class RuleSetExecutor<R> {
         return results;
     }
 
+    /**
+     * Applies all concepts required by a given concept (including required concepts of provided concepts)
+     */
+    private boolean applyAllRequiredConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+        boolean requiredConceptsApplied = true;
+        Set<String> conceptIds = ruleSet.getConceptBucket()
+            .getIds();
+        for (String providedConceptId : ruleSet.getProvidingConcepts()
+            .getOrDefault(concept.getId(), emptySet())) {
+            if (conceptIds.contains(providedConceptId)) {
+                Concept providedConcept = ruleSet.getConceptBucket()
+                    .getById(providedConceptId);
+                requiredConceptsApplied = requiredConceptsApplied && applyAllRequiredConcepts(ruleSet, providedConcept, stack);
+            } else {
+                log.warn("Cannot resolve provided concept '{}' (provided by concept '{}').", providedConceptId, concept.getId());
+            }
+        }
+        return requiredConceptsApplied && applyRequiredConcepts(ruleSet, concept, stack);
+    }
+
+    /**
+     * Applies the concepts required by a concept.
+     */
     private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {
         boolean requiredConceptsApplied = true;
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts()

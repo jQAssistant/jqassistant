@@ -9,6 +9,8 @@ public interface RuleSet {
 
     Map<String, Set<String>> getProvidedConcepts();
 
+    Map<String, Set<String>> getProvidingConcepts();
+
     ConstraintBucket getConstraintBucket();
 
     GroupsBucket getGroupsBucket();

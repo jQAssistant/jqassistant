@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -25,9 +28,8 @@ public class RuleSetBuilder {
     public RuleSetBuilder addConcept(Concept concept) throws RuleException {
         ruleSet.conceptBucket.add(concept);
         String providingConceptId = concept.getId();
-        for (String providesConceptId : concept.getProvidedConcepts()) {
-            ruleSet.providedConcepts.computeIfAbsent(providesConceptId, id -> new LinkedHashSet<>())
-                .add(providingConceptId);
+        for (String providedConceptId : concept.getProvidedConcepts()) {
+            updateProvidedConcepts(providedConceptId, providingConceptId);
         }
         return this;
     }
@@ -41,10 +43,19 @@ public class RuleSetBuilder {
         ruleSet.groupsBucket.add(group);
         for (Map.Entry<String, Set<String>> entry : group.getProvidedConcepts()
             .entrySet()) {
-            ruleSet.providedConcepts.computeIfAbsent(entry.getKey(), id -> new LinkedHashSet<>())
-                .addAll(entry.getValue());
+            String providedConceptId = entry.getKey();
+            for (String providingConceptId : entry.getValue()) {
+                updateProvidedConcepts(providedConceptId, providingConceptId);
+            }
         }
         return this;
+    }
+
+    private void updateProvidedConcepts(String providedConceptId, String providingConceptId) {
+        ruleSet.providingConcepts.computeIfAbsent(providingConceptId, id -> new LinkedHashSet<>())
+            .add(providedConceptId);
+        ruleSet.providedConcepts.computeIfAbsent(providedConceptId, id -> new LinkedHashSet<>())
+            .add(providingConceptId);
     }
 
     public RuleSet getRuleSet() {
@@ -59,9 +70,18 @@ public class RuleSetBuilder {
     private static class DefaultRuleSet implements RuleSet {
 
         private final ConceptBucket conceptBucket = new ConceptBucket();
-        private final Map<String, Set<String>> providedConcepts = new HashMap<>();
+        private final Map<String, Set<String>> providingConcepts = new HashMap<>();
         private final ConstraintBucket constraintBucket = new ConstraintBucket();
         private final GroupsBucket groupsBucket = new GroupsBucket();
+
+        /**
+         * Holds provided concepts as keys and their providing concepts as values
+         */
+        private final Map<String, Set<String>> providedConcepts = new HashMap<>();
+
+        /**
+         * Holds providing concepts as keys and their provided concepts as values
+         */
 
         private DefaultRuleSet() {
         }
