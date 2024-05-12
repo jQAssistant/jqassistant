@@ -36,7 +36,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     private final Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies;
 
-    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store) {
+    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store) throws RuleException {
         this.classLoader = classLoader;
         this.store = store;
         this.verificationStrategies = of(new RowCountVerificationStrategy(configuration.report()),

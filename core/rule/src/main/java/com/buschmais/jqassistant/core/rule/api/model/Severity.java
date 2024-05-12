@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.EnumSet;
 import java.util.Optional;
 
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,8 @@ import static lombok.AccessLevel.PRIVATE;
  *
  * @author Aparna Chaudhary
  */
+@Getter
+@RequiredArgsConstructor(access = PRIVATE)
 public enum Severity {
 
     BLOCKER("blocker", 0),
@@ -78,38 +78,6 @@ public enum Severity {
     private final String value;
     private final Integer level;
 
-    /**
-     * Constructor
-     *
-     * @param value
-     *     value of severity
-     * @param level
-     *     violation level
-     */
-    Severity(String value, Integer level) {
-        this.value = value;
-        this.level = level;
-    }
-
-    /**
-     * Returns string representation of severity
-     *
-     * @return string representation
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Returns violation level
-     *
-     * @return violation level
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 1, minor = 13)
-    public Integer getLevel() {
-        return level;
-    }
 
     /**
      * Return a string representing of the effective severity of a rule.
@@ -121,7 +89,7 @@ public enum Severity {
      * @return The string representation.
      */
     public String getInfo(Severity fromSeverity) {
-        StringBuffer result = new StringBuffer(name());
+        StringBuilder result = new StringBuilder(name());
         if (!this.equals(fromSeverity)) {
             result.append(" (from ")
                 .append(fromSeverity)

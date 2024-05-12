@@ -6,12 +6,13 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
 public class RowCountVerificationStrategy extends AbstractMinMaxVerificationStrategy<RowCountVerification> {
 
-    public RowCountVerificationStrategy(Report configuration) {
+    public RowCountVerificationStrategy(Report configuration) throws RuleException {
         super(configuration);
     }
 

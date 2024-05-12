@@ -18,7 +18,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AggregationVerificationStrategy.class);
 
-    public AggregationVerificationStrategy(Report configuration) {
+    public AggregationVerificationStrategy(Report configuration) throws RuleException {
         super(configuration);
     }
 

@@ -78,9 +78,9 @@ class ReportHelperTest {
             .warn(Mockito.anyString());
         doAnswer(new LogAnswer(errorMessages)).when(logger)
             .error(Mockito.anyString());
-        doReturn(Severity.MINOR).when(report)
+        doReturn(Severity.MINOR.name()).when(report)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
     }
 
@@ -120,9 +120,9 @@ class ReportHelperTest {
 
     @Test
     void failedConceptsWithOverriddenSeverity() {
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .warnOnSeverity();
-        doReturn(Severity.CRITICAL).when(report)
+        doReturn(Severity.CRITICAL.name()).when(report)
             .failOnSeverity();
         Result<Concept> infoConceptResult = mockResult("test:infoConcept", Concept.class, SUCCESS, INFO, MINOR);
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, WARNING, MINOR, MAJOR);
@@ -143,7 +143,7 @@ class ReportHelperTest {
 
     @Test
     void validatedConstraint() {
-        doReturn(Severity.MINOR).when(report)
+        doReturn(Severity.MINOR.name()).when(report)
             .failOnSeverity();
         Result<Constraint> constraintResult = mockResult("test:constraint", Constraint.class, SUCCESS, MAJOR);
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
@@ -238,7 +238,7 @@ class ReportHelperTest {
 
     @Test
     void continueOnFailureEnabled() throws ReportException {
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         doReturn(true).when(report)
             .continueOnFailure();
@@ -262,9 +262,9 @@ class ReportHelperTest {
 
     @Test
     void continueOnFailureDisabled() {
-        doReturn(Severity.MINOR).when(report)
+        doReturn(Severity.MINOR.name()).when(report)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         doReturn(false).when(report)
             .continueOnFailure();

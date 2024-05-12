@@ -241,7 +241,7 @@ public final class ReportHelper {
         int failures = 0;
         for (Result<?> result : results) {
             Result.Status status = result.getStatus();
-            ExecutableRule rule = result.getRule();
+            ExecutableRule<?> rule = result.getRule();
             Severity resultSeverity = result.getSeverity();
             String severityInfo = resultSeverity.getInfo(rule.getSeverity());
             List<String> resultRows = getResultRows(result, logResult);
@@ -264,7 +264,7 @@ public final class ReportHelper {
         return failures;
     }
 
-    private void log(LoggingStrategy loggingStrategy, ExecutableRule rule, List<String> resultRows, String severityInfo, String type, String header) {
+    private void log(LoggingStrategy loggingStrategy, ExecutableRule<?> rule, List<String> resultRows, String severityInfo, String type, String header) {
         loggingStrategy.log(header);
         loggingStrategy.log(type + ": " + rule.getId());
         loggingStrategy.log("Severity: " + severityInfo);

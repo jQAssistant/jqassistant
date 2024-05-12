@@ -12,7 +12,7 @@ public abstract class AbstractMinMaxVerificationStrategy<T extends Verification>
 
     private final Severity.Threshold failOnSeverity;
 
-    protected AbstractMinMaxVerificationStrategy(Report configuration) {
+    protected AbstractMinMaxVerificationStrategy(Report configuration) throws RuleException {
         this.warnOnSeverity = Severity.Threshold.from(configuration.warnOnSeverity());
         this.failOnSeverity = Severity.Threshold.from(configuration.failOnSeverity());
     }

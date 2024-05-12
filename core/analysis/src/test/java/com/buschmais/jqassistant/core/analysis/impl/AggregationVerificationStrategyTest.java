@@ -45,10 +45,10 @@ class AggregationVerificationStrategyTest {
     private AggregationVerificationStrategy strategy;
 
     @BeforeEach
-    void setUp() {
-        doReturn(Severity.MINOR).when(configuration)
+    void setUp() throws RuleException {
+        doReturn(Severity.MINOR.name()).when(configuration)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(configuration)
+        doReturn(Severity.MAJOR.name()).when(configuration)
             .failOnSeverity();
         strategy = new AggregationVerificationStrategy(configuration);
     }

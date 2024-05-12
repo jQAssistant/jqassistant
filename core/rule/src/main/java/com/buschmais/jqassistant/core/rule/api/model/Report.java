@@ -12,9 +12,9 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Report {
 
-    private Set<String> selectedTypes = null;
+    private Set<String> selectedTypes;
 
-    private String primaryColumn = null;
+    private String primaryColumn;
 
     @Builder.Default
     private Properties properties = new Properties();

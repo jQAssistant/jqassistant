@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -38,12 +39,12 @@ class AnalyzerContextImplTest {
     private Store store;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws RuleException {
         doReturn(report).when(configuration)
             .report();
-        doReturn(Severity.MINOR).when(report)
+        doReturn(Severity.MINOR.name()).when(report)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         analyzerContext = new AnalyzerContextImpl(configuration, this.getClass()
             .getClassLoader(), store);

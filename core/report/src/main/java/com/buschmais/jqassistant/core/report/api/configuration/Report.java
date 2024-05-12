@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.report.api.configuration;
 import java.util.Map;
 import java.util.Optional;
 
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;
@@ -26,13 +25,13 @@ public interface Report {
 
     @Description("Determines the severity level to report warnings for rules with equal or higher severities.")
     @WithDefault("MINOR")
-    Severity warnOnSeverity();
+    String warnOnSeverity();
 
     String FAIL_ON_SEVERITY = "fail-on-severity";
 
     @Description("Determines the severity level to report failures for rules with equal or higher severities.")
     @WithDefault("MAJOR")
-    Severity failOnSeverity();
+    String failOnSeverity();
 
     String CONTINUE_ON_FAILURE = "continue-on-failure";
 

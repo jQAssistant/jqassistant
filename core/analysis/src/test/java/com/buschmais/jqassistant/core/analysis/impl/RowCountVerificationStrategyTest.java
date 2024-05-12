@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 
@@ -43,10 +44,10 @@ class RowCountVerificationStrategyTest {
     private RowCountVerificationStrategy strategy;
 
     @BeforeEach
-    void setUp() {
-        doReturn(Severity.MINOR).when(configuration)
+    void setUp() throws RuleException {
+        doReturn(Severity.MINOR.name()).when(configuration)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(configuration)
+        doReturn(Severity.MAJOR.name()).when(configuration)
             .failOnSeverity();
         strategy = new RowCountVerificationStrategy(configuration);
     }

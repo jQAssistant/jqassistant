@@ -251,7 +251,7 @@ public abstract class AbstractPluginIT {
         return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }
 
-    private Analyzer getAnalyzer(Map<String, String> parameters) {
+    private Analyzer getAnalyzer(Map<String, String> parameters) throws RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), reportPlugin);

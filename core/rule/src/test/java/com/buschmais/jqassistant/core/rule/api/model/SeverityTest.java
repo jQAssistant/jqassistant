@@ -12,10 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,6 +60,28 @@ class SeverityTest {
     }
 
     @Test
+    void exceedsSeverityThreshold() throws RuleException {
+        assertThat(BLOCKER.exceeds(Severity.Threshold.from("never"))).isFalse();
+        assertThat(BLOCKER.exceeds(Severity.Threshold.from(BLOCKER))).isTrue();
+        assertThat(BLOCKER.exceeds(Severity.Threshold.from(CRITICAL))).isTrue();
+
+        assertThat(CRITICAL.exceeds(Severity.Threshold.from("never"))).isFalse();
+        assertThat(CRITICAL.exceeds(Severity.Threshold.from(CRITICAL))).isTrue();
+        assertThat(CRITICAL.exceeds(Severity.Threshold.from(MAJOR))).isTrue();
+
+        assertThat(MAJOR.exceeds(Severity.Threshold.from("never"))).isFalse();
+        assertThat(MAJOR.exceeds(Severity.Threshold.from(MAJOR))).isTrue();
+        assertThat(MAJOR.exceeds(Severity.Threshold.from(MINOR))).isTrue();
+
+        assertThat(MINOR.exceeds(Severity.Threshold.from("never"))).isFalse();
+        assertThat(MINOR.exceeds(Severity.Threshold.from(MINOR))).isTrue();
+        assertThat(MINOR.exceeds(Severity.Threshold.from(INFO))).isTrue();
+
+        assertThat(INFO.exceeds(Severity.Threshold.from("never"))).isFalse();
+        assertThat(INFO.exceeds(Severity.Threshold.from(INFO))).isTrue();
+    }
+
+    @Test
     void xmlSeverity() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
         verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
@@ -73,8 +92,8 @@ class SeverityTest {
 
     private void verifySeverities(RuleSet ruleSet, String groupId, Severity expectedGroupSeverity, String conceptId, Severity expectedIncludedConceptSeverity,
             String constraintId, Severity expectedIncludedConstraintSeverity) throws RuleException {
-        assertThat(ruleSet.getConceptBucket().getIds(), hasItems(conceptId));
-        assertThat(ruleSet.getConstraintBucket().getIds(), hasItems(constraintId));
+        assertThat(ruleSet.getConceptBucket().getIds()).contains(conceptId);
+        assertThat(ruleSet.getConstraintBucket().getIds()).contains(constraintId);
         GroupsBucket groups = ruleSet.getGroupsBucket();
         // Group without any severity definition
         Group group = groups.getById(groupId);
@@ -93,28 +112,23 @@ class SeverityTest {
         doReturn(of(Severity.CRITICAL)).when(rule).defaultConceptSeverity();
         doReturn(of(Severity.CRITICAL)).when(rule).defaultConstraintSeverity();
         doReturn(of(Severity.CRITICAL)).when(rule).defaultGroupSeverity();
-        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
-        verifyDefaultSeverities(ruleSet, Severity.CRITICAL);
-    }
 
-    private void verifyDefaultSeverities(RuleSet ruleSet, Severity defaultSeverity) throws RuleException {
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
+
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
-        assertThat(groupWithoutSeverity.getSeverity()).isEqualTo(defaultSeverity);
+        assertThat(groupWithoutSeverity.getSeverity()).isEqualTo(Severity.CRITICAL);
         Group groupWithSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithSeverity");
         assertThat(groupWithSeverity.getSeverity()).isEqualTo(BLOCKER);
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");
-        assertThat(concept.getSeverity()).isEqualTo(defaultSeverity);
+        assertThat(concept.getSeverity()).isEqualTo(Severity.CRITICAL);
         Constraint constraint = ruleSet.getConstraintBucket().getById("test:Constraint");
-        assertThat(constraint.getSeverity()).isEqualTo(defaultSeverity);
+        assertThat(constraint.getSeverity()).isEqualTo(Severity.CRITICAL);
     }
 
     @Test
     void xmlRuleDefaultSeverity() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/severity.xml", rule);
-        verifyRuleDefaultSeverity(ruleSet);
-    }
 
-    private void verifyRuleDefaultSeverity(RuleSet ruleSet) throws RuleException {
         Group groupWithoutSeverity = ruleSet.getGroupsBucket().getById("test:GroupWithoutSeverity");
         assertThat(groupWithoutSeverity.getSeverity()).isNull();
         Concept concept = ruleSet.getConceptBucket().getById("test:Concept");
@@ -122,5 +136,4 @@ class SeverityTest {
         Constraint constraint = ruleSet.getConstraintBucket().getById("test:Constraint");
         assertThat(constraint.getSeverity()).isEqualTo(Severity.MAJOR);
     }
-
 }
