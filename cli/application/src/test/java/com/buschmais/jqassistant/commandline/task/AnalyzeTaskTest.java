@@ -90,9 +90,9 @@ class AnalyzeTaskTest {
             .rule();
         doReturn(of(new URI("memory:///"))).when(store)
             .uri();
-        doReturn(Severity.MINOR).when(report)
+        doReturn(Severity.MINOR.name()).when(report)
             .warnOnSeverity();
-        doReturn(Severity.MAJOR).when(report)
+        doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         when(pluginRepository.getClassLoader()).thenReturn(AnalyzeTaskTest.class.getClassLoader());
         when(pluginRepository.getStorePluginRepository()).thenReturn(storePluginRepository);
