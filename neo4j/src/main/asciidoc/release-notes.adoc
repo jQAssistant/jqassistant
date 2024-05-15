@@ -3,7 +3,8 @@
 
 == 2.3.0
 
-* Upgraded to Neo4j 4.4.33
+* Upgraded to Neo4j 4.4.34
+* Removed quiet period for shutting down internal Neo4j server
 
 == 2.2.0
 * Upgraded to Neo4j 4.4.32 and 5.19.0

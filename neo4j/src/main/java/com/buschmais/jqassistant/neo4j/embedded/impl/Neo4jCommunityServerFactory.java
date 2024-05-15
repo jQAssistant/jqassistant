@@ -41,7 +41,8 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             .property(GraphDatabaseSettings.keep_logical_logs, FALSE.toString())
             .property(GraphDatabaseSettings.logical_log_rotation_threshold, ByteUnit.mebiBytes(25L))
             .property(GraphDatabaseSettings.procedure_unrestricted, List.of("*"))
-            .property(GraphDatabaseInternalSettings.dump_diagnostics, false);
+            .property(GraphDatabaseInternalSettings.dump_diagnostics, false)
+            .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0);
         pluginDirectory.ifPresent(dir -> {
             prepareClassloader(dir.toPath());
             propertiesBuilder.property(GraphDatabaseSettings.plugin_dir, dir.toPath());
