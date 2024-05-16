@@ -321,7 +321,7 @@
                   WHEN 47 THEN "Java 1.3"
                   WHEN 46 THEN "Java 1.2"
                   WHEN 45 THEN "Java 1.1/1.0"
-                  DEFAULT "Unknown"
+                  ELSE "Unknown"
                 END
             RETURN
               count(type) as Types
