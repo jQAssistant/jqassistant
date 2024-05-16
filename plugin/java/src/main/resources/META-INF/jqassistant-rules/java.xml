@@ -299,29 +299,30 @@
               (:Artifact)-[:CONTAINS]->(type:Java:Type)
             SET
               type.javaVersion=
-              CASE type.byteCodeVersion
-                WHEN 65 THEN "Java 21"
-                WHEN 64 THEN "Java 20"
-                WHEN 63 THEN "Java 19"
-                WHEN 62 THEN "Java 18"
-                WHEN 61 THEN "Java 17"
-                WHEN 60 THEN "Java 16"
-                WHEN 59 THEN "Java 15"
-                WHEN 58 THEN "Java 14"
-                WHEN 57 THEN "Java 13"
-                WHEN 56 THEN "Java 12"
-                WHEN 55 THEN "Java 11"
-                WHEN 54 THEN "Java 10"
-                WHEN 53 THEN "Java 9"
-                WHEN 52 THEN "Java 8"
-                WHEN 51 THEN "Java 7"
-                WHEN 50 THEN "Java 6"
-                WHEN 49 THEN "Java 5"
-                WHEN 48 THEN "Java 1.4"
-                WHEN 47 THEN "Java 1.3"
-                WHEN 46 THEN "Java 1.2"
-                WHEN 45 THEN "Java 1.1/1.0"
-              END
+                CASE type.byteCodeVersion
+                  WHEN 65 THEN "Java 21"
+                  WHEN 64 THEN "Java 20"
+                  WHEN 63 THEN "Java 19"
+                  WHEN 62 THEN "Java 18"
+                  WHEN 61 THEN "Java 17"
+                  WHEN 60 THEN "Java 16"
+                  WHEN 59 THEN "Java 15"
+                  WHEN 58 THEN "Java 14"
+                  WHEN 57 THEN "Java 13"
+                  WHEN 56 THEN "Java 12"
+                  WHEN 55 THEN "Java 11"
+                  WHEN 54 THEN "Java 10"
+                  WHEN 53 THEN "Java 9"
+                  WHEN 52 THEN "Java 8"
+                  WHEN 51 THEN "Java 7"
+                  WHEN 50 THEN "Java 6"
+                  WHEN 49 THEN "Java 5"
+                  WHEN 48 THEN "Java 1.4"
+                  WHEN 47 THEN "Java 1.3"
+                  WHEN 46 THEN "Java 1.2"
+                  WHEN 45 THEN "Java 1.1/1.0"
+                  DEFAULT "Unknown"
+                END
             RETURN
               count(type) as Types
         ]]></cypher>

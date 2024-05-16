@@ -1,6 +1,10 @@
 
 = Java Plugin
 
+== 2.3.0
+
+* Added `Unknown` as default to list of java versions for concept `java:JavaVersion`
+
 == 2.1.0
 
 * Added attribute `column` to `@jQASuppress` annotation to allow specifying a non-primary column to be evaluated
