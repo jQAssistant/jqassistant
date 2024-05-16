@@ -52,10 +52,10 @@ public class RuleSetExecutor<R> {
                 applyConcepts(ruleSet, conceptPattern, null, null);
             }
             for (String groupPattern : ruleSelection.getGroupIds()) {
-                executeGroups(ruleSet, groupPattern, null, null);
+                executeGroups(ruleSet, groupPattern, ruleSelection.getExcludeConstraintIds(), null, null);
             }
             for (String constraintPattern : ruleSelection.getConstraintIds()) {
-                validateConstraints(ruleSet, constraintPattern, null, null);
+                validateConstraints(ruleSet, constraintPattern, ruleSelection.getExcludeConstraintIds(), null, null);
             }
         } finally {
             this.ruleVisitor.afterRules();
@@ -69,10 +69,12 @@ public class RuleSetExecutor<R> {
      *     The rule set.
      * @param group
      *     The group.
+     * @param excludedConstraintIds
+     *     The {@link Set} of constraint ids that shall be excluded from execution.
      * @param parentSeverity
      *     The severity.
      */
-    private void executeGroup(RuleSet ruleSet, Group group, Severity parentSeverity) throws RuleException {
+    private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity parentSeverity) throws RuleException {
         if (!executedGroups.contains(group)) {
             ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, parentSeverity, parentSeverity));
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
@@ -81,11 +83,11 @@ public class RuleSetExecutor<R> {
             }
             for (Map.Entry<String, Severity> groupEntry : group.getGroups()
                 .entrySet()) {
-                executeGroups(ruleSet, groupEntry.getKey(), parentSeverity, groupEntry.getValue());
+                executeGroups(ruleSet, groupEntry.getKey(), excludedConstraintIds, parentSeverity, groupEntry.getValue());
             }
             Map<String, Severity> constraints = group.getConstraints();
             for (Map.Entry<String, Severity> constraintEntry : constraints.entrySet()) {
-                validateConstraints(ruleSet, constraintEntry.getKey(), parentSeverity, constraintEntry.getValue());
+                validateConstraints(ruleSet, constraintEntry.getKey(), excludedConstraintIds, parentSeverity, constraintEntry.getValue());
             }
             ruleVisitor.afterGroup(group);
             executedGroups.add(group);
@@ -104,26 +106,33 @@ public class RuleSetExecutor<R> {
         }
     }
 
-    private void executeGroups(RuleSet ruleSet, String groupPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
+    private void executeGroups(RuleSet ruleSet, String groupPattern, Set<String> excludedConstraintIds, Severity parentSeverity, Severity requestedSeverity)
+        throws RuleException {
         List<Group> matchingGroups = ruleSet.getGroupsBucket()
             .match(groupPattern);
         if (matchingGroups.isEmpty()) {
             LOGGER.warn("Could not find groups matching to '{}'.", groupPattern);
         } else {
             for (Group matchingGroup : matchingGroups) {
-                executeGroup(ruleSet, matchingGroup, getEffectiveSeverity(matchingGroup, parentSeverity, requestedSeverity));
+                executeGroup(ruleSet, matchingGroup, excludedConstraintIds, getEffectiveSeverity(matchingGroup, parentSeverity, requestedSeverity));
             }
         }
     }
 
-    private void validateConstraints(RuleSet ruleSet, String constraintPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
+    private void validateConstraints(RuleSet ruleSet, String constraintPattern, Set<String> excludedConstraintIds, Severity parentSeverity,
+        Severity requestedSeverity) throws RuleException {
         List<Constraint> matchingConstraints = ruleSet.getConstraintBucket()
             .match(constraintPattern);
         if (matchingConstraints.isEmpty()) {
             LOGGER.warn("Could not find constraints matching to '{}'.", constraintPattern);
         } else {
             for (Constraint matchingConstraint : matchingConstraints) {
-                validateConstraint(ruleSet, matchingConstraint, parentSeverity, requestedSeverity);
+                String constraintId = matchingConstraint.getId();
+                if (excludedConstraintIds.contains(constraintId)) {
+                    log.info("Skipping excluded constraint '{}'.", constraintId);
+                } else {
+                    validateConstraint(ruleSet, matchingConstraint, parentSeverity, requestedSeverity);
+                }
             }
         }
     }

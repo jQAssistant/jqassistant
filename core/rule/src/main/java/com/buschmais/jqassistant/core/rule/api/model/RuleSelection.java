@@ -1,8 +1,13 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import lombok.*;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Represents a selection of rules.
@@ -10,7 +15,7 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = PRIVATE)
 public class RuleSelection {
 
     private static final String GROUP_DEFAULT = "default";
@@ -22,25 +27,25 @@ public class RuleSelection {
     private Set<String> constraintIds;
 
     @Singular
+    private Set<String> excludeConstraintIds;
+
+    @Singular
     private Set<String> groupIds;
 
     public static RuleSelection select(RuleSet ruleSet, Optional<List<String>> groupIds, Optional<List<String>> constraintIds,
-        Optional<List<String>> conceptIds) {
-        return select(ruleSet, groupIds.orElse(Collections.emptyList()), constraintIds.orElse(Collections.emptyList()),
-            conceptIds.orElse(Collections.emptyList()));
-    }
-
-    private static RuleSelection select(RuleSet ruleSet, List<String> groupIds, List<String> constraintIds, List<String> conceptIds) {
+        Optional<List<String>> excludeConstraintIds, Optional<List<String>> conceptIds) {
+        RuleSelectionBuilder builder = builder();
         if (groupIds.isEmpty() && conceptIds.isEmpty() && constraintIds.isEmpty() && ruleSet.getGroupsBucket()
             .getIds()
             .contains(GROUP_DEFAULT)) {
-            return builder().groupId(GROUP_DEFAULT)
-                .build();
+            builder.groupIds(Set.of(GROUP_DEFAULT));
+        } else {
+            // use LinkedHashSet to keep order of selection
+            groupIds.ifPresent(groups -> builder.groupIds(new LinkedHashSet<>(groups)));
+            constraintIds.ifPresent(constraints -> builder.constraintIds(new LinkedHashSet<>(constraints)));
+            conceptIds.ifPresent(concepts -> builder.conceptIds(new LinkedHashSet<>(concepts)));
         }
-        // use LinkedHashSet to keep order of selection
-        return builder().groupIds(new LinkedHashSet<>(groupIds))
-            .constraintIds(new LinkedHashSet<>(constraintIds))
-            .conceptIds(new LinkedHashSet<>(conceptIds))
-            .build();
+        excludeConstraintIds.ifPresent(builder::excludeConstraintIds);
+        return builder.build();
     }
 }

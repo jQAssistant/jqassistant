@@ -40,6 +40,10 @@ public interface Analyze {
     @Description("The constraints to be validated.")
     Optional<List<String>> constraints();
 
+    String EXCLUDE_CONSTRAINTS = "exclude-constraints";
+    @Description("The constraints to be excluded.")
+    Optional<List<String>> excludeConstraints();
+
     String GROUPS = "groups";
 
     @Description("The groups to be executed.")

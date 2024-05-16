@@ -16,9 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.CRITICAL;
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
@@ -60,7 +58,8 @@ class RuleSetExecutorTest {
             .id("constraint:Overridden")
             .severity(MAJOR)
             .build();
-        doReturn(TRUE).when(visitor)
+        lenient().doReturn(TRUE)
+            .when(visitor)
             .visitConcept(any(Concept.class), any(Severity.class), anyMap());
     }
 
@@ -467,5 +466,36 @@ class RuleSetExecutorTest {
             .visitConcept(abstractConcept, MINOR, ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
         inOrder.verify(visitor)
             .visitConcept(concept, CRITICAL, emptyMap());
+    }
+
+    @Test
+    void excludeConstraint() throws RuleException {
+        Constraint constraint = Constraint.builder()
+            .id("test:Constraint")
+            .severity(MAJOR)
+            .build();
+        Constraint excludedConstraint = Constraint.builder()
+            .id("test:ExcludedConstraint")
+            .severity(MAJOR)
+            .build();
+        Group group = Group.builder()
+            .id("group")
+            .constraint("test:Constraint", null)
+            .constraint("test:ExcludedConstraint", null)
+            .build();
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConstraint(constraint)
+            .addConstraint(excludedConstraint)
+            .addGroup(group)
+            .getRuleSet();
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .excludeConstraintId("test:ExcludedConstraint")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConstraint(constraint, MAJOR);
+        verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR);
     }
 }
