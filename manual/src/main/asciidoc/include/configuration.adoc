@@ -252,6 +252,13 @@ jqassistant:
     constraints:
     # - my-constraint
 
+    # The constraints to be excluded (e.g. if referenced from a group).
+    #
+    # -Djqassistant.analyze.exclude-constraints[0]
+    exclude-constraints:
+    # - any-constraint
+
+
     # The groups to be executed.
     #
     # -Djqassistant.analyze.groups[0]
