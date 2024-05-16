@@ -12,6 +12,7 @@
                 <xs:element name="function" type="tns:ClassListType" minOccurs="0"/>
                 <xs:element name="procedure" type="tns:ClassListType" minOccurs="0"/>
                 <xs:element name="scope" type="tns:ClassListType" minOccurs="0"/>
+                <!-- deprecated: the scanner element will no longer support the id attribute -->
                 <xs:element name="scanner" type="tns:IdClassListType" minOccurs="0"/>
                 <xs:element name="rules" type="tns:RulesType" minOccurs="0"/>
                 <xs:element name="ruleParser" type="tns:IdClassListType" minOccurs="0"/>

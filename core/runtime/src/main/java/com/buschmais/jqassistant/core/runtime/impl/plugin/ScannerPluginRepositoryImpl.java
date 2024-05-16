@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -15,6 +13,8 @@ import org.jqassistant.schema.plugin.v2.ClassListType;
 import org.jqassistant.schema.plugin.v2.IdClassListType;
 import org.jqassistant.schema.plugin.v2.IdClassType;
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableMap;
 
@@ -23,9 +23,10 @@ import static java.util.Collections.unmodifiableMap;
  */
 public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implements ScannerPluginRepository {
 
-    private Map<String, ScannerPlugin<?, ?>> scannerPlugins = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(ScannerPluginRepositoryImpl.class);
+    private final Set<ScannerPlugin<?, ?>> scannerPlugins = new HashSet<>();
 
-    private Map<String, Scope> scopes;
+    private final Map<String, Scope> scopes;
 
     /**
      * Constructor.
@@ -42,13 +43,13 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
 
     @Override
     public void destroy() {
-        scannerPlugins.values().forEach(scannerPlugin -> scannerPlugin.destroy());
+        scannerPlugins.forEach(ScannerPlugin::destroy);
     }
 
     @Override
-    public Map<String, ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext) {
+    public Set<ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext) {
         Map<String, Object> properties = unmodifiableMap(scan.properties());
-        for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
+        for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
             scannerPlugin.configure(scannerContext, properties);
         }
         return scannerPlugins;
@@ -73,10 +74,10 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
                     if (scannerPlugin != null) {
                         scannerPlugin.initialize();
                         String id = classType.getId();
-                        if (id == null) {
-                            id = scannerPlugin.getClass().getSimpleName();
+                        if (id != null) {
+                            log.info("The id attribute for scanner plugins is obsolete, please remove it: {}.", id);
                         }
-                        scannerPlugins.put(id, scannerPlugin);
+                        scannerPlugins.add(scannerPlugin);
                     }
                 }
             }
@@ -90,7 +91,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
             if (scopeTypes != null) {
                 for (String scopePluginName : scopeTypes.getClazz()) {
                     Class<? extends Enum<?>> type = getType(scopePluginName);
-                    for (Enum enumConstant : type.getEnumConstants()) {
+                    for (Enum<?> enumConstant : type.getEnumConstants()) {
                         Scope scope = (Scope) enumConstant;
                         String scopeName = scope.getPrefix() + ":" + scope.getName();
                         scopes.put(scopeName.toLowerCase(), scope);

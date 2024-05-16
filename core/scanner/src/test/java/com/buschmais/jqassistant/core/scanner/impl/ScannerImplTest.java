@@ -2,9 +2,8 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
@@ -25,7 +24,6 @@ import org.mockito.stubbing.Answer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
@@ -54,35 +52,39 @@ class ScannerImplTest {
 
     private boolean transaction = false;
 
-
     @BeforeEach
     void setup() throws IOException {
         // Plugin
-        doReturn(String.class).when(scannerPlugin).getType();
+        doReturn(String.class).when(scannerPlugin)
+            .getType();
         when(scannerPlugin.accepts(anyString(), anyString(), eq(scope))).thenReturn(true);
         doAnswer(invocation -> {
-            assertThat(transaction).isEqualTo(true);
+            assertThat(transaction).isTrue();
             return mock(Descriptor.class);
-        }).when(scannerPlugin).scan(anyString(), anyString(), any(Scope.class), any(Scanner.class));
+        }).when(scannerPlugin)
+            .scan(anyString(), anyString(), any(Scope.class), any(Scanner.class));
         // Store
-        doAnswer(invocation -> transaction).when(store).hasActiveTransaction();
+        doAnswer(invocation -> transaction).when(store)
+            .hasActiveTransaction();
         doAnswer(invocation -> {
             transaction = true;
             return null;
-        }).when(store).beginTransaction();
+        }).when(store)
+            .beginTransaction();
         doAnswer(invocation -> {
             transaction = false;
             return null;
-        }).when(store).commitTransaction();
+        }).when(store)
+            .commitTransaction();
         doAnswer(invocation -> {
             transaction = false;
             return null;
-        }).when(store).rollbackTransaction();
+        }).when(store)
+            .rollbackTransaction();
         // context
         context = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
-        Map<String, ScannerPlugin<?, ?>> plugins = new HashMap<>();
-        plugins.put("testPlugin", scannerPlugin);
-        doReturn(plugins).when(scannerPluginRepository).getScannerPlugins(configuration, context);
+        doReturn(Set.<ScannerPlugin<?, ?>>of(scannerPlugin)).when(scannerPluginRepository)
+            .getScannerPlugins(configuration, context);
     }
 
     @Test
@@ -98,12 +100,13 @@ class ScannerImplTest {
         Properties resource = mock(Properties.class);
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
-        doReturn(Boolean.TRUE).when(selectedPlugin).accepts(Mockito.<Properties> anyObject(), Mockito.eq(path), Mockito.eq(scope));
+        doReturn(Boolean.TRUE).when(selectedPlugin)
+            .accepts(Mockito.<Properties>anyObject(), Mockito.eq(path), Mockito.eq(scope));
         ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
-        assertThat(result).isEqualTo(true);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -111,12 +114,13 @@ class ScannerImplTest {
         Properties resource = mock(Properties.class);
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
-        doReturn(Boolean.FALSE).when(selectedPlugin).accepts(Mockito.anyObject(), Mockito.eq(path), Mockito.eq(scope));
+        doReturn(Boolean.FALSE).when(selectedPlugin)
+            .accepts(Mockito.anyObject(), Mockito.eq(path), Mockito.eq(scope));
         ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
 
-        assertThat(result).isEqualTo(false);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -134,12 +138,13 @@ class ScannerImplTest {
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
         verify(store, never()).commitTransaction();
-        assertThat(transaction).isEqualTo(false);
+        assertThat(transaction).isFalse();
     }
 
     @Test
     void continueOnError() throws IOException {
-        doReturn(true).when(configuration).continueOnError();
+        doReturn(true).when(configuration)
+            .continueOnError();
         Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
 
@@ -153,15 +158,18 @@ class ScannerImplTest {
 
     private void stubExceptionDuringScan(Scanner scanner) throws IOException {
         doAnswer(invocation -> {
-            assertThat(transaction).isEqualTo(true);
+            assertThat(transaction).isTrue();
             throw new IllegalStateException("Exception in plugin");
-        }).when(scannerPlugin).scan("test", "test", scope, scanner);
+        }).when(scannerPlugin)
+            .scan("test", "test", scope, scanner);
     }
 
     @Test
     void continueOnErrorDuringCommit() {
-        doThrow(new IllegalStateException("Exception during commit")).when(store).commitTransaction();
-        doReturn(true).when(configuration).continueOnError();
+        doThrow(new IllegalStateException("Exception during commit")).when(store)
+            .commitTransaction();
+        doReturn(true).when(configuration)
+            .continueOnError();
         Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         scanner.scan("test1", "test1", scope);
@@ -198,11 +206,9 @@ class ScannerImplTest {
             Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[1];
             return mock(descriptorType);
         });
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = new HashMap<>();
-        scannerPlugins.put("TestScanner", new TestItemScannerPlugin());
-        scannerPlugins.put("DependentTestScanner", new DependentTestItemScannerPlugin());
-        scannerPlugins.put("NestedTestScanner", new NestedTestItemScannerPlugin());
-        doReturn(scannerPlugins).when(scannerPluginRepository).getScannerPlugins(configuration, scannerContext);
+        doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin(), new DependentTestItemScannerPlugin(), new NestedTestItemScannerPlugin())).when(
+                scannerPluginRepository)
+            .getScannerPlugins(configuration, scannerContext);
         Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPluginRepository);
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);

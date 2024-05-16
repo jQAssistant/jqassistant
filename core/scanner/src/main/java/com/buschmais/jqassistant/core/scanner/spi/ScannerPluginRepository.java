@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.spi;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -22,7 +23,7 @@ public interface ScannerPluginRepository extends LifecycleAware {
      *     The scannerContext.
      * @return The instances of the configured scanner plugins.
      */
-    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext);
+    Set<ScannerPlugin<?, ?>> getScannerPlugins(Scan scan, ScannerContext scannerContext);
 
     /**
      * Return the scope for the given name.

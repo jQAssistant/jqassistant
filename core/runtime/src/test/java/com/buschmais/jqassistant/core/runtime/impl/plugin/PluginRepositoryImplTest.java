@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -18,6 +15,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
+import org.assertj.core.api.Condition;
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,23 +69,23 @@ class PluginRepositoryImplTest {
         pluginRepository.initialize();
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository()
+        Set<ScannerPlugin<?, ?>> scannerPlugins = pluginRepository.getScannerPluginRepository()
             .getScannerPlugins(scan, scannerContext);
-        assertThat(scannerPlugins).hasSize(2);
-        assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName())).isNotNull();
-        assertThat(scannerPlugins.get(TestScannerPlugin.class.getSimpleName())).isNotNull();
-        assertThat(scannerPlugins.get("testScanner")).isNotNull();
-        assertThat(scannerPlugins.get("testScanner")).isNotNull();
+        assertThat(scannerPlugins).hasSize(1)
+            .haveExactly(1, new Condition<>() {
+                @Override
+                public boolean matches(ScannerPlugin<?, ?> value) {
+                    return TestScannerPlugin.class.isAssignableFrom(value.getClass());
+                }
+            });
         // Report plugins
         ReportContext reportContext = mock(ReportContext.class);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
             .getReportPlugins(report, reportContext);
-        assertThat(reportPlugins.size()).isEqualTo(3);
         assertThat(reportPlugins).hasSize(3);
         assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName())).isNotNull();
-        assertThat(reportPlugins.get(TestReportPlugin.class.getSimpleName())).isNotNull();
         assertThat(reportPlugins.get("testReport")).isNotNull();
-        assertThat(reportPlugins.get("testReport")).isNotNull();
+        assertThat(reportPlugins.get("xml")).isNotNull();
         pluginRepository.destroy();
     }
 
@@ -142,15 +140,15 @@ class PluginRepositoryImplTest {
 
     private void verifyProperties(Map<String, Object> pluginProperties) {
         assertThat(pluginProperties).isNotNull();
-        assertThat(pluginProperties.get("testKey")).isEqualTo("testValue");
+        assertThat(pluginProperties).containsEntry("testKey", "testValue");
     }
 
     private Map<String, Object> getScannerPluginProperties(PluginRepository pluginRepository) {
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scan, scannerContext);
+        Set<ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(scan, scannerContext);
         assertThat(scannerPlugins).isNotEmpty();
-        for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
+        for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
             if (scannerPlugin instanceof TestScannerPlugin) {
                 return ((TestScannerPlugin) scannerPlugin).getProperties();
             }

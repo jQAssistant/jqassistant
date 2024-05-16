@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 /**
  * Implementation of the {@link Scanner}.
@@ -30,7 +29,7 @@ public class ScannerImpl implements Scanner {
 
     private final ScannerPluginRepository scannerPluginRepository;
 
-    private final Map<String, ScannerPlugin<?, ?>> scannerPlugins;
+    private final Set<ScannerPlugin<?, ?>> scannerPlugins;
 
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
 
@@ -38,15 +37,15 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Constructor.
-     *  @param configuration
-     *            The configuration.
+     *
+     * @param configuration
+     *     The configuration.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      * @param scannerPluginRepository
- *            The {@link ScannerPluginRepository}.
+     *     The {@link ScannerPluginRepository}.
      */
-    public ScannerImpl(Scan configuration, ScannerContext scannerContext,
-            ScannerPluginRepository scannerPluginRepository) {
+    public ScannerImpl(Scan configuration, ScannerContext scannerContext, ScannerPluginRepository scannerPluginRepository) {
         this.configuration = configuration;
         this.scannerContext = scannerContext;
         this.scannerPluginRepository = scannerPluginRepository;
@@ -96,8 +95,9 @@ public class ScannerImpl implements Scanner {
             if (store.hasActiveTransaction()) {
                 store.rollbackTransaction();
             }
-            String message = "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='"
-                    + pipeline + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.continueOnError() + ").";
+            String message =
+                "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline
+                    + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.continueOnError() + ").";
             if (configuration.continueOnError()) {
                 LOGGER.error(message, e);
                 LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
@@ -139,32 +139,33 @@ public class ScannerImpl implements Scanner {
      * Verifies if the selected plugin requires a descriptor.
      *
      * @param selectedPlugin
-     *            The selected plugin.
+     *     The selected plugin.
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param <I>
-     *            The item type of the plugin.
+     *     The item type of the plugin.
      * @param <D>
-     *            The descriptor type of the plugin.
+     *     The descriptor type of the plugin.
      * @return <code>true</code> if the selected plugin can be used.
      */
     private <I, D extends Descriptor> boolean satisfies(ScannerPlugin<I, D> selectedPlugin, D descriptor) {
-        return !(selectedPlugin.getClass().isAnnotationPresent(Requires.class) && descriptor == null);
+        return !(selectedPlugin.getClass()
+            .isAnnotationPresent(Requires.class) && descriptor == null);
     }
 
     /**
      * Checks whether a plugin accepts an item.
      *
      * @param selectedPlugin
-     *            The plugin.
+     *     The plugin.
      * @param item
-     *            The item.
+     *     The item.
      * @param path
-     *            The path.
+     *     The path.
      * @param scope
-     *            The scope.
+     *     The scope.
      * @param <I>
-     *            The item type.
+     *     The item type.
      * @return <code>true</code> if the plugin accepts the item for scanning.
      */
     protected <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
@@ -183,9 +184,9 @@ public class ScannerImpl implements Scanner {
      * Push the given descriptor with all it's types to the context.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param <D>
-     *            The descriptor type.
+     *     The descriptor type.
      */
     private <D extends Descriptor> void pushDesriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
@@ -198,9 +199,9 @@ public class ScannerImpl implements Scanner {
      * Pop the given descriptor from the context.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param <D>
-     *            The descriptor type.
+     *     The descriptor type.
      */
     private <D extends Descriptor> void popDescriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
@@ -220,9 +221,10 @@ public class ScannerImpl implements Scanner {
             return DefaultScope.NONE;
         }
 
-        Scope scope = scannerPluginRepository.getScopes().get(name);
+        Scope scope = scannerPluginRepository.getScopes()
+            .get(name);
         if (scope == null) {
-            LOGGER.warn("No scope found for name '" + name + "'.");
+            LOGGER.warn("No scope found for name '{}'.", name);
             scope = DefaultScope.NONE;
         }
         return scope;
@@ -232,7 +234,7 @@ public class ScannerImpl implements Scanner {
      * Determine the list of scanner plugins that handle the given type.
      *
      * @param type
-     *            The type.
+     *     The type.
      * @return The list of plugins.
      */
     private List<ScannerPlugin<?, ?>> getScannerPluginsForType(final Class<?> type) {
@@ -242,26 +244,21 @@ public class ScannerImpl implements Scanner {
             final List<ScannerPlugin<?, ?>> candidates = new LinkedList<>();
             // The map of scanner plugins which produce a descriptor type
             Map<Class<? extends Descriptor>, Set<ScannerPlugin<?, ?>>> pluginsByDescriptor = new HashMap<>();
-            for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
+            for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
                     Class<? extends Descriptor> descriptorType = scannerPlugin.getDescriptorType();
-                    Set<ScannerPlugin<?, ?>> pluginsForDescriptorType = pluginsByDescriptor.get(descriptorType);
-                    if (pluginsForDescriptorType == null) {
-                        pluginsForDescriptorType = new HashSet<>();
-                        pluginsByDescriptor.put(descriptorType, pluginsForDescriptorType);
-                    }
+                    Set<ScannerPlugin<?, ?>> pluginsForDescriptorType = pluginsByDescriptor.computeIfAbsent(descriptorType, k -> new HashSet<>());
                     pluginsForDescriptorType.add(scannerPlugin);
                     candidates.add(scannerPlugin);
                 }
             }
             // Order plugins by the values of their optional @Requires
             // annotation
-            plugins = DependencyResolver.newInstance(candidates, new DependencyProvider<ScannerPlugin<?, ?>>() {
-                @Override
-                public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
+            plugins = DependencyResolver.newInstance(candidates, dependent -> {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();
-                    Requires annotation = dependent.getClass().getAnnotation(Requires.class);
+                    Requires annotation = dependent.getClass()
+                        .getAnnotation(Requires.class);
                     if (annotation != null) {
                         for (Class<? extends Descriptor> descriptorType : annotation.value()) {
                             Set<ScannerPlugin<?, ?>> pluginsByDescriptorType = pluginsByDescriptor.get(descriptorType);
@@ -275,8 +272,8 @@ public class ScannerImpl implements Scanner {
                         }
                     }
                     return dependencies;
-                }
-            }).resolve();
+                })
+                .resolve();
             scannerPluginsPerType.put(type, plugins);
         }
         return plugins;
