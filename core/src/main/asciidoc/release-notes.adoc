@@ -4,6 +4,8 @@
 
 * Ensure that for a concept all required concepts are executed including those required by concepts which are provided
 * Fixed an issue where the config properties `jqassistant.analyze.report.warn-on-severity` and `jqassistant.analyze.report.fail-on-severity` did not accept the value `NEVER`.
+* Added configuration parameter `jqassistant.analyze.exclude-constraints` taking a list of constraint ids for exclusion from analysis (e.g. if used in a referenced group provided by a plugin)
+* Deprecated `ìd` attribute for scanner plugins declared in `jqassistant-plugin.xml` descriptors
 
 == 2.2.0
 
