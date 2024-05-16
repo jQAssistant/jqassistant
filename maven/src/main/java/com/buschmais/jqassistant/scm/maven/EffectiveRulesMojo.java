@@ -28,7 +28,7 @@ public class EffectiveRulesMojo extends AbstractRuleMojo {
         Analyze analyze = mojoExecutionContext.getConfiguration()
             .analyze();
         RuleSet ruleSet = readRules(mojoExecutionContext);
-        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
         RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection, analyze.rule());

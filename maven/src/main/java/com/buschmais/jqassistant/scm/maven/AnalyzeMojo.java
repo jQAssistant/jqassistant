@@ -57,7 +57,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         RuleSet ruleSet = readRules(mojoExecutionContext);
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
         Analyze analyze = configuration.analyze();
-        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.concepts());
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
         File outputDirectory = mojoExecutionContext.getOutputDirectory();
 
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
