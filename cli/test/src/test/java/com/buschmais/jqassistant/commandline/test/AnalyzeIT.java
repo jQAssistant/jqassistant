@@ -40,9 +40,16 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
+    void excludeConstraint() {
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.exclude-constraints=" + TEST_CONSTRAINT };
+        assertThat(execute(args).getExitCode()).isZero();
+    }
+
+    @DistributionTest
     void concept() {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
-            "jqassistant.analyze.concepts=" + TEST_CONCEPT};
+            "jqassistant.analyze.concepts=" + TEST_CONCEPT };
         assertThat(execute(args).getExitCode()).isZero();
         withStore(store -> verifyConcepts(store, TEST_CONCEPT));
     }
@@ -88,7 +95,7 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
-    void defaultConstraintSeverity()  {
+    void defaultConstraintSeverity() {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.report.fail-on-severity=minor", "-D",
             "jqassistant.analyze.rule.default-constraint-severity=info" };
@@ -97,7 +104,7 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
-    void defaultGroupSeverity()  {
+    void defaultGroupSeverity() {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.report.fail-on-severity=minor", "-D", "jqassistant.analyze.rule.default-group-severity=info" };
         assertThat(execute(args).getExitCode()).isZero();
@@ -105,7 +112,7 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
-    void storeUri()  {
+    void storeUri() {
         File customStoreDir = new File(getWorkingDirectory(), "customStore");
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.store.uri=" + customStoreDir.toURI() };
@@ -114,7 +121,7 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
-    void createReportArchive()  {
+    void createReportArchive() {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.report.create-archive" };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
@@ -128,7 +135,7 @@ class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-configurationLocations", configFile.getAbsolutePath(), "-D",
             "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D", "jqassistant.analyze.concepts=it-apoc:APOCHelp", "-D",
             "jqassistant.store.embedded.neo4j-plugin-directory=jqassistant/plugins/" };
-        assertThat(execute(args).getExitCode()).isEqualTo(0);
+        assertThat(execute(args).getExitCode()).isZero();
     }
 
     /**
