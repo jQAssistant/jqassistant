@@ -69,12 +69,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.neo4j.community</groupId>
-            <artifactId>it-test-support</artifactId>
-            <version>${neo4j_5x.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.cli</groupId>
             <artifactId>application</artifactId>
         </dependency>
