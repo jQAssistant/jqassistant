@@ -135,10 +135,6 @@
             <artifactId>neo4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.neo4j.community</groupId>
-            <artifactId>it-test-support</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.neo4j.client</groupId>
             <artifactId>neo4j-browser</artifactId>
         </dependency>
