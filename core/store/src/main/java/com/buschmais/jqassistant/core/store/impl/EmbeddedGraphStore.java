@@ -71,6 +71,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     public EmbeddedNeo4jServer getServer() {
         return this.server;
     }
+
     @Override
     protected XOUnit configure(XOUnit.XOUnitBuilder builder) {
         Optional<File> neo4jPluginDirectory = resolveNeo4jPlugins();
@@ -115,9 +116,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected final void initialize(XOManagerFactory xoManagerFactory) {
         LOGGER.debug("Initializing embedded Neo4j server.");
         EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
-        server.initialize(embeddedDatastore, embedded.listenAddress(), embedded.httpPort(), storePluginRepository.getClassLoader(),
-            storePluginRepository.getProcedureTypes(),
-            storePluginRepository.getFunctionTypes());
+        server.initialize(embeddedDatastore, embedded.listenAddress(), embedded.httpPort(), embedded.boltPort(), storePluginRepository.getClassLoader(),
+            storePluginRepository.getProcedureTypes(), storePluginRepository.getFunctionTypes());
         logVersion(embeddedDatastore);
     }
 
