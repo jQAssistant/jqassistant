@@ -262,9 +262,9 @@ public abstract class AbstractCLIIT {
                 .getOutputStream());
             printWriter.println();
             printWriter.flush();
-            if (serverExecutionResult.getExitCode() != 0) {
-                throw new IllegalStateException("Cannot stop Neo4j server.");
-            }
+        }
+        if (serverExecutionResult.getExitCode() != 0) {
+            throw new IllegalStateException("Cannot stop Neo4j server.");
         }
     }
 
@@ -272,7 +272,7 @@ public abstract class AbstractCLIIT {
         withStore(new File(getWorkingDirectory(), Task.DEFAULT_STORE_DIRECTORY), storeOperation);
     }
 
-    interface StoreOperation {
+    protected interface StoreOperation {
 
         void run(Store store);
 
