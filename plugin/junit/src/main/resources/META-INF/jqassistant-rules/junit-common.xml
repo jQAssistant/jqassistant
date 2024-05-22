@@ -84,6 +84,7 @@
     </constraint>
 
     <constraint id="junit:TestMethodWithoutAssertion">
+        <requiresConcept refId="java:VirtualInvokes"/>
         <requiresConcept refId="junit4:TestMethod"/>
         <requiresConcept refId="junit4:AssertMethod"/>
         <requiresConcept refId="junit5:AssertMethod"/>
@@ -95,7 +96,7 @@
             MATCH
               (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
             WHERE
-              NOT (testMethod)-[:INVOKES*..3]->(:Method:Assert)
+              NOT (testMethod)-[:INVOKES|VIRTUAL_INVOKES*..3]->(:Method:Assert)
             RETURN
               testType AS DeclaringType,
               testMethod AS Method
