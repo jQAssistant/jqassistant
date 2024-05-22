@@ -47,7 +47,7 @@ class ConfigurationMappingLoaderTest {
 
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
-        assertThat(scan.continueOnError()).isEqualTo(true);
+        assertThat(scan.continueOnError()).isTrue();
         assertThat(scan.properties()
             .get("user-value")).isEqualTo("default");
         assertThat(scan.properties()
@@ -56,7 +56,6 @@ class ConfigurationMappingLoaderTest {
         Store store = configuration.store();
         assertThat(store).isNotNull();
         assertThat(store.uri()).isEqualTo(of(new URI("bolt://localhost:7687")));
-
     }
 
     /**
@@ -73,7 +72,7 @@ class ConfigurationMappingLoaderTest {
 
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
-        assertThat(scan.continueOnError()).isEqualTo(true);
+        assertThat(scan.continueOnError()).isTrue();
         assertThat(scan.properties()
             .get("user-value")).isEqualTo("default");
         assertThat(scan.properties()
@@ -85,11 +84,19 @@ class ConfigurationMappingLoaderTest {
     }
 
     @Test
+    void profile() {
+        TestConfiguration configuration = getConfiguration(singletonList(".jqassistant/profile.yml"), List.of("test-profile"));
+
+        assertThat(configuration.scan()
+            .properties()).containsEntry("profile-user-value", "test-value");
+    }
+
+    @Test
     @SetEnvironmentVariable(key = "jqassistant_scan_continue_on_error", value = "false")
     void overrideFromEnvVariable() {
         TestConfiguration configuration = getConfiguration(emptyList());
         assertThat(configuration.scan()
-            .continueOnError()).isEqualTo(false);
+            .continueOnError()).isFalse();
     }
 
     @Test
@@ -107,18 +114,23 @@ class ConfigurationMappingLoaderTest {
         try {
             TestConfiguration configuration = getConfiguration(emptyList());
             assertThat(configuration.scan()
-                .continueOnError()).isEqualTo(false);
+                .continueOnError()).isFalse();
         } finally {
             System.clearProperty(continueOnError);
         }
     }
 
     private TestConfiguration getConfiguration(List<String> configLocations) {
+        return getConfiguration(configLocations, emptyList());
+    }
+
+    private TestConfiguration getConfiguration(List<String> configLocations, List<String> profiles) {
         return ConfigurationMappingLoader.builder(TestConfiguration.class, configLocations)
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
             .withClasspath()
             .withEnvVariables()
+            .withProfiles(profiles)
             .load(new SysPropConfigSource());
     }
 }

@@ -94,6 +94,8 @@ public class ConfigurationMappingLoader {
 
         private final List<ConfigSource> configSources = new ArrayList<>();
 
+        private final List<String> profiles = new ArrayList<>();
+
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
             this.configLocations = configLocations;
@@ -158,6 +160,18 @@ public class ConfigurationMappingLoader {
         }
 
         /**
+         * Add profiles to activate.
+         *
+         * @param profiles
+         *     The profiles.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withProfiles(List<String> profiles) {
+            this.profiles.addAll(profiles);
+            return this;
+        }
+
+        /**
          * Load the {@link Configuration} using the given directory including
          * <p/>
          * - yml/yaml files present in the given configuration directory
@@ -174,6 +188,7 @@ public class ConfigurationMappingLoader {
                 .withSources(additionalConfigSources)
                 .withValidateUnknown(false)
                 .withInterceptors(new ExpressionConfigSourceInterceptor())
+                .withProfiles(this.profiles)
                 .build();
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {

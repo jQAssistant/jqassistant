@@ -8,6 +8,7 @@
 * Deprecated `ìd` attribute for scanner plugins declared in `jqassistant-plugin.xml` descriptors
 * Added CycloneDX BOM (XML and JSON) for distributions and plugins
 * Allow ITs to use environment variables or system properties to specify configuration properties, e.g. `JQASSISTANT_STORE_URI=bolt://localhost:7687` or `-Djqassistant.store.uri=bolt://localhost:7687`
+* Added support for profiles in configurations
 
 == 2.2.0
 
