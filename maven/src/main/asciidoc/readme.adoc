@@ -107,6 +107,16 @@ jqassistant:
 
 TIP: Maven properties (e.g. `project.basedir`) or user properties defined in `pom.xml` or `settings.xml` files can be referenced in `.jqassistant.yml` files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
 
+The configuration furthermore supports profiles, e.g. for `mvn verify -Pcustom-profile` the following properties may be activated:
+
+[source,yaml]
+----
+"%custom-profile":
+  jqassistant:
+    store:
+      uri: "bolt://localhost:7687"
+----
+
 .Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
 [source,xml]
 ----

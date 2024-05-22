@@ -1,6 +1,10 @@
 
 = Plugin for Maven
 
+== 2.3.0
+
+* Added profile support for configuration properties
+
 == 2.2.1
 
 * Fixed an issue with overriding configuration properties from multiple sources: `.jqassistant.yml` files in project directory should have higher priority than settings in a `pom.xml`

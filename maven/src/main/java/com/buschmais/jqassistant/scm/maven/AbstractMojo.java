@@ -274,7 +274,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
-            .withClasspath();
+            .withClasspath()
+            .withProfiles(session.getProjectBuildingRequest()
+                .getActiveProfileIds());
         if (!executionRootDirectory.equals(currentProject.getBasedir())) {
             builder.withWorkingDirectory(currentProject.getBasedir());
         }
