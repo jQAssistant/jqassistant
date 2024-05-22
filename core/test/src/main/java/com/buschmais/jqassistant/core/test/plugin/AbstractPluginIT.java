@@ -46,6 +46,8 @@ import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
+import io.smallrye.config.EnvConfigSource;
+import io.smallrye.config.SysPropConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -167,7 +169,8 @@ public abstract class AbstractPluginIT {
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         return ConfigurationMappingLoader.builder(Configuration.class)
-            .load(configurationBuilder.build());
+            .load(configurationBuilder.build(), new EnvConfigSource() {
+            }, new SysPropConfigSource());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
