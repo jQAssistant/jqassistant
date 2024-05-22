@@ -31,15 +31,16 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
     private Server server;
     private String listenAddress;
     private Integer httpPort;
+    private Integer boltPort;
 
     @Override
-    public final void initialize(EmbeddedDatastore embeddedDatastore, String listenAddress, Integer httpPort, ClassLoader classLoader,
-        Collection<Class<?>> procedureTypes,
-        Collection<Class<?>> functionTypes) {
+    public final void initialize(EmbeddedDatastore embeddedDatastore, String listenAddress, Integer httpPort, Integer boltPort, ClassLoader classLoader,
+        Collection<Class<?>> procedureTypes, Collection<Class<?>> functionTypes) {
         this.embeddedDatastore = embeddedDatastore;
         this.classLoader = classLoader;
         this.listenAddress = listenAddress;
         this.httpPort = httpPort;
+        this.boltPort = boltPort;
         registerProceduresAndFunctions(procedureTypes, functionTypes);
     }
 
@@ -55,7 +56,7 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
         } catch (Exception e) {
             throw new IllegalStateException("Cannot start embedded server.", e);
         }
-        LOGGER.info("Neo4j browser available at http://{}:{}.", listenAddress, httpPort);
+        LOGGER.info("Neo4j browser available at http://{}:{}?dbms=bolt://{}:{}&preselectAuthMethod=NO_AUTH.", listenAddress, httpPort, listenAddress,boltPort);
     }
 
     private WebAppContext getWebAppContext(String contextPath, String resourceRoot) {
@@ -93,18 +94,18 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
         }
         for (Class<?> procedureType : procedureTypes) {
             try {
-                LOGGER.debug("Registering procedure class " + procedureType.getName());
+                LOGGER.debug("Registering procedure class {}", procedureType.getName());
                 procedures.registerProcedure(procedureType);
             } catch (KernelException e) {
-                LOGGER.warn("Cannot register procedure class " + procedureType.getName(), e);
+                LOGGER.warn("Cannot register procedure class {}", procedureType.getName(), e);
             }
         }
         for (Class<?> functionType : functionTypes) {
             try {
-                LOGGER.debug("Registering function class " + functionType.getName());
+                LOGGER.debug("Registering function class {}", functionType.getName());
                 procedures.registerFunction(functionType);
             } catch (KernelException e) {
-                LOGGER.warn("Cannot register function class " + functionType.getName(), e);
+                LOGGER.warn("Cannot register function class {}", functionType.getName(), e);
             }
         }
     }
