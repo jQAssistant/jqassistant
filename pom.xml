@@ -132,7 +132,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <maven.jqassistant.previous.version>2.2.1</maven.jqassistant.previous.version>
+        <maven.jqassistant.previous.version>2.3.0-M3</maven.jqassistant.previous.version>
         <maven.resources.version>3.3.0</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
