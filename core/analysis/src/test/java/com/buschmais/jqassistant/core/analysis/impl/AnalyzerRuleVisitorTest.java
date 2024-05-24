@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -19,6 +20,7 @@ import com.buschmais.jqassistant.core.shared.transaction.Transactional;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
+import com.buschmais.xo.api.XOManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +65,12 @@ class AnalyzerRuleVisitorTest {
     private Store store;
 
     @Mock
+    private XOManager xoManager;
+
+    @Mock
+    private RuleRepository ruleRepository;
+
+    @Mock
     private ReportPlugin reportWriter;
 
     @Mock
@@ -91,7 +99,8 @@ class AnalyzerRuleVisitorTest {
         doReturn(ruleParameters).when(configuration)
             .ruleParameters();
 
-        doReturn(createResult(columnNames)).when(store).executeQuery(eq(STATEMENT), anyMap());
+        doReturn(createResult(columnNames)).when(store)
+            .executeQuery(eq(STATEMENT), anyMap());
 
         doReturn(store).when(analyzerContext)
             .getStore();
@@ -103,7 +112,17 @@ class AnalyzerRuleVisitorTest {
         doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
             .requireTransaction(any(Transactional.TransactionalSupplier.class));
 
-        when(store.create(ConceptDescriptor.class)).thenReturn(mock(ConceptDescriptor.class));
+        doReturn(xoManager).when(store)
+            .getXOManager();
+        doReturn(ruleRepository).when(xoManager)
+            .getRepository(RuleRepository.class);
+        doAnswer(invocation -> {
+            ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
+            doReturn(invocation.getArgument(0)).when(conceptDescriptor)
+                .getId();
+            return conceptDescriptor;
+        }).when(ruleRepository)
+            .merge(anyString());
 
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
@@ -138,11 +157,15 @@ class AnalyzerRuleVisitorTest {
         verify(reportWriter).setResult(resultCaptor.capture());
         verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap());
         Result<Concept> capturedResult = resultCaptor.getValue();
-        assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.").isEqualTo(columnNames);
+        assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.")
+            .isEqualTo(columnNames);
         List<Row> capturedRows = capturedResult.getRows();
-        assertThat(capturedRows.size()).as("Expecting one row.").isEqualTo(1);
+        assertThat(capturedRows).as("Expecting one row.")
+            .hasSize(1);
         Row capturedRow = capturedRows.get(0);
-        assertThat(new ArrayList<>(capturedRow.getColumns().keySet())).as("The reported column names must match the given column names.").isEqualTo(columnNames);
+        assertThat(new ArrayList<>(capturedRow.getColumns()
+            .keySet())).as("The reported column names must match the given column names.")
+            .isEqualTo(columnNames);
     }
 
     @Test
@@ -157,11 +180,11 @@ class AnalyzerRuleVisitorTest {
         ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(STATEMENT), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT)).isEqualTo("value");
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT)).isEqualTo("defaultValue");
+        assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
+            .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
         verifyConceptResult(concept, SUCCESS, MAJOR);
-        verify(store).create(ConceptDescriptor.class);
+        verify(ruleRepository).merge(concept.getId());
     }
 
     @Test
@@ -175,7 +198,7 @@ class AnalyzerRuleVisitorTest {
         Result<Concept> result = verifyConceptResult(abstractConcept, SUCCESS, MAJOR);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
-        verify(store).create(ConceptDescriptor.class);
+        verify(ruleRepository).merge(abstractConcept.getId());
     }
 
     @Test
@@ -183,7 +206,8 @@ class AnalyzerRuleVisitorTest {
         Concept providingConcept1 = createConcept("test:ProvidingConcept1");
         Concept providingConcept2 = createConcept("test:ProvidingConcept2");
         Concept providedConcept = createConcept("test:ProvidedConcept");
-        doReturn(createEmptyResult()).when(store).executeQuery(eq(STATEMENT), anyMap());
+        doReturn(createEmptyResult()).when(store)
+            .executeQuery(eq(STATEMENT), anyMap());
 
         assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
             ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, FAILURE)))).isEqualTo(FAILURE);
@@ -199,7 +223,7 @@ class AnalyzerRuleVisitorTest {
 
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
         verifyConceptResult(concept, Result.Status.SKIPPED, MAJOR);
-        verify(store, never()).create(ConceptDescriptor.class);
+        verify(ruleRepository, never()).merge(concept.getId());
     }
 
     private Result<Concept> verifyConceptResult(Concept expectedConcept, Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
@@ -223,8 +247,8 @@ class AnalyzerRuleVisitorTest {
         ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(STATEMENT), argumentCaptor.capture());
         Map<String, Object> parameters = argumentCaptor.getValue();
-        assertThat(parameters.get(PARAMETER_WITHOUT_DEFAULT)).isEqualTo("value");
-        assertThat(parameters.get(PARAMETER_WITH_DEFAULT)).isEqualTo("defaultValue");
+        assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
+            .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
     }
 
@@ -238,7 +262,6 @@ class AnalyzerRuleVisitorTest {
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
     }
-
 
     @Test
     void skipConstraint() throws RuleException {
@@ -264,13 +287,14 @@ class AnalyzerRuleVisitorTest {
         ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
         doReturn(SUCCESS).when(conceptDescriptor)
             .getStatus();
-        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
+        doReturn(conceptDescriptor).when(ruleRepository)
+            .find(concept.getId());
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
-        verify(store, never()).create(ConceptDescriptor.class);
+        verify(ruleRepository, never()).merge(concept.getId());
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
     }
 
@@ -278,15 +302,13 @@ class AnalyzerRuleVisitorTest {
     void executeAppliedConcept() throws RuleException {
         doReturn(SUCCESS).when(analyzerContext)
             .verify(eq(concept), eq(MINOR), anyList(), anyList());
-        ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
-        when(store.find(ConceptDescriptor.class, concept.getId())).thenReturn(conceptDescriptor);
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter).beginConcept(concept);
-        verify(store, never()).create(ConceptDescriptor.class);
+        verify(ruleRepository).merge(concept.getId());
     }
 
     @Test
