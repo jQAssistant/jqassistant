@@ -25,4 +25,9 @@ public interface Repositories {
     @Description("The remote repositories.")
     Map<String, Remote> remotes();
 
+    String IGNORE_TRANSITIVE_REPOSITORIES = "ignore-transitive-repositories";
+
+    @Description("If true (default), ignore any repositories specified by transitive dependencies.")
+    Optional<Boolean> ignoreTransitiveRepositories();
+
 }

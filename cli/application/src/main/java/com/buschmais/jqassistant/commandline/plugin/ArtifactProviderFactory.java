@@ -105,7 +105,7 @@ public class ArtifactProviderFactory {
                     "", repositoryProxy != null ? String.format(" via proxy %s:%d", repositoryProxy.getHost(), repositoryProxy.getPort()) : "");
             })
             .collect(joining(", ")));
-        RepositorySystemSession session = newRepositorySystemSession(repositorySystem, localRepository, mirrorSelector, proxySelector);
+        RepositorySystemSession session = newRepositorySystemSession(repositories, repositorySystem, localRepository, mirrorSelector, proxySelector);
 
         return new AetherArtifactProvider(repositorySystem, session, remoteRepositories);
     }
@@ -134,9 +134,9 @@ public class ArtifactProviderFactory {
             Integer port = p.port();
             AuthenticationBuilder authBuilder = new AuthenticationBuilder();
             p.username()
-                .ifPresent(username -> authBuilder.addUsername(username));
+                .ifPresent(authBuilder::addUsername);
             p.password()
-                .ifPresent(password -> authBuilder.addPassword(password));
+                .ifPresent(authBuilder::addPassword);
 
             return new org.eclipse.aether.repository.Proxy(protocol, host, port, authBuilder.build());
         });
@@ -197,8 +197,8 @@ public class ArtifactProviderFactory {
     private static RemoteRepository getRemoteRepository(RemoteRepository remoteRepository, ProxySelector proxySelector, Optional<String> optionalUsername,
         Optional<String> optionalPassword) {
         AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-        optionalUsername.ifPresent(username -> authBuilder.addUsername(username));
-        optionalPassword.ifPresent(password -> authBuilder.addPassword(password));
+        optionalUsername.ifPresent(authBuilder::addUsername);
+        optionalPassword.ifPresent(authBuilder::addPassword);
         org.eclipse.aether.repository.Proxy proxy = proxySelector.getProxy(remoteRepository);
         return new RemoteRepository.Builder(remoteRepository).setProxy(proxy)
             .setAuthentication(authBuilder.build())
@@ -221,6 +221,8 @@ public class ArtifactProviderFactory {
     /**
      * Creates a new {@link RepositorySystemSession}.
      *
+     * @param repositories
+     *     The {@link Repositories}
      * @param system
      *     the {@link RepositorySystem}
      * @param mirrorSelector
@@ -229,14 +231,16 @@ public class ArtifactProviderFactory {
      *     The {@link ProxySelector}.
      * @return a new {@link RepositorySystemSession}.
      */
-    private RepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory, Optional<MirrorSelector> mirrorSelector,
-        ProxySelector proxySelector) {
+    private RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory,
+        Optional<MirrorSelector> mirrorSelector, ProxySelector proxySelector) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setTransferListener(new TransferListener());
         LocalRepository localRepo = new LocalRepository(localDirectory);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
         session.setProxySelector(proxySelector);
-        mirrorSelector.ifPresent(selector -> session.setMirrorSelector(selector));
+        mirrorSelector.ifPresent(session::setMirrorSelector);
+        session.setIgnoreArtifactDescriptorRepositories(repositories.ignoreTransitiveRepositories()
+            .orElse(true));
         return session;
     }
 

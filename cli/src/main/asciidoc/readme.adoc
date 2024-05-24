@@ -37,6 +37,7 @@ jqassistant:
     #
     # -Djqassistant.repositories.local (optional)
     local: ~/.jqassistant/repository
+
     remotes:
       central:
         # The URL of the Maven repository
@@ -51,6 +52,12 @@ jqassistant:
         #
         # -Djqassistant.repositories.central.password (optional)
         password:
+
+    # If true (default), ignore any repositories specified by transitive dependencies.
+    #
+    # -Djqassistant.repositories.ignore-transitive-repositories (optional)
+    ignore-transitive-repositories: true
+
     mirrors:
       mirror-repository:
         # The mirror URL.

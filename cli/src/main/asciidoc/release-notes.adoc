@@ -1,6 +1,10 @@
 
 = Commandline Tool
 
+== 2.3.0
+
+* Added setting `jqassistant.repositories.ignore-transitive-repositories`
+
 == 2.2.0
 
 * Added support to specify authentication credentials for mirrors of plugin repositories in `.jqassistant.yml` and Maven settings.
