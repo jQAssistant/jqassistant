@@ -11,6 +11,8 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.model.ExecutableRuleTemplate;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -45,23 +47,23 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
      * Constructor.
      *
      * @param configuration
-     *         The configuration
+     *     The configuration
      * @param analyzerContext
-     *         The {@link AnalyzerContext}
+     *     The {@link AnalyzerContext}
      * @param ruleInterpreterPlugins
-     *         The {@link RuleInterpreterPlugin}s.
+     *     The {@link RuleInterpreterPlugin}s.
      * @param reportPlugin
-     *         The report writer.
+     *     The report writer.
      */
     AnalyzerRuleVisitor(Analyze configuration, AnalyzerContext analyzerContext, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
-            ReportPlugin reportPlugin) {
+        ReportPlugin reportPlugin) {
         this.configuration = configuration;
         this.analyzerContext = analyzerContext;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.reportPlugin = reportPlugin;
         this.store = analyzerContext.getStore();
         this.ruleRepository = store.getXOManager()
-                .getRepository(RuleRepository.class);
+            .getRepository(RuleRepository.class);
     }
 
     @Override
@@ -93,28 +95,28 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             return status;
         } else {
             log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
-                    Analyze.class.getAnnotation(ConfigMapping.class)
-                            .prefix(), EXECUTE_APPLIED_CONCEPTS);
+                Analyze.class.getAnnotation(ConfigMapping.class)
+                    .prefix(), EXECUTE_APPLIED_CONCEPTS);
             return store.requireTransaction(conceptDescriptor::getStatus);
         }
     }
 
     private static Result.Status evaluateConceptStatus(Result<Concept> result, Map<Concept, Result.Status> providedConceptResults) {
         return Stream.of(singletonList(result.getStatus()), providedConceptResults.values())
-                .flatMap(Collection::stream)
-                .filter(SUCCESS::equals)
-                .findAny()
-                .orElse(FAILURE);
+            .flatMap(Collection::stream)
+            .filter(SUCCESS::equals)
+            .findAny()
+            .orElse(FAILURE);
     }
 
     @Override
     public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConcept(concept));
         Result<Concept> result = Result.<Concept>builder()
-                .rule(concept)
-                .status(Result.Status.SKIPPED)
-                .severity(effectiveSeverity)
-                .build();
+            .rule(concept)
+            .status(Result.Status.SKIPPED)
+            .severity(effectiveSeverity)
+            .build();
         store.requireTransaction(() -> reportPlugin.setResult(result));
         store.requireTransaction(reportPlugin::endConcept);
     }
@@ -126,17 +128,19 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         Result<Constraint> result = execute(constraint, effectiveSeverity);
         store.requireTransaction(() -> reportPlugin.setResult(result));
         store.requireTransaction(reportPlugin::endConstraint);
-        return result.getStatus();
+        Result.Status status = result.getStatus();
+        updateConstraint(constraint, status);
+        return status;
     }
 
     @Override
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
         Result<Constraint> result = Result.<Constraint>builder()
-                .rule(constraint)
-                .status(Result.Status.SKIPPED)
-                .severity(effectiveSeverity)
-                .build();
+            .rule(constraint)
+            .status(Result.Status.SKIPPED)
+            .severity(effectiveSeverity)
+            .build();
         store.requireTransaction(() -> reportPlugin.setResult(result));
         store.requireTransaction(reportPlugin::endConstraint);
     }
@@ -156,12 +160,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         Executable<?> executable = executableRule.getExecutable();
         if (executable == null) {
             return Result.<T>builder()
-                    .rule(executableRule)
-                    .status(SUCCESS)
-                    .severity(severity)
-                    .columnNames(emptyList())
-                    .rows(emptyList())
-                    .build();
+                .rule(executableRule)
+                .status(SUCCESS)
+                .severity(severity)
+                .columnNames(emptyList())
+                .rows(emptyList())
+                .build();
         } else {
             Map<String, Object> ruleParameters = getRuleParameters(executableRule);
             Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
@@ -181,7 +185,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,
-            RuleInterpreterPlugin languagePlugin) throws RuleException {
+        RuleInterpreterPlugin languagePlugin) throws RuleException {
         StopWatch stopWatch = StopWatch.createStarted();
         try {
             return languagePlugin.execute(executableRule, ruleParameters, severity, analyzerContext);
@@ -190,12 +194,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             long ruleExecutionTime = stopWatch.getTime(TimeUnit.SECONDS);
             if (ruleExecutionTime > configuration.warnOnExecutionTimeSeconds()) {
                 log.warn("Execution of rule with id '{}' took {} seconds.", executableRule.getSource()
-                        .getId(), ruleExecutionTime);
+                    .getId(), ruleExecutionTime);
             }
             if (store.hasActiveTransaction()) {
                 log.warn("Rule with id '{}' returned with an active transaction, performing rollback. Please check the implementation.",
-                        executableRule.getSource()
-                                .getId());
+                    executableRule.getSource()
+                        .getId());
                 store.rollbackTransaction();
             }
         }
@@ -209,11 +213,11 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             Parameter parameter = entry.getValue();
             Object parameterValue;
             String parameterValueAsString = configuration.ruleParameters()
-                    .get(parameterName);
+                .get(parameterName);
             if (parameterValueAsString != null) {
                 try {
                     parameterValue = parameter.getType()
-                            .parse(parameterValueAsString);
+                        .parse(parameterValueAsString);
                 } catch (RuleException e) {
                     throw new RuleException("Cannot determine value for parameter " + parameterName + "' of rule '" + executableRule + "'.");
                 }
@@ -229,24 +233,34 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private ConceptDescriptor findConcept(Concept concept) {
-        return store.requireTransaction(() -> this.ruleRepository.find(concept.getId()));
+        return store.requireTransaction(() -> this.ruleRepository.findConcept(concept.getId()));
     }
 
     private void updateConcept(Concept concept, Set<Concept> providingConcepts, Result.Status status) {
         store.requireTransaction(() -> {
-            ConceptDescriptor conceptDescriptor = this.ruleRepository.merge(concept.getId());
-            for (String requiresConceptId : concept.getRequiresConcepts()
-                    .keySet()) {
-                conceptDescriptor.getRequiresConcepts()
-                        .add(this.ruleRepository.merge(requiresConceptId));
-            }
+            ConceptDescriptor conceptDescriptor = this.ruleRepository.mergeConcept(concept.getId());
+            updateRule(concept, status, conceptDescriptor);
             for (Concept providingConcept : providingConcepts) {
-                this.ruleRepository.merge(providingConcept.getId())
-                        .getProvidesConcepts()
-                        .add(conceptDescriptor);
+                this.ruleRepository.mergeConcept(providingConcept.getId())
+                    .getProvidesConcepts()
+                    .add(conceptDescriptor);
             }
-            conceptDescriptor.setStatus(status);
         });
     }
 
+    private void updateConstraint(Constraint constraint, Result.Status status) {
+        store.requireTransaction(() -> {
+            ConstraintDescriptor constraintDescriptor = this.ruleRepository.mergeConstraint(constraint.getId());
+            updateRule(constraint, status, constraintDescriptor);
+        });
+    }
+
+    private void updateRule(ExecutableRule<?> executableRule, Result.Status status, ExecutableRuleTemplate executableRuleTemplate) {
+        for (String requiresConceptId : executableRule.getRequiresConcepts()
+            .keySet()) {
+            executableRuleTemplate.getRequiresConcepts()
+                .add(this.ruleRepository.mergeConcept(requiresConceptId));
+        }
+        executableRuleTemplate.setStatus(status);
+    }
 }

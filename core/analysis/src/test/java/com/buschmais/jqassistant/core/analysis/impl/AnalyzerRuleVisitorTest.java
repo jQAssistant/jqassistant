@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -122,7 +123,15 @@ class AnalyzerRuleVisitorTest {
                 .getId();
             return conceptDescriptor;
         }).when(ruleRepository)
-            .merge(anyString());
+            .mergeConcept(anyString());
+
+        doAnswer(invocation -> {
+            ConstraintDescriptor constraintDescriptor = mock(ConstraintDescriptor.class);
+            doReturn(invocation.getArgument(0)).when(constraintDescriptor)
+                .getId();
+            return constraintDescriptor;
+        }).when(ruleRepository)
+            .mergeConstraint(anyString());
 
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
@@ -184,7 +193,7 @@ class AnalyzerRuleVisitorTest {
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
         verifyConceptResult(concept, SUCCESS, MAJOR);
-        verify(ruleRepository).merge(concept.getId());
+        verify(ruleRepository).mergeConcept(concept.getId());
     }
 
     @Test
@@ -198,7 +207,7 @@ class AnalyzerRuleVisitorTest {
         Result<Concept> result = verifyConceptResult(abstractConcept, SUCCESS, MAJOR);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
-        verify(ruleRepository).merge(abstractConcept.getId());
+        verify(ruleRepository).mergeConcept(abstractConcept.getId());
     }
 
     @Test
@@ -223,7 +232,7 @@ class AnalyzerRuleVisitorTest {
 
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
         verifyConceptResult(concept, Result.Status.SKIPPED, MAJOR);
-        verify(ruleRepository, never()).merge(concept.getId());
+        verify(ruleRepository, never()).mergeConcept(concept.getId());
     }
 
     private Result<Concept> verifyConceptResult(Concept expectedConcept, Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
@@ -250,6 +259,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
+        verify(ruleRepository).mergeConstraint(constraint.getId());
     }
 
     @Test
@@ -261,6 +271,7 @@ class AnalyzerRuleVisitorTest {
         Result<?> result = verifyConstraintResult(SUCCESS, BLOCKER);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
+        verify(ruleRepository).mergeConstraint(constraint.getId());
     }
 
     @Test
@@ -288,13 +299,13 @@ class AnalyzerRuleVisitorTest {
         doReturn(SUCCESS).when(conceptDescriptor)
             .getStatus();
         doReturn(conceptDescriptor).when(ruleRepository)
-            .find(concept.getId());
+            .findConcept(concept.getId());
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
-        verify(ruleRepository, never()).merge(concept.getId());
+        verify(ruleRepository, never()).mergeConcept(concept.getId());
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
     }
 
@@ -308,7 +319,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(analyzerRuleVisitor.visitConcept(concept, Severity.MINOR, emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter).beginConcept(concept);
-        verify(ruleRepository).merge(concept.getId());
+        verify(ruleRepository).mergeConcept(concept.getId());
     }
 
     @Test
