@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 
 import org.apache.commons.cli.CommandLine;
@@ -45,8 +44,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
      *     If the execution fails.
      */
     void withStore(CliConfiguration configuration, StoreOperation storeOperation) throws CliExecutionException {
-        Store store = StoreFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY), pluginRepository.getStorePluginRepository(),
-            artifactProvider);
+        Store store = storeFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY));
         try {
             store.start();
             storeOperation.run(store);

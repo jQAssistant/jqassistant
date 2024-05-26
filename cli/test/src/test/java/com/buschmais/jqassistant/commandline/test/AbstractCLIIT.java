@@ -97,9 +97,9 @@ public abstract class AbstractCLIIT {
 
     private static CliConfiguration configuration;
 
-    private static ArtifactProvider artifactProvider;
-
     private PluginRepository pluginRepository;
+
+    private StoreFactory storeFactory;
 
     private String neo4jVersion;
 
@@ -138,9 +138,6 @@ public abstract class AbstractCLIIT {
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
         configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configurationBuilder.build());
-        // The user home contains a Maven settings.xml to configure the local repository
-        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));
-        artifactProvider = artifactProviderFactory.create(configuration);
     }
 
     /**
@@ -154,6 +151,10 @@ public abstract class AbstractCLIIT {
         FileUtils.cleanDirectory(workingDirectory);
         pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())));
         pluginRepository.initialize();
+        // The user home contains a Maven settings.xml to configure the local repository
+        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));
+        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
     }
 
     private String getjQAHomeDirectory(String neo4jVersion) throws IOException {
@@ -250,7 +251,7 @@ public abstract class AbstractCLIIT {
     protected void withStore(File directory, StoreOperation storeOperation) {
         ExecutionResult serverExecutionResult = execute("server", "-Djqassistant.store.uri=" + directory.toURI());
         try {
-            Store remoteStore = StoreFactory.getStore(configuration.store(), () -> directory, pluginRepository.getStorePluginRepository(), artifactProvider);
+            Store remoteStore = storeFactory.getStore(configuration.store(), () -> directory);
             waitAtMost(30, SECONDS).untilAsserted(() -> assertThatNoException().isThrownBy(() -> remoteStore.start()));
             try {
                 storeOperation.run(remoteStore);

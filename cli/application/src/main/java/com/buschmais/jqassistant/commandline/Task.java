@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.commandline;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.cli.Options;
 
@@ -18,7 +18,7 @@ public interface Task extends OptionsProvider, OptionsConsumer {
     String DEFAULT_REPORT_DIRECTORY = "jqassistant/report";
     String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(PluginRepository pluginRepository, ArtifactProvider artifactProvider) throws CliExecutionException;
+    void initialize(PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException;
 
     void run(CliConfiguration configuration, Options options) throws CliExecutionException;
 }

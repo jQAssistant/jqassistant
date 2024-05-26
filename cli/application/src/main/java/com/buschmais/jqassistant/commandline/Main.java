@@ -1,13 +1,6 @@
 package com.buschmais.jqassistant.commandline;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +18,8 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
-import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
@@ -53,9 +46,6 @@ import static java.util.stream.Collectors.toMap;
  */
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
-    private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
-    private static final String DIRECTORY_PLUGINS = "plugins";
 
     private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
 
@@ -114,23 +104,17 @@ public class Main {
      *
      * @param configuration
      *     The {@link CliConfiguration}
-     * @param userHome
-     *     The user home directory
      * @param artifactProvider
      *     The {@link ArtifactProvider}
      * @return The repository.
-     * @throws CliExecutionException
-     *     If initialization fails.
      */
-    private PluginRepository getPluginRepository(CliConfiguration configuration, File userHome, ArtifactProvider artifactProvider)
-        throws CliExecutionException {
-        // create classloader for the plugins/ directory.
-        ClassLoader pluginDirectoryClassLoader = createPluginClassLoader();
+    private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider) {
         PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
-        // create plugin classloader using classloader for plugins/ directory as parent, adding plugins to be resolved from PluginResolver
-        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(pluginDirectoryClassLoader, configuration);
+        PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Task.class.getClassLoader(), configuration);
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        return new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepositoryImpl pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository.initialize();
+        return pluginRepository;
     }
 
     /**
@@ -205,31 +189,26 @@ public class Main {
         } else {
             ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(userHome);
             ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
-            PluginRepository pluginRepository = getPluginRepository(configuration, userHome, artifactProvider);
+            PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider);
+            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
             ClassLoader contextClassLoader = currentThread().getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, pluginRepository, artifactProvider, options);
+                executeTasks(tasks, configuration, options, pluginRepository, storeFactory);
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
             }
         }
     }
 
-    private List<Task> getTasks(CommandLine commandLine) {
+    private List<Task> getTasks(CommandLine commandLine) throws CliExecutionException {
         List<String> taskNames = commandLine.getArgList();
         if (taskNames.isEmpty()) {
             return singletonList(RegisteredTask.HELP.getTask());
         }
         List<Task> tasks = new ArrayList<>(taskNames.size());
         for (String taskName : taskNames) {
-            try {
-                Task task = RegisteredTask.fromName(taskName);
-                tasks.add(task);
-            } catch (CliExecutionException e) {
-                printUsage(e.getMessage());
-                System.exit(1);
-            }
+            tasks.add(RegisteredTask.fromName(taskName));
         }
         return tasks;
     }
@@ -271,12 +250,11 @@ public class Main {
         return emptyList();
     }
 
-    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider,
-        Options options) throws CliExecutionException {
+    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, PluginRepository pluginRepository, StoreFactory storeFactory)
+        throws CliExecutionException {
         try {
-            pluginRepository.initialize();
             for (Task task : tasks) {
-                executeTask(task, configuration, pluginRepository, artifactProvider, options);
+                executeTask(task, configuration, options, pluginRepository, storeFactory);
             }
         } finally {
             pluginRepository.destroy();
@@ -292,16 +270,13 @@ public class Main {
      *     The known options.
      * @return The command line.
      */
-    private CommandLine getCommandLine(String[] args, Options options) {
+    private CommandLine getCommandLine(String[] args, Options options) throws CliExecutionException {
         final CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine = null;
         try {
-            commandLine = parser.parse(options, args);
+            return parser.parse(options, args);
         } catch (ParseException e) {
-            printUsage(e.getMessage());
-            System.exit(1);
+            throw new CliExecutionException("Cannot parse command line arguments", e);
         }
-        return commandLine;
     }
 
     /**
@@ -313,89 +288,14 @@ public class Main {
      *     The {@link CliConfiguration}-
      * @param options
      *     The CLI options.
+     * @param storeFactory
+     *     The {@link StoreFactory}
      * @throws CliExecutionException
      *     If the execution fails.
      */
-    private void executeTask(Task task, CliConfiguration configuration, PluginRepository pluginRepository, ArtifactProvider artifactProvider, Options options)
+    private void executeTask(Task task, CliConfiguration configuration, Options options, PluginRepository pluginRepository, StoreFactory storeFactory)
         throws CliExecutionException {
-        task.initialize(pluginRepository, artifactProvider);
+        task.initialize(pluginRepository, storeFactory);
         task.run(configuration, options);
-    }
-
-    /**
-     * Print usage information.
-     *
-     * @param errorMessage
-     *     The error message to append.
-     */
-    private void printUsage(final String errorMessage) {
-        if (errorMessage != null) {
-            System.out.println("Error: " + errorMessage);
-        }
-    }
-
-    /**
-     * Determine the JQASSISTANT_HOME directory.
-     *
-     * @return The directory or `null`.
-     */
-    private File getHomeDirectory() {
-        String dirName = System.getenv(ENV_JQASSISTANT_HOME);
-        if (dirName != null) {
-            File dir = new File(dirName);
-            if (dir.exists()) {
-                LOGGER.debug("Using {} '{}'.", ENV_JQASSISTANT_HOME, dir.getAbsolutePath());
-                return dir;
-            } else {
-                LOGGER.warn("{} '{}' points to a non-existing directory.", ENV_JQASSISTANT_HOME, dir.getAbsolutePath());
-                return null;
-            }
-        }
-        LOGGER.warn("{} is not set.", ENV_JQASSISTANT_HOME);
-        return null;
-    }
-
-    /**
-     * Create the class loader to be used for detecting and loading plugins.
-     * @deprecated plugin dir is to be removed
-     *
-     * @return The plugin class loader.
-     * @throws com.buschmais.jqassistant.commandline.CliExecutionException
-     *     If the plugins cannot be loaded.
-     */
-    @Deprecated
-    @ToBeRemovedInVersion(major = 2, minor = 3)
-    private ClassLoader createPluginClassLoader() throws CliExecutionException {
-        ClassLoader parentClassLoader = Task.class.getClassLoader();
-        File homeDirectory = getHomeDirectory();
-        if (homeDirectory != null) {
-            File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
-            if (pluginDirectory.exists()) {
-                final List<URL> urls = new ArrayList<>();
-                final Path pluginDirectoryPath = pluginDirectory.toPath();
-                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.toFile()
-                            .getName()
-                            .endsWith(".jar")) {
-                            urls.add(file.toFile()
-                                .toURI()
-                                .toURL());
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                };
-                try {
-                    Files.walkFileTree(pluginDirectoryPath, visitor);
-                } catch (IOException e) {
-                    throw new CliExecutionException("Cannot read plugin directory.", e);
-                }
-                LOGGER.debug("Using plugin URLs: {}.", urls);
-                return new PluginClassLoader(parentClassLoader, urls);
-            }
-        }
-        return parentClassLoader;
     }
 }

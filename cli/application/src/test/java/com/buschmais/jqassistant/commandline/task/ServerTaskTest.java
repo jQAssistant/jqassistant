@@ -91,7 +91,7 @@ class ServerTaskTest {
         CommandLineParser parser = new BasicParser();
         CommandLine commandLine = parser.parse(options, arguments);
 
-        serverTask.initialize(pluginRepository, artifactProvider);
+        serverTask.initialize(pluginRepository, serverTask.storeFactory);
         serverTask.configure(commandLine, mock(ConfigurationBuilder.class));
         serverTask.run(configuration, options);
     }
