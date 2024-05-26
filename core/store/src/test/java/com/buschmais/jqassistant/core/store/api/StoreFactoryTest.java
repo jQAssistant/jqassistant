@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,6 +36,13 @@ class StoreFactoryTest {
     @Mock
     private ArtifactProvider artifactProvider;
 
+    private StoreFactory storeFactory;
+
+    @BeforeEach
+    void setUp() {
+        storeFactory = new StoreFactory(storePluginRepository, artifactProvider);
+    }
+
     @Test
     void file() throws URISyntaxException {
         verifyEmbedded("file://target/jqassistant/store");
@@ -49,7 +57,6 @@ class StoreFactoryTest {
     void bolt() throws URISyntaxException {
         verifyRemote("bolt://localhost:7687");
     }
-
 
     @Test
     void neo4j() throws URISyntaxException {
@@ -74,7 +81,7 @@ class StoreFactoryTest {
     private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
         doReturn(uri).when(configuration)
             .uri();
-        assertThat(StoreFactory.getStore(configuration, () -> new File("store"), storePluginRepository, artifactProvider)).isInstanceOf(expectedStoreType);
+        assertThat(storeFactory.getStore(configuration, () -> new File("store"))).isInstanceOf(expectedStoreType);
     }
 
 }

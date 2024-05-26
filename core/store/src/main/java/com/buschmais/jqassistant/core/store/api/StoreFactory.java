@@ -9,21 +9,23 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Creates a store instance.
  */
+@RequiredArgsConstructor
 public class StoreFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreFactory.class);
 
-    private StoreFactory() {
-    }
+    private final StorePluginRepository storePluginRepository;
 
-    public static Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Supplier<File> storeDirectorySupplier,
-        StorePluginRepository storePluginRepository, ArtifactProvider artifactProvider) {
+    private final ArtifactProvider artifactProvider;
+
+    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Supplier<File> storeDirectorySupplier) {
         URI uri = configuration.uri()
             .orElse(storeDirectorySupplier.get()
                 .toURI())

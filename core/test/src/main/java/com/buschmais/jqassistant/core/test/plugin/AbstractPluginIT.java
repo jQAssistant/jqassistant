@@ -225,7 +225,8 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, TestStore testStore) {
-        store = StoreFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY, pluginRepository.getStorePluginRepository(), plugins -> emptyList());
+        StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), plugins -> emptyList());
+        store = storeFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY);
         store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();
