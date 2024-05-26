@@ -8,6 +8,7 @@
     <model>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</class>
         <class>com.buschmais.jqassistant.core.analysis.spi.RuleRepository</class>
     </model>
     <ruleParser>

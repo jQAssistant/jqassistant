@@ -1,18 +1,13 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
-import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.ExecutableRuleTemplate;
+import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -42,6 +37,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
     private final Store store;
     private final RuleRepository ruleRepository;
+    private Deque<GroupDescriptor> groupDescriptors = new ArrayDeque<>();
 
     /**
      * Constructor.
@@ -91,7 +87,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             store.requireTransaction(() -> reportPlugin.setResult(result));
             store.requireTransaction(reportPlugin::endConcept);
             Result.Status status = evaluateConceptStatus(result, providedConceptResults);
-            updateConcept(concept, providedConceptResults.keySet(), status);
+            updateConcept(concept, effectiveSeverity, providedConceptResults.keySet(), status);
             return status;
         } else {
             log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
@@ -129,7 +125,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         store.requireTransaction(() -> reportPlugin.setResult(result));
         store.requireTransaction(reportPlugin::endConstraint);
         Result.Status status = result.getStatus();
-        updateConstraint(constraint, status);
+        updateConstraint(constraint, effectiveSeverity, status);
         return status;
     }
 
@@ -149,11 +145,14 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
         log.info("Executing group '{}'", group.getId());
         store.requireTransaction(() -> reportPlugin.beginGroup(group));
+        updateGroup(group, effectiveSeverity);
+
     }
 
     @Override
     public void afterGroup(Group group) throws RuleException {
         store.requireTransaction(reportPlugin::endGroup);
+        groupDescriptors.pop();
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {
@@ -236,26 +235,56 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         return store.requireTransaction(() -> this.ruleRepository.findConcept(concept.getId()));
     }
 
-    private void updateConcept(Concept concept, Set<Concept> providingConcepts, Result.Status status) {
+    private void updateConcept(Concept concept, Severity effectiveSeverity, Set<Concept> providingConcepts, Result.Status status) {
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = this.ruleRepository.mergeConcept(concept.getId());
-            updateRule(concept, status, conceptDescriptor);
+            updateRule(concept, effectiveSeverity, conceptDescriptor);
+            updateExecutableRule(concept, status, conceptDescriptor);
             for (Concept providingConcept : providingConcepts) {
                 this.ruleRepository.mergeConcept(providingConcept.getId())
                     .getProvidesConcepts()
                     .add(conceptDescriptor);
             }
+            if (!groupDescriptors.isEmpty()) {
+                groupDescriptors.peek()
+                    .getIncludesConcepts()
+                    .add(conceptDescriptor);
+            }
         });
     }
 
-    private void updateConstraint(Constraint constraint, Result.Status status) {
+    private void updateConstraint(Constraint constraint, Severity effectiveSeverity, Result.Status status) {
         store.requireTransaction(() -> {
             ConstraintDescriptor constraintDescriptor = this.ruleRepository.mergeConstraint(constraint.getId());
-            updateRule(constraint, status, constraintDescriptor);
+            updateRule(constraint, effectiveSeverity, constraintDescriptor);
+            updateExecutableRule(constraint, status, constraintDescriptor);
+            if (!groupDescriptors.isEmpty()) {
+                groupDescriptors.peek()
+                    .getIncludesConstraints()
+                    .add(constraintDescriptor);
+            }
         });
     }
 
-    private void updateRule(ExecutableRule<?> executableRule, Result.Status status, ExecutableRuleTemplate executableRuleTemplate) {
+    private void updateGroup(Group group, Severity effectiveSeverity) {
+        store.requireTransaction(() -> {
+            GroupDescriptor groupDescriptor = this.ruleRepository.mergeGroup(group.getId());
+            updateRule(group, effectiveSeverity, groupDescriptor);
+            if (!groupDescriptors.isEmpty()) {
+                groupDescriptors.peek()
+                    .getIncludesGroups()
+                    .add(groupDescriptor);
+            }
+            groupDescriptors.push(groupDescriptor);
+        });
+    }
+
+    private void updateRule(SeverityRule rule, Severity effectiveSeverity, RuleDescriptor ruleDescriptor) {
+        ruleDescriptor.setSeverity(rule.getSeverity());
+        ruleDescriptor.setEffectiveSeverity(effectiveSeverity);
+    }
+
+    private void updateExecutableRule(ExecutableRule<?> executableRule, Result.Status status, ExecutableRuleTemplate executableRuleTemplate) {
         for (String requiresConceptId : executableRule.getRequiresConcepts()
             .keySet()) {
             executableRuleTemplate.getRequiresConcepts()
