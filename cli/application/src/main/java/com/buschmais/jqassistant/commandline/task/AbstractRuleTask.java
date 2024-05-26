@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 /**
  * Abstract base class for all tasks working with rules.
  */
-public abstract class AbstractAnalyzeTask extends AbstractStoreTask {
+public abstract class AbstractRuleTask extends AbstractStoreTask {
 
     @Override
     protected boolean isConnectorRequired() {

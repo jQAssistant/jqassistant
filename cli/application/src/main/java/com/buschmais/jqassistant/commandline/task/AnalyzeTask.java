@@ -31,9 +31,9 @@ import static java.util.Collections.emptyMap;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public class AnalyzeTask extends AbstractAnalyzeTask {
+public class AnalyzeTask extends AbstractRuleTask {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeTask.class);
 
     @Override
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
@@ -41,8 +41,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             Analyze analyze = configuration.analyze();
             Report report = analyze
                 .report();
-            LOGGER.info("Will warn on violations starting from severity '" + report.warnOnSeverity() + "'");
-            LOGGER.info("Will fail on violations starting from severity '" + report.failOnSeverity() + "'.");
+            LOGGER.info("Will warn on violations starting from severity '{}'", report.warnOnSeverity());
+            LOGGER.info("Will fail on violations starting from severity '{}'.", report.failOnSeverity());
             LOGGER.info("Executing analysis.");
             File reportDirectory = new File(report.directory()
                 .orElse(DEFAULT_REPORT_DIRECTORY));
@@ -63,7 +63,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 createReportArchive(reportContext);
             }
             store.beginTransaction();
-            LOGGER.info("Verifying results: failOnSeverity=" + report.failOnSeverity() + ", warnOnSeverity=" + report.warnOnSeverity());
+            LOGGER.info("Verifying results: failOnSeverity={}, warnOnSeverity={}", report.failOnSeverity(), report.warnOnSeverity());
             try {
                 final ReportHelper reportHelper = new ReportHelper(report, LOGGER);
                 reportHelper.verify(inMemoryReportPlugin, message -> {

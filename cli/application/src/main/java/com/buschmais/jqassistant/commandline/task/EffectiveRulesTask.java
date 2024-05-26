@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
 import org.apache.commons.cli.Options;
 
-public class EffectiveRulesTask extends AbstractAnalyzeTask {
+public class EffectiveRulesTask extends AbstractRuleTask {
 
     @Override
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
