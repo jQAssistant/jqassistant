@@ -66,12 +66,14 @@ public class CachingStoreProvider implements Disposable {
             .normalize();
         StoreKey.StoreKeyBuilder storeKeyBuilder = StoreKey.builder()
             .uri(uri);
-        storeConfiguration.remote().username()
+        storeConfiguration.remote()
+            .username()
             .ifPresent(username -> storeKeyBuilder.username(username));
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            store = StoreFactory.getStore(storeConfiguration, storeDirectorySupplier, pluginRepository.getStorePluginRepository(), artifactProvider);
+            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
+            store = storeFactory.getStore(storeConfiguration, storeDirectorySupplier);
             store.start();
             storesByKey.put(key, store);
             keysByStore.put(store, key);
