@@ -46,7 +46,7 @@
                                     <fileset>
                                         <directory>${project.basedir}/src/main/resources/META-INF/report/xsd</directory>
                                         <includes>
-                                            <include>jqassistant-report-v2.0.xsd</include>
+                                            <include>jqassistant-report-v2.3.xsd</include>
                                         </includes>
                                     </fileset>
                                 </schema>

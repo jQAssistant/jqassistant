@@ -175,7 +175,7 @@ public class RuleSetExecutor<R> {
                 checkDeprecation(constraint);
                 ruleVisitor.visitConstraint(constraint, effectiveSeverity, requiredConceptResults);
             } else {
-                ruleVisitor.skipConstraint(constraint, effectiveSeverity);
+                ruleVisitor.skipConstraint(constraint, effectiveSeverity, requiredConceptResults);
             }
             executedConstraints.add(constraint);
         }
@@ -210,7 +210,7 @@ public class RuleSetExecutor<R> {
                 checkDeprecation(concept);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providedConceptResults);
             } else {
-                ruleVisitor.skipConcept(concept, effectiveSeverity);
+                ruleVisitor.skipConcept(concept, effectiveSeverity, requiredConceptResults);
             }
             executionStack.remove(concept);
             executedConcepts.put(concept, result);

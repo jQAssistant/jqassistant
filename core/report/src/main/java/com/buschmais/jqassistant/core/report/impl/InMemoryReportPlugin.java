@@ -6,11 +6,7 @@ import java.util.TreeMap;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 /**
  * A {@link ReportPlugin}
@@ -41,6 +37,12 @@ public class InMemoryReportPlugin implements ReportPlugin {
     }
 
     @Override
+    public void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+        Map<Concept, Result.Status> providingConceptResults) throws ReportException {
+        delegate.beginConcept(concept, requiredConceptResults, providingConceptResults);
+    }
+
+    @Override
     public void beginConcept(Concept concept) throws ReportException {
         delegate.beginConcept(concept);
     }
@@ -59,6 +61,11 @@ public class InMemoryReportPlugin implements ReportPlugin {
     @Override
     public void endGroup() throws ReportException {
         delegate.endGroup();
+    }
+
+    @Override
+    public void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws ReportException {
+        delegate.beginConstraint(constraint, requiredConceptResults);
     }
 
     @Override
@@ -89,7 +96,8 @@ public class InMemoryReportPlugin implements ReportPlugin {
     @SuppressWarnings("unchecked")
     private <T extends ExecutableRule> void addResult(Map<String, Result<T>> results) {
         if (currentResult != null) {
-            results.put(currentResult.getRule().getId(), (Result<T>) currentResult);
+            results.put(currentResult.getRule()
+                .getId(), (Result<T>) currentResult);
             this.currentResult = null;
         }
     }

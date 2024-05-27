@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -114,7 +115,7 @@ class CompositeReportPluginTest {
 
     private void verifyInvoked(Concept concept, ReportPlugin... reportPlugins) throws ReportException {
         for (ReportPlugin reportPlugin : reportPlugins) {
-            verify(reportPlugin).beginConcept(concept);
+            verify(reportPlugin).beginConcept(concept, emptyMap(), emptyMap());
             verify(reportPlugin).setResult(conceptResult);
             verify(reportPlugin).endConcept();
         }
@@ -123,6 +124,7 @@ class CompositeReportPluginTest {
     private void verifyNotInvoked(Concept concept, ReportPlugin... reportPlugins) throws ReportException {
         for (ReportPlugin reportPlugin : reportPlugins) {
             verify(reportPlugin, never()).beginConcept(concept);
+            verify(reportPlugin, never()).beginConcept(eq(concept), anyMap(), anyMap());
             verify(reportPlugin, never()).setResult(conceptResult);
             verify(reportPlugin, never()).endConcept();
         }
@@ -130,7 +132,7 @@ class CompositeReportPluginTest {
 
     private void verifyInvoked(Constraint constraint, ReportPlugin... reportPlugins) throws ReportException {
         for (ReportPlugin reportPlugin : reportPlugins) {
-            verify(reportPlugin).beginConstraint(constraint);
+            verify(reportPlugin).beginConstraint(constraint, emptyMap());
             verify(reportPlugin).setResult(constraintResult);
             verify(reportPlugin).endConstraint();
         }
@@ -139,6 +141,7 @@ class CompositeReportPluginTest {
     private void verifyNotInvoked(Constraint constraint, ReportPlugin... reportPlugins) throws ReportException {
         for (ReportPlugin reportPlugin : reportPlugins) {
             verify(reportPlugin, never()).beginConstraint(constraint);
+            verify(reportPlugin, never()).beginConstraint(eq(constraint), anyMap());
             verify(reportPlugin, never()).setResult(constraintResult);
             verify(reportPlugin, never()).endConstraint();
         }
@@ -149,11 +152,11 @@ class CompositeReportPluginTest {
 
         compositeReportPlugin.beginGroup(group);
 
-        compositeReportPlugin.beginConcept(concept);
+        compositeReportPlugin.beginConcept(concept, emptyMap(), emptyMap());
         compositeReportPlugin.setResult(conceptResult);
         compositeReportPlugin.endConcept();
 
-        compositeReportPlugin.beginConstraint(constraint);
+        compositeReportPlugin.beginConstraint(constraint, emptyMap());
         compositeReportPlugin.setResult(constraintResult);
         compositeReportPlugin.endConstraint();
 
@@ -206,6 +209,12 @@ class CompositeReportPluginTest {
         }
 
         @Override
+        public void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+            Map<Concept, Result.Status> providingConceptResults) throws ReportException {
+            delegate.beginConcept(concept, requiredConceptResults, providingConceptResults);
+        }
+
+        @Override
         public void beginConcept(Concept concept) throws ReportException {
             delegate.beginConcept(concept);
         }
@@ -223,6 +232,11 @@ class CompositeReportPluginTest {
         @Override
         public void endGroup() throws ReportException {
             delegate.endGroup();
+        }
+
+        @Override
+        public void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws ReportException {
+            delegate.beginConstraint(constraint, requiredConceptResults);
         }
 
         @Override

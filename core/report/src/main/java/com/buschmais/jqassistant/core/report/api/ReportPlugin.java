@@ -39,11 +39,11 @@ public interface ReportPlugin extends ContextualConfigurableLifecycleAware<Repor
      * Initializes the plugin with the given properties.
      *
      * @param reportContext
-     *            The {@link ReportContext}.
+     *     The {@link ReportContext}.
      * @param properties
-     *            The properties.
+     *     The properties.
      * @throws ReportException
-     *             If the plugin cannot be initialized.
+     *     If the plugin cannot be initialized.
      */
     @Override
     default void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
@@ -59,6 +59,11 @@ public interface ReportPlugin extends ContextualConfigurableLifecycleAware<Repor
     default void end() throws ReportException {
     }
 
+    default void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+        Map<Concept, Result.Status> providingConceptResults) throws ReportException {
+        beginConcept(concept);
+    }
+
     default void beginConcept(Concept concept) throws ReportException {
     }
 
@@ -69,6 +74,10 @@ public interface ReportPlugin extends ContextualConfigurableLifecycleAware<Repor
     }
 
     default void endGroup() throws ReportException {
+    }
+
+    default void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws ReportException {
+        beginConstraint(constraint);
     }
 
     default void beginConstraint(Constraint constraint) throws ReportException {

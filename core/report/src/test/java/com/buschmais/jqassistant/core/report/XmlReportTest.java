@@ -2,15 +2,22 @@ package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportReader;
+import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.jqassistant.schema.report.v2.*;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.ROW_COUNT_VERIFICATION;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +49,8 @@ class XmlReportTest {
         ResultType result = ruleType.getResult();
         assertThat(result.getColumns()
             .getCount()).isEqualTo(2);
-        assertThat(result.getColumns().getPrimary()).isEqualTo("c2");
+        assertThat(result.getColumns()
+            .getPrimary()).isEqualTo("c2");
         List<String> columnHeaders = result.getColumns()
             .getColumn();
         assertThat(columnHeaders).hasSize(2);
@@ -54,8 +62,7 @@ class XmlReportTest {
         assertThat(rows).hasSize(1);
         RowType rowType = rows.get(0);
         assertThat(rowType.getKey()).hasSize(64);
-        assertThat(rowType.getColumn()
-            .size()).isEqualTo(2);
+        assertThat(rowType.getColumn()).hasSize(2);
         for (ColumnType column : rowType.getColumn()) {
             assertThat(column.getName()).isIn("c1", "c2");
             if ("c1".equals(column.getName())) {
@@ -110,6 +117,121 @@ class XmlReportTest {
         assertThat(columnsHeader.getPrimary()).isEqualTo("c1");
         List<String> columnHeaders = columnsHeader.getColumn();
         assertThat(columnHeaders).containsExactly("c1", "c2");
+    }
+
+    @Test
+    void reportWithRequiredAndProvidedConcepts() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = XmlReportTestHelper.getXmlReportPlugin();
+        Concept requiredConcept = Concept.builder()
+            .id("required-concept")
+            .description("required concept")
+            .severity(Severity.MINOR)
+            .executable(new CypherExecutable(""))
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(Report.builder()
+                .build())
+            .build();
+        Concept providingConcept = Concept.builder()
+            .id("providing-concept")
+            .description("providing concept")
+            .severity(Severity.MINOR)
+            .executable(new CypherExecutable(""))
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(Report.builder()
+                .build())
+            .build();
+        Concept abstractConcept = Concept.builder()
+            .id("abstract-concept")
+            .description("abstract concept")
+            .severity(Severity.MINOR)
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(Report.builder()
+                .build())
+            .build();
+        Constraint constraint = Constraint.builder()
+            .id("constraint")
+            .description("My constraint")
+            .severity(Severity.BLOCKER)
+            .executable(new CypherExecutable(""))
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(Report.builder()
+                .build())
+            .build();
+
+        xmlReportPlugin.begin();
+
+        xmlReportPlugin.beginConcept(requiredConcept, emptyMap(), emptyMap());
+        xmlReportPlugin.setResult(getResult(requiredConcept));
+        xmlReportPlugin.endConcept();
+
+        xmlReportPlugin.beginConcept(providingConcept, emptyMap(), emptyMap());
+        xmlReportPlugin.setResult(getResult(providingConcept));
+        xmlReportPlugin.endConcept();
+
+        Map.Entry<Concept, Boolean> requiredConceptRef = new AbstractMap.SimpleEntry<>(requiredConcept, true);
+        xmlReportPlugin.beginConcept(abstractConcept, Map.of(requiredConceptRef, Result.Status.SUCCESS), Map.of(providingConcept, Result.Status.SUCCESS));
+        xmlReportPlugin.setResult(getResult(abstractConcept));
+        xmlReportPlugin.endConcept();
+
+        xmlReportPlugin.beginConstraint(constraint, Map.of(requiredConceptRef, Result.Status.SUCCESS));
+        xmlReportPlugin.setResult(getResult(constraint));
+        xmlReportPlugin.endConstraint();
+
+        xmlReportPlugin.end();
+
+        JqassistantReport jqassistantReport = readReport(new File("target/test/jqassistant-report.xml"));
+        assertThat(jqassistantReport).isNotNull();
+
+        List<ReferencableRuleType> groupOrConceptOrConstraint = jqassistantReport.getGroupOrConceptOrConstraint();
+        assertThat(groupOrConceptOrConstraint).hasSize(4);
+
+        ConceptType requiredConceptType = (ConceptType) groupOrConceptOrConstraint.get(0);
+        assertThat(requiredConceptType.getId()).isEqualTo("required-concept");
+        assertThat(requiredConceptType.getRequiredConcept()).isEmpty();
+        assertThat(requiredConceptType.getProvidingConcept()).isEmpty();
+
+        ConceptType providingConceptType = (ConceptType) groupOrConceptOrConstraint.get(1);
+        assertThat(providingConceptType.getId()).isEqualTo("providing-concept");
+        assertThat(providingConceptType.getRequiredConcept()).isEmpty();
+        assertThat(providingConceptType.getProvidingConcept()).isEmpty();
+
+        ConceptType abstractConceptType = (ConceptType) groupOrConceptOrConstraint.get(2);
+        assertThat(abstractConceptType.getId()).isEqualTo("abstract-concept");
+        assertThat(abstractConceptType.getRequiredConcept()).hasSize(1);
+        assertThat(abstractConceptType.getRequiredConcept()
+            .get(0)
+            .getId()).isEqualTo("required-concept");
+        assertThat(abstractConceptType.getRequiredConcept()
+            .get(0)
+            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+        assertThat(abstractConceptType.getProvidingConcept()).hasSize(1);
+        assertThat(abstractConceptType.getProvidingConcept()
+            .get(0)
+            .getId()).isEqualTo("providing-concept");
+        assertThat(abstractConceptType.getProvidingConcept()
+            .get(0)
+            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+
+        ConstraintType constraintType = (ConstraintType) groupOrConceptOrConstraint.get(3);
+        assertThat(constraintType.getId()).isEqualTo("constraint");
+        assertThat(constraintType.getRequiredConcept()).hasSize(1);
+        assertThat(constraintType.getRequiredConcept()
+            .get(0)
+            .getId()).isEqualTo("required-concept");
+        assertThat(constraintType.getRequiredConcept()
+            .get(0)
+            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+    }
+
+    private static <T extends ExecutableRule<?>> Result<T> getResult(T rule) {
+        Result<T> result = Result.<T>builder()
+            .rule(rule)
+            .status(Result.Status.FAILURE)
+            .severity(Severity.CRITICAL)
+            .columnNames(emptyList())
+            .rows(emptyList())
+            .build();
+        return result;
     }
 
     @Test

@@ -29,6 +29,9 @@ import com.buschmais.xo.api.CompositeObject;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
+
 /**
  * Implementation of {@link ReportPlugin} which writes the results of an
  * analysis to an XML file.
@@ -43,9 +46,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String ENCODING = "UTF-8";
-
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.0";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.3";
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -54,6 +55,10 @@ public class XmlReportPlugin implements ReportPlugin {
     private ReportContext reportContext;
 
     private File xmlReportFile;
+
+    private Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults;
+
+    private Map<Concept, Result.Status> providingConceptResults;
 
     private Result<? extends ExecutableRule> result;
 
@@ -78,10 +83,10 @@ public class XmlReportPlugin implements ReportPlugin {
     @Override
     public void begin() throws ReportException {
         xml(() -> {
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), ENCODING);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), UTF_8);
             XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
             xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
-            xmlStreamWriter.writeStartDocument(ENCODING, "1.0");
+            xmlStreamWriter.writeStartDocument(UTF_8.name(), "1.0");
             xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
             xmlStreamWriter.writeStartElement("jqassistant-report");
             xmlStreamWriter.writeDefaultNamespace(NAMESPACE_URL);
@@ -98,8 +103,9 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void beginConcept(Concept concept) {
-        beginExecutable();
+    public void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+        Map<Concept, Result.Status> providingConceptResults) {
+        beginExecutable(requiredConceptResults, providingConceptResults);
     }
 
     @Override
@@ -127,8 +133,8 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) {
-        beginExecutable();
+    public void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) {
+        beginExecutable(requiredConceptResults, emptyMap());
     }
 
     @Override
@@ -141,13 +147,15 @@ public class XmlReportPlugin implements ReportPlugin {
         this.result = result;
     }
 
-    private void beginExecutable() {
+    private void beginExecutable(Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults, Map<Concept, Result.Status> providingConceptResults) {
         this.ruleBeginTime = System.currentTimeMillis();
+        this.requiredConceptResults = requiredConceptResults;
+        this.providingConceptResults = providingConceptResults;
     }
 
     private void endRule() throws ReportException {
         if (result != null) {
-            final ExecutableRule rule = result.getRule();
+            final ExecutableRule<?> rule = result.getRule();
             final String elementName;
             if (rule instanceof Concept) {
                 elementName = "concept";
@@ -167,6 +175,8 @@ public class XmlReportPlugin implements ReportPlugin {
                 writeStatus(result.getStatus()); // status
                 writeSeverity(result.getSeverity()); // severity
                 writeDuration(ruleBeginTime);
+                writeRequiredConceptResults(); // required-concept
+                writeProvidingConceptResults(); // providing-concept
                 xmlStreamWriter.writeEndElement(); // concept|constraint
             });
         }
@@ -190,9 +200,10 @@ public class XmlReportPlugin implements ReportPlugin {
             for (Row row : rows) {
                 xmlStreamWriter.writeStartElement("row");
                 xmlStreamWriter.writeAttribute("key", row.getKey());
-                for (Map.Entry<String, Column<?>> rowEntry : row.getColumns().entrySet()) {
+                for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
+                    .entrySet()) {
                     String columnName = rowEntry.getKey();
-                    Column column = rowEntry.getValue();
+                    Column<?> column = rowEntry.getValue();
                     writeColumn(columnName, column);
                 }
                 xmlStreamWriter.writeEndElement();
@@ -202,7 +213,7 @@ public class XmlReportPlugin implements ReportPlugin {
         }
     }
 
-    private void writeReports(ExecutableRule rule) throws ReportException {
+    private void writeReports(ExecutableRule<?> rule) throws ReportException {
         List<ReportContext.Report<?>> reports = reportContext.getReports(rule);
         if (!reports.isEmpty()) {
             xml(() -> {
@@ -243,7 +254,7 @@ public class XmlReportPlugin implements ReportPlugin {
      *     The column names returned by the executed rule.
      * @return The name of the primary column.
      */
-    private String getPrimaryColumn(ExecutableRule rule, List<String> columnNames) {
+    private String getPrimaryColumn(ExecutableRule<?> rule, List<String> columnNames) {
         if (columnNames == null || columnNames.isEmpty()) {
             return null;
         }
@@ -284,7 +295,7 @@ public class XmlReportPlugin implements ReportPlugin {
      * @throws XMLStreamException
      *     If a problem occurs.
      */
-    private void writeColumn(String columnName, Column column) throws XMLStreamException {
+    private void writeColumn(String columnName, Column<?> column) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         Object value = column.getValue();
@@ -376,6 +387,31 @@ public class XmlReportPlugin implements ReportPlugin {
             .toString());
         xmlStreamWriter.writeCharacters(severity.getValue());
         xmlStreamWriter.writeEndElement();
+    }
+
+    private void writeRequiredConceptResults() throws XMLStreamException {
+        if (requiredConceptResults != null) {
+            for (Map.Entry<Map.Entry<Concept, Boolean>, Result.Status> entry : requiredConceptResults.entrySet()) {
+                xmlStreamWriter.writeStartElement("required-concept");
+                Concept concept = entry.getKey()
+                    .getKey();
+                xmlStreamWriter.writeAttribute("id", concept.getId());
+                writeStatus(entry.getValue());
+                xmlStreamWriter.writeEndElement();
+            }
+        }
+    }
+
+    private void writeProvidingConceptResults() throws XMLStreamException {
+        if (providingConceptResults != null) {
+            for (Map.Entry<Concept, Result.Status> entryStatusEntry : providingConceptResults.entrySet()) {
+                xmlStreamWriter.writeStartElement("providing-concept");
+                Concept concept = entryStatusEntry.getKey();
+                xmlStreamWriter.writeAttribute("id", concept.getId());
+                writeStatus(entryStatusEntry.getValue());
+                xmlStreamWriter.writeEndElement();
+            }
+        }
     }
 
     /**

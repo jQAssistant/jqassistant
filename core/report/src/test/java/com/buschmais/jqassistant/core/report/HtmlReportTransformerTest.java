@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.report;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ class HtmlReportTransformerTest {
 
 
     @Test
-    void reportWithSeverities() throws ReportTransformerException, IOException {
+    void reportWithSeverities() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-severities.xml"));
         StringWriter htmlWriter = new StringWriter();

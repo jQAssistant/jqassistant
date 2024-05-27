@@ -38,7 +38,7 @@ public class CompositeReportPlugin implements ReportPlugin {
      * Constructor.
      *
      * @param reportPlugins
-     *            The available {@link ReportPlugin}s.
+     *     The available {@link ReportPlugin}s.
      */
     public CompositeReportPlugin(Map<String, ReportPlugin> reportPlugins) {
         for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
@@ -50,102 +50,70 @@ public class CompositeReportPlugin implements ReportPlugin {
             }
             selectableReportPlugins.put(id, reportPlugin);
         }
-        LOGGER.debug("Using " + defaultReportPlugins + " as default reports.");
+        LOGGER.debug("Using {} as default reports.", defaultReportPlugins);
     }
 
     @Override
     public void begin() throws ReportException {
         this.selectedReportPlugins = selectableReportPlugins;
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.begin();
-            }
-        });
+        run(ReportPlugin::begin);
     }
 
     @Override
     public void end() throws ReportException {
         this.selectedReportPlugins = selectableReportPlugins;
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.end();
-            }
-        });
+        run(ReportPlugin::end);
+    }
+
+    @Override
+    public void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+        Map<Concept, Result.Status> providingConceptResults) throws ReportException {
+        this.selectedReportPlugins = selectReportPlugins(concept);
+        run(reportPlugin -> reportPlugin.beginConcept(concept, requiredConceptResults, providingConceptResults));
     }
 
     @Override
     public void beginConcept(final Concept concept) throws ReportException {
         this.selectedReportPlugins = selectReportPlugins(concept);
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.beginConcept(concept);
-            }
-        });
+        run(reportPlugin -> reportPlugin.beginConcept(concept));
     }
 
     @Override
     public void endConcept() throws ReportException {
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.endConcept();
-            }
-        });
+        run(ReportPlugin::endConcept);
     }
 
     @Override
     public void beginGroup(final Group group) throws ReportException {
         this.selectedReportPlugins = Collections.emptyMap();
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.beginGroup(group);
-            }
-        });
+        run(reportPlugin -> reportPlugin.beginGroup(group));
     }
 
     @Override
     public void endGroup() throws ReportException {
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.endGroup();
-            }
-        });
+        run(ReportPlugin::endGroup);
+    }
+
+    @Override
+    public void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws ReportException {
+        this.selectedReportPlugins = selectReportPlugins(constraint);
+        run(reportPlugin -> reportPlugin.beginConstraint(constraint, requiredConceptResults));
     }
 
     @Override
     public void beginConstraint(final Constraint constraint) throws ReportException {
         this.selectedReportPlugins = selectReportPlugins(constraint);
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.beginConstraint(constraint);
-            }
-        });
+        run(reportPlugin -> reportPlugin.beginConstraint(constraint));
     }
 
     @Override
     public void endConstraint() throws ReportException {
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.endConstraint();
-            }
-        });
+        run(ReportPlugin::endConstraint);
     }
 
     @Override
     public void setResult(final Result<? extends ExecutableRule> result) throws ReportException {
-        run(new ReportOperation() {
-            @Override
-            public void run(ReportPlugin reportPlugin) throws ReportException {
-                reportPlugin.setResult(result);
-            }
-        });
+        run(reportPlugin -> reportPlugin.setResult(result));
     }
 
     /**
@@ -153,9 +121,9 @@ public class CompositeReportPlugin implements ReportPlugin {
      * {@link ReportPlugin}s.
      *
      * @param operation
-     *            The {@link ReportOperation}.
+     *     The {@link ReportOperation}.
      * @throws ReportException
-     *             If a problem is reported.
+     *     If a problem is reported.
      */
     private void run(ReportOperation operation) throws ReportException {
         Set<String> executedPlugins = new HashSet<>();
@@ -168,13 +136,13 @@ public class CompositeReportPlugin implements ReportPlugin {
      * assure that this happens only once.
      *
      * @param reportPlugins
-     *            The {@link ReportPlugin}s.
+     *     The {@link ReportPlugin}s.
      * @param operation
-     *            The {@link ReportOperation}.
+     *     The {@link ReportOperation}.
      * @param executedPlugins
-     *            The already executed {@link ReportPlugin}s.
+     *     The already executed {@link ReportPlugin}s.
      * @throws ReportException
-     *             If a problem is reported.
+     *     If a problem is reported.
      */
     private void run(Map<String, ReportPlugin> reportPlugins, ReportOperation operation, Set<String> executedPlugins) throws ReportException {
         for (Map.Entry<String, ReportPlugin> entry : reportPlugins.entrySet()) {
@@ -188,19 +156,20 @@ public class CompositeReportPlugin implements ReportPlugin {
      * Select the report writers for the given rule.
      *
      * @param rule
-     *            The rule.
+     *     The rule.
      * @throws ReportException
-     *             If no writer exists for a specified id.
+     *     If no writer exists for a specified id.
      */
-    private Map<String, ReportPlugin> selectReportPlugins(ExecutableRule rule) throws ReportException {
-        Set<String> selection = rule.getReport().getSelectedTypes();
+    private Map<String, ReportPlugin> selectReportPlugins(ExecutableRule<?> rule) throws ReportException {
+        Set<String> selection = rule.getReport()
+            .getSelectedTypes();
         Map<String, ReportPlugin> reportPlugins = new HashMap<>();
         if (selection != null) {
             for (String type : selection) {
                 ReportPlugin candidate = this.selectableReportPlugins.get(type);
                 if (candidate == null) {
                     throw new ReportException(
-                            "Unknown report type '" + type + "' selected for '" + rule + "'. Valid report types are " + this.selectedReportPlugins.keySet());
+                        "Unknown report type '" + type + "' selected for '" + rule + "'. Valid report types are " + this.selectedReportPlugins.keySet());
                 }
                 reportPlugins.put(type, candidate);
             }

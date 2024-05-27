@@ -212,7 +212,8 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
-        verifyConceptResult(concept, SUCCESS, MAJOR);
+        verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
+        verifyConceptResult(SUCCESS, MAJOR);
         verify(ruleRepository).mergeConcept(concept.getId());
     }
 
@@ -224,7 +225,8 @@ class AnalyzerRuleVisitorTest {
 
         assertThat(status).isEqualTo(SUCCESS);
         verify(store, never()).executeQuery(anyString(), anyMap());
-        Result<Concept> result = verifyConceptResult(abstractConcept, SUCCESS, MAJOR);
+        verify(reportWriter).beginConcept(eq(abstractConcept), anyMap(), anyMap());
+        Result<Concept> result = verifyConceptResult(SUCCESS, MAJOR);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
         verify(ruleRepository).mergeConcept(abstractConcept.getId());
@@ -248,15 +250,15 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void skipConcept() throws RuleException {
-        analyzerRuleVisitor.skipConcept(concept, MAJOR);
+        analyzerRuleVisitor.skipConcept(concept, MAJOR, emptyMap());
 
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
-        verifyConceptResult(concept, Result.Status.SKIPPED, MAJOR);
+        verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
+        verifyConceptResult(Result.Status.SKIPPED, MAJOR);
         verify(ruleRepository, never()).mergeConcept(concept.getId());
     }
 
-    private Result<Concept> verifyConceptResult(Concept expectedConcept, Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
-        verify(reportWriter).beginConcept(expectedConcept);
+    private Result<Concept> verifyConceptResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result<Concept> result = resultCaptor.getValue();
@@ -278,6 +280,7 @@ class AnalyzerRuleVisitorTest {
         Map<String, Object> parameters = argumentCaptor.getValue();
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
+        verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
         verify(ruleRepository).mergeConstraint(constraint.getId());
     }
@@ -288,6 +291,7 @@ class AnalyzerRuleVisitorTest {
 
         analyzerRuleVisitor.visitConstraint(abstractConstraint, BLOCKER, emptyMap());
 
+        verify(reportWriter).beginConstraint(constraint, emptyMap());
         Result<?> result = verifyConstraintResult(SUCCESS, BLOCKER);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
@@ -296,14 +300,14 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void skipConstraint() throws RuleException {
-        analyzerRuleVisitor.skipConstraint(constraint, BLOCKER);
+        analyzerRuleVisitor.skipConstraint(constraint, BLOCKER, emptyMap());
 
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
+        verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.SKIPPED, BLOCKER);
     }
 
     private Result<?> verifyConstraintResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
-        verify(reportWriter).beginConstraint(constraint);
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result<?> result = resultCaptor.getValue();
@@ -338,7 +342,7 @@ class AnalyzerRuleVisitorTest {
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
-        verify(reportWriter).beginConcept(concept);
+        verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
         verify(ruleRepository).mergeConcept(concept.getId());
     }
 

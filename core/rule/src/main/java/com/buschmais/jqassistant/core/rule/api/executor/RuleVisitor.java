@@ -53,10 +53,12 @@ public interface RuleVisitor<R> {
      *     The concept.
      * @param effectiveSeverity
      *     The severity to use.
+     * @param requiredConceptResults
+     *     The results of required concepts.
      * @throws RuleException
      *     If an error occurred.
      */
-    void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException;
+    void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
      * Visit a constraint with the given severity.
@@ -80,10 +82,12 @@ public interface RuleVisitor<R> {
      *     The constraint.
      * @param effectiveSeverity
      *     The severity to use.
+     * @param requiredConceptResults
+     *     The results of required concepts.
      * @throws RuleException
      *     If an error occurred.
      */
-    void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException;
+    void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
      * Start processing a group.

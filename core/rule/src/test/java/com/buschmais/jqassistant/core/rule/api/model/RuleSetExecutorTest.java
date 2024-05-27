@@ -403,9 +403,9 @@ class RuleSetExecutorTest {
         verify(visitor).visitConcept(dependencyConcept1, MINOR, emptyMap(), emptyMap());
         verify(visitor).visitConcept(dependencyConcept2, MINOR, emptyMap(), emptyMap());
         verify(visitor, visitVerification).visitConcept(eq(concept), eq(MINOR), anyMap(), anyMap());
-        verify(visitor, skipVerification).skipConcept(concept, MINOR);
+        verify(visitor, skipVerification).skipConcept(eq(concept), eq(MINOR), anyMap());
         verify(visitor, visitVerification).visitConstraint(eq(constraint), eq(MAJOR), anyMap());
-        verify(visitor, skipVerification).skipConstraint(constraint, MAJOR);
+        verify(visitor, skipVerification).skipConstraint(eq(constraint), eq(MAJOR), anyMap());
     }
 
     @Test

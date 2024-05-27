@@ -165,12 +165,12 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
-    private XmlReportPlugin getXmlReportPlugin() {
+    public static XmlReportPlugin getXmlReportPlugin() {
         ReportContext reportContext = getReportContext();
         return getXmlReportPlugin(reportContext);
     }
 
-    private XmlReportPlugin getXmlReportPlugin(ReportContext reportContext) {
+    private static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext) {
         XmlReportPlugin xmlReportWriter = new XmlReportPlugin();
         xmlReportWriter.initialize();
         xmlReportWriter.configure(reportContext, emptyMap());

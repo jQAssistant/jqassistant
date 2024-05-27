@@ -22,8 +22,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -78,11 +77,12 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults, Map<Concept, Result.Status> providingConceptResults) throws RuleException {
+    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
+        Map<Concept, Result.Status> providingConceptResults) throws RuleException {
         ConceptDescriptor conceptDescriptor = findConcept(concept);
         if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
             log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
-            store.requireTransaction(() -> reportPlugin.beginConcept(concept));
+            store.requireTransaction(() -> reportPlugin.beginConcept(concept, requiredConceptResults, providingConceptResults));
             Result<Concept> result = execute(concept, effectiveSeverity);
             store.requireTransaction(() -> reportPlugin.setResult(result));
             store.requireTransaction(reportPlugin::endConcept);
@@ -106,8 +106,9 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public void skipConcept(Concept concept, Severity effectiveSeverity) throws RuleException {
-        store.requireTransaction(() -> reportPlugin.beginConcept(concept));
+    public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
+        throws RuleException {
+        store.requireTransaction(() -> reportPlugin.beginConcept(concept, requiredConceptResults, emptyMap()));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .status(Result.Status.SKIPPED)
@@ -121,7 +122,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public Result.Status visitConstraint(Constraint constraint, Severity effectiveSeverity,
         Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws RuleException {
         log.info("Validating constraint '{}' with severity: '{}'.", constraint.getId(), effectiveSeverity.getInfo(constraint.getSeverity()));
-        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
+        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint, requiredConceptResults));
         Result<Constraint> result = execute(constraint, effectiveSeverity);
         store.requireTransaction(() -> reportPlugin.setResult(result));
         store.requireTransaction(reportPlugin::endConstraint);
@@ -131,8 +132,9 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public void skipConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
-        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
+    public void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
+        throws RuleException {
+        store.requireTransaction(() -> reportPlugin.beginConstraint(constraint, requiredConceptResults));
         Result<Constraint> result = Result.<Constraint>builder()
             .rule(constraint)
             .status(Result.Status.SKIPPED)
