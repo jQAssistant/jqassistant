@@ -1,3 +1,0 @@
-jqassistant:
-  store:
-    uri: bolt://localhost:7687

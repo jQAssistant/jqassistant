@@ -1,14 +1,12 @@
 package com.buschmais.jqassistant.core.runtime.impl.configuration;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
-import com.buschmais.jqassistant.core.store.api.configuration.Store;
 
 import io.smallrye.config.SysPropConfigSource;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,14 +45,8 @@ class ConfigurationMappingLoaderTest {
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
         assertThat(scan.continueOnError()).isTrue();
-        assertThat(scan.properties()
-            .get("user-value")).isEqualTo("default");
-        assertThat(scan.properties()
-            .get("overwritten-user-value")).isEqualTo("overwritten");
-
-        Store store = configuration.store();
-        assertThat(store).isNotNull();
-        assertThat(store.uri()).isEqualTo(of(new URI("bolt://localhost:7687")));
+        assertThat(scan.properties()).containsEntry("user-value", "default");
+        assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
     }
 
     /**
@@ -73,14 +64,10 @@ class ConfigurationMappingLoaderTest {
         Scan scan = configuration.scan();
         assertThat(scan).isNotNull();
         assertThat(scan.continueOnError()).isTrue();
-        assertThat(scan.properties()
-            .get("user-value")).isEqualTo("default");
-        assertThat(scan.properties()
-            .get("overwritten-user-value")).isEqualTo("overwritten");
-
-        Store store = configuration.store();
-        assertThat(store).isNotNull();
-        assertThat(store.uri()).isEmpty();
+        assertThat(scan.reset()).isPresent()
+            .hasValue(true);
+        assertThat(scan.properties()).containsEntry("user-value", "default");
+        assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
     }
 
     @Test
