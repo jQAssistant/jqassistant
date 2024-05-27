@@ -180,7 +180,7 @@ class AnalyzerRuleVisitorTest {
         }).when(analyzerContext)
             .toRow(any(ExecutableRule.class), anyMap());
 
-        analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap());
+        analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
 
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
@@ -202,7 +202,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(SUCCESS).when(analyzerContext)
             .verify(eq(concept), eq(MAJOR), anyList(), anyList());
 
-        Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR, emptyMap());
+        Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR, emptyMap(), emptyMap());
 
         assertThat(status).isEqualTo(SUCCESS);
 
@@ -220,7 +220,7 @@ class AnalyzerRuleVisitorTest {
     void abstractConcept() throws RuleException {
         Concept abstractConcept = createConcept("test:AbstractConcept", null);
 
-        Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR, emptyMap());
+        Result.Status status = analyzerRuleVisitor.visitConcept(abstractConcept, MAJOR, emptyMap(), emptyMap());
 
         assertThat(status).isEqualTo(SUCCESS);
         verify(store, never()).executeQuery(anyString(), anyMap());
@@ -238,11 +238,11 @@ class AnalyzerRuleVisitorTest {
         doReturn(createEmptyResult()).when(store)
             .executeQuery(eq(STATEMENT), anyMap());
 
-        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
+        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR, emptyMap(),
             ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, FAILURE)))).isEqualTo(FAILURE);
-        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
+        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR, emptyMap(),
             ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, SUCCESS)))).isEqualTo(SUCCESS);
-        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR,
+        assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR, emptyMap(),
             ofEntries(entry(providingConcept1, SUCCESS), entry(providingConcept2, SUCCESS)))).isEqualTo(SUCCESS);
     }
 
@@ -271,7 +271,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(Result.Status.FAILURE).when(analyzerContext)
             .verify(eq(constraint), eq(BLOCKER), anyList(), anyList());
 
-        analyzerRuleVisitor.visitConstraint(constraint, BLOCKER);
+        analyzerRuleVisitor.visitConstraint(constraint, BLOCKER, emptyMap());
 
         ArgumentCaptor<Map<String, Object>> argumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(store).executeQuery(eq(STATEMENT), argumentCaptor.capture());
@@ -286,7 +286,7 @@ class AnalyzerRuleVisitorTest {
     void abstractConstraint() throws RuleException {
         Constraint abstractConstraint = createConstraint(null);
 
-        analyzerRuleVisitor.visitConstraint(abstractConstraint, BLOCKER);
+        analyzerRuleVisitor.visitConstraint(abstractConstraint, BLOCKER, emptyMap());
 
         Result<?> result = verifyConstraintResult(SUCCESS, BLOCKER);
         assertThat(result.getColumnNames()).isEmpty();
@@ -321,7 +321,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(conceptDescriptor).when(ruleRepository)
             .findConcept(concept.getId());
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap())).isEqualTo(SUCCESS);
+        assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter, never()).beginConcept(concept);
         verify(reportWriter, never()).endConcept();
@@ -336,7 +336,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
-        assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap())).isEqualTo(SUCCESS);
+        assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
         verify(reportWriter).beginConcept(concept);
         verify(ruleRepository).mergeConcept(concept.getId());
@@ -365,11 +365,11 @@ class AnalyzerRuleVisitorTest {
             .build();
 
         analyzerRuleVisitor.beforeGroup(parent, BLOCKER);
-        analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap());
+        analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
         analyzerRuleVisitor.beforeGroup(child, INFO);
-        analyzerRuleVisitor.visitConstraint(childConstraint, BLOCKER);
+        analyzerRuleVisitor.visitConstraint(childConstraint, BLOCKER, emptyMap());
         analyzerRuleVisitor.afterGroup(child);
-        analyzerRuleVisitor.visitConstraint(constraint, CRITICAL);
+        analyzerRuleVisitor.visitConstraint(constraint, CRITICAL, emptyMap());
         analyzerRuleVisitor.afterGroup(parent);
 
         verify(reportWriter).beginGroup(parent);
@@ -416,7 +416,7 @@ class AnalyzerRuleVisitorTest {
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
-            analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap());
+            analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
             fail("Expecting an " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();
@@ -431,7 +431,7 @@ class AnalyzerRuleVisitorTest {
         ReportPlugin reportWriter = mock(ReportPlugin.class);
         try {
             AnalyzerRuleVisitor analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
-            analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap());
+            analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
             fail("Expecting a " + RuleException.class.getName());
         } catch (RuleException e) {
             String message = e.getMessage();

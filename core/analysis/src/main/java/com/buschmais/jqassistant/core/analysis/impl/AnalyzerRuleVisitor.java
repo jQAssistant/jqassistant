@@ -37,7 +37,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
     private final Store store;
     private final RuleRepository ruleRepository;
-    private Deque<GroupDescriptor> groupDescriptors = new ArrayDeque<>();
+    private final Deque<GroupDescriptor> groupDescriptors = new ArrayDeque<>();
 
     /**
      * Constructor.
@@ -78,7 +78,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Result.Status> providedConceptResults) throws RuleException {
+    public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults, Map<Concept, Result.Status> providingConceptResults) throws RuleException {
         ConceptDescriptor conceptDescriptor = findConcept(concept);
         if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
             log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
@@ -86,8 +86,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             Result<Concept> result = execute(concept, effectiveSeverity);
             store.requireTransaction(() -> reportPlugin.setResult(result));
             store.requireTransaction(reportPlugin::endConcept);
-            Result.Status status = evaluateConceptStatus(result, providedConceptResults);
-            updateConcept(concept, effectiveSeverity, providedConceptResults.keySet(), status);
+            Result.Status status = evaluateConceptStatus(result, providingConceptResults);
+            updateConcept(concept, effectiveSeverity, providingConceptResults.keySet(), status);
             return status;
         } else {
             log.info("Concept '{}' has already been applied, skipping (activate '{}.{}' to force execution).", concept.getId(),
@@ -118,7 +118,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
-    public Result.Status visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
+    public Result.Status visitConstraint(Constraint constraint, Severity effectiveSeverity,
+        Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws RuleException {
         log.info("Validating constraint '{}' with severity: '{}'.", constraint.getId(), effectiveSeverity.getInfo(constraint.getSeverity()));
         store.requireTransaction(() -> reportPlugin.beginConstraint(constraint));
         Result<Constraint> result = execute(constraint, effectiveSeverity);

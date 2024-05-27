@@ -23,7 +23,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public R visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, R> results) throws RuleException {
+    public R visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults, Map<Concept, R> providingConceptResults) throws RuleException {
         throw new RuleException("Cannot visit concept" + concept);
     }
 
@@ -32,7 +32,8 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public R visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException {
+    public R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults)
+        throws RuleException {
         throw new RuleException("Cannot visit constraint" + constraint);
     }
 
@@ -45,6 +46,6 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void afterGroup(Group group) throws RuleException{
+    public void afterGroup(Group group) throws RuleException {
     }
 }

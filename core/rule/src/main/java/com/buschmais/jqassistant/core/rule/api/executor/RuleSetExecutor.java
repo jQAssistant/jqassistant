@@ -170,9 +170,10 @@ public class RuleSetExecutor<R> {
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity groupSeverity, Severity includeSeverity) throws RuleException {
         if (!executedConstraints.contains(constraint)) {
             Severity effectiveSeverity = getEffectiveSeverity(constraint, groupSeverity, includeSeverity);
-            if (applyRequiredConcepts(ruleSet, constraint, new LinkedHashSet<>())) {
+            Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyRequiredConcepts(ruleSet, constraint, new LinkedHashSet<>());
+            if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 checkDeprecation(constraint);
-                ruleVisitor.visitConstraint(constraint, effectiveSeverity);
+                ruleVisitor.visitConstraint(constraint, effectiveSeverity, requiredConceptResults);
             } else {
                 ruleVisitor.skipConstraint(constraint, effectiveSeverity);
             }
@@ -203,10 +204,11 @@ public class RuleSetExecutor<R> {
         if (result == null) {
             executionStack.add(concept);
             Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
-            if (applyAllRequiredConcepts(ruleSet, concept, executionStack)) {
+            Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyAllRequiredConcepts(ruleSet, concept, executionStack);
+            if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, executionStack);
                 checkDeprecation(concept);
-                result = ruleVisitor.visitConcept(concept, effectiveSeverity, providedConceptResults);
+                result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providedConceptResults);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity);
             }
@@ -214,6 +216,16 @@ public class RuleSetExecutor<R> {
             executedConcepts.put(concept, result);
         }
         return result;
+    }
+
+    private boolean requiredConceptsAreSuccessful(Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) {
+        return requiredConceptResults.entrySet()
+            .stream()
+            .allMatch(entry -> {
+                Boolean isOptional = entry.getKey()
+                    .getValue();
+                return ((isOptional == null ? configuration.requiredConceptsAreOptionalByDefault() : isOptional) || ruleVisitor.isSuccess(entry.getValue()));
+            });
     }
 
     /**
@@ -243,8 +255,8 @@ public class RuleSetExecutor<R> {
     /**
      * Applies all concepts required by a given concept (including required concepts of provided concepts)
      */
-    private boolean applyAllRequiredConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
-        boolean requiredConceptsApplied = true;
+    private Map<Map.Entry<Concept, Boolean>, R> applyAllRequiredConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+        Map<Map.Entry<Concept, Boolean>, R> requiredConcepts = new HashMap<>();
         Set<String> conceptIds = ruleSet.getConceptBucket()
             .getIds();
         for (String providedConceptId : ruleSet.getProvidingConcepts()
@@ -252,35 +264,31 @@ public class RuleSetExecutor<R> {
             if (conceptIds.contains(providedConceptId)) {
                 Concept providedConcept = ruleSet.getConceptBucket()
                     .getById(providedConceptId);
-                requiredConceptsApplied = requiredConceptsApplied && applyAllRequiredConcepts(ruleSet, providedConcept, stack);
+                requiredConcepts.putAll(applyAllRequiredConcepts(ruleSet, providedConcept, stack));
             } else {
                 log.warn("Cannot resolve provided concept '{}' (provided by concept '{}').", providedConceptId, concept.getId());
             }
         }
-        return requiredConceptsApplied && applyRequiredConcepts(ruleSet, concept, stack);
+        requiredConcepts.putAll(applyRequiredConcepts(ruleSet, concept, stack));
+        return requiredConcepts;
     }
 
     /**
      * Applies the concepts required by a concept.
      */
-    private boolean applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {
-        boolean requiredConceptsApplied = true;
+    private Map<Map.Entry<Concept, Boolean>, R> applyRequiredConcepts(RuleSet ruleSet, ExecutableRule<?> rule, Set<Concept> stack) throws RuleException {
+        Map<Map.Entry<Concept, Boolean>, R> requiredConcepts = new HashMap<>();
         for (Map.Entry<String, Boolean> entry : rule.getRequiresConcepts()
             .entrySet()) {
-            List<Concept> requiredConcepts = ruleSet.getConceptBucket()
-                .match(entry.getKey());
-            for (Concept requiredConcept : requiredConcepts) {
+            for (Concept requiredConcept : ruleSet.getConceptBucket()
+                .match(entry.getKey())) {
                 if (!stack.contains(requiredConcept)) {
                     R conceptResult = applyConcept(ruleSet, requiredConcept, null, null, stack);
-                    Boolean optional = entry.getValue();
-                    if (optional == null) {
-                        optional = configuration.requiredConceptsAreOptionalByDefault();
-                    }
-                    requiredConceptsApplied = ruleVisitor.isSuccess(conceptResult) || optional;
+                    requiredConcepts.put(new AbstractMap.SimpleEntry<>(requiredConcept, entry.getValue()), conceptResult);
                 }
             }
         }
-        return requiredConceptsApplied;
+        return requiredConcepts;
     }
 
     private void checkDeprecation(ExecutableRule<?> executableRule) {

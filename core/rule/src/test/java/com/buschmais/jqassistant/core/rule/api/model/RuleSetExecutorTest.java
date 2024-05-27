@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +61,7 @@ class RuleSetExecutorTest {
             .build();
         lenient().doReturn(TRUE)
             .when(visitor)
-            .visitConcept(any(Concept.class), any(Severity.class), anyMap());
+            .visitConcept(any(Concept.class), any(Severity.class), anyMap(), anyMap());
     }
 
     @Test
@@ -86,10 +87,10 @@ class RuleSetExecutorTest {
         ruleExecutor.execute(ruleSet, ruleSelection);
 
         verify(visitor).beforeGroup(group, null);
-        verify(visitor).visitConcept(defaultConcept, MAJOR, emptyMap());
-        verify(visitor).visitConcept(overriddenConcept, CRITICAL, emptyMap());
-        verify(visitor).visitConstraint(defaultConstraint, MAJOR);
-        verify(visitor).visitConstraint(overriddenConstraint, CRITICAL);
+        verify(visitor).visitConcept(defaultConcept, MAJOR, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(overriddenConcept, CRITICAL, emptyMap(), emptyMap());
+        verify(visitor).visitConstraint(defaultConstraint, MAJOR, emptyMap());
+        verify(visitor).visitConstraint(overriddenConstraint, CRITICAL, emptyMap());
         verify(visitor).afterGroup(group);
     }
 
@@ -97,7 +98,7 @@ class RuleSetExecutorTest {
     void overriddenGroupSeverity() throws RuleException {
         Group group = Group.builder()
             .id("group")
-            .severity(Severity.BLOCKER)
+            .severity(BLOCKER)
             .concept(defaultConcept.getId(), null)
             .concept(overriddenConcept.getId(), CRITICAL)
             .constraint(defaultConstraint.getId(), null)
@@ -116,11 +117,11 @@ class RuleSetExecutorTest {
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
-        verify(visitor).beforeGroup(group, Severity.BLOCKER);
-        verify(visitor).visitConcept(defaultConcept, Severity.BLOCKER, emptyMap());
-        verify(visitor).visitConcept(overriddenConcept, CRITICAL, emptyMap());
-        verify(visitor).visitConstraint(defaultConstraint, Severity.BLOCKER);
-        verify(visitor).visitConstraint(overriddenConstraint, CRITICAL);
+        verify(visitor).beforeGroup(group, BLOCKER);
+        verify(visitor).visitConcept(defaultConcept, BLOCKER, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(overriddenConcept, CRITICAL, emptyMap(), emptyMap());
+        verify(visitor).visitConstraint(defaultConstraint, BLOCKER, emptyMap());
+        verify(visitor).visitConstraint(overriddenConstraint, CRITICAL, emptyMap());
         verify(visitor).afterGroup(group);
     }
 
@@ -225,29 +226,29 @@ class RuleSetExecutorTest {
 
         InOrder inOrder = inOrder(visitor);
         inOrder.verify(visitor)
-            .visitConcept(rootConcept, MINOR, emptyMap());
+            .visitConcept(rootConcept, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
             .beforeGroup(parentGroup, null);
         inOrder.verify(visitor)
-            .visitConcept(parentConcept1, MINOR, emptyMap());
+            .visitConcept(parentConcept1, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
-            .visitConcept(parentConcept2, MINOR, emptyMap());
+            .visitConcept(parentConcept2, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
             .beforeGroup(nestedGroup, null);
         inOrder.verify(visitor)
-            .visitConcept(nestedConcept1, MINOR, emptyMap());
+            .visitConcept(nestedConcept1, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
-            .visitConcept(nestedConcept2, MINOR, emptyMap());
+            .visitConcept(nestedConcept2, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
-            .visitConstraint(nestetConstraint, MAJOR);
+            .visitConstraint(nestetConstraint, MAJOR, emptyMap());
         inOrder.verify(visitor)
             .afterGroup(nestedGroup);
         inOrder.verify(visitor)
-            .visitConstraint(parentConstraint, MAJOR);
+            .visitConstraint(parentConstraint, MAJOR, emptyMap());
         inOrder.verify(visitor)
             .afterGroup(parentGroup);
         inOrder.verify(visitor)
-            .visitConstraint(rootConstraint, MAJOR);
+            .visitConstraint(rootConstraint, MAJOR, emptyMap());
     }
 
     @Test
@@ -314,14 +315,14 @@ class RuleSetExecutorTest {
         verify(visitor).afterGroup(group);
         verify(visitor).beforeGroup(nestedGroup, null);
         verify(visitor).afterGroup(nestedGroup);
-        verify(visitor).visitConcept(defaultConcept, MAJOR, emptyMap());
-        verify(visitor).visitConcept(dependentConcept, MINOR, emptyMap());
-        verify(visitor).visitConcept(requiredConcept1, MINOR, emptyMap());
-        verify(visitor).visitConcept(requiredConcept2, MINOR, emptyMap());
-        verify(visitor).visitConstraint(defaultConstraint, MAJOR);
-        verify(visitor).visitConstraint(dependentConstraint, MAJOR);
-        verify(visitor, never()).visitConcept(overriddenConcept, MAJOR, emptyMap());
-        verify(visitor, never()).visitConstraint(overriddenConstraint, MAJOR);
+        verify(visitor).visitConcept(defaultConcept, MAJOR, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(eq(dependentConcept), eq(MINOR), anyMap(), anyMap());
+        verify(visitor).visitConcept(requiredConcept1, MINOR, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(requiredConcept2, MINOR, emptyMap(), emptyMap());
+        verify(visitor).visitConstraint(defaultConstraint, MAJOR, emptyMap());
+        verify(visitor).visitConstraint(eq(dependentConstraint), eq(MAJOR), anyMap());
+        verify(visitor, never()).visitConcept(overriddenConcept, MAJOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConstraint(overriddenConstraint, MAJOR, emptyMap());
     }
 
     @Test
@@ -350,8 +351,8 @@ class RuleSetExecutorTest {
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
-        verify(visitor).visitConcept(requiredConcept, MINOR, emptyMap());
-        verify(visitor).visitConcept(dependentConcept, MINOR, emptyMap());
+        verify(visitor).visitConcept(requiredConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(eq(dependentConcept), eq(MINOR), anyMap(), anyMap());
     }
 
     private void verifyRequiredConcepts(Boolean optional, boolean status, VerificationMode visitVerification, VerificationMode skipVerification)
@@ -378,9 +379,9 @@ class RuleSetExecutorTest {
             .requiresConcepts(requiresConcepts)
             .build();
 
-        lenient().when(visitor.visitConcept(dependencyConcept1, MINOR, emptyMap()))
+        lenient().when(visitor.visitConcept(dependencyConcept1, MINOR, emptyMap(), emptyMap()))
             .thenReturn(status);
-        lenient().when(visitor.visitConcept(dependencyConcept2, MINOR, emptyMap()))
+        lenient().when(visitor.visitConcept(dependencyConcept2, MINOR, emptyMap(), emptyMap()))
             .thenReturn(status);
         lenient().doAnswer(i -> i.getArgument(0))
             .when(visitor)
@@ -399,11 +400,11 @@ class RuleSetExecutorTest {
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
-        verify(visitor).visitConcept(dependencyConcept1, MINOR, emptyMap());
-        verify(visitor).visitConcept(dependencyConcept2, MINOR, emptyMap());
-        verify(visitor, visitVerification).visitConcept(concept, MINOR, emptyMap());
+        verify(visitor).visitConcept(dependencyConcept1, MINOR, emptyMap(), emptyMap());
+        verify(visitor).visitConcept(dependencyConcept2, MINOR, emptyMap(), emptyMap());
+        verify(visitor, visitVerification).visitConcept(eq(concept), eq(MINOR), anyMap(), anyMap());
         verify(visitor, skipVerification).skipConcept(concept, MINOR);
-        verify(visitor, visitVerification).visitConstraint(constraint, MAJOR);
+        verify(visitor, visitVerification).visitConstraint(eq(constraint), eq(MAJOR), anyMap());
         verify(visitor, skipVerification).skipConstraint(constraint, MAJOR);
     }
 
@@ -457,15 +458,16 @@ class RuleSetExecutorTest {
 
         InOrder inOrder = inOrder(visitor);
         inOrder.verify(visitor)
-            .visitConcept(requiredConcept, MINOR, emptyMap());
+            .visitConcept(requiredConcept, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
-            .visitConcept(providingConcept1, MINOR, emptyMap());
+            .visitConcept(eq(providingConcept1), eq(MINOR), anyMap(), anyMap());
         inOrder.verify(visitor)
-            .visitConcept(providingConcept2, MINOR, emptyMap());
+            .visitConcept(eq(providingConcept2), eq(MINOR), anyMap(), anyMap());
         inOrder.verify(visitor)
-            .visitConcept(abstractConcept, MINOR, ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
+            .visitConcept(abstractConcept, MINOR, ofEntries(entry(new SimpleEntry<>(requiredConcept, TRUE), TRUE)),
+                ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
         inOrder.verify(visitor)
-            .visitConcept(concept, CRITICAL, emptyMap());
+            .visitConcept(eq(concept), eq(CRITICAL), anyMap(), anyMap());
     }
 
     @Test
@@ -495,7 +497,7 @@ class RuleSetExecutorTest {
 
         ruleExecutor.execute(ruleSet, ruleSelection);
 
-        verify(visitor).visitConstraint(constraint, MAJOR);
-        verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR);
+        verify(visitor).visitConstraint(constraint, MAJOR, emptyMap());
+        verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR, emptyMap());
     }
 }

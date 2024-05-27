@@ -35,12 +35,16 @@ public interface RuleVisitor<R> {
      *     The concept.
      * @param effectiveSeverity
      *     The severity to use.
-     * @param results
+     * @param requiredConceptResults
+     *     The results of required concepts.
+     * @param providingConceptResults
+     *     The results of providing concepts.
      * @return The result of the visitor.
      * @throws RuleException
      *     If an error occurred.
      */
-    R visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, R> results) throws RuleException;
+    R visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults,
+        Map<Concept, R> providingConceptResults) throws RuleException;
 
     /**
      * Skip a concept.
@@ -61,11 +65,13 @@ public interface RuleVisitor<R> {
      *     The constraint.
      * @param effectiveSeverity
      *     The severity to use.
+     * @param requiredConceptResults
+     *     The results of required concepts.
      * @return The result of the visitor.
      * @throws RuleException
      *     If an error occurred.
      */
-    R visitConstraint(Constraint constraint, Severity effectiveSeverity) throws RuleException;
+    R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
      * Skip a constraint.

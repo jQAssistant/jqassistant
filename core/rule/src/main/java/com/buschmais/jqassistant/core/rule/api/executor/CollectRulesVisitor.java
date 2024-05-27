@@ -6,13 +6,7 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 
 public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
 
-    private static final Comparator<Rule> RULE_COMPARATOR = new Comparator<Rule>() {
-        @Override
-        public int compare(Rule o1, Rule o2) {
-            return o1.getId()
-                .compareTo(o2.getId());
-        }
-    };
+    private static final Comparator<Rule> RULE_COMPARATOR = Comparator.comparing(Rule::getId);
 
     private Map<Concept, Severity> concepts = new TreeMap<>(RULE_COMPARATOR);
     private Map<Constraint, Severity> constraints = new TreeMap<>(RULE_COMPARATOR);
@@ -23,13 +17,14 @@ public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public Boolean visitConcept(Concept concept, Severity effectiveSeverity, Map<Concept, Boolean> results) {
+    public Boolean visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Boolean> requiredConceptResults,
+        Map<Concept, Boolean> providingConceptResults) {
         concepts.put(concept, effectiveSeverity);
         return true;
     }
 
     @Override
-    public Boolean visitConstraint(Constraint constraint, Severity effectiveSeverity) {
+    public Boolean visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Boolean> requiredConceptResults) {
         constraints.put(constraint, effectiveSeverity);
         return true;
     }
