@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.0">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.3">
     <xsl:output method="html" version="1.0" encoding="iso-8859-1"
                 indent="yes"/>
     <xsl:template name="content">
@@ -70,7 +70,7 @@
             text-align:right;
             }
 
-            .nameWithResult {
+            .collapsible {
             cursor:pointer;
             text-decoration:underline;
             }
@@ -198,7 +198,7 @@
 
     <!-- CONSTRAINT/CONCEPT TABLE -->
     <xsl:template match="tns:constraint | tns:concept">
-        <xsl:variable name="resultId" select="generate-id(tns:result)"/>
+        <xsl:variable name="resultId" select="generate-id(.)"/>
         <tr>
             <xsl:attribute name="class">
                 <xsl:choose>
@@ -213,14 +213,8 @@
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <span class="ruleName" title="{tns:description/text()}"
+                <span class="ruleName collapsible" title="{tns:description/text()}"
                       onclick="javascript:toggle('{$resultId}');">
-                    <xsl:attribute name="class">
-                        <xsl:choose>
-                            <xsl:when test="tns:result">ruleName nameWithResult</xsl:when>
-                            <xsl:otherwise>ruleName</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
                     <xsl:value-of select="@id"/>
                 </span>
             </td>
@@ -234,13 +228,31 @@
                 <xsl:value-of select="tns:duration/text()"/>
             </td>
         </tr>
-        <xsl:if test="tns:result">
-            <tr id="{$resultId}" style="display:none;" name="resultRow">
-                <td colspan="5">
+        <tr id="{$resultId}" style="display:none;" name="resultRow">
+            <td colspan="5">
+                <xsl:if test="tns:result">
                     <xsl:apply-templates select="tns:result"/>
-                </td>
-            </tr>
-        </xsl:if>
+                </xsl:if>
+                <xsl:if test="tns:required-concept">
+                    <table>
+                        <tr>
+                            <th>Required Concept</th>
+                            <th>Status</th>
+                        </tr>
+                        <xsl:apply-templates select="tns:required-concept"/>
+                    </table>
+                </xsl:if>
+                <xsl:if test="tns:providing-concept">
+                    <table>
+                        <tr>
+                            <th>Providing Concept</th>
+                            <th>Status</th>
+                        </tr>
+                        <xsl:apply-templates select="tns:providing-concept"/>
+                    </table>
+                </xsl:if>
+            </td>
+        </tr>
     </xsl:template>
 
     <!-- RESULT PART -->
@@ -270,6 +282,17 @@
                 </xsl:for-each>
             </table>
         </div>
+    </xsl:template>
+
+    <xsl:template match="tns:required-concept|tns:providing-concept">
+        <tr>
+            <td>
+                <xsl:value-of select="@id"/>
+            </td>
+            <td>
+                <xsl:value-of select="tns:status"/>
+            </td>
+        </tr>
     </xsl:template>
 
 </xsl:stylesheet>

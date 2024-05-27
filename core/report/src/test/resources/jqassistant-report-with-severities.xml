@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.0">
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.3">
     <concept id="concept:SuccessWithMinorSeverity">
         <description>Minor Success</description>
         <status>success</status>
