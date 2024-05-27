@@ -145,6 +145,8 @@
         <maven.min.version>3.5.0</maven.min.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- integration tests -->
+        <it.jqassistant.store.uri>memory:///</it.jqassistant.store.uri>
     </properties>
 
     <build>
@@ -224,6 +226,10 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven.failsafe.version}</version>
                     <configuration>
+                        <systemPropertyVariables>
+                            <!-- default store to use for Integration tests -->
+                            <jqassistant.store.uri>${it.jqassistant.store.uri}</jqassistant.store.uri>
+                        </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
                             --add-opens java.base/java.lang=ALL-UNNAMED
@@ -237,6 +243,10 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.version}</version>
                     <configuration>
+                        <systemPropertyVariables>
+                            <!-- default store to use for Integration tests -->
+                            <jqassistant.store.uri>${it.jqassistant.store.uri}</jqassistant.store.uri>
+                        </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
                             --add-opens java.base/java.lang=ALL-UNNAMED
@@ -630,20 +640,16 @@
             </build>
         </profile>
         <profile>
-            <id>remote</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jqassistant.store.uri>neo4j://localhost:7687</jqassistant.store.uri>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <id>it-store-remote</id>
+            <properties>
+                <it.jqassistant.store.uri>neo4j://localhost:7687</it.jqassistant.store.uri>
+            </properties>
+        </profile>
+        <profile>
+            <id>it-store-file</id>
+            <properties>
+                <it.jqassistant.store.uri>file:${project.build.directory}/jqassistant/test-store</it.jqassistant.store.uri>
+            </properties>
         </profile>
         <profile>
             <id>owasp</id>
