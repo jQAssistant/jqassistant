@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -269,9 +271,10 @@ public abstract class AbstractPluginIT {
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
-        File directory = new File(rootClass.getClassLoader()
+        String path = URLDecoder.decode(rootClass.getClassLoader()
             .getResource(".")
-            .getFile());
+            .getPath(), Charset.defaultCharset());
+        File directory = new File(path);
         assertThat(directory).isDirectory()
             .describedAs("Expected %s to be a directory", directory.toString());
         return directory;
