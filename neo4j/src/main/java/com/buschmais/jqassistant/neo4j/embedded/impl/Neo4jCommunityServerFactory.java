@@ -38,10 +38,15 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
     @Override
     public Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Optional<File> pluginDirectory) {
         EmbeddedNeo4jXOProvider.PropertiesBuilder propertiesBuilder = EmbeddedNeo4jXOProvider.propertiesBuilder()
+            .property(GraphDatabaseSettings.procedure_unrestricted, List.of("*"))
+            // keep disk footprint small (TX logs)
             .property(GraphDatabaseSettings.keep_logical_logs, FALSE.toString())
             .property(GraphDatabaseSettings.logical_log_rotation_threshold, ByteUnit.mebiBytes(25L))
-            .property(GraphDatabaseSettings.procedure_unrestricted, List.of("*"))
+            // deactivate unnecessary logging
+            .property(GraphDatabaseSettings.debug_log_enabled, false)
+            .property(GraphDatabaseSettings.log_queries, GraphDatabaseSettings.LogQueryLevel.OFF)
             .property(GraphDatabaseInternalSettings.dump_diagnostics, false)
+            // don't wait on server shutdown
             .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0);
         pluginDirectory.ifPresent(dir -> {
             prepareClassloader(dir.toPath());
