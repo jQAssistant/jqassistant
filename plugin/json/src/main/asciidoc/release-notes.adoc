@@ -4,6 +4,7 @@
 == 2.3.0
 
 * Migrated JSON-Scanner from ANTLR to Jackson
+* Added report type `json` for exporting rule results as JSON files
 
 == 1.6.0
 

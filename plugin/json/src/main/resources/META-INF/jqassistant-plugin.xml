@@ -16,4 +16,7 @@
     <scanner>
         <class>com.buschmais.jqassistant.plugin.json.impl.scanner.JSONFileScannerPlugin</class>
     </scanner>
+    <report>
+        <class id="json">com.buschmais.jqassistant.plugin.json.impl.report.JSONReportPlugin</class>
+    </report>
 </jqassistant-plugin>

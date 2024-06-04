@@ -1,0 +1,11 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.json.it"
+                    name="jQAssistant JSON Plugin IT"
+                    version="${project.version}">
+    <description>Provides a scanner for JSON files</description>
+    <rules>
+        <resource>json-it.xml</resource>
+    </rules>
+</jqassistant-plugin>
