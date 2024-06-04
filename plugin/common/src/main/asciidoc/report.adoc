@@ -1,6 +1,6 @@
 == CSV Report
 
-Generates CSV a file from a rule result.
+Generates a CSV file from a rule result.
 
 === Configuration
 
