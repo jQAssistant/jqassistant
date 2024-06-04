@@ -46,6 +46,8 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             .property(GraphDatabaseSettings.debug_log_enabled, false)
             .property(GraphDatabaseSettings.log_queries, GraphDatabaseSettings.LogQueryLevel.OFF)
             .property(GraphDatabaseInternalSettings.dump_diagnostics, false)
+            // deactivate user data collector
+            .property(GraphDatabaseSettings.udc_enabled, false)
             // don't wait on server shutdown
             .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0);
         pluginDirectory.ifPresent(dir -> {
