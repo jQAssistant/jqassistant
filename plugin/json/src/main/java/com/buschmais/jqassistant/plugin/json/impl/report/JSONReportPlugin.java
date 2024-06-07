@@ -54,7 +54,8 @@ public class JSONReportPlugin implements ReportPlugin {
             .stream()
             .map(row -> getRow(row.getColumns(), columnName));
         try {
-            objectMapper.writeValue(file, stream.iterator());
+            objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValue(file, stream.iterator());
         } catch (IOException e) {
             throw new ReportException("Cannot write JSON report.", e);
         }
