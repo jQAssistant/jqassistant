@@ -21,8 +21,10 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     @Override
     protected void configure() {
         getScannerContext().push(FileResolver.class, new LocalFileSystemFileResolver());
-        filePatternMatcher = FilePatternMatcher.builder().include(getStringProperty(PROPERTY_INCLUDE, null))
-                .exclude(getStringProperty(PROPERTY_EXCLUDE, null)).build();
+        filePatternMatcher = FilePatternMatcher.builder()
+            .include(getStringProperty(PROPERTY_INCLUDE, null))
+            .exclude(getStringProperty(PROPERTY_EXCLUDE, null))
+            .build();
     }
 
     @Override
@@ -32,7 +34,9 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     @Override
     public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        return scanner.getContext().peek(FileResolver.class).match(path, FileDescriptor.class, scanner.getContext());
+        return scanner.getContext()
+            .peek(FileResolver.class)
+            .match(path, FileDescriptor.class, scanner.getContext());
     }
 
 }
