@@ -48,9 +48,9 @@ public class JSONReportPlugin implements ReportPlugin {
         String fileName = ReportHelper.escapeRuleId(result.getRule()) + ".json";
         File reportDirectory = reportContext.getReportDirectory(REPORT_TYPE);
         File file = new File(reportDirectory, fileName);
-
+        // Do not include columns as top-level object if result contains only one column
         Optional<String> columnName = columnNames.size() == 1 ? of(columnNames.get(0)) : empty();
-        Stream<Object> stream = result.getRows()
+        Stream<?> stream = result.getRows()
             .stream()
             .map(row -> getRow(row.getColumns(), columnName));
         try {
