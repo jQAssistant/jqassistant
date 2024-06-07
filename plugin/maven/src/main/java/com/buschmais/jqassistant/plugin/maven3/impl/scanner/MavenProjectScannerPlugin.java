@@ -45,6 +45,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.buschmais.jqassistant.core.shared.io.FileNameNormalizer.normalize;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_PROP_VERBOSE;
@@ -242,28 +243,30 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *
      * @param project
      *     The project
-     * @param expectedType
-     *     The expected descriptor type.
      * @param scannerContext
      *     The scanner context.
-     * @param <T>
-     *     The expected descriptor type.
      * @return The maven project descriptor.
      */
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
+        String id = String.format("%s:%s:%s", project.getGroupId(), project.getArtifactId(), project.getVersion());
         Store store = scannerContext.getStore();
-        String id = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion();
         MavenProjectDescriptor projectDescriptor = store.find(MavenProjectDescriptor.class, id);
         if (projectDescriptor == null) {
-            projectDescriptor = store.create(expectedType, id);
+            // resolve project as directory if a basedir is present (local project)
+            File basedir = project.getBasedir();
+            if (basedir != null) {
+                projectDescriptor = scannerContext.peek(FileResolver.class)
+                    .match(normalize(basedir.getAbsoluteFile()), MavenProjectDirectoryDescriptor.class, scannerContext);
+
+            } else {
+                projectDescriptor = store.create(expectedType);
+            }
+            projectDescriptor.setFullQualifiedName(id);
             projectDescriptor.setName(project.getName());
             projectDescriptor.setGroupId(project.getGroupId());
             projectDescriptor.setArtifactId(project.getArtifactId());
             projectDescriptor.setVersion(project.getVersion());
             projectDescriptor.setPackaging(project.getPackaging());
-            projectDescriptor.setFullQualifiedName(id);
-        } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
-            projectDescriptor = store.addDescriptorType(projectDescriptor, expectedType);
         }
         return expectedType.cast(projectDescriptor);
     }
@@ -379,7 +382,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         }
         for (MavenProject module : project.getCollectedProjects()) {
             if (modules.contains(module.getBasedir())) {
-                MavenProjectDescriptor moduleDescriptor = resolveProject(module, MavenProjectDescriptor.class, scannerContext);
+                MavenProjectDirectoryDescriptor moduleDescriptor = resolveProject(module, MavenProjectDirectoryDescriptor.class, scannerContext);
                 projectDescriptor.getModules()
                     .add(moduleDescriptor);
             }
@@ -448,7 +451,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         if (file.exists()) {
             return scanner.scan(file, path, scope);
         } else {
-            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
+            LOGGER.debug("{} does not exist, skipping.", file.getAbsolutePath());
         }
         return null;
     }

@@ -1,6 +1,10 @@
 
 = Maven 3 Plugin
 
+== 2.3.0
+
+* Ensure that the property `fileName` is set for `:Maven:Project` nodes that represent local (i.e. scanned) Maven projects
+
 == 1.12.0
 
 * Removed deprecated graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)`, it has been replaced by a model supporting exclusions (see deprecation notice in 1.9.0)
