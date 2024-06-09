@@ -2,3 +2,6 @@ jqassistant:
   maven:
     module:
       skip: ${jqa.module.skip:false}
+  analyze:
+    groups:
+      - it
