@@ -43,11 +43,8 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             .property(GraphDatabaseSettings.keep_logical_logs, FALSE.toString())
             .property(GraphDatabaseSettings.logical_log_rotation_threshold, ByteUnit.mebiBytes(25L))
             // deactivate unnecessary logging
-            .property(GraphDatabaseSettings.debug_log_enabled, false)
             .property(GraphDatabaseSettings.log_queries, GraphDatabaseSettings.LogQueryLevel.OFF)
             .property(GraphDatabaseInternalSettings.dump_diagnostics, false)
-            // deactivate user data collector
-            .property(GraphDatabaseSettings.udc_enabled, false)
             // don't wait on server shutdown
             .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0);
         pluginDirectory.ifPresent(dir -> {
@@ -58,7 +55,13 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             propertiesBuilder.property(BoltConnector.enabled, true);
             propertiesBuilder.property(BoltConnector.listen_address, new SocketAddress(listenAddress, boltPort));
         }
-        return propertiesBuilder.build();
+        Properties properties = propertiesBuilder.build();
+        // set string properties which are not available for Neo4j v4
+        // deactivate internal debug logs
+        properties.setProperty("neo4j.server.logs.debug.enabled", FALSE.toString());
+        // deactivate user data collector
+        properties.setProperty("neo4j.dbms.usage_report.enabled", FALSE.toString());
+        return properties;
     }
 
     /**
@@ -83,11 +86,11 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
      */
     private static Consumer<Path> getClasspathAppender() {
         ClassLoader neo4jClassLoader = GraphDatabaseSettings.class.getClassLoader();
-            if (neo4jClassLoader instanceof URLClassLoader) {
-                return getURLClassLoaderAppender(neo4jClassLoader);
-            } else {
-                return getInstrumentationAppender();
-            }
+        if (neo4jClassLoader instanceof URLClassLoader) {
+            return getURLClassLoaderAppender(neo4jClassLoader);
+        } else {
+            return getInstrumentationAppender();
+        }
     }
 
     /**
