@@ -31,13 +31,18 @@ public class MavenSettingsConfigSourceBuilder {
 
     private static final String USER_MAVEN_SETTINGS = ".m2/settings.xml";
 
+    private static final String DEFAULT_LOCAL_REPOSITORY = ".m2/repository";
+
     public static ConfigSource createMavenSettingsConfigSource(File userHome, Optional<File> mavenSettingsFile) throws CliConfigurationException {
         Map<String, String> properties = new HashMap<>();
+
         File settingsFile = mavenSettingsFile.orElseGet(() -> new File(userHome, USER_MAVEN_SETTINGS));
-        if (settingsFile.exists()) {
+        if (!settingsFile.exists()) {
+            log.info("Maven settings file '{}' does not exist, skipping.", settingsFile);
+        } else {
             Settings settings = loadMavenSettings(settingsFile);
-            String localRepository = settings.getLocalRepository();
-            put(localRepository, properties, Repositories.PREFIX, Repositories.LOCAL);
+            String value = getLocalRepository(settings, userHome);
+            put(value, properties, Repositories.PREFIX, Repositories.LOCAL);
             applyMirrors(properties, settings);
             applyProxy(properties, settings);
             List<Profile> activeProfiles = getActiveProfiles(settings);
@@ -46,6 +51,14 @@ public class MavenSettingsConfigSourceBuilder {
             }
         }
         return new PropertiesConfigSource(properties, "Maven Settings", 90);
+    }
+
+    private static String getLocalRepository(Settings settings, File userHome) {
+        String localRepository = settings.getLocalRepository();
+        if (localRepository != null) {
+            return localRepository;
+        }
+        return new File(userHome, DEFAULT_LOCAL_REPOSITORY).getAbsolutePath();
     }
 
     private static void applyMirrors(Map<String, String> properties, Settings settings) {

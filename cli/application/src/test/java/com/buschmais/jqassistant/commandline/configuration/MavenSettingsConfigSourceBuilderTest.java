@@ -78,13 +78,27 @@ class MavenSettingsConfigSourceBuilderTest {
         File userHome = new File(userHomeUrl.getFile());
         File customSettings = new File(userHome, "custom-maven-settings.xml");
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, Optional.of(customSettings));
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings));
 
         CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
 
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/custom-repo")));
+    }
+
+    @Test
+    void customMavenSettingsWithoutLocalRepo() throws CliConfigurationException {
+        URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
+        File userHome = new File(userHomeUrl.getFile());
+        File customSettings = new File(userHome, "custom-maven-settings-without-local-repo.xml");
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings));
+
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
+            .load(configSource);
+
+        Repositories repositories = configuration.repositories();
+        assertThat(repositories.local()).isEqualTo(of(new File(userHome, ".m2/repository")));
     }
 
     @Test
