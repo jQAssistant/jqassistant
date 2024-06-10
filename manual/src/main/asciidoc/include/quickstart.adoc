@@ -9,13 +9,13 @@
 
 ==== Installation
 
-* The latest command line distributions are available for download from Maven Central by selecting `distribution.zip` from the `Download` menu:
-** https://search.maven.org/search?q=a:jqassistant-commandline-neo4jv4[JDK 11], provides Neo4j v4.x
-** https://search.maven.org/search?q=a:jqassistant-commandline-neo4jv5[JDK 17 or later], provides Neo4j v5.x
-* Download and unpack the distribution, a directory
-  `jqassistant-commandline-_neo4jv?_-_version_` will be created.
+* The latest command line distributions are available on Maven Central. Use one of the links below for selecting the bundled Neo4j version depending on your local JDK, select `Browse` and download the `*-distribution.zip` file:
+** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv4/versions[jQAssistant for JDK 17 or later] (includes Neo4j v5.x, _recommended_)
+** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv4/versions[jQAssistant for JDK 11] (includes Neo4j v4.x)
+* Unpack the distribution, a directory
+  `jqassistant-commandline-neo4jv__<?>__-_<version>_` will be created
 
-NOTE: jQAssistant releases until 2.0.x are available https://search.maven.org/search?q=a:jqassistant-commandline-distributions[here].
+NOTE: jQAssistant releases until 2.0.x are available https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-distribution/versions[here].
 
 ==== Scan
 
