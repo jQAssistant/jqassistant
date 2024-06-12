@@ -84,15 +84,15 @@ public class Junit5IT extends AbstractJunitIT {
 
     @Test
     public void parameterizedTestFound() throws Exception {
-        scanClasses(ParamterizedTestClass.class);
+        scanClasses(ParameterizedTestClass.class);
         assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
         assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-            hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+            hasItem(methodDescriptor(ParameterizedTestClass.class, "parameterizedTest", String.class)));
         assertThat(query("MATCH (m:Method:Junit5:Parameterized) RETURN m").getColumn("m"),
-            hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+            hasItem(methodDescriptor(ParameterizedTestClass.class, "parameterizedTest", String.class)));
     }
 
     @Test
@@ -257,7 +257,7 @@ public class Junit5IT extends AbstractJunitIT {
 
     @Test
     public void constraintTestClassFindsAllClassesWithTests() throws Exception {
-        scanClasses(DisabledTestClass.class, ParamterizedTestClass.class, TestTemplateClass.class, RepeatedTestClass.class, TagTestClass.A.class);
+        scanClasses(DisabledTestClass.class, ParameterizedTestClass.class, TestTemplateClass.class, RepeatedTestClass.class, TagTestClass.A.class);
 
         assertThat(applyConcept("junit5:TestClass").getStatus(), equalTo(SUCCESS));
 
@@ -269,7 +269,7 @@ public class Junit5IT extends AbstractJunitIT {
             .isNotEmpty();
         assertThat(classes,
             containsInAnyOrder(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
-                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParamterizedTestClass.class)));
+                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class)));
     }
 
     @Test
@@ -348,8 +348,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
-        assertThat(tests).isNotNull();
-        assertThat(tests).hasSize(1);
+        assertThat(tests).isNotNull()
+            .hasSize(1);
         assertThat(tests, hasItem(methodDescriptor(MultipleTagAnnotationTest.class, "getLong")));
     }
 

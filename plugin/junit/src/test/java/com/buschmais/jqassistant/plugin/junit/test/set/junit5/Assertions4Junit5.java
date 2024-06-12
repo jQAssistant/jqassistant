@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled("This is not an actual test")
-public class Assertions4Junit5 {
+public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     @Test
     public void assertWithoutMessage() {
@@ -52,6 +52,11 @@ public class Assertions4Junit5 {
     @Test
     public void assertWithNonVoidReturn() {
         assertThrows(IllegalArgumentException.class, this::throwsException);
+    }
+
+    @Test
+    public void assertInSuperClass() {
+        super.verify();
     }
 
     private void nestedAssertion() {

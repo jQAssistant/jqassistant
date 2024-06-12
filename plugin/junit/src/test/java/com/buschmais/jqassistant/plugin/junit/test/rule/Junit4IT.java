@@ -319,14 +319,15 @@ public class Junit4IT extends AbstractJunitIT {
                 .get("TestMethod")
                 .getValue())
             .collect(Collectors.toList());
-        assertThat(rows.size(), equalTo(9));
+        assertThat(rows.size(), equalTo(10));
         assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
             is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")), is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
             is(methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class)),
             is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")), is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
-            is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
+            is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn")),
+            is(methodDescriptor(Assertions4Junit5.class, "assertInSuperClass"))));
         store.commitTransaction();
     }
 

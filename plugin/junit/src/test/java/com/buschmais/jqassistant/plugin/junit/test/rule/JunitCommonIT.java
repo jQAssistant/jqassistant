@@ -17,9 +17,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,9 +40,9 @@ public class JunitCommonIT extends AbstractJunitIT {
      * Verifies the concept "junit:TestCaseImplementedByMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testCaseImplementedByMethod() throws Exception {
@@ -64,9 +62,9 @@ public class JunitCommonIT extends AbstractJunitIT {
      * Verifies the uniqueness of concept "junit:TestCaseImplementedByMethod" with keeping existing properties.
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testCaseImplementedByMethodUnique() throws Exception {
@@ -74,10 +72,17 @@ public class JunitCommonIT extends AbstractJunitIT {
         scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         store.beginTransaction();
         // create existing relations with and without properties
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (m:Method {name: 'success'}) MERGE (t)-[r:IMPLEMENTED_BY {prop: 'value'}]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (m:Method {name: 'failure'}) MERGE (t)-[r:IMPLEMENTED_BY]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY]->(c) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(
+            query("MATCH (t:TestCase {name: 'success'}), (m:Method {name: 'success'}) MERGE (t)-[r:IMPLEMENTED_BY {prop: 'value'}]->(m) RETURN r").getColumn(
+                    "r")
+                .size(), equalTo(1));
+        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (m:Method {name: 'failure'}) MERGE (t)-[r:IMPLEMENTED_BY]->(m) RETURN r").getColumn("r")
+            .size(), equalTo(1));
+        assertThat(
+            query("MATCH (t:TestCase {name: 'success'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY {prop: 'value'}]->(c) RETURN r").getColumn("r")
+                .size(), equalTo(1));
+        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY]->(c) RETURN r").getColumn("r")
+            .size(), equalTo(1));
         verifyUniqueRelation("IMPLEMENTED_BY", 2);
         verifyUniqueRelation("DEFINED_BY", 2);
         store.commitTransaction();
@@ -92,17 +97,17 @@ public class JunitCommonIT extends AbstractJunitIT {
      * Verifies the concept "junit4:IgnoreWithoutMessage".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void ignoreWithoutMessage() throws Exception {
-        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class,
-                    DisabledTestWithoutMessage.class);
+        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
         assertThat(validateConstraint("junit:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults()
+            .values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
@@ -125,10 +130,9 @@ public class JunitCommonIT extends AbstractJunitIT {
             .map(tuple -> TypeDescriptor.class.cast(tuple.b()))
             .collect(toList());
 
-        assertThat(methods, containsInAnyOrder(methodDescriptor(IgnoredTest.class, "ignoredTest"),
-                                               methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage")));
-        assertThat(types, containsInAnyOrder(typeDescriptor(IgnoredTest.class),
-                                             typeDescriptor(DisabledTestWithoutMessage.class)));
+        assertThat(methods,
+            containsInAnyOrder(methodDescriptor(IgnoredTest.class, "ignoredTest"), methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage")));
+        assertThat(types, containsInAnyOrder(typeDescriptor(IgnoredTest.class), typeDescriptor(DisabledTestWithoutMessage.class)));
 
         store.commitTransaction();
     }
@@ -141,25 +145,25 @@ public class JunitCommonIT extends AbstractJunitIT {
         executeGroup("junit:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, aMapWithSize(3));
-        assertThat(constraintViolations.keySet(), hasItems("junit:IgnoreWithoutMessage",
-                                                           "junit:AssertionMustProvideMessage",
-                                                           "junit:TestMethodWithoutAssertion"));
+        assertThat(constraintViolations.keySet(),
+            hasItems("junit:IgnoreWithoutMessage", "junit:AssertionMustProvideMessage", "junit:TestMethodWithoutAssertion"));
     }
 
     /**
      * Verifies the constraint "junit:AssertionMustProvideMessage".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void assertionMustProvideMessage() throws Exception {
         scanClasses(Assertions4Junit4.class);
         assertThat(validateConstraint("junit:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults()
+            .values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:AssertionMustProvideMessage")));
@@ -176,13 +180,13 @@ public class JunitCommonIT extends AbstractJunitIT {
      * Verifies the constraint "junit:TestMethodWithoutAssertion".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testMethodWithoutAssertion() throws Exception {
-        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class);
+        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
         testMethodWithoutAssertion("junit:TestMethodWithoutAssertion", "Method");
         testMethodWithoutAssertion("java:TestMethodWithoutAssertion", "TestMethod");
     }
@@ -190,7 +194,8 @@ public class JunitCommonIT extends AbstractJunitIT {
     private void testMethodWithoutAssertion(String constraintId, String testMethodColumn) throws RuleException, NoSuchMethodException {
         assertThat(validateConstraint(constraintId).getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        Result<Constraint> result = reportPlugin.getConstraintResults().get(constraintId);
+        Result<Constraint> result = reportPlugin.getConstraintResults()
+            .get(constraintId);
         assertThat(result, result(constraint(constraintId)));
         List<MethodDescriptor> methods = result.getRows()
             .stream()
@@ -202,9 +207,9 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(methods.size(), equalTo(4));
 
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
-                                               methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
-                                               methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class),
-                                               methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")));
+            methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
+            methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class),
+            methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")));
 
         store.commitTransaction();
     }
