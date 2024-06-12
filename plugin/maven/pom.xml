@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>parent</artifactId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.3.0-RC1</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>maven3</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.3.0-RC1</version>
 
     <name>jQAssistant Maven 3 Plugin</name>
     <url>https://jqassistant.org/</url>
@@ -40,10 +40,10 @@
   </scm>
 
     <properties>
-        <jqa-plugin-common.version>2.3.0-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-java-plugin.version>2.3.0-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-junit-plugin.version>2.3.0-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-xml-plugin.version>2.3.0-SNAPSHOT</jqa-xml-plugin.version>
+        <jqa-plugin-common.version>2.3.0-RC1</jqa-plugin-common.version>
+        <jqa-java-plugin.version>2.3.0-RC1</jqa-java-plugin.version>
+        <jqa-junit-plugin.version>2.3.0-RC1</jqa-junit-plugin.version>
+        <jqa-xml-plugin.version>2.3.0-RC1</jqa-xml-plugin.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
     </properties>
