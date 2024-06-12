@@ -32,10 +32,12 @@ class JavaTestIT extends AbstractJavaPluginIT {
         Result<Concept> result = applyConcept("java:TestClass");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).hasSize(1);
+        store.beginTransaction();
         assertThat(((Column<TypeDescriptor>) result.getRows()
             .get(0)
             .getColumns()
             .get("TestClass")).getValue()).is(typeDescriptor("Test"));
+        store.commitTransaction();
     }
 
     @Test
@@ -43,11 +45,13 @@ class JavaTestIT extends AbstractJavaPluginIT {
         Result<Concept> result = applyConcept("java:TestMethod");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).hasSize(1);
+        store.beginTransaction();
         Map<String, Column<?>> columns = result.getRows()
             .get(0)
             .getColumns();
         assertThat(((Column<TypeDescriptor>) columns.get("TestClass")).getValue()).is(typeDescriptor("Test"));
         assertThat(((Column<Long>) columns.get("TestMethods")).getValue()).isEqualTo(1l);
+        store.commitTransaction();
     }
 
     @Test
@@ -55,11 +59,13 @@ class JavaTestIT extends AbstractJavaPluginIT {
         Result<Concept> result = applyConcept("java:AssertMethod");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).hasSize(1);
+        store.beginTransaction();
         Map<String, Column<?>> columns = result.getRows()
             .get(0)
             .getColumns();
         assertThat(((Column<TypeDescriptor>) columns.get("DeclaringType")).getValue()).is(typeDescriptor("Assertions"));
         assertThat(((Column<Long>) columns.get("AssertMethods")).getValue()).isEqualTo(1l);
+        store.commitTransaction();
     }
 
     @Test
@@ -68,10 +74,12 @@ class JavaTestIT extends AbstractJavaPluginIT {
         Result<Constraint> result = validateConstraint("java:TestMethodWithoutAssertion", Map.of("javaTestAssertMaxCallDepth", "1"));
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()).hasSize(1);
+        store.beginTransaction();
         Map<String, Column<?>> columns = result.getRows()
             .get(0)
             .getColumns();
         assertThat(((Column<TypeDescriptor>) columns.get("TestClass")).getValue()).is(typeDescriptor("Test"));
         assertThat(((Column<MethodDescriptor>) columns.get("TestMethod")).getValue()).isNotNull();
+        store.commitTransaction();
     }
 }
