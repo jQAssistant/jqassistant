@@ -562,5 +562,72 @@
         ]]></cypher>
     </constraint>
 
+    <concept id="java:TestMethod">
+        <description>
+            Java methods labeled with `Test` are considered to represent test methods (e.g. for unit or integration tests).
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(testMethod:Java:Method:Test)
+            RETURN
+              artifact as Artifact, testClass as TestClass, count(testMethod) as TestMethods
+            ORDER BY
+              artifact.fqn, testClass.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TestClass">
+        <requiresConcept refId="java:TestMethod"/>
+        <description>
+            Classes declaring test methods are labeled with `Test`.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
+            SET
+              testClass:Test
+            RETURN
+              artifact as Artifact, testClass as TestClass
+            ORDER BY
+              artifact.fqn, testClass.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:AssertMethod">
+        <description>An assert method is used to perform assertions within a test method.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(assertMethod:Assert:Method)
+            RETURN
+              type AS DeclaringType, count(assertMethod) as AssertMethods
+            ORDER BY
+              type.fqn
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:TestMethodWithoutAssertion">
+        <requiresConcept refId="java:VirtualInvokes"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
+        <requiresParameter name="javaTestAssertMaxCallDepth" type="int" defaultValue="3" />
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <cypher><![CDATA[
+            MATCH
+              (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
+            OPTIONAL MATCH
+              path=((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assert:Method:Assert))
+            WITH
+              testClass, testMethod, path
+            WHERE
+              path is null
+              or length(path) > $javaTestAssertMaxCallDepth
+            RETURN
+              distinct testClass AS TestClass, testMethod AS TestMethod
+            ORDER BY
+              testClass.fqn, testMethod.name
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
 </jqassistant-rules>
 

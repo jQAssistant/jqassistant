@@ -3,6 +3,7 @@
 
 == 2.3.0
 
+* Added concepts `java:TestClass`, `java:TestMethod`, `java:AssertMethod` and constraint `java:TestMethodWithoutAssertion`
 * Added `Unknown` as default to list of java versions for concept `java:JavaVersion`
 
 == 2.1.0
