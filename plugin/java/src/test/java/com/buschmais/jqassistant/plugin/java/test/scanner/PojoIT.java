@@ -7,6 +7,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
@@ -20,13 +21,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class PojoIT extends AbstractJavaPluginIT {
 
+    @Override
+    protected Map<String, Object> getScannerProperties() {
+        return Map.of(ClassFileScannerPlugin.PROPERTY_INCLUDE_LOCAL_VARIABLES, true);
+    }
+
     @Test
     void attributes() {
         scanClasses(Pojo.class);
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
-        assertThat(testResult.getRows()
-            .size()).isEqualTo(1);
+        assertThat(testResult.getRows()).hasSize(1);
         ClassFileDescriptor typeDescriptor = (ClassFileDescriptor) testResult.getRows()
             .get(0)
             .get("types");
@@ -52,19 +57,19 @@ class PojoIT extends AbstractJavaPluginIT {
         scanClasses(Pojo.class);
         store.beginTransaction();
         List<int[]> lines = query("MATCH (:Method{name:'hashCode'})-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size()).isEqualTo(1);
+        assertThat(lines).hasSize(1);
         lines = query("MATCH (:Java:ByteCode:Method{name:'getStringValue'})-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size()).isEqualTo(1);
+        assertThat(lines).hasSize(1);
         lines = query("MATCH (:Java:ByteCode:Method{name:'setStringValue'})-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
-        assertThat(lines.size()).isEqualTo(1);
+        assertThat(lines).hasSize(1);
         List<MethodDescriptor> hashCodeList = query("MATCH (hashCode:Method{name:'hashCode'}) return hashCode ").getColumn("hashCode");
-        assertThat(hashCodeList.size()).isEqualTo(1);
+        assertThat(hashCodeList).hasSize(1);
         MethodDescriptor hashCode = hashCodeList.get(0);
         assertThat(hashCode.getFirstLineNumber()).isNotNull();
         assertThat(hashCode.getLastLineNumber()).isNotNull();
         assertThat(hashCode.getLastLineNumber()).isGreaterThan(hashCode.getFirstLineNumber());
         List<MethodDescriptor> equalsList = query("MATCH (equals:Method{name:'equals'}) return equals ").getColumn("equals");
-        assertThat(equalsList.size()).isEqualTo(1);
+        assertThat(equalsList).hasSize(1);
         MethodDescriptor equals = equalsList.get(0);
         assertThat(equals.getEffectiveLineCount()).isEqualTo(8);
         store.commitTransaction();
@@ -76,7 +81,7 @@ class PojoIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         List<VariableDescriptor> variables = query("MATCH (:Java:ByteCode:Method{name:'equals'})-[:DECLARES]->(v:Java:ByteCode:Variable) return v").getColumn(
             "v");
-        assertThat(variables.size()).isEqualTo(2);
+        assertThat(variables).hasSize(2);
         Map<String, VariableDescriptor> map = new HashMap<>();
         for (VariableDescriptor variable : variables) {
             map.put(variable.getName(), variable);

@@ -10,6 +10,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.*;
 
@@ -32,6 +33,11 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 @Slf4j
 class JavaGenericsIT extends AbstractJavaPluginIT {
 
+    @Override
+    protected Map<String, Object> getScannerProperties() {
+        return Map.of(ClassFileScannerPlugin.PROPERTY_INCLUDE_LOCAL_VARIABLES, true);
+    }
+
     @Test
     void outerClassTypeParameters() {
         scanClasses(GenericTypeDeclarations.class);
@@ -42,12 +48,12 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
                         "RETURN typeParameter ORDER BY declares.index").getColumn("typeParameter");
         assertThat(typeParameters).hasSize(2);
         TypeVariableDescriptor x = typeParameters.get(0);
-        assertThat(x.getName().equals("X"));
+        assertThat(x.getName()).isEqualTo("X");
         List<BoundDescriptor> xBounds = x.getUpperBounds();
-        assertThat(xBounds.size()).isEqualTo(1);
+        assertThat(xBounds).hasSize(1);
         assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
         TypeVariableDescriptor y = typeParameters.get(1);
-        assertThat(y.getName().equals("Y"));
+        assertThat(y.getName()).isEqualTo("Y");
         List<BoundDescriptor> yBounds = y.getUpperBounds();
         assertThat(yBounds).hasSize(2);
         List<TypeDescriptor> rawYBounds = yBounds.stream().map(bound -> bound.getRawType()).collect(toList());
@@ -65,17 +71,17 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
                         "RETURN typeParameter ORDER BY declares.index").getColumn("typeParameter");
         assertThat(declaredTypeParameters).hasSize(1);
         TypeVariableDescriptor x = declaredTypeParameters.get(0);
-        assertThat(x.getName().equals("X"));
+        assertThat(x.getName()).isEqualTo("X");
         List<BoundDescriptor> xBounds = x.getUpperBounds();
-        assertThat(xBounds.size()).isEqualTo(1);
+        assertThat(xBounds).hasSize(1);
         assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
         List<TypeVariableDescriptor> requiredTypeParameters = query(
                 "MATCH (:Type:GenericDeclaration{name:'GenericTypeDeclarations$Inner'})-[declares:REQUIRES_TYPE_PARAMETER]->(typeParameter:Java:ByteCode:Bound:TypeVariable) "
                         + //
                         "RETURN typeParameter").getColumn("typeParameter");
         assertThat(requiredTypeParameters).hasSize(1);
-        TypeVariableDescriptor y = declaredTypeParameters.get(0);
-        assertThat(y.getName().equals("Y"));
+        TypeVariableDescriptor y = requiredTypeParameters.get(0);
+        assertThat(y.getName()).isEqualTo("Y");
         store.commitTransaction();
     }
 
@@ -242,7 +248,7 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         List<ParameterDescriptor> parameters = genericParameter.getParameters();
         assertThat(parameters).hasSize(1);
         ParameterDescriptor parameter = parameters.get(0);
-        assertThat(parameter.getIndex()).isEqualTo(0);
+        assertThat(parameter.getIndex()).isZero();
         assertThat(parameter.getType()).is(matching(typeDescriptor(Object.class)));
         verifyTypeVariable(parameter.getGenericType(), "X", typeDescriptor(GenericMethods.class), Object.class);
         store.commitTransaction();

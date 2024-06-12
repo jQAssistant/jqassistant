@@ -29,7 +29,18 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
+    public static final String PROPERTY_INCLUDE_LOCAL_VARIABLES = "java.include.local-variables";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
+
+    private ClassFileScannerConfiguration configuration;
+
+    @Override
+    protected void configure() {
+        configuration = ClassFileScannerConfiguration.builder()
+            .includeLocalVariables(getBooleanProperty(PROPERTY_INCLUDE_LOCAL_VARIABLES, false))
+            .build();
+    }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
@@ -49,7 +60,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         ClassFileDescriptor classFileDescriptor = context.getStore()
             .addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
-        VisitorHelper visitorHelper = new VisitorHelper(context);
+        VisitorHelper visitorHelper = new VisitorHelper(context, configuration);
         final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
         try (InputStream inputStream = file.createStream()) {
             new ClassReader(inputStream).accept(visitor, 0);

@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerConfiguration;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.TypeVariableResolver;
 
 import org.objectweb.asm.AnnotationVisitor;
@@ -29,21 +30,29 @@ public class VisitorHelper {
 
     private final ScannerContext scannerContext;
 
+    private final ClassFileScannerConfiguration configuration;
+
     private final TypeVariableResolver typeVariableResolver;
 
     /**
      * Constructor.
      *
      * @param scannerContext
-     *            The scanner context
+     *     The scanner context
+     * @param configuration
      */
-    public VisitorHelper(ScannerContext scannerContext) {
+    public VisitorHelper(ScannerContext scannerContext, ClassFileScannerConfiguration configuration) {
         this.scannerContext = scannerContext;
+        this.configuration = configuration;
         this.typeVariableResolver = new TypeVariableResolver();
     }
 
     public ScannerContext getScannerContext() {
         return scannerContext;
+    }
+
+    public ClassFileScannerConfiguration getConfiguration() {
+        return configuration;
     }
 
     public Store getStore() {

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodVisitor.class);
 
     private static final String LAMBDA_META_FACTORY = Type.getType(LambdaMetafactory.class).getInternalName();
 
@@ -49,8 +49,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         }
         ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
         if (parameterDescriptor == null) {
-            LOGGER.warn("Cannot find parameter with index " + (parameter - syntheticParameters) + " in method signature "
-                    + containingType.getTypeDescriptor().getFullQualifiedName() + "#" + methodDescriptor.getSignature());
+            LOGGER.warn("Cannot find parameter with index {} in method signature {}#{}", parameter - syntheticParameters, containingType.getTypeDescriptor()
+                .getFullQualifiedName(), methodDescriptor.getSignature());
             return null;
         }
         return visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
@@ -123,7 +123,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
-        if (!THIS.equals(name)) {
+        if (visitorHelper.getConfiguration().isIncludeLocalVariables() && !THIS.equals(name)) {
             final VariableDescriptor variableDescriptor = visitorHelper.getVariableDescriptor(name, SignatureHelper.getFieldSignature(name, desc));
             if (signature == null) {
                 TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), containingType).getTypeDescriptor();

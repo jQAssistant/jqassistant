@@ -69,7 +69,21 @@ A Java package, i.e. a directory containing `.class` files or other directories.
 
 [[ClassFileScanner]]
 == Class File Scanner
-Imports Java classes, i.e. all scanned files having a `.class` suffix. Nodes with following labels will be created:
+Imports Java classes, i.e. all scanned files having a `.class` suffix.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     | Description																 | Default
+
+| java.include.local-variables
+| If `true` then local variables (declared by methods) will be scanned: `(:Method)-[:DECLARES]->(:Variable)` |
+
+|====
+
+Nodes with following labels will be created:
 
 *NOTE* Some of these labels may be further qualified with other labels, see the description below.
 
