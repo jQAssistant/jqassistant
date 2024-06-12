@@ -330,7 +330,7 @@ public abstract class AbstractPluginIT {
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id) throws RuleException {
-        return applyConcept(id, Collections.<String, String>emptyMap());
+        return applyConcept(id, emptyMap());
     }
 
     /**
