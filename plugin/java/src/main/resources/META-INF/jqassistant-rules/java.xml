@@ -615,7 +615,7 @@
             MATCH
               (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
             OPTIONAL MATCH
-              path=((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assert:Method:Assert))
+              path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assert:Method:Assert))
             WITH
               testClass, testMethod, path
             WHERE
