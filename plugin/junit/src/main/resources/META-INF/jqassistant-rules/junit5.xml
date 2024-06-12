@@ -9,6 +9,7 @@
     </group>
 
     <concept id="junit5:TestMethod">
+        <providesConcept refId="java:TestMethod"/>
         <description>
             Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
             labels them with "Test" and "Junit5".
@@ -26,8 +27,9 @@
     </concept>
 
     <concept id="junit5:RepeatedTestMethod">
+        <providesConcept refId="java:TestMethod"/>
         <description>
-            Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
+            Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.RepeatedTest") and
             labels them with "Test", "Repeated", and "Junit5".
         </description>
         <cypher><![CDATA[
@@ -43,6 +45,7 @@
     </concept>
 
     <concept id="junit5:ParameterizedTestMethod">
+        <providesConcept refId="java:TestMethod"/>
         <description>
             Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
             labels them with "Test", "Parameterized", and "Junit5".
@@ -145,6 +148,7 @@
     </concept>
 
     <concept id="junit5:TestTemplateMethod">
+        <providesConcept refId="java:TestMethod"/>
         <description>
             Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
             with "Junit5", "Test" and "Template".</description>
@@ -417,6 +421,7 @@
     </concept>
 
     <concept id="junit5:AssertMethod">
+        <providesConcept refId="java:AssertMethod"/>
         <description>
             Labels all assertion methods declared by "org.junit.jupiter.api.Assertions" with "Junit5"
             and "Assert".
@@ -426,7 +431,10 @@
               (assertType:Type)-[:DECLARES]->(assertMethod)
             WHERE
               assertType.fqn = 'org.junit.jupiter.api.Assertions'
-              and assertMethod.signature CONTAINS ' assert'
+              and (
+               assertMethod.signature CONTAINS ' assert'
+               or assertMethod.signature CONTAINS ' fail'
+              )
             SET
               assertMethod:Junit5:Assert
             RETURN
@@ -435,15 +443,18 @@
     </concept>
 
     <constraint id="junit5:AssertionMustProvideMessage">
+        <requiresConcept refId="java:TestMethod"/>
         <requiresConcept refId="junit5:AssertMethod"/>
         <description>All assertions must provide a message.</description>
         <cypher><![CDATA[
             MATCH
-              (testType:Type)-[:DECLARES]->(testMethod:Method),
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
               (testMethod)-[invocation:INVOKES]->(assertMethod:Junit5:Assert:Method)
-            WHERE
-              NOT assertMethod.signature =~ 'void assert.*\\(.*java.lang.String\\)' AND
-              NOT assertMethod.signature =~ 'void assert.*\\(.*java.util.function.Supplier\\)'
+            WHERE NOT (
+              assertMethod.signature =~ 'void assert.*\\(.*java.lang.String\\)'
+              or assertMethod.signature =~ 'void assert.*\\(.*java.util.function.Supplier\\)'
+              or assertMethod.signature = 'java.lang.Object fail(java.lang.String)'
+            )
             RETURN
               invocation AS Invocation,
               testType AS DeclaringType,
@@ -468,11 +479,8 @@
     </constraint>
 
     <constraint id="junit5:UsageOfJUnit4TestApi">
-        <requiresConcept refId="junit4:TestMethod"/>
-        <requiresConcept refId="junit5:TestMethod"/>
-        <requiresConcept refId="junit5:RepeatedTestMethod"/>
-        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
-        <requiresConcept refId="junit4:AssertMethod"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
         <description>Only the jUnit 5-test api must be used in a jUnit 5-based project.</description>
         <cypher><![CDATA[
             MATCH

@@ -183,16 +183,19 @@ public class JunitCommonIT extends AbstractJunitIT {
     @Test
     public void testMethodWithoutAssertion() throws Exception {
         scanClasses(Assertions4Junit4.class, Assertions4Junit5.class);
-        assertThat(validateConstraint("junit:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
+        testMethodWithoutAssertion("junit:TestMethodWithoutAssertion", "Method");
+        testMethodWithoutAssertion("java:TestMethodWithoutAssertion", "TestMethod");
+    }
+
+    private void testMethodWithoutAssertion(String constraintId, String testMethodColumn) throws RuleException, NoSuchMethodException {
+        assertThat(validateConstraint(constraintId).getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
-        assertThat(constraintViolations.size(), equalTo(1));
-        Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit:TestMethodWithoutAssertion")));
+        Result<Constraint> result = reportPlugin.getConstraintResults().get(constraintId);
+        assertThat(result, result(constraint(constraintId)));
         List<MethodDescriptor> methods = result.getRows()
             .stream()
             .map(row -> row.getColumns()
-                .get("Method")
+                .get(testMethodColumn)
                 .getValue())
             .map(MethodDescriptor.class::cast)
             .collect(toList());

@@ -41,14 +41,14 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:TestMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testMethod() throws Exception {
         scanClasses(TestClass.class);
-        assertThat(applyConcept("junit4:TestMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
         store.commitTransaction();
@@ -58,9 +58,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:TestClass".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testClass() throws Exception {
@@ -75,9 +75,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:TestClassOrMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void testClassOrMethod() throws Exception {
@@ -93,19 +93,20 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:SuiteClass".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void suiteClass() throws Exception {
         scanClasses(TestSuite.class, TestClass.class);
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        Map<String, Object> params = MapBuilder.<String, Object>builder().entry("testClass", TestClass.class.getName()).build();
-        List<Object> suites =
-                query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn=$testClass RETURN s", params)
-                        .getColumn("s");
+        Map<String, Object> params = MapBuilder.<String, Object>builder()
+            .entry("testClass", TestClass.class.getName())
+            .build();
+        List<Object> suites = query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn=$testClass RETURN s",
+            params).getColumn("s");
         assertThat(suites, hasItem(typeDescriptor(TestSuite.class)));
         store.commitTransaction();
     }
@@ -114,17 +115,22 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the uniqueness of concept "junit4:SuiteClass" with keeping existing properties.
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void suiteClassUnique() throws Exception {
-        Map<String, Object> params = MapBuilder.<String, Object> builder().entry("testClass", TestClass.class.getName()).entry("suiteClass", TestSuite.class.getName()).build();
+        Map<String, Object> params = MapBuilder.<String, Object>builder()
+            .entry("testClass", TestClass.class.getName())
+            .entry("suiteClass", TestSuite.class.getName())
+            .build();
         scanClasses(TestSuite.class, TestClass.class);
         store.beginTransaction();
         // create existing relation with property
-        assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn=$suiteClass AND c.fqn=$testClass MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r", params).getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn=$suiteClass AND c.fqn=$testClass MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r",
+            params).getColumn("r")
+            .size(), equalTo(1));
         verifyUniqueRelation("CONTAINS_TESTCLASS", 1);
         store.commitTransaction();
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
@@ -137,9 +143,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:IgnoreTestClassOrMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void ignoreTestClassOrMethod() throws Exception {
@@ -151,34 +157,32 @@ public class Junit4IT extends AbstractJunitIT {
         store.commitTransaction();
     }
 
-
     /**
      * Verifies the concept "junit4:AssertMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void assertMethod() throws Exception {
         scanClasses(Assertions4Junit4.class);
-        assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assert.class, "assertTrue", boolean.class),
-                                               methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class)));
+            methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class), methodDescriptor(Assert.class, "fail", String.class)));
         store.commitTransaction();
     }
-
 
     /**
      * Verifies the concept "junit4:BeforeMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void beforeMethod() throws Exception {
@@ -194,9 +198,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:AfterMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void afterMethod() throws Exception {
@@ -212,9 +216,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:BeforeClassMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void beforeClassMethod() throws Exception {
@@ -230,9 +234,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the concept "junit4:AfterClassMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void afterClassMethod() throws Exception {
@@ -252,10 +256,7 @@ public class Junit4IT extends AbstractJunitIT {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations.size(), equalTo(3));
-        assertThat(constraintViolations.keySet(), hasItems(
-            "junit4:AssertionMustProvideMessage",
-            "junit4:NonJUnit4TestMethod",
-            "junit4:UsageOfJUnit5TestApi"));
+        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage", "junit4:NonJUnit4TestMethod", "junit4:UsageOfJUnit5TestApi"));
     }
 
     /**
@@ -275,16 +276,17 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the constraint "junit4:AssertionMustProvideMessage".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void assertionMustProvideMessage() throws Exception {
         scanClasses(Assertions4Junit4.class);
         assertThat(validateConstraint("junit4:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults()
+            .values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
@@ -301,9 +303,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the constraint "junit4:NonJUnit4TestMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void nonJUnit4TestMethod() throws Exception {
@@ -311,18 +313,20 @@ public class Junit4IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit4:NonJUnit4TestMethod");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows()
+            .stream()
+            .map(m -> (MethodDescriptor) m.getColumns()
+                .get("TestMethod")
+                .getValue())
+            .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(9));
-        assertThat(rows, containsInAnyOrder(
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
-                is(methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class)),
-                is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+            is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")), is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
+            is(methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class)),
+            is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")), is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
         store.commitTransaction();
     }
 
@@ -330,9 +334,9 @@ public class Junit4IT extends AbstractJunitIT {
      * Verifies the constraint "junit4:UsageOfJUnit5TestApi".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void usageOfJUnit5TestApi() throws Exception {
@@ -340,17 +344,18 @@ public class Junit4IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit4:UsageOfJUnit5TestApi");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows()
+            .stream()
+            .map(m -> (MethodDescriptor) m.getColumns()
+                .get("TestMethod")
+                .getValue())
+            .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(6));
-        assertThat(rows, containsInAnyOrder(
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
-                is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
-                is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+            is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")), is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
+            is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")), is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn"))));
         store.commitTransaction();
     }
-
 
 }

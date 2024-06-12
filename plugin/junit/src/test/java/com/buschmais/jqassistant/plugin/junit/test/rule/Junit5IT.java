@@ -53,30 +53,25 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "activeTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "activeTest")));
     }
 
     @Test
     public void nestedTestsMethodsFound() throws Exception {
-        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class,
-                    ParentTestClass.ChildTestClass.GrandChildTestClass.class);
+        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class, ParentTestClass.ChildTestClass.GrandChildTestClass.class);
         assertThat(applyConcept("junit5:TestMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(ParentTestClass.class, "aTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(ParentTestClass.ChildTestClass.class, "bTest")));
         assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(ParentTestClass.class, "aTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(ParentTestClass.ChildTestClass.class, "bTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class, "cTest")));
+            hasItem(methodDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class, "cTest")));
     }
 
     @Test
     public void nestedTestClassesAreLabledWithNested() throws Exception {
-        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class,
-                    ParentTestClass.ChildTestClass.GrandChildTestClass.class);
+        scanClasses(ParentTestClass.class, ParentTestClass.ChildTestClass.class, ParentTestClass.ChildTestClass.GrandChildTestClass.class);
 
         assertThat(applyConcept("junit5:NestedTestClass").getStatus(), equalTo(SUCCESS));
 
@@ -84,35 +79,31 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> classes = query("MATCH (c:Class:Junit5:Nested) RETURN c").getColumn("c");
         assertThat(classes,
-                   containsInAnyOrder(typeDescriptor(ParentTestClass.ChildTestClass.class),
-                                      typeDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class)));
+            containsInAnyOrder(typeDescriptor(ParentTestClass.ChildTestClass.class), typeDescriptor(ParentTestClass.ChildTestClass.GrandChildTestClass.class)));
     }
 
     @Test
     public void parameterizedTestFound() throws Exception {
         scanClasses(ParamterizedTestClass.class);
-        assertThat(applyConcept("junit5:ParameterizedTestMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
-
         assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+            hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
         assertThat(query("MATCH (m:Method:Junit5:Parameterized) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
+            hasItem(methodDescriptor(ParamterizedTestClass.class, "parameterizedTest", String.class)));
     }
 
     @Test
     public void repeatedTestFound() throws Exception {
         scanClasses(RepeatedTestClass.class);
-        assertThat(applyConcept("junit5:RepeatedTestMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test:Repeated) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test:Repeated) RETURN m").getColumn("m"), hasItem(methodDescriptor(RepeatedTestClass.class, "repeatedTest")));
     }
 
     @Test
@@ -123,10 +114,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
-        assertThat(query("MATCH (m:Method:Junit5:Test:Disabled) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
+        assertThat(query("MATCH (m:Method:Junit5:Test:Disabled) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "disabledTest")));
     }
 
     @Test
@@ -137,8 +126,7 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (c:Class:Junit5:Disabled) RETURN c").getColumn("c"),
-                   hasItem(typeDescriptor(DisabledTestClass.class)));
+        assertThat(query("MATCH (c:Class:Junit5:Disabled) RETURN c").getColumn("c"), hasItem(typeDescriptor(DisabledTestClass.class)));
     }
 
     @Test
@@ -148,8 +136,7 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:BeforeEach) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
+        assertThat(query("MATCH (m:Method:Junit5:BeforeEach) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "beforeEach")));
     }
 
     @Test
@@ -159,8 +146,7 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:BeforeAll) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "beforeAll")));
+        assertThat(query("MATCH (m:Method:Junit5:BeforeAll) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "beforeAll")));
     }
 
     @Test
@@ -170,8 +156,7 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:AfterEach) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "afterEach")));
+        assertThat(query("MATCH (m:Method:Junit5:AfterEach) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "afterEach")));
     }
 
     @Test
@@ -181,26 +166,23 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        assertThat(query("MATCH (m:Method:Junit5:AfterAll) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(StandardTest.class, "afterAll")));
+        assertThat(query("MATCH (m:Method:Junit5:AfterAll) RETURN m").getColumn("m"), hasItem(methodDescriptor(StandardTest.class, "afterAll")));
     }
-
 
     @Test
     public void testTemplateFound() throws Exception {
         scanClasses(TestTemplateClass.class);
-        assertThat(applyConcept("junit5:TestTemplateMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
         assertThat(query("MATCH (m:Method:Junit5:Test:Template) RETURN m").getColumn("m"),
-                   hasItem(methodDescriptor(TestTemplateClass.class, "templatedMethod", int.class)));
+            hasItem(methodDescriptor(TestTemplateClass.class, "templatedMethod", int.class)));
     }
 
     @Test
     public void taggedTestsFound() throws Exception {
-        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
-                    TagTestClass.C.class, TagTestClass.XY.class);
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class, TagTestClass.C.class, TagTestClass.XY.class);
 
         assertThat(applyConcept("junit5:TaggedMethod").getStatus(), equalTo(SUCCESS));
         assertThat(applyConcept("junit5:TaggedMethodTags").getStatus(), equalTo(SUCCESS));
@@ -212,32 +194,28 @@ public class Junit5IT extends AbstractJunitIT {
         assertThat(methods, notNullValue());
         assertThat(methods, Matchers.not(Matchers.empty()));
 
-        assertThat(methods, hasItems(methodDescriptor(TagTestClass.B.class, "activeTest"),
-                                     methodDescriptor(TagTestClass.C.class, "activeTest")));
+        assertThat(methods, hasItems(methodDescriptor(TagTestClass.B.class, "activeTest"), methodDescriptor(TagTestClass.C.class, "activeTest")));
     }
 
     @Test
     public void taggedTestsFoundByTag() throws Exception {
-        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
-                    TagTestClass.C.class, TagTestClass.XY.class);
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class, TagTestClass.C.class, TagTestClass.XY.class);
 
         assertThat(applyConcept("junit5:TaggedMethod").getStatus(), equalTo(SUCCESS));
         assertThat(applyConcept("junit5:TaggedMethodTags").getStatus(), equalTo(SUCCESS));
 
         store.beginTransaction();
 
-        List<MethodDescriptor> methods =
-            query("match (m:Test:Method:Junit5) where (\"bm\" in m.tags) return m").getColumn("m");
+        List<MethodDescriptor> methods = query("match (m:Test:Method:Junit5) where (\"bm\" in m.tags) return m").getColumn("m");
 
-        assertThat(methods).isNotNull();
-        assertThat(methods).isNotEmpty();
+        assertThat(methods).isNotNull()
+            .isNotEmpty();
         assertThat(methods, hasItem(methodDescriptor(TagTestClass.B.class, "activeTest")));
     }
 
     @Test
     public void taggedTestClassesFound() throws Exception {
-        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
-                    TagTestClass.C.class, TagTestClass.XY.class);
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class, TagTestClass.C.class, TagTestClass.XY.class);
 
         assertThat(applyConcept("junit5:TestMethod").getStatus(), equalTo(SUCCESS));
         applyConcept("junit5:RepeatedTestMethod");
@@ -251,18 +229,15 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> classes = query("match (c:Tag:Type:Junit5) return c").getColumn("c");
 
-        assertThat(classes).isNotNull();
-        assertThat(classes).isNotEmpty();
-        assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.A.class),
-                                               typeDescriptor(TagTestClass.B.class),
-                                               typeDescriptor(TagTestClass.XY.class)));
+        assertThat(classes).isNotNull()
+            .isNotEmpty();
+        assertThat(classes,
+            containsInAnyOrder(typeDescriptor(TagTestClass.A.class), typeDescriptor(TagTestClass.B.class), typeDescriptor(TagTestClass.XY.class)));
     }
-
 
     @Test
     public void taggedTestClassesFoundByTag() throws Exception {
-        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class,
-                    TagTestClass.C.class, TagTestClass.XY.class);
+        scanClasses(TagTestClass.class, TagTestClass.A.class, TagTestClass.B.class, TagTestClass.C.class, TagTestClass.XY.class);
 
         assertThat(applyConcept("junit5:TestMethod").getStatus(), equalTo(SUCCESS));
         applyConcept("junit5:RepeatedTestMethod");
@@ -273,20 +248,16 @@ public class Junit5IT extends AbstractJunitIT {
 
         store.beginTransaction();
 
-        List<TypeDescriptor> classes = query("match (c:Test:Class:Junit5) where " +
-                                             "(\"b\" in c.tags) or " +
-                                             "(\"x\" in c.tags) return c").getColumn("c");
+        List<TypeDescriptor> classes = query("match (c:Test:Class:Junit5) where " + "(\"b\" in c.tags) or " + "(\"x\" in c.tags) return c").getColumn("c");
 
-        assertThat(classes).isNotNull();
-        assertThat(classes).isNotEmpty();
-        assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.B.class),
-                                               typeDescriptor(TagTestClass.XY.class)));
+        assertThat(classes).isNotNull()
+            .isNotEmpty();
+        assertThat(classes, containsInAnyOrder(typeDescriptor(TagTestClass.B.class), typeDescriptor(TagTestClass.XY.class)));
     }
 
     @Test
     public void constraintTestClassFindsAllClassesWithTests() throws Exception {
-        scanClasses(DisabledTestClass.class, ParamterizedTestClass.class, TestTemplateClass.class,
-                    RepeatedTestClass.class, TagTestClass.A.class);
+        scanClasses(DisabledTestClass.class, ParamterizedTestClass.class, TestTemplateClass.class, RepeatedTestClass.class, TagTestClass.A.class);
 
         assertThat(applyConcept("junit5:TestClass").getStatus(), equalTo(SUCCESS));
 
@@ -294,15 +265,12 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> classes = query("match (c:Test:Class:Junit5) return c").getColumn("c");
 
-        assertThat(classes).isNotNull();
-        assertThat(classes).isNotEmpty();
-        assertThat(classes, containsInAnyOrder(typeDescriptor(DisabledTestClass.class),
-                                               typeDescriptor(RepeatedTestClass.class),
-                                               typeDescriptor(TestTemplateClass.class),
-                                               typeDescriptor(TagTestClass.A.class),
-                                               typeDescriptor(ParamterizedTestClass.class)));
+        assertThat(classes).isNotNull()
+            .isNotEmpty();
+        assertThat(classes,
+            containsInAnyOrder(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
+                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParamterizedTestClass.class)));
     }
-
 
     @Test
     public void surefireTestReportForJunit5IsProcessedCorrectly() throws Exception {
@@ -362,8 +330,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (m:Test:Tag:Junit5) return m").getColumn("m");
 
-        assertThat(tests).isNotNull();
-        assertThat(tests).hasSize(1);
+        assertThat(tests).isNotNull()
+            .hasSize(1);
         assertThat(tests, hasItem(methodDescriptor(SingleTagAnnotationTest.class, "getInt")));
     }
 
@@ -416,8 +384,8 @@ public class Junit5IT extends AbstractJunitIT {
 
         List<TypeDescriptor> tests = query("match (c:Type:Tag:Junit5) return c").getColumn("c");
 
-        assertThat(tests).isNotNull();
-        assertThat(tests).hasSize(1);
+        assertThat(tests).isNotNull()
+            .hasSize(1);
         assertThat(tests, hasItem(typeDescriptor(SingleTagAnnotationClass.class)));
     }
 
@@ -425,24 +393,25 @@ public class Junit5IT extends AbstractJunitIT {
      * Verifies the concept "junit5:AssertMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void assertMethod() throws Exception {
         scanClasses(Assertions4Junit5.class, org.junit.jupiter.api.Assertions.class);
-        assertThat(applyConcept("junit5:AssertMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (m:Assert:Junit5:Method) return m").getColumn("m");
 
         // Actual we don't know the exact number of methods here as the number of methods
         // depends on the effective dependencies and might change from version to version
         // Oliver B. Fischer, 2019-02-20
-        assertThat(methods.size()).isGreaterThanOrEqualTo(109);
+        assertThat(methods).hasSizeGreaterThanOrEqualTo(109);
         assertThat(methods, hasItems(methodDescriptor(Assertions.class, "assertTrue", boolean.class),
-                                     methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class),
-                                     methodDescriptor(Assertions.class, "assertThrows", Class.class, Executable.class)));
+            methodDescriptor(Assertions.class, "assertTrue", boolean.class, String.class),
+            methodDescriptor(Assertions.class, "assertThrows", Class.class, Executable.class), methodDescriptor(Assertions.class, "fail", String.class),
+            methodDescriptor(Assertions.class, "fail")));
         store.commitTransaction();
     }
 
@@ -450,16 +419,17 @@ public class Junit5IT extends AbstractJunitIT {
      * Verifies the constraint "junit5:AssertionMustProvideMessage".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void assertionMustProvideMessage() throws Exception {
         scanClasses(Assertions4Junit5.class);
         assertThat(validateConstraint("junit5:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults()
+            .values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit5:AssertionMustProvideMessage")));
@@ -478,9 +448,9 @@ public class Junit5IT extends AbstractJunitIT {
      * Verifies the constraint "junit5:NonJUnit5TestMethod".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void nonJUnit5TestMethod() throws Exception {
@@ -488,14 +458,16 @@ public class Junit5IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit5:NonJUnit5TestMethod");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows()
+            .stream()
+            .map(m -> (MethodDescriptor) m.getColumns()
+                .get("TestMethod")
+                .getValue())
+            .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(5));
-        assertThat(rows, containsInAnyOrder(
-            is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
-            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion"))));
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
+            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")), is(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion")),
+            is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")), is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion"))));
         store.commitTransaction();
     }
 
@@ -503,9 +475,9 @@ public class Junit5IT extends AbstractJunitIT {
      * Verifies the constraint "junit5:UsageOfJUnit4TestApi".
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      * @throws NoSuchMethodException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     public void usageOfJUnit4TestApi() throws Exception {
@@ -513,12 +485,15 @@ public class Junit5IT extends AbstractJunitIT {
         Result<Constraint> result = validateConstraint("junit5:UsageOfJUnit4TestApi");
         assertThat(result.getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        List<MethodDescriptor> rows = result.getRows().stream().map(m -> (MethodDescriptor) m.getColumns().get("TestMethod").getValue()).collect(Collectors.toList());
+        List<MethodDescriptor> rows = result.getRows()
+            .stream()
+            .map(m -> (MethodDescriptor) m.getColumns()
+                .get("TestMethod")
+                .getValue())
+            .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(4));
-        assertThat(rows, containsInAnyOrder(
-            is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
-            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")),
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
+            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")), is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")),
             is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion"))));
         store.commitTransaction();
     }

@@ -44,7 +44,7 @@ public class Junit3IT extends AbstractJunitIT {
     @Test
     public void testMethod() throws Exception {
         scanClasses(Junit3Test.class);
-        assertThat(applyConcept("junit3:TestMethod").getStatus(), equalTo(SUCCESS));
+        assertThat(applyConcept("java:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit3:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(Junit3Test.class, "testSomething")));
         store.commitTransaction();

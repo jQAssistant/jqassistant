@@ -17,6 +17,7 @@
     </concept>
 
     <concept id="junit3:TestMethod">
+        <providesConcept refId="java:TestMethod"/>
         <requiresConcept refId="junit3:TestClass"/>
         <description>Labels all test methods declared by a test class with "Test" and "Junit3".
         </description>
@@ -31,7 +32,6 @@
               m AS Test, c AS TestClass
         ]]></cypher>
     </concept>
-
 
     <concept id="junit3:SetUpMethod">
         <requiresConcept refId="junit3:TestClass"/>

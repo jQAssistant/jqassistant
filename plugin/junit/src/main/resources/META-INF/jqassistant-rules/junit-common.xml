@@ -67,15 +67,18 @@
     </constraint>
 
     <constraint id="junit:AssertionMustProvideMessage">
-        <requiresConcept refId="junit4:AssertMethod"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
         <description>All assertions must provide a message.</description>
         <deprecated>This constraint has been replaced by "junit4:AssertionMustProvideMessage" and "junit5:AssertionMustProvideMessage".</deprecated>
         <cypher><![CDATA[
             MATCH
-              (testType:Type)-[:DECLARES]->(testMethod:Method),
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
               (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
-            WHERE
-              NOT assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+            WHERE NOT (
+               assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+               or assertMethod.signature =~ '.* fail(java.lang.String)'
+            )
             RETURN
               invocation AS Invocation,
               testType AS DeclaringType,
@@ -85,13 +88,10 @@
 
     <constraint id="junit:TestMethodWithoutAssertion">
         <requiresConcept refId="java:VirtualInvokes"/>
-        <requiresConcept refId="junit4:TestMethod"/>
-        <requiresConcept refId="junit4:AssertMethod"/>
-        <requiresConcept refId="junit5:AssertMethod"/>
-        <requiresConcept refId="junit5:ParameterizedTestMethod"/>
-        <requiresConcept refId="junit5:RepeatedTestMethod"/>
-        <requiresConcept refId="junit5:TestMethod"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
         <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <deprecated>This constraint has been replaced by "java:TestMethodWithoutAssertion".</deprecated>
         <cypher><![CDATA[
             MATCH
               (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
