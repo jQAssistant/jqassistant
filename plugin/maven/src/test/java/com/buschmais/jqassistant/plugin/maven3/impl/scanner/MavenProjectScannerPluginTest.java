@@ -267,7 +267,7 @@ class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
         verify(artifactCache).get(argThat(fqn -> fqn.contains(":jar:")), any());
         verify(store).addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
-        verify(artifactCache).get(argThat(fqn -> fqn.contains(":test-jar:")), any());
+        verify(artifactCache).get(argThat(fqn -> fqn.contains(":test-jar:tests:")), any());
         verify(store).addDescriptorType(testArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
 
         verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
