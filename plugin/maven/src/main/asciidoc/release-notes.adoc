@@ -3,6 +3,7 @@
 
 == 2.3.0
 
+* Added missing classifier `tests` to test artifacts created by the Maven project scanner
 * Ensure that the property `fileName` is set for `:Maven:Project` nodes that represent local (i.e. scanned) Maven projects
 
 == 1.12.0

@@ -7,7 +7,8 @@ public class MavenArtifactCoordinates implements Coordinates {
     /**
      * The artifact type for test jars.
      */
-    public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
+    public static final String TYPE_TEST_JAR = "test-jar";
+    public static final String CLASSIFIER_TESTS = "tests";
 
     private Artifact artifact;
     private boolean testJar;
@@ -29,12 +30,12 @@ public class MavenArtifactCoordinates implements Coordinates {
 
     @Override
     public String getClassifier() {
-        return artifact.getClassifier();
+        return testJar ? CLASSIFIER_TESTS : artifact.getClassifier();
     }
 
     @Override
     public String getType() {
-        return testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+        return testJar ? TYPE_TEST_JAR : artifact.getType();
     }
 
     @Override
