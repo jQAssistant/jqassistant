@@ -1,10 +1,40 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
 
-    <group id="default">
-        <includeConcept refId="test:Dependency"/>
+    <group id="default" severity="blocker">
+        <includeConcept refId="test:*"/>
     </group>
 
-    <concept id="test:Dependency">
+    <concept id="test:MainArtifactDependency">
+        <description>Verifies that there's direct dependency between main artifacts of different modules.</description>
+        <cypher><![CDATA[
+            MATCH
+              (module1:Maven:Project)-[:CREATES]->(a1:Main:Artifact),
+              (module2:Maven:Project)-[:CREATES]->(a2:Main:Artifact),
+              (a1)-[:DEPENDS_ON]->(a2)
+            RETURN
+              count(*) as count
+        ]]></cypher>
+        <verify>
+            <aggregation column="count" min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="test:TestArtifactDependency">
+        <description>Verifies that there's direct dependency between test artifacts of different modules.</description>
+        <cypher><![CDATA[
+            MATCH
+              (module1:Maven:Project)-[:CREATES]->(a1:Test:Artifact),
+              (module2:Maven:Project)-[:CREATES]->(a2:Test:Artifact),
+              (a1)-[:DEPENDS_ON]->(a2)
+            RETURN
+              count(*) as count
+        ]]></cypher>
+        <verify>
+            <aggregation column="count" min="1" max="1"/>
+        </verify>
+    </concept>
+
+    <concept id="test:TypeDependency">
         <description>Verifies that there's direct dependency between classes in two different modules.</description>
         <cypher>
             <![CDATA[
@@ -16,7 +46,7 @@
               count(*) as count
         ]]></cypher>
         <verify>
-            <aggregation column="count" />
+            <aggregation column="count" min="1" max="1"/>
         </verify>
     </concept>
 
