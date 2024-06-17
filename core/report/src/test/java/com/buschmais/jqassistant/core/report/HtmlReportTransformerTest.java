@@ -32,9 +32,9 @@ class HtmlReportTransformerTest {
         transformer.toEmbedded(xmlSource, htmlTarget);
 
         String html = htmlWriter.toString();
-        assertThat(getRuleIds(html, "constraint:(.*Severity)")).containsExactlyInAnyOrder("constraint:FailureCriticalMajorSeverity",
+        assertThat(getRuleIds(html, "constraint:([a-zA-Z]*Severity)")).containsExactlyInAnyOrder("constraint:FailureCriticalMajorSeverity",
             "constraint:WarningWithMajorSeverity", "constraint:SuccessWithMinorSeverity");
-        assertThat(getRuleIds(html, "concept:(.*Severity)")).containsExactlyInAnyOrder("concept:FailureCriticalMajorSeverity",
+        assertThat(getRuleIds(html, "concept:([a-zA-Z]*Severity)")).containsExactlyInAnyOrder("concept:FailureCriticalMajorSeverity",
             "concept:WarningWithMajorSeverity", "concept:SuccessWithMinorSeverity");
     }
 
