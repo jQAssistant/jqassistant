@@ -5,7 +5,7 @@
     </group>
 
     <concept id="test:MainArtifactDependency">
-        <description>Verifies that there's direct dependency between main artifacts of different modules.</description>
+        <description>Verifies that there's a direct dependency between main artifacts of different modules.</description>
         <cypher><![CDATA[
             MATCH
               (module1:Maven:Project)-[:CREATES]->(a1:Main:Artifact),
@@ -20,7 +20,7 @@
     </concept>
 
     <concept id="test:TestArtifactDependency">
-        <description>Verifies that there's direct dependency between test artifacts of different modules.</description>
+        <description>Verifies that there's a direct dependency between test artifacts of different modules.</description>
         <cypher><![CDATA[
             MATCH
               (module1:Maven:Project)-[:CREATES]->(a1:Test:Artifact),
@@ -35,7 +35,7 @@
     </concept>
 
     <concept id="test:TypeDependency">
-        <description>Verifies that there's direct dependency between classes in two different modules.</description>
+        <description>Verifies that there's a direct dependency between classes in two different modules.</description>
         <cypher>
             <![CDATA[
             MATCH
