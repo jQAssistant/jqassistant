@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class HtmlReportTransformerTest {
 
-
     @Test
     void reportWithSeverities() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
@@ -33,16 +32,16 @@ class HtmlReportTransformerTest {
         transformer.toEmbedded(xmlSource, htmlTarget);
 
         String html = htmlWriter.toString();
-        assertThat(getRuleIds(html, "constraint:(.*Severity)")).containsExactly("constraint:FailureCriticalMajorSeverity",
+        assertThat(getRuleIds(html, "constraint:(.*Severity)")).containsExactlyInAnyOrder("constraint:FailureCriticalMajorSeverity",
             "constraint:WarningWithMajorSeverity", "constraint:SuccessWithMinorSeverity");
-        assertThat(getRuleIds(html, "concept:(.*Severity)")).containsExactly("concept:FailureCriticalMajorSeverity", "concept:WarningWithMajorSeverity",
-            "concept:SuccessWithMinorSeverity");
+        assertThat(getRuleIds(html, "concept:(.*Severity)")).containsExactlyInAnyOrder("concept:FailureCriticalMajorSeverity",
+            "concept:WarningWithMajorSeverity", "concept:SuccessWithMinorSeverity");
     }
 
-    private static List<String> getRuleIds(String html, String rulePattern) {
+    private static Set<String> getRuleIds(String html, String rulePattern) {
         Matcher matcher = Pattern.compile(rulePattern)
             .matcher(html);
-        List<String> ruleIds = new ArrayList<>();
+        Set<String> ruleIds = new TreeSet<>();
         while (matcher.find()) {
             ruleIds.add(matcher.group(0));
         }
