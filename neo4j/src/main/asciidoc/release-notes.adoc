@@ -4,6 +4,7 @@
 == 2.3.0
 
 * Upgraded to Neo4j 5.5.20 and 4.4.34
+* Upgraded to Neo4j Browser 5.21.0 and 4.4.34
 * Removed quiet period for shutting down internal Neo4j server
 * Removed support for `memory://` store urls from distributions
 * Log Neo4j URL including connection and authentication parameters to console after starting embedded server
