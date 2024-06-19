@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.commandline.configuration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMap
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,11 +24,12 @@ class MavenSettingsConfigSourceBuilderTest {
         URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
         File userHome = new File(userHomeUrl.getFile());
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty(), emptyList());
 
         CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
 
+        assertThat(configuration.skip()).isFalse();
         Optional<Proxy> proxyOptional = configuration.proxy();
         assertThat(proxyOptional).isPresent();
         Proxy proxy = proxyOptional.get();
@@ -73,12 +76,25 @@ class MavenSettingsConfigSourceBuilderTest {
     }
 
     @Test
+    void userProfile() throws CliConfigurationException {
+        URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
+        File userHome = new File(userHomeUrl.getFile());
+
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty(), List.of("user-profile"));
+
+        CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
+            .load(configSource);
+
+        assertThat(configuration.skip()).isTrue();
+    }
+
+    @Test
     void customMavenSettings() throws CliConfigurationException {
         URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
         File userHome = new File(userHomeUrl.getFile());
         File customSettings = new File(userHome, "custom-maven-settings.xml");
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings));
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings), emptyList());
 
         CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
@@ -92,7 +108,7 @@ class MavenSettingsConfigSourceBuilderTest {
         URL userHomeUrl = MavenSettingsConfigSourceBuilderTest.class.getResource("/userhome");
         File userHome = new File(userHomeUrl.getFile());
         File customSettings = new File(userHome, "custom-maven-settings-without-local-repo.xml");
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings));
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, of(customSettings), emptyList());
 
         CliConfiguration configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
             .load(configSource);
@@ -105,7 +121,7 @@ class MavenSettingsConfigSourceBuilderTest {
     void withoutMavenSettings() throws CliConfigurationException {
         File userHome = new File("invalid-userhome");
 
-        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty());
+        ConfigSource configSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(userHome, empty(), emptyList());
 
         assertThat(configSource.getPropertyNames()).isEmpty();
     }

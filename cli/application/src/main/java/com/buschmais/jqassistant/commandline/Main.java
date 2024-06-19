@@ -35,8 +35,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 
 /**
  * The main class, i.e. the entry point for the CLI.
@@ -50,6 +49,8 @@ public class Main {
     private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
 
     private static final String CMDLINE_OPTION_MAVEN_SETTINGS = "-mavenSettings";
+
+    private static final String CMDLINE_OPTION_PROFILES = "-profiles";
 
     /**
      * The main method.
@@ -148,6 +149,12 @@ public class Main {
             .hasArg()
             .valueSeparator(',')
             .build());
+        options.addOption(Option.builder("P")
+            .longOpt("profiles")
+            .desc("The configuration profiles to activate.")
+            .hasArgs()
+            .valueSeparator(',')
+            .build());
         options.addOption(Option.builder("D")
             .desc("Additional configuration property.")
             .hasArgs()
@@ -216,13 +223,18 @@ public class Main {
     private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
         throws CliConfigurationException {
         List<String> configLocations = getConfigLocations(commandLine);
+        List<String> profiles = getUserProfiles(commandLine);
+        if (!profiles.isEmpty()) {
+            LOGGER.info("Activating configuration profile(s) {}.", profiles.stream()
+                .collect(joining(", ")));
+        }
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 200);
         Map<String, String> properties = commandLine.getOptionProperties("D")
             .entrySet()
             .stream()
             .collect(toMap(entry -> String.valueOf(entry.getKey()), entry -> String.valueOf(entry.getValue())));
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(properties, "Command line properties", 400);
-        ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine));
+        ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine), profiles);
         ConfigSource configSource = configurationBuilder.build();
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
@@ -232,7 +244,16 @@ public class Main {
             .withWorkingDirectory(workingDirectory)
             .withClasspath()
             .withEnvVariables()
+            .withProfiles(profiles)
             .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+    }
+
+    private List<String> getConfigLocations(CommandLine commandLine) {
+        if (commandLine.hasOption(CMDLINE_OPTION_CONFIG_LOCATIONS)) {
+            return stream(commandLine.getOptionValues(CMDLINE_OPTION_CONFIG_LOCATIONS)).filter(configLocation -> !configLocation.isEmpty())
+                .collect(toList());
+        }
+        return emptyList();
     }
 
     private Optional<File> getMavenSettings(CommandLine commandLine) {
@@ -242,9 +263,9 @@ public class Main {
         return empty();
     }
 
-    private List<String> getConfigLocations(CommandLine commandLine) {
-        if (commandLine.hasOption(CMDLINE_OPTION_CONFIG_LOCATIONS)) {
-            return stream(commandLine.getOptionValues(CMDLINE_OPTION_CONFIG_LOCATIONS)).filter(configLocation -> !configLocation.isEmpty())
+    private List<String> getUserProfiles(CommandLine commandLine) {
+        if (commandLine.hasOption(CMDLINE_OPTION_PROFILES)) {
+            return stream(commandLine.getOptionValues(CMDLINE_OPTION_PROFILES)).filter(userProfile -> !userProfile.isEmpty())
                 .collect(toList());
         }
         return emptyList();

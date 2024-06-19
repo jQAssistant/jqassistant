@@ -117,7 +117,11 @@ If multiple, partially overlapping configurations are provided then the followin
 [[cli:configurationLocations]]
 * -configurationLocations <files> <directories>
 ** the list of configuration locations, e.g. YAML files and directories
-** default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
+** default: `.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml`
+
+[[cli:profiles]]
+* -profiles <comma-separated list of profiles>
+** activates configuration profiles in `.jqassistant.yml` and Maven `settings.xml` files
 
 [[cli:mavenSettings]]
 * -mavenSettings <file>

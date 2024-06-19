@@ -5,6 +5,7 @@
 
 * Added setting `jqassistant.repositories.ignore-transitive-repositories`
 * Use `~/.m2/repository` as plugin repository if a `settings.xml` is used which does not contain a local repository setting
+* Added command line option `-profiles` for activating configuration profiles in `.jqassistant.yml` files or Maven settings
 
 == 2.2.0
 

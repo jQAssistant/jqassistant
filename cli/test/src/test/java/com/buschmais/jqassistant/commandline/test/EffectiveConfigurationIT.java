@@ -17,4 +17,13 @@ class EffectiveConfigurationIT extends AbstractCLIIT {
         List<String> console = executionResult.getErrorConsole();
         assertThat(console).anyMatch(item -> item.contains("    continue-on-error: true"));
     }
+
+    @DistributionTest
+    void userProfile() {
+        String[] args = new String[] { "effective-configuration", "-D", "user-profile.jqassistant.scan.continue-on-error=true", "-P", "user-profile"};
+        ExecutionResult executionResult = execute(args);
+        assertThat(executionResult.getExitCode()).isZero();
+        List<String> console = executionResult.getErrorConsole();
+        assertThat(console).anyMatch(item -> item.contains("    continue-on-error: true"));
+    }
 }

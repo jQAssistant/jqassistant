@@ -8,9 +8,9 @@ import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import io.smallrye.config.PropertiesConfigSource;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.settings.*;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.*;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
@@ -33,7 +33,8 @@ public class MavenSettingsConfigSourceBuilder {
 
     private static final String DEFAULT_LOCAL_REPOSITORY = ".m2/repository";
 
-    public static ConfigSource createMavenSettingsConfigSource(File userHome, Optional<File> mavenSettingsFile) throws CliConfigurationException {
+    public static ConfigSource createMavenSettingsConfigSource(File userHome, Optional<File> mavenSettingsFile, List<String> profiles)
+        throws CliConfigurationException {
         Map<String, String> properties = new HashMap<>();
 
         File settingsFile = mavenSettingsFile.orElseGet(() -> new File(userHome, USER_MAVEN_SETTINGS));
@@ -45,10 +46,13 @@ public class MavenSettingsConfigSourceBuilder {
             put(value, properties, Repositories.PREFIX, Repositories.LOCAL);
             applyMirrors(properties, settings);
             applyProxy(properties, settings);
-            List<Profile> activeProfiles = getActiveProfiles(settings);
-            if (!activeProfiles.isEmpty()) {
-                applyProfileSettings(properties, settings, activeProfiles);
-            }
+            applyProfileSettings(properties, settings, getActiveProfiles(settings));
+            List<Profile> userProfiles = profiles.stream()
+                .map(profile -> settings.getProfilesAsMap()
+                    .get(profile))
+                .filter(Objects::nonNull)
+                .collect(toList());
+            applyProfileSettings(properties, settings, userProfiles);
         }
         return new PropertiesConfigSource(properties, "Maven Settings", 90);
     }
@@ -114,9 +118,11 @@ public class MavenSettingsConfigSourceBuilder {
         return activeProfiles;
     }
 
-    private static void applyProfileSettings(Map<String, String> properties, Settings settings, List<Profile> activeProfiles) {
-        applyProperties(properties, activeProfiles);
-        applyRepositorySettings(properties, settings, activeProfiles);
+    private static void applyProfileSettings(Map<String, String> properties, Settings settings, List<Profile> profiles) {
+        if (!profiles.isEmpty()) {
+            applyProperties(properties, profiles);
+            applyRepositorySettings(properties, settings, profiles);
+        }
     }
 
     private static void applyProperties(Map<String, String> properties, List<Profile> activeProfiles) {
