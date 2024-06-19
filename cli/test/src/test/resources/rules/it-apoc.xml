@@ -7,4 +7,10 @@
         </cypher>
     </concept>
 
+    <concept id="it-apoc:APOCMetadata">
+        <description>Calls APOC Metadata (restricted procedure, requires according setting for embedded server)</description>
+        <cypher>
+            call apoc.meta.data()
+        </cypher>
+    </concept>
 </jqa:jqassistant-rules>

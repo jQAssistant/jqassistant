@@ -133,9 +133,10 @@ class AnalyzeIT extends AbstractCLIIT {
         File configFile = new File(ScanIT.class.getResource("/.jqassistant-analyze-apoc-" + getNeo4jVersion() + ".yml")
             .getFile());
         String[] args = new String[] { "analyze", "-configurationLocations", configFile.getAbsolutePath(), "-D",
-            "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D", "jqassistant.analyze.concepts=it-apoc:APOCHelp", "-D",
+            "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D", "jqassistant.analyze.concepts=it-apoc:*", "-D",
             "jqassistant.store.embedded.neo4j-plugin-directory=jqassistant/plugins/" };
         assertThat(execute(args).getExitCode()).isZero();
+        withStore(store -> verifyConcepts(store, "it-apoc:APOCHelp", "it-apoc:APOCMetadata"));
     }
 
     /**
