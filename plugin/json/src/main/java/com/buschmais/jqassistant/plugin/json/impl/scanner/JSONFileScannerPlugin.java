@@ -41,10 +41,6 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
 
     private FilePatternMatcher filePatternMatcher;
 
-    protected FilePatternMatcher getFilePatternMatcher() {
-        return filePatternMatcher;
-    }
-
     @Override
     public void initialize() {
         this.objectMapper = new ObjectMapper();
