@@ -20,7 +20,7 @@ class EffectiveConfigurationIT extends AbstractCLIIT {
 
     @DistributionTest
     void userProfile() {
-        String[] args = new String[] { "effective-configuration", "-D", "user-profile.jqassistant.scan.continue-on-error=true", "-P", "user-profile"};
+        String[] args = new String[] { "effective-configuration", "-D", "%user-profile.jqassistant.scan.continue-on-error=true", "-P", "user-profile"};
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isZero();
         List<String> console = executionResult.getErrorConsole();
