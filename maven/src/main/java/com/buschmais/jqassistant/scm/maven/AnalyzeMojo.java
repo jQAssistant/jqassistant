@@ -63,8 +63,6 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         Report report = configuration.analyze()
             .report();
-        getLog().info("Will warn on violations starting from severity '" + report.warnOnSeverity() + "'");
-        getLog().info("Will fail on violations starting from severity '" + report.failOnSeverity() + "'.");
 
         PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
