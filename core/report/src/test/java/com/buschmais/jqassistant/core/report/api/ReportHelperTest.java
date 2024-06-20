@@ -35,11 +35,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -162,25 +158,22 @@ class ReportHelperTest {
     void failedConstraints() {
         Map<String, Column<?>> infoRow = new HashMap<>();
         infoRow.put("InfoElement", toColumn("InfoValue"));
-        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, singletonList(
-            Row.builder()
-                .key("1")
-                .columns(infoRow)
-                .build()));
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, singletonList(Row.builder()
+            .key("1")
+            .columns(infoRow)
+            .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
-        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, singletonList(
-            Row.builder()
-                .key("2")
-                .columns(minorRow)
-                .build()));
+        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, singletonList(Row.builder()
+            .key("2")
+            .columns(minorRow)
+            .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
-        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, singletonList(
-            Row.builder()
-                .key("3")
-                .columns(majorRow)
-                .build()));
+        Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, singletonList(Row.builder()
+            .key("3")
+            .columns(majorRow)
+            .build()));
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:infoConstraint", infoConstraintResult);
         constraintResults.put("test:minorConstraint", minorConstraintResult);
@@ -201,24 +194,22 @@ class ReportHelperTest {
     void failedConstraintsWithOverriddenSeverity() {
         Map<String, Column<?>> infoRow = new HashMap<>();
         infoRow.put("InfoElement", toColumn("InfoValue"));
-        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, MINOR,
-            singletonList(Row.builder()
-                .key("1")
-                .columns(infoRow)
-                .build()));
+        Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, MINOR, singletonList(Row.builder()
+            .key("1")
+            .columns(infoRow)
+            .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
-        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, MAJOR,
-            singletonList(Row.builder()
-                .key("2")
-                .columns(minorRow)
-                .build()));
+        Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, MAJOR, singletonList(Row.builder()
+            .key("2")
+            .columns(minorRow)
+            .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
         Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, CRITICAL, singletonList(Row.builder()
-                .key("3")
-                .columns(majorRow)
-                .build()));
+            .key("3")
+            .columns(majorRow)
+            .build()));
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:infoConstraint", infoConstraintResult);
         constraintResults.put("test:minorConstraint", minorConstraintResult);
@@ -253,11 +244,11 @@ class ReportHelperTest {
         constraintResults.put("test:constraint", constraintResult);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
 
-        boolean result = reportHelper.verify(inMemoryReportWriter, message -> {
-            throw new ReportException(message);
+        assertThatNoException().isThrownBy(() -> {
+            reportHelper.verify(inMemoryReportWriter, message -> {
+                throw new ReportException(message);
+            });
         });
-
-        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -287,14 +278,10 @@ class ReportHelperTest {
         constraintResults.put("test:constraint3", constraintResult3);
         when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
 
-        try {
-            reportHelper.verify(inMemoryReportWriter, message -> {
+        assertThatExceptionOfType(ReportException.class).isThrownBy(() -> reportHelper.verify(inMemoryReportWriter, message -> {
                 throw new ReportException(message);
-            });
-            fail("Expecting a " + ReportException.class);
-        } catch (ReportException e) {
-            assertThat(e.getMessage()).isEqualTo("Failed rules detected: " + 1 + " concepts, " + 1 + " constraints");
-        }
+            }))
+            .withMessage("Failed rules detected: " + 1 + " concepts, " + 1 + " constraints");
     }
 
     @Test
@@ -303,7 +290,7 @@ class ReportHelperTest {
         when(descriptorWithLabel.getValue()).thenReturn("value");
         assertThat(ReportHelper.getLabel(descriptorWithLabel)).isEqualTo("value");
         assertThat(ReportHelper.getLabel(singletonList(descriptorWithLabel))).isEqualTo("value");
-        assertThat(ReportHelper.getLabel(new String[]{"value1", "value2"})).isEqualTo("value1, value2");
+        assertThat(ReportHelper.getLabel(new String[] { "value1", "value2" })).isEqualTo("value1, value2");
         Map<String, Object> singleProperty = new HashMap<>();
         singleProperty.put("key", "Value");
         assertThat(ReportHelper.getLabel(singleProperty)).isEqualTo("Value");
@@ -344,13 +331,13 @@ class ReportHelperTest {
 
     private void verifyMessages(List<String> messages, String expectedHeader, String expectedRule, String expectedSeverity, String expectedRow) {
         verifyMessages(messages, expectedHeader, expectedRule, expectedSeverity);
-        assertThat(messages, hasItem(containsString(expectedRow)));
+        assertThat(messages).contains(expectedRow);
     }
 
     private void verifyMessages(List<String> messages, String expectedHeader, String expectedRule, String expectedSeverity) {
-        assertThat(messages, hasItem(expectedHeader));
-        assertThat(messages, hasItem(expectedRule));
-        assertThat(messages, hasItem(expectedSeverity));
+        assertThat(messages).contains(expectedHeader);
+        assertThat(messages).contains(expectedRule);
+        assertThat(messages).contains(expectedSeverity);
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity) {
@@ -372,8 +359,7 @@ class ReportHelperTest {
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, String description, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
-        Severity resultSeverity,
-        List<Row> rows) {
+        Severity resultSeverity, List<Row> rows) {
         Result<T> ruleResult = mock(Result.class);
         T rule = mock(ruleType);
         when(rule.getId()).thenReturn(id);

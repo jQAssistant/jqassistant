@@ -24,6 +24,7 @@ import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -32,6 +33,8 @@ import static java.util.stream.Collectors.toList;
  * Provides utility functionality for creating reports.
  */
 public final class ReportHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(ReportHelper.class);
 
     public interface FailAction<E extends Exception> {
 
@@ -178,11 +181,10 @@ public final class ReportHelper {
      *     The {@link InMemoryReportPlugin}.
      * @param failAction
      *     The {@link FailAction} that shall be triggered for breaking a build.
-     * @return <code>true</code> If the build shall break according to the detected failures and the setting {@link Report#continueOnFailure()}.
      * @throws E
      *     The exception declared by the {@link FailAction}.
      */
-    public <E extends Exception> boolean verify(InMemoryReportPlugin inMemoryReport, FailAction<E> failAction) throws E {
+    public <E extends Exception> void verify(InMemoryReportPlugin inMemoryReport, FailAction<E> failAction) throws E {
         infoLogger.log("Verifying results (warn-on-severity=" + configuration.warnOnSeverity() + ", fail-on-severity=" + configuration.failOnSeverity()
             + ", continue-on-failure=" + configuration.continueOnFailure() + ")");
         int conceptFailures = verifyConceptResults(inMemoryReport);
@@ -190,9 +192,7 @@ public final class ReportHelper {
         int totalFailures = conceptFailures + constraintFailures;
         if (totalFailures > 0 && !this.configuration.continueOnFailure()) {
             failAction.fail("Failed rules detected: " + conceptFailures + " concepts, " + constraintFailures + " constraints");
-            return true;
         }
-        return false;
     }
 
     /**
