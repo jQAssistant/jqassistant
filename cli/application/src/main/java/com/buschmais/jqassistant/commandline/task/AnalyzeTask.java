@@ -41,8 +41,6 @@ public class AnalyzeTask extends AbstractRuleTask {
             Analyze analyze = configuration.analyze();
             Report report = analyze
                 .report();
-            LOGGER.info("Will warn on violations starting from severity '{}'", report.warnOnSeverity());
-            LOGGER.info("Will fail on violations starting from severity '{}'.", report.failOnSeverity());
             LOGGER.info("Executing analysis.");
             File reportDirectory = new File(report.directory()
                 .orElse(DEFAULT_REPORT_DIRECTORY));
