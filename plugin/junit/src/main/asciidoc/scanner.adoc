@@ -24,14 +24,14 @@ A file containing results of a JUnit 4 or JUnit 5 test suite.
 [options="header"]
 |====
 | Name     | Target label(s)        | Cardinality | Description
-| CONTAINS | <<:JUnit::TestCase>>   | 0..n        | References test cases
+| CONTAINS | <<:JUnit:TestCase>>   | 0..n        | References test cases
 |====
 
 [[:TestCase]]
 === :JUnit:TestCase
 A test case.
 
-.Properties of `:JUnit::TestCase`
+.Properties of `:JUnit:TestCase`
 [options="header"]
 |====
 | Name             | Description
