@@ -33,7 +33,8 @@ class MavenSettingsConfigSourceBuilderTest {
         Optional<Proxy> proxyOptional = configuration.proxy();
         assertThat(proxyOptional).isPresent();
         Proxy proxy = proxyOptional.get();
-        assertThat(proxy.protocol()).isEqualTo("https");
+        assertThat(proxy.protocol()).isPresent()
+            .hasValue("https");
         assertThat(proxy.host()).isEqualTo("active-proxy-host");
         assertThat(proxy.port()).isEqualTo(3128);
         assertThat(proxy.username()).get()
@@ -101,6 +102,7 @@ class MavenSettingsConfigSourceBuilderTest {
 
         Repositories repositories = configuration.repositories();
         assertThat(repositories.local()).isEqualTo(of(new File("~/custom-repo")));
+        assertThat(configuration.proxy()).isNotPresent();
     }
 
     @Test

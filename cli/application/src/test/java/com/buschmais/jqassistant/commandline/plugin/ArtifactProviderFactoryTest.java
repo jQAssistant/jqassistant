@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class ArtifactProviderFactoryTest {
+class ArtifactProviderFactoryTest {
 
     private ArtifactProviderFactory artifactProviderFactory;
 
@@ -90,8 +90,6 @@ public class ArtifactProviderFactoryTest {
         String proxyUser = "foo";
         String proxyPassword = "bar";
         Proxy proxy = mock(Proxy.class);
-        doReturn("https").when(proxy)
-            .protocol();
         doReturn(proxyHost).when(proxy)
             .host();
         doReturn(proxyPort).when(proxy)

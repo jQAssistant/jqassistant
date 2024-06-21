@@ -129,7 +129,8 @@ public class ArtifactProviderFactory {
 
     private Optional<org.eclipse.aether.repository.Proxy> getProxy(Optional<Proxy> proxy) {
         return proxy.map(p -> {
-            String protocol = p.protocol();
+            String protocol = p.protocol()
+                .orElse("https");
             String host = p.host();
             Integer port = p.port();
             AuthenticationBuilder authBuilder = new AuthenticationBuilder();

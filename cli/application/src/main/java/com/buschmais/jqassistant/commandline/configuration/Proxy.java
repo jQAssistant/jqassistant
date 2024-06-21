@@ -4,14 +4,11 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
-import io.smallrye.config.WithDefault;
-
 public interface Proxy {
 
     String PROTOCOL = "protocol";
 
-    @WithDefault("https")
-    String protocol();
+    Optional<String> protocol();
 
     String HOST = "host";
     String host();
