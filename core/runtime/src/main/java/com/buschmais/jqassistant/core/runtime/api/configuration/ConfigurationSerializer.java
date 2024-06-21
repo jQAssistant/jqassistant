@@ -157,7 +157,7 @@ public class ConfigurationSerializer<C extends Configuration> {
                     Map<String, Property> properties = new HashMap<>();
                     for (Class<?> implementedInterface : getImplementedInterfaces(configurationInterface)) {
                         ConfigMappingInterface configMappingInterface = getConfigurationInterface(implementedInterface);
-                        ConfigMappingInterface.NamingStrategy namingStrategy = configMappingInterface.getNamingStrategy();
+                        ConfigMapping.NamingStrategy namingStrategy = configMappingInterface.getNamingStrategy();
                         for (ConfigMappingInterface.Property property : configMappingInterface.getProperties()) {
                             String propertyName = namingStrategy.apply(property.getPropertyName());
                             properties.put(propertyName, getProperty(propertyName, property.getMethod()));
