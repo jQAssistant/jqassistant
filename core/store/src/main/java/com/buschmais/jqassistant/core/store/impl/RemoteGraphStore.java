@@ -44,5 +44,11 @@ public class RemoteGraphStore extends AbstractGraphStore {
 
     @Override
     protected void initialize(XOManagerFactory xoManagerFactory) {
+        // unused
+    }
+
+    @Override
+    protected void destroy() {
+        // unused
     }
 }

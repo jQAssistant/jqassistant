@@ -22,6 +22,7 @@ import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private final ArtifactProvider artifactProvider;
 
+    private Optional<File> neo4jPluginDirectory;
+
     /**
      * Constructor.
      *
@@ -74,9 +77,9 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected XOUnit configure(XOUnit.XOUnitBuilder builder) {
-        Optional<File> neo4jPluginDirectory = resolveNeo4jPlugins();
+        this.neo4jPluginDirectory = resolveNeo4jPlugins();
         Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
-            neo4jPluginDirectory);
+            this.neo4jPluginDirectory);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
         return builder.build();
@@ -126,6 +129,17 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
             String neo4jVersion = session.getNeo4jVersion();
             LOGGER.info("Initialized embedded Neo4j database '{}'.", neo4jVersion);
         }
+    }
+
+    @Override
+    protected void destroy() {
+        neo4jPluginDirectory.ifPresent(directory -> {
+            try {
+                FileUtils.deleteDirectory(directory);
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot delete Neo4j plugin directory " + directory, e);
+            }
+        });
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {

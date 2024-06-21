@@ -57,7 +57,7 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public void start() {
+    public final void start() {
         XOUnit.XOUnitBuilder builder = XOUnit.builder()
             .uri(uri)
             .classLoader(ofNullable(storePluginRepository.getClassLoader()))
@@ -74,7 +74,7 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public void stop() {
+    public final void stop() {
         if (xoManager != null) {
             if (xoManager.currentTransaction()
                 .isActive()) {
@@ -87,6 +87,7 @@ public abstract class AbstractGraphStore implements Store {
         if (xoManagerFactory != null) {
             xoManagerFactory.close();
         }
+        destroy();
     }
 
     @Override
@@ -110,14 +111,12 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target) {
-        R descriptor = xoManager.create(source, relationType, target);
-        return descriptor;
+        return xoManager.create(source, relationType, target);
     }
 
     @Override
     public <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target, Example<R> example) {
-        R descriptor = xoManager.create(source, relationType, target, example);
-        return descriptor;
+        return xoManager.create(source, relationType, target, example);
     }
 
     /**
@@ -303,6 +302,8 @@ public abstract class AbstractGraphStore implements Store {
      * Initialize the store.
      */
     protected abstract void initialize(XOManagerFactory xoManagerFactory);
+
+    protected abstract void destroy();
 
     protected abstract int getAutocommitThreshold();
 
