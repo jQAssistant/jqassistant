@@ -81,7 +81,7 @@
                 text-align:right;
             }
 
-            .collapsible {
+            .ruleName {
                 cursor:pointer;
                 text-decoration:underline;
             }
@@ -224,7 +224,7 @@
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <span class="ruleName collapsible" title="{tns:description/text()}"
+                <span class="ruleName" title="{tns:description/text()}"
                       onclick="javascript:toggleResult('{$ruleId}');">
                     <xsl:value-of select="@id"/>
                 </span>
@@ -304,12 +304,12 @@
         <tr>
             <td>
                 <xsl:variable name="ruleId"><xsl:value-of select="@id" /></xsl:variable>
-                <a onclick="javascript:showResult('{$ruleId}'); location.href='#{$ruleId}'">
+                <span class="ruleName" onclick="javascript:toggleResult('{$ruleId}'); location.href='#{$ruleId}'">
                     <xsl:value-of select="@id"/>
-                </a>
+                </span>
             </td>
             <td>
-                <span class="ruleName">
+                <span>
                     <xsl:attribute name="class">
                         <xsl:choose>
                             <xsl:when test="tns:status='failure'">failure</xsl:when>
