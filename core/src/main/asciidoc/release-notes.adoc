@@ -13,6 +13,7 @@
 * Fixed an issue in AbstractPluginIT where project paths containing white spaces could not be used
 * Added links to required and provided concepts in HTML report
 * Delete Neo4j plugin directory and its content after shutting down embedded store
+* Fixed an issue creating the HTML report if a rule result contains invalid XML characters
 
 == 2.2.0
 
