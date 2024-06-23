@@ -347,8 +347,10 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private void writeElementWithCharacters(String element, String text) throws XMLStreamException {
         xmlStreamWriter.writeStartElement(element);
-        xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(text)
-            .replaceAll(""));
+        if (text != null) {
+            xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(text)
+                .replaceAll(""));
+        }
         xmlStreamWriter.writeEndElement();
     }
 
