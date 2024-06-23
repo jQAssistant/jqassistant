@@ -30,7 +30,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
     @Override
     public <T extends ExecutableRule> Result.Status verify(T executable, Severity severity, AggregationVerification verification, List<String> columnNames,
         List<Row> rows) throws RuleException {
-        LOGGER.debug("Verifying result of " + executable);
+        LOGGER.debug("Verifying result of {}", executable);
         if (rows.isEmpty()) {
             return getStatus(executable, severity, 0, verification.getMin(), verification.getMax());
         }
@@ -40,16 +40,17 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         String columnName = verification.getColumn();
         if (columnName == null) {
             columnName = columnNames.get(0);
-            LOGGER.debug("No aggregation column specified, using " + columnName);
+            LOGGER.debug("No aggregation column specified, using {}", columnName);
         }
         int aggregatedValue = 0;
         for (Row row : rows) {
             Column<?> column = row.getColumns()
                 .get(columnName);
-            Object value = column.getValue();
-            if (value == null) {
+            if (column == null) {
                 throw new RuleException("The result does not contain a column '" + columnName);
-            } else if (!Number.class.isAssignableFrom(value.getClass())) {
+            }
+            Object value = column.getValue();
+            if (!Number.class.isAssignableFrom(value.getClass())) {
                 throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
             }
             aggregatedValue = aggregatedValue + ((Number) value).intValue();

@@ -24,6 +24,7 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -131,6 +132,16 @@ class AggregationVerificationStrategyTest {
         result = asList(createRow(concept, 0, 1), createRow(concept, 0, 1));
         assertThat(strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(SUCCESS);
         assertThat(strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result)).isEqualTo(FAILURE);
+    }
+
+    @Test
+    void unknownColumn() {
+        AggregationVerification aggregationVerification = AggregationVerification.builder()
+            .column("cx")
+            .build();
+        result = asList(createRow(concept, 0, 1), createRow(concept, 0, 1));
+        assertThatExceptionOfType(RuleException.class).isThrownBy(() -> strategy.verify(concept, MINOR, aggregationVerification, COLUMN_NAMES, result));
+        assertThatExceptionOfType(RuleException.class).isThrownBy(() -> strategy.verify(constraint, MAJOR, aggregationVerification, COLUMN_NAMES, result));
     }
 
     @Test
