@@ -6,6 +6,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor;
@@ -367,7 +368,12 @@ class AnalyzerRuleVisitorTest {
             .constraint("constraint", CRITICAL)
             .group("child", INFO)
             .build();
+        AnalyzeTaskDescriptor analyzeTaskDescriptor = mock(AnalyzeTaskDescriptor.class);
+        doReturn(analyzeTaskDescriptor).when(store).create(AnalyzeTaskDescriptor.class);
+        List<GroupDescriptor> rootGroups = new ArrayList<>();
+        doReturn(rootGroups).when(analyzeTaskDescriptor).getIncludesGroups();
 
+        analyzerRuleVisitor.beforeRules();
         analyzerRuleVisitor.beforeGroup(parent, BLOCKER);
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
         analyzerRuleVisitor.beforeGroup(child, INFO);
@@ -375,6 +381,10 @@ class AnalyzerRuleVisitorTest {
         analyzerRuleVisitor.afterGroup(child);
         analyzerRuleVisitor.visitConstraint(constraint, CRITICAL, emptyMap());
         analyzerRuleVisitor.afterGroup(parent);
+        analyzerRuleVisitor.afterRules();
+
+        verify(store).create(AnalyzeTaskDescriptor.class);
+        verify(analyzeTaskDescriptor).setTimestamp(any());
 
         verify(reportWriter).beginGroup(parent);
         verify(ruleRepository).mergeGroup(parent.getId());
@@ -383,6 +393,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(parentGroupDescriptor).isNotNull();
         verify(parentGroupDescriptor).setSeverity(MINOR);
         verify(parentGroupDescriptor).setEffectiveSeverity(BLOCKER);
+        assertThat(rootGroups).containsExactly(parentGroupDescriptor);
 
         verify(ruleRepository).mergeConcept("concept");
         List<ConceptDescriptor> includesConcepts = parentGroupDescriptor.getIncludesConcepts();

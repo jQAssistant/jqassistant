@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.*;
 
 /**
@@ -36,7 +38,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
     private final Store store;
     private final RuleRepository ruleRepository;
-    private final Deque<GroupDescriptor> groupDescriptors = new ArrayDeque<>();
+    private final Deque<RuleGroupTemplate> ruleGroups = new ArrayDeque<>();
 
     /**
      * Constructor.
@@ -68,12 +70,18 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
     @Override
     public void beforeRules() throws RuleException {
-        store.requireTransaction(reportPlugin::begin);
+        store.requireTransaction(() -> {
+            AnalyzeTaskDescriptor analyzeTaskDescriptor = store.create(AnalyzeTaskDescriptor.class);
+            analyzeTaskDescriptor.setTimestamp(now());
+            ruleGroups.push(analyzeTaskDescriptor);
+            reportPlugin.begin();
+        });
     }
 
     @Override
     public void afterRules() throws RuleException {
         store.requireTransaction(reportPlugin::end);
+        ruleGroups.pop();
     }
 
     @Override
@@ -155,7 +163,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     @Override
     public void afterGroup(Group group) throws RuleException {
         store.requireTransaction(reportPlugin::endGroup);
-        groupDescriptors.pop();
+        ruleGroups.pop();
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {
@@ -248,11 +256,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                     .getProvidesConcepts()
                     .add(conceptDescriptor);
             }
-            if (!groupDescriptors.isEmpty()) {
-                groupDescriptors.peek()
-                    .getIncludesConcepts()
-                    .add(conceptDescriptor);
-            }
+            updateRuleGroup(ruleGroup -> ruleGroup.getIncludesConcepts()
+                .add(conceptDescriptor));
         });
     }
 
@@ -261,11 +266,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             ConstraintDescriptor constraintDescriptor = this.ruleRepository.mergeConstraint(constraint.getId());
             updateRule(constraint, effectiveSeverity, constraintDescriptor);
             updateExecutableRule(constraint, status, constraintDescriptor);
-            if (!groupDescriptors.isEmpty()) {
-                groupDescriptors.peek()
-                    .getIncludesConstraints()
-                    .add(constraintDescriptor);
-            }
+            updateRuleGroup(ruleGroup -> ruleGroup.getIncludesConstraints()
+                .add(constraintDescriptor));
         });
     }
 
@@ -273,13 +275,16 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         store.requireTransaction(() -> {
             GroupDescriptor groupDescriptor = this.ruleRepository.mergeGroup(group.getId());
             updateRule(group, effectiveSeverity, groupDescriptor);
-            if (!groupDescriptors.isEmpty()) {
-                groupDescriptors.peek()
-                    .getIncludesGroups()
-                    .add(groupDescriptor);
-            }
-            groupDescriptors.push(groupDescriptor);
+            updateRuleGroup(ruleGroup -> ruleGroup.getIncludesGroups()
+                .add(groupDescriptor));
+            ruleGroups.push(groupDescriptor);
         });
+    }
+
+    private void updateRuleGroup(Consumer<RuleGroupTemplate> ruleGroupConsumer) {
+        if (!ruleGroups.isEmpty()) {
+            ruleGroupConsumer.accept(ruleGroups.peek());
+        }
     }
 
     private void updateRule(SeverityRule rule, Severity effectiveSeverity, RuleDescriptor ruleDescriptor) {
