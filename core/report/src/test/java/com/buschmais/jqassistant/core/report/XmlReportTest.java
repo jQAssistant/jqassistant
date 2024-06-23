@@ -53,8 +53,8 @@ class XmlReportTest {
             .getPrimary()).isEqualTo("c2");
         List<String> columnHeaders = result.getColumns()
             .getColumn();
-        assertThat(columnHeaders).hasSize(2);
-        assertThat(columnHeaders).containsExactly("c1", "c2");
+        assertThat(columnHeaders).hasSize(2)
+            .containsExactly("c1", "c2");
         assertThat(result.getRows()
             .getCount()).isEqualTo(1);
         List<RowType> rows = result.getRows()
@@ -236,20 +236,30 @@ class XmlReportTest {
 
     @Test
     void reportEncoding() throws ReportException {
-        String description = "ÄÖÜß";
-        File xmlReport = xmlReportTestHelper.createXmlWithUmlauts(description);
+        String specialCharacters = "ÄÖÜß\"'`";
+        String value = specialCharacters + "\u0010\u0013";
+        File xmlReport = xmlReportTestHelper.createXmlWithExtraCharacters(value);
+
         JqassistantReport jqassistantReport = readReport(xmlReport);
+
         List<ReferencableRuleType> groups = jqassistantReport.getGroupOrConceptOrConstraint();
         assertThat(groups).hasSize(1);
         ReferencableRuleType groupType = groups.get(0);
         assertThat(groupType).isInstanceOf(GroupType.class);
-        GroupType defaultGrroup = (GroupType) groupType;
-        List<ReferencableRuleType> concepts = defaultGrroup.getGroupOrConceptOrConstraint();
+        GroupType defaultGroup = (GroupType) groupType;
+        List<ReferencableRuleType> concepts = defaultGroup.getGroupOrConceptOrConstraint();
         assertThat(concepts).hasSize(1);
         ReferencableRuleType conceptType = concepts.get(0);
         assertThat(conceptType).isInstanceOf(ConceptType.class);
-        ConceptType meinKonzept = (ConceptType) conceptType;
-        assertThat(meinKonzept.getDescription()).isEqualTo(description);
+        ConceptType myConcept = (ConceptType) conceptType;
+        assertThat(myConcept.getDescription()).isEqualTo(specialCharacters);
+        List<RowType> rows = myConcept.getResult()
+            .getRows()
+            .getRow();
+        ColumnType column = rows.get(0)
+            .getColumn()
+            .get(0);
+        assertThat(column.getValue()).isEqualTo(specialCharacters);
     }
 
     private JqassistantReport readReport(File xmlReport) {

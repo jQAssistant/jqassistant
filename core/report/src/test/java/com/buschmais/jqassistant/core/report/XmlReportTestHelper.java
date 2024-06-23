@@ -7,7 +7,6 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
@@ -83,30 +82,36 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
-    public File createXmlWithUmlauts(String description) throws ReportException {
+    public File createXmlWithExtraCharacters(String value) throws ReportException {
         XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
         xmlReportPlugin.begin();
         Concept concept = Concept.builder()
-            .id("mein:Konzept")
-            .description(description)
+            .id("my:Concept")
+            .description(value)
             .severity(Severity.MAJOR)
             .executable(new CypherExecutable("match..."))
             .verification(ROW_COUNT_VERIFICATION)
             .report(Report.builder()
-                .primaryColumn("c2")
+                .primaryColumn("c1")
                 .build())
             .build();
         Map<String, Severity> concepts = new HashMap<>();
-        concepts.put("mein:Konzept", Severity.INFO);
+        concepts.put("my:Concept", Severity.INFO);
         Group group = Group.builder()
             .id("default")
-            .description("Meine Gruppe")
+            .description("My Group")
             .concepts(concepts)
             .build();
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConcept(concept);
         List<Row> rows = new ArrayList<>();
-        rows.add(createRow(concept));
+        rows.add(Row.builder()
+            .key("0")
+            .columns(Map.of("C1", Column.builder()
+                .value(value)
+                .label(value)
+                .build()))
+            .build());
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .status(Result.Status.SUCCESS)
@@ -186,10 +191,7 @@ public final class XmlReportTestHelper {
 
     private static Row createRow(ExecutableRule<?> rule) {
         Map<String, Column<?>> columns = new HashMap<>();
-        columns.put(C1, Column.builder()
-            .value("simpleValue")
-            .label(ReportHelper.getLabel("simpleValue"))
-            .build());
+        columns.put(C1, toColumn("simpleValue"));
         TestDescriptorWithLanguageElement testDescriptor = new TestDescriptorWithLanguageElement() {
             @Override
             public <I> I getId() {

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -47,6 +48,8 @@ public class XmlReportPlugin implements ReportPlugin {
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
     public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.3";
+
+    private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -344,7 +347,8 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private void writeElementWithCharacters(String element, String text) throws XMLStreamException {
         xmlStreamWriter.writeStartElement(element);
-        xmlStreamWriter.writeCharacters(text);
+        xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(text)
+            .replaceAll(""));
         xmlStreamWriter.writeEndElement();
     }
 
