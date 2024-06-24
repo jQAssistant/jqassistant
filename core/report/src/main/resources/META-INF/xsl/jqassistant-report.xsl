@@ -304,7 +304,7 @@
         <tr>
             <td>
                 <xsl:variable name="ruleId"><xsl:value-of select="@id" /></xsl:variable>
-                <span class="ruleName" onclick="javascript:toggleResult('{$ruleId}'); location.href='#{$ruleId}'">
+                <span class="ruleName" onclick="javascript:showResult('{$ruleId}'); location.href='#{$ruleId}'">
                     <xsl:value-of select="@id"/>
                 </span>
             </td>
