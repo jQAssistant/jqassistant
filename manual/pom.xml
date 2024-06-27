@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqa-uber-parent</artifactId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.3.0</version>
         <relativePath/>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>manual</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.3.0</version>
 
     <name>jQAssistant User Manual</name>
     <url>https://jqassistant.org/</url>
@@ -41,18 +41,18 @@
     </description>
 
     <properties>
-        <jqa-own-constraints.version>2.3.0-SNAPSHOT</jqa-own-constraints.version>
-        <jqa-neo4jbackend.version>2.3.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-core-framework.version>2.3.0-SNAPSHOT</jqa-core-framework.version>
-        <jqa-plugin-common.version>2.3.0-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-java-plugin.version>2.3.0-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-json-plugin.version>2.3.0-SNAPSHOT</jqa-json-plugin.version>
-        <jqa-junit-plugin.version>2.3.0-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-maven3-plugin.version>2.3.0-SNAPSHOT</jqa-maven3-plugin.version>
-        <jqa-xml-plugin.version>2.3.0-SNAPSHOT</jqa-xml-plugin.version>
-        <jqa-yaml2-plugin.version>2.3.0-SNAPSHOT</jqa-yaml2-plugin.version>
-        <jqa-commandline-tool.version>2.3.0-SNAPSHOT</jqa-commandline-tool.version>
-        <jqa-maven-plugin.version>2.3.0-SNAPSHOT</jqa-maven-plugin.version>
+        <jqa-own-constraints.version>2.3.0</jqa-own-constraints.version>
+        <jqa-neo4jbackend.version>2.3.0</jqa-neo4jbackend.version>
+        <jqa-core-framework.version>2.3.0</jqa-core-framework.version>
+        <jqa-plugin-common.version>2.3.0</jqa-plugin-common.version>
+        <jqa-java-plugin.version>2.3.0</jqa-java-plugin.version>
+        <jqa-json-plugin.version>2.3.0</jqa-json-plugin.version>
+        <jqa-junit-plugin.version>2.3.0</jqa-junit-plugin.version>
+        <jqa-maven3-plugin.version>2.3.0</jqa-maven3-plugin.version>
+        <jqa-xml-plugin.version>2.3.0</jqa-xml-plugin.version>
+        <jqa-yaml2-plugin.version>2.3.0</jqa-yaml2-plugin.version>
+        <jqa-commandline-tool.version>2.3.0</jqa-commandline-tool.version>
+        <jqa-maven-plugin.version>2.3.0</jqa-maven-plugin.version>
 
         <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
         <sourcedoc.directory>${project.build.directory}/asciidoc-modules-documentation</sourcedoc.directory>
