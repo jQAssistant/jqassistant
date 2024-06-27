@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -157,6 +158,11 @@ class AnalyzerRuleVisitorTest {
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
+
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
+            .toRow(any(), anyMap());
+        doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
+            .toColumn(any());
 
         analyzerRuleVisitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportWriter);
     }

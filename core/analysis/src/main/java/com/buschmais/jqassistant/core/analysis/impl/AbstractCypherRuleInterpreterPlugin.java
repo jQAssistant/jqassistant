@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -21,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher
@@ -48,19 +45,20 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
     private <T extends ExecutableRule<?>> Result<T> getResult(T executableRule, Severity severity, AnalyzerContext context,
         Query.Result<Query.Result.CompositeRowObject> compositeRowObjects) throws RuleException {
         List<Row> rows = new LinkedList<>();
-        String primaryColumn = null;
+        String primaryColumn = executableRule.getReport()
+            .getPrimaryColumn();
         List<String> columnNames = null;
         for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
             if (columnNames == null) {
                 columnNames = unmodifiableList(rowObject.getColumns());
-                primaryColumn = executableRule.getReport()
-                    .getPrimaryColumn();
                 if (primaryColumn == null) {
                     primaryColumn = columnNames.get(0);
                 }
             }
-            getColumns(executableRule.getId(), columnNames, primaryColumn, rowObject, context).ifPresent(
-                columns -> rows.add(context.toRow(executableRule, columns)));
+            Row row = getColumns(executableRule, columnNames, rowObject, context);
+            if (!isSuppressed(executableRule, primaryColumn, row)) {
+                rows.add(row);
+            }
         }
         Status status = getStatus(executableRule, severity, columnNames, rows, context);
         return Result.<T>builder()
@@ -72,44 +70,45 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             .build();
     }
 
-    private static Optional<Map<String, Column<?>>> getColumns(String ruleId, List<String> columnNames, String primaryColumn,
-        Query.Result.CompositeRowObject rowObject, AnalyzerContext context) {
+    private Row getColumns(ExecutableRule<?> rule, List<String> columnNames, Query.Result.CompositeRowObject rowObject, AnalyzerContext context) {
         Map<String, Column<?>> columns = new LinkedHashMap<>();
         for (String columnName : columnNames) {
             Object columnValue = rowObject.get(columnName, Object.class);
-            if (isSuppressed(columnName, columnValue, ruleId, primaryColumn)) {
-                return empty();
-            }
             columns.put(columnName, context.toColumn(columnValue));
         }
-        return of(columns);
+        return context.toRow(rule, columns);
     }
 
     /**
-     * Verifies if the given column indicates that the row shall be suppressed.
+     * Verifies if the Row shall be suppressed.
      * <p>
      * The primary column is checked if it contains a suppression that matches the
      * current rule id.
      *
-     * @param columnName
-     *     The column name.
-     * @param columnValue
-     *     The column value.
-     * @param ruleId
-     *     The rule id.
+     * @param executableRule
+     *     The {@link ExecutableRule}.
      * @param primaryColumn
      *     The name of the primary column.
+     * @param row
+     *     The {@link Row}.
      * @return <code>true</code> if the row shall be suppressed.
      */
-    private static boolean isSuppressed(String columnName, Object columnValue, String ruleId, String primaryColumn) {
-        if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
-            Suppress suppress = (Suppress) columnValue;
-            String suppressColumn = suppress.getSuppressColumn();
-            if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
-                String[] suppressIds = suppress.getSuppressIds();
-                for (String suppressId : suppressIds) {
-                    if (ruleId.equals(suppressId)) {
-                        return true;
+    private static boolean isSuppressed(ExecutableRule<?> executableRule, String primaryColumn, Row row) {
+        String ruleId = executableRule.getId();
+        Map<String, Column<?>> columns = row.getColumns();
+        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
+            String columnName = entry.getKey();
+            Column<?> column = entry.getValue();
+            Object columnValue = column.getValue();
+            if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
+                Suppress suppress = (Suppress) columnValue;
+                String suppressColumn = suppress.getSuppressColumn();
+                if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
+                    String[] suppressIds = suppress.getSuppressIds();
+                    for (String suppressId : suppressIds) {
+                        if (ruleId.equals(suppressId)) {
+                            return true;
+                        }
                     }
                 }
             }
