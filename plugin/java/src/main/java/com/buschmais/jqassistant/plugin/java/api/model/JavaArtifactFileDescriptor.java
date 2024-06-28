@@ -36,6 +36,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
         "  shortestPath((artifact)-[:DEPENDS_ON*]->(dependency))\n" +
         "WHERE\n" +
         "  id(artifact)=$this\n" +
+        "  and artifact <> dependency\n" +
         "RETURN\n" +
         "  type\n" +
         "LIMIT 1")
@@ -57,6 +58,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
         "  shortestPath((artifact)-[:DEPENDS_ON*0..]->(dependency))\n" +
         "WHERE\n" +
         "  id(artifact)=$this\n" +
+        "  and artifact <> dependency\n" +
         "RETURN\n" +
         "  module\n" +
         "LIMIT 1")
