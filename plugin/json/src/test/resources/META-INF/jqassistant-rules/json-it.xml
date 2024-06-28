@@ -50,5 +50,14 @@
         <report type="json"/>
     </concept>
 
+    <concept id="json-it:EmptyResult">
+        <description>Returns an empty result.</description>
+        <cypher><![CDATA[
+          UNWIND [] as row
+          RETURN
+            row
+        ]]></cypher>
+        <report type="json"/>
+    </concept>
 </jqassistant-rules>
 
