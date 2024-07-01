@@ -1,6 +1,11 @@
 
 = Neo4j Backend
 
+== 2.3.1
+
+* Upgraded to Neo4j 5.5.21
+* Log a warning instead throwing an exception if the Neo4j plugin directory cannot be removed when shutting down the embedded graph store
+
 == 2.3.0
 
 * Upgraded to Neo4j 5.5.20 and 4.4.34
