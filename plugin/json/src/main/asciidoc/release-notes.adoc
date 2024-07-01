@@ -1,6 +1,10 @@
 
 = JSON Plugin
 
+== 2.3.1
+
+* Fixed a NullPointerException in JSON report plugin for empty rule results
+
 == 2.3.0
 
 * Migrated JSON-Scanner from ANTLR to Jackson
