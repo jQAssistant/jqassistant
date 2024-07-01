@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.json.impl.report;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +46,12 @@ public class JSONReportPlugin implements ReportPlugin {
     @Override
     public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         List<String> columnNames = result.getColumnNames();
+        if (columnNames != null) {
+            writeReport(result, columnNames);
+        }
+    }
+
+    private void writeReport(Result<? extends ExecutableRule> result, List<String> columnNames) throws ReportException {
         String fileName = ReportHelper.escapeRuleId(result.getRule()) + ".json";
         File reportDirectory = reportContext.getReportDirectory(REPORT_TYPE);
         File file = new File(reportDirectory, fileName);
@@ -58,6 +65,12 @@ public class JSONReportPlugin implements ReportPlugin {
                 .writeValue(file, stream.iterator());
         } catch (IOException e) {
             throw new ReportException("Cannot write JSON report.", e);
+        }
+        try {
+            reportContext.addReport("JSON", result.getRule(), ReportContext.ReportType.LINK, file.toURI()
+                .toURL());
+        } catch (MalformedURLException e) {
+            throw new ReportException("Cannot get URL for file " + file, e);
         }
     }
 
