@@ -147,6 +147,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- integration tests -->
         <it.jqassistant.store.uri>memory:///</it.jqassistant.store.uri>
+        <!-- jQA build version -->
+        <jqassistant.build.version>2.4.0-SNAPSHOT</jqassistant.build.version>
     </properties>
 
     <build>
@@ -187,6 +189,13 @@
                               - jqa-*
                       </yaml>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant.build</groupId>
+                            <artifactId>jqassistant</artifactId>
+                            <version>${jqassistant.build.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -214,6 +223,13 @@
                         </testSourceDirectories>
                         <logViolationsToConsole>true</logViolationsToConsole>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant.build</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${jqassistant.build.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -287,6 +303,27 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven.assembly.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-asciidoc</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>asciidoc</descriptorRef>
+                                </descriptorRefs>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant.build</groupId>
+                            <artifactId>asciidoc</artifactId>
+                            <version>${jqassistant.build.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>
