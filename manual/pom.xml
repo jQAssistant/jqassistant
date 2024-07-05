@@ -41,7 +41,6 @@
     </description>
 
     <properties>
-        <jqa-own-constraints.version>2.4.0-SNAPSHOT</jqa-own-constraints.version>
         <jqa-neo4jbackend.version>2.4.0-SNAPSHOT</jqa-neo4jbackend.version>
         <jqa-core-framework.version>2.4.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-plugin-common.version>2.4.0-SNAPSHOT</jqa-plugin-common.version>
@@ -59,37 +58,6 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.buschmais.jqassistant</groupId>
-                    <artifactId>jqassistant-maven-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>github-integration</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>legal-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>maven-commmon-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>project-layout-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.asciidoctor</groupId>
