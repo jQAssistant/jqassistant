@@ -82,10 +82,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>checkstyle/jqa-code-style.xml</configLocation>
-                    <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
