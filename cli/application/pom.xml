@@ -35,38 +35,11 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${jqa-asciidoctor-utilities.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <!--
-         ! I M P O R T A N T
-         !
-         ! The declaration of this dependency is required as Maven if
-         ! not able to download declared dependencies of plugins.
-         ! Oliver B. Fischer, 2017-04-11
-         ! todo Check if this hack is still required
-         !
-         ! Try the following to check if this is still required
-         ! - mvn - - version
-         ! - Remove the dependency com.buschmais.jqassistant:asciidoctor-utilities
-         ! - mvn -Dmaven.repo.local=<somepath> clean install
-         !-->
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <!-- The scope must be provided otherwise it will be part of the distribution -->
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>

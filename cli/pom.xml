@@ -40,10 +40,8 @@
   </scm>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>2.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
         <jqa-distribution-spec.version>2.4.0-SNAPSHOT</jqa-distribution-spec.version>
-        <jqa-own-constraints.version>2.4.0-SNAPSHOT</jqa-own-constraints.version>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
     </properties>
@@ -53,32 +51,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
-                        <!--
-                         ! Builds an assembly with all artifacts required to include
-                         ! the documentation of the command line tool in
-                         ! the user manual
-                         !-->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>asciidoc</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${jqa-asciidoctor-utilities.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <plugin>
@@ -88,39 +66,10 @@
                     <configLocation>checkstyle/jqa-code-style.xml</configLocation>
                     <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>checkstyle-config</artifactId>
-                        <version>${project.parent.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>github-integration</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>legal-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>maven-commmon-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>project-layout-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
