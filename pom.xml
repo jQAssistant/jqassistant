@@ -214,6 +214,8 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <configLocation>checkstyle/jqa-code-style.xml</configLocation>
+                        <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
                         <sourceDirectories>
                             <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
                         </sourceDirectories>
