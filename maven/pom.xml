@@ -42,10 +42,8 @@
     </scm>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>2.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
         <jqa-distribution-spec.version>2.4.0-SNAPSHOT</jqa-distribution-spec.version>
-        <jqa-own-constraints.version>2.4.0-SNAPSHOT</jqa-own-constraints.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
@@ -74,13 +72,6 @@
                             <configLocation>checkstyle/jqa-code-style.xml</configLocation>
                             <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.buschmais.jqassistant</groupId>
-                                <artifactId>checkstyle-config</artifactId>
-                                <version>${project.parent.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -182,19 +173,16 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <configLocation>checkstyle/jqa-code-style.xml</configLocation>
                     <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>checkstyle-config</artifactId>
-                        <version>${project.parent.version}</version>
-                    </dependency>
-               </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -203,33 +191,6 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>github-integration</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>legal-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>maven-commmon-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>project-layout-constraints</artifactId>
-                        <version>${jqa-own-constraints.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-component-metadata</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -237,34 +198,8 @@
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
-                        <!--
-                         ! Builds an assembly with all artifacts required to include
-                         ! the documentation of the command line tool in
-                         ! the user manual
-                         !-->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>asciidoc</descriptorRef>
-                            </descriptorRefs>
-                            <delimiters>
-                                <!-- do not use ${*} as readme.adoc contains samples that shall not be replaced -->
-                                <delimiter>@{*}</delimiter>
-                            </delimiters>
-                        </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${jqa-asciidoctor-utilities.version}</version>
-                    </dependency>
-                </dependencies>
-
             </plugin>
         </plugins>
     </build>
@@ -297,28 +232,6 @@
             <artifactId>jqa-distribution-specification</artifactId>
             <version>${jqa-distribution-spec.version}</version>
         </dependency>
-
-        <!--
-         ! I M P O R T A N T
-         !
-         ! The declaration of this dependency is required as Maven if
-         ! not able to download declared dependencies of plugins.
-         ! Oliver B. Fischer, 2017-04-11
-         ! todo Check if this hack is still required
-         !
-         ! Try the following to check if this is still required
-         ! - mvn - - version
-         ! - Remove the dependency com.buschmais.jqassistant:asciidoctor-utilities
-         ! - mvn -Dmaven.repo.local=<somepath> clean install
-         !-->
-        <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
-            <version>${jqa-asciidoctor-utilities.version}</version>
-            <!-- The scope must be provided otherwise it will be part of the distribution -->
-            <scope>provided</scope>
-        </dependency>
-
         <!--
          ! All non-jQAssistant go below!
          !-->
