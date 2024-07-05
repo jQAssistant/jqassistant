@@ -42,11 +42,9 @@
     </description>
 
     <properties>
-        <jqa-asciidoctor-utilities.version>2.4.0-SNAPSHOT</jqa-asciidoctor-utilities.version>
         <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
         <jqa-core-framework.version>2.4.0-SNAPSHOT</jqa-core-framework.version>
         <jqa-neo4jbackend.version>2.4.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-own-constraints.version>2.4.0-SNAPSHOT</jqa-own-constraints.version>
     </properties>
 
     <build>
@@ -66,42 +64,6 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.buschmais.jqassistant</groupId>
-                    <artifactId>jqassistant-maven-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>github-integration</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>legal-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>maven-commmon-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>project-layout-constraints</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>plugin-rules</artifactId>
-                            <version>${jqa-own-constraints.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
 
         <plugins>
             <plugin>
@@ -127,11 +89,11 @@
                             <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.buschmais.jqassistant</groupId>
-                                    <artifactId>asciidoctor-utilities</artifactId>
+                                    <groupId>com.buschmais.jqassistant.build</groupId>
+                                    <artifactId>asciidoc</artifactId>
                                     <type>zip</type>
                                     <classifier>xsl</classifier>
-                                    <version>${jqa-asciidoctor-utilities.version}</version>
+                                    <version>${jqassistant.build.version}</version>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -264,13 +226,6 @@
                     <configLocation>checkstyle/jqa-code-style.xml</configLocation>
                     <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>checkstyle-config</artifactId>
-                        <version>${project.parent.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <!-- Builds a jar with the Asciidoctor based documentation
@@ -279,26 +234,9 @@
                  !-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${jqa-asciidoctor-utilities.version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>asciidoc</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -308,7 +246,6 @@
             </plugin>
         </plugins>
     </build>
-
 
     <dependencyManagement>
         <dependencies>
@@ -400,11 +337,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.buschmais.jqassistant</groupId>
-            <artifactId>asciidoctor-utilities</artifactId>
+            <groupId>com.buschmais.jqassistant.build</groupId>
+            <artifactId>asciidoc</artifactId>
             <type>zip</type>
             <classifier>xsl</classifier>
-            <version>${jqa-asciidoctor-utilities.version}</version>
+            <version>${jqassistant.build.version}</version>
             <!-- The scope must be provided otherwise it will be part of the distribution -->
             <scope>provided</scope>
         </dependency>
