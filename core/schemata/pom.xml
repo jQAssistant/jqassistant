@@ -65,25 +65,12 @@
                             <args>
                                 <arg>-mark-generated</arg>
                                 <arg>-Xdefault-value</arg>
-                                <arg>-Xno-comment</arg>
                             </args>
                             <plugins>
                                 <plugin>
                                     <groupId>org.jvnet.jaxb2_commons</groupId>
                                     <artifactId>jaxb2-default-value</artifactId>
                                     <version>1.1</version>
-                                </plugin>
-                                <!--
-                                 ! This is a custom plugin which suppresses the generation
-                                 ! of JavaDoc descriptions. We this as our JavaDoc is written
-                                 ! in Asciidoctor and the JAXB 2 plugin generated the standard
-                                 ! JavaDoc descriptions.
-                                 ! Oliver B. Fischer, 2016-12-26
-                                 !-->
-                                <plugin>
-                                    <groupId>com.buschmais.x2j.nocomment</groupId>
-                                    <artifactId>nocomment-plugin</artifactId>
-                                    <version>0.1</version>
                                 </plugin>
                             </plugins>
                         </configuration>
