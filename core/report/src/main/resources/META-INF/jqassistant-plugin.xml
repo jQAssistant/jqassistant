@@ -5,6 +5,12 @@
                     name="jQAssistant Core Report Plugin"
                     version="${project.version}">
     <description>Core Report</description>
+    <model>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</class>
+    </model>
     <report>
         <class id="xml">com.buschmais.jqassistant.core.report.impl.XmlReportPlugin</class>
     </report>
