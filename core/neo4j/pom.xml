@@ -2,14 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.buschmais.jqassistant</groupId>
-        <artifactId>jqa-uber-parent</artifactId>
+        <groupId>com.buschmais.jqassistant.core</groupId>
+        <artifactId>parent</artifactId>
         <version>2.4.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
-    <groupId>com.buschmais.jqassistant.neo4j</groupId>
-    <artifactId>embedded</artifactId>
+    <artifactId>neo4j</artifactId>
     <version>2.4.0-SNAPSHOT</version>
 
     <name>jQAssistant Embedded Neo4j</name>
@@ -23,24 +21,6 @@
         <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
     </properties>
 
-    <organization>
-        <name>jQAssistant Development Team</name>
-        <url>https://jqassistant.org</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License, v3</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-neo4j-backend.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-neo4j-backend.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-neo4j-backend</url>
-        <tag>HEAD</tag>
-    </scm>
 
     <build>
         <plugins>

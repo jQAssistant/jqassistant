@@ -80,6 +80,7 @@
     </build>
 
     <modules>
+        <module>neo4j</module>
         <module>schemata</module>
         <module>shared</module>
         <module>rule</module>
