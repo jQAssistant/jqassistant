@@ -6,7 +6,7 @@
     <version>2.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>jQAssistant Ueber Parent</name>
+    <name>jQAssistant Parent</name>
     <url>https://jqassistant.org/</url>
 
     <description>
@@ -28,14 +28,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-uber-parent.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-uber-parent.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-uber-parent/</url>
+        <connection>scm:git:https://github.com/jqassistant/jqassistant.git</connection>
+        <developerConnection>scm:git:https://github.com/jqassistant/jqassistant.git</developerConnection>
+        <url>scm:git:https://github.com/jqassistant/jqassistant/</url>
         <tag>HEAD</tag>
     </scm>
 
     <prerequisites>
-        <maven>3.2</maven>
+        <maven>3.6</maven>
     </prerequisites>
 
     <distributionManagement>
@@ -56,6 +56,11 @@
             <id>dirk-mahler</id>
             <name>Dirk Mahler</name>
             <email>dirk.mahler@buschmais.com</email>
+        </developer>
+        <developer>
+            <id>stephan.pirnbaum</id>
+            <name>Stephan Pirnbaum</name>
+            <email>stephan.pirnbaum@buschmais.com</email>
         </developer>
         <developer>
             <id>oliver.b.fischer</id>
