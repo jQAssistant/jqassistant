@@ -1,0 +1,4 @@
+concepts:
+  - id: concept
+    description: おはようございます。
+    source: MATCH (a) RETURN a

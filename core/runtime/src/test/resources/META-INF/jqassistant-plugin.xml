@@ -1,0 +1,15 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    id="jqa.test"
+                    name="Test">
+    <description>Test plugin.</description>
+    <scope>
+        <class>com.buschmais.jqassistant.core.runtime.impl.plugin.TestScope</class>
+    </scope>
+    <scanner>
+        <class>com.buschmais.jqassistant.core.runtime.impl.plugin.TestScannerPlugin</class>
+    </scanner>
+    <report>
+        <class>com.buschmais.jqassistant.core.runtime.impl.plugin.TestReportPlugin</class>
+        <class id="testReport">com.buschmais.jqassistant.core.runtime.impl.plugin.TestReportPlugin</class>
+    </report>
+</jqassistant-plugin>

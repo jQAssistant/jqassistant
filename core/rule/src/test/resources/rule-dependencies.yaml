@@ -1,0 +1,66 @@
+---
+groups:
+  - id: test
+    includedGroups:
+      - refId: test1
+      - refId: test2
+  - id: test1
+    includedConstraints:
+      - refId: test:Constraint
+  - id: test2
+    includedConcepts:
+      - refId: test:ProvidingConcept2
+        providesConcepts:
+          - refId: test:AbstractConcept
+
+constraints:
+  - id: test:Constraint
+    description: Test Constraint
+    requiresConcepts:
+      - refId: test:Concept
+    source: |
+      match
+        (n)
+      return
+        n
+
+concepts:
+  - id: test:Concept
+    description: Test Concept
+    requiresConcepts:
+      - refId: test:AbstractConcept
+    source: |
+      match
+        (n)
+      return
+        n
+
+  - id: test:AbstractConcept
+    description: Abstract Test Concept
+    source: |
+      match
+        (n)
+      return
+        n
+
+  - id: test:ProvidingConcept1
+    description: Providing Test Concept 1
+    providesConcepts:
+      - refId: test:AbstractConcept
+    source: |
+      match
+        (n)
+      return
+        n
+
+  - id: test:ProvidingConcept2
+    description: Providing Test Concept 2
+    source: |
+      match
+        (n)
+      return
+        n
+
+
+
+

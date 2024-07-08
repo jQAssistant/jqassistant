@@ -1,0 +1,23 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <group id="jqa-core-framework">
+        <includeConcept refId="jqa-core-framework:*"/>
+    </group>
+
+    <concept id="jqa-core-framework:jQASuppress">
+        <description></description>
+        <cypher>
+            MATCH
+              (test:Maven:Project{artifactId:"test"})
+            SET
+              test:jQASuppress
+            SET
+              test.suppressIds=["jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts"]
+            RETURN
+              test
+        </cypher>
+    </concept>
+
+</jqassistant-rules>

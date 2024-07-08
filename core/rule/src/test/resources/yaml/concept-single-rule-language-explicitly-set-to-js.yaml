@@ -1,0 +1,35 @@
+---
+concepts:
+  - id: java:Throwable
+    description: >
+      Returns a result containing the number of declared methods for each class.
+    language: JavaScript
+    source: |
+      // Define the columns returned by the constraint
+      var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
+      // Define the list of rows returned by the constraint
+      var rows = new java.util.ArrayList();
+      // Execute a query using the store
+      var typeIterator = store.executeQuery("match (t:Type:Class) return t").iterator();
+      while(typeIterator.hasNext()) {
+        // Get the next row from the query result
+        var typeRow = typeIterator.next();
+        // Get the column "t" from the row, it represents a type
+        // descriptor as defined by the Java plugin
+        var type = typeRow.get("t", com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.class);
+        // Get the declared methods of the type and count them
+        var methodIterator = type.getDeclaredMethods().iterator();
+        var methodsOfType = 0;
+        while( methodIterator.hasNext()) {
+          methodIterator.next();
+          methodsOfType++;
+        }
+        // Define the row for the result and put the value for each defined column
+        var resultRow = new java.util.HashMap();
+        resultRow.put("Class", type);
+        resultRow.put("MethodsOfType", methodsOfType);
+        rows.add(resultRow);
+      }
+      // Return the result
+      var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+      new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);

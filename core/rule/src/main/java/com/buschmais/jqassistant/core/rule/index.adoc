@@ -1,0 +1,21 @@
+= Supported Formats for Rule Documents
+
+jQAssistant allows you to write your own rules, contraints and
+concepts, in three different format: XML, YAML, and Asciidoctor.
+This allows you to choose the document format which fits at best
+to your project and your environment. XML was the first and orginal
+document format supported by jQAssistant. Later jQAssistant allowed
+you embed rules in Asciidoctor documents, because Asciidoctor
+allows you to document your constraints and concepts and the ideas
+behind them much better than XML. YAML as document format is the latest
+addition to the set of supported formats. People how read and write
+a lot of YAML documents during their daily work might prefer it
+because of its clear structure.
+
+// todo Add a xref to the user guide. 2020-04-07, Oliver B. Fischer
+The following sections provide a guidance how to embedded jQAssistant rules
+in these formats. How to write rules is described in the manual.
+
+include::./yaml.adoc[]
+include::./xml.adoc[]
+include::./asciidoctor.adoc[]

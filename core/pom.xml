@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqa-uber-parent</artifactId>
+        <version>2.4.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.buschmais.jqassistant.core</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.4.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>jQAssistant Core Framework</name>
+    <url>https://jqassistant.org/</url>
+
+    <description>
+        The jQAssistant Core Framework providing the basic infrastructure
+        for all jQAssistant plugins and other jQAssistant tools.
+    </description>
+
+    <organization>
+        <name>jQAssistant Development Team</name>
+        <url>https://jqassistant.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/jqa-core-framework.git</developerConnection>
+        <url>https://github.com/jqassistant/jqa-core-framework</url>
+      <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
+        <jqa-neo4jbackend.version>2.4.0-SNAPSHOT</jqa-neo4jbackend.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>bom</artifactId>
+                <version>${jqa-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.neo4j</groupId>
+                <artifactId>embedded</artifactId>
+                <version>${jqa-neo4jbackend.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>META-INF/jqassistant-plugin.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>META-INF/jqassistant-plugin.xml</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <modules>
+        <module>schemata</module>
+        <module>shared</module>
+        <module>rule</module>
+        <module>report</module>
+        <module>analysis</module>
+        <module>scanner</module>
+        <module>store</module>
+        <module>runtime</module>
+        <module>test</module>
+    </modules>
+
+</project>

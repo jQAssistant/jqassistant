@@ -1,0 +1,41 @@
+concepts:
+  - id: "test:WithoutDescription"
+    source: |
+      Cypher Concept
+  - id: "test:EmptyDescription"
+    description: ""
+    source: |
+      Cypher Concept
+  - id: "test:SingleLineDescription"
+    description: "  Cal took a long, deep breath, struggling to control his own emotions.  "
+    source: |
+      Cypher Concept
+  - id: "test:MultiMixEmptyLineDescription"
+    description: |
+      Cal took a long, deep breath,
+
+      struggling to control his own emotions.
+    source: |
+      Cypher Concept
+
+constraints:
+  - id: "test:WithoutDescription"
+    source: |
+      Cypher Constraint
+  - id: "test:EmptyDescription"
+    description: ""
+    source: |
+      Cypher Constraint
+  - id: "test:SingleLineDescription"
+    description: "  When he arrived at the station, the bus had already left.  "
+    source: |
+      Cypher Constraint
+  - id: "test:MultiMixEmptyLineDescription"
+    description: |
+      
+      When he arrived at the station,
+
+      the bus had already left.
+
+    source: |
+      Cypher Constraint

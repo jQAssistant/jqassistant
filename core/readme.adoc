@@ -1,0 +1,7 @@
+= jQAssistant Core Framework
+
+The jQAssistant Core Framework provides the functionality
+of jQAssistant which is used by all depending projects
+as the plugins of jQAssistant.
+
+
