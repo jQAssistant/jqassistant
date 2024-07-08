@@ -1,0 +1,29 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - "*"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch: {}
+
+concurrency:
+  group: build-java-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
+    with:
+      publish_snapshots: true
+    secrets:
+      ossrh_username: ${{ secrets.OSSRH_USERNAME }}
+      ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
+      ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
+      ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+      sonar_token: ${{ secrets.SONAR_TOKEN }}
