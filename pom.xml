@@ -28,9 +28,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-uber-parent.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-uber-parent.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-uber-parent/</url>
+        <connection>scm:git:git@github.com:jqassistant/parent.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant/parent.git</developerConnection>
+        <url>https://github.com/jqassistant/parent/</url>
         <tag>HEAD</tag>
     </scm>
 
