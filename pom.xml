@@ -777,5 +777,6 @@
         <module>bom</module>
         <module>core</module>
         <module>plugin</module>
+        <module>distribution-specification</module>
     </modules>
 </project>
