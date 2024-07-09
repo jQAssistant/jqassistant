@@ -1,0 +1,4 @@
+"%test-store":
+  jqassistant:
+    store:
+      uri: "file://${project.build.directory}/test-store"

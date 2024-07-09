@@ -20,6 +20,7 @@ jobs:
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
     with:
+      java_test_versions: '[17, 21]'
       publish_snapshots: true
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}

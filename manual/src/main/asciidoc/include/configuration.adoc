@@ -1,0 +1,325 @@
+[[core:Configuration]]
+== Configuration
+
+The behavior of jQAssistant accepts a wide range of configuration options, e.g.
+
+* passing properties to scanner or report plugins
+* rules to be executed during analysis including required rule parameters
+* define thresholds for warnings and failures during analysis
+* location of the database to use, e.g. directory of the embedded Neo4j instance or URL of a remote Neo4j instance
+
+The configuration options can be passed in different ways:
+
+* YAML files (recommended)
+* system properties or environment variables
+* command line options for the Command Line Interface
+* configuration options in the Maven build descriptors (pom.xml)
+
+=== YAML files
+
+jQAssistant automatically loads YAML files from the following locations of the user home and the working directory:
+
+* `.jqassistant.yml` or `.jqassistant.yaml`
+* `.yml` or `.yaml` files located in the directory or sub-directories of `.jqassistant/`
+
+NOTE: Configuration files in the user home directory have a lower priority than those in the working directory.
+
+TIP: The locations can be overridden by command line parameters of the Command Line Utility or the Maven plugin.
+
+The following options are supported (including default values):
+
+[source,yaml]
+----
+jqassistant:
+  # Controls whether the execution of jQAssistant shall be skipped
+  #
+  # -Djqassistant.skip: true|false
+  skip: false
+
+  # The list of jQAssistant plugins to load and activate.
+  #
+  # Each plugin is identified using its Maven coordinates:
+  #
+  # -Djqassistant.plugins[0].group-id
+  # -Djqassistant.plugins[0].artifact-id
+  # -Djqassistant.plugins[0].version
+  # -Djqassistant.plugins[0].classifier (optional)
+  # -Djqassistant.plugins[0].type (optional)
+  # -Djqassistant.plugins[0].exclusions[0].group-id (optional)
+  # -Djqassistant.plugins[0].exclusions[0].artifact-id (optional)
+  plugins:
+    - group-id:
+      artifact-id:
+      version:
+      classifier:
+      type:
+      exclusions:
+        - group-id:
+          artifact-id:
+
+
+  # The store configuration
+  store:
+
+    # URI of the database to connect to. Supported URI schemes are 'file' for embedded databases and 'bolt' for connecting to a running Neo4j instance (3.x+), e.g.
+    #
+    # -Djqassistant.store.uri
+    uri: file://target/jqassistant/store
+
+    # Settings for the embedded Neo4j store
+    embedded:
+
+      # Enable the HTTP and BOLT connector for the embedded store
+      #
+      # -Djqassistant.store.embedded.connector-enabled: true|false
+      connector-enabled: false
+
+      # The listen address for the HTTP and BOLT connectors
+      #
+      # -Djqassistant.store.embedded.listen-address
+      listen-address: localhost
+
+      # The BOLT connector port
+      #
+      # -Djqassistant.store.embedded.bolt-port
+      bolt-port: 7687
+
+      # The HTTP connector port
+      #
+      # -Djqassistant.store.embedded.http-port
+      http-port: 7474
+
+      # The directory from which Neo4j shall load plugins (e.g. APOC)
+      #
+      # -Djqassistant.store.embedded.neo4j-plugin-directory
+      neo4j-plugin-directory:
+
+      # The list of Neo4j plugins to load and activate.
+      # It uses the "neo4j-plugin-directory" (see above) if provided, otherwise a temporary directory is created.
+      neo4j-plugins:
+        # Each plugin is identified using its Maven coordinates:
+        #
+        # -Djqassistant.store.embedded.neo4j-plugins[0].group-id
+        # -Djqassistant.store.embedded.neo4j-plugins[0].artifact-id
+        # -Djqassistant.store.embedded.neo4j-plugins[0].version
+        # -Djqassistant.store.embedded.neo4j-plugins[0].classifier (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].type (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].exclusions[0].group-id (optional)
+        # -Djqassistant.store.embedded.neo4j-plugins[0].exclusions[0].artifact-id (optional)
+        - group-id:
+          artifact-id:
+          version:
+          classifier:
+          type:
+          exclusions:
+            - group-id:
+              artifact-id:
+
+
+    # Settings for connecting to a remote Neo4j store
+    remote:
+
+      # The user name for authentication.
+      #
+      # -Djqassistant.store.username
+      username:
+
+      # The password for authentication.
+      #
+      # -Djqassistant.store.password
+      password:
+
+      # Activate encryption level for 'bolt' connections.
+      #
+      # -Djqassistant.store.encryption: true|false
+      encryption: true
+
+      #The trust strategy for 'bolt' connections
+      #
+      # -Djqassistant.store.trust-strategy: trustAllCertificates|trustCustomCaSignedCertificates|trustSystemCaSignedCertificates
+      trust-strategy: trustAllCertificates
+
+      # The file containing the custom CA certificate for trust strategy.
+      #
+      # -Djqassistant.store.trust-certificate
+      trust-certificate:
+
+      # Additional properties to be passed to the remote store as key-value pairs.
+      #
+      # -Djqassistant.store.properties
+      properties:
+
+
+  # The Scanner configuration
+  scan:
+
+    # Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning.
+    #
+    # -Djqassistant.scan.reset: true|false
+    reset: true
+
+    # Specifies if a scan shall be continued if an error is encountered.
+    #
+    # -Djqassistant.scan.continue-on-error: true|false
+    continue-on-error: false
+
+    # The items to include for scanning.
+    include:
+
+      # A list of files to include.
+      #
+      #jqassistant.scan.include.files[0]
+      files:
+      # - src/folder
+
+      # A list of URLs to include.
+      #
+      #jqassistant.scan.include.urls[0]
+      urls:
+      # - maven:repository::https://nexus/repository
+
+    # The properties to configure scanner plugins as key-value pairs. The supported properties are plugin specific.
+    #
+    # -Djqassistant.scan.properties
+    properties:
+      # plugin.property.key: value
+
+
+  # The analyze configuration
+  analyze:
+
+    # The rule configuration
+    rule:
+
+      # The name of the directory containing project rules.
+      #
+      # -Djqassistant.analyze.rule.directory
+      directory: jqassistant/
+
+      # The default severity of concepts without an explicit severity.
+      #
+      # -Djqassistant.analyze.rule.default-concept-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      default-concept-severity: MINOR
+
+      # The default severity of constraint without an explicit severity.
+      #
+      # -Djqassistant.analyze.rule.default-constraint-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      default-constraint-severity: MAJOR
+
+      # The default severity of groups without an explicit severity.
+      #
+      # -Djqassistant.analyze.rule.default-group-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
+      default-group-severity:
+
+    # The report configuration
+    report:
+
+      # The properties to configure report plugins. The supported properties are plugin specific.
+      #
+      # -Djqassistant.analyze.report.properties
+      properties:
+        # plugin.property.key: value
+
+      # Determines the severity level for reporting a warning.
+      #
+      # -Djqassistant.analyze.report.warn-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
+      warn-on-severity: MINOR
+
+      # Determines the severity level for reporting a failure.
+      #
+      # -Djqassistant.analyze.report.fail-on-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER|NEVER
+      fail-on-severity: MAJOR
+
+      # Determines if jQAssistant shall continue the build if failures have been detected.
+      #
+      # -Djqassistant.analyze.report.continue-on-failure: true|false
+      continue-on-failure: false
+
+      # Create an archive containing all generated reports.
+      #
+      # -Djqassistant.analyze.report.create-archive: true|false
+      create-archive: false
+
+    # The concepts to be applied.
+    #
+    # -Djqassistant.analyze.concepts[0]
+    concepts:
+    # - my-concept
+
+    # The constraints to be validated.
+    #
+    # -Djqassistant.analyze.constraints[0]
+    constraints:
+    # - my-constraint
+
+    # The constraints to be excluded (e.g. if referenced from a group).
+    #
+    # -Djqassistant.analyze.exclude-constraints[0]
+    exclude-constraints:
+    # - any-constraint
+
+
+    # The groups to be executed.
+    #
+    # -Djqassistant.analyze.groups[0]
+    groups:
+    # - spring-boot:Default
+
+    # The parameters to be passed to the executed rules.
+    #
+    # -Djqassistant.analyze.rule-parameters."parameterName"
+    rule-parameters:
+    # parameterName: value
+
+    # Execute concepts even if they have already been applied before
+    #
+    # -Djqassistant.analyze.execute-applied-concepts: true|false
+    execute-applied-concepts: false
+
+    # The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.
+    #
+    # -Djqassistant.analyze.warn-on-rule-execution-time-seconds
+    warn-on-rule-execution-time-seconds: 5
+----
+
+=== Environment Variables
+
+The names of system properties may be used for environment variables.
+Depending on execution environment there may be restrictions on the naming, e.g. not allowing characters like `.`.
+Therefore, the following mappings are supported (see https://download.eclipse.org/microprofile/microprofile-config-1.4/microprofile-config-spec.html#default_configsources.env.mapping[Eclipse Microprofile Config]):
+
+* Exact match (e.g. `jqassistant.scan.continue-on-error`)
+* Replace each character that is neither alphanumeric nor _ with _ (e.g. `jqassistant_scan_continue_on_error`)
+* Replace each character that is neither alphanumeric nor _ with _; then convert the name to upper case (`JQASSISTANT_SCAN_CONTINUE_ON_ERROR`)
+
+=== System Properties
+
+All configuration options can be provided as system properties.
+The according names are documented in the YAML example above.
+
+NOTE: Configuration options defined in a YAML file can be overridden by environment variables of system properties.
+The priorities are as following: `System Property` --> `Environment Variable` --> `YAML file`.
+
+=== Property placeholders
+
+Values may contain placeholders referering to other properties:
+
+[source,yaml]
+----
+src-dir: ./src
+
+jqassistant:
+  scan:
+    include:
+      files:
+        - ${src-dir}/folder1
+        - ${src-dir}/folder2
+----
+
+The properties in placeholders can be defined in different sources:
+
+- within the same or other configuration files
+- system properties
+- environment variables
+- Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)
+

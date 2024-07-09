@@ -1,0 +1,423 @@
+== Introduction
+
+This chapter provides an introduction to the concepts of jQAssistant.
+
+=== How it works
+
+The basic idea behind jQAssistant is to integrate the following steps into the build process of a software system:
+
+1. Scan the generated artifacts and store structural information about them into a database
+2. Analyze the structures using _rules_ which are represented by queries
+3. Report violations  
+
+jQAssistant itself is a plugin based framework. It comes with a pre-defined set of plugins containing scanners, rules and reports but can be easily extended by
+custom rules or implementations.
+
+As database an embedded instance of Neo4j Community Edition is managed and used by jQAssistant. This means that no setup or configuration of a dedicated server
+is required. Neo4j has been chosen because:
+
+- it is a mature open source graph database
+- it allows easy modelling of structural elements of a software and their relations
+- it comes with a very expressive and easy to learn query language (Cypher)
+
+=== Scanner
+Scanners are used to import software structures into the database. They are provided by plugins and may support several types of artifacts, e.g.
+Java classes, XML files or database structures.
+The jQAssistant framework (including the command line or Maven plugin) only provides the infrastructure to run a scan operation on a set
+of items, e.g. files, directories or URLs. Every active plugin decides itself if it accepts and imports a given item by checking several
+conditions, e.g. file name extensions or a provided scope. The latter is an extra information which provides specific context information
+like "java:classpath" for a directory containing Java classes or "maven:repository" for a URL.
+
+=== Rules
+Rules are expressed as Cypher queries and are specified in XML files:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <group id="default">
+        <includeConstraint refId="my-rules:MyConstraint"/>
+    </group>
+
+    <concept id="my-rules:MyConcept">
+        <description>A human readable description of the concept.</description>
+        <cypher><![CDATA[
+            MATCH
+              ...
+            WHERE
+              ...
+            MERGE
+              ...
+            SET
+              ...
+            RETURN
+              ...
+        ]]></cypher>
+    </concept>
+
+    <concept id="my-rules:MyProvidingConcept">
+        <providesConcept refId="java:GeneratedType"/>
+        <description>A human readable description of the concept.</description>
+        <cypher><![CDATA[
+            MATCH
+              ...
+            WHERE
+              ...
+            SET
+              type:Generated
+            RETURN
+              ...
+        ]]></cypher>
+    </concept>
+
+    <constraint id="my-rules:MyConstraint" severity="blocker">
+        <requiresConcept refId="my-rules:MyConcept" />
+        <requiresConcept refId="java:GeneratedType" />
+        <description>A human readable description of the constraint.</description>
+        <cypher><![CDATA[
+            MATCH
+                ...
+            WHERE
+                ...
+            RETURN
+                ...
+        ]]></cypher>
+    </constraint>
+
+</jqassistant-rules>
+----
+
+Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
+the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
+
+TIP: Despite rules are usually referenced by their id it is also possible to use the wildcards `\*` and `?`.
+This is especially useful for defining groups and include all constraints that match a specific pattern, e.g. `my-rules:*`.
+
+==== Groups
+A group is a set of rules (i.e. concepts, constraints or other groups) that shall be executed together by including them with the option to overwrite their default severity.
+This allows to adjust analysis depth for different types of builds, e.g. a Continuous Integration build (CI) can be configured
+to only execute rules with low costs (i.e. execution times) whereas a report build is allowed to run for a longer time with more
+expensive checks.
+
+
+==== Concepts
+The information created by the scanner represents the structure of a software project on a raw level. _Concept_ rules allow enriching the database with higher
+level information to ease the process of writing queries that check for violations (i.e. constraints) . This typically means adding labels, properties or
+relations.
+
+jQAssistant comes with language and framework plugins which include general technical concepts, e.g.
+
+- "java:MethodOverrides" provided by the Java plugin adds a relation "OVERRIDES" between a method of a sub class to the super class methods it overrides.
+
+It is recommended to use concepts to enrich the database with information which is specific for the concrete project, e.g. labels can be added to
+
+- package nodes representing modules of the application ("Module")
+- package nodes that represent technical layers ("UI", "EJB")
+- class nodes representing elements with a specific role ("Controller", "Model")
+
+NOTE: Even if the primary intention of a concept is to enrich data it still must provide a return clause.
+If a concept returns an empty result a warning will be generated by jQAssistant.
+The rationale is that in such case the concept does not match the structure of the application and other rules which depend on it will probably not work as expected.
+
+TIP: The return clause of the concept shall preferably return a node/relation itself instead of an attribute of it.
+With this, XML and HTML reports can provide additional information about the concept.
+
+==== Constraints
+A _Constraint_ is a query which detects violations, e.g.
+
+- classes with specific roles (e.g. entity, controller, etc.) that are either located in the wrong packages or have names that do not fit defined conventions
+- invocations of methods which are deprecated and/or forbidden (e.g. constructors of java.util.Date)
+- dependencies to other modules which are not allowed
+
+A constraint can depend on one or more concepts and usually is referenced by one or more groups.
+
+NOTE: If a constraint returns a result jQAssistant will report an error including the provided description and information about the returned elements. This
+information shall help the developer to understand and fix the problem.
+
+==== Rule Dependencies
+
+As shown in the snippets above concepts or constraints may define dependencies to other concepts. There are two approaches:
+
+`requiresConcept` (XML) or `requiresConcepts` (Asciidoc):: A rule explicitly requires another concept to be executed before.
+`providesConcept` (XML) or `providesConcepts` (Asciidoc):: A concept extends another concept by adding the same labels or relationships.
+
+The rules are referenced by their ids. jQAssistant will ensure that these rules are executed in the correct order.
+
+Usually dependencies are expressed using `requiresConcept(s)`, e.g. a constraint requires one or more specific concepts.
+These concepts again might require other concepts.
+
+There may be situation where pre-defined constraints and required concepts are defined within a plugin.
+In this case it can become necessary to extend such concepts with project-specific concepts, e.g. to work with generated code:
+
+* Constraints defined by the Spring plugin delivered with jQAssistant verify correct usage of dependency injection
+* These constraints exclude all Java types labeled with `:Type:Generated` and therefore require the concept `java:GeneratedType` which is defined by the Java plugin
+* This concept may be extended by project specific concepts adding labels `:Type:Generated` and declaring the provided concept `java:GeneratedType` using `providesConcept(s)`
+
+There might be cases where a concept is provided by a rule plugin which provides the same labels or relationships as an (abstract) concept from another plugin.
+In these cases it is possible to perform a dynamic extension (duck-typing) to the abstract by specifying `providesConcept` in a group definition:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <group id="default">
+        <includeConcept refId="plugin1:ConcreteConcept">
+            <providesConcept refId="plugin2:AbstractConcept"/>
+        </includeConcept>
+    </group>
+
+</jqassistant-rules>
+----
+
+==== Severity Of Rules
+
+A rule may optionally define the _severity_ level. jQAssistant allows to break the build if there are violations in the configured severity level (or higher).
+For example, if the severity is set to critical, and if there are violated constraints with blocker and/or critical severity; the build will break.
+This feature allows projects to pay down their technical debt in an iterative manner.
+
+Following severity levels are supported:
+
+- info
+- minor (default for concepts)
+- major (default for constraints)
+- critical
+- blocker
+
+There is no default severity for groups. If a severity is specified then it is applied to all included elements where no
+further severity is given, e.g.
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+
+    <group id="my-rules:MyGroup" severity="blocker">
+        <includeConstraint refId="my-rules:MyConstraint1"/>
+        <includeConstraint refId="my-rules:MyConstraint2" severity="minor"/>
+    </group>
+
+</jqassistant-rules>
+----
+
+Thus execution of the group 'my-rules:MyGroup' will report a violation of constraint...
+
+- ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
+- ...'my-rules-Constraint2' with severity 'minor' (specified within the group)
+
+==== Warnings and Failures
+
+Based on the severity of violated rules jQAssistant generates warnings and failures.
+These are based on configurable thresholds:
+
+* `jqassistant.analyze.report.warn-on-severity` (default: `minor`)
+* `jqassistant.analyze.report.fail-on-severity` (default: `major`)
+
+The warnings and failures are logged on the console and part of generated reports (e.g. XML or Asciidoc).
+
+Furthermore, the setting `jqassistant.analyze.report.continue-on-failure` (default: `false`) controls whether jQAssistant will continue or break the build failures have been detected during analysis.
+
+TIP: If violations are exported to dashboards (e.g. SonarQube, Teamscale) then `jqassistant.analyze.report.continue-on-failure` should be set to `true`.
+
+==== Script Languages
+
+Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
+
+[source,xml]
+.my-scripting-rules.xml
+----
+<constraint id="xmlExample:JavaScriptConstraint">
+    <description>JavaScript example constraint: returns a result containing the number
+        of declared methods for each class.</description>
+    <script language="JavaScript">
+        store.beginTransaction()
+        // Define the columns returned by the constraint
+        var columnNames = java.util.Arrays.asList("Type", "MethodsOfType");
+        // Define the list of rows returned by the constraint
+        var rows = new java.util.ArrayList();
+        // Execute a query using the store
+        var typeIterator = store.executeQuery("match (t:Type:Class) return t").iterator();
+        while(typeIterator.hasNext()) {
+            // Get the next row from the query result
+            var typeRow = typeIterator.next();
+            // Get the column "t" from the row, it represents a type
+            // descriptor as defined by the Java plugin
+            var type = typeRow.get("t",
+                com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.class);
+            // Get the declared methods of the type and count them
+            var methodIterator = type.getDeclaredMethods().iterator();
+            var methodsOfType = 0;
+            while( methodIterator.hasNext()) {
+                methodIterator.next();
+                methodsOfType++;
+            }
+            // Create the row and columns for the result
+            var columns = new java.util.HashMap();
+            columns.put("Class", context.toColumn(type));
+            columns.put("MethodsOfType", context.toColumn(methodsOfType));
+            var row = context.toRow(rule, columns);
+            rows.add(row);
+        }
+        store.commitTransaction()
+        // Return the result
+        var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+        new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
+    </script>
+</constraint>
+----
+
+==== Rule Parameters
+
+Both concepts and constraints may define required parameters:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://schema.jqassistant.org/rule/jqassistant-rule-v1.8.xsd">
+
+    <concept id="my-rules:ApplicationRootPackage">
+        <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <1>
+        <description>Labels the root package of the application with "Root".</description>
+        <cypher><![CDATA[
+           MATCH
+             (root:Package)
+           WHERE
+             root.name = $rootPackage <2>
+           SET
+             root:Root
+           RETURN
+             root
+        ]]></cypher>
+    </concept>
+
+</jqassistant-rules>
+----
+
+<1> Declaration of a required parameter with a default value.
+<2> Reference to a parameter in a Cypher query.
+
+The following parameter types are supported:
+
+* char
+* byte
+* short
+* int
+* long
+* float
+* double
+* boolean
+* String
+
+The values for the required parameters must be provided by the execution context, e.g. the jQAssistant
+Maven plugin or the command line utility. A rule may specify a default value which is used if no concrete value
+is provided for an execution.
+
+NOTE: Default values are currently not supported for rules in Asciidoc files.
+
+For rules expressed in Cypher the parameters are referenced by `{...}` placeholders. For scripts the values are passed
+as parameters, i.e. they may be used directly in the code.
+
+==== Result verification
+
+The default strategy (`rowCount`) verifies a result of a concept or constraint by counting the number of returned rows, i.e.
+
+- a concept is valid if it returns at least one row
+- a constraint is valid if it returns no row
+
+This behavior can be customized by specifing `min` and `max` thresholds:
+
+[source,xml]
+----
+<constraint id="my-rules:MyConstraint">
+    <description>A human readable description of the constraint.</description>
+    <cypher><![CDATA[
+        MATCH
+          (n)
+        WHERE
+          ...
+        RETURN
+          n as Element
+    ]]></cypher>
+    <verify>
+        <rowCount max="20"/>
+    </verify>
+</concept>
+----
+
+It is also possible to verify aggregated results reported as numeric values in a column, e.g.
+
+[source,xml]
+----
+<concept id="my-rules:MyConstraint">
+    <description>A human readable description of the constraint.</description>
+    <cypher><![CDATA[
+        MATCH
+          (n)
+        WHERE
+          ...
+        RETURN
+          count(n) as Count
+    ]]></cypher>
+    <verify>
+        <aggregation column="Count" max="20"/>
+    </verify>
+</concept>
+----
+
+* For each returned row the value of the column "Count" will be verified following the same principles as described above
+* The rule fails if at least one returned row does not match the expected result
+* The attribute `column`/`aggregationColumn` can be omitted, in this case the first column of the result is evaluated
+* Similar to the row count verification the attributes `min`/`aggregationMin` and `max`/`aggregationMax` can be specified for individual thresholds
+
+==== Report
+
+A rule may select a specific report plugin and pass properties to it:
+
+[source,xml]
+----
+<concept id="my-rules:MyConcept">
+    <description>A human readable description of the concept.</description>
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n)
+          ...
+        RETURN
+          m, n
+    ]]></cypher>
+    <report reportType="myReport">
+        <property name="key">value</property>
+    </report>
+</concept>
+----
+
+===== Primary Column
+
+If a rule reports more than one column it might be necessary to specify the column which contains the primary element
+the rule refers to, e.g. the Java class. The information may be evaluated by reporting tools, e.g. for creating issues
+in SonarQube:
+
+[source,xml]
+----
+<concept id="my-rules:MyConcept">
+    <description>A human readable description of the concept.</description>
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n)
+          ...
+        RETURN
+          m, n
+    ]]></cypher>
+    <report primaryColumn="n" />
+</concept>
+----
+
+NOTE: The first column will be used automatically if no primary column is explicitly specified.
