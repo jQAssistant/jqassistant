@@ -3,38 +3,13 @@
 
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
-        <artifactId>jqa-uber-parent</artifactId>
+        <artifactId>parent</artifactId>
         <version>2.4.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
-    <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>manual</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
 
     <name>jQAssistant User Manual</name>
-    <url>https://jqassistant.org/</url>
-
-    <inceptionYear>2016</inceptionYear>
-
-    <organization>
-        <name>jQAssistant Development Team</name>
-        <url>https://jqassistant.org</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License, v3</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-manual.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-manual.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-manual</url>
-      <tag>HEAD</tag>
-  </scm>
 
     <description>
         The user manual of jQAssistant.

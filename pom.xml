@@ -780,5 +780,6 @@
         <module>distribution-specification</module>
         <module>cli</module>
         <module>maven</module>
+        <module>manual</module>
     </modules>
 </project>
