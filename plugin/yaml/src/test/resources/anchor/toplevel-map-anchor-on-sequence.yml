@@ -1,0 +1,8 @@
+k1:
+  &alias
+  - s1v1
+  - s1v2
+  - s1v3
+k2: *alias
+
+

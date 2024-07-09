@@ -1,0 +1,9 @@
+- firstname: &name Emilia
+  lastname: Fischer
+- firstName: *name
+  lastname: Rützighausen
+- firstname: &name Elias
+  lastname: Pumpernickel
+- fistname: *name
+  lastname: Weißbierschläger
+

@@ -1,0 +1,27 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.yaml2"
+                    name="jQAssistant YAML 2 Plugin"
+                    version="${project.version}">
+    <description>Provides yet another a scanner for YAML files</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.yaml2.impl.scanner.YMLFileScannerPlugin</class>
+    </scanner>
+</jqassistant-plugin>
