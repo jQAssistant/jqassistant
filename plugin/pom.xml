@@ -327,6 +327,7 @@
         <module>json</module>
         <module>maven</module>
         <module>yaml</module>
+        <module>xml</module>
     </modules>
 
 </project>
