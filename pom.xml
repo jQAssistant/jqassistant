@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:https://github.com/jqassistant/jqassistant.git</connection>
         <developerConnection>scm:git:https://github.com/jqassistant/jqassistant.git</developerConnection>
-        <url>scm:git:https://github.com/jqassistant/jqassistant/</url>
+        <url>https://github.com/jqassistant/jqassistant/</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -776,5 +776,6 @@
     <modules>
         <module>bom</module>
         <module>core</module>
+        <module>plugin</module>
     </modules>
 </project>
