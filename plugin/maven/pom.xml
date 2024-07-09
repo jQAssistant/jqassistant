@@ -5,39 +5,16 @@
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>parent</artifactId>
         <version>2.4.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
-    <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>maven3</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
 
     <name>jQAssistant Maven 3 Plugin</name>
-    <url>https://jqassistant.org/</url>
 
     <description>
         Plugin for jQAssistant to be able to scan and to
         analyze Maven 3 related artifacts.
     </description>
-
-    <organization>
-        <name>jQAssistant Development Team</name>
-        <url>https://jqassistant.org</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License, v3</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-maven3-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-maven3-plugin.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-maven3-plugin</url>
-      <tag>HEAD</tag>
-  </scm>
 
     <properties>
         <jqa-plugin-common.version>2.4.0-SNAPSHOT</jqa-plugin-common.version>
