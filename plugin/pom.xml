@@ -322,6 +322,7 @@
 
     <modules>
         <module>common</module>
+        <module>java</module>
     </modules>
 
 </project>
