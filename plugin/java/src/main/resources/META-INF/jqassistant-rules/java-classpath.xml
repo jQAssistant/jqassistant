@@ -1,0 +1,418 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <concept id="java-classpath:ResolveType">
+        <description>Adds a relation "RESOLVES_TO" from a type required by an artifact to a type contained in another
+            artifact if their fully qualified names match.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a1:Artifact)-[:REQUIRES]->(t1:Java:Type)
+            WITH
+              a1, t1, t1.fqn AS fqn
+            MATCH
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+            WHERE
+              t2.fqn = t1.fqn
+            CALL {
+              WITH
+                t1, t2
+              MERGE
+                (t1)-[:RESOLVES_TO]->(t2)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) AS ResolvedTypes
+            ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveMember">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Adds a relation "RESOLVES_TO" from a member (i.e. field or method) of a type to a member of another
+            type if there is a relation "RESOLVES_TO" between the two types and the members have the same signature.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type),
+              (t1)-[:DECLARES]->(m1),
+              (t2)-[:DECLARES]->(m2)
+            WHERE
+              (m1:Field or m1:Method)
+              and m1.signature = m2.signature
+            CALL {
+              WITH
+                m1, m2
+              MERGE
+              (m1)-[:RESOLVES_TO]->(m2)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedMembers
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveDependsOn">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
+            CALL {
+              WITH
+                t, dependsOn, t2
+              MERGE
+                (t)-[dependsOn1:DEPENDS_ON]->(t2)
+              SET
+                dependsOn1=dependsOn,
+                dependsOn1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedDependencies
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveExtends">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "EXTENDS" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Java:Type)-[extends:EXTENDS]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
+            CALL {
+              WITH
+                t, extends, t2
+              MERGE
+                (t)-[extends1:EXTENDS]->(t2)
+              SET
+                extends1=extends,
+                extends1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedSuperClass
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveImplements">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "IMPLEMENTS" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Java:Type)-[implements:IMPLEMENTS]->(t1:Java:Type)-[:RESOLVES_TO]->(t2:Java:Type)
+            CALL {
+              WITH
+                t, implements, t2
+              MERGE
+                (t)-[implements1:IMPLEMENTS]->(t2)
+              SET
+                implements1=implements,
+                implements1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedInterfaces
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveFieldType">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "OF_TYPE" relations between fields and types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (f:Field)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                f, ofType, t
+              MERGE
+                (f)-[ofType1:OF_TYPE]->(t)
+              SET
+                ofType1=ofType,
+                ofType1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedFieldTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveThrows">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "THROWS" relations between methods and types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[throws:THROWS]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                m, throws, t
+              MERGE
+                (m)-[throws1:THROWS]->(t)
+              SET
+                throws1=throws,
+                throws1.resolved=true
+            }
+            RETURN
+              count(*) as ResolvedExceptionTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveReturns">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "RETURNS" relations between methods and types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[returns:RETURNS]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                m, returns, t
+              MERGE
+                (m)-[returns1:RETURNS]->(t)
+              SET
+                returns1=returns,
+                returns1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedReturnTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveParameterType">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "OF_TYPE" relations between method parameters and types to their resolved types with a
+            property "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Parameter)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                m, ofType, t
+              MERGE
+                (m)-[ofType1:OF_TYPE]->(t)
+              SET
+                ofType1=ofType,
+                ofType1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedParameterTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveAnnotationType">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "OF_TYPE" relations between annotation and types to their resolved types with a
+            property "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Annotation)-[ofType:OF_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                a, ofType, t
+              MERGE
+                (a)-[ofType1:OF_TYPE]->(t)
+              SET
+                ofType1=ofType,
+                ofType1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedAnnotationTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveOfRawType">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates "OF_RAW_TYPE" relations between generic bounds and types to their resolved types with a
+            property "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (b:Bound)-[ofRawType:OF_RAW_TYPE]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL {
+              WITH
+                b, ofRawType, t
+              MERGE
+                (b)-[ofRawType1:OF_RAW_TYPE]->(t)
+              SET
+                ofRawType1=ofRawType,
+                ofRawType1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedRawTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveValue">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <requiresConcept refId="java-classpath:ResolveMember"/>
+        <description>Propagates "IS" relations between values and types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (v:Value)-[is:IS]->(e)-[:RESOLVES_TO]->(e2)
+            CALL {
+              WITH
+                v, is, e2
+              MERGE
+                (v)-[is1:IS]->(e2)
+              SET
+                is1=is,
+                is1.resolved=true
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedValueTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveReads">
+        <requiresConcept refId="java-classpath:ResolveMember"/>
+        <description>Propagates "READS" relations between methods and fields to their resolved fields with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[reads:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+            CALL {
+              WITH
+                m, reads, f2
+              MERGE
+                (m)-[reads1:READS {relationId: id(reads)}]->(f2)
+              SET
+                reads1=reads,
+                reads1.resolved=true
+              REMOVE
+                reads1.relationId
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedReads
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveWrites">
+        <requiresConcept refId="java-classpath:ResolveMember"/>
+        <description>Propagates "WRITES" relations between methods and fields to their resolved fields with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[writes:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+            CALL {
+              WITH
+                m, writes, f2
+              MERGE
+                (m)-[writes1:WRITES {relationId: id(writes)}]->(f2)
+              SET
+                writes1=writes,
+                writes1.resolved=true
+              REMOVE
+                writes1.relationId
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as ResolvedWrites
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveInvokes">
+        <requiresConcept refId="java-classpath:ResolveMember"/>
+        <description>Propagates "INVOKES" relations between methods to their resolved methods with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[invokes:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
+            CALL {
+              WITH
+                m, invokes, m2
+              MERGE
+                (m)-[invokes1:INVOKES {relationId : id(invokes)}]->(m2)
+              SET
+                invokes1=invokes,
+                invokes1.resolved=true
+              REMOVE
+                invokes1.relationId
+              }
+            RETURN
+              count(*) as ResolvedInvocations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:Resolve">
+        <requiresConcept refId="java-classpath:ResolveDependsOn"/>
+        <requiresConcept refId="java-classpath:ResolveExtends"/>
+        <requiresConcept refId="java-classpath:ResolveImplements"/>
+        <requiresConcept refId="java-classpath:ResolveFieldType"/>
+        <requiresConcept refId="java-classpath:ResolveThrows"/>
+        <requiresConcept refId="java-classpath:ResolveReturns"/>
+        <requiresConcept refId="java-classpath:ResolveParameterType"/>
+        <requiresConcept refId="java-classpath:ResolveAnnotationType"/>
+        <requiresConcept refId="java-classpath:ResolveOfRawType"/>
+        <requiresConcept refId="java-classpath:ResolveValue"/>
+        <requiresConcept refId="java-classpath:ResolveReads"/>
+        <requiresConcept refId="java-classpath:ResolveWrites"/>
+        <requiresConcept refId="java-classpath:ResolveInvokes"/>
+        <description>Includes all concepts for resolving a Java classpath and returns the number of resolved elements.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              ()-[r:RESOLVES_TO]->()
+            RETURN
+              count(r) as ResolvedElements
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+</jqassistant-rules>

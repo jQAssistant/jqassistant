@@ -1,0 +1,633 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 http://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <concept id="java:InnerType">
+        <description>Sets a label "Inner" on inner types.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Java:Type)-[:DECLARES]->(innerType:Java:Type)
+            CALL {
+              WITH
+                innerType
+              SET
+                innerType:Inner
+            } IN TRANSACTIONS
+            RETURN
+              count(innerType) AS InnerTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:AnonymousInnerType">
+        <requiresConcept refId="java:InnerType"/>
+        <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
+        <cypher><![CDATA[
+            MATCH
+              (anonymousInnerTypes:Inner:Java:Type)
+            WHERE
+              anonymousInnerTypes.name =~ ".*\\$[0-9]*"
+            CALL {
+              WITH
+                anonymousInnerTypes
+              SET
+                anonymousInnerTypes:Anonymous
+            } IN TRANSACTIONS
+            RETURN
+              count(anonymousInnerTypes) AS AnonymousInnerTypes
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TypeAssignableFrom">
+        <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable
+            from the other (i.e. a super class or interface).
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:IMPLEMENTS|EXTENDS*0..]->(superType:Java:Type)
+            CALL {
+                WITH
+                  type, superType
+                MERGE
+                  (superType)-[:ASSIGNABLE_FROM]->(type)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) AS AssignableTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:MemberInheritedFrom">
+        <description>Creates a relationship INHERITS between two "Member" labeled nodes if a member is inherited from a
+            super type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(member:Member),
+              (superType:Java:Type)-[:DECLARES]->(superMember:Member),
+              path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]->(superType))
+            WHERE
+              type <> superType
+              and member.name is null
+              and superMember.name is not null
+              and member.signature = superMember.signature
+              and superMember.visibility <> "private"
+            WITH
+              type, member, superType, superMember, length(path) as depth
+            ORDER BY
+              depth asc
+            WITH
+              member, head(collect(superMember)) as inheritedMember
+            CALL {
+              WITH
+                member, inheritedMember
+              MERGE
+                (member)-[:INHERITED_FROM]->(inheritedMember)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as InheritedMembers
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:MethodOverrides">
+        <requiresConcept refId="java:MemberInheritedFrom"/>
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(method:Method),
+              (superType:Java:Type)-[:DECLARES]->(superMethod:Method),
+              path=(type)-[:EXTENDS|IMPLEMENTS*]->(superType)
+            WHERE
+              method.signature = superMethod.signature
+              and superMethod.visibility <> "private"
+              and not (
+                (method)-[:INHERITED_FROM]->(:Method)
+                or (superMethod)-[:INHERITED_FROM]->(:Method)
+              )
+            WITH
+              type, method, superType, superMethod, length(path) as depth
+            ORDER BY
+              depth asc
+            WITH
+              method, head(collect(superMethod)) as overriddenMethod
+            CALL {
+              WITH
+                method, overriddenMethod
+              MERGE
+                (method)-[:OVERRIDES]->(overriddenMethod)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as OverriddenMethods
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:VirtualInvokes">
+        <requiresConcept refId="java:MethodOverrides"/>
+        <requiresConcept refId="java:MemberInheritedFrom"/>
+        <description>Propagates INVOKES relationships as VIRTUAL_INVOKES to non-abstract methods within the inheritance
+            hierarchy, i.e. identifying potential methods that could be invoked.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (method:Method)-[invokes:INVOKES]->(:Method)-[:INHERITED_FROM*0..1]->(invokedMethod:Method),
+              (invokedMethod)<-[:OVERRIDES*0..]-(overridingMethod:Method)
+            WHERE NOT (                                     // exclude...
+              overridingMethod.abstract is not null         // ...abstract methods
+              or (overridingMethod)-[:INHERITED_FROM]->()   // ...inherited methods
+            )
+            WITH
+              method, overridingMethod, coalesce(invokes.lineNumber, -1) as lineNumber
+            CALL {
+              WITH
+                method, overridingMethod, lineNumber
+              MERGE
+                (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]->(overridingMethod)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as VirtualInvokes
+            ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:VirtualDependsOn">
+        <description>Propagates DEPENDS_ON relationships as VIRTUAL_DEPENDS_ON to types that extend or implement the
+            referenced type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:EXTENDS|IMPLEMENTS*]->(superType:Java:Type),
+              (dependent:Java:Type)-[:DEPENDS_ON]->(superType)
+            WHERE NOT (
+              superType.fqn = "java.lang.Object"
+              or (dependent)-[:EXTENDS|IMPLEMENTS*]->(superType) // exclude types sharing the same super classes/interfaces
+            )
+            WITH
+              dependent, collect(distinct type) as types
+            UNWIND
+              types as type
+            CALL {
+              WITH
+                dependent, type
+              MERGE
+                (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) AS VirtualDependsOn
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:MethodOverloads">
+        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another
+            one from the same type (i.e. the
+            methods have the same name but not the same signature).
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(method:Method),
+              (type)-[:DECLARES]->(otherMethod:Method)
+            WHERE
+              method <> otherMethod
+              AND method.name = otherMethod.name
+              AND method.signature <> otherMethod.signature
+            CALL {
+              WITH method, otherMethod
+              MERGE
+                (method)-[:OVERLOADS]->(otherMethod)
+            } IN TRANSACTIONS
+            RETURN
+              count(method) AS OverloadedMethods
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:Deprecated">
+        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters)
+            with "Deprecated".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Java:Type)
+            WHERE
+              dt.fqn='java.lang.Deprecated'
+            SET
+              e:Deprecated
+            RETURN
+              e AS DeprecatedElement
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Exception">
+        <description>Labels types deriving from java.lang.Exception as "Exception".</description>
+        <cypher><![CDATA[
+            MATCH
+              (exception)-[:EXTENDS*]->(t:Java:Type)
+            WHERE
+              t.fqn = 'java.lang.Exception'
+            SET
+              exception:Exception
+            RETURN
+              exception AS Exception
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:RuntimeException">
+        <description>Labels types deriving from java.lang.RuntimeException as "RuntimeException".</description>
+        <cypher><![CDATA[
+            MATCH
+              (runtimeException)-[:EXTENDS*]->(t:Java:Type)
+            WHERE
+              t.fqn = 'java.lang.RuntimeException'
+            SET
+              runtimeException:RuntimeException
+            RETURN
+              runtimeException AS RuntimeException
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Error">
+        <description>Labels types deriving from java.lang.Error as "Error".</description>
+        <cypher><![CDATA[
+            MATCH
+              (throwable)-[:EXTENDS*]->(t:Java:Type)
+            WHERE
+              t.fqn = 'java.lang.Error'
+            SET
+              throwable:Error
+            RETURN
+              throwable AS Error
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Throwable">
+        <description>Labels types deriving from java.lang.Throwable as "Throwable".</description>
+        <cypher><![CDATA[
+            MATCH
+              (throwable)-[:EXTENDS*]->(t:Java:Type)
+            WHERE
+              t.fqn = 'java.lang.Throwable'
+            SET
+              throwable:Throwable
+            RETURN
+              throwable AS Throwable
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:JavaVersion">
+        <description>Set a human readable property "javaVersion" on a class file based on its byte code version.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(type:Java:Type)
+            SET
+              type.javaVersion=
+                CASE type.byteCodeVersion
+                  WHEN 65 THEN "Java 21"
+                  WHEN 64 THEN "Java 20"
+                  WHEN 63 THEN "Java 19"
+                  WHEN 62 THEN "Java 18"
+                  WHEN 61 THEN "Java 17"
+                  WHEN 60 THEN "Java 16"
+                  WHEN 59 THEN "Java 15"
+                  WHEN 58 THEN "Java 14"
+                  WHEN 57 THEN "Java 13"
+                  WHEN 56 THEN "Java 12"
+                  WHEN 55 THEN "Java 11"
+                  WHEN 54 THEN "Java 10"
+                  WHEN 53 THEN "Java 9"
+                  WHEN 52 THEN "Java 8"
+                  WHEN 51 THEN "Java 7"
+                  WHEN 50 THEN "Java 6"
+                  WHEN 49 THEN "Java 5"
+                  WHEN 48 THEN "Java 1.4"
+                  WHEN 47 THEN "Java 1.3"
+                  WHEN 46 THEN "Java 1.2"
+                  WHEN 45 THEN "Java 1.1/1.0"
+                  ELSE "Unknown"
+                END
+            RETURN
+              count(type) as Types
+        ]]></cypher>
+        <verify>
+            <aggregation column="Types"/>
+        </verify>
+    </concept>
+
+    <concept id="java:FunctionalInterface">
+        <description>Labels functional interfaces (i.e. to be used as lambda expressions)
+            with `FunctionalInterface`.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (i:Java:Interface)-[:DECLARES]->(m:Member:Java:Method {abstract: true})
+            WITH
+                i, count(m) AS methods
+            WHERE
+                methods = 1
+            CALL {
+              WITH
+                i
+              SET
+                i:FunctionalInterface
+            } IN TRANSACTIONS
+            RETURN
+              count(i) AS FunctionInterfaces
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:DefaultMethod">
+        <description>Labels default methods of interfaces with `Default`.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type:Java:Interface)-[:DECLARES]->(defaultMethod:Java:Method)
+            WHERE NOT
+              defaultMethod.abstract is not null
+            SET
+              defaultMethod:Default
+            RETURN
+              defaultMethod AS DefaultMethod, type AS Interface
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PostConstruct">
+        <description>Labels methods annotated `@javax.annotation.PostConstruct` with 'PostConstruct'.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (postConstruct:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Java:Type{fqn:"javax.annotation.PostConstruct"})
+            SET
+              postConstruct:PostConstruct
+            RETURN
+              postConstruct as PostConstruct
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PreDestroy">
+        <description>Labels methods annotated `@javax.annotation.PreDestroy` with 'PreDestroy'.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (preDestroy:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Java:Type{fqn:"javax.annotation.PreDestroy"})
+            SET
+              preDestroy:PreDestroy
+            RETURN
+              preDestroy as PreDestroy
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:PackageAnnotatedBy">
+        <description>Propagates the annotations from the package-info.java to the package node.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p:Package)-[:CONTAINS]->(t:Java:Type{sourceFileName: "package-info.java"}),
+              (t)-[:ANNOTATED_BY]->(a:Annotation)
+            MERGE
+              (p)-[:ANNOTATED_BY]->(a)
+            RETURN p
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:GeneratedType" severity="minor">
+        <description>Reports the count of types labeled with `Generated`, grouped by containing artifact.</description>
+    </concept>
+
+    <concept id="java:GeneratedLombokType" severity="info">
+        <providesConcept refId="java:GeneratedType"/>
+        <description>Labels types generated by Lombok as 'Generated' (requires 'lombok.addLombokGeneratedAnnotation=true' in 'lombok.config').</description>
+        <cypher><![CDATA[
+            MATCH
+              (generatedType:Java:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"lombok.Generated"})
+            SET
+              generatedType:Generated
+            RETURN
+              count(generatedType) as GeneratedTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:InnerTypeParameterDeclaredByOuterType">
+        <description>Creates a `DECLARED_BY` relation of a type parameter required by an inner to type to its
+            declaration by an outer type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (inner:Java:Type)-[requires:REQUIRES_TYPE_PARAMETER]->(requiredTypeParameter:TypeVariable),
+              (outer:Java:Type)-[declares:DECLARES_TYPE_PARAMETER]->(declaredTypeParameter:TypeVariable),
+              shortestPath((outer)-[:DECLARES*]->(inner))
+            WHERE
+              outer <> inner
+              and declaredTypeParameter.name = requiredTypeParameter.name
+            CALL {
+              WITH
+                requiredTypeParameter, declaredTypeParameter
+              MERGE
+                (requiredTypeParameter)-[:DECLARED_BY]->(declaredTypeParameter)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as OuterTypeDeclarations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:TypeArgumentDeclaredByTypeParameter">
+        <description>Creates a `DECLARED_BY` relation between a type argument of a parameterized type to the according type parameter of the declaring type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (parameterizedType:ParameterizedType)-[:OF_RAW_TYPE]->(rawType:Java:Type),
+              (parameterizedType)-[hasActualTypeArgument:HAS_ACTUAL_TYPE_ARGUMENT]->(typeArgument),
+              (rawType)-[declaresTypeParameter:DECLARES_TYPE_PARAMETER]->(typeParameter)
+            WHERE
+              hasActualTypeArgument.index = declaresTypeParameter.index
+            CALL {
+              WITH
+                typeArgument, typeParameter
+              MERGE
+                (typeArgument)-[:DECLARED_BY]->(typeParameter)
+            } IN TRANSACTIONS
+            RETURN
+              count(*) as TypeParameterDeclarations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:PackageDependency">
+        <description>
+            Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:CONTAINS]->(t1:Java:Type)-[dependsOn:DEPENDS_ON]->(t2:Java:Type)<-[:CONTAINS]-(p2:Package)
+            WHERE
+                p1 <> p2
+            WITH
+              p1, count(dependsOn) as weight, p2
+            CALL {
+              WITH
+                p1, weight, p2
+              MERGE
+                (p1)-[d:DEPENDS_ON]->(p2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              p1 AS package, COUNT(p2) AS PackageDependencies
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:ArtifactDependency">
+        <description>
+            Creates a new DEPENDS_ON relationship between artifacts or updates an existing one with a 'used'
+            property if there are type dependencies between them, i.e. if an artifact contains a type with a fully
+            qualified name which a type from another artifact requires.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a1:Artifact)-[:CONTAINS]->(:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type),
+              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+            WHERE
+              a1 <> a2
+              and t1.fqn = t2.fqn
+            WITH
+              a1, count(dependsOn) as weight, a2
+            CALL {
+              WITH
+                a1, weight, a2
+              MERGE
+                (a1)-[d:DEPENDS_ON]->(a2)
+              SET
+                d.weight = weight
+            } IN TRANSACTIONS
+            RETURN
+              a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:AvoidCyclicPackageDependencies">
+        <requiresConcept refId="java:PackageDependency"/>
+        <description>Cyclic package dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (p1:Package)-[:DEPENDS_ON]->(p2:Package),
+                path=shortestPath((p2)-[:DEPENDS_ON*]->(p1))
+            WHERE
+                p1<>p2
+            RETURN
+                p1 as Package, nodes(path) as Cycle
+            ORDER BY
+                Package.fqn
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java:AvoidCyclicArtifactDependencies">
+        <requiresConcept refId="java:ArtifactDependency"/>
+        <description>Cyclic artifact dependencies must be avoided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact),
+                path=shortestPath((a2)-[:DEPENDS_ON*]->(a1))
+            WHERE
+                a1<>a2
+            RETURN
+                a1 as Artifact, nodes(path) as Cycle
+            ORDER BY
+                Artifact.fqn
+        ]]></cypher>
+    </constraint>
+
+    <concept id="java:TestMethod">
+        <description>
+            Java methods labeled with `Test` are considered to represent test methods (e.g. for unit or integration tests).
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(testMethod:Java:Method:Test)
+            RETURN
+              artifact as Artifact, testClass as TestClass, count(testMethod) as TestMethods
+            ORDER BY
+              artifact.fqn, testClass.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TestClass">
+        <requiresConcept refId="java:TestMethod"/>
+        <description>
+            Classes declaring test methods are labeled with `Test`.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
+            SET
+              testClass:Test
+            RETURN
+              artifact as Artifact, testClass as TestClass
+            ORDER BY
+              artifact.fqn, testClass.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:AssertMethod">
+        <description>An assert method is used to perform assertions within a test method.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(assertMethod:Assert:Method)
+            RETURN
+              type AS DeclaringType, count(assertMethod) as AssertMethods
+            ORDER BY
+              type.fqn
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:TestMethodWithoutAssertion">
+        <requiresConcept refId="java:VirtualInvokes"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
+        <requiresParameter name="javaTestAssertMaxCallDepth" type="int" defaultValue="3" />
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <cypher><![CDATA[
+            MATCH
+              (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
+            OPTIONAL MATCH
+              path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assert:Method:Assert))
+            WITH
+              testClass, testMethod, path
+            WHERE
+              path is null
+              or length(path) > $javaTestAssertMaxCallDepth
+            RETURN
+              distinct testClass AS TestClass, testMethod AS TestMethod
+            ORDER BY
+              testClass.fqn, testMethod.name
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
+</jqassistant-rules>
+

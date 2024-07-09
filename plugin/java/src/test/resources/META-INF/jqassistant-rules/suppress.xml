@@ -1,0 +1,122 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+
+    <constraint id="suppress:SuppressAnnotationMustNotBeScanned">
+        <description>The annotation @jQASuppress not be reported.</description>
+        <cypher><![CDATA[
+        MATCH
+          (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress"})
+        RETURN
+          e
+        ]]></cypher>
+    </constraint>
+
+    <concept id="suppress:SuppressedClass">
+        <description>Return all suppressed classes.</description>
+        <cypher><![CDATA[
+        MATCH
+          (class:Java:jQASuppress:Class)
+        RETURN
+          class
+        ]]></cypher>
+    </concept>
+
+    <constraint id="suppress:Class">
+        <description>Return all classes.</description>
+        <cypher><![CDATA[
+        MATCH
+          (class:Java:Class)
+        RETURN
+          class
+        ]]></cypher>
+    </constraint>
+
+    <concept id="suppress:SuppressedField">
+        <description>Return all suppressed fields.</description>
+        <cypher><![CDATA[
+        MATCH
+          (:Type:Class)-[:DECLARES]->(field:Java:jQASuppress:Field)
+        RETURN
+          field
+        ]]></cypher>
+    </concept>
+
+    <constraint id="suppress:Field">
+        <description>Return all fields.</description>
+        <cypher><![CDATA[
+        MATCH
+          (:Type:Class)-[:DECLARES]->(field:Java:Field)
+        RETURN
+          field
+        ]]></cypher>
+    </constraint>
+
+    <concept id="suppress:SuppressedMethod">
+        <description>Return all suppressed methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
+        RETURN
+          method
+        ]]></cypher>
+    </concept>
+
+    <constraint id="suppress:Method">
+        <description>Return all methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (:Type:Class)-[:DECLARES]->(method:Java:Method)
+        WHERE
+          not method:Constructor
+        RETURN
+          method
+        ]]></cypher>
+    </constraint>
+
+    <concept id="suppress:SuppressedMethodInPrimaryColumn">
+        <description>Return all suppressed methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="method" />
+    </concept>
+
+    <constraint id="suppress:MethodInPrimaryColumn">
+        <description>Return all methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:Method)
+        WHERE
+          not method:Constructor
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="method" />
+    </constraint>
+
+    <concept id="suppress:SuppressedMethodInNonPrimaryColumn">
+        <description>Return all suppressed methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:jQASuppress:Method)
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="type" />
+    </concept>
+
+    <constraint id="suppress:MethodInNonPrimaryColumn">
+        <description>Return all methods.</description>
+        <cypher><![CDATA[
+        MATCH
+          (type:Type:Class)-[:DECLARES]->(method:Java:Method)
+        WHERE
+          not method:Constructor
+        RETURN
+          type, method
+        ]]></cypher>
+        <report primaryColumn="type" />
+    </constraint>
+</jqa:jqassistant-rules>

@@ -1,0 +1,69 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.java"
+                    name="jQAssistant Java Plugin"
+                    version="${project.version}">
+    <description>Provides scanner for Java elements (e.g. packages, classes, manifest and property files) and rules for
+        common language concepts (e.g. Deprecation), dependencies and metrics.
+    </description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</class>
+        <!-- JPMS -->
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</class>
+    </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
+    </scope>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageDirectoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassTypeScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ManifestFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ServiceLoaderFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.XmlPropertyFileScannerPlugin</class>
+    </scanner>
+    <rules>
+        <resource>java.xml</resource>
+        <resource>java-classpath.xml</resource>
+    </rules>
+</jqassistant-plugin>
