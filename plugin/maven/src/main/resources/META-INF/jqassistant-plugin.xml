@@ -1,0 +1,47 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.maven3"
+                    name="jQAssistant Maven 3 Plugin"
+                    version="${project.version}">
+    <description>Provides a scanner for Maven 3 modules.</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</class>
+    </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope</class>
+    </scope>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenModelScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</class>
+    </scanner>
+    <rules>
+        <resource>maven3.xml</resource>
+    </rules>
+</jqassistant-plugin>
