@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Use Stackoverflow for your question on jQAssistant
+    url: https://stackoverflow.com/questions/tagged/jqassistant
+    about: Please use stackoverflow for supporting issues. Using stackoverflow will help us to have all questions in a plublic space and you have the chance to get help from the whole jQAssistant community.
+  - name: Use our Idea Hub for new Ideas and Suggestions
+    url: https://github.com/jQAssistant/jQA-Idea-Hub
+    about: Some features might be not releated to any particular subproject or will affect all of them. To report such issues, please use this project.
