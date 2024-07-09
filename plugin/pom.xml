@@ -320,4 +320,8 @@
         </dependency>
     </dependencies>
 
+    <modules>
+        <module>common</module>
+    </modules>
+
 </project>

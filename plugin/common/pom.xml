@@ -5,39 +5,15 @@
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>parent</artifactId>
         <version>2.4.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
-    <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>common</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
-
     <name>jQAssistant Plugin Common</name>
-    <url>https://jqassistant.org/</url>
-
-    <organization>
-        <name>jQAssistant Development Team</name>
-        <url>https://jqassistant.org</url>
-    </organization>
 
     <description>
         The jQAssistant Plugin Common provides a set of common
         classes which can be used by all jQAssistant plugins.
     </description>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License, v3</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-plugin-common.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-plugin-common.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-plugin-common</url>
-      <tag>HEAD</tag>
-  </scm>
 
     <properties>
         <org.codehaus.groovy.version>3.0.20</org.codehaus.groovy.version>
