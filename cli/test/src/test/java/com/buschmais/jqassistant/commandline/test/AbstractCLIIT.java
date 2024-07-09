@@ -29,10 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -42,6 +39,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.junit.Assume.assumeTrue;
 
@@ -53,6 +51,7 @@ import static org.junit.Assume.assumeTrue;
 public abstract class AbstractCLIIT {
 
     private static final String[] DISTRIBUTIONS = new String[] { "neo4jv4", "neo4jv5" };
+    private static final Runtime.Version JAVA_17 = Runtime.Version.parse("17");
 
     /**
      * Resolves the distribution parameter of the method {@link AbstractCLIIT#before(String)} (String)}.
@@ -145,6 +144,7 @@ public abstract class AbstractCLIIT {
      */
     @BeforeEach
     public void before(String neo4jVersion) throws IOException {
+        assumeThat(Runtime.version()).isGreaterThanOrEqualTo(JAVA_17);
         this.neo4jVersion = neo4jVersion;
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
