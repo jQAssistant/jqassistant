@@ -1,0 +1,4 @@
+jqassistant:
+  analyze:
+    report:
+      create-archive: true

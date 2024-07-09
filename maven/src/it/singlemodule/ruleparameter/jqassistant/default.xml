@@ -1,0 +1,20 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
+
+    <group id="default">
+        <includeConcept refId="test:RuleParameter" />
+    </group>
+
+    <concept id="test:RuleParameter">
+        <requiresParameter name="testArtifactId" type="String" />
+        <description>Test concept for verifying rule parameters.</description>
+        <cypher>
+            MATCH
+              (project:Maven:Project)
+            WHERE
+              project.artifactId=$testArtifactId
+            RETURN
+              project
+        </cypher>
+    </concept>
+
+</jqa:jqassistant-rules>

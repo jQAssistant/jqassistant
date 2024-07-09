@@ -1,0 +1,290 @@
+
+== Maven Plugin
+
+jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build
+process or manual execution from a command line.
+
+=== Setup
+
+[[ProjectScope]]
+==== Project Scope
+
+The jQAssistant Maven plugins uses a root Maven module where the following items will be searched or created:
+
+- the set of rules to apply (from the directory "jqassistant/")
+- the database, default "{project.build.directory}/jqassistant/store"
+- the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
+- the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
+- additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")
+
+By default the root module is the directory, where the `mvn` command has been executed.
+
+For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
+`jqassistant.use-execution-root-as-project-root` can be set to `false`.
+The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
+parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
+The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
+
+.Single project consisting of two modules
+[source]
+----
+root*
+   |-pom.xml
+   |
+   |-jqassistant
+   |           |-rules.xml
+   |
+   |-module1
+   |       |-pom.xml
+   |
+   |-module2
+           |-pom.xml
+----
+
+.Multiple projects, each consisting of two modules
+[source]
+----
+root
+   |-pom.xml
+   |
+   |-project1*
+   |        |-jqassistant
+   |        |           |-rules1.xml
+   |        |
+   |        |-pom.xml
+   |        |-module1
+   |        |       |-pom.xml
+   |        |
+   |        |-module2
+   |                |-pom.xml
+   |
+   |-project2*
+            |-jqassistant
+            |           |-rules2.xml
+            |-pom.xml
+            |-module1
+            |       |-pom.xml
+            |
+            |-module2
+                    |-pom.xml
+----
+
+NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
+
+==== Plugin Configuration
+
+The recommended way of configuring the jQAssistant Maven plugin is using files call `.jqassistant.yml`.
+These are usually located in root directory of the reactor (i.e. where the 'mvn' command is executed) but can as well be placed into modules to add specific configurations (e.g. to include files for scanning).  
+Available options are described in the section <<core:Configuration>>.
+
+Furthermore, the following Maven specific option is supported:
+
+[source,yaml]
+----
+jqassistant:
+
+  maven:
+    # Force the module where 'mvn' is being executed to be used as root module. The database will be created in this module and contain all information of the reactor. Rules will be read from the rules folder of this module.
+    #
+    # jqassistant.maven.use-execution-root-as-project-root: true|false
+    use-execution-root-as-project-root: false
+
+    # Re-use store instances across all modules of the Maven reactor. Can be set to false for mitigating problems in specific setups,
+    # the jQAssistant Maven plugin will display an according hint when this is necessary.
+    #
+    # jqassistant.maven.reuse-store: true|false
+    reuse-store: true
+
+  # Properties for module level goals (e.g. scan)
+  module:
+
+    # Skip goals which are executed per module, useful to exclude single modules from `scan`.
+    # NOTE: 'jqassistant.skip' applies to all goals (e.g. scan, analyze)
+    #
+    # jqassistant.maven.module.skip: true|false
+    skip: false
+----
+
+TIP: Maven properties (e.g. `project.basedir`) or user properties defined in `pom.xml` or `settings.xml` files can be referenced in `.jqassistant.yml` files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
+
+The configuration furthermore supports profiles, e.g. for `mvn verify -Pcustom-profile` the following properties may be activated:
+
+[source,yaml]
+----
+"%custom-profile":
+  jqassistant:
+    store:
+      uri: "bolt://localhost:7687"
+----
+
+.Setup of the jQAssistant Maven plugin including supported configuration options and their default values (within comments).
+[source,xml]
+----
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@{project.groupId}</groupId>
+                <artifactId>@{project.artifactId}</artifactId>
+                <version>@{project.version}</version>
+                <executions>
+                    <execution>
+                        <!-- The id "default-cli" is used to allow execution of the goals with the given configuration from the command line -->
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                        <!--
+                        <extensions>false</extensions>
+                        -->
+                        <configuration>
+                            <!--
+                            <configurationLocations>
+                                <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
+                            </configurationLocations>
+                            <yaml>
+                                jqassistant:
+                                  skip: true
+                            <yaml>
+                            -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- The following section is only required if a Maven site shall be generated including a jQAssistant report -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+            <plugin>
+                <groupId>@{project.groupId}</groupId>
+                <artifactId>@{project.artifactId}</artifactId>
+                <version>@{project.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
+----
+
+configurationLocations (-Djqassistant.configuration.locations)::
+* the list of configuration locations, e.g. files and directories
+* default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
+
+yaml::
+* embedded YAML configuration
+* can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
+
+If multiple, partially overlapping configurations are provided then the following priorities apply (from lowest to highest):
+
+. `~/.jqassistant.yml` configuration file in the user's home directory
+. `.jqassistant.yml` files embedded in the dependencies of the jQAssistant Maven Plugin
+. Properties or YAML configuration section specified in pom.xml files
+. `.jqassistant.yml` file in the directory where the Maven build is triggered (execution root)
+. `.jqassistant.yml` file in the current Maven module (for multi-module projects)
+. environment variables, e.g. `JQASSISTANT_SKIP=true`
+. System properties provided to the Maven build (e.g. `-Djqassistant.skip`)
+
+==== Command Line
+
+Goals may also be executed from the command line:
+
+[source]
+----
+mvn ${project.groupId}:${project.artifactId}:available-rules
+----
+
+Adding the following lines to the file settings.xml (usually located in the $HOME/.m2) eases execution of jQAssistant goals from the command line:
+
+[source,xml]
+----
+<pluginGroups>
+    <pluginGroup>com.buschmais.jqassistant</pluginGroup>
+</pluginGroups>
+----
+
+The same goal can now be executed using the following command line statement:
+
+[source]
+----
+mvn jqassistant:available-rules
+----
+
+=== Goals
+
+* <<scan>>
+* <<available-scopes>>
+* <<reset>>
+* <<server>>
+* <<analyze>>
+* <<effective-configuration>>
+* <<effective-rules>>
+* <<available-rules>>
+* <<report>>
+
+[[scan]]
+==== jqassistant:scan
+
+Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
+gathered information in the database.
+
+[[available-scopes]]
+==== jqassistant:available-scopes
+
+List all available scopes which may be specified for scanInclude properties.
+
+[[reset]]
+==== jqassistant:reset
+
+Resets the database by deleting all nodes and relationships.
+
+[[server]]
+==== jqassistant:server
+
+Starts the integrated Neo4j web server (default address: http://localhost:7474).
+
+[[analyze]]
+==== jqassistant:analyze
+
+Executes an analysis.
+
+NOTE: If for a multi-module project a report archive shall be created and installed into the local repository the
+https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven Install Plugin] must be configured to use
+`installAtEnd`.
+In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
+
+[[effective-configuration]]
+==== jqassistant:effective-configuration
+
+Print the current configuration as YAML representation on the console.
+
+[[effective-rules]]
+==== jqassistant:effective-rules
+
+List the rules which would be executed for an analysis and the given concepts, constraints or groups.
+
+[[available-rules]]
+==== jqassistant:available-rules
+
+List all available rules.
+
+[[report]]
+==== jqassistant:report
+
+Transforms the XML report into HTML (i.e. for generating a Maven site).
+

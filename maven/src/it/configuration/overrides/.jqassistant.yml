@@ -1,0 +1,8 @@
+jqassistant:
+  scan:
+    include:
+      files:
+        - ${project.basedir}/README.md
+  analyze:
+    groups:
+      - it
