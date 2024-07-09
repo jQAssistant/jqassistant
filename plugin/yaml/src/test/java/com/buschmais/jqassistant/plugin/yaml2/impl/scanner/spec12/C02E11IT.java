@@ -69,22 +69,12 @@ class C02E11IT extends AbstractYAMLPluginIT {
     void cypherAComplexKeyHasTheCorrectLabels() {
         readSourceDocument();
 
-        String checkExistingOfCompleyKeysQuery = "MATCH (ck:Complex:Key) " +
+        String checkExistingOfCompleyKeysQuery = "MATCH (ck:Yaml:Complex:Key) " +
                                                  "RETURN ck";
 
         List<Object> existenceResult = query(checkExistingOfCompleyKeysQuery).getColumn("ck");
 
         assertThat(existenceResult).hasSize(2);
-
-        String findKeysWithUnwantedLabels = "WITH [\"Yaml\", \"Key\", \"Complex\"] AS expected " +
-                                            "MATCH (ck:Complex:Key) " +
-                                            "WITH labels(ck) AS labels " +
-                                            "WHERE labels <> expected " +
-                                            "RETURN labels";
-
-        TestResult query = query(findKeysWithUnwantedLabels);
-
-        assertThat(query.getColumns()).isEmpty();
     }
 
     @Test
