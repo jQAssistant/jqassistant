@@ -3,10 +3,7 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.*;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,7 +26,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.*;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -50,11 +50,18 @@ import static org.junit.Assume.assumeTrue;
 @ExtendWith(AbstractCLIIT.DistributionParameterResolver.class)
 public abstract class AbstractCLIIT {
 
-    private static final String[] DISTRIBUTIONS = new String[] { "neo4jv4", "neo4jv5" };
-    private static final Runtime.Version JAVA_17 = Runtime.Version.parse("17");
+    @RequiredArgsConstructor
+    private enum DISTRIBUTION {
+
+        NEO4JV4(Runtime.Version.parse("11"), Runtime.Version.parse("17")),
+        NEO4JV5(Runtime.Version.parse("17"), Runtime.Version.parse("21"));
+
+        private final Runtime.Version minRuntimeVersion;
+        private final Runtime.Version maxRuntimeVersion;
+    }
 
     /**
-     * Resolves the distribution parameter of the method {@link AbstractCLIIT#before(String)} (String)}.
+     * Resolves the distribution parameter of the method {@link AbstractCLIIT#before(DISTRIBUTION)}}.
      */
     static class DistributionParameterResolver implements ParameterResolver {
 
@@ -63,14 +70,14 @@ public abstract class AbstractCLIIT {
         @Override
         public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
             return parameterContext.getIndex() == 0 && parameterContext.getParameter()
-                .getType() == String.class;
+                    .getType() == DISTRIBUTION.class;
         }
 
         @Override
         public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-            String distribution = parameterContext.getIndex() == 0 ? DISTRIBUTIONS[distributionIndex] : null;
+            DISTRIBUTION distribution = parameterContext.getIndex() == 0 ? DISTRIBUTION.values()[distributionIndex] : null;
             // increment index per execution and reset after # of distributions is reached (current repetition per method is not available via API)
-            distributionIndex = ++distributionIndex % DISTRIBUTIONS.length;
+            distributionIndex = ++distributionIndex % DISTRIBUTION.values().length;
             return distribution;
         }
     }
@@ -85,7 +92,7 @@ public abstract class AbstractCLIIT {
     }
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules")
-        .getFile();
+            .getFile();
 
     public static final String TEST_CONCEPT = "default:TestConcept";
     public static final String TEST_CONCEPT_WITH_PARAMETER = "default:TestConceptWithParameter";
@@ -131,21 +138,24 @@ public abstract class AbstractCLIIT {
     @BeforeAll
     public static void beforeAll() {
         userHome = AbstractCLIIT.class.getResource("/userhome/")
-            .getFile();
+                .getFile();
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
+                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
         configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
-            .load(configurationBuilder.build());
+                .load(configurationBuilder.build());
     }
 
     /**
      * Reset the default store.
      */
     @BeforeEach
-    public void before(String neo4jVersion) throws IOException {
-        assumeThat(Runtime.version()).isGreaterThanOrEqualTo(JAVA_17);
-        this.neo4jVersion = neo4jVersion;
+    public void before(DISTRIBUTION distribution) throws IOException {
+        assumeThat(Runtime.version()
+                .feature()).isGreaterThanOrEqualTo(distribution.minRuntimeVersion.feature())
+                .isLessThanOrEqualTo(distribution.maxRuntimeVersion.feature());
+        this.neo4jVersion = distribution.name()
+                .toLowerCase(Locale.getDefault());
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
@@ -180,11 +190,11 @@ public abstract class AbstractCLIIT {
      * Execute the shell script.
      *
      * @param args
-     *     The arguments.
+     *         The arguments.
      * @throws IOException
-     *     If an error occurs.
+     *         If an error occurs.
      * @throws InterruptedException
-     *     If an error occurs.
+     *         If an error occurs.
      */
     protected ExecutionResult execute(String... args) {
         assumeTrue("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
@@ -208,7 +218,7 @@ public abstract class AbstractCLIIT {
         builder.directory(workingDirectory);
 
         log.info("Executing '{}'.", command.stream()
-            .collect(joining(" ")));
+                .collect(joining(" ")));
         Process process;
         try {
             process = builder.start();
@@ -221,10 +231,10 @@ public abstract class AbstractCLIIT {
         executorService.submit(standardConsole);
         executorService.submit(errorConsole);
         return ExecutionResult.builder()
-            .process(process)
-            .standardConsole(standardConsole.getOutput())
-            .errorConsole(errorConsole.getOutput())
-            .build();
+                .process(process)
+                .standardConsole(standardConsole.getOutput())
+                .errorConsole(errorConsole.getOutput())
+                .build();
     }
 
     /**
@@ -234,7 +244,7 @@ public abstract class AbstractCLIIT {
      */
     protected File getWorkingDirectory() {
         File workingDirectory = new File("target" + "/" + this.getClass()
-            .getSimpleName());
+                .getSimpleName());
         workingDirectory.mkdirs();
         return workingDirectory;
     }
@@ -260,7 +270,7 @@ public abstract class AbstractCLIIT {
             }
         } finally {
             PrintWriter printWriter = new PrintWriter(serverExecutionResult.getProcess()
-                .getOutputStream());
+                    .getOutputStream());
             printWriter.println();
             printWriter.flush();
         }
@@ -291,9 +301,9 @@ public abstract class AbstractCLIIT {
          * Constructor.
          *
          * @param stream
-         *     The stream to redirect.
+         *         The stream to redirect.
          * @param printStream
-         *     The target stream.
+         *         The target stream.
          */
         private ConsoleReader(InputStream stream, PrintStream printStream) {
             this.stream = stream;
