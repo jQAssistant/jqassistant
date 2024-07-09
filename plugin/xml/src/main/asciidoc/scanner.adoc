@@ -1,0 +1,128 @@
+<<XmlFileScanner>> <<XmlSourceScanner>> <<XsdFileScanner>>
+[[XmlFileScanner]]
+== Scanner for XML files
+Imports all XML in a generic representation, e.g. namespaces, elements, attributes and text, using the <<XmlSourceScanner>>.
+The files to scan may be configured using include and exclude filters.
+
+=== Configuration
+
+.Configuration properties
+[options="header", cols="3"]
+|====
+| Property
+| Description
+| Default
+
+| `xml.file.include`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `*.xml,*.my-extension`,
+| `*.xml`
+
+| `xml.file.exclude`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/large-files/*.xml`.
+|
+|====
+
+[[XmlSourceScanner]]
+== Scanner for XML sources
+Imports all XML documents in a generic representation, e.g. namespaces, elements, attributes and text.
+
+This plugin is internally used by other plugins (e.g. <<XmlFileScanner>>) to create an alternative native structure of
+XML documents.
+
+=== :Xml:Document
+Represents an XML document.
+
+.Properties of :Xml:Document
+[options="header"]
+|====
+| Name                    | Description
+| xmlVersion              | The XML version
+| standalone              | The "standalone" attribute of the XML declaration.
+| characterEncodingScheme | The encoding of the XML file.
+| xmlWellFormed           | Indicates if the document is well-formed, i.e. could be parsed.
+| lineNumber              | Last line number
+|====
+
+.Relations of :Xml:Document
+[options="header"]
+|====
+| Name             | Target label(s)  | Cardinality | Description
+| HAS_ROOT_ELEMENT | <<:Xml:Element>> | 1           | References the root element of the document.
+|====
+
+[[:Xml:Element]]
+=== :Xml:Element
+An XML element.
+
+.Properties of :Xml:Element
+[options="header"]
+|====
+| Name       | Description
+| value      | The text value.
+| lineNumber | Last line number of the start tag of the element.
+|====
+
+.Relations of :Xml:Element
+[options="header"]
+|====
+| Name      | Target label(s)             | Cardinality  | Description
+| DECLARES_NAMESPACE | <<:Xml:Namespace>> | 0..n         | References namespaces which are declared on the element.
+| OF_NAMESPACE       | <<:Xml:Namespace>> | 0..1         | References the namespace of the element.
+| HAS_ELEMENT        | <<:Xml:Element>>   | 0..n         | References child elements of the element.
+| HAS_ATTRIBUTE      | <<:Xml:Attribute>> | 0..n         | References attributes of the element.
+| HAS_TEXT           | <<:Xml:Text>>      | 0..n         | References the text values of the element.
+|====
+
+
+[[:Xml:Namespace]]
+=== :Xml:Namespace
+A XML namespace declaration.
+
+.Properties of :Xml:Namespace
+[options="header"]
+|====
+| Name   | Description
+| uri    | The namespace URI.
+| prefix | The optional namespace prefix
+|====
+
+
+[[:Xml:Attribute]]
+=== :Xml:Attribute
+An XML attribute.
+
+.Properties of :Xml:Attribute
+[options="header"]
+|====
+| Name   | Description
+| name   | The name of the atribute.
+| value  | The value of the attribute.
+|====
+
+.Relations of :Xml:Attribute
+[options="header"]
+|====
+| Name         | Target label(s)    | Cardinality | Description
+| OF_NAMESPACE | <<:Xml:Namespace>> | 0..1        | References the namespace of the attribute.
+|====
+
+
+[[:Xml:Text]]
+=== :Xml:Text
+A text value of an XML element.
+
+.Properties of :Xml:Text
+[options="header"]
+|====
+| Name       | Description
+| value      | The text value.
+| lineNumber | Last line number
+|====
+
+[[XsdFileScanner]]
+== Generic scanner for XSD files
+
+Imports all files with the file name suffix ".xsd" using the <<XmlFileScanner>>.
+
