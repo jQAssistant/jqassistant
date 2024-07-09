@@ -1,0 +1,21 @@
+# The default plugins for the jQAssistant Maven Plugin
+jqassistant:
+  default-plugins:
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: java
+      version: ${jqa-java-plugin.version}
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: junit
+      version: ${jqa-junit-plugin.version}
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: json
+      version: ${jqa-json-plugin.version}
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: maven3
+      version: ${jqa-maven3-plugin.version}
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: xml
+      version: ${jqa-xml-plugin.version}
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: yaml2
+      version: ${jqa-yaml2-plugin.version}
