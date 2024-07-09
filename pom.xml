@@ -778,5 +778,6 @@
         <module>core</module>
         <module>plugin</module>
         <module>distribution-specification</module>
+        <module>cli</module>
     </modules>
 </project>
