@@ -326,6 +326,7 @@
         <module>junit</module>
         <module>json</module>
         <module>maven</module>
+        <module>yaml</module>
     </modules>
 
 </project>
