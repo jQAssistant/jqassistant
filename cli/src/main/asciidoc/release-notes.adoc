@@ -1,0 +1,103 @@
+
+= Commandline Tool
+
+== 2.3.0
+
+* Added setting `jqassistant.repositories.ignore-transitive-repositories`
+* Use `~/.m2/repository` as plugin repository if a `settings.xml` is used which does not contain a local repository setting
+* Added command line option `-profiles` for activating configuration profiles in `.jqassistant.yml` files or Maven settings
+
+== 2.2.0
+
+* Added support to specify authentication credentials for mirrors of plugin repositories in `.jqassistant.yml` and Maven settings.
+
+== 2.1.0
+
+* Provide different distributions for JDK 11 (Neo4j 4.x) and JDK 17 or later (Neo4j 5.x)
+
+== 2.0.10
+
+* Added command line parameter `-mavenSettings` for specifying the location of a Maven `settings.xml` file to use for repository, proxy and mirror configurations
+* Improved support for mirrors of remote repositories for plugin provisioning
+* Added setting `non-proxy-hosts` to proxy configuration for plugin provisioning
+
+== 2.0.7
+
+* Added task `effective-configuration` to print the current configuration as YAML representation on the console
+
+== 2.0.0
+
+* Removed configuration options from command line, as they have been completely replaced by the YAML/properties based configuration mechanism
+* Removed plugins from distribution and migrated provision of core plugin to dynamic, configuration based resolution on startup
+* Use Maven settings from `~/.m2/settings.xml` automatically configure local and remote repositories to download plugins
+
+== 1.12.0
+
+* Added option `-continueOnFailure` for the analysis task.
+
+== 1.11.0
+
+* Added new commandline task `list-plugins`. This task lists all plugins
+  known to jQAssistant. Useful to see which plugins are active during the
+  scan, analyze, and report phase of jQAssistant.
+
+== 1.9.0
+
+* Added command line option `createReportArchive` to the analyze task for creating a ZIP archive containing the generated reports
+* Added command line options `storeEncryption`, `storeTrustStrategy` and `storeTrustCertificate` to control encryption for bolt connections to a Neo4j database
+
+== 1.8.0
+
+* Added Asciidoc Report plugin to CLI distribution
+* Removed commandline options `embeddedApocEnabled` `embeddedGraphAlgorithmsEnabled`.
+  These are now available as separate plugins,
+  see https://github.com/jqassistant-contrib/jqassistant-apoc-plugin[APOC plugin] and https://github.com/jqassistant-contrib/jqassistant-graph-algorithms-plugin[Graph Algorithms plugin]
+
+== 1.7.0
+ifdef::jqa-in-manual[== Commandline Tool 1.7.0]
+
+* Removed Neo4j V2 distribution
+* Renamed long option of `-u` for scanning URLs from `--uris` to `--urls`
+* Added option `embeddedGraphAlgorithmsEnabled`
+
+== 1.6.0
+
+* The flag `-continueOnError` was activated by default, it is now deactivated and
+   must be explicitly specified to skip errors during scanning
+* Use a child-first classloading strategy for plugins, i.e. prefer classes that are provided by plugins over classes from the framework
+* Removed deprecated command line option `serverAddress`, replaced by `embeddedListenAddress`
+* Removed deprecated command line option `serverPort`, replaced by `embeddedHttpPort`
+
+== 1.5.0
+
+* Removed deprecated option `severity` from analyze task (replaced by `failOnSeverity` and `warnOnSeverity`)
+* Deprecated option `serverAddress`, replaced by `embeddedListenAddress`
+* Deprecated option `serverPort`, replaced by `embeddedHttpPort`
+* Added options `embeddedBoltPort` and `embeddedApocEnabled`
+
+== 1.4.0
+
+* Two separate commandline tool distributions are now provided: Neo4jv2 (Java 7) and Neo4jv3 (Java 8+, including APOC library)
+* jQAssistant now logs the severity of constraint violations
+  which will cause jQAssistant to fail.
+  It also logs the severity of constraint violations which will
+  cause warnings.
+
+* Added `-daemon` parameter to server task
+
+== 1.3.0
+
+* Maven coordinates changed from `com.buschmais.jqassistant:commandline`
+  to `com.buschmais.jqassistant:jqassistant-commandline`. Therefore the name of the
+  commandline distribution changed from `commandline-1.3.0.zip` to
+  `jqassistant-commandline-1.3.0.zip`.
+* Renamed command line option `severity` to `violationSeverity`, i.e. the threshold for exiting with an error code
+  after at lease one rule has failed
+* Added command line option `warnSeverity` to set the threshold for logging warnings about failed rules to the console
+* Added command line options `defaultConceptSeverity`, `defaultConstraintSeverity` and `defaultGroupSeverity`
+* Added command line options `storeUri`, `storeUsername` and `storePassword` for initial support of remote Neo4j 3.x databases
+
+== 1.2.0
+
+* Added support for rule parameters.
+

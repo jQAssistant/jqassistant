@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant.cli</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.4.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>test</artifactId>
+
+    <name>jQAssistant Commandline Integration Test</name>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-test-distribution</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/distribution</outputDirectory>
+                            <includeGroupIds>com.buschmais.jqassistant.cli</includeGroupIds>
+                            <includeTypes>zip</includeTypes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- Distributions -->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.cli</groupId>
+            <artifactId>jqassistant-commandline-neo4jv4</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.cli</groupId>
+            <artifactId>jqassistant-commandline-neo4jv5</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

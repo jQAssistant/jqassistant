@@ -1,0 +1,32 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>distribution</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>com.buschmais.jqassistant.cli:application:zip:bin:${project.version}</include>
+            </includes>
+            <scope>provided</scope>
+            <useStrictFiltering>true</useStrictFiltering>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <filtered>true</filtered>
+            </unpackOptions>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <outputFileNameMapping>
+                ${artifact.groupId}-${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+</assembly>
