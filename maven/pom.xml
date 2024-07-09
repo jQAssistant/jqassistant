@@ -3,43 +3,19 @@
 
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
-        <artifactId>jqa-uber-parent</artifactId>
+        <artifactId>parent</artifactId>
         <version>2.4.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
-    <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
 
     <name>jQAssistant Plugin for Apache Maven</name>
-    <url>https://jqassistant.org/</url>
-
     <packaging>maven-plugin</packaging>
 
     <description>
         jQAssistant plugin for Apache Maven to integrate jQAssistant
         into a Maven based project.
     </description>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License, v3</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>jQAssistant Development Team</name>
-        <url>https://jqassistant.org</url>
-    </organization>
-
-    <scm>
-        <connection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant/jqa-maven-plugin.git</developerConnection>
-        <url>https://github.com/jqassistant/jqa-maven-plugin</url>
-        <tag>HEAD</tag>
-    </scm>
 
     <properties>
         <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>

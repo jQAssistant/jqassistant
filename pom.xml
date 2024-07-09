@@ -779,5 +779,6 @@
         <module>plugin</module>
         <module>distribution-specification</module>
         <module>cli</module>
+        <module>maven</module>
     </modules>
 </project>
