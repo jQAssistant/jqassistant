@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="745.750244140625" height="305.41680908203125"
+     viewBox="-301 -68.12486267089844 745.750244140625 305.41680908203125">
+    <title>Neo4j Graph Visualization</title>
+    <desc>Created using Neo4j (http://www.neo4j.com/)</desc>
+    <g class="layer relationships">
+        <g class="relationship" transform="translate(-257 -4.999456454869247) rotate(403.67047906043723)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 63.04636505186663 0.5 L 63.04636505186663 -0.5 L 40 -0.5 Z M 109.67970016539202 0.5 L 132.72606521725865 0.5 L 132.72606521725865 3.5 L 139.72606521725865 0 L 132.72606521725865 -3.5 L 132.72606521725865 -0.5 L 109.67970016539202 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="86.36303260862933" y="3"
+                  font-family="sans-serif">CONTAINS
+            </text>
+        </g>
+        <g class="relationship" transform="translate(-127 119.10315640432205) rotate(334.3411942458067)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 78.95832496625678 0.5 L 78.95832496625678 -0.5 L 40 -0.5 Z M 121.82498985273139 0.5 L 160.78331481898817 0.5 L 160.78331481898817 3.5 L 167.78331481898817 0 L 160.78331481898817 -3.5 L 160.78331481898817 -0.5 L 121.82498985273139 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="100.39165740949409" y="3"
+                  font-family="sans-serif">HAS_KEY
+            </text>
+        </g>
+        <g class="relationship" transform="translate(60.29350678842589 29.130670431883686) rotate(371.1705731998893)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 62.85667455855858 0.5 L 62.85667455855858 -0.5 L 40 -0.5 Z M 115.32334173385155 0.5 L 138.18001629241013 0.5 L 138.18001629241013 3.5 L 145.18001629241013 0 L 138.18001629241013 -3.5 L 138.18001629241013 -0.5 L 115.32334173385155 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="89.09000814620507" y="3"
+                  font-family="sans-serif">HAS_VALUE
+            </text>
+        </g>
+        <g class="relationship" transform="translate(241.96524761240664 65.00568987496744) rotate(400.29575737615767)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 72.3635283475776 0.5 L 72.3635283475776 -0.5 L 40 -0.5 Z M 118.99686346110299 0.5 L 151.3603918086806 0.5 L 151.3603918086806 3.5 L 158.3603918086806 0 L 151.3603918086806 -3.5 L 151.3603918086806 -0.5 L 118.99686346110299 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="95.6801959043403" y="3"
+                  font-family="sans-serif">CONTAINS
+            </text>
+        </g>
+        <g class="relationship" transform="translate(241.96524761240664 65.00568987496744) rotate(330.69326255086435)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 64.2285699870434 0.5 L 64.2285699870434 -0.5 L 40 -0.5 Z M 110.86190510056879 0.5 L 135.0904750876122 0.5 L 135.0904750876122 3.5 L 142.0904750876122 0 L 135.0904750876122 -3.5 L 135.0904750876122 -0.5 L 110.86190510056879 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="87.5452375438061" y="3"
+                  font-family="sans-serif">CONTAINS
+            </text>
+        </g>
+    </g>
+    <g class="layer nodes">
+        <g class="node" transform="translate(-257,-4.999456454869247)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#6DCE9E" stroke="#60B58B" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">Source File
+            </text>
+        </g>
+        <g class="node selected" transform="translate(-127,119.10315640432205)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FFD86E" stroke="#EDBA39" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#604A0E"
+                  font-family="sans-serif">JSON Document</text>
+        </g>
+        <g class="node" transform="translate(60.29350678842589,29.130670431883686)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#A5ABB6" stroke="#9AA1AC" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">A
+            </text>
+        </g>
+        <g class="node" transform="translate(241.96524761240664,65.00568987496744)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#DE9BF9" stroke="#BF85D6" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">Array
+            </text>
+        </g>
+        <g class="node" transform="translate(393.2579360360829,193.29196142430231)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FF756E" stroke="#E06760" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">B
+            </text>
+        </g>
+        <g class="node" transform="translate(400.7502759149294,-24.12486551766642)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FF756E" stroke="#E06760" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">C
+            </text>
+        </g>
+    </g>
+</svg>
