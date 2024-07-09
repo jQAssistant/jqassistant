@@ -1,0 +1,234 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <group id="junit4:Default">
+        <includeConstraint refId="junit4:AssertionMustProvideMessage"/>
+        <includeConstraint refId="junit4:NonJUnit4TestMethod"/>
+        <includeConstraint refId="junit4:UsageOfJUnit5TestApi"/>
+    </group>
+
+    <concept id="junit4:TestMethod">
+        <providesConcept refId="java:TestMethod"/>
+        <description>Finds all test methods (i.e. annotated with "@org.junit.Test") and labels them with "Test" and
+            "Junit4".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.Test"
+            SET
+              m:Test:Junit4
+            RETURN
+              m AS Test
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:TestClass">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <description>Labels all classes containing test methods with "Test" and "Junit4".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit4:Test)
+            SET
+              c:Test:Junit4
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:TestClassOrMethod">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit4:TestClass"/>
+        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing
+            classes with "Test" and "Junit4".
+        </description>
+        <deprecated>This concept has been replaced by "junit4:TestMethod" and "junit4:TestClass".</deprecated>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit4:Test)
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:IgnoreTestClassOrMethod">
+        <description>Labels all classes or methods annotated with "@org.junit.Ignore" with "Junit4" and "Ignore".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.Ignore"
+            SET
+              e:Junit4:Ignore
+            RETURN
+              e AS IgnoredElement
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:BeforeMethod">
+        <description>Labels all methods annotated by "@org.junit.Before" with "Junit4" and "Before".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.Before"
+            SET
+              m:Junit4:Before
+            RETURN
+              m AS BeforeMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterMethod">
+        <description>Labels all methods annotated by "@org.junit.After" with "Junit4" and "After".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.After"
+            SET
+              m:Junit4:After
+            RETURN
+              m AS AfterMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:BeforeClassMethod">
+        <description>Labels all methods annotated by "@org.junit.BeforeClass" with "Junit4" and "BeforeClass".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.BeforeClass"
+            SET
+              m:Junit4:BeforeClass
+            RETURN
+              m AS BeforeClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterClassMethod">
+        <description>Labels all methods annotated by "@org.junit.AfterClass" with "Junit4" and "AfterClass".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.junit.AfterClass"
+            SET
+              m:Junit4:AfterClass
+            RETURN
+              m AS AfterClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AssertMethod">
+        <providesConcept refId="java:AssertMethod"/>
+        <description>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</description>
+        <cypher><![CDATA[
+            MATCH
+              (assertType:Type)-[:DECLARES]->(assertMethod)
+            WHERE
+              assertType.fqn = 'org.junit.Assert'
+              and (
+                assertMethod.signature =~ 'void assert.*'
+                or assertMethod.signature =~ 'void fail.*'
+              )
+            SET
+              assertMethod:Junit4:Assert
+            RETURN
+              assertMethod
+            ]]></cypher>
+    </concept>
+
+    <concept id="junit4:SuiteClass">
+        <description>Labels all classes annotated by "@org.junit.runners.Suite.SuiteClasses" with "Junit4" and "Suite" and creates a relation "CONTAINS_TESTCLASS" to all referenced classes.</description>
+        <cypher><![CDATA[
+            MATCH
+              (suite:Type)-[:ANNOTATED_BY]->(suiteClasses)-[:OF_TYPE]->(suiteClassesType:Type)
+            WHERE
+              suiteClassesType.fqn = "org.junit.runners.Suite$SuiteClasses"
+            SET
+              suite:Junit4:Suite
+            WITH
+              suite, suiteClasses
+            MATCH
+              (suiteClasses)-[:HAS]->(:Array:Value)-[:CONTAINS]->(Class:Value)-[:IS]->(testClass:Type)
+            MERGE
+              (suite)-[c:CONTAINS_TESTCLASS]->(testClass)
+            RETURN
+              suite, collect(testClass)
+      ]]></cypher>
+    </concept>
+
+    <concept id="junit4:InnerTestClass">
+        <requiresConcept refId="junit4:TestClass" />
+        <description>Labels inner types of types labeled with "Test" with "Test" and "Inner".</description>
+        <cypher><![CDATA[
+            MATCH
+                (source:Type:Junit4:Test)-[:DECLARES]->(target:Type)
+            SET
+                target:Junit4:Test:Inner
+            RETURN
+                target
+        ]]></cypher>
+    </concept>
+
+    <constraint id="junit4:AssertionMustProvideMessage">
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>All assertions must provide a message.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
+              (testMethod)-[invocation:INVOKES*]->(assertMethod:Junit4:Assert:Method)
+            WHERE NOT (
+                assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+                or assertMethod.signature = 'void fail(java.lang.String)'
+            )
+            RETURN
+              invocation AS Invocation,
+              testType AS DeclaringType,
+              testMethod AS Method
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="junit4:NonJUnit4TestMethod">
+        <requiresConcept refId="java:TestMethod"/>
+        <description>Only the jUnit 4-test annotation must be used to identify test methods in a jUnit 4-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method)
+            WHERE NOT
+              m:Junit4
+            RETURN
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
+    <constraint id="junit4:UsageOfJUnit5TestApi">
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
+        <description>Only the jUnit 4-test api must be used in a jUnit 4-based project.</description>
+        <cypher><![CDATA[
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Test:Method),
+              (m)-[:INVOKES*..3]->(:Junit5:Assert:Method)
+            RETURN DISTINCT
+              t AS TestClass,
+              m AS TestMethod
+        ]]></cypher>
+        <report primaryColumn="TestMethod"/>
+    </constraint>
+
+</jqassistant-rules>

@@ -1,0 +1,108 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+<group id="junit:Default">
+        <includeConstraint refId="junit:AssertionMustProvideMessage"/>
+        <includeConstraint refId="junit:IgnoreWithoutMessage"/>
+        <includeConstraint refId="junit:TestMethodWithoutAssertion"/>
+    </group>
+
+    <concept id="junit:TestCaseDefinedByClass">
+        <description>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testcase:TestCase)
+            WITH
+              testcase
+            MATCH
+              (testclass:Type)
+            WHERE
+              testclass.fqn = testcase.className
+            MERGE
+              (testcase)-[:DEFINED_BY]->(testclass)
+            RETURN
+              testcase.name AS TestCase, testclass AS TestClass
+    ]]></cypher>
+    </concept>
+
+    <concept id="junit:TestCaseImplementedByMethod">
+        <requiresConcept refId="junit:TestCaseDefinedByClass" />
+        <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
+            methods.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (testcase:TestCase)-[:DEFINED_BY]->(testclass:Type),
+              (testclass)-[:EXTENDS*0..]->(:Type)-[:DECLARES]->(testmethod:Method)
+            WHERE
+              testmethod.name = testcase.name
+            MERGE
+              (testcase)-[:IMPLEMENTED_BY]->(testmethod)
+            RETURN
+              testcase.name AS TestCase, testmethod as TestMethod
+    ]]></cypher>
+    </concept>
+
+    <constraint id="junit:IgnoreWithoutMessage">
+        <description>All @Ignore annotations must provide a message.</description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
+            WHERE
+              ignoreType.fqn= "org.junit.Ignore"
+              AND NOT (ignore)-[:HAS]->(:Value{name:"value"})
+            RETURN
+              e AS IgnoreWithoutMessage
+            UNION
+            MATCH
+              (e)-[:ANNOTATED_BY]->(disabled:Annotation)-[:OF_TYPE]->(disabledType:Type)
+            WHERE
+              disabledType.fqn = "org.junit.jupiter.api.Disabled"
+              AND NOT (disabled)-[:HAS]->(:Value{name:"value"})
+            RETURN
+              e AS IgnoreWithoutMessage
+
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="junit:AssertionMustProvideMessage">
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
+        <description>All assertions must provide a message.</description>
+        <deprecated>This constraint has been replaced by "junit4:AssertionMustProvideMessage" and "junit5:AssertionMustProvideMessage".</deprecated>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
+              (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
+            WHERE NOT (
+               assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+               or assertMethod.signature =~ '.* fail(java.lang.String)'
+            )
+            RETURN
+              invocation AS Invocation,
+              testType AS DeclaringType,
+              testMethod AS Method
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="junit:TestMethodWithoutAssertion">
+        <requiresConcept refId="java:VirtualInvokes"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertMethod"/>
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <deprecated>This constraint has been replaced by "java:TestMethodWithoutAssertion".</deprecated>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+            WHERE
+              NOT (testMethod)-[:INVOKES|VIRTUAL_INVOKES*..3]->(:Method:Assert)
+            RETURN
+              testType AS DeclaringType,
+              testMethod AS Method
+        ]]></cypher>
+    </constraint>
+
+
+
+</jqassistant-rules>

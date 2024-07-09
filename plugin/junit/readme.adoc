@@ -1,0 +1,12 @@
+= jQAssistant Java Plugin
+
+This is the http://www.junit.org[JUnit^] Plugin of https://jqassistant.org[jQAssistant^].
+It enables jQAssistant to scan and to analyze JUnit related
+artifacts like:
+
+- JUnit 5 test cases
+- JUnit 4 test cases
+- JUnit 3 test cases
+
+
+For more information on jQAssistant see https://jqassistant.org[^].
