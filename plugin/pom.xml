@@ -324,6 +324,7 @@
         <module>common</module>
         <module>java</module>
         <module>junit</module>
+        <module>json</module>
     </modules>
 
 </project>
