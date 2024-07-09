@@ -305,6 +305,13 @@
                             </goals>
                         </execution>
                     </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.groovy</groupId>
+                            <artifactId>groovy-xml</artifactId>
+                            <version>4.0.10</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
