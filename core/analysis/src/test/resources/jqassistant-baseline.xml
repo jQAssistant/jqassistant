@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jqassistant-baseline xmlns="http://schema.jqassistant.org/baseline/v2.3">
+    <constraint id="test-constraint">
+        <row key="1">
+            <column name="c1">value 1</column>
+            <column name="c2">value 2</column>
+        </row>
+    </constraint>
+    <concept id="test-concept">
+        <row key="1">
+            <column name="c1">value 1</column>
+            <column name="c2">value 2</column>
+        </row>
+    </concept>
+</jqassistant-baseline>

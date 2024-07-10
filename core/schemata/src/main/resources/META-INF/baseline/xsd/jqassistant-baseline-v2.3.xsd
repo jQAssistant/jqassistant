@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://schema.jqassistant.org/baseline/v2.3"
+           targetNamespace="http://schema.jqassistant.org/baseline/v2.3"
+           elementFormDefault="qualified">
+
+    <xs:element name="jqassistant-baseline">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="constraint" type="tns:RuleType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="concept" type="tns:RuleType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="RuleType">
+        <xs:sequence>
+            <xs:element name="row" type="tns:RowType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RowType">
+        <xs:sequence>
+            <xs:element name="column" type="tns:ColumnType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ColumnType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>
