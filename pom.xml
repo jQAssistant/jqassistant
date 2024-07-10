@@ -97,10 +97,10 @@
         <lombok.version>1.18.32</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
-        <neo4j_4x.version>4.4.34</neo4j_4x.version>
-        <neo4j_4x_apoc.version>4.4.0.26</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.21.0</neo4j_5x.version>
-        <neo4j_5x_apoc.version>5.21.0</neo4j_5x_apoc.version>
+        <neo4j_4x.version>4.4.35</neo4j_4x.version>
+        <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
+        <neo4j_5x.version>5.21.2</neo4j_5x.version>
+        <neo4j_5x_apoc.version>${neo4j_5x.version}</neo4j_5x_apoc.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -132,12 +132,6 @@
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.4.0</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.15.1</maven.jaxb2-plugin.version>
-        <!--
-         ! The current version of jQAssistant is always scanned by the
-         ! previous version of jQAssistant.
-         !                          Oliver B. Fischer, 2015-11-27
-         !-->
-        <maven.jqassistant.previous.version>2.3.1</maven.jqassistant.previous.version>
         <maven.resources.version>3.3.0</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.4</maven.site.version>
@@ -167,7 +161,7 @@
                 <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>${maven.jqassistant.previous.version}</version>
+                    <version>2.3.1</version>
                     <executions>
                         <execution>
                             <id>default</id>
