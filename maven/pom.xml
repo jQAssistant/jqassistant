@@ -18,8 +18,6 @@
     </description>
 
     <properties>
-        <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
-        <jqa-distribution-spec.version>2.4.0-SNAPSHOT</jqa-distribution-spec.version>
         <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
@@ -30,9 +28,6 @@
          ! his own lifecyle inclusive versioning.
          ! Oliver B. Fischer, 2016-10-30
          !-->
-        <it.jqa.core.version>2.4.0-SNAPSHOT</it.jqa.core.version>
-        <it.jqa.java-plugin.version>2.4.0-SNAPSHOT</it.jqa.java-plugin.version>
-        <it.jqa.plugin-common.version>2.4.0-SNAPSHOT</it.jqa.plugin-common.version>
         <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
     </properties>
 
@@ -177,7 +172,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>bom</artifactId>
-                <version>${jqa-bom.version}</version>
+                <version>${project.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -198,7 +193,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>
-            <version>${jqa-distribution-spec.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!--
          ! All non-jQAssistant go below!
