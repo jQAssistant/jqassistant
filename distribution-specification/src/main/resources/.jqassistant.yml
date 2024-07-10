@@ -3,19 +3,19 @@ jqassistant:
   default-plugins:
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: java
-      version: ${jqa-java-plugin.version}
+      version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: junit
-      version: ${jqa-junit-plugin.version}
+      version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: json
-      version: ${jqa-json-plugin.version}
+      version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: maven3
-      version: ${jqa-maven3-plugin.version}
+      version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: xml
-      version: ${jqa-xml-plugin.version}
+      version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: yaml2
-      version: ${jqa-yaml2-plugin.version}
+      version: ${project.version}

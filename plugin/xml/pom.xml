@@ -16,10 +16,6 @@
         analyze XML related artifacts.
     </description>
 
-    <properties>
-        <jqa-plugin-common.version>2.4.0-SNAPSHOT</jqa-plugin-common.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -28,13 +24,13 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>${jqa-plugin-common.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
-            <version>${jqa-plugin-common.version}</version>
+            <version>${project.version}</version>
 			<scope>test</scope>
         </dependency>
         <dependency>

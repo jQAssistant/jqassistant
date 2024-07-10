@@ -16,11 +16,6 @@
         Provides the integration of an embedded Neo4j database and server.
     </description>
 
-    <properties>
-        <jqa-bom.version>2.4.0-SNAPSHOT</jqa-bom.version>
-    </properties>
-
-
     <build>
         <plugins>
             <plugin>
@@ -49,7 +44,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>bom</artifactId>
-                <version>${jqa-bom.version}</version>
+                <version>${project.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

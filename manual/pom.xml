@@ -16,18 +16,6 @@
     </description>
 
     <properties>
-        <jqa-neo4jbackend.version>2.4.0-SNAPSHOT</jqa-neo4jbackend.version>
-        <jqa-core-framework.version>2.4.0-SNAPSHOT</jqa-core-framework.version>
-        <jqa-plugin-common.version>2.4.0-SNAPSHOT</jqa-plugin-common.version>
-        <jqa-java-plugin.version>2.4.0-SNAPSHOT</jqa-java-plugin.version>
-        <jqa-json-plugin.version>2.4.0-SNAPSHOT</jqa-json-plugin.version>
-        <jqa-junit-plugin.version>2.4.0-SNAPSHOT</jqa-junit-plugin.version>
-        <jqa-maven3-plugin.version>2.4.0-SNAPSHOT</jqa-maven3-plugin.version>
-        <jqa-xml-plugin.version>2.4.0-SNAPSHOT</jqa-xml-plugin.version>
-        <jqa-yaml2-plugin.version>2.4.0-SNAPSHOT</jqa-yaml2-plugin.version>
-        <jqa-commandline-tool.version>2.4.0-SNAPSHOT</jqa-commandline-tool.version>
-        <jqa-maven-plugin.version>2.4.0-SNAPSHOT</jqa-maven-plugin.version>
-
         <asciidoc.directory>${project.build.directory}/asciidoc-modules-documentation</asciidoc.directory>
         <sourcedoc.directory>${project.build.directory}/asciidoc-modules-documentation</sourcedoc.directory>
     </properties>
@@ -148,7 +136,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>parent</artifactId>
-                <version>${jqa-core-framework.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -162,7 +150,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.neo4j</groupId>
                 <artifactId>embedded</artifactId>
-                <version>${jqa-neo4jbackend.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -177,7 +165,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>yaml2</artifactId>
-                <version>${jqa-yaml2-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -191,7 +179,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>json</artifactId>
-                <version>${jqa-json-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -205,7 +193,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>junit</artifactId>
-                <version>${jqa-junit-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -219,7 +207,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>xml</artifactId>
-                <version>${jqa-xml-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -233,12 +221,12 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>common</artifactId>
-                <version>${jqa-plugin-common.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>common</artifactId>
-                <version>${jqa-plugin-common.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -252,7 +240,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java</artifactId>
-                <version>${jqa-java-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -266,7 +254,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>maven3</artifactId>
-                <version>${jqa-maven3-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -284,7 +272,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.cli</groupId>
                 <artifactId>parent</artifactId>
-                <version>${jqa-commandline-tool.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -302,7 +290,7 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <version>${jqa-maven-plugin.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
