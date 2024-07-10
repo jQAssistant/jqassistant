@@ -1,8 +1,12 @@
 == Core Framework Changelog
 
+== 2.4.0
+
+* Upgraded to Neo4j 5.21.2 and 4.4.34
+
 === 2.3.1
 
-* Upgraded to Neo4j 5.5.21
+* Upgraded to Neo4j 5.21.0
 * Log a warning instead throwing an exception if the Neo4j plugin directory cannot be removed when shutting down the embedded graph store
 
 === 2.3.0
@@ -19,8 +23,8 @@
 * Added links to required and provided concepts in HTML report
 * Delete Neo4j plugin directory and its content after shutting down embedded store
 * Fixed an issue creating the HTML report if a rule result contains invalid XML characters
-* Upgraded to Neo4j 5.5.20 and 4.4.34
-* Upgraded to Neo4j Browser 5.21.0 and 4.4.34
+* Upgraded to Neo4j 5.20.0 and 4.4.34
+* Upgraded to Neo4j Browser 5.21.0
 * Removed quiet period for shutting down internal Neo4j server
 * Removed support for `memory://` store urls from distributions
 * Log Neo4j URL including connection and authentication parameters to console after starting embedded server
