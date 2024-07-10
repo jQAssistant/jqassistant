@@ -11,25 +11,25 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>@it.jqa.plugin-common.version@</version>
+            <version>@project.version@</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
-            <version>@it.jqa.java-plugin.version@</version>
+            <version>@project.version@</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>scanner</artifactId>
-            <version>@it.jqa.core.version@</version>
+            <version>@project.version@</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>report</artifactId>
-            <version>@it.jqa.core.version@</version>
+            <version>@project.version@</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
