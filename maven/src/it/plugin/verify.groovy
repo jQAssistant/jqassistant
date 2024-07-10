@@ -5,7 +5,7 @@ assert new File(basedir, 'site/target/customReport.txt.2').exists()
 // XML report
 def reportFile = new File(basedir, 'site/target/jqassistant/jqassistant-report.xml')
 assert reportFile.exists()
-def report = new XmlSlurper().parse(reportFile)
+def report = new groovy.xml.XmlSlurper().parse(reportFile)
 assert report.group.concept.find { it.@id == 'customPlugin:PluginURI' }.status == "success"
 verifyValueConcept(report.group.concept.find { it.@id == "customPlugin:testValue1" })
 verifyValueConcept(report.group.concept.find { it.@id == "customPlugin:testValue2" })

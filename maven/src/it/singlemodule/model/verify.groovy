@@ -1,6 +1,6 @@
 def reportFile = new File(basedir, 'target/jqassistant/jqassistant-report.xml')
 assert reportFile.exists()
-def report = new XmlSlurper().parse(reportFile)
+def report = new groovy.xml.XmlSlurper().parse(reportFile)
 
 verifyConcept(report, "test:ProjectHasModel", 1)
 verifyConcept(report, "test:ProjectHasEffectiveModel", 1)
