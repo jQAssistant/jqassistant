@@ -1,0 +1,44 @@
+
+= JUnit Plugin
+
+== 1.12.0
+
+* The constraint `junit:AssertionMustProvideMessage` in `junit:Default` has been deprecated
+** The new rule `junit4:AssertionMustProvideMessage` in `junit4:Default` replaces it for jUnit 4
+** The new rule `junit5:AssertionMustProvideMessage` in `junit5:Default` replaces it for jUnit 5
+* Adds `junit4:NonJUnit4TestMethod` and `junit4:UsageOfJUnit5TestApi` to `junit4:Default`
+* Adds `junit5:NonJUnit5TestMethod` and `junit5:UsageOfJUnit4TestApi` to `junit5:Default`
+
+== 1.10.0
+
+* Added support for additional assert methods to concept `junit5:AssertMethod`.
+** The concept now matches all methods in `org.junit.jupiter.api.Assertions` starting with `assert`, thus now supports `assertThrows` and `assertTimeout*`.
+
+== 1.4
+
+=== Support for Junit 5 added
+
+This release adds JUnit 5 support to jQAssistant. See
+https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugin#2^].
+
+=== Renamed constraints
+
+* Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
+  of added support for JUnit 5.
+* Renamed `junit:IgnoreWithoutMessage` to `junit:AssertionMustProvideMessage` because
+  of added support for JUnit 5.
+* Renamed `junit4:TestMethodWithoutAssertion` to `junit:TestMethodWithoutAssertion`
+  because of added support for JUnit 5.
+
+== 1.3
+
+* Only internal changes.
+
+== 1.2
+
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.junit`
+  to `com.buschmais.jqassistant.plugin:junit`.
+* No functional changes since version 1.1.3.
+
+
+

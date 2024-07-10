@@ -1,0 +1,63 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 http://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <concept id="json-it:JsonReportObject">
+        <description>Creates a JSON report using a single-column result.</description>
+        <cypher><![CDATA[
+            RETURN
+              {
+                scalar: "Scalar",
+                array: [
+                  "Array Item"
+                ],
+                object: {
+                    scalar: "Embedded Object"
+                }
+              } as object
+        ]]></cypher>
+        <report type="json"/>
+    </concept>
+
+    <concept id="json-it:JsonReportWithSingleColumn">
+        <description>Creates a JSON report using a single-column result.</description>
+        <cypher><![CDATA[
+            UNWIND
+              ["a", "b"] as row
+            RETURN
+              row
+        ]]></cypher>
+        <report type="json"/>
+    </concept>
+
+    <concept id="json-it:JsonReportWithMultipleColumns">
+        <description>Creates a JSON report using a multi-column result.</description>
+        <cypher><![CDATA[
+            UNWIND
+              [
+                {
+                    key: "key1",
+                    value: "value1"
+                },
+                {
+                    key: "key2",
+                    value: "value2"
+                }
+              ] as row
+            RETURN
+              row.key as key, row.value as value
+        ]]></cypher>
+        <report type="json"/>
+    </concept>
+
+    <concept id="json-it:EmptyResult">
+        <description>Returns an empty result.</description>
+        <cypher><![CDATA[
+          UNWIND [] as row
+          RETURN
+            row
+        ]]></cypher>
+        <report type="json"/>
+    </concept>
+</jqassistant-rules>
+

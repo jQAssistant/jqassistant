@@ -1,0 +1,17 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.core.report.plugin"
+                    name="jQAssistant Core Report Plugin"
+                    version="${project.version}">
+    <description>Core Report</description>
+    <model>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</class>
+    </model>
+    <report>
+        <class id="xml">com.buschmais.jqassistant.core.report.impl.XmlReportPlugin</class>
+    </report>
+</jqassistant-plugin>

@@ -1,0 +1,4 @@
+= jQAssistant Plugin Parent
+
+Common Maven parent POM for all plugins of jQAssistant.
+

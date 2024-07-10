@@ -1,0 +1,37 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      java_version:
+        description: Java version to use
+        type: string
+        required: false
+        default: 17
+      branch:
+        description: "The branch to checkout when cutting the release."
+        required: true
+        default: "master"
+      releaseVersion:
+        description: "Default version to use when preparing a release."
+        required: true
+        default: "X.Y.Z"
+      developmentVersion:
+        description: "Default version to use for new local working copy."
+        required: true
+        default: "X.Y.Z-SNAPSHOT"
+
+jobs:
+  build:
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
+    with:
+      branch: ${{ github.event.inputs.branch }}
+      releaseVersion: ${{ github.event.inputs.releaseVersion }}
+      developmentVersion: ${{ github.event.inputs.developmentVersion }}
+    secrets:
+      ossrh_username: ${{ secrets.OSSRH_USERNAME }}
+      ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
+      ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
+      ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+      sonar_token: ${{ secrets.SONAR_TOKEN }}

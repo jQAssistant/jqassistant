@@ -1,0 +1,223 @@
+= Core Framework
+
+== 2.3.0
+
+* Ensure that for a concept all required concepts are executed including those required by concepts which are provided
+* Fixed an issue where the config properties `jqassistant.analyze.report.warn-on-severity` and `jqassistant.analyze.report.fail-on-severity` did not accept the value `NEVER`.
+* Added configuration parameter `jqassistant.analyze.exclude-constraints` taking a list of constraint ids for exclusion from analysis (e.g. if used in a referenced group provided by a plugin)
+* Deprecated `ìd` attribute for scanner plugins declared in `jqassistant-plugin.xml` descriptors
+* Added CycloneDX BOM (XML and JSON) for distributions and plugins
+* Allow ITs to use environment variables or system properties to specify configuration properties, e.g. `JQASSISTANT_STORE_URI=bolt://localhost:7687` or `-Djqassistant.store.uri=bolt://localhost:7687`
+* Added support for profiles in configurations
+* Added a graph representing rules (`:Concept`, `:Constraint` and `:Group`) including their result status, severities and relations which have been executed during analyze (represented by `:Analyze:Task`)
+* Fixed an issue in AbstractPluginIT where project paths containing white spaces could not be used
+* Added links to required and provided concepts in HTML report
+* Delete Neo4j plugin directory and its content after shutting down embedded store
+* Fixed an issue creating the HTML report if a rule result contains invalid XML characters
+
+== 2.2.0
+
+* Added support for abstract concepts, i.e. concepts without executable query (e.g. Cypher)
+* Added support for providing concepts from concepts included in group definitions
+* Allow plugins to provide a version which is logged on startup
+
+== 2.1.0
+
+* Remove leading and trailing lines as well as indent of rule descriptions
+* Fixed sorting of constraints and concepts in HTML report, now sorting by status (failure/warning/success), severity and rule id
+* Changed execution order for provided and required concepts for a base concept: required concepts -> providing concepts -> base concept
+
+== 2.0.10
+
+* Upgraded to Maven Resolver 1.9.18 (used for plugin provisioning)
+
+== 2.0.9
+
+* Upgraded to Maven Resolver 1.9.16 (used for plugin provisioning)
+
+== 2.0.8
+
+* Fixed missing plugins when printing effective configuration
+
+== 2.0.5
+
+* Fixed NPE for logging results for rules without description
+
+== 2.0.0
+* Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
++
+NOTE: It is still possible to scan applications compiled with older Java versions.
+* Added support for default configurations in the user home directory
+* Migrated `configuration` and `plugin` APIs to new `runtime` module
+* Added a `key` attribute to each row in the XML report (`jqassistant-report.xml`) to allow matching results between subsequent analysis executions
+* Added custom reports (e.g. images, CSV files, etc) to the XML report (`jqassistant-report.xml`)
+* Changed the reporting API for scripts to have explicit rows and columns
+* Removed Asciidoc & PlantUML related support from core
+
+== 1.12.1
+* Upgraded to AsciidoctorJ 2.5.7 and PlantUML 1.2022.12
+
+== 1.12.0
+* Added support for configuration via YAML files, environment variables and system properties based on Eclipse Microprofile config mechanism
+* Added support for plugin provisioning based on a given configuration via Maven repositories (including dependency resolution)
+* Improved the state of an executed rule as `warning` or `failure` to generated reports (e.g. XML)
+* Added support for the state `warning` in the XML report
+* Removed deprecated source locations from XML report
+* Added a message during analysis for concepts which are skipped because they have already been applied in a previous execution
+* Fixed an issue where diagram reports (e.g. GraphML) failed with an exception (`"Element type not supported:"`)
+* Add support for Elk layout mechanism for use in PlantUML diagrams
+* Added a module `test` providing core test infrastructure for plugins. Matchers located in the `test-jar` artifacts of `store` and `analysis` have been moved to this module, as well as `com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT`.
++
+NOTE: Plugins must declare `com.buschmais.jqassistant.core:test` as a test-scoped dependency.
+* Upgraded to PlantUML 1.2022.6, AsciidoctorJ 2.5.4, AsciidoctorJ diagram 2.2.3 and JRuby 9.3.6.0
++
+TIP: If loading Asciidoc files turns out to be very slow on Windows systems try to specify the system property
+`-Djruby.jar.cache.expiration=5000` for running Maven or the Command Line Utility.
+
+== 1.11.1
+* Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
+* Upgraded to PlantUML 1.2021.8 and JRuby 9.2.20.0 (the latter should reduce the time for loading Asciidoc files on Windows systems)
+
+== 1.11.0
+* Added more specific source locations to jQAssistant XML report for improving integration with tools like SonarQube.
++
+NOTE: The updated XML schema is available under https://schema.jqassistant.org/report/jqassistant-report-v1.11.xsd[]
+* Optimized query used for resetting the store.
+
+== 1.10.1
+
+* Added support for `neo4j://` and `neo4j+s://` protocols for connecting to remote Neo4j (cluster) instances
+
+== 1.10.0
+
+* Concepts may provide to existing concepts to extend them, e.g. a pre-defined concept `java:GeneratedType` which is required by other rules (e.g. Spring related constraints) can be extended by a project specific concept `my-project:GeneratedType`:
++
+[source,xml]
+----
+<!-- pre-defined concept, e.g. from the Java plugin -->
+<concept id="java:GeneratedType">
+  <cypher><![CDATA[
+    MATCH
+      (a:Artifact)-[:CONTAINS]->(generated:Java:Type:Generated)
+    RETURN
+      a as Artifact, count(generated) as GeneratedTypes
+    ]]></cypher>
+</concept>
+
+<!-- project specific concept providing to the pre-defined concept -->
+<concept id="my-project:GeneratedType">
+  <cypher><![CDATA[
+    MATCH
+      (generated:Java:Type)
+    WHERE
+      generated.fqn starts with "com.acme.generated"
+    SET
+      generated:Generated
+    RETURN
+      count(generated) as GeneratedTypes
+    ]]></cypher>
+  <providesConcept refId="java:GeneratedType"/>
+</concept>
+----
++
+Provided concepts may be used in Asciidoc and YAML files as well:
++
+[source,asciidoc]
+....
+[[my-project:GeneratedType]]
+[source,cypher,role=concept,providesConcepts="java:GeneratedType"]
+----
+  MATCH
+    ...
+----
+....
++
+[source,yaml]
+----
+concepts:
+  - id: my-project:GeneratedType
+    providesConcepts:
+      - refId: java:GeneratedType
+    source: |
+      MATCH
+        ...
+----
+
+* A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
+* The store is now available for custom report plugins via `ReportContext#getStore()`
+* The XML Schema description for plugins for jQAssistant has been
+  updated and is now available in version 1.10.
+  Please update your existing plugins
+  by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"`
+  as namespace declaration for your plugin descriptors.
+* Starting with this version, it is recommended to assign a unique
+  id to each plugin. In later versions of jQAssistant, this id
+  can be used to refer to its plugin in the upcoming new
+  configuration mechanism. +
+   +
+  A possible plugin descriptor could look like this:
++
+[source, xml]
+----
+  <jpd:jqassistant-plugin
+        xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10
+                            https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
+        name="myPlugin" id="myorganisation.myplugin">
+  </jpd:jqassistant-plugin>
+----
+* Upgraded bundled AsciidoctorJ to 2.5.1
++
+NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. Migration is straight-forward and described https://docs.asciidoctor.org/asciidoctorj/latest/guides/extension-migration-guide-16-to-20/[here^].
+
+== 1.9.0
+
+* Fixed an issue for loading jQAssistant plugins on JDK 11
+
+== 1.8.0
+
+* Fixed a StackOverflowError if a concepts requires itself, e.g. by using wildcards (see https://github.com/jQAssistant/jqa-core-framework/issues/29[issue])
+* Changed the namespace for the XML schemas of rule, plugin and report descriptors and provided schema locations that can be resolved by editors/IDEs (see https://github.com/jQAssistant/jqa-core-framework/issues/32[issue])
+* Changes for plugin developers:
+** Moved package `com.buschmais.jqassistant.core.analysis.api.rule` to `com.buschmais.jqassistant.rule.api.model`
+** Moved package `com.buschmais.jqassistant.core.analysis.api.report` to `com.buschmais.jqassistant.report.api.model`
+** Plugins using classes from these packages just need to adopt their imports, no other changes have been applied
+* Upgraded to XO 1.0.0
+** The release comes with a https://github.com/buschmais/extended-objects/issues/173[change] that possibly breaks existing plugin implementations: property related annotations (e.g. `@Property`, `@Relationship`) must be placed on Getters, an error will be reported at startup if such annotation is found on a Setter.
+* Removed APOC and Graph Algorithms libraries
+
+== 1.7.0
+
+* Removed deprecated class `com.buschmais.jqassistant.core.report.api.AbstractReportPlugin`, report plugins must
+  be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
+* A warning will now be logged if there is no rule source parser who is able to
+  read and parse the rule source.
+* Fixed an issue where plugins could not register Asciidoctor extensions when used within the CLI
+
+== 1.5.0
+
+* Allow wildcards `*` and `?` for referencing rules to be included in a group or required concepts
+* Added `builder()` method to `com.buschmais.jqassistant.core.analysis.api.Result` to ease instance creation in script rules.
+
+== 1.4.0
+
+* Fixed a problem of parsing AsciiDoc files containing definition lists
+* API change (breaking): Added `ReportContext` as 1st parameter to `ReportPlugin#initialize`
+
+== 1.3.0
+
+* Upgraded backend to support remote connections using Bolt protocol to existing Neo4j 3.x+ installations
+* Upgraded embedded Neo4j database to 2.3.10
+* Raised default severity for concepts to MINOR and constraints to MAJOR
+* Added support for default severities for groups, concepts and rules
+* Added `min` and `max` attributes to verification strategies for rule results
+
+== 1.2.0
+
+* Upgraded to Neo4j 2.3.8.
+* Added support for array properties in reports (e.g. HTML).
+* Added support for rule parameters.
+
+
+

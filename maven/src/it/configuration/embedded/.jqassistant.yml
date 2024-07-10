@@ -1,0 +1,5 @@
+jqassistant:
+  analyze:
+    groups:
+      - plugin-execution-configuration
+      - project-configuration

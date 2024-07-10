@@ -1,0 +1,15 @@
+---
+concepts:
+  - id: java:Throwable
+    description: Labels types deriving from java.lang.Throwable as "Throwable".
+    # language must not be given for the unit test using this document
+    source: |
+      match
+        (throwable)-[:EXTENDS*]->(t:Type)
+      where
+        t.fqn = 'java.lang.Throwable'
+      SET
+        throwable:Throwable
+      return
+        count(throwable) AS Throwables
+

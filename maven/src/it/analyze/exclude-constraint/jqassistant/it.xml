@@ -1,0 +1,28 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="it">
+        <includeConstraint refId="it:Constraint" />
+        <includeConstraint refId="it:ExcludedConstraint" />
+    </group>
+
+    <constraint id="it:Constraint" severity="minor">
+        <description>A constraint which shall be executed.</description>
+        <cypher>
+            RETURN 1
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
+    <constraint id="it:ExcludedConstraint" severity="blocker">
+        <description>A constraint which shall be excluded.</description>
+        <cypher>
+            RETURN 1
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
+</jqa:jqassistant-rules>

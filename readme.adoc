@@ -1,35 +1,8 @@
-= jQAssistant Aggregator Repository
+= jQAssistant Ueber Parent
 
-jQAssistant has been splitted into multiple repositories to allow more flexible releases.
+The jQAssistant Ueber Parent is the root parent POM of all
+other http://jqassistant.org[jQAssistant^] projects.
 
-NOTE: Want to raise an issue? If possible try to go to the affected repository. If not, please raise
-      it in our https://github.com/jQAssistant/jQA-Idea-Hub[Idea Hub].
+It is used only to specify properties common for all other
+jQAssistant projects.
 
-Want to get started? Here are some links to help you:
-
-* https://jqassistant.org/get-started/[Get Started]
-* https://101.jqassistant.org/[101 Tutorials]
-* https://jqassistant.github.io/jqassistant/doc/[The jQAssistant Manual]
-
-
-If you have questions related to jQAssistant please get in touch
-with us via the https://groups.google.com/forum/#!forum/jqassistant[jQAssistant forum] or https://stackoverflow.com/questions/tagged/jqassistant[Stackoverflow].
-
-The table below lists the repositories jQAssistant is made of.
-
-.List of jQAssistant repositories
-|===
-| BOM                       | https://github.com/jqassistant/jqa-bom[^]
-| Commandline Distribution  | https://github.com/jqassistant/jqa-commandline-tool[^]
-| Core Framework            | https://github.com/jqassistant/jqa-core-framework[^]
-| Java Plugin               | https://github.com/jqassistant/jqa-java-plugin[^]
-| JSON Plugin               | https://github.com/jqassistant/jqa-json-plugin[^]
-| Maven 3 Plugin            | https://github.com/jqassistant/jqa-maven3-plugin[^]
-| JUnit Plugin              | https://github.com/jqassistant/jqa-junit-plugin[^]
-| Neo4j Backend             | https://github.com/jqassistant/jqa-neo4j-backend[^]
-| Plugin for Apache Maven   | https://github.com/jqassistant/jqa-maven-plugin[^]
-| XML Plugin                | https://github.com/jqassistant/jqa-xml-plugin[^]
-| YAML 2 Plugin             | https://github.com/jqassistant/jqa-yaml2-plugin[^]
-|===
-
-TIP: For convenience reasons the repositories are aggregated as sub-modules in this Git repository. You can clone it using `git clone --recursive https://github.com/jQAssistant/jQAssistant.git`. Once checked out you might need to run `git submodule update --remote` to update to the latest commits of the sub-modules.

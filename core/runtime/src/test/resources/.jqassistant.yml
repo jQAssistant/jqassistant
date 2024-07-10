@@ -1,0 +1,6 @@
+# Test file for ConfigurationLoader
+jqassistant:
+  default-plugins:
+    - group-id: org.jqassistant.plugin
+      artifact-id: test-plugin
+      version: 1.0.0

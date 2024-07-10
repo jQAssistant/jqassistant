@@ -1,0 +1,28 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    id="jqa.plugin.junit"
+                    name="jQAssistant JUnit Plugin"
+                    version="${project.version}">
+    <description>Provides scanner for JUnit test reports and rules (e.g. for test classes/methods and ignored tests).</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</class>
+    </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope</class>
+    </scope>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.junit.impl.scanner.TestReportDirectoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.junit.impl.scanner.TestReportScannerPlugin</class>
+    </scanner>
+    <rules>
+        <resource>junit3.xml</resource>
+        <resource>junit4.xml</resource>
+        <resource>junit5.xml</resource>
+        <resource>junit-common.xml</resource>
+    </rules>
+</jqassistant-plugin>

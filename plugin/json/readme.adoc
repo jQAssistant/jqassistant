@@ -1,0 +1,13 @@
+= Overview
+
+This project hosts the https://jqassistant.org[jQAssistant^] JSON Plugin.
+This plugin allows jQAssistant to scan also
+http://www.rfc-editor.org/rfc/rfc7159.txt[RFC 7159^]
+compliant JSON files.
+
+
+== Further information
+
+This plugin is part of the jQAssistant distribution.
+Under normal circumstances it should not be necessary
+to configure it manually.

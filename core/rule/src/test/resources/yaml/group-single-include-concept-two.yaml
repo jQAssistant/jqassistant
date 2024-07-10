@@ -1,0 +1,6 @@
+---
+groups:
+  - id: zzz
+    includedConcepts:
+      - refId: xxx
+      - refId: yyy

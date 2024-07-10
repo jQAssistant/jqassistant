@@ -1,0 +1,31 @@
+== CSV Report
+
+Generates a CSV file from a rule result.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     			| Description											      | Default
+| csv.report.escapeChar | The character to use for escaping quotechars or escapechars | "
+| csv.report.separator  | The character to use as separator between columns           | ,
+| csv.report.quoteChar  | The character to use for quoting a column value             | "
+|====
+
+== JUnit Report
+
+This report plugin generates JUnit XML files for all executed rules and their results.
+These reports can be evaluated by other tools, e.g. https://jenkins-ci.org[Jenkins] to break a build.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     			       | Description														                | Default
+| junit.report.directory       | The directory where the files will be created                                      | jqassistant/report/junit
+| junit.report.failureSeverity | The severity from which a failed rule will be reported as failure                  | MINOR
+| junit.report.errorSeverity   | The severity from which a failed rule will be reported as error instead of failure | MAJOR
+|====
+

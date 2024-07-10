@@ -1,0 +1,327 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.4.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.buschmais.jqassistant.plugin</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>jQAssistant Plugin Parent POM</name>
+
+    <description>
+        The parent POM for all plugins developed by the jQAssistant team. It defines a standard
+        of actions, checks and dependencies required by each jQAssistant plugin.
+    </description>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>META-INF/jqassistant-plugin.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>META-INF/jqassistant-plugin.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <!-- Copies the XSL stylesheets to a subdirectory of the
+                 !   the build directory. They are needed to process the XML
+                 !   descriptors of jQAssistant during the generation of the
+                 !   documentation.
+                 !-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-asciidoc-stylesheets</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.buschmais.jqassistant.build</groupId>
+                                    <artifactId>asciidoc</artifactId>
+                                    <type>zip</type>
+                                    <classifier>xsl</classifier>
+                                    <version>${jqassistant.build.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>transform-xml2asciidoc</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <transformationSets>
+                                <!-- Plugin -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-plugin.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/plugin.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^jqassistant-plugin\.xml$</pattern>
+                                            <replacement>plugin.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                    <parameters>
+                                        <parameter>
+                                            <name>groupId</name>
+                                            <value>${project.groupId}</value>
+                                        </parameter>
+                                        <parameter>
+                                            <name>artifactId</name>
+                                            <value>${project.artifactId}</value>
+                                        </parameter>
+                                    </parameters>
+                                </transformationSet>
+                                <!-- Rules -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/rules.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                                <!-- Group Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/group-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-group-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                                <!-- Constraint Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/constraint-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-constraint-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                                <!-- Concept Summary -->
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-rules/*.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/concept-summary.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^(.*)$</pattern>
+                                            <replacement>$1-concept-summary.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                </transformationSet>
+                            </transformationSets>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>saxon</artifactId>
+                        <version>8.7</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <!-- Builds a jar with the Asciidoctor based documentation
+                 !   of the plugin and all needed stuff. This artifact
+                 !   is required for building the user manual of jQAssistant.
+                 !-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+             ! Here goes all dependencies to the core framework
+             ! Please keep in mind that the version of the plugin parent
+             ! MUST match the version of core framework of jQAssistant!
+             !-->
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>scanner</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>report</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>store</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>shared</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>rule</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>analysis</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>test</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.api</artifactId>
+                <version>${xo.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.spi</artifactId>
+                <version>${xo.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.neo4.api</artifactId>
+                <version>${xo.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.build</groupId>
+            <artifactId>asciidoc</artifactId>
+            <type>zip</type>
+            <classifier>xsl</classifier>
+            <version>${jqassistant.build.version}</version>
+            <!-- The scope must be provided otherwise it will be part of the distribution -->
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>common</module>
+        <module>java</module>
+        <module>junit</module>
+        <module>json</module>
+        <module>maven</module>
+        <module>yaml</module>
+        <module>xml</module>
+    </modules>
+
+</project>
