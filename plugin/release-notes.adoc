@@ -1,0 +1,210 @@
+
+== Plugin Parent changelog
+
+=== 2.3.1
+
+* Fixed a NullPointerException in JSON report plugin for empty rule results
+
+=== 2.3.0
+
+* Migrated JSON-Scanner from ANTLR to Jackson
+* Added report type `json` for exporting rule results as JSON files
+* Added missing classifier `tests` to test artifacts created by the Maven project scanner
+* Ensure that the property `fileName` is set for `:Maven:Project` nodes that represent local (i.e. scanned) Maven projects
+* Scan XML files by default, exclusions must be configured explicitly using `xml.file.exclude`
+* Fail if a plugin resource is included for scanning (`jqassistant-plugin:`) but does not exist
+* Added concepts `java:TestClass`, `java:TestMethod`, `java:AssertMethod` and constraint `java:TestMethodWithoutAssertion`
+* Do not scan local variables by default (can be activated by setting scan property `java.include.local-variables` to `true`)
+* Added `Unknown` as default to list of java versions for concept `java:JavaVersion`
+
+=== 2.1.0
+
+* Added attribute `column` to `@jQASuppress` annotation to allow specifying a non-primary column to be evaluated
+
+=== 2.0.6
+
+* Added infrastructure for MapStruct based scanner plugins
+
+=== 2.0.4
+
+* Reverted `DEPENDS_ON_PACKAGE` and `DEPENDS_ON_ARTIFACT` relations to `DEPENDS_ON` for the concepts `java:PackageDependency` and `java:ArtifactDependency`
+
+=== 2.0.0
+
+* Added support for Java Records, i.e. types labeled with `:Type:Record`
+* Renamed concepts and constraints
+** `classpath:*` -> `java-classpath:*`
+** `dependency:Package` -> `java:PackageDependency`
+** `dependency:PackageCycle` -> `java:AvoidCyclicPackageDependencies`
+** `dependency:Artifact` -> `java:ArtifactDependency`
+** `dependency:ArtifactCycle` -> `java:AvoidCyclicArtifactDependencies`
+* Migrated expensive Java concepts (e.g. `java:VirtualDependsOn`, `java-classpath:*`) to be executed in batches
+* Fixed a problem for support of generic type variables (only last usage of the variable within a class was referenced e.g. for multiple declarations like `List<X>`)
+* Upgraded ASM to 9.5 to enable support for Java 21 bytecode
+* Removed `md5` property from `:Class` nodes
+
+=== 1.12.0
+
+* Removed deprecated graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)`, it has been replaced by a model supporting exclusions (see deprecation notice in 1.9.0)
+* Activated coalescing for XML parsing to prevent splitted text elements
+* Added support for scanning resources from jQAssistant plugins using URLs with the protocol prefix `jqassistant-plugin`, e.g. a file `/my-resource.xml` packaged within a jQAssistant plugin can be scanned using the URL `jqassistant-plugin:my-resource.xml`
+* Added support for invocations of method references and lambda methods, e.g. `(:Method)-[:INVOKES]->(:Lambda:Method)` (see https://github.com/jQAssistant/jqa-java-plugin/issues/35[issue])
+* Improved calculation of cyclomatic complexity for Java class methods
+* The constraint `junit:AssertionMustProvideMessage` in `junit:Default` has been deprecated
+** The new rule `junit4:AssertionMustProvideMessage` in `junit4:Default` replaces it for jUnit 4
+** The new rule `junit5:AssertionMustProvideMessage` in `junit5:Default` replaces it for jUnit 5
+* Adds `junit4:NonJUnit4TestMethod` and `junit4:UsageOfJUnit5TestApi` to `junit4:Default`
+* Adds `junit5:NonJUnit5TestMethod` and `junit5:UsageOfJUnit4TestApi` to `junit5:Default`
+
+=== 1.10.1
+
+* Fixed a problem where scanning dependencies either skipped artifacts (if specified in dependency management) or scanned them multiple times
+* Upgraded to ASM 9.2 to support the scan of Java 18 bytecode
+
+=== 1.10.0
+
+* The set of YAML files processed by jQA can be now
+configured via the properties `yaml.file.include` and `yaml.file.exclude`.
+Main contributor for this feature was https://github.com/ascheman[Gerd Aschemann^].
+* Add support for generic types, e.g. `(:Field)-[OF_GENERIC_TYPE]->(:ParameterizedType)`
+* Added concept `java:GeneratedType` which can be extended by project specific concepts using `providesConcept`
+* Added support for additional assert methods to concept `junit5:AssertMethod`.
+** The concept now matches all methods in `org.junit.jupiter.api.Assertions` starting with `assert`, thus now supports `assertThrows` and `assertTimeout*`.
+* Added a `reason` attribute to `@jQASuppress` to allow human-readable description for the suppression, e.g.
++
+[source,java]
+----
+@jQASuppress(value = "my-rules:SuppressedRule", reason = "This rule does not apply here.")
+public class MyClass { }
+----
+
+=== 1.9.0
+
+* added concepts `java:PostConstruct` and `java:PreDestroy`
+* improved concept `java:VirtualInvokes` to identify all potential non-abstract methods within the inheritance hierarchy that could be invoked
+* upgraded to ASM 8.0 to support scanning of Java 14 bytecode
+* Deprecated graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)`, it has been replaced by a model supporting exclusions:
+
+  (:Pom)-[:DECLARES]->(dependency:Maven:Dependency)-[:TO_ARTIFACT]->(:Maven:Artifact),
+  (dependency)-[:EXCLUDES]->(:Maven:Exclusion)
+
+=== 1.8.0
+
+* Added concept `java:VirtualDependsOn` providing `VIRTUAL_DEPENDS_ON` relations based on `DEPENDS_ON` relations to super classes
+* Added concept `java:VirtualInvokes` providing `VIRTUAL_INVOKES` relations representing virtual invocations
+* Deprecated concept `java:InvokesOverriddenMethod` as it creates`INVOKES` relations that may be ambiguous (replaced by `VIRTUAL_INVOKES`)
+* Type members (i.e. fields and methods) are now reported only using their signature.
+Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething()`
+* Migrated the following concepts from the `Java 8` plugin into this plugin:
+** `java8:FunctionalInterface` -> `java:FunctionalInterface`
+** `java8:DefaultMethod` -> `java:DefaultMethod`
+** `java8:LambdaMethod` -> `java:LambdaMethod`
+* Added plugin configuration options for scanning artifacts that are declared as dependencies to a Maven project (https://github.com/jQAssistant/jqa-maven3-plugin/issues/10[issue])
+** `maven3.dependencies.scan` for enabling scanning dependencies
+** `maven3.dependencies.includes` and `maven3.dependencies.excludes` taking Maven artifact filters to control which artifact should be scanned
+* Added capability to scan URLs as part of scanIncludes
+
+=== 1.7.0
+
+* Initial release
+* Added a label `Effective` for `:Maven:Pom` nodes to represent the effective model of a project or artifact
+* Fixed a problem where in a multi module Maven project resolved dependencies between artifacts have been created multipe times
+* Improved graph model to support for exclusions on declared or managed dependencies:
+
+  (:Pom)-[:DECLARES]->(dependency:Maven:Dependency)-[:TO_ARTIFACT]->(:Maven:Artifact),
+  (dependency)-[:EXCLUDES]->(:Maven:Exclusion)
+
+NOTE: The previously used graph model `(:Pom)-[:DECLARES_DEPENDENCY]\->(:Maven:Artifact)` is still supported but deprecated.
+ It will be removed in upcoming releases.
+
+* Fixed Maven project scanner to add label `:File` only to `:Maven:Artifact` nodes if the corresponding Maven artifact has been scanned
+* Upgraded Maven core and plugin dependencies to Maven 3.5.0
+* Added annotation `@jQAsuppress` to allow suppression of annotated Java elements from rule results (similar to `@java.lang.SuppressWarnings`).
+* Added support for scanning Java 13 bytecode (upgraded ASM to 7.1)
+
+=== 1.6.0
+
+* Upgraded Java bytecode parser to ASM 7.0 for supporting Java 11 bytecode
+* Resolve the dependency tree for the artifacts generated by a Maven project which can be queried by
+  ```MATCH (p:Maven:Project)-[:CREATES]->(a:Artifact)-[:DEPENDS_ON*]->(d:Artifact) RETURN *```
+* Added to the documentation that the declared dependencies of a Maven plugin
+  can be queried by using the outgoing `DECLARES_DEPENDENCY` relation of
+  the node for a Maven plugin.
+* The information of the SCM (Source Control Management) section of a POM
+  is now also part of the graph model. The node for the SCM information
+  can be queried with a query like `MATCH (p:Maven:Pom)-[:HAS_SCM]\->(s:Maven:Scm) RETURN s`.
+* The URL of the project home is now available as property of the node for the Maven POM
+  and can be retrieved via the property `url`. A query to access the project home
+  could be written as `MATCH (p:Maven:Pom) RETURN p.url`.
+* Fixed https://github.com/buschmais/jqa-json-plugin/issues/8[Cope with null scalar values in arrays^].
+This ugly bug could prevent jQAssistant to scan projects with JSON files.
+
+=== 1.5.0
+
+* Added property `lineNumber` to `:Xml:Document`, `:Xml:Element`,
+`:Xml:CData` and `:Xml:Text`.
+* The Maven project scanner adds a label `Main` to the main artifact (e.g. classes compiled from `src/main/java`) and `Test` to the test artifact ((e.g. classes compiled from `src/test/java`)
+* Removed additional label `Container` for directories, archives and artifacts as it was ambiguous.
+
+=== 1.4
+
+* Added Checkstyle rules
+* Added support for method variables in Java class scanner, i.e. `(:Method)-[:DECLARES]->(:Variable)`.
+* Added support for XML based Property files. See
+https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
+* Added label 'ByteCode' for Java class elements (types, methods, fields, etc.)
+* Added support for Java 10
+* Added support to exclude or include specific files via a simple filename pattern
+by setting the parameters `json.file.include` and `json.file.exclude`.
+* Fixed wrong compiler settings to generate Java 7 bytecode instead of Java 8
+* Added a plugin that creates JUnit reports about all executed rules
+* Added a plugin that creates CSV reports is a concept or constraints selects "csv" as report type
+* Fixed wrong compiler settings to generate Java 7 bytecode instead of Java 8
+* Fixed an NPE https://github.com/buschmais/jqa-xml-plugin/issues/5[issue] while scanning XML documents using Bolt protocol
+* Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
+of added support for JUnit 5.
+* Renamed `junit:IgnoreWithoutMessage` to `junit:AssertionMustProvideMessage` because
+of added support for JUnit 5.
+* Renamed `junit4:TestMethodWithoutAssertion` to `junit:TestMethodWithoutAssertion`
+because of added support for JUnit 5.
+* This release adds JUnit 5 support to jQAssistant. See
+https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugin#2^].
+
+=== 1.3
+
+* Only internal changes.
+* The plugin adds now also information on the organization behind
+  a project to the generated graph. See
+  https://github.com/buschmais/jqa-maven3-plugin/issues/3[Support for Organization information^]
+  on GitHub.
+* Added `firstLineNumber`, `lastLineNumber` and `effectiveLineCount` attributes to `:Method` nodes
+* Deprecated concept `classpath:ResolveDependency` and replaced it by `classpath:ResolveDependsOn`
+* `classpath:ResolveDependsOn` propagates `weight` attribute of `DEPENDS_ON` relations
+* Initial release.
+
+=== 1.2
+
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.common`
+to `com.buschmais.jqassistant.plugin:common`.
+* Added support for using file patterns (`file.include` and `file.exclude`) for scanner plugins.
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.xml`
+to `com.buschmais.jqassistant.plugin:xml`.
+* Added file pattern support (`xml.file.include` and `xml.file.exclude`) for specifying XML
+documents without a native scanner plugin.
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.maven3`
+  to `com.buschmais.jqassistant.plugin:maven3`.
+* No functional changes since version 1.1.3.
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.java`
+to `com.buschmais.jqassistant.plugin:java`.
+* Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.junit`
+to `com.buschmais.jqassistant.plugin:junit`.
+* Added attribute `weight` to `DEPENDS_ON` relations between types
+* Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and
+their inner classes.
+* Annotation nodes are now also labeled with `Java`.
+* Fixed a bug with where type resolution created multiple nodes when scanning directories with
+`java:classpath` scope.
+* Added constant values for fields.
+* Added `DECLARES` relations between methods and their declared anonymous inner
+classes: `(:Method)-[:DECLARES]\->(:Type)`.
+* No functional changes since version 1.1.3.

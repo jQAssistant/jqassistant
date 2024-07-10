@@ -1,9 +1,0 @@
-
-= Plugin Parent
-
-== 1.4.0
-
-* Added Checkstyle rules
-
-
-

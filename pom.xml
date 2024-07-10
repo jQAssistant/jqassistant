@@ -153,7 +153,7 @@
         <!-- integration tests -->
         <it.jqassistant.store.uri>memory:///</it.jqassistant.store.uri>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.4.0-SNAPSHOT</jqassistant.build.version>
+        <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
     </properties>
 
     <build>
