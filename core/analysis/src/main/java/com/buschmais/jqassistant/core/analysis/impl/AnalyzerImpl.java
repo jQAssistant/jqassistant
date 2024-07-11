@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -25,6 +26,9 @@ public class AnalyzerImpl implements Analyzer {
     private final AnalyzerContext analyzerContext;
 
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+
+    private final BaselineManager baselineManager;
+
     private final ReportPlugin reportPlugin;
 
     /**
@@ -38,14 +42,17 @@ public class AnalyzerImpl implements Analyzer {
      *     The store
      * @param ruleInterpreterPlugins
      *     The {@link RuleInterpreterPlugin}s.
+     * @param baselineManager
+     *     The {@link BaselineManager}.
      * @param reportPlugin
      *     The report writer.
      */
     public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
-        ReportPlugin reportPlugin) throws RuleException {
+        BaselineManager baselineManager, ReportPlugin reportPlugin) throws RuleException {
         this.configuration = configuration;
         this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store);
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
+        this.baselineManager = baselineManager;
         this.reportPlugin = reportPlugin;
     }
 

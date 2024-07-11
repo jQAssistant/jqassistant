@@ -8,6 +8,8 @@ import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.CliRuleViolationException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineRepository;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
@@ -49,8 +51,10 @@ public class AnalyzeTask extends AbstractRuleTask {
                 .report(), reportContext);
             InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
             try {
+                BaselineRepository baselineRepository = new BaselineRepository(analyze.baseline(), getRulesDirectory(analyze.rule()));
+                BaselineManager baselineManager = new BaselineManager(analyze.baseline(), baselineRepository.read());
                 Analyzer analyzer = new AnalyzerImpl(analyze, pluginRepository.getClassLoader(), store, pluginRepository.getAnalyzerPluginRepository()
-                    .getRuleInterpreterPlugins(emptyMap()), inMemoryReportPlugin);
+                    .getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
                 RuleSet availableRules = getAvailableRules(analyze
                     .rule());
                 analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
