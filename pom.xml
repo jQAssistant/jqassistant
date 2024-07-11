@@ -185,8 +185,6 @@
                                 - ${project.basedir}/src/main/asciidoc
                                 - ${project.basedir}/.editorconfig
                                 - ${project.basedir}/LICENSE
-                            properties:
-                              xml.file.include: /META-INF/jqassistant-plugin.xml
                           analyze:
                             groups:
                               - jqa-*
