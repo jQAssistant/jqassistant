@@ -1,0 +1,108 @@
+
+= Neo4j Backend
+
+== 2.4.0
+
+* Upgraded to Neo4j 5.21.2 and 4.4.34
+
+== 2.3.1
+
+* Upgraded to Neo4j 5.21.0
+* Log a warning instead throwing an exception if the Neo4j plugin directory cannot be removed when shutting down the embedded graph store
+
+== 2.3.0
+
+* Upgraded to Neo4j 5.20.0 and 4.4.34
+* Upgraded to Neo4j Browser 5.21.0 and 4.4.34
+* Removed quiet period for shutting down internal Neo4j server
+* Removed support for `memory://` store urls from distributions
+* Log Neo4j URL including connection and authentication parameters to console after starting embedded server
+
+== 2.2.0
+* Upgraded to Neo4j 4.4.32 and 5.19.0
+* Log Cypher warnings provided from Neo4j (e.g. notifications about using deprecated features)
+
+== 2.1.0
+* Upgraded to Neo4j 4.4.31 and Neo4j 5.17.0
+* Added configuration settings `jqassistant.store.embedded.neo4j-plugin-dir` and `jqassistant.store.embedded.neo4j-plugins` for adding Neo4j plugins, e.g. APOC
+* Added `exclusions` using `group-id`/`artifact-id` patterns for jQAssistant and Neo4j plugin declarations
+
+== 2.0.11
+* Upgraded to Neo4j 4.4.29 and Neo4j Browser 5.15.0
+
+== 2.0.9
+* Upgraded to Neo4j 4.4.28
+
+== 2.0.8
+* Upgraded to Neo4j 4.4.26 and Neo4j Browser 5.12.0
+
+== 2.0.6
+* Upgraded to Neo4j 4.4.24
+
+== 2.0.5
+* Upgraded to Neo4j 4.4.23
+
+== 2.0.2
+* Upgraded to Neo4j 4.4.21 and Neo4j Browser 5.9.0
+
+== 2.0.1
+* Upgraded to Neo4j 4.4.20
+
+== 2.0.0
+* Upgraded to Neo4j 4.4.19 and Neo4j Browser 5.6.0
+* Added support for connecting to remote Neo4j 5.x instances
+
+== 1.12.1
+* Upgraded to Neo4j 3.5.35
+
+== 1.12.0
+* Upgraded to Neo4j 3.5.31
+
+== 1.11.0
+
+* Upgraded to Neo4j 3.5.29
+
+== 1.10.0
+
+* Upgraded to Neo4j 3.5.28
+
+== 1.9.0
+
+* Upgraded to Neo4j 3.5.24
+
+== 1.8.0
+
+* Upgraded to Neo4j 3.5.14
+
+== 1.7.0
+
+* Removed Neo4j v2 backend
+* Upgraded to Neo4j 3.5.7 and APOC 3.5.0.4
+* Added Neo4j graph algorithms library 3.5.4.0
+* Reduced size of database directory by limiting retention of Neo4j transaction logs
+* Added an unmanaged Neo4j extension that serves static content provided from classpath resources located in
+
+== 1.6.0
+
+* Upgraded to Neo4j 3.4.10
+
+== 1.5.0
+
+* Upgraded to Neo4j 3.4.8 and APOC 3.4.0.3
+
+== 1.4.0
+
+* Upgraded to Neo4j 2.3.12 and 3.4.0
+* Added https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher for Neo4j] 3.4.0.1
+
+== 1.3.0
+
+* Prepared support for Neo4j 3.x
+
+== 1.2.0
+
+* Upgraded to Neo4j 2.3.8.
+
+
+
+

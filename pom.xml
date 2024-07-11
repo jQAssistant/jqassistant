@@ -31,7 +31,7 @@
         <connection>scm:git:https://github.com/jqassistant/jqassistant.git</connection>
         <developerConnection>scm:git:https://github.com/jqassistant/jqassistant.git</developerConnection>
         <url>https://github.com/jqassistant/jqassistant/</url>
-        <tag>HEAD</tag>
+        <tag>parent-2.4.0-M1</tag>
     </scm>
 
     <prerequisites>
@@ -116,7 +116,6 @@
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.9</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-        <maven.ant.version>3.1.0</maven.ant.version>
         <maven.assembly.version>3.3.0</maven.assembly.version>
         <maven.buildhelper.version>3.2.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.1.0</maven.checkstyle.version>
@@ -126,6 +125,7 @@
         <maven.compiler.version>3.10.1</maven.compiler.version>
         <maven.dependency.version>3.3.0</maven.dependency.version>
         <maven.deploy.version>3.1.1</maven.deploy.version>
+        <maven.release.version>3.0.1</maven.release.version>
         <maven.enforcer.version>3.0.0</maven.enforcer.version>
         <maven.failsafe.version>3.2.3</maven.failsafe.version>
         <maven.install.version>3.1.1</maven.install.version>
@@ -140,6 +140,8 @@
         <maven.xml.version>1.0.2</maven.xml.version>
         <maven.invoker.version>3.7.0</maven.invoker.version>
         <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <!-- Maven config -->
         <maven.min.version>3.5.0</maven.min.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -163,7 +165,7 @@
                 <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>2.3.1</version>
+                    <version>2.4.0-M1</version>
                     <executions>
                         <execution>
                             <id>default</id>
@@ -197,11 +199,6 @@
                             <version>${jqassistant.build.version}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>${maven.ant.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -472,6 +469,19 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven.release.version}</version>
+                    <configuration>
+                        <mavenExecutorId>forked-path</mavenExecutorId>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <tagNameFormat>@{version}</tagNameFormat>
+                        <goals>deploy</goals>
+                        <releaseProfiles>release</releaseProfiles>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven.enforcer.version}</version>
                     <executions>
@@ -613,6 +623,16 @@
                         </formats>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -630,16 +650,20 @@
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -738,8 +762,8 @@
                                 </goals>
                                 <configuration>
                                     <rules>
-                                        <requireReleaseDeps/>
-                                        <requireReleaseVersion/>
+                                        <requireReleaseDeps />
+                                        <requireReleaseVersion />
                                     </rules>
                                 </configuration>
                             </execution>
@@ -748,7 +772,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <configuration>
+                            <!-- Prevent `gpg` from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -758,6 +788,16 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
