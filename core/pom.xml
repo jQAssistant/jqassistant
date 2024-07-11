@@ -49,14 +49,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <inherited>false</inherited>
                 <executions>

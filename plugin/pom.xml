@@ -192,14 +192,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <!-- Builds a jar with the Asciidoctor based documentation
-                 !   of the plugin and all needed stuff. This artifact
-                 !   is required for building the user manual of jQAssistant.
-                 !-->
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
