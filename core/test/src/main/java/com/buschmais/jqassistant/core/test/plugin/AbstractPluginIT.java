@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineRepository;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Baseline;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -266,10 +267,10 @@ public abstract class AbstractPluginIT {
     private Analyzer getAnalyzer(Map<String, String> parameters) throws RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
-        BaselineRepository baselineRepository = new BaselineRepository(configuration.analyze()
-            .baseline(), getRulesDirectory());
-        BaselineManager baselineManager = new BaselineManager(configuration.analyze()
-            .baseline(), baselineRepository.read());
+        Baseline baselineConfiguration = configuration.analyze()
+            .baseline();
+        BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory());
+        BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
     }
 

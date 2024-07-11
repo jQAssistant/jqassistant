@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineRepository;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Baseline;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -73,8 +74,9 @@ public class AnalyzeMojo extends AbstractRuleMojo {
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
 
         try {
-            BaselineRepository baselineRepository = new BaselineRepository(analyze.baseline(), mojoExecutionContext.getRuleDirectory());
-            BaselineManager baselineManager = new BaselineManager(analyze.baseline(), baselineRepository.read());
+            Baseline baselineConfiguration = analyze.baseline();
+            BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, mojoExecutionContext.getRuleDirectory());
+            BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
             Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
                 analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
             analyzer.execute(ruleSet, ruleSelection);

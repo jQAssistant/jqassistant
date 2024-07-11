@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api.baseline;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -11,16 +12,21 @@ import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BaselineManagerTest {
@@ -36,44 +42,87 @@ class BaselineManagerTest {
     @Mock
     private com.buschmais.jqassistant.core.analysis.api.configuration.Baseline configuration;
 
+    @Mock
+    private BaselineRepository baselineRepository;
+
+    @Captor
+    private ArgumentCaptor<Baseline> baselineArgumentCaptor;
+
+    private BaselineManager baselineManager;
+
+    @BeforeEach
+    void setUp() {
+        this.baselineManager = new BaselineManager(configuration, baselineRepository);
+    }
+
     @ParameterizedTest
     @MethodSource("rules")
-    void noBaselineWithNewConstraintViolation(ExecutableRule<?> executableRule) {
+    void baselineDisabled(ExecutableRule<?> executableRule) {
+        doReturn(false).when(configuration)
+            .enabled();
         Row row = Row.builder()
             .key("1")
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
             .build();
-        BaselineManager baselineManager = new BaselineManager(configuration,empty());
 
+        baselineManager.start();
         assertThat(baselineManager.isNew(executableRule, row)).isTrue();
+        baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baselineManager.getNewBaseline()
-            .getConstraints(), "1");
+        verify(baselineRepository, never()).read();
+        verify(baselineRepository, never()).write(any(Baseline.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("rules")
+    void noBaselineWithNewConstraintViolation(ExecutableRule<?> executableRule) {
+        doReturn(true).when(configuration)
+            .enabled();
+        doReturn(empty()).when(baselineRepository)
+            .read();
+        Row row = Row.builder()
+            .key("1")
+            .columns(Map.of("c1", Column.builder()
+                .label("1")
+                .build()))
+            .build();
+
+        baselineManager.start();
+        assertThat(baselineManager.isNew(executableRule, row)).isTrue();
+        baselineManager.stop();
+
+        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
     }
 
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithExistingConstraintViolation(ExecutableRule<?> executableRule) {
+        doReturn(true).when(configuration)
+            .enabled();
         Baseline oldBaseline = createOldBaseline(executableRule, "1");
+        doReturn(of(oldBaseline)).when(baselineRepository)
+            .read();
         Row row = Row.builder()
             .key("1")
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
             .build();
-        BaselineManager baselineManager = new BaselineManager(configuration, of(oldBaseline));
 
+        baselineManager.start();
         assertThat(baselineManager.isNew(executableRule, row)).isFalse();
+        baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baselineManager.getNewBaseline()
-            .getConstraints(), "1");
+        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
     }
 
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithNewConstraintViolation(ExecutableRule<?> executableRule) {
+        doReturn(true).when(configuration)
+            .enabled();
         Baseline oldBaseline = createOldBaseline(executableRule, "1");
         Row oldRow = Row.builder()
             .key("1")
@@ -87,18 +136,22 @@ class BaselineManagerTest {
                 .label("2")
                 .build()))
             .build();
-        BaselineManager baselineManager = new BaselineManager(configuration, of(oldBaseline));
+        doReturn(of(oldBaseline)).when(baselineRepository)
+            .read();
 
+        baselineManager.start();
         assertThat(baselineManager.isNew(executableRule, oldRow)).isFalse();
         assertThat(baselineManager.isNew(executableRule, newRow)).isTrue();
+        baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baselineManager.getNewBaseline()
-            .getConstraints(), "1");
+        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
     }
 
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithRemovedConstraintViolation(ExecutableRule<?> executableRule) {
+        doReturn(true).when(configuration)
+            .enabled();
         Baseline oldBaseline = createOldBaseline(executableRule, "1", "2");
         Row row = Row.builder()
             .key("1")
@@ -106,12 +159,14 @@ class BaselineManagerTest {
                 .label("1")
                 .build()))
             .build();
-        BaselineManager baselineManager = new BaselineManager(configuration, of(oldBaseline));
+        doReturn(of(oldBaseline)).when(baselineRepository)
+            .read();
 
+        baselineManager.start();
         assertThat(baselineManager.isNew(executableRule, row)).isFalse();
+        baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baselineManager.getNewBaseline()
-            .getConstraints(), "1");
+        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
     }
 
     private static Baseline createOldBaseline(ExecutableRule<?> rule, String... rowKeys) {
@@ -128,10 +183,14 @@ class BaselineManagerTest {
         return oldBaseline;
     }
 
-    private static void verifyNewBaseline(ExecutableRule<?> executableRule, SortedMap<String, Baseline.RuleBaseline> rulebaseLines, String... expectedRowKeys) {
-        assertThat(rulebaseLines).hasSize(1)
+    private void verifyNewBaseline(ExecutableRule<?> executableRule, Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rulebaseLinesFunction,
+        String... expectedRowKeys) {
+        verify(baselineRepository).write(baselineArgumentCaptor.capture());
+        Baseline newBaseline = baselineArgumentCaptor.getValue();
+        SortedMap<String, Baseline.RuleBaseline> ruleBaselines = rulebaseLinesFunction.apply(newBaseline);
+        assertThat(ruleBaselines).hasSize(1)
             .containsKey(executableRule.getId());
-        Baseline.RuleBaseline ruleBaseline = rulebaseLines.get(executableRule.getId());
+        Baseline.RuleBaseline ruleBaseline = ruleBaselines.get(executableRule.getId());
         assertThat(ruleBaseline).isNotNull();
         SortedMap<String, SortedMap<String, String>> rows = ruleBaseline.getRows();
         assertThat(rows).hasSize(expectedRowKeys.length);

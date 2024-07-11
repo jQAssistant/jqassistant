@@ -30,11 +30,32 @@ public class BaselineManager {
 
     private final com.buschmais.jqassistant.core.analysis.api.configuration.Baseline configuration;
 
-    private final Optional<Baseline> optionalOldBaseline;
+    private final BaselineRepository baselineRepository;
 
-    private final Baseline newBaseline = new Baseline();
+    private Optional<Baseline> optionalOldBaseline = null;
+
+    private Baseline newBaseline = null;
+
+    public void start() {
+        if (configuration.enabled()) {
+            optionalOldBaseline = baselineRepository.read();
+            newBaseline = new Baseline();
+        }
+    }
+
+    public void stop() {
+        if (configuration.enabled()) {
+            baselineRepository.write(newBaseline);
+        }
+    }
 
     public boolean isNew(ExecutableRule<?> executableRule, Row row) {
+        if (!configuration.enabled()) {
+            return true;
+        }
+        if (optionalOldBaseline == null) {
+            throw new IllegalStateException("Baseline manager has not been started yet");
+        }
         String ruleId = executableRule.getId();
         String rowKey = row.getKey();
         Map<String, Column<?>> columns = row.getColumns();
@@ -75,7 +96,4 @@ public class BaselineManager {
             .put(rowKey, row);
     }
 
-    public Baseline getNewBaseline() {
-        return newBaseline;
-    }
 }
