@@ -68,7 +68,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isNew(executableRule, row)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, row)).isFalse();
         baselineManager.stop();
 
         verify(baselineRepository, never()).read();
@@ -90,7 +90,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isNew(executableRule, row)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, row)).isFalse();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
@@ -112,7 +112,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isNew(executableRule, row)).isFalse();
+        assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
@@ -140,8 +140,8 @@ class BaselineManagerTest {
             .read();
 
         baselineManager.start();
-        assertThat(baselineManager.isNew(executableRule, oldRow)).isFalse();
-        assertThat(baselineManager.isNew(executableRule, newRow)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, oldRow)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, newRow)).isFalse();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
@@ -163,7 +163,7 @@ class BaselineManagerTest {
             .read();
 
         baselineManager.start();
-        assertThat(baselineManager.isNew(executableRule, row)).isFalse();
+        assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");

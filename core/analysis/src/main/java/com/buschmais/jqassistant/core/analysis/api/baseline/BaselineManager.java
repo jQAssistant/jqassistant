@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
  *     <li>A baseline exists but does not yet contain the {@link Row}.</li>
  * </ul>
  * <p>
- * Only {@link Row}s that have been validated using {@link #isNew(ExecutableRule, Row)} ({@link ExecutableRule}, Row)} are copied to the new baseline.
+ * Only {@link Row}s that have been validated using {@link #isExisting(ExecutableRule, Row)} ({@link ExecutableRule}, Row)} are copied to the new baseline.
  * <p>
  */
 @RequiredArgsConstructor
@@ -49,9 +49,9 @@ public class BaselineManager {
         }
     }
 
-    public boolean isNew(ExecutableRule<?> executableRule, Row row) {
+    public boolean isExisting(ExecutableRule<?> executableRule, Row row) {
         if (!configuration.enabled()) {
-            return true;
+            return false;
         }
         if (optionalOldBaseline == null) {
             throw new IllegalStateException("Baseline manager has not been started yet");
@@ -65,13 +65,13 @@ public class BaselineManager {
                 if (oldRuleBaseline != null && oldRuleBaseline.getRows()
                     .containsKey(rowKey)) {
                     add(ruleId, rowKey, columns);
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
             })
             .orElseGet(() -> {
                 add(ruleId, rowKey, columns);
-                return true;
+                return false;
             });
     }
 

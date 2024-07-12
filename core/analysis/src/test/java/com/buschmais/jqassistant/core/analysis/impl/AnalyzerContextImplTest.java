@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -38,6 +39,9 @@ class AnalyzerContextImplTest {
     @Mock
     private Store store;
 
+    @Mock
+    private BaselineManager baselineManager;
+
     @BeforeEach
     void setUp() throws RuleException {
         doReturn(report).when(configuration)
@@ -47,7 +51,7 @@ class AnalyzerContextImplTest {
         doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         analyzerContext = new AnalyzerContextImpl(configuration, this.getClass()
-            .getClassLoader(), store);
+            .getClassLoader(), store, baselineManager);
     }
 
     @Test

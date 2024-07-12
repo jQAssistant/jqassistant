@@ -27,8 +27,6 @@ public class AnalyzerImpl implements Analyzer {
 
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
 
-    private final BaselineManager baselineManager;
-
     private final ReportPlugin reportPlugin;
 
     /**
@@ -50,9 +48,8 @@ public class AnalyzerImpl implements Analyzer {
     public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
         BaselineManager baselineManager, ReportPlugin reportPlugin) throws RuleException {
         this.configuration = configuration;
-        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store);
+        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, baselineManager);
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
-        this.baselineManager = baselineManager;
         this.reportPlugin = reportPlugin;
     }
 
