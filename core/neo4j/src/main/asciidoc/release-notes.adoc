@@ -1,5 +1,5 @@
 
-= Neo4j Backend
+= Neo4j Backend Changelog
 
 == 2.4.0
 

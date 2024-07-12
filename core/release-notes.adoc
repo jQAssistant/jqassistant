@@ -1,15 +1,7 @@
-== Core Framework Changelog
 
-== 2.4.0
+= Core Framework Changelog
 
-* Upgraded to Neo4j 5.21.2 and 4.4.34
-
-=== 2.3.1
-
-* Upgraded to Neo4j 5.21.0
-* Log a warning instead throwing an exception if the Neo4j plugin directory cannot be removed when shutting down the embedded graph store
-
-=== 2.3.0
+== 2.3.0
 
 * Ensure that for a concept all required concepts are executed including those required by concepts which are provided
 * Fixed an issue where the config properties `jqassistant.analyze.report.warn-on-severity` and `jqassistant.analyze.report.fail-on-severity` did not accept the value `NEVER`.
@@ -23,64 +15,36 @@
 * Added links to required and provided concepts in HTML report
 * Delete Neo4j plugin directory and its content after shutting down embedded store
 * Fixed an issue creating the HTML report if a rule result contains invalid XML characters
-* Upgraded to Neo4j 5.20.0 and 4.4.34
-* Upgraded to Neo4j Browser 5.21.0
-* Removed quiet period for shutting down internal Neo4j server
-* Removed support for `memory://` store urls from distributions
-* Log Neo4j URL including connection and authentication parameters to console after starting embedded server
 
-=== 2.2.0
+== 2.2.0
 
 * Added support for abstract concepts, i.e. concepts without executable query (e.g. Cypher)
 * Added support for providing concepts from concepts included in group definitions
 * Allow plugins to provide a version which is logged on startup
-* Upgraded to Neo4j 4.4.32 and 5.19.0
-* Log Cypher warnings provided from Neo4j (e.g. notifications about using deprecated features)
 
-=== 2.1.0
+== 2.1.0
 
 * Remove leading and trailing lines as well as indent of rule descriptions
 * Fixed sorting of constraints and concepts in HTML report, now sorting by status (failure/warning/success), severity and rule id
 * Changed execution order for provided and required concepts for a base concept: required concepts -> providing concepts -> base concept
-* Upgraded to Neo4j 4.4.31 and Neo4j 5.17.0
-* Added configuration settings `jqassistant.store.embedded.neo4j-plugin-dir` and `jqassistant.store.embedded.neo4j-plugins` for adding Neo4j plugins, e.g. APOC
-* Added `exclusions` using `group-id`/`artifact-id` patterns for jQAssistant and Neo4j plugin declarations
 
-=== 2.0.11
-
-* Upgraded to Neo4j 4.4.29 and Neo4j Browser 5.15.0
-
-=== 2.0.10
+== 2.0.10
 
 * Upgraded to Maven Resolver 1.9.18 (used for plugin provisioning)
 
-=== 2.0.9
+== 2.0.9
 
 * Upgraded to Maven Resolver 1.9.16 (used for plugin provisioning)
 
-=== 2.0.8
+== 2.0.8
 
 * Fixed missing plugins when printing effective configuration
-* Upgraded to Neo4j 4.4.26 and Neo4j Browser 5.12.0
 
-=== 2.0.6
-* Upgraded to Neo4j 4.4.24
-
-=== 2.0.5
+== 2.0.5
 
 * Fixed NPE for logging results for rules without description
-* Upgraded to Neo4j 4.4.23
 
-=== 2.0.2
-* Upgraded to Neo4j 4.4.21 and Neo4j Browser 5.9.0
-
-=== 2.0.1
-* Upgraded to Neo4j 4.4.20
-
-=== 2.0.0
-
-* Upgraded to Neo4j 4.4.19 and Neo4j Browser 5.6.0
-* Added support for connecting to remote Neo4j 5.x instances
+== 2.0.0
 * Migrated to Java 11, i.e. an according Java Runtime is required to run jQAssistant.
 +
 NOTE: It is still possible to scan applications compiled with older Java versions.
@@ -91,13 +55,10 @@ NOTE: It is still possible to scan applications compiled with older Java version
 * Changed the reporting API for scripts to have explicit rows and columns
 * Removed Asciidoc & PlantUML related support from core
 
-=== 1.12.1
+== 1.12.1
 * Upgraded to AsciidoctorJ 2.5.7 and PlantUML 1.2022.12
-* Upgraded to Neo4j 3.5.35
 
-=== 1.12.0
-
-* Upgraded to Neo4j 3.5.31
+== 1.12.0
 * Added support for configuration via YAML files, environment variables and system properties based on Eclipse Microprofile config mechanism
 * Added support for plugin provisioning based on a given configuration via Maven repositories (including dependency resolution)
 * Improved the state of an executed rule as `warning` or `failure` to generated reports (e.g. XML)
@@ -114,13 +75,11 @@ NOTE: Plugins must declare `com.buschmais.jqassistant.core:test` as a test-scope
 TIP: If loading Asciidoc files turns out to be very slow on Windows systems try to specify the system property
 `-Djruby.jar.cache.expiration=5000` for running Maven or the Command Line Utility.
 
-=== 1.11.1
-
+== 1.11.1
 * Fixed a problem with embedded PlantUML rules having `requiredConcepts` specified but not evaluated
 * Upgraded to PlantUML 1.2021.8 and JRuby 9.2.20.0 (the latter should reduce the time for loading Asciidoc files on Windows systems)
-* Upgraded to Neo4j 3.5.29
 
-=== 1.11.0
+== 1.11.0
 * Added more specific source locations to jQAssistant XML report for improving integration with tools like SonarQube.
 +
 NOTE: The updated XML schema is available under https://schema.jqassistant.org/report/jqassistant-report-v1.11.xsd[]
@@ -130,9 +89,8 @@ NOTE: The updated XML schema is available under https://schema.jqassistant.org/r
 
 * Added support for `neo4j://` and `neo4j+s://` protocols for connecting to remote Neo4j (cluster) instances
 
-=== 1.10.0
+== 1.10.0
 
-* Upgraded to Neo4j 3.5.28
 * Concepts may provide to existing concepts to extend them, e.g. a pre-defined concept `java:GeneratedType` which is required by other rules (e.g. Spring related constraints) can be extended by a project specific concept `my-project:GeneratedType`:
 +
 [source,xml]
@@ -189,16 +147,16 @@ concepts:
 * A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
 * The store is now available for custom report plugins via `ReportContext#getStore()`
 * The XML Schema description for plugins for jQAssistant has been
-  updated and is now available in version 1.10.
-  Please update your existing plugins
-  by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"`
-  as namespace declaration for your plugin descriptors.
+updated and is now available in version 1.10.
+Please update your existing plugins
+by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"`
+as namespace declaration for your plugin descriptors.
 * Starting with this version, it is recommended to assign a unique
-  id to each plugin. In later versions of jQAssistant, this id
-  can be used to refer to its plugin in the upcoming new
-  configuration mechanism. +
-   +
-  A possible plugin descriptor could look like this:
+id to each plugin. In later versions of jQAssistant, this id
+can be used to refer to its plugin in the upcoming new
+configuration mechanism. +
+ +
+A possible plugin descriptor could look like this:
 +
 [source, xml]
 ----
@@ -214,12 +172,11 @@ concepts:
 +
 NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. Migration is straight-forward and described https://docs.asciidoctor.org/asciidoctorj/latest/guides/extension-migration-guide-16-to-20/[here^].
 
-=== 1.9.0
+== 1.9.0
 
 * Fixed an issue for loading jQAssistant plugins on JDK 11
-* Upgraded to Neo4j 3.5.24
 
-=== 1.8.0
+== 1.8.0
 
 * Fixed a StackOverflowError if a concepts requires itself, e.g. by using wildcards (see https://github.com/jQAssistant/jqa-core-framework/issues/29[issue])
 * Changed the namespace for the XML schemas of rule, plugin and report descriptors and provided schema locations that can be resolved by editors/IDEs (see https://github.com/jQAssistant/jqa-core-framework/issues/32[issue])
@@ -230,53 +187,37 @@ NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. 
 * Upgraded to XO 1.0.0
 ** The release comes with a https://github.com/buschmais/extended-objects/issues/173[change] that possibly breaks existing plugin implementations: property related annotations (e.g. `@Property`, `@Relationship`) must be placed on Getters, an error will be reported at startup if such annotation is found on a Setter.
 * Removed APOC and Graph Algorithms libraries
-* Upgraded to Neo4j 3.5.14
 
-=== 1.7.0
+== 1.7.0
 
 * Removed deprecated class `com.buschmais.jqassistant.core.report.api.AbstractReportPlugin`, report plugins must
-  be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
+be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
 * A warning will now be logged if there is no rule source parser who is able to
-  read and parse the rule source.
+read and parse the rule source.
 * Fixed an issue where plugins could not register Asciidoctor extensions when used within the CLI
-* Removed Neo4j v2 backend
-* Upgraded to Neo4j 3.5.7 and APOC 3.5.0.4
-* Added Neo4j graph algorithms library 3.5.4.0
-* Reduced size of database directory by limiting retention of Neo4j transaction logs
-* Added an unmanaged Neo4j extension that serves static content provided from classpath resources located in
 
-=== 1.6.0
-
-* Upgraded to Neo4j 3.4.10
-
-=== 1.5.0
+== 1.5.0
 
 * Allow wildcards `*` and `?` for referencing rules to be included in a group or required concepts
 * Added `builder()` method to `com.buschmais.jqassistant.core.analysis.api.Result` to ease instance creation in script rules.
-* Upgraded to Neo4j 3.4.8 and APOC 3.4.0.3
 
-=== 1.4.0
+== 1.4.0
 
 * Fixed a problem of parsing AsciiDoc files containing definition lists
 * API change (breaking): Added `ReportContext` as 1st parameter to `ReportPlugin#initialize`
-* Upgraded to Neo4j 2.3.12 and 3.4.0
-* Added https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher for Neo4j] 3.4.0.1
 
-=== 1.3.0
+== 1.3.0
 
 * Upgraded backend to support remote connections using Bolt protocol to existing Neo4j 3.x+ installations
 * Upgraded embedded Neo4j database to 2.3.10
 * Raised default severity for concepts to MINOR and constraints to MAJOR
 * Added support for default severities for groups, concepts and rules
 * Added `min` and `max` attributes to verification strategies for rule results
-* Prepared support for Neo4j 3.x
 
-=== 1.2.0
+== 1.2.0
 
 * Upgraded to Neo4j 2.3.8.
 * Added support for array properties in reports (e.g. HTML).
 * Added support for rule parameters.
-* Upgraded to Neo4j 2.3.8.
-
 
 
