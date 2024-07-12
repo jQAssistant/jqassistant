@@ -142,6 +142,7 @@
         <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
         <maven.min.version>3.5.0</maven.min.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -152,7 +153,7 @@
         <maven.invoker.jqassistant.version>2.3.1</maven.invoker.jqassistant.version>
         <!-- jQA build version -->
         <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
-  </properties>
+    </properties>
 
     <build>
         <pluginManagement>
@@ -480,7 +481,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.7.0.1746</version>
+                    <version>${maven.sonar.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -750,8 +751,11 @@
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>jqassistant</sonar.organization>
-                <sonar.projectKey>com.buschmais.jqassistant:parent</sonar.projectKey>
-                <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
+                <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
+                <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
+                <!--
+                <sonar.moduleKey>${project.groupId}_${project.artifactId}</sonar.moduleKey>
+                -->
                 <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
