@@ -1,5 +1,5 @@
 
-= Commandline Tool
+= Commandline Tool Changelog
 
 == 2.3.0
 
@@ -54,7 +54,7 @@
   see https://github.com/jqassistant-contrib/jqassistant-apoc-plugin[APOC plugin] and https://github.com/jqassistant-contrib/jqassistant-graph-algorithms-plugin[Graph Algorithms plugin]
 
 == 1.7.0
-ifdef::jqa-in-manual[== Commandline Tool 1.7.0]
+ifdef::jqa-in-manual[= Commandline Tool 1.7.0]
 
 * Removed Neo4j V2 distribution
 * Renamed long option of `-u` for scanning URLs from `--uris` to `--urls`

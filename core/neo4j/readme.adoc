@@ -1,7 +1,0 @@
-= jQAssistant Server Extension (Prototype)
-
-This is a prototype of an jQAssistant Server Extension of https://jqassistant.org[jQAssistant^].
-
-WARNING: It is currently unly a prototype and not supported by the jQAssistant team.
-
-For more information on jQAssistant see https://jqassistant.org[^].

@@ -52,22 +52,6 @@
                             </resources>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>release-notes</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <attributes>
-                                <stylesheet>jqassistant.css</stylesheet>
-                                <docRoot>/${asciidoc.directory}</docRoot>
-                            </attributes>
-                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
-                            <sourceDocumentName>release-notes.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
-                        </configuration>
-                    </execution>
                 </executions>
                 <configuration>
                     <backend>xhtml5</backend>

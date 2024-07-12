@@ -1,5 +1,5 @@
 
-= XML Plugin
+= XML Plugin Changelog
 
 == 2.3.0
 
@@ -12,7 +12,7 @@
 == 1.5.0
 
 * Added property `lineNumber` to `:Xml:Document`, `:Xml:Element`,
-  `:Xml:CData` and `:Xml:Text`.
+`:Xml:CData` and `:Xml:Text`.
 
 == 1.4
 
@@ -25,9 +25,8 @@
 == 1.2
 
 * Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.xml`
-  to `com.buschmais.jqassistant.plugin:xml`.
+to `com.buschmais.jqassistant.plugin:xml`.
 * Added file pattern support (`xml.file.include` and `xml.file.exclude`) for specifying XML
-  documents without a native scanner plugin.
-
+documents without a native scanner plugin.
 
 

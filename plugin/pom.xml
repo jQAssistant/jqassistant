@@ -36,174 +36,159 @@
             </resource>
         </resources>
 
-        <plugins>
-            <plugin>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <!-- Copies the XSL stylesheets to a subdirectory of the
-                 !   the build directory. They are needed to process the XML
-                 !   descriptors of jQAssistant during the generation of the
-                 !   documentation.
-                 !-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-asciidoc-stylesheets</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.buschmais.jqassistant.build</groupId>
-                                    <artifactId>asciidoc</artifactId>
-                                    <type>zip</type>
-                                    <classifier>xsl</classifier>
-                                    <version>${jqassistant.build.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>transform-xml2asciidoc</id>
-                        <goals>
-                            <goal>transform</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <transformationSets>
-                                <!-- Plugin -->
-                                <transformationSet>
-                                    <dir>src/main/resources/META-INF</dir>
-                                    <includes>
-                                        <include>jqassistant-plugin.xml</include>
-                                    </includes>
-                                    <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/plugin.xsl
-                                    </stylesheet>
-                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-                                    <fileMappers>
-                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^jqassistant-plugin\.xml$</pattern>
-                                            <replacement>plugin.adoc</replacement>
-                                        </fileMapper>
-                                    </fileMappers>
-                                    <parameters>
-                                        <parameter>
-                                            <name>groupId</name>
-                                            <value>${project.groupId}</value>
-                                        </parameter>
-                                        <parameter>
-                                            <name>artifactId</name>
-                                            <value>${project.artifactId}</value>
-                                        </parameter>
-                                    </parameters>
-                                </transformationSet>
-                                <!-- Rules -->
-                                <transformationSet>
-                                    <dir>src/main/resources/META-INF</dir>
-                                    <includes>
-                                        <include>jqassistant-rules/*.xml</include>
-                                    </includes>
-                                    <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/rules.xsl
-                                    </stylesheet>
-                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-                                    <fileMappers>
-                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^(.*)$</pattern>
-                                            <replacement>$1.adoc</replacement>
-                                        </fileMapper>
-                                    </fileMappers>
-                                </transformationSet>
-                                <!-- Group Summary -->
-                                <transformationSet>
-                                    <dir>src/main/resources/META-INF</dir>
-                                    <includes>
-                                        <include>jqassistant-rules/*.xml</include>
-                                    </includes>
-                                    <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/group-summary.xsl
-                                    </stylesheet>
-                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-                                    <fileMappers>
-                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^(.*)$</pattern>
-                                            <replacement>$1-group-summary.adoc</replacement>
-                                        </fileMapper>
-                                    </fileMappers>
-                                </transformationSet>
-                                <!-- Constraint Summary -->
-                                <transformationSet>
-                                    <dir>src/main/resources/META-INF</dir>
-                                    <includes>
-                                        <include>jqassistant-rules/*.xml</include>
-                                    </includes>
-                                    <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/constraint-summary.xsl
-                                    </stylesheet>
-                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-                                    <fileMappers>
-                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^(.*)$</pattern>
-                                            <replacement>$1-constraint-summary.adoc</replacement>
-                                        </fileMapper>
-                                    </fileMappers>
-                                </transformationSet>
-                                <!-- Concept Summary -->
-                                <transformationSet>
-                                    <dir>src/main/resources/META-INF</dir>
-                                    <includes>
-                                        <include>jqassistant-rules/*.xml</include>
-                                    </includes>
-                                    <stylesheet>
-                                        ${project.build.directory}/xml2asciidoc/concept-summary.xsl
-                                    </stylesheet>
-                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-                                    <fileMappers>
-                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-                                            <pattern>^(.*)$</pattern>
-                                            <replacement>$1-concept-summary.adoc</replacement>
-                                        </fileMapper>
-                                    </fileMappers>
-                                </transformationSet>
-                            </transformationSets>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.sf.saxon</groupId>
-                        <artifactId>saxon</artifactId>
-                        <version>8.7</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-asciidoc</id>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.cyclonedx</groupId>
-                <artifactId>cyclonedx-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- Copies the XSL stylesheets to a subdirectory of the
+                     !   the build directory. They are needed to process the XML
+                     !   descriptors of jQAssistant during the generation of the
+                     !   documentation.
+                     !-->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>unpack-asciidoc-stylesheets</id>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <phase>process-sources</phase>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>com.buschmais.jqassistant.build</groupId>
+                                        <artifactId>asciidoc</artifactId>
+                                        <type>zip</type>
+                                        <classifier>xsl</classifier>
+                                        <version>${jqassistant.build.version}</version>
+                                    </artifactItem>
+                                </artifactItems>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>transform-xml2asciidoc</id>
+                            <goals>
+                                <goal>transform</goal>
+                            </goals>
+                            <phase>process-sources</phase>
+                            <configuration>
+                                <transformationSets>
+                                    <!-- Plugin -->
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF</dir>
+                                        <includes>
+                                            <include>jqassistant-plugin.xml</include>
+                                        </includes>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/plugin.xsl
+                                        </stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^jqassistant-plugin\.xml$</pattern>
+                                                <replacement>plugin.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                        <parameters>
+                                            <parameter>
+                                                <name>groupId</name>
+                                                <value>${project.groupId}</value>
+                                            </parameter>
+                                            <parameter>
+                                                <name>artifactId</name>
+                                                <value>${project.artifactId}</value>
+                                            </parameter>
+                                        </parameters>
+                                    </transformationSet>
+                                    <!-- Rules -->
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF</dir>
+                                        <includes>
+                                            <include>jqassistant-rules/*.xml</include>
+                                        </includes>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/rules.xsl
+                                        </stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^(.*)$</pattern>
+                                                <replacement>$1.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                    </transformationSet>
+                                    <!-- Group Summary -->
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF</dir>
+                                        <includes>
+                                            <include>jqassistant-rules/*.xml</include>
+                                        </includes>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/group-summary.xsl
+                                        </stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^(.*)$</pattern>
+                                                <replacement>$1-group-summary.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                    </transformationSet>
+                                    <!-- Constraint Summary -->
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF</dir>
+                                        <includes>
+                                            <include>jqassistant-rules/*.xml</include>
+                                        </includes>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/constraint-summary.xsl
+                                        </stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^(.*)$</pattern>
+                                                <replacement>$1-constraint-summary.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                    </transformationSet>
+                                    <!-- Concept Summary -->
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF</dir>
+                                        <includes>
+                                            <include>jqassistant-rules/*.xml</include>
+                                        </includes>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/concept-summary.xsl
+                                        </stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^(.*)$</pattern>
+                                                <replacement>$1-concept-summary.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                    </transformationSet>
+                                </transformationSets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sf.saxon</groupId>
+                            <artifactId>saxon</artifactId>
+                            <version>8.7</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <dependencyManagement>

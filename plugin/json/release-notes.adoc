@@ -1,5 +1,5 @@
 
-= JSON Plugin
+= JSON Plugin Changelog
 
 == 2.3.1
 
@@ -13,17 +13,16 @@
 == 1.6.0
 
 * Fixed https://github.com/buschmais/jqa-json-plugin/issues/8[Cope with null scalar values in arrays^].
-  This ugly bug could prevent jQAssistant to scan projects with JSON files.
+This ugly bug could prevent jQAssistant to scan projects with JSON files.
 
 == 1.4
 
 * Added support to exclude or include specific files via a simple filename pattern
-  by setting the parameters `json.file.include` and `json.file.exclude`.
+by setting the parameters `json.file.include` and `json.file.exclude`.
 * Fixed wrong compiler settings to generate Java 7 bytecode instead of Java 8
 
 == 1.3
 
 * Initial release.
-
 
 
