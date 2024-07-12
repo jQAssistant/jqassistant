@@ -152,7 +152,7 @@
         <maven.invoker.jqassistant.version>2.3.1</maven.invoker.jqassistant.version>
         <!-- jQA build version -->
         <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
-    </properties>
+  </properties>
 
     <build>
         <pluginManagement>
@@ -477,7 +477,11 @@
                         <releaseProfiles>release</releaseProfiles>
                     </configuration>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.7.0.1746</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
@@ -736,6 +740,37 @@
             </build>
         </profile>
         <profile>
+            <id>sonar</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                <sonar.organization>jqassistant</sonar.organization>
+                <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+                <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <!--
              ! This profile is automatically activated by using maven-release-plugin:perfom.
@@ -818,7 +853,6 @@
             </build>
         </profile>
     </profiles>
-
     <modules>
         <module>bom</module>
         <module>core</module>
