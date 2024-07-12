@@ -70,8 +70,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row) {
-        if (!baselineManager.isExisting(executableRule, row)) {
-            return false;
+        if (baselineManager.isExisting(executableRule, row)) {
+            return true;
         }
         String ruleId = executableRule.getId();
         Map<String, Column<?>> columns = row.getColumns();
