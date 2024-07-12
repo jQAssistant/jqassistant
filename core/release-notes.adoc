@@ -1,4 +1,5 @@
-= Core Framework
+
+= Core Framework Changelog
 
 == 2.3.0
 
@@ -146,16 +147,16 @@ concepts:
 * A warning is logged if execution of a rule (concept/constraint) exceeds 5 seconds
 * The store is now available for custom report plugins via `ReportContext#getStore()`
 * The XML Schema description for plugins for jQAssistant has been
-  updated and is now available in version 1.10.
-  Please update your existing plugins
-  by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"`
-  as namespace declaration for your plugin descriptors.
+updated and is now available in version 1.10.
+Please update your existing plugins
+by using `xmlns:jpd="http://schema.jqassistant.org/plugin/v1.10"`
+as namespace declaration for your plugin descriptors.
 * Starting with this version, it is recommended to assign a unique
-  id to each plugin. In later versions of jQAssistant, this id
-  can be used to refer to its plugin in the upcoming new
-  configuration mechanism. +
-   +
-  A possible plugin descriptor could look like this:
+id to each plugin. In later versions of jQAssistant, this id
+can be used to refer to its plugin in the upcoming new
+configuration mechanism. +
+ +
+A possible plugin descriptor could look like this:
 +
 [source, xml]
 ----
@@ -190,9 +191,9 @@ NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. 
 == 1.7.0
 
 * Removed deprecated class `com.buschmais.jqassistant.core.report.api.AbstractReportPlugin`, report plugins must
-  be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
+be migrated to implement `com.buschmais.jqassistant.core.report.api.ReportPlugin`
 * A warning will now be logged if there is no rule source parser who is able to
-  read and parse the rule source.
+read and parse the rule source.
 * Fixed an issue where plugins could not register Asciidoctor extensions when used within the CLI
 
 == 1.5.0
@@ -218,6 +219,5 @@ NOTE: This might break plugins relying on the before used AsciidoctorJ 1.5 API. 
 * Upgraded to Neo4j 2.3.8.
 * Added support for array properties in reports (e.g. HTML).
 * Added support for rule parameters.
-
 
 

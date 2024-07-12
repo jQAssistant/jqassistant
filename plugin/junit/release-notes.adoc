@@ -1,5 +1,5 @@
 
-= JUnit Plugin
+= JUnit Plugin Changelog
 
 == 1.12.0
 
@@ -24,11 +24,11 @@ https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugi
 === Renamed constraints
 
 * Renamed `junit4:IgnoreWithoutMessage` to `junit:IgnoreWithoutMessage` because
-  of added support for JUnit 5.
+of added support for JUnit 5.
 * Renamed `junit:IgnoreWithoutMessage` to `junit:AssertionMustProvideMessage` because
-  of added support for JUnit 5.
+of added support for JUnit 5.
 * Renamed `junit4:TestMethodWithoutAssertion` to `junit:TestMethodWithoutAssertion`
-  because of added support for JUnit 5.
+because of added support for JUnit 5.
 
 == 1.3
 
@@ -37,8 +37,7 @@ https://github.com/buschmais/jqa-junit-plugin/issues/2[buschmais/jqa-junit-plugi
 == 1.2
 
 * Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.junit`
-  to `com.buschmais.jqassistant.plugin:junit`.
+to `com.buschmais.jqassistant.plugin:junit`.
 * No functional changes since version 1.1.3.
-
 
 

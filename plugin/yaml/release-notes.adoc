@@ -1,0 +1,12 @@
+
+= YAML 2 Plugin Changelog
+
+== 1.10.0
+
+* The set of YAML files processed by jQA can be now
+configured via the properties `yaml.file.include` and `yaml.file.exclude`.
+Main contributor for this feature was https://github.com/ascheman[Gerd Aschemann^].
+
+== 1.7.0
+
+* Initial release

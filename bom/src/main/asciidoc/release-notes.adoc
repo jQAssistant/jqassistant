@@ -1,8 +1,0 @@
-
-= Bill of Materials
-
-== 1.12.0
-
-* Initial release of the Bill of Materials.
-
-

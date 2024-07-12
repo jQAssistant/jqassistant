@@ -1,5 +1,5 @@
 
-= Plugin for Maven
+= Plugin for Maven Changelog
 
 == 2.3.0
 

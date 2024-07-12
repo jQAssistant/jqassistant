@@ -1,4 +1,4 @@
-= Distribution Specification
+= Distribution Specification Changelog
 
 == 2.0.0
 

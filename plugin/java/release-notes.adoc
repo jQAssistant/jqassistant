@@ -1,5 +1,5 @@
 
-= Java Plugin
+= Java Plugin Changelog
 
 == 2.3.0
 
@@ -81,7 +81,7 @@ Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething(
 
 * Added support for method variables in Java class scanner, i.e. `(:Method)-[:DECLARES]->(:Variable)`.
 * Added support for XML based Property files. See
-  https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
+https://github.com/buschmais/jqa-java-plugin/issues/1[Issue 1: Scan also XML based Property Files^].
 * Added label 'ByteCode' for Java class elements (types, methods, fields, etc.)
 * Added support for Java 10
 
@@ -94,14 +94,13 @@ Example: `com.acme.Foo#void doSomething()` is now reported as `void doSomething(
 == 1.2
 
 * Maven coordinates changed from `com.buschmais.jqassistant.plugin:jqassistant.plugin.java`
-  to `com.buschmais.jqassistant.plugin:java`.
+to `com.buschmais.jqassistant.plugin:java`.
 * Added attribute `weight` to `DEPENDS_ON` relations between types
 * Fixed a bug where redundant and cyclic DECLARES relations have been created between outer and
-  their inner classes.
+their inner classes.
 * Annotation nodes are now also labeled with `Java`.
 * Fixed a bug with where type resolution created multiple nodes when scanning directories with
-  `java:classpath` scope.
+`java:classpath` scope.
 * Added constant values for fields.
 * Added `DECLARES` relations between methods and their declared anonymous inner
-  classes: `(:Method)-[:DECLARES]\->(:Type)`.
-
+classes: `(:Method)-[:DECLARES]\->(:Type)`.
