@@ -17,24 +17,27 @@ public class ClasspathRuleSource extends RuleSource {
     public static final String RULE_RESOURCE_PATH = "META-INF/jqassistant-rules";
 
     private final ClassLoader classLoader;
-    private final String resource;
     private final String relativePath;
+    private final URL resource;
 
     public ClasspathRuleSource(ClassLoader classLoader, String relativePath) {
         this.classLoader = classLoader;
         this.relativePath = relativePath;
-        this.resource = RULE_RESOURCE_PATH + "/" + relativePath;
-
+        String classpathResource = RULE_RESOURCE_PATH + "/" + relativePath;
+        this.resource = getClassLoader().getResource(classpathResource);
+        if (this.resource == null) {
+            throw new IllegalArgumentException("Cannot find rule resource in classpath: " + classpathResource);
+        }
     }
 
     @Override
     public String getId() {
-        return resource;
+        return resource.toString();
     }
 
     @Override
     public URL getURL() {
-        return getClassLoader().getResource(resource);
+        return resource;
     }
 
     @Override
@@ -49,12 +52,7 @@ public class ClasspathRuleSource extends RuleSource {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        ClassLoader currentClassloader = getClassLoader();
-        InputStream stream = currentClassloader.getResourceAsStream(resource);
-        if (stream == null) {
-            throw new IOException("Cannot load resource from " + resource);
-        }
-        return stream;
+        return resource.openStream();
     }
 
     private ClassLoader getClassLoader() {
