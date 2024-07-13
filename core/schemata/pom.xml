@@ -62,7 +62,7 @@
                                     <fileset>
                                         <directory>${project.basedir}/src/main/resources/META-INF/baseline/xsd</directory>
                                         <includes>
-                                            <include>jqassistant-baseline-v2.3.xsd</include>
+                                            <include>jqassistant-baseline-v2.4.xsd</include>
                                         </includes>
                                     </fileset>
                                 </schema>

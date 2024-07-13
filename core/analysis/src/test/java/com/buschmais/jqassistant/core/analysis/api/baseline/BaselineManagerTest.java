@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -93,7 +92,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, row)).isFalse();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
+        verifyNewBaseline(executableRule, "1");
     }
 
     @ParameterizedTest
@@ -114,7 +113,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
+        verifyNewBaseline(executableRule, "1");
     }
 
     @ParameterizedTest
@@ -142,7 +141,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, newRow)).isFalse();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
+        verifyNewBaseline(executableRule, "1");
     }
 
     @ParameterizedTest
@@ -163,7 +162,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
+        verifyNewBaseline(executableRule, "1");
     }
 
     @Test
@@ -245,11 +244,10 @@ class BaselineManagerTest {
         return oldBaseline;
     }
 
-    private void verifyNewBaseline(ExecutableRule<?> executableRule, Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rulebaseLinesFunction,
-        String... expectedRowKeys) {
+    private void verifyNewBaseline(ExecutableRule<?> executableRule, String... expectedRowKeys) {
         verify(baselineRepository).write(baselineArgumentCaptor.capture());
         Baseline newBaseline = baselineArgumentCaptor.getValue();
-        SortedMap<String, Baseline.RuleBaseline> ruleBaselines = rulebaseLinesFunction.apply(newBaseline);
+        SortedMap<String, Baseline.RuleBaseline> ruleBaselines = executableRule instanceof Concept ? newBaseline.getConcepts() : newBaseline.getConstraints();
         assertThat(ruleBaselines).hasSize(1)
             .containsKey(executableRule.getId());
         Baseline.RuleBaseline ruleBaseline = ruleBaselines.get(executableRule.getId());

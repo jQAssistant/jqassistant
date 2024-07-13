@@ -80,19 +80,19 @@ public class BaselineManager {
                 Baseline.RuleBaseline oldRuleBaseline = ruleBaseline.get(ruleId);
                 if (oldRuleBaseline != null && oldRuleBaseline.getRows()
                     .containsKey(rowKey)) {
-                    add(ruleId, rowKey, columns);
+                    add(ruleId, rowKey, columns, rows);
                     return true;
                 }
                 return false;
             })
             .orElseGet(() -> {
-                add(ruleId, rowKey, columns);
+                add(ruleId, rowKey, columns, rows);
                 return false;
             });
     }
 
-    private void add(String constraintId, String rowKey, Map<String, Column<?>> columns) {
-        Baseline.RuleBaseline newRuleBaseline = newBaseline.getConstraints()
+    private void add(String constraintId, String rowKey, Map<String, Column<?>> columns, Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rows) {
+        Baseline.RuleBaseline newRuleBaseline = rows.apply(newBaseline)
             .computeIfAbsent(constraintId, key -> new Baseline.RuleBaseline());
         TreeMap<String, String> row = new TreeMap<>();
         columns.entrySet()
