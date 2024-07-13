@@ -771,7 +771,6 @@
                 <sonar.organization>jqassistant</sonar.organization>
                 <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
                 <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
-                <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
                 <plugins>
