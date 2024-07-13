@@ -127,7 +127,8 @@
         <maven.deploy.version>3.1.1</maven.deploy.version>
         <maven.release.version>3.0.1</maven.release.version>
         <maven.enforcer.version>3.0.0</maven.enforcer.version>
-        <maven.failsafe.version>3.2.3</maven.failsafe.version>
+        <maven.failsafe.version>3.3.1</maven.failsafe.version>
+        <maven.jacoco.version>0.8.12</maven.jacoco.version>
         <maven.install.version>3.1.1</maven.install.version>
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.4.0</maven.javadoc.version>
@@ -247,6 +248,7 @@
                         </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
+                            @{argLine}
                             --add-opens java.base/java.lang=ALL-UNNAMED
                             --add-opens java.base/java.nio=ALL-UNNAMED
                             --add-opens java.base/java.util=ALL-UNNAMED
@@ -264,11 +266,17 @@
                         </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
+                            @{argLine}
                             --add-opens java.base/java.lang=ALL-UNNAMED
                             --add-opens java.base/java.nio=ALL-UNNAMED
                             --add-opens java.base/java.util=ALL-UNNAMED
                         </argLine>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${maven.jacoco.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -395,7 +403,9 @@
                         <encoding>UTF-8</encoding>
                         <detectJavaApiLink>false</detectJavaApiLink>
                         <doclint>none</doclint>
-                        <sourcepath>${project.basedir}/src/main/java;${project.build.directory}/generated-sources/delombok;${project.build.directory}/generated-sources/xjc</sourcepath>
+                        <sourcepath>
+                            ${project.basedir}/src/main/java;${project.build.directory}/generated-sources/delombok;${project.build.directory}/generated-sources/xjc
+                        </sourcepath>
                     </configuration>
                     <executions>
                         <execution>
@@ -649,6 +659,18 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
@@ -659,10 +681,6 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -753,9 +771,6 @@
                 <sonar.organization>jqassistant</sonar.organization>
                 <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
                 <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
-                <!--
-                <sonar.moduleKey>${project.groupId}_${project.artifactId}</sonar.moduleKey>
-                -->
                 <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
@@ -800,8 +815,8 @@
                                 </goals>
                                 <configuration>
                                     <rules>
-                                        <requireReleaseDeps />
-                                        <requireReleaseVersion />
+                                        <requireReleaseDeps/>
+                                        <requireReleaseVersion/>
                                     </rules>
                                 </configuration>
                             </execution>
