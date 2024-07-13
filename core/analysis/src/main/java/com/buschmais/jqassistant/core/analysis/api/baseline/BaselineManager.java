@@ -1,17 +1,18 @@
 package com.buschmais.jqassistant.core.analysis.api.baseline;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import lombok.RequiredArgsConstructor;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Verifies result rows gathered for rule during an analyze task against a baseline
@@ -32,9 +33,9 @@ public class BaselineManager {
 
     private final BaselineRepository baselineRepository;
 
-    private Optional<Baseline> optionalOldBaseline = null;
+    private Optional<Baseline> optionalOldBaseline;
 
-    private Baseline newBaseline = null;
+    private Baseline newBaseline;
 
     public void start() {
         if (configuration.enabled()) {
@@ -53,14 +54,29 @@ public class BaselineManager {
         if (!configuration.enabled()) {
             return false;
         }
-        if (optionalOldBaseline == null) {
+        if (newBaseline == null) {
             throw new IllegalStateException("Baseline manager has not been started yet");
         }
+        if (executableRule instanceof Concept) {
+            return isExistingResult(executableRule, row, configuration.includeConcepts()
+                .orElse(emptyList()), Baseline::getConcepts);
+        } else if (executableRule instanceof Constraint) {
+            return isExistingResult(executableRule, row, configuration.includeConstraints(), Baseline::getConstraints);
+        }
+        throw new IllegalArgumentException("Unsupported executable rule: " + executableRule);
+    }
+
+    private Boolean isExistingResult(ExecutableRule<?> executableRule, Row row, List<String> ruleFilters,
+        Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rows) {
         String ruleId = executableRule.getId();
+        if (ruleFilters.stream()
+            .noneMatch(filter -> RuleFilter.matches(ruleId, filter))) {
+            return false;
+        }
         String rowKey = row.getKey();
         Map<String, Column<?>> columns = row.getColumns();
         return optionalOldBaseline.map(oldBaseline -> {
-                SortedMap<String, Baseline.RuleBaseline> ruleBaseline = getRows(oldBaseline, executableRule);
+                SortedMap<String, Baseline.RuleBaseline> ruleBaseline = rows.apply(oldBaseline);
                 Baseline.RuleBaseline oldRuleBaseline = ruleBaseline.get(ruleId);
                 if (oldRuleBaseline != null && oldRuleBaseline.getRows()
                     .containsKey(rowKey)) {
@@ -73,15 +89,6 @@ public class BaselineManager {
                 add(ruleId, rowKey, columns);
                 return false;
             });
-    }
-
-    private static SortedMap<String, Baseline.RuleBaseline> getRows(Baseline baseline, ExecutableRule<?> executableRule) {
-        if (executableRule instanceof Concept) {
-            return baseline.getConcepts();
-        } else if (executableRule instanceof Constraint) {
-            return baseline.getConstraints();
-        }
-        throw new IllegalArgumentException("Unsupported executable rule: " + executableRule);
     }
 
     private void add(String constraintId, String rowKey, Map<String, Column<?>> columns) {

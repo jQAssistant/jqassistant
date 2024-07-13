@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.baseline;
 
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -13,6 +14,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -58,8 +60,7 @@ class BaselineManagerTest {
     @ParameterizedTest
     @MethodSource("rules")
     void baselineDisabled(ExecutableRule<?> executableRule) {
-        doReturn(false).when(configuration)
-            .enabled();
+        stubConfigForAllRules(false);
         Row row = Row.builder()
             .key("1")
             .columns(Map.of("c1", Column.builder()
@@ -78,8 +79,7 @@ class BaselineManagerTest {
     @ParameterizedTest
     @MethodSource("rules")
     void noBaselineWithNewConstraintViolation(ExecutableRule<?> executableRule) {
-        doReturn(true).when(configuration)
-            .enabled();
+        stubConfigForAllRules(true);
         doReturn(empty()).when(baselineRepository)
             .read();
         Row row = Row.builder()
@@ -99,8 +99,7 @@ class BaselineManagerTest {
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithExistingConstraintViolation(ExecutableRule<?> executableRule) {
-        doReturn(true).when(configuration)
-            .enabled();
+        stubConfigForAllRules(true);
         Baseline oldBaseline = createOldBaseline(executableRule, "1");
         doReturn(of(oldBaseline)).when(baselineRepository)
             .read();
@@ -121,8 +120,7 @@ class BaselineManagerTest {
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithNewConstraintViolation(ExecutableRule<?> executableRule) {
-        doReturn(true).when(configuration)
-            .enabled();
+        stubConfigForAllRules(true);
         Baseline oldBaseline = createOldBaseline(executableRule, "1");
         Row oldRow = Row.builder()
             .key("1")
@@ -150,8 +148,7 @@ class BaselineManagerTest {
     @ParameterizedTest
     @MethodSource("rules")
     void existingBaselineWithRemovedConstraintViolation(ExecutableRule<?> executableRule) {
-        doReturn(true).when(configuration)
-            .enabled();
+        stubConfigForAllRules(true);
         Baseline oldBaseline = createOldBaseline(executableRule, "1", "2");
         Row row = Row.builder()
             .key("1")
@@ -167,6 +164,71 @@ class BaselineManagerTest {
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, baseline -> baseline.getConstraints(), "1");
+    }
+
+    @Test
+    void filterConcept() {
+        doReturn(true).when(configuration)
+            .enabled();
+        doReturn(of(List.of("included-concept"))).when(configuration)
+            .includeConcepts();
+        doReturn(empty()).when(baselineRepository)
+            .read();
+
+        Row row = Row.builder()
+            .key("1")
+            .columns(Map.of("c1", Column.builder()
+                .label("1")
+                .build()))
+            .build();
+
+        baselineManager.start();
+        assertThat(baselineManager.isExisting(Concept.builder()
+            .id("non-matching")
+            .build(), row)).isFalse();
+        baselineManager.stop();
+
+        verify(baselineRepository).write(baselineArgumentCaptor.capture());
+        Baseline newBaseline = baselineArgumentCaptor.getValue();
+        assertThat(newBaseline.getConcepts()).isEmpty();
+    }
+
+    @Test
+    void filterConstraint() {
+        doReturn(true).when(configuration)
+            .enabled();
+        doReturn(List.of("included-constraint")).when(configuration)
+            .includeConstraints();
+        doReturn(empty()).when(baselineRepository)
+            .read();
+
+        Row row = Row.builder()
+            .key("1")
+            .columns(Map.of("c1", Column.builder()
+                .label("1")
+                .build()))
+            .build();
+
+        baselineManager.start();
+        assertThat(baselineManager.isExisting(Constraint.builder()
+            .id("non-matching")
+            .build(), row)).isFalse();
+        baselineManager.stop();
+
+        verify(baselineRepository).write(baselineArgumentCaptor.capture());
+        Baseline newBaseline = baselineArgumentCaptor.getValue();
+        assertThat(newBaseline.getConstraints()).isEmpty();
+    }
+
+    private void stubConfigForAllRules(boolean enabled) {
+        doReturn(enabled).when(configuration)
+            .enabled();
+        lenient().doReturn(of(List.of("*")))
+            .when(configuration)
+            .includeConcepts();
+        lenient().doReturn(List.of("*"))
+            .when(configuration)
+            .includeConstraints();
     }
 
     private static Baseline createOldBaseline(ExecutableRule<?> rule, String... rowKeys) {
