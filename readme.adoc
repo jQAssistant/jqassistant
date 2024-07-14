@@ -1,0 +1,48 @@
+:toc:
+= jQAssistant
+
+This repository contains the core framework, plugins and integrations of https://jqassistant.org[jQAssistant].
+
+== General Resources
+
+For information about the tool, getting started and asking questions we provide the following resources:
+
+* https://jqassistant.org[Project homepage]
+* https://jqassistant.github.io/jqassistant/doc/[User Manual]
+* https://github.com/jqassistant-tutorials[Tutorials]
+* https://github.com/jqassistant-plugins[Plugins]
+* https://stackoverflow.com/questions/tagged/jqassistant[Stackoverflow]
+* https://groups.google.com/g/jqassistant[Google Group]
+
+== Contributions
+
+For any missing features or bugs you're invited to create issues in this repository.
+
+NOTE: Pull requests are appreciated but for non-trivial changes we highly recommend to create an issue before. This helps to avoid frustration if a contributor spends efforts on a PR which we then would not accept.
+
+== Development Setup
+
+To build and test jQAssistant the following prerequisites must be satisfied on your machine:
+
+* Java IDE (e.g. IntelliJ IDEA, Eclipse, VS Code)
+** ensure that you imported the settings for code formatting and import optimization available https://github.com/jQAssistant/jqassistant-build/tree/main/ide[here]
+* Java Development Kit 11, 17 (recommended) or 21
+* Apache Maven 3.8 or later
+** The file `~/.m2/settings.xml` should contain the Sonatype OSS Snapshot repository (see https://github.com/jQAssistant/jqassistant-build/blob/main/ide/maven/settings.xml[here] for an example)
+
+== Build and Test
+
+The project can be built using Maven:
+
+----
+mvn verify
+----
+
+For execution of integration tests the according profile must be activated:
+
+----
+mvn verify -PIT
+----
+
+NOTE: This profiles activates all Java unit (`*Test`) and integration `(*IT)` tests as well as the Maven Invoker plugin (located under `src/it`). These tests are quite expensive, expect an execution time of at least 30 minutes for the whole project.
+
