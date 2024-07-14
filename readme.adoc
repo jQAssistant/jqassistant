@@ -5,7 +5,7 @@ This repository contains the core framework, plugins and integrations of https:/
 
 == General Resources
 
-For information about the tool, getting started and asking questions we provide the following resources:
+For general information about the tool, getting started and asking questions we provide the following resources:
 
 * https://jqassistant.org[Project homepage]
 * https://jqassistant.github.io/jqassistant/doc/[User Manual]
