@@ -40,6 +40,21 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
+    void constraintWithBaseline() {
+        File baselineFile = new File(RULES_DIRECTORY + "/jqassistant-baseline.xml");
+        if (baselineFile.exists()) {
+            assertThat(baselineFile.delete()).isTrue();
+        }
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
+            "jqassistant.analyze.constraints=" + TEST_CONSTRAINT, "-D", "jqassistant.analyze.baseline.enabled=true" };
+        // create baseline
+        assertThat(execute(args).getExitCode()).isEqualTo(2);
+        assertThat(baselineFile).exists();
+        // create run with baseline
+        assertThat(execute(args).getExitCode()).isZero();
+    }
+
+    @DistributionTest
     void excludeConstraint() {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.analyze.exclude-constraints=" + TEST_CONSTRAINT };
