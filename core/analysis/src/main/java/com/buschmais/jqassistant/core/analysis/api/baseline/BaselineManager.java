@@ -48,7 +48,7 @@ public class BaselineManager {
 
     public void stop() {
         if (configuration.enabled() && !(optionalOldBaseline.isPresent() && newBaseline.equals(optionalOldBaseline.get()))) {
-            log.info("Detected updated baseline.");
+            log.info("Baseline has been updated.");
             baselineRepository.write(newBaseline);
         }
     }
