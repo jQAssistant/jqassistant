@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api.baseline;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import lombok.ToString;
  * Note that the data structures rely on {@link SortedMap}s to preserve the order of entries. This is required for creating diffs between baseline files which are generated from these structures.
  */
 @Getter
+@EqualsAndHashCode
 @ToString
 public class Baseline {
 
@@ -29,6 +31,7 @@ public class Baseline {
      * Represent a baseline for a specific {@link com.buschmais.jqassistant.core.rule.api.model.Concept} or {@link com.buschmais.jqassistant.core.rule.api.model.Constraint}.
      */
     @Getter
+    @EqualsAndHashCode
     @ToString
     public static class RuleBaseline {
 

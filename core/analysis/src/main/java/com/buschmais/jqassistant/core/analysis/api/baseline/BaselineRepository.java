@@ -6,6 +6,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.baseline.v2.ColumnType;
 import org.jqassistant.schema.baseline.v2.JqassistantBaseline;
 import org.jqassistant.schema.baseline.v2.RowType;
@@ -15,6 +16,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 @RequiredArgsConstructor
+@Slf4j
 public class BaselineRepository {
 
     private static final JAXBHelper<JqassistantBaseline> JAXB_HELPER = new JAXBHelper<>(JqassistantBaseline.class);
@@ -26,13 +28,17 @@ public class BaselineRepository {
     public Optional<Baseline> read() {
         File baselineFile = getFile();
         if (baselineFile.exists()) {
+            log.info("Reading baseline from file '{}'.", baselineFile);
             return of(read(baselineFile));
         }
+        log.info("Baseline file '{}' does not exist yet.", baselineFile);
         return empty();
     }
 
     public void write(Baseline baseline) {
-        write(baseline, getFile());
+        File baselineFile = getFile();
+        log.info("Writing baseline to file '{}'.", baselineFile);
+        write(baseline, baselineFile);
     }
 
     private File getFile() {

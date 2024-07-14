@@ -113,7 +113,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, "1");
+        verify(baselineRepository, never()).write(any(Baseline.class));
     }
 
     @ParameterizedTest
@@ -141,7 +141,7 @@ class BaselineManagerTest {
         assertThat(baselineManager.isExisting(executableRule, newRow)).isFalse();
         baselineManager.stop();
 
-        verifyNewBaseline(executableRule, "1");
+        verify(baselineRepository, never()).write(any(Baseline.class));
     }
 
     @ParameterizedTest

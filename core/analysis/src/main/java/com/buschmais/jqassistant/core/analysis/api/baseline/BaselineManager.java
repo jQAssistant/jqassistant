@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Collections.emptyList;
 
@@ -27,6 +28,7 @@ import static java.util.Collections.emptyList;
  * <p>
  */
 @RequiredArgsConstructor
+@Slf4j
 public class BaselineManager {
 
     private final com.buschmais.jqassistant.core.analysis.api.configuration.Baseline configuration;
@@ -45,7 +47,8 @@ public class BaselineManager {
     }
 
     public void stop() {
-        if (configuration.enabled()) {
+        if (configuration.enabled() && !(optionalOldBaseline.isPresent() && newBaseline.equals(optionalOldBaseline.get()))) {
+            log.info("Detected updated baseline.");
             baselineRepository.write(newBaseline);
         }
     }
@@ -80,18 +83,19 @@ public class BaselineManager {
                 Baseline.RuleBaseline oldRuleBaseline = ruleBaseline.get(ruleId);
                 if (oldRuleBaseline != null && oldRuleBaseline.getRows()
                     .containsKey(rowKey)) {
-                    add(ruleId, rowKey, columns, rows);
+                    addToNewBaseline(ruleId, rowKey, columns, rows);
                     return true;
                 }
                 return false;
             })
             .orElseGet(() -> {
-                add(ruleId, rowKey, columns, rows);
+                addToNewBaseline(ruleId, rowKey, columns, rows);
                 return false;
             });
     }
 
-    private void add(String constraintId, String rowKey, Map<String, Column<?>> columns, Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rows) {
+    private void addToNewBaseline(String constraintId, String rowKey, Map<String, Column<?>> columns,
+        Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rows) {
         Baseline.RuleBaseline newRuleBaseline = rows.apply(newBaseline)
             .computeIfAbsent(constraintId, key -> new Baseline.RuleBaseline());
         TreeMap<String, String> row = new TreeMap<>();
@@ -102,5 +106,4 @@ public class BaselineManager {
         newRuleBaseline.getRows()
             .put(rowKey, row);
     }
-
 }
