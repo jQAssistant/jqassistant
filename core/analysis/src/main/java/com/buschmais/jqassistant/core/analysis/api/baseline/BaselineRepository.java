@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.baseline.v2.ColumnType;
 import org.jqassistant.schema.baseline.v2.JqassistantBaseline;
@@ -15,18 +14,20 @@ import org.jqassistant.schema.baseline.v2.RuleType;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-@RequiredArgsConstructor
 @Slf4j
 public class BaselineRepository {
 
     private static final JAXBHelper<JqassistantBaseline> JAXB_HELPER = new JAXBHelper<>(JqassistantBaseline.class);
 
-    private final com.buschmais.jqassistant.core.analysis.api.configuration.Baseline configuration;
+    private final File baselineFile;
 
-    private final File ruleDirectory;
+    public BaselineRepository(com.buschmais.jqassistant.core.analysis.api.configuration.Baseline configuration, File ruleDirectory) {
+        this.baselineFile = configuration.file()
+            .map(File::new)
+            .orElse(new File(ruleDirectory, "jqassistant-baseline.xml"));
+    }
 
     public Optional<Baseline> read() {
-        File baselineFile = getFile();
         if (baselineFile.exists()) {
             log.info("Reading baseline from file '{}'.", baselineFile);
             return of(read(baselineFile));
@@ -36,15 +37,8 @@ public class BaselineRepository {
     }
 
     public void write(Baseline baseline) {
-        File baselineFile = getFile();
         log.info("Writing baseline to file '{}'.", baselineFile);
         write(baseline, baselineFile);
-    }
-
-    private File getFile() {
-        return configuration.file()
-            .map(File::new)
-            .orElse(new File(ruleDirectory, "jqassistant-baseline.xml"));
     }
 
     private static Baseline read(File baselineFile) {
@@ -57,12 +51,12 @@ public class BaselineRepository {
 
     private static Baseline toBaseline(JqassistantBaseline jqassistantBaseline) {
         Baseline baseline = new Baseline();
-        toBaseline(jqassistantBaseline.getConstraint(), baseline.getConstraints());
-        toBaseline(jqassistantBaseline.getConcept(), baseline.getConcepts());
+        toRuleBaselines(jqassistantBaseline.getConstraint(), baseline.getConstraints());
+        toRuleBaselines(jqassistantBaseline.getConcept(), baseline.getConcepts());
         return baseline;
     }
 
-    private static void toBaseline(List<RuleType> ruleTypes, SortedMap<String, Baseline.RuleBaseline> ruleBaselines) {
+    private static void toRuleBaselines(List<RuleType> ruleTypes, SortedMap<String, Baseline.RuleBaseline> ruleBaselines) {
         for (RuleType ruleType : ruleTypes) {
             Baseline.RuleBaseline ruleBaseline = new Baseline.RuleBaseline();
             for (RowType rowType : ruleType.getRow()) {
@@ -79,8 +73,8 @@ public class BaselineRepository {
 
     private static void write(Baseline baseline, File baselinefile) {
         JqassistantBaseline jqassistantBaseline = fromBaseline(baseline);
-        try {
-            JAXB_HELPER.marshal(jqassistantBaseline, new FileOutputStream(baselinefile));
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(baselinefile))) {
+            JAXB_HELPER.marshal(jqassistantBaseline, outputStream);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to write baseline file " + baselinefile, e);
         }
@@ -88,12 +82,12 @@ public class BaselineRepository {
 
     private static JqassistantBaseline fromBaseline(Baseline baseline) {
         JqassistantBaseline jqassistantBaseline = new JqassistantBaseline();
-        fromBaseline(baseline.getConstraints(), jqassistantBaseline.getConstraint());
-        fromBaseline(baseline.getConcepts(), jqassistantBaseline.getConcept());
+        fromRuleBaselines(baseline.getConstraints(), jqassistantBaseline.getConstraint());
+        fromRuleBaselines(baseline.getConcepts(), jqassistantBaseline.getConcept());
         return jqassistantBaseline;
     }
 
-    private static void fromBaseline(SortedMap<String, Baseline.RuleBaseline> ruleBaselines, List<RuleType> ruleTypes) {
+    private static void fromRuleBaselines(SortedMap<String, Baseline.RuleBaseline> ruleBaselines, List<RuleType> ruleTypes) {
         for (Map.Entry<String, Baseline.RuleBaseline> ruleBaselineEntry : ruleBaselines.entrySet()) {
             String ruleId = ruleBaselineEntry.getKey();
             Baseline.RuleBaseline ruleBaseline = ruleBaselineEntry.getValue();
