@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jqassistant-baseline xmlns="http://schema.jqassistant.org/baseline/v2.3">
+<jqassistant-baseline xmlns="http://schema.jqassistant.org/baseline/v2.4">
     <constraint id="test-constraint">
         <row key="1">
             <column name="c1">value 1</column>
