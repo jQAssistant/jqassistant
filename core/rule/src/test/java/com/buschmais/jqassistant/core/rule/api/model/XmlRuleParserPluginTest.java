@@ -24,8 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class XmlRuleParserPluginTest {
@@ -116,41 +115,37 @@ class XmlRuleParserPluginTest {
 
 
     @Test
-    void testAccepts_ValidXmlFile_ReturnsTrue() throws XMLStreamException, IOException {
+    void testAccepts_ValidXmlFile_ReturnsTrue() throws IOException {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        when(mockRuleSource.getId()).thenReturn("jqassistant-rules.xml");
+        doReturn("jqassistant-rules.xml").when(mockRuleSource).getId();
         when(mockRuleSource.getInputStream()).thenReturn(
-            new ByteArrayInputStream("<jqassistant-rules>".getBytes())
-        );
-        boolean result = xmlRuleParserPlugin.accepts(mockRuleSource);
-        assertTrue(result);
+            new ByteArrayInputStream("<jqassistant-rules>".getBytes()));
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isTrue();
+
     }
     @Test
-    void testAccepts_InvalidXmlFile_ReturnsFalse() throws XMLStreamException, IOException {
+    void testAccepts_InvalidXmlFile_ReturnsFalse() throws IOException {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        when(mockRuleSource.getId()).thenReturn("report.xml");
+        doReturn("rules.xml").when(mockRuleSource).getId();
         when(mockRuleSource.getInputStream()).thenReturn(
             new ByteArrayInputStream("<jqassistant-rules.xml>".getBytes())
         );
-        boolean result = xmlRuleParserPlugin.accepts(mockRuleSource);
-        assertFalse(result);
+
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
     }
-//    @Test
-//    void testAccepts_InvalidXFile_ReturnsFalse() throws XMLStreamException, IOException {
-//        XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
-//        RuleSource mockRuleSource = mock(RuleSource.class);
-//
-//        when(mockRuleSource.getId()).thenReturn("report.txt");
-//        when(mockRuleSource
-//            .getInputStream()).thenReturn( new ByteArrayInputStream("<jqassistant-rules.xml>".getBytes())
-//        );
-//        boolean result = xmlRuleParserPlugin.accepts(mockRuleSource);
-//        assertFalse(result);
-//    }
+    @Test
+    void testAccepts_InvalidXFile_ReturnsFalse() {
+        XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
+        RuleSource mockRuleSource = mock(RuleSource.class);
+
+        doReturn("report.txt").when(mockRuleSource).getId();
+
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
+    }
 
     // new ByteArrayInputStream("<jqassistant-rules>".getBytes())
 }
