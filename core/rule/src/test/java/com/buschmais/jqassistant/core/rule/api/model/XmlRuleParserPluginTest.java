@@ -47,8 +47,7 @@ class XmlRuleParserPluginTest {
     private void verifyExecutableRule(Collection<? extends AbstractRule> rules) {
         for (AbstractRule rule : rules) {
             assertThat(rule).isInstanceOf(ExecutableRule.class);
-            assertThat(((ExecutableRule<?>) rule).getExecutable()
-                .getLanguage()).isEqualTo("javascript");
+            assertThat(((ExecutableRule<?>) rule).getExecutable().getLanguage()).isEqualTo("javascript");
         }
     }
 
