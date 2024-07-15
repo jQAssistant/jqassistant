@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.stream.XMLStreamException;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
@@ -15,6 +14,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -106,7 +104,7 @@ class XmlRuleParserPluginTest {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", configuration);
         Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
         assertThat(conceptIds.size()).isEqualTo(1);
-        assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
+        MatcherAssert.assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
 
 
