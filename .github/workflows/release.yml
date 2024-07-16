@@ -25,6 +25,10 @@ on:
         description: "Default version to use for new local working copy."
         required: true
         default: "X.Y.Z-SNAPSHOT"
+      dryRun:
+        description: "Dry run mode (true/false)"
+        required: false
+        default: "true"
 
 jobs:
   build:
@@ -33,6 +37,7 @@ jobs:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
+      dryRun: ${{ github.event.inputs.dryRun }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
