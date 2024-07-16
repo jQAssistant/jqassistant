@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -47,20 +46,25 @@ class XmlRuleParserPluginTest {
     private void verifyExecutableRule(Collection<? extends AbstractRule> rules) {
         for (AbstractRule rule : rules) {
             assertThat(rule).isInstanceOf(ExecutableRule.class);
-            assertThat(((ExecutableRule<?>) rule).getExecutable().getLanguage()).isEqualTo("javascript");
+            assertThat(((ExecutableRule<?>) rule).getExecutable()
+                .getLanguage()).isEqualTo("javascript");
         }
     }
 
     @Test
     void ruleParameters() throws Exception {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/parameters.xml", configuration);
-        Concept concept = ruleSet.getConceptBucket().getById("test:ConceptWithParameters");
+        Concept concept = ruleSet.getConceptBucket()
+            .getById("test:ConceptWithParameters");
         verifyParameters(concept, false);
-        Concept conceptWithDefaultValues = ruleSet.getConceptBucket().getById("test:ConceptWithParametersAndDefaultValues");
+        Concept conceptWithDefaultValues = ruleSet.getConceptBucket()
+            .getById("test:ConceptWithParametersAndDefaultValues");
         verifyParameters(conceptWithDefaultValues, true);
-        Constraint constraint = ruleSet.getConstraintBucket().getById("test:ConstraintWithParameters");
+        Constraint constraint = ruleSet.getConstraintBucket()
+            .getById("test:ConstraintWithParameters");
         verifyParameters(constraint, false);
-        Constraint constraintWithDefaultValues = ruleSet.getConstraintBucket().getById("test:ConstraintWithParametersAndDefaultValues");
+        Constraint constraintWithDefaultValues = ruleSet.getConstraintBucket()
+            .getById("test:ConstraintWithParametersAndDefaultValues");
         verifyParameters(constraintWithDefaultValues, true);
     }
 
@@ -88,20 +92,27 @@ class XmlRuleParserPluginTest {
         assertThat(reader.accepts(ruleSource)).isEqualTo(true);
         reader.parse(ruleSource, ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertThat(ruleSet.getConceptBucket().size()).isEqualTo(1);
-        assertThat(ruleSet.getConstraintBucket().size()).isEqualTo(1);
-        assertThat(ruleSet.getConceptBucket().getIds()).containsExactly("java:Throwable");
-        assertThat(ruleSet.getConstraintBucket().getIds()).containsExactly("example:ConstructorOfDateMustNotBeUsed");
-        assertThat(ruleSet.getGroupsBucket().size()).isEqualTo(1);
+        assertThat(ruleSet.getConceptBucket()
+            .size()).isEqualTo(1);
+        assertThat(ruleSet.getConstraintBucket()
+            .size()).isEqualTo(1);
+        assertThat(ruleSet.getConceptBucket()
+            .getIds()).containsExactly("java:Throwable");
+        assertThat(ruleSet.getConstraintBucket()
+            .getIds()).containsExactly("example:ConstructorOfDateMustNotBeUsed");
+        assertThat(ruleSet.getGroupsBucket()
+            .size()).isEqualTo(1);
 
-        Group group = ruleSet.getGroupsBucket().getById("default");
+        Group group = ruleSet.getGroupsBucket()
+            .getById("default");
         assertThat(group.getId()).isEqualTo("default");
     }
 
     @Test
     void ruleSchema_1_8() throws RuleException {
         RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/rules-1.8.xml", configuration);
-        Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
+        Set<String> conceptIds = ruleSet.getConceptBucket()
+            .getIds();
         assertThat(conceptIds.size()).isEqualTo(1);
         MatcherAssert.assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
@@ -111,9 +122,9 @@ class XmlRuleParserPluginTest {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        doReturn("jqassistant-rules.xml").when(mockRuleSource).getId();
-        when(mockRuleSource.getInputStream()).thenReturn(
-            new ByteArrayInputStream("<jqassistant-rules>".getBytes()));
+        doReturn("jqassistant-rules.xml").when(mockRuleSource)
+            .getId();
+        when(mockRuleSource.getInputStream()).thenReturn(new ByteArrayInputStream("<jqassistant-rules>".getBytes()));
         assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isTrue();
     }
 
@@ -122,7 +133,8 @@ class XmlRuleParserPluginTest {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        doReturn("report.xml").when(mockRuleSource).getId();
+        doReturn("report.xml").when(mockRuleSource)
+            .getId();
         assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
     }
 
@@ -131,7 +143,8 @@ class XmlRuleParserPluginTest {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        doReturn("report.txt").when(mockRuleSource).getId();
+        doReturn("report.txt").when(mockRuleSource)
+            .getId();
         assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
     }
 
