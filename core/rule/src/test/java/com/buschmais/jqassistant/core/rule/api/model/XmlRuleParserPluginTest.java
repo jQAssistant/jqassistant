@@ -106,8 +106,6 @@ class XmlRuleParserPluginTest {
         MatcherAssert.assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
 
-    private RuleSource ruleSource;
-    private XmlRuleParserPlugin yourClassUnderTest;
 
     @Test
     void testAccepts_ValidXmlFile_ReturnsTrue() throws IOException {
@@ -124,11 +122,7 @@ class XmlRuleParserPluginTest {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        doReturn("rules.xml").when(mockRuleSource).getId();
-        when(mockRuleSource.getInputStream()).thenReturn(
-            new ByteArrayInputStream("<jqassistant-rules.xml>".getBytes())
-        );
-
+        doReturn("report.xml").when(mockRuleSource).getId();
         assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
     }
     @Test
