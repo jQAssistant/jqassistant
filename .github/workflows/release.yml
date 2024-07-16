@@ -17,6 +17,10 @@ on:
         description: "Default version to use when preparing a release."
         required: true
         default: "X.Y.Z"
+      releaseAssets:
+        description: "Paths to the release assets."
+        required: true
+        default: "[cli/neo4jv4/*-distribution.zip , cli/neo4jv5/*-distribution.zip]"
       developmentVersion:
         description: "Default version to use for new local working copy."
         required: true
@@ -35,3 +39,19 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  attach-artifacts:
+     runs-on: ubuntu-latest
+     needs: build
+     steps:
+       - name: Checkout code
+         uses: actions/checkout@v2
+
+       - name: Upload Release Asset Neo4j
+         uses: actions/upload-artifact@v3
+         with:
+           name: neo4j.zip
+           path: |
+            cli/neo4jv4/*-distribution.zip
+            cli/neo4jv5/*-distribution.zip
+           content_type: application/zip
