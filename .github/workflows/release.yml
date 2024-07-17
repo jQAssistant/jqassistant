@@ -21,16 +21,17 @@ on:
         description: "Default version to use for new local working copy."
         required: true
         default: "X.Y.Z-SNAPSHOT"
-      dryRun:
-        description: "Perform a dry run"
-        required: true
-        default: false
-        type: boolean
       neo4j:
         description: "Neo4j v4 version to use"
         type: string
         required: true
         default: 'cli/neo4jv4/target/*-distribution.zip'
+      dryRun:
+        description: "Perform a dry run"
+        required: true
+        default: false
+        type: boolean
+
 
 
 jobs:
@@ -40,8 +41,8 @@ jobs:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
-      dryRun: ${{ github.event.inputs.dryRun }}
       neo4j: ${{ github.event.inputs.neo4j }}
+      dryRun: ${{ github.event.inputs.dryRun }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
