@@ -22,13 +22,12 @@ on:
         required: true
         default: "X.Y.Z-SNAPSHOT"
       dryRun:
-        description: "Whether to perform a dry run"
+        description: "Perform a dry run"
         required: true
         default: false
         type: boolean
 jobs:
   build:
-    needs: dry-run
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@feature/dry-run
     with:
       branch: ${{ github.event.inputs.branch }}
@@ -41,4 +40,3 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-
