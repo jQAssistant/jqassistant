@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
+import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.XmlRuleParserPlugin;
 
@@ -18,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class XmlRuleParserPluginTest {
@@ -112,4 +116,37 @@ class XmlRuleParserPluginTest {
         assertThat(conceptIds.size()).isEqualTo(1);
         MatcherAssert.assertThat(conceptIds, IsCollectionContaining.hasItems("test"));
     }
+
+    @Test
+    void testAccepts_ValidXmlFile_ReturnsTrue() throws IOException {
+        XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
+        RuleSource mockRuleSource = mock(RuleSource.class);
+
+        doReturn("jqassistant-rules.xml").when(mockRuleSource)
+            .getId();
+        when(mockRuleSource.getInputStream()).thenReturn(new ByteArrayInputStream("<jqassistant-rules>".getBytes()));
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isTrue();
+    }
+
+    @Test
+    void testAccepts_InvalidXmlFile_ReturnsFalse() throws IOException {
+        XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
+        RuleSource mockRuleSource = mock(RuleSource.class);
+
+        doReturn("jqassistant-report.xml").when(mockRuleSource)
+            .getId();
+        when(mockRuleSource.getInputStream()).thenReturn(new ByteArrayInputStream("<jqassistant-report>".getBytes()));
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
+    }
+
+    @Test
+    void testAccepts_InvalidXFile_ReturnsFalse() {
+        XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
+        RuleSource mockRuleSource = mock(RuleSource.class);
+
+        doReturn("report.txt").when(mockRuleSource)
+            .getId();
+        assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
+    }
+
 }

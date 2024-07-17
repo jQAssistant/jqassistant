@@ -11,10 +11,10 @@ import java.util.TreeSet;
 
 import javax.xml.validation.Schema;
 
-import com.buschmais.jqassistant.core.rule.impl.reader.XmlHelper;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.XmlHelper;
 
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 import org.slf4j.Logger;
