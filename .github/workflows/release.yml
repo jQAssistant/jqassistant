@@ -4,34 +4,31 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      java_version:
+        description: Java version to use
+        type: string
+        required: false
+        default: 17
+      branch:
+        description: "The branch to checkout when cutting the release."
+        required: true
+        default: "dryrun"
       releaseVersion:
-        description: 'The release version'
+        description: "Default version to use when preparing a release."
         required: true
+        default: "X.Y.Z"
       developmentVersion:
-        description: 'The development version'
+        description: "Default version to use for new local working copy."
         required: true
+        default: "X.Y.Z-SNAPSHOT"
       dryRun:
-        description: 'Whether to perform a dry run'
+        description: "Whether to perform a dry run"
         required: true
-        default: 'false'
-        type: boolean
-
+        default: false
 jobs:
-  dry-run:
-    if: ${{ github.event.inputs.dryRun }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Perform Dry Run
-        run: |
-          mvn release:prepare release:perform \
-          -ntp \
-          --batch-mode \
-          -DreleaseVersion=${{ inputs.releaseVersion }} \
-          -DdevelopmentVersion=${{ inputs.developmentVersion }} \
-          -DdryRun=${{ inputs.dryRun }}
   build:
     needs: dry-run
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@dryrun
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@feature/dry-run
     with:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
@@ -43,3 +40,4 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
