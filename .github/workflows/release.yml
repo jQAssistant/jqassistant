@@ -26,16 +26,12 @@ on:
         required: true
         default: false
         type: boolean
-#      neo4j:
-#        description: "Neo4j v4 version to use"
-#        type: string
-#        required: true
-#        default: 'cli/neo4jv4/target/*-distribution.zip'
       neo4j:
         description: "Neo4j v4 version to use"
         type: string
         required: true
-        default: "cli/neo4jv4/target/jqassistant-commandline-neo4jv4-2.4.0-SNAPSHOT-distribution.zip"
+        default: 'cli/neo4jv4/target/*-distribution.zip'
+
 
 jobs:
   build:
