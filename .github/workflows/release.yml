@@ -17,10 +17,6 @@ on:
         description: "Default version to use when preparing a release."
         required: true
         default: "X.Y.Z"
-      releaseAssets:
-        description: "Paths to the release assets."
-        required: true
-        default: "[cli/neo4jv4/*-distribution.zip , cli/neo4jv5/*-distribution.zip]"
       developmentVersion:
         description: "Default version to use for new local working copy."
         required: true
@@ -30,7 +26,6 @@ on:
         required: true
         default: false
         type: boolean
-
 jobs:
   attach-artifacts:
     runs-on: ubuntu-latest
