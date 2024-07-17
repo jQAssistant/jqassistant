@@ -12,7 +12,7 @@ on:
       branch:
         description: "The branch to checkout when cutting the release."
         required: true
-        default: "dryrun"
+        default: "master"
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
@@ -28,7 +28,7 @@ on:
         type: boolean
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@feature/dry-run
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
     with:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
