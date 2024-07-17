@@ -25,6 +25,7 @@ on:
         description: "Whether to perform a dry run"
         required: true
         default: false
+        type: boolean
 jobs:
   build:
     needs: dry-run
