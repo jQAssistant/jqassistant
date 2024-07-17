@@ -33,7 +33,7 @@ jobs:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
-      dryRun: ${{ github.event.inputs.dryRun == 'true' }}
+      dryRun: ${{ github.event.inputs.dryRun }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
