@@ -27,21 +27,6 @@ on:
         default: false
         type: boolean
 jobs:
-  attach-artifacts:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Upload Release Asset Neo4j
-        uses: actions/upload-artifact@v3
-        with:
-          name: neo4j.zip
-          path: |
-            cli/neo4jv4/*-distribution.zip
-            cli/neo4jv5/*-distribution.zip
-          content_type: application/zip
-
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
     with:
@@ -55,3 +40,19 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  attach-artifacts:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Upload Release Asset Neo4j
+        uses: actions/upload-artifact@v3
+        with:
+          name: neo4j.zip
+          path: |
+            cli/neo4jv4/*-distribution.zip
+            cli/neo4jv5/*-distribution.zip
+          content_type: application/zip
