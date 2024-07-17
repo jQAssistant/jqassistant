@@ -30,7 +30,8 @@ on:
         description: "Neo4j v4 version to use"
         type: string
         required: true
-        default: 'target/checkout/cli/neo4jv4/target/*-distribution.zip'
+        default: 'cli/neo4jv4/target/jqassistant-commandline-neo4jv4-*-distribution.zip'
+
 jobs:
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@neo4j-release
