@@ -133,8 +133,9 @@ class XmlRuleParserPluginTest {
         XmlRuleParserPlugin xmlRuleParserPlugin = new XmlRuleParserPlugin();
         RuleSource mockRuleSource = mock(RuleSource.class);
 
-        doReturn("report.xml").when(mockRuleSource)
+        doReturn("jqassistant-report.xml").when(mockRuleSource)
             .getId();
+        when(mockRuleSource.getInputStream()).thenReturn(new ByteArrayInputStream("<jqassistant-report>".getBytes()));
         assertThat(xmlRuleParserPlugin.accepts(mockRuleSource)).isFalse();
     }
 
