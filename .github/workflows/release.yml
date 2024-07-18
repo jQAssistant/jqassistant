@@ -49,17 +49,19 @@ jobs:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
   unpack-artifacts:
-    if: ${{ github.event.inputs.artifacts }} != ""
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Download Artifacts
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: artifacts
           zipFilePath: .
           if-no-zipFilePath-found: ignore
 
+
+        if: success() && steps.download-artifact.outcome == 'success'
       - name: Upload Neo4jv4 Artifacts
         uses: actions/upload-artifact@v4
         with:
