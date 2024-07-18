@@ -58,7 +58,7 @@ jobs:
         with:
           name: artifacts
           zipFilePath: .
-          if-no-zipFile-found: warn
+          if-no-zipFilePath-found: ignore
 
       - name: Upload Neo4jv4 Artifacts
         uses: actions/upload-artifact@v4
