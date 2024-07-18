@@ -23,9 +23,9 @@ on:
         default: "X.Y.Z-SNAPSHOT"
       neo4j:
         description: "Neo4j version to release"
-        type: boolean
+        type: string
         required: true
-
+        default: "cli/*/target/*-distribution.zip"
       dryRun:
         description: "Perform a dry run"
         required: true
@@ -43,7 +43,7 @@ jobs:
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       neo4j: ${{ github.event.inputs.neo4j }}
       dryRun: ${{ github.event.inputs.dryRun }}
-#      releaseArtifacts: "cli/neo4jv?/target/*-distribution.zip"
+#      releaseArtifacts: "cli/*/target/*-distribution.zip"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
@@ -62,8 +62,7 @@ jobs:
           zipFilePath: .
 
       - name: Unpack Artifacts
-        run: |
-          unzip artifacts.zip
+        run: unzip artifacts
 
       - name: Upload Neo4jv4 Artifacts
         uses: actions/upload-artifact@v4
