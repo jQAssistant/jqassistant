@@ -25,7 +25,7 @@ on:
         description: "Neo4j version to release"
         type: string
         required: true
-        default: "cli/*/target/*-distribution.zip"
+        default: "cli/neo4jv?/target/*-distribution.zip"
       dryRun:
         description: "Perform a dry run"
         required: true
@@ -60,9 +60,14 @@ jobs:
         with:
           name: artifacts
           zipFilePath: .
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Unpack Artifacts
         run: unzip artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Upload Neo4jv4 Artifacts
         uses: actions/upload-artifact@v4
