@@ -25,6 +25,7 @@ on:
         description: "Neo4j version to release"
         type: boolean
         required: true
+
       dryRun:
         description: "Perform a dry run"
         required: true
@@ -57,8 +58,8 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: artifacts.zip
-          path: .
+          name: artifacts
+          zipFilePath: .
 
       - name: Unpack Artifacts
         run: |
