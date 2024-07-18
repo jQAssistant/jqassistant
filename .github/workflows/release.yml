@@ -23,9 +23,8 @@ on:
         default: "X.Y.Z-SNAPSHOT"
       neo4j:
         description: "Neo4j version to release"
-        type: string
+        type: boolean
         required: true
-        default: 'cli/neo4jv*/target/*-distribution.zip'
       dryRun:
         description: "Perform a dry run"
         required: true
