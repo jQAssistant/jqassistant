@@ -21,18 +21,16 @@ on:
         description: "Default version to use for new local working copy."
         required: true
         default: "X.Y.Z-SNAPSHOT"
-      neo4j:
-        description: "Neo4j version to release"
-        type: string
-        required: true
-        default: "cli/neo4jv?/target/*-distribution.zip"
       dryRun:
         description: "Perform a dry run"
         required: true
         default: false
         type: boolean
-
-
+      artifacts:
+        description: "Path expression for artifacts to upload."
+        type: string
+        required: false
+        default: "cli/neo4jv?/target/*-distribution.zip"
 
 jobs:
   build:
@@ -41,9 +39,8 @@ jobs:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
-      neo4j: ${{ github.event.inputs.neo4j }}
       dryRun: ${{ github.event.inputs.dryRun }}
-#      releaseArtifacts: "cli/*/target/*-distribution.zip"
+      artifacts: ${{ github.event.inputs.artifacts }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
@@ -64,21 +61,14 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
-#      - name: Unpack Artifacts
-#
-#        run: unzip artifacts
-#
-#      - name: Display structure of downloaded files
-#        run: ls -R
-
       - name: Upload Neo4jv4 Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Commandline Utility Neo4jV4
-          path: ./neo4jv4/target/jqassistant-commandline-neo4jv4-2.4.0-SNAPSHOT-distribution.zip
+          path: ./neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.releaseVersion }}-distribution.zip
 
       - name: Upload Neo4jv5 Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Commandline Utility Neo4jV5
-          path: ./neo4jv5/target/jqassistant-commandline-neo4jv5-2.4.0-SNAPSHOT-distribution.zip
+          path: ./neo4jv5/target/jqassistant-commandline-neo4jv5-${{ github.event.inputs.releaseVersion }}-distribution.zip
