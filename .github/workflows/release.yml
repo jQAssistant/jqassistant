@@ -61,9 +61,9 @@ jobs:
           name: artifacts
           zipFilePath: .
 
-#      - name: Display structure of downloaded files
-#        run: ls -R
-#
+      - name: Display structure of downloaded files
+        run: ls -R
+
 #      - name: Unpack Artifacts
 #
 #        run: unzip artifacts
@@ -75,10 +75,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Commandline Utility Neo4jV4
-          path: jqassistant-commandline-neo4jv4-${{ github.event.inputs.releaseVersion }}-distribution.zip
+          path: ./neo4jv4/target/jqassistant-commandline-neo4jv4-2.4.0-SNAPSHOT-distribution.zip
 
       - name: Upload Neo4jv5 Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Commandline Utility Neo4jV5
-          path: jqassistant-commandline-neo4jv5-${{ github.event.inputs.releaseVersion }}-distribution.zip
+          path: ./neo4jv5/target/jqassistant-commandline-neo4jv5-2.4.0-SNAPSHOT-distribution.zip
