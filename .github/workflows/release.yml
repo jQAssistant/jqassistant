@@ -22,10 +22,10 @@ on:
         required: true
         default: "X.Y.Z-SNAPSHOT"
       neo4j:
-        description: "Neo4j v4 version to use"
-        type: boolean
+        description: "Neo4j version to release"
+        type: string
         required: true
-        default: false
+        default: 'cli/neo4jv?/target/*-distribution.zip'
       dryRun:
         description: "Perform a dry run"
         required: true
@@ -43,9 +43,36 @@ jobs:
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       neo4j: ${{ github.event.inputs.neo4j }}
       dryRun: ${{ github.event.inputs.dryRun }}
+      releaseArtifacts: "cli/neo4jv?/target/*-distribution.zip"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  unpack-artifacts:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+          path: .
+
+      - name: Unpack Artifacts
+        run: |
+          unzip artifacts.zip
+
+      - name: Upload Neo4jv4 Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Commandline Utility Neo4jV4
+          path: jqassistant-commandline-neo4jv4-${{ github.event.inputs.releaseVersion }}-distribution.zip
+
+      - name: Upload Neo4jv5 Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Commandline Utility Neo4jV5
+          path: jqassistant-commandline-neo4jv5-${{ github.event.inputs.releaseVersion }}-distribution.zip
