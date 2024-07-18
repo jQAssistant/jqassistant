@@ -25,7 +25,7 @@ on:
         description: "Neo4j version to release"
         type: string
         required: true
-        default: 'cli/neo4jv?/target/*-distribution.zip'
+        default: 'cli/neo4jv*/target/*-distribution.zip'
       dryRun:
         description: "Perform a dry run"
         required: true
@@ -56,7 +56,7 @@ jobs:
     needs: build
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: artifacts
           path: .
@@ -66,7 +66,7 @@ jobs:
           unzip artifacts.zip
 
       - name: Upload Neo4jv4 Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Commandline Utility Neo4jV4
           path: jqassistant-commandline-neo4jv4-${{ github.event.inputs.releaseVersion }}-distribution.zip
