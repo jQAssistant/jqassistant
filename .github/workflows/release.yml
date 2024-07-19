@@ -66,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Commandline Utility Neo4jV4
-          path: artifacts/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
+          path: ./cli/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
 
       - name: Upload Neo4jv5 Artifacts
         uses: actions/upload-artifact@v3
