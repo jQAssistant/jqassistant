@@ -26,6 +26,12 @@ on:
         required: true
         default: false
         type: boolean
+      assets:
+        description: "Path expression for Assets to upload."
+        type: string
+        required: false
+        default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
+
 jobs:
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
@@ -34,6 +40,7 @@ jobs:
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
+      assets  : ${{ github.event.inputs.assets }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
