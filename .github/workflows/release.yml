@@ -9,10 +9,6 @@ on:
         type: string
         required: false
         default: 17
-      branch:
-        description: "The branch to checkout when cutting the release."
-        required: true
-        default: "master"
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
@@ -34,9 +30,8 @@ on:
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@remove-brach-inputs
     with:
-      branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
