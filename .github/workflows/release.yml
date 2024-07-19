@@ -12,7 +12,7 @@ on:
       branch:
         description: "The branch to checkout when cutting the release."
         required: true
-        default: "479-command-line-distributions-shall-be-attached-to-github-releases"
+        default: "master"
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
@@ -26,21 +26,21 @@ on:
         required: true
         default: false
         type: boolean
-      artifacts:
-        description: "Path expression for artifacts to upload."
+      assets:
+        description: "Path expression for Assets to upload."
         type: string
         required: false
         default: "cli/neo4jv?/target/*-distribution.zip"
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@neo4jRelease
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
     with:
       branch: ${{ github.event.inputs.branch }}
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
-      artifacts: ${{ github.event.inputs.artifacts }}
+      assets: ${{ github.event.inputs.assets }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
