@@ -122,6 +122,10 @@ public abstract class AbstractPluginIT {
     protected void configure(ConfigurationBuilder configurationBuilder) {
     }
 
+    protected List<String> getConfigurationProfiles() {
+        return emptyList();
+    }
+
     private ConfigurationBuilder createConfigurationBuilder() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
         TestStore.Type type = testStore != null ? testStore.type() : TestStore.Type.MEMORY;
@@ -174,6 +178,8 @@ public abstract class AbstractPluginIT {
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         return ConfigurationMappingLoader.builder(Configuration.class)
+            .withClasspath()
+            .withProfiles(getConfigurationProfiles())
             .load(configurationBuilder.build(), new EnvConfigSource() {
             }, new SysPropConfigSource());
     }
