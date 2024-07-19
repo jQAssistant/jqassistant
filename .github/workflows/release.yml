@@ -48,28 +48,28 @@ jobs:
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
-  unpack-artifacts:
-    runs-on: ubuntu-latest
-    needs: build
-    if: ${{ github.event.inputs.artifacts }} != ''
-    steps:
-#      - name: Download Artifacts
-#        continue-on-error: true
-#        uses: actions/download-artifact@v4
+#  unpack-artifacts:
+#    runs-on: ubuntu-latest
+#    needs: build
+#    if: ${{ github.event.inputs.artifacts }} != ''
+#    steps:
+##      - name: Download Artifacts
+##        continue-on-error: true
+##        uses: actions/download-artifact@v4
+##        with:
+##          name: artifacts
+##          zipFilePath: .
+#      - name: Display structure of downloaded files
+#        run: ls -R
+#
+#      - name: Upload Neo4jv4 Artifacts
+#        uses: actions/upload-artifact@v4
 #        with:
-#          name: artifacts
-#          zipFilePath: .
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Upload Neo4jv4 Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Commandline Utility Neo4jV4
-          zipFilePath: ./cli/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
-
-      - name: Upload Neo4jv5 Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Commandline Utility Neo4jV5
-          zipFilePath: cli/neo4jv5/target/jqassistant-commandline-neo4jv5-${{ github.event.inputs.developmentVersion }}-distribution.zip
+#          name: Commandline Utility Neo4jV4
+#          path: ./cli/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
+#
+#      - name: Upload Neo4jv5 Artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Commandline Utility Neo4jV5
+#          path: artifacts/neo4jv5/target/jqassistant-commandline-neo4jv5-${{ github.event.inputs.developmentVersion }}-distribution.zip
