@@ -30,7 +30,7 @@ on:
         description: "Path expression for Assets to upload."
         type: string
         required: false
-        default: "cli/neo4jv?/target/*-distribution.zip"
+        default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
-      assets: ${{ github.event.inputs.assets }}
+      assets  : ${{ github.event.inputs.assets }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
