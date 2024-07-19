@@ -21,7 +21,7 @@ jobs:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
     with:
       publish_snapshots: true
-      java_test_versions: '[21]'
+      java_test_versions: '[11,17,21]'
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}

@@ -6,24 +6,20 @@ on:
     branches:
       - master
   pull_request:
-    # pull_request event is required only for auto labeler
-    types: [ opened, reopened, closed ]
+    types: [ opened, reopened, synchronize ]
 
 permissions:
   contents: read
 
 jobs:
   update_release_draft:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up release drafter
-        # Drafts your next Release notes as Pull Requests are merged into "master"
-        uses: release-drafter/release-drafter@v6.0.0
+      - uses: release-drafter/release-drafter@v6
         with:
           config-name: release_drafter.yml
-          disable-autolabeler: false
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

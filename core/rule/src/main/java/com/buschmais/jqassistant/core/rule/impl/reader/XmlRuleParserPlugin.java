@@ -14,11 +14,13 @@ import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.XmlHelper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
+import static com.buschmais.jqassistant.core.shared.xml.XmlHelper.rootElementMatches;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -43,7 +45,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     public boolean accepts(RuleSource ruleSource) {
         return ruleSource.getId()
             .toLowerCase()
-            .endsWith(".xml");
+            .endsWith(".xml") && rootElementMatches(ruleSource::getInputStream, qname -> "jqassistant-rules".equals(qname.getLocalPart()));
     }
 
     @Override
