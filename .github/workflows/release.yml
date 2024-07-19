@@ -30,7 +30,7 @@ on:
         description: "Path expression for artifacts to upload."
         type: string
         required: false
-#        default: "cli/neo4jv?/target/*-distribution.zip"
+        default: "cli/neo4jv?/target/*-distribution.zip"
 
 jobs:
   build:
