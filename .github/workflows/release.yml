@@ -41,8 +41,6 @@ jobs:
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
       artifacts: ${{ github.event.inputs.artifacts }}
-      name: Display structure of downloaded files
-      run: ls -R
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
@@ -68,10 +66,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Commandline Utility Neo4jV4
-          path: ./cli/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
+          zipFilePath: ./cli/neo4jv4/target/jqassistant-commandline-neo4jv4-${{ github.event.inputs.developmentVersion }}-distribution.zip
 
       - name: Upload Neo4jv5 Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Commandline Utility Neo4jV5
-          path: artifacts/neo4jv5/target/jqassistant-commandline-neo4jv5-${{ github.event.inputs.developmentVersion }}-distribution.zip
+          zipFilePath: cli/neo4jv5/target/jqassistant-commandline-neo4jv5-${{ github.event.inputs.developmentVersion }}-distribution.zip
