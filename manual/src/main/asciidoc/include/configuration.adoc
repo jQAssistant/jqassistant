@@ -211,6 +211,31 @@ jqassistant:
       # -Djqassistant.analyze.rule.default-group-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
       default-group-severity:
 
+    # The baseline configuration
+    baseline:
+
+      # Enables baseline management for concept and constraint results.
+      #
+      # -Djqassistant.analyze.baseline.enabled: true|false
+      enabled: false
+
+      # The file name for storing the baseline.
+      #
+      # -Djqassistant.analyze.baseline.file
+      file: jqassistant/jqassistant-baseline.xml
+
+      # The concepts to be managed in the baseline (default: none)
+      #
+      # -Djqassistant.analyze.baseline-include.concepts[0]
+      include.concepts:
+      # - my-concept
+
+      # The constraints to be managed in the baseline (default: all)
+      #
+      # -Djqassistant.analyze.baseline.include-constraints[0]
+      include-constraints:
+        - "*"
+
     # The report configuration
     report:
 

@@ -34,8 +34,8 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
-    private final ReportPlugin reportPlugin;
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+    private final ReportPlugin reportPlugin;
     private final Store store;
     private final RuleRepository ruleRepository;
     private final Deque<RuleGroupTemplate> ruleGroups = new ArrayDeque<>();

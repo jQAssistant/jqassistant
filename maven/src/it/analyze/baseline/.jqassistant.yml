@@ -1,0 +1,11 @@
+jqassistant:
+  analyze:
+    groups:
+      - it
+    baseline:
+      enabled: true
+      include-concepts:
+        - "it:IncludedConcept"
+      include-constraints:
+        - "it:IncludedConstraint"
+

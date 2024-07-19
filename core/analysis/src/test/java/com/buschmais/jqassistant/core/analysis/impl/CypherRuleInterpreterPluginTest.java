@@ -1,11 +1,14 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Suppress;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -24,8 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -59,43 +60,14 @@ class CypherRuleInterpreterPluginTest {
     }
 
     @Test
-    void withoutSuppression() throws RuleException {
+    void rows() throws RuleException {
         Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
             Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
 
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
-    }
-
-    @Test
-    void suppressByPrimaryColumn() throws RuleException {
-        Suppress suppressedValue = createSuppressedValue(empty(), CONSTRAINT_ID);
-        Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, suppressedValue, SECONDARY_COLUMN, "value"));
-
-        Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
-
-        assertThat(result.getRows()).isEmpty();
-    }
-
-    @Test
-    void suppressByNonPrimaryColumn() throws RuleException {
-        Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), CONSTRAINT_ID);
-        Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value", SECONDARY_COLUMN, suppressedValue));
-
-        Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
-
-        assertThat(result.getRows()).isEmpty();
-    }
-
-    @Test
-    void nonMatchingSuppressId() throws RuleException {
-        Suppress suppressedValue = createSuppressedValue(empty(), "otherConstraint");
-        Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, suppressedValue, SECONDARY_COLUMN, "value"));
-
-        Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
-
-        assertThat(result.getRows()).hasSize(1);
+        verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {
@@ -115,29 +87,6 @@ class CypherRuleInterpreterPluginTest {
             .executeQuery(anyString(), anyMap());
 
         return constraint;
-    }
-
-    private static Suppress createSuppressedValue(Optional<String> suppressColumn, String... suppressIds) {
-        Suppress suppress = new Suppress() {
-            @Override
-            public String[] getSuppressIds() {
-                return suppressIds;
-            }
-
-            @Override
-            public void setSuppressIds(String[] suppressIds) {
-            }
-
-            @Override
-            public String getSuppressColumn() {
-                return suppressColumn.orElse(null);
-            }
-
-            @Override
-            public void setSuppressColumn(String suppressColumn) {
-            }
-        };
-        return suppress;
     }
 
     private static ResultIterator<CompositeRowObject> asResultIterator(List<CompositeRowObject> queryRows) {

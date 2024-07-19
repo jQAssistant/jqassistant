@@ -58,8 +58,15 @@
                                         </includes>
                                     </fileset>
                                 </schema>
+                                <schema>
+                                    <fileset>
+                                        <directory>${project.basedir}/src/main/resources/META-INF/baseline/xsd</directory>
+                                        <includes>
+                                            <include>jqassistant-baseline-v2.4.xsd</include>
+                                        </includes>
+                                    </fileset>
+                                </schema>
                             </schemas>
-
                             <!-- Provide namespace in each generated class to avoid problems loading this information from package-info.java on Java 11 and newer -->
                             <packageLevelAnnotations>false</packageLevelAnnotations>
                             <args>

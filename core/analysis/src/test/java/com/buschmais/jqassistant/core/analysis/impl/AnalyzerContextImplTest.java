@@ -1,14 +1,19 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.Suppress;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
@@ -20,12 +25,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyzerContextImplTest {
+
+    private static final String CONSTRAINT_ID = "constraint";
+    public static final String PRIMARY_COLUMN = "primary";
+    public static final String SECONDARY_COLUMN = "secondary";
 
     private AnalyzerContext analyzerContext;
 
@@ -38,6 +49,9 @@ class AnalyzerContextImplTest {
     @Mock
     private Store store;
 
+    @Mock
+    private BaselineManager baselineManager;
+
     @BeforeEach
     void setUp() throws RuleException {
         doReturn(report).when(configuration)
@@ -47,7 +61,7 @@ class AnalyzerContextImplTest {
         doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         analyzerContext = new AnalyzerContextImpl(configuration, this.getClass()
-            .getClassLoader(), store);
+            .getClassLoader(), store, baselineManager);
     }
 
     @Test
@@ -78,4 +92,78 @@ class AnalyzerContextImplTest {
         assertThat(rowKeys).hasSize(3);
     }
 
+    @Test
+    void withoutSuppression() {
+        Constraint constraint = getConstraint();
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
+    }
+
+    @Test
+    void suppressByPrimaryColumn() {
+        Suppress suppressedValue = createSuppressedValue(empty(), CONSTRAINT_ID);
+        Constraint constraint = getConstraint();
+
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
+    }
+
+    @Test
+    void suppressByNonPrimaryColumn() throws RuleException {
+        Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), CONSTRAINT_ID);
+        Constraint constraint = getConstraint();
+
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
+    }
+
+    @Test
+    void nonMatchingSuppressId() {
+        Suppress suppressedValue = createSuppressedValue(empty(), "otherConstraint");
+        Constraint constraint = getConstraint();
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
+    }
+
+    private Constraint getConstraint() {
+        com.buschmais.jqassistant.core.rule.api.model.Report report = com.buschmais.jqassistant.core.rule.api.model.Report.builder()
+            .primaryColumn(PRIMARY_COLUMN)
+            .build();
+        Constraint constraint = Constraint.builder()
+            .id(CONSTRAINT_ID)
+            .report(report)
+            .build();
+        return constraint;
+    }
+
+    private static Suppress createSuppressedValue(Optional<String> suppressColumn, String... suppressIds) {
+        Suppress suppress = new Suppress() {
+            @Override
+            public String[] getSuppressIds() {
+                return suppressIds;
+            }
+
+            @Override
+            public void setSuppressIds(String[] suppressIds) {
+            }
+
+            @Override
+            public String getSuppressColumn() {
+                return suppressColumn.orElse(null);
+            }
+
+            @Override
+            public void setSuppressColumn(String suppressColumn) {
+            }
+        };
+        return suppress;
+    }
 }

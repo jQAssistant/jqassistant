@@ -23,6 +23,14 @@ public interface Analyze {
     Rule rule();
 
     /**
+     * The {@link Baseline} configuration.
+     *
+     * @return The {@link Baseline} configuration.
+     */
+    @Description("The baseline configuration.")
+    Baseline baseline();
+
+    /**
      * The {@link Report} configuration.
      *
      * @return The {@link Report} configuration.
@@ -41,6 +49,7 @@ public interface Analyze {
     Optional<List<String>> constraints();
 
     String EXCLUDE_CONSTRAINTS = "exclude-constraints";
+
     @Description("The constraints to be excluded.")
     Optional<List<String>> excludeConstraints();
 

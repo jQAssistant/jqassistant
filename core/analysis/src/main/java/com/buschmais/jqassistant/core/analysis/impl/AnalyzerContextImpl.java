@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.Suppress;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -34,13 +36,16 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     private final Store store;
 
-    private final Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies;
+    private final BaselineManager baselineManager;
 
-    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store) throws RuleException {
+    private final Map<Class<? extends Verification>, VerificationStrategy<?>> verificationStrategies;
+
+    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, BaselineManager baselineManager) throws RuleException {
         this.classLoader = classLoader;
         this.store = store;
+        this.baselineManager = baselineManager;
         this.verificationStrategies = of(new RowCountVerificationStrategy(configuration.report()),
-            new AggregationVerificationStrategy(configuration.report())).collect(toMap(strategy -> strategy.getVerificationType(), strategy -> strategy));
+            new AggregationVerificationStrategy(configuration.report())).collect(toMap(VerificationStrategy::getVerificationType, strategy -> strategy));
     }
 
     @Override
@@ -64,8 +69,34 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows)
-        throws RuleException {
+    public <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row) {
+        if (baselineManager.isExisting(executableRule, row)) {
+            return true;
+        }
+        String ruleId = executableRule.getId();
+        Map<String, Column<?>> columns = row.getColumns();
+        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
+            String columnName = entry.getKey();
+            Column<?> column = entry.getValue();
+            Object columnValue = column.getValue();
+            if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
+                Suppress suppress = (Suppress) columnValue;
+                String suppressColumn = suppress.getSuppressColumn();
+                if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
+                    String[] suppressIds = suppress.getSuppressIds();
+                    for (String suppressId : suppressIds) {
+                        if (ruleId.equals(suppressId)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows) throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
             log.debug("Using default verification for '{}'.", executable);

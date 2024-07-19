@@ -15,7 +15,10 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineRepository;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.analysis.api.configuration.Baseline;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -176,11 +179,11 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
-        File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
+        File rulesDirectory = getRulesDirectory();
         // read rules from rules directory
         List<RuleSource> sources = new LinkedList<>();
-        if (selectedDirectory.exists()) {
-            sources.addAll(FileRuleSource.getRuleSources(selectedDirectory));
+        if (rulesDirectory.exists()) {
+            sources.addAll(FileRuleSource.getRuleSources(rulesDirectory));
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository()
@@ -190,6 +193,10 @@ public abstract class AbstractPluginIT {
                 .rule());
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
+    }
+
+    private File getRulesDirectory() {
+        return new File(getClassesDirectory(this.getClass()), "rules");
     }
 
     private void initializeReportPlugin(Configuration configuration) {
@@ -260,7 +267,11 @@ public abstract class AbstractPluginIT {
     private Analyzer getAnalyzer(Map<String, String> parameters) throws RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
-        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), reportPlugin);
+        Baseline baselineConfiguration = configuration.analyze()
+            .baseline();
+        BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory());
+        BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
     }
 
     /**

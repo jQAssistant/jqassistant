@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
+import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -22,9 +23,14 @@ public class AnalyzerImpl implements Analyzer {
 
     private final Analyze configuration;
 
-    private final AnalyzerContext analyzerContext;
+    private final ClassLoader classLoader;
+
+    private final Store store;
 
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
+
+    private final BaselineManager baselineManager;
+
     private final ReportPlugin reportPlugin;
 
     /**
@@ -38,26 +44,28 @@ public class AnalyzerImpl implements Analyzer {
      *     The store
      * @param ruleInterpreterPlugins
      *     The {@link RuleInterpreterPlugin}s.
+     * @param baselineManager
+     *     The {@link BaselineManager}.
      * @param reportPlugin
      *     The report writer.
      */
     public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
-        ReportPlugin reportPlugin) throws RuleException {
+        BaselineManager baselineManager, ReportPlugin reportPlugin) {
         this.configuration = configuration;
-        this.analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store);
+        this.classLoader = classLoader;
+        this.store = store;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
+        this.baselineManager = baselineManager;
         this.reportPlugin = reportPlugin;
     }
 
     @Override
-    public Analyze getConfiguration() {
-        return configuration;
-    }
-
-    @Override
     public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
+        AnalyzerContext analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, baselineManager);
+        baselineManager.start();
         AnalyzerRuleVisitor visitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportPlugin);
         RuleSetExecutor<Result.Status> executor = new RuleSetExecutor<>(visitor, configuration.rule());
         executor.execute(ruleSet, ruleSelection);
+        baselineManager.stop();
     }
 }

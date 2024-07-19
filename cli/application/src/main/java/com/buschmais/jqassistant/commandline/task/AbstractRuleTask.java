@@ -29,10 +29,8 @@ public abstract class AbstractRuleTask extends AbstractStoreTask {
 
     protected RuleSet getAvailableRules(Rule rule) throws CliExecutionException {
         List<RuleSource> sources = new ArrayList<>();
-        File selectedDirectory = new File(rule.directory()
-            .orElse(DEFAULT_RULE_DIRECTORY));
         // read rules from rules directory
-        sources.addAll(readRulesDirectory(selectedDirectory));
+        sources.addAll(readRulesDirectory(rule));
         List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()
             .getRuleSources();
         sources.addAll(ruleSources);
@@ -52,6 +50,18 @@ public abstract class AbstractRuleTask extends AbstractStoreTask {
     }
 
     /**
+     * Determines the directory containing rules.
+     *
+     * @param rule
+     *     The {@link Rule} configuration.
+     * @return The rules directory.
+     */
+    protected static File getRulesDirectory(Rule rule) {
+        return new File(rule.directory()
+            .orElse(DEFAULT_RULE_DIRECTORY));
+    }
+
+    /**
      * Return the selection of rules.
      *
      * @param ruleSet
@@ -64,7 +74,8 @@ public abstract class AbstractRuleTask extends AbstractStoreTask {
         return RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
     }
 
-    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
+    private List<RuleSource> readRulesDirectory(Rule rule) throws CliExecutionException {
+        File rulesDirectory = getRulesDirectory(rule);
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new CliExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }

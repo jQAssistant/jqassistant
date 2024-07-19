@@ -152,8 +152,9 @@ public abstract class AbstractCLIIT {
     @BeforeEach
     public void before(DISTRIBUTION distribution) throws IOException {
         assumeThat(Runtime.version()
-                .feature()).isGreaterThanOrEqualTo(distribution.minRuntimeVersion.feature())
-                .isLessThanOrEqualTo(distribution.maxRuntimeVersion.feature());
+            .feature()).describedAs("Java runtime version")
+            .isGreaterThanOrEqualTo(distribution.minRuntimeVersion.feature())
+            .isLessThanOrEqualTo(distribution.maxRuntimeVersion.feature());
         this.neo4jVersion = distribution.name()
                 .toLowerCase(Locale.getDefault());
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);

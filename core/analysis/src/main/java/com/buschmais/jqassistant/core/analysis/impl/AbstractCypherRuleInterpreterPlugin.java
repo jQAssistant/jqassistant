@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
-import com.buschmais.jqassistant.core.report.api.model.Suppress;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -56,7 +55,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                 }
             }
             Row row = getColumns(executableRule, columnNames, rowObject, context);
-            if (!isSuppressed(executableRule, primaryColumn, row)) {
+            if (!context.isSuppressed(executableRule, primaryColumn, row)) {
                 rows.add(row);
             }
         }
@@ -77,43 +76,6 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             columns.put(columnName, context.toColumn(columnValue));
         }
         return context.toRow(rule, columns);
-    }
-
-    /**
-     * Verifies if the Row shall be suppressed.
-     * <p>
-     * The primary column is checked if it contains a suppression that matches the
-     * current rule id.
-     *
-     * @param executableRule
-     *     The {@link ExecutableRule}.
-     * @param primaryColumn
-     *     The name of the primary column.
-     * @param row
-     *     The {@link Row}.
-     * @return <code>true</code> if the row shall be suppressed.
-     */
-    private static boolean isSuppressed(ExecutableRule<?> executableRule, String primaryColumn, Row row) {
-        String ruleId = executableRule.getId();
-        Map<String, Column<?>> columns = row.getColumns();
-        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
-            String columnName = entry.getKey();
-            Column<?> column = entry.getValue();
-            Object columnValue = column.getValue();
-            if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
-                Suppress suppress = (Suppress) columnValue;
-                String suppressColumn = suppress.getSuppressColumn();
-                if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
-                    String[] suppressIds = suppress.getSuppressIds();
-                    for (String suppressId : suppressIds) {
-                        if (ruleId.equals(suppressId)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     /**

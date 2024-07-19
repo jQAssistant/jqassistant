@@ -13,17 +13,19 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
-import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.core.shared.xml.XmlHelper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
-import static com.buschmais.jqassistant.core.shared.xml.XmlHelper.rootElementMatches;
 import static java.util.stream.Collectors.toSet;
+
 /**
  * A {@link RuleParserPlugin} implementation.
  */
+@Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.2";
@@ -31,18 +33,18 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
-    private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
+    private JAXBHelper<JqassistantRules> jaxbHelper;
 
     @Override
     public void initialize() {
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE);
+        this.jaxbHelper = new JAXBHelper<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE);
     }
 
     @Override
     public boolean accepts(RuleSource ruleSource) {
         return ruleSource.getId()
             .toLowerCase()
-            .endsWith(".xml") && rootElementMatches(ruleSource::getInputStream, qname -> "jqassistant-rules".equals(qname.getLocalPart()));
+            .endsWith(".xml") && XmlHelper.rootElementMatches(ruleSource::getInputStream, qname -> "jqassistant-rules".equals(qname.getLocalPart()));
     }
 
     @Override
@@ -55,13 +57,13 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
      * Read rules from XML documents.
      *
      * @param ruleSource
-     *            The available sources.
+     *     The available sources.
      * @return The list of found rules.
      */
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
         List<JqassistantRules> rules = new ArrayList<>();
         try (InputStream inputStream = ruleSource.getInputStream()) {
-            JqassistantRules jqassistantRules = jaxbUnmarshaller.unmarshal(inputStream);
+            JqassistantRules jqassistantRules = jaxbHelper.unmarshal(inputStream);
             rules.add(jqassistantRules);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
@@ -73,9 +75,9 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
      * Converts a list of {@link JqassistantRules} to a rule set.
      *
      * @param rules
-     *            The {@link JqassistantRules}.
+     *     The {@link JqassistantRules}.
      * @throws RuleException
-     *             If rules are not consistent.
+     *     If rules are not consistent.
      */
     private void convert(List<JqassistantRules> rules, RuleSource ruleSource, RuleSetBuilder builder) throws RuleException {
         for (JqassistantRules rule : rules) {
@@ -111,19 +113,21 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .providedConcepts(providedConcepts)
             .constraints(includeConstraints)
             .groups(includeGroups)
-                .build();
+            .build();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType conceptType) throws RuleException {
         String description = removeIndent(conceptType.getDescription());
-        Executable<?> executable = createExecutable(conceptType, conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
+        Executable<?> executable = createExecutable(conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
         Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultConceptSeverity);
         List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
         List<ReferenceType> providesConcept = conceptType.getProvidesConcept();
-        Set<String> providesConcepts = providesConcept.stream().map(ReferenceType::getRefId).collect(toSet());
+        Set<String> providesConcepts = providesConcept.stream()
+            .map(ReferenceType::getRefId)
+            .collect(toSet());
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
@@ -143,7 +147,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType constraintType) throws RuleException {
-        Executable<?> executable = createExecutable(constraintType, constraintType.getSource(), constraintType.getCypher(), constraintType.getScript());
+        Executable<?> executable = createExecutable(constraintType.getSource(), constraintType.getCypher(), constraintType.getScript());
         String description = removeIndent(constraintType.getDescription());
         Map<String, Parameter> parameters = getRequiredParameters(constraintType.getRequiresParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
@@ -167,16 +171,18 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .build();
     }
 
-    private Executable<?> createExecutable(SeverityRuleType severityRuleType, SourceType source, CypherType cypherType, SourceType scriptType) throws RuleException {
+    private Executable<?> createExecutable(SourceType source, CypherType cypherType, SourceType scriptType) {
         if (source != null) {
-            return new SourceExecutable<>(source.getLanguage().toLowerCase(), source.getValue(), String.class);
+            return new SourceExecutable<>(source.getLanguage()
+                .toLowerCase(), source.getValue(), String.class);
         }
         // for compatibility
         if (cypherType != null) {
             return new CypherExecutable(cypherType.getValue());
         }
         if (scriptType != null) {
-            return new ScriptExecutable(scriptType.getLanguage().toLowerCase(), scriptType.getValue());
+            return new ScriptExecutable(scriptType.getLanguage()
+                .toLowerCase(), scriptType.getValue());
         }
         return null;
     }
@@ -189,10 +195,16 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
             AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
             if (aggregationVerificationType != null) {
-                return AggregationVerification.builder().column(aggregationVerificationType.getColumn()).min(aggregationVerificationType.getMin())
-                        .max(aggregationVerificationType.getMax()).build();
+                return AggregationVerification.builder()
+                    .column(aggregationVerificationType.getColumn())
+                    .min(aggregationVerificationType.getMin())
+                    .max(aggregationVerificationType.getMax())
+                    .build();
             } else if (rowCountVerificationType != null) {
-                return RowCountVerification.builder().min(rowCountVerificationType.getMin()).max(rowCountVerificationType.getMax()).build();
+                return RowCountVerification.builder()
+                    .min(rowCountVerificationType.getMin())
+                    .max(rowCountVerificationType.getMax())
+                    .build();
             } else {
                 throw new RuleException("Unsupported verification " + verificationType);
             }
@@ -204,7 +216,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
      * Read the report definition.
      *
      * @param reportType
-     *            The report type.
+     *     The report type.
      * @return The report definition.
      */
     private Report getReport(ReportType reportType) {
@@ -218,7 +230,9 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
-        Report.ReportBuilder reportBuilder = Report.builder().primaryColumn(primaryColumn).properties(properties);
+        Report.ReportBuilder reportBuilder = Report.builder()
+            .primaryColumn(primaryColumn)
+            .properties(properties);
         if (type != null) {
             reportBuilder.selectedTypes(Report.selectTypes(type));
         }
