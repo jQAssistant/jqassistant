@@ -51,7 +51,7 @@ jobs:
   unpack-artifacts:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.event.inputs.artifacts }} != ''
+    if: ${{ github.event.inputs.artifacts != '' }}
     steps:
       - name: Download Artifacts
         continue-on-error: true
