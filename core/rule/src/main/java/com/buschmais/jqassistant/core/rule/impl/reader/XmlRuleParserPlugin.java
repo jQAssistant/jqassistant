@@ -13,14 +13,13 @@ import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.SourceExecutable;
-import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.core.shared.xml.XmlHelper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
-import static com.buschmais.jqassistant.core.shared.xml.XmlHelper.rootElementMatches;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -34,18 +33,18 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
-    private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
+    private JAXBHelper<JqassistantRules> jaxbHelper;
 
     @Override
     public void initialize() {
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE);
+        this.jaxbHelper = new JAXBHelper<>(JqassistantRules.class, SCHEMA, NAMESPACE_RULE);
     }
 
     @Override
     public boolean accepts(RuleSource ruleSource) {
         return ruleSource.getId()
             .toLowerCase()
-            .endsWith(".xml") && rootElementMatches(ruleSource::getInputStream, qname -> "jqassistant-rules".equals(qname.getLocalPart()));
+            .endsWith(".xml") && XmlHelper.rootElementMatches(ruleSource::getInputStream, qname -> "jqassistant-rules".equals(qname.getLocalPart()));
     }
 
     @Override
@@ -64,12 +63,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
         List<JqassistantRules> rules = new ArrayList<>();
         try (InputStream inputStream = ruleSource.getInputStream()) {
-            JqassistantRules jqassistantRules = jaxbUnmarshaller.unmarshal(inputStream);
+            JqassistantRules jqassistantRules = jaxbHelper.unmarshal(inputStream);
             rules.add(jqassistantRules);
         } catch (IOException e) {
-            // TODO remove workaround, rule sources should be valid
-            // throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
-            log.warn("Cannot read rules from '{}'.", ruleSource);
+            throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
         return rules;
     }

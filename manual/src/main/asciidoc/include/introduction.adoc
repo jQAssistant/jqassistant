@@ -437,12 +437,13 @@ jqassistant:
       enabled: true
 ----
 
-In the first analysis the existing violations will be reported.
-At the same time a file `jqassistant-baseline.xml` will be created in the rule directory containing these violations as entries.
-These will no longer be reported by subsequent executions.
+Existing violations will be reported during the first analysis.
+At the same time a file `jqassistant-baseline.xml` will be created in the rule directory containing these violations as entries. These will no longer be reported by subsequent executions.
 
 The file `jqassistant-baseline.xml` is supposed to be checked in into the VCS.
 If an entry contained in the baseline file is no longer detected during an analysis, then the according entry will be removed from the file which can be updated in the VCS again.
+
+TIP: Entries in the baseline can be removed manually if these entries no longer shall be suppressed during analysis. To achieve this the according `<row> ... </row>` must be deleted and the baseline file updated in the VCS.
 
 If baseline management is enabled the by default all constraint violations will be included.
 This can be fine-tuned by adding further configuration properties:
