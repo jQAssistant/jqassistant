@@ -27,6 +27,7 @@ on:
         type: string
         required: false
         default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
+
 jobs:
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
