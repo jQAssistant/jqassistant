@@ -1,0 +1,169 @@
+== Quickstart
+
+=== Command Line
+
+==== Requirements
+
+- Java Development Kit 11 or later
+- optional _JAVA_HOME_ environment variable pointing to the JDK to be used for jQAssistant
+
+==== Installation
+
+* The latest command line distributions are available on Maven Central. Use one of the links below for selecting the bundled Neo4j version depending on your local JDK, select `Browse` and download the `*-distribution.zip` file:
+** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv5/versions[jQAssistant for JDK 17 or later] (includes Neo4j v5.x, _recommended_)
+** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv4/versions[jQAssistant for JDK 11] (includes Neo4j v4.x)
+* Unpack the distribution, a directory
+  `jqassistant-commandline-neo4jv__<?>__-_<version>_` will be created
+
+NOTE: jQAssistant releases until 2.0.x are available https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-distribution/versions[here].
+
+==== Scan
+
+[source]
+.Windows
+----
+bin\jqassistant.cmd scan -f lib
+----
+
+[source]
+.Linux
+----
+bin/jqassistant.sh scan -f lib
+----
+
+* The JAR files contained in the lib/ folder will be scanned.
+
+==== Explore
+
+[source]
+.Windows
+----
+bin\jqassistant.cmd server
+----
+
+[source]
+.Linux
+----
+bin/jqassistant.sh server
+----
+
+* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Enter the following query in the top level area and hit Ctrl-Enter:
+
+[source]
+----
+MATCH
+  (a:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Method)
+RETURN
+  a.fileName as Artifact, t.fqn AS Type, count(t) AS DeclaredMethods
+ORDER BY
+  DeclaredMethods DESC
+LIMIT 20
+----
+
+=== Maven
+
+==== Requirements
+
+- Maven 3.5 or later
+- Java Development Kit 11 or later
+
+==== Add the plugin
+
+Add the following lines to the parent pom.xml file of your project:
+
+[source,xml,subs=attributes+]
+----
+<project>
+    <properties>
+        <!-- Define your desired jQAssistant version here -->
+        <jqassistant.version>{projectVersion}</jqassistant.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>${jqassistant.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+----
+
+==== Add a rule
+
+Within your parent module create a directory `jqassistant` and a file `my-rules.adoc`:
+
+[source,xml]
+.jqassistant/my-rules.adoc
+....
+= My Project
+
+// Include a summary of all executed rules and their status
+include::jQA:Summary[]
+
+[[default]]
+[role=group,includesConstraints="my-rules:*"]
+== Default Rules
+
+[[my-rules:TestClassName]]
+[source,cypher,role=constraint,requiresConcepts="junit4:TestClass"]
+----
+MATCH
+    (t:Junit4:Test:Class)
+WHERE NOT
+    t.name ends with "Test"
+RETURN
+    t AS InvalidTestClass
+----
+
+== Imported Rules
+
+// Include specific rules that have been executed and their results.
+include::jQA:Rules[concepts="junit*:*"]
+....
+
+==== Run the build
+
+Execute the following command from your parent module:
+
+[source]
+----
+mvn install
+----
+
+The build will fail with the rule's message if it is violated.
+
+The HTML report generated from the Asciidoc file including all results is available from `target/jqassistant/report/asciidoc/index.html`.
+
+==== Explore your application
+
+jQAssistant comes with an integrated Neo4j server, you can run it using
+
+[source]
+----
+mvn jqassistant:server
+----
+
+* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Enter the follwoing query in the top level area and hit Ctrl-Enter:
+
+[source]
+----
+MATCH
+  (t:Type)-[:DECLARES]->(m:Method)
+RETURN
+  t.fqn AS Type, count(t) AS DeclaredMethods
+ORDER BY
+  DeclaredMethods DESC
+LIMIT 20
+----
