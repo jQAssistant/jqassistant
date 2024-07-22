@@ -34,7 +34,7 @@ on:
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@main
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/release.yml@471-publish-generated-docs-as-part-of-release-build-gh-actions
     with:
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
