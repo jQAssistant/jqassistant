@@ -94,7 +94,7 @@
         <json-schema-validator.version>1.0.36</json-schema-validator.version>
         <junit.version>5.10.3</junit.version>
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
-        <lombok.version>1.18.32</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>2.23.4</mockito.version>
         <neo4j_4x.version>4.4.35</neo4j_4x.version>
