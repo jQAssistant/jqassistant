@@ -27,6 +27,10 @@ on:
         type: string
         required: false
         default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
+      pages:
+        description: "Path expression for Pages to upload."
+        required: false
+        default: "target/checkout/manual/target/generated-docs/index.html"
 
 jobs:
   build:
@@ -35,7 +39,8 @@ jobs:
       releaseVersion: ${{ github.event.inputs.releaseVersion }}
       developmentVersion: ${{ github.event.inputs.developmentVersion }}
       dryRun: ${{ github.event.inputs.dryRun }}
-      assets  : ${{ github.event.inputs.assets }}
+      assets: ${{ github.event.inputs.assets }}
+      pages: ${{ github.event.inputs.pages }}
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
