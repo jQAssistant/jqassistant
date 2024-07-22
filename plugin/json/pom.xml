@@ -22,7 +22,7 @@
          ! Oliver B. Fischer, 2017-05-20
          !-->
         <jqassistant.scan.continueOnError>true</jqassistant.scan.continueOnError>
-        <jsonassert.version>1.5.1</jsonassert.version>
+        <jsonassert.version>1.5.3</jsonassert.version>
     </properties>
 
     <build>
