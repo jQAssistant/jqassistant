@@ -14,7 +14,7 @@
     <description>Yet another YAML file scanner for jQAssistant.</description>
 
     <properties>
-        <snakeyaml.version>2.1</snakeyaml.version>
+        <snakeyaml.version>2.7</snakeyaml.version>
     </properties>
 
     <build>
