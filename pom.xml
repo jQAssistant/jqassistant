@@ -133,7 +133,7 @@
         <maven.jar.version>3.2.2</maven.jar.version>
         <maven.javadoc.version>3.8.0</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.15.1</maven.jaxb2-plugin.version>
-        <maven.resources.version>3.3.0</maven.resources.version>
+        <maven.resources.version>3.3.1</maven.resources.version>
         <maven.shade.version>3.1.1</maven.shade.version>
         <maven.site.version>3.12.1</maven.site.version>
         <maven.source.plugin>3.3.1</maven.source.plugin>
