@@ -39,15 +39,11 @@ public class StoreFactory {
         case "file":
         case "memory":
             return new EmbeddedGraphStore(uri, configuration, storePluginRepository, artifactProvider);
-        case "bolt":
-        case "neo4j":
-        case "neo4j+s":
+        default:
             configuration.remote()
                 .username()
                 .ifPresent(username -> LOGGER.info("Authenticating with user '{}'", username));
             return new RemoteGraphStore(uri, configuration, storePluginRepository);
-        default:
-            throw new IllegalArgumentException("Cannot determine store type from URI '" + uri + "'.");
         }
     }
 }

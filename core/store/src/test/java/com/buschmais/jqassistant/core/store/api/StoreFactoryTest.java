@@ -59,6 +59,11 @@ class StoreFactoryTest {
     }
 
     @Test
+    void bolts() throws URISyntaxException {
+        verifyRemote("bolt+s://localhost:7687");
+    }
+
+    @Test
     void neo4j() throws URISyntaxException {
         verifyRemote("neo4j://localhost:7687");
     }
