@@ -108,8 +108,8 @@ public class BaselineRepository {
                 }
                 ruleType.getRow()
                     .add(rowType);
-                ruleTypes.add(ruleType);
             }
+            ruleTypes.add(ruleType);
         }
     }
 }
