@@ -17,7 +17,7 @@
 
     <properties>
         <org.codehaus.groovy.version>3.0.20</org.codehaus.groovy.version>
-        <org.jruby.version>9.4.5.0</org.jruby.version>
+        <org.jruby.version>9.4.8.0</org.jruby.version>
         <org.openjdk.nashorn.version>15.4</org.openjdk.nashorn.version>
         <commons-compress.version>1.26.2</commons-compress.version>
     </properties>
