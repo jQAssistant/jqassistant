@@ -119,7 +119,7 @@
         <maven.assembly.version>3.3.0</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
-        <maven.owasp-dependency-check.version>9.0.8</maven.owasp-dependency-check.version>
+        <maven.owasp-dependency-check.version>10.0.3</maven.owasp-dependency-check.version>
         <maven.cyclonedx.version>2.8.0</maven.cyclonedx.version>
         <maven.clean.version>3.1.0</maven.clean.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
