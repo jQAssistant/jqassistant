@@ -154,6 +154,11 @@
         <maven.invoker.jqassistant.version>2.3.1</maven.invoker.jqassistant.version>
         <!-- jQA build version -->
         <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
+        <!-- Sonar -->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>jqassistant</sonar.organization>
+        <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
+        <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
     </properties>
 
     <build>
@@ -766,12 +771,6 @@
                     <value>true</value>
                 </property>
             </activation>
-            <properties>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.organization>jqassistant</sonar.organization>
-                <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
-                <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
