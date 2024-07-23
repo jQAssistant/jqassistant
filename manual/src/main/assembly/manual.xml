@@ -7,7 +7,15 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/generated-docs</directory>
+            <directory>${project.build.directory}/generated-docs/SNAPSHOT/</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>**/*</include>
+                <include>images/**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/generated-docs/release/</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
                 <include>**/*</include>

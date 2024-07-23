@@ -30,7 +30,7 @@ on:
       pages:
         description: "Path expression for Pages to upload."
         required: false
-        default: "manual/target/generated-docs/index.html"
+        default: "./manual/target/generated-docs/"
 
 jobs:
   build:
