@@ -71,7 +71,7 @@
 
     <properties>
         <!-- library versions -->
-        <assertj.version>3.22.0</assertj.version>
+        <assertj.version>3.26.3</assertj.version>
         <asm.version>9.7</asm.version>
         <caffeine.version>3.1.6</caffeine.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
