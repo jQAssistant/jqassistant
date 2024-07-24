@@ -27,7 +27,7 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>manual-release</id>
+                        <id>manual</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
@@ -40,37 +40,11 @@
                             </attributes>
                             <sourceDirectory>src/main/asciidoc/</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/release/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/asciidoc</directory>
-                                    <targetPath>${project.build.directory}/generated-docs/release/</targetPath>
-                                    <includes>
-                                        <include>**/*.png</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>manual-SNAPSHOT</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <attributes>
-                                <toc>auto</toc>
-                                <stylesheet>jqassistant.css</stylesheet>
-                                <docRoot>${asciidoc.directory}</docRoot>
-                            </attributes>
-                            <sourceDirectory>src/main/asciidoc/</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${project.build.directory}/generated-docs/SNAPSHOT/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/asciidoc</directory>
-                                    <targetPath>${project.build.directory}/generated-docs/SNAPSHOT/</targetPath>
+                                    <targetPath>${project.build.directory}/generated-docs/</targetPath>
                                     <includes>
                                         <include>**/*.png</include>
                                     </includes>

@@ -4,12 +4,12 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - 471-publish-generated-docs-as-part-of-release-build
     tags-ignore:
       - "*"
   pull_request:
     branches:
-      - master
+      - 471-publish-generated-docs-as-part-of-release-build
   workflow_dispatch: {}
 
 concurrency:
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@471-publish-generated-docs-as-part-of-release-build-gh-actions
     with:
       publish_snapshots: true
       java_test_versions: '[11,17,21]'
