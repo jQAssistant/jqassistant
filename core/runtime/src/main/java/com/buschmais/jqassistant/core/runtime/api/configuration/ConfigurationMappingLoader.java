@@ -192,7 +192,7 @@ public class ConfigurationMappingLoader {
                 .build();
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {
-                log.info("Loaded configuration from {} config sources:\n{}", additionalConfigSources.length, configurationSerializer.toYaml(configMapping));
+                log.debug("Loaded configuration from {} config sources:\n{}", additionalConfigSources.length, configurationSerializer.toYaml(configMapping));
             }
             return configMapping;
         }
