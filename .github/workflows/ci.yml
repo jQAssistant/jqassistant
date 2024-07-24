@@ -22,6 +22,7 @@ jobs:
     with:
       publish_snapshots: true
       java_test_versions: '[11,17,21]'
+      pages: "./manual/target/generated-docs/"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
