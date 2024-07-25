@@ -109,6 +109,19 @@
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>unpack-schema</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
+                            <includeTypes>zip</includeTypes>
+                            <includeClassifiers>schema</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -285,6 +298,20 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>schemata</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+                <classifier>schema</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -374,6 +401,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+         ! The XML and JSON schemata provided by the core framework
+         !-->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>schemata</artifactId>
+            <type>zip</type>
+            <classifier>schema</classifier>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

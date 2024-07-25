@@ -23,6 +23,25 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package-schema</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>true</attach>
+                            <descriptors>
+                                <descriptor>${project.basedir}/src/main/assembly/schema.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
                 <version>${maven.jaxb2-plugin.version}</version>
@@ -36,32 +55,11 @@
                             <schemas>
                                 <schema>
                                     <fileset>
-                                        <directory>${project.basedir}/src/main/resources/META-INF/plugin/xsd</directory>
+                                        <directory>${project.basedir}/src/main/resources/META-INF/schema</directory>
                                         <includes>
                                             <include>jqassistant-plugin-v2.2.xsd</include>
-                                        </includes>
-                                    </fileset>
-                                </schema>
-                                <schema>
-                                    <fileset>
-                                        <directory>${project.basedir}/src/main/resources/META-INF/report/xsd</directory>
-                                        <includes>
                                             <include>jqassistant-report-v2.3.xsd</include>
-                                        </includes>
-                                    </fileset>
-                                </schema>
-                                <schema>
-                                    <fileset>
-                                        <directory>${project.basedir}/src/main/resources/META-INF/rule/xsd</directory>
-                                        <includes>
                                             <include>jqassistant-rule-v2.2.xsd</include>
-                                        </includes>
-                                    </fileset>
-                                </schema>
-                                <schema>
-                                    <fileset>
-                                        <directory>${project.basedir}/src/main/resources/META-INF/baseline/xsd</directory>
-                                        <includes>
                                             <include>jqassistant-baseline-v2.4.xsd</include>
                                         </includes>
                                     </fileset>

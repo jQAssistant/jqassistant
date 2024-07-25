@@ -53,27 +53,3 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Combine multiple directories
-        run: |
-          mkdir -p combined_dir/TESTING-SCHEMA
-          cp -r ./core/schemata/src/main/resources/META-INF/baseline/xsd combined_dir/TESTING-SCHEMA/
-          cp -r ./core/schemata/src/main/resources/META-INF/plugin/xsd combined_dir/TESTING-SCHEMA/
-          cp -r ./core/schemata/src/main/resources/META-INF/report/xsd combined_dir/TESTING-SCHEMA/
-          cp -r ./core/schemata/src/main/resources/META-INF/rule/xsd combined_dir/TESTING-SCHEMA/
-      - name: Deploy GitHub Pages to SCHEMA
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: combined_dir/TESTING-SCHEMA
-          destination_dir: ./TESTING-SCHEMA
-          keep_files: true
-
-            ./core/schemata/src/main/resources/META-INF/baseline/xsd
-            ./core/schemata/src/main/resources/META-INF/plugin/xsd
-            ./core/schemata/src/main/resources/META-INF/report/xsd
-            ./core/schemata/src/main/resources/META-INF/rule/xsd
