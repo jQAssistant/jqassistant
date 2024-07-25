@@ -9,10 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.ExpressionConfigSourceInterceptor;
@@ -26,6 +23,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
+import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -40,7 +38,10 @@ public class ConfigurationMappingLoader {
     /**
      * The default names of configuration files
      */
-    public static final List<String> DEFAULT_CONFIG_LOCATIONS = Arrays.asList(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant");
+    public static final List<Path> DEFAULT_CONFIG_LOCATIONS = List.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
+        .stream()
+        .map(Paths::get)
+        .collect(toList());
 
     /**
      * The ordinal for config sources from the user home.
@@ -78,7 +79,7 @@ public class ConfigurationMappingLoader {
      * @param configurationMapping
      *     The {@link Configuration} mapping.
      * @param configLocations
-     *     The name of the configuration directory relative to the working directory.
+     *     The names of the configuration locations. These may either be absolute paths or relative paths to the working directory.
      */
     public static <C extends Configuration> Builder<C> builder(Class<C> configurationMapping, List<String> configLocations) {
         return new Builder<>(configurationMapping, configLocations);
@@ -90,7 +91,9 @@ public class ConfigurationMappingLoader {
 
         private final Class<C> configurationMapping;
 
-        private final List<String> configLocations;
+        private final List<Path> configLocations = new ArrayList<>();
+
+        private final Set<URL> yamlConfigFiles = new HashSet<>();
 
         private final List<ConfigSource> configSources = new ArrayList<>();
 
@@ -98,7 +101,14 @@ public class ConfigurationMappingLoader {
 
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
-            this.configLocations = configLocations;
+            for (String configLocation : configLocations) {
+                Path configLocationPath = Paths.get(configLocation);
+                if (configLocationPath.isAbsolute()) {
+                    configSources.addAll(getExternalYamlConfigSources(configLocationPath, ORDINAL_WORKING_DIRECTORY));
+                } else {
+                    this.configLocations.add(configLocationPath);
+                }
+            }
         }
 
         /**
@@ -197,35 +207,38 @@ public class ConfigurationMappingLoader {
             return configMapping;
         }
 
-        private static List<ConfigSource> getExternalYamlConfigSources(File directory, List<String> configLocations, int ordinal) {
+        private List<ConfigSource> getExternalYamlConfigSources(File directory, List<Path> configLocations, int ordinal) {
             List<ConfigSource> configSources = new ArrayList<>();
-            for (String configLocation : configLocations) {
-                File file = directory.toPath()
-                    .resolve(Paths.get(configLocation))
-                    .toFile();
-                if (file.exists()) {
-                    if (file.isDirectory()) {
-                        configSources.addAll(getYamlConfigSources(file, ordinal));
-                    } else {
-                        configSources.add(getYamlConfigSource(file.toPath(), ordinal));
-                    }
-                }
+            for (Path configLocation : configLocations) {
+                Path path = directory.toPath()
+                    .resolve(configLocation);
+                configSources.addAll(getExternalYamlConfigSources(path, ordinal));
             }
             return configSources;
         }
 
-        private static List<ConfigSource> getYamlConfigSources(File configurationDirectory, int ordinal) {
-            log.info("Loading configuration from directory '{}'.", configurationDirectory.getAbsolutePath());
-            List<Path> configurationFiles = getYamlConfigurationFiles(configurationDirectory);
-            return configurationFiles.stream()
-                .map(path -> getYamlConfigSource(path, ordinal))
-                .collect(toList());
+        private List<ConfigSource> getExternalYamlConfigSources(Path configLocationPath, int ordinal) {
+            File file = configLocationPath.toFile();
+            if (!file.exists()) {
+                return emptyList();
+            }
+            if (file.isDirectory()) {
+                log.info("Loading configuration from directory '{}'.", configLocationPath.toAbsolutePath());
+                List<Path> configurationFiles = findYamlConfigurationFiles(configLocationPath);
+                return configurationFiles.stream()
+                    .map(path -> getYamlConfigSource(path, ordinal))
+                    .flatMap(Optional::stream)
+                    .collect(toList());
+            } else {
+                return getYamlConfigSource(configLocationPath, ordinal).map(List::of)
+                    .orElse(emptyList());
+            }
         }
 
-        private static List<Path> getYamlConfigurationFiles(File configurationDirectory) {
+        private List<Path> findYamlConfigurationFiles(Path configurationDirectory) {
             List<Path> configurationFiles = new ArrayList<>();
             try {
-                walkFileTree(configurationDirectory.toPath(), new SimpleFileVisitor<Path>() {
+                walkFileTree(configurationDirectory, new SimpleFileVisitor<Path>() {
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
@@ -244,8 +257,7 @@ public class ConfigurationMappingLoader {
             return configurationFiles;
         }
 
-        private static YamlConfigSource getYamlConfigSource(Path path, int ordinal) {
-            log.info("Loading configuration from file '{}'.", path.toAbsolutePath());
+        private Optional<ConfigSource> getYamlConfigSource(Path path, int ordinal) {
             try {
                 return getYamlConfigSource(path.toUri()
                     .toURL(), ordinal);
@@ -254,25 +266,30 @@ public class ConfigurationMappingLoader {
             }
         }
 
-        private static List<ConfigSource> getYamlConfigSourceFromClasspath() {
+        private List<ConfigSource> getYamlConfigSourceFromClasspath() {
             try {
                 Enumeration<URL> resources = Thread.currentThread()
                     .getContextClassLoader()
                     .getResources(CLASSPATH_RESOURCE);
                 return list(resources).stream()
                     .map(resource -> getYamlConfigSource(resource, ORDINAL_CLASSPATH))
+                    .flatMap(Optional::stream)
                     .collect(toUnmodifiableList());
             } catch (IOException e) {
                 throw new IllegalArgumentException("Cannot get classpath resources for " + CLASSPATH_RESOURCE, e);
             }
         }
 
-        private static YamlConfigSource getYamlConfigSource(URL url, int ordinal) {
-            try {
-                return new YamlConfigSource(url, ordinal);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
+        private Optional<ConfigSource> getYamlConfigSource(URL url, int ordinal) {
+            if (yamlConfigFiles.add(url)) {
+                log.info("Loading configuration from URL '{}' (priority: {}).", url, ordinal);
+                try {
+                    return Optional.of(new YamlConfigSource(url, ordinal));
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
+                }
             }
+            return empty();
         }
 
     }
