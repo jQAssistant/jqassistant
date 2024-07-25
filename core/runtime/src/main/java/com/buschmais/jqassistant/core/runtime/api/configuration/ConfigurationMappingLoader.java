@@ -282,7 +282,7 @@ public class ConfigurationMappingLoader {
 
         private Optional<ConfigSource> getYamlConfigSource(URL url, int ordinal) {
             if (yamlConfigFiles.add(url)) {
-                log.info("Loading configuration from URL '{}' (priority: {}).", url, ordinal);
+                log.info("Loading configuration from '{}' (priority: {}).", url, ordinal);
                 try {
                     return Optional.of(new YamlConfigSource(url, ordinal));
                 } catch (IOException e) {
