@@ -18,7 +18,7 @@
     </description>
 
     <properties>
-        <org.apache.maven.version>3.5.0</org.apache.maven.version>
+        <org.apache.maven.version>3.9.8</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
 
