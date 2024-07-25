@@ -26,11 +26,11 @@ on:
         description: "Path expression for Assets to upload."
         type: string
         required: false
-        default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
+        default: ""
       pages:
         description: "Path expression for Pages to upload."
         required: false
-        default: "target/checkout/manual/target/generated-docs/"
+        default: ""
       deployCurrentDoc:
         description: "Deploy the current documentation page."
         type: boolean
@@ -53,3 +53,19 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy GitHub Pages to SCHEMA
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: |
+            ./core/schemata/src/main/resources/META-INF/baseline/xsd
+            ./core/schemata/src/main/resources/META-INF/plugin/xsd
+            ./core/schemata/src/main/resources/META-INF/report/xsd
+            ./core/schemata/src/main/resources/META-INF/rule/xsd
+          destination_dir: ./TESTING-SCHEMA
+          keep_files: true
