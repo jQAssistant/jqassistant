@@ -22,7 +22,7 @@ jobs:
     with:
       publish_snapshots: true
       java_test_versions: '[11,17,21]'
-      pages: ""
+      pages: "./manual/target/generated-docs/"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
@@ -31,18 +31,3 @@ jobs:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
 
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy GitHub Pages to SCHEMA
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: |
-            ./core/schemata/src/main/resources/META-INF/baseline/xsd
-            ./core/schemata/src/main/resources/META-INF/plugin/xsd
-            ./core/schemata/src/main/resources/META-INF/report/xsd
-            ./core/schemata/src/main/resources/META-INF/rule/xsd
-          destination_dir: ./TESTING-SCHEMA
-          keep_files: true
