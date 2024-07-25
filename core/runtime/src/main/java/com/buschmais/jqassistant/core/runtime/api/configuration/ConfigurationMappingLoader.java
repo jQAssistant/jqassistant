@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.core.runtime.api.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -24,6 +26,7 @@ import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -93,7 +96,7 @@ public class ConfigurationMappingLoader {
 
         private final List<Path> configLocations = new ArrayList<>();
 
-        private final Set<URL> yamlConfigFiles = new HashSet<>();
+        private final Set<URI> yamlConfigFiles = new HashSet<>();
 
         private final List<ConfigSource> configSources = new ArrayList<>();
 
@@ -281,10 +284,16 @@ public class ConfigurationMappingLoader {
         }
 
         private Optional<ConfigSource> getYamlConfigSource(URL url, int ordinal) {
-            if (yamlConfigFiles.add(url)) {
+            URI uri;
+            try {
+                uri = url.toURI();
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Cannot convert URL to URI" + url, e);
+            }
+            if (yamlConfigFiles.add(uri)) {
                 log.info("Loading configuration from '{}' (priority: {}).", url, ordinal);
                 try {
-                    return Optional.of(new YamlConfigSource(url, ordinal));
+                    return of(new YamlConfigSource(url, ordinal));
                 } catch (IOException e) {
                     throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
                 }
