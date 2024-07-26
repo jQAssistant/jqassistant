@@ -3,15 +3,15 @@ package com.buschmais.jqassistant.core.runtime.api.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.ExpressionConfigSourceInterceptor;
@@ -25,8 +25,6 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -94,9 +92,7 @@ public class ConfigurationMappingLoader {
 
         private final Class<C> configurationMapping;
 
-        private final List<Path> configLocations = new ArrayList<>();
-
-        private final Set<URI> yamlConfigFiles = new HashSet<>();
+        private final List<Path> relativeConfigLocations;
 
         private final List<ConfigSource> configSources = new ArrayList<>();
 
@@ -104,12 +100,17 @@ public class ConfigurationMappingLoader {
 
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
-            for (String configLocation : configLocations) {
-                Path configLocationPath = Paths.get(configLocation);
-                if (configLocationPath.isAbsolute()) {
-                    configSources.addAll(getExternalYamlConfigSources(configLocationPath, ORDINAL_WORKING_DIRECTORY));
-                } else {
-                    this.configLocations.add(configLocationPath);
+            if (configLocations.isEmpty()) {
+                this.relativeConfigLocations = DEFAULT_CONFIG_LOCATIONS;
+            } else {
+                this.relativeConfigLocations = new ArrayList<>();
+                for (String configLocation : configLocations) {
+                    Path configLocationPath = Paths.get(configLocation);
+                    if (configLocationPath.isAbsolute()) {
+                        this.configSources.addAll(getExternalYamlConfigSources(configLocationPath, ORDINAL_WORKING_DIRECTORY));
+                    } else {
+                        this.relativeConfigLocations.add(configLocationPath);
+                    }
                 }
             }
         }
@@ -147,7 +148,7 @@ public class ConfigurationMappingLoader {
          * @return The {@link Builder}.
          */
         public Builder<C> withDirectory(File directory, int ordinal) {
-            configSources.addAll(getExternalYamlConfigSources(directory, configLocations.isEmpty() ? DEFAULT_CONFIG_LOCATIONS : configLocations, ordinal));
+            configSources.addAll(getExternalYamlConfigSources(directory, relativeConfigLocations, ordinal));
             return this;
         }
 
@@ -230,11 +231,9 @@ public class ConfigurationMappingLoader {
                 List<Path> configurationFiles = findYamlConfigurationFiles(configLocationPath);
                 return configurationFiles.stream()
                     .map(path -> getYamlConfigSource(path, ordinal))
-                    .flatMap(Optional::stream)
                     .collect(toList());
             } else {
-                return getYamlConfigSource(configLocationPath, ordinal).map(List::of)
-                    .orElse(emptyList());
+                return List.of(getYamlConfigSource(configLocationPath, ordinal));
             }
         }
 
@@ -260,7 +259,7 @@ public class ConfigurationMappingLoader {
             return configurationFiles;
         }
 
-        private Optional<ConfigSource> getYamlConfigSource(Path path, int ordinal) {
+        private ConfigSource getYamlConfigSource(Path path, int ordinal) {
             try {
                 return getYamlConfigSource(path.toUri()
                     .toURL(), ordinal);
@@ -276,30 +275,19 @@ public class ConfigurationMappingLoader {
                     .getResources(CLASSPATH_RESOURCE);
                 return list(resources).stream()
                     .map(resource -> getYamlConfigSource(resource, ORDINAL_CLASSPATH))
-                    .flatMap(Optional::stream)
                     .collect(toUnmodifiableList());
             } catch (IOException e) {
                 throw new IllegalArgumentException("Cannot get classpath resources for " + CLASSPATH_RESOURCE, e);
             }
         }
 
-        private Optional<ConfigSource> getYamlConfigSource(URL url, int ordinal) {
-            URI uri;
+        private ConfigSource getYamlConfigSource(URL url, int ordinal) {
+            log.info("Loading YAML configuration from '{}' (priority: {}).", url, ordinal);
             try {
-                uri = url.toURI();
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Cannot convert URL to URI" + url, e);
+                return new YamlConfigSource(url, ordinal);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
             }
-            if (yamlConfigFiles.add(uri)) {
-                log.info("Loading configuration from '{}' (priority: {}).", url, ordinal);
-                try {
-                    return of(new YamlConfigSource(url, ordinal));
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Cannot create YAML config source from URL " + url, e);
-                }
-            }
-            return empty();
         }
-
     }
 }
