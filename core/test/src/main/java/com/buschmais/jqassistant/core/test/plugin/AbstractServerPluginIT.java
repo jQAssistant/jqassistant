@@ -23,7 +23,7 @@ public abstract class AbstractServerPluginIT extends AbstractPluginIT {
     @BeforeEach
     void startServer() {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
-        server = embeddedGraphStore.getServer();
+        server = embeddedGraphStore.getEmbeddedNeo4jServer();
         server.start();
     }
 

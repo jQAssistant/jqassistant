@@ -70,7 +70,7 @@ public abstract class AbstractCLIIT {
         @Override
         public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
             return parameterContext.getIndex() == 0 && parameterContext.getParameter()
-                    .getType() == DISTRIBUTION.class;
+                .getType() == DISTRIBUTION.class;
         }
 
         @Override
@@ -92,7 +92,7 @@ public abstract class AbstractCLIIT {
     }
 
     public static final String RULES_DIRECTORY = AbstractCLIIT.class.getResource("/rules")
-            .getFile();
+        .getFile();
 
     public static final String TEST_CONCEPT = "default:TestConcept";
     public static final String TEST_CONCEPT_WITH_PARAMETER = "default:TestConceptWithParameter";
@@ -138,12 +138,12 @@ public abstract class AbstractCLIIT {
     @BeforeAll
     public static void beforeAll() {
         userHome = AbstractCLIIT.class.getResource("/userhome/")
-                .getFile();
+            .getFile();
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
-                com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
+            com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
         configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
-                .load(configurationBuilder.build());
+            .load(configurationBuilder.build());
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class AbstractCLIIT {
             .isGreaterThanOrEqualTo(distribution.minRuntimeVersion.feature())
             .isLessThanOrEqualTo(distribution.maxRuntimeVersion.feature());
         this.neo4jVersion = distribution.name()
-                .toLowerCase(Locale.getDefault());
+            .toLowerCase(Locale.getDefault());
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
@@ -191,11 +191,11 @@ public abstract class AbstractCLIIT {
      * Execute the shell script.
      *
      * @param args
-     *         The arguments.
+     *     The arguments.
      * @throws IOException
-     *         If an error occurs.
+     *     If an error occurs.
      * @throws InterruptedException
-     *         If an error occurs.
+     *     If an error occurs.
      */
     protected ExecutionResult execute(String... args) {
         assumeTrue("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX);
@@ -219,7 +219,7 @@ public abstract class AbstractCLIIT {
         builder.directory(workingDirectory);
 
         log.info("Executing '{}'.", command.stream()
-                .collect(joining(" ")));
+            .collect(joining(" ")));
         Process process;
         try {
             process = builder.start();
@@ -232,10 +232,10 @@ public abstract class AbstractCLIIT {
         executorService.submit(standardConsole);
         executorService.submit(errorConsole);
         return ExecutionResult.builder()
-                .process(process)
-                .standardConsole(standardConsole.getOutput())
-                .errorConsole(errorConsole.getOutput())
-                .build();
+            .process(process)
+            .standardConsole(standardConsole.getOutput())
+            .errorConsole(errorConsole.getOutput())
+            .build();
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class AbstractCLIIT {
      */
     protected File getWorkingDirectory() {
         File workingDirectory = new File("target" + "/" + this.getClass()
-                .getSimpleName());
+            .getSimpleName());
         workingDirectory.mkdirs();
         return workingDirectory;
     }
@@ -262,7 +262,7 @@ public abstract class AbstractCLIIT {
     protected void withStore(File directory, StoreOperation storeOperation) {
         ExecutionResult serverExecutionResult = execute("server", "-Djqassistant.store.uri=" + directory.toURI());
         try {
-            Store remoteStore = storeFactory.getStore(configuration.store(), () -> directory);
+            Store remoteStore = storeFactory.getStore(configuration.store(), configuration.server(), () -> directory);
             waitAtMost(30, SECONDS).untilAsserted(() -> assertThatNoException().isThrownBy(() -> remoteStore.start()));
             try {
                 storeOperation.run(remoteStore);
@@ -271,7 +271,7 @@ public abstract class AbstractCLIIT {
             }
         } finally {
             PrintWriter printWriter = new PrintWriter(serverExecutionResult.getProcess()
-                    .getOutputStream());
+                .getOutputStream());
             printWriter.println();
             printWriter.flush();
         }
@@ -302,9 +302,9 @@ public abstract class AbstractCLIIT {
          * Constructor.
          *
          * @param stream
-         *         The stream to redirect.
+         *     The stream to redirect.
          * @param printStream
-         *         The target stream.
+         *     The target stream.
          */
         private ConsoleReader(InputStream stream, PrintStream printStream) {
             this.stream = stream;

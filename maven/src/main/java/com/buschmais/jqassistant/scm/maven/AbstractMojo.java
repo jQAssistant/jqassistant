@@ -222,9 +222,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     If the store cannot be opened.
      */
     private Store getStore(MojoExecutionContext mojoExecutionContext, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
-        Object existingStore = cachingStoreProvider.getStore(mojoExecutionContext.getConfiguration()
-                .store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository(),
-            new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories));
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        Object existingStore = cachingStoreProvider.getStore(configuration.store(), configuration.server(), storeDirectorySupplier,
+            mojoExecutionContext.getPluginRepository(), new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                 "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D" + Maven.REUSE_STORE

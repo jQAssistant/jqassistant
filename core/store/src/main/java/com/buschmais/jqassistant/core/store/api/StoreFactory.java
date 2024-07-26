@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class StoreFactory {
 
     private final ArtifactProvider artifactProvider;
 
-    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Supplier<File> storeDirectorySupplier) {
+    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Server server, Supplier<File> storeDirectorySupplier) {
         URI uri = configuration.uri()
             .orElse(storeDirectorySupplier.get()
                 .toURI())
@@ -38,7 +39,7 @@ public class StoreFactory {
         switch (scheme.toLowerCase()) {
         case "file":
         case "memory":
-            return new EmbeddedGraphStore(uri, configuration, storePluginRepository, artifactProvider);
+            return new EmbeddedGraphStore(uri, configuration, server, storePluginRepository, artifactProvider);
         default:
             configuration.remote()
                 .username()

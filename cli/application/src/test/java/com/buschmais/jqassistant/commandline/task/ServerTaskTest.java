@@ -6,11 +6,11 @@ import java.io.InputStream;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.Server;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 
 import org.apache.commons.cli.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +47,9 @@ class ServerTaskTest {
     @BeforeEach
     final void setUp() {
         doReturn(embeddedNeo4jServer).when(store)
-            .getServer();
-        doReturn(server).when(configuration).server();
+            .getEmbeddedNeo4jServer();
+        doReturn(server).when(configuration)
+            .server();
         serverTask = new ServerTask() {
             @Override
             void withStore(CliConfiguration configuration, StoreOperation storeOperation) throws CliExecutionException {
@@ -59,7 +60,8 @@ class ServerTaskTest {
 
     @Test
     void daemon() throws CliExecutionException, ParseException {
-        doReturn(true).when(server).daemon();
+        doReturn(true).when(server)
+            .daemon();
 
         startServer();
 

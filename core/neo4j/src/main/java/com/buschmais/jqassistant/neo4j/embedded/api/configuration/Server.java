@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.runtime.api.configuration;
+package com.buschmais.jqassistant.neo4j.embedded.api.configuration;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
@@ -13,5 +13,11 @@ public interface Server {
     @Description("Run the server as daemon.")
     @WithDefault("false")
     boolean daemon();
+
+    String OPEN_BROWSER = "open-browser";
+
+    @Description("Open server URL in browser.")
+    @WithDefault("false")
+    boolean openBrowser();
 
 }

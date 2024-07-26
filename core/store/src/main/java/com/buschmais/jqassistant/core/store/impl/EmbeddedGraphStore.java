@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServerFactory;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 import com.buschmais.jqassistant.neo4j.embedded.impl.Neo4jCommunityServerFactory;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
@@ -44,9 +45,11 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private final EmbeddedNeo4jServerFactory serverFactory;
 
-    private final EmbeddedNeo4jServer server;
+    private final EmbeddedNeo4jServer embeddedNeo4jServer;
 
     private final Embedded embedded;
+
+    private final Server server;
 
     private final ArtifactProvider artifactProvider;
 
@@ -62,17 +65,18 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
      * @param storePluginRepository
      *     The {@link StorePluginRepository}.
      */
-    public EmbeddedGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository,
-        ArtifactProvider artifactProvider) {
+    public EmbeddedGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, Server server,
+        StorePluginRepository storePluginRepository, ArtifactProvider artifactProvider) {
         super(uri, configuration, storePluginRepository);
         this.serverFactory = getEmbeddedNeo4jServerFactory();
-        this.server = serverFactory.getServer();
+        this.embeddedNeo4jServer = serverFactory.getServer();
         this.embedded = configuration.embedded();
+        this.server = server;
         this.artifactProvider = artifactProvider;
     }
 
-    public EmbeddedNeo4jServer getServer() {
-        return this.server;
+    public EmbeddedNeo4jServer getEmbeddedNeo4jServer() {
+        return this.embeddedNeo4jServer;
     }
 
     @Override
@@ -119,8 +123,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected final void initialize(XOManagerFactory xoManagerFactory) {
         LOGGER.debug("Initializing embedded Neo4j server.");
         EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
-        server.initialize(embeddedDatastore, embedded.listenAddress(), embedded.httpPort(), embedded.boltPort(), storePluginRepository.getClassLoader(),
-            storePluginRepository.getProcedureTypes(), storePluginRepository.getFunctionTypes());
+        embeddedNeo4jServer.initialize(embeddedDatastore, server, embedded.listenAddress(), embedded.httpPort(), embedded.boltPort(),
+            storePluginRepository.getClassLoader(), storePluginRepository.getProcedureTypes(), storePluginRepository.getFunctionTypes());
         logVersion(embeddedDatastore);
     }
 

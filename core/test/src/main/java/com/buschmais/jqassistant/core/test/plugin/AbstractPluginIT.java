@@ -48,6 +48,7 @@ import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.core.store.api.configuration.Remote;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -114,7 +115,7 @@ public abstract class AbstractPluginIT {
         workingDirectory = new File(".");
         outputDirectory = new File(workingDirectory, "target/jqassistant");
         outputDirectory.mkdirs();
-        startStore(configuration.store(), testStore);
+        startStore(configuration.store(), configuration.server(), testStore);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
     }
@@ -239,9 +240,9 @@ public abstract class AbstractPluginIT {
     /**
      * Initializes and resets the store.
      */
-    private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, TestStore testStore) {
+    private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Server server, TestStore testStore) {
         StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), plugins -> emptyList());
-        store = storeFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY);
+        store = storeFactory.getStore(storeConfiguration, server, () -> TEST_STORE_DIRECTORY);
         store.start();
         if (testStore == null || testStore.reset()) {
             store.reset();

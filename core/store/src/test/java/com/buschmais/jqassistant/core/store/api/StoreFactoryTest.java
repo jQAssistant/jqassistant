@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class StoreFactoryTest {
 
     @Mock
     private com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
+
+    @Mock
+    private Server server;
 
     @Mock
     private Remote remote;
@@ -86,7 +90,7 @@ class StoreFactoryTest {
     private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
         doReturn(uri).when(configuration)
             .uri();
-        assertThat(storeFactory.getStore(configuration, () -> new File("store"))).isInstanceOf(expectedStoreType);
+        assertThat(storeFactory.getStore(configuration, server, () -> new File("store"))).isInstanceOf(expectedStoreType);
     }
 
 }

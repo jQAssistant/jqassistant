@@ -27,9 +27,9 @@ public class ServerTask extends AbstractStoreTask {
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
-            EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
-            server.start();
+            EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
             LOGGER.info("Running server");
+            server.start();
             if (configuration.server().daemon()) {
                 // let the neo4j daemon do the job
                 LOGGER.info("Running server. Use <Ctrl-C> to stop server.");
