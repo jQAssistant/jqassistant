@@ -26,11 +26,11 @@ on:
         description: "Path expression for Assets to upload."
         type: string
         required: false
-        default: ""
+        default: "target/checkout/cli/neo4jv?/target/*-distribution.zip"
       pages:
         description: "Path expression for Pages to upload."
         required: false
-        default: ""
+        default: "target/checkout/manual/target/generated-docs/"
       deployCurrentDoc:
         description: "Deploy the current documentation page."
         type: boolean
