@@ -46,7 +46,7 @@
                                     <directory>${project.basedir}/src/main/asciidoc</directory>
                                     <targetPath>${project.build.directory}/generated-docs/</targetPath>
                                     <includes>
-                                        <include>**/*.png</include>
+                                        <include>images/*</include>
                                     </includes>
                                 </resource>
                             </resources>
