@@ -13,7 +13,7 @@
 
     <properties>
         <maven-resolver-provider.version>3.5.0</maven-resolver-provider.version>
-        <maven-settings-builder.version>3.5.0</maven-settings-builder.version>
+        <maven-settings-builder.version>3.9.8</maven-settings-builder.version>
     </properties>
 
     <build>
