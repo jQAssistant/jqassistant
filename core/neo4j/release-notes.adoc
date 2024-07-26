@@ -3,7 +3,7 @@
 
 == 2.4.0
 
-* Upgraded to Neo4j 5.21.2 and 4.4.34
+* Upgraded to Neo4j 5.22.0 and 4.4.36
 
 == 2.3.1
 
