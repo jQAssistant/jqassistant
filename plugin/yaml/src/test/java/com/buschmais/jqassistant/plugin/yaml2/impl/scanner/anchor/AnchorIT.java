@@ -134,7 +134,6 @@ class AnchorIT extends AbstractYAMLPluginIT {
             assertThat(result).hasSize(1);
         }
 
-        @TestStore(type = TestStore.Type.MEMORY)
         @Test
         void cypherAnchorOnSequenceItemResultsInToSequences() {
             readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");
@@ -151,7 +150,6 @@ class AnchorIT extends AbstractYAMLPluginIT {
             assertThat(sequences).hasSize(2);
         }
 
-        @TestStore(type = TestStore.Type.MEMORY)
         @Test
         void cypherAnchorOnSequenceItemResultsInCorrectSettingOfFirstAndLand() {
             readSourceDocument("/anchor/toplevel-sequence-anchor-on-sequence.yml");

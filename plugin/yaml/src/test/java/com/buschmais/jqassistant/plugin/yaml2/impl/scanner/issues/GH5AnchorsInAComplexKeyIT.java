@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GH5AnchorsInAComplexKeyIT extends AbstractYAMLPluginIT {
 
-    @TestStore(reset = false, type = TestStore.Type.MEMORY)
     @Test
     void anchorOnlyInAComplexKey() {
         readSourceDocument("/anchorincomplexkey/anchor-only.yaml");
@@ -19,7 +18,6 @@ class GH5AnchorsInAComplexKeyIT extends AbstractYAMLPluginIT {
         assertThat(testResult.getColumns()).containsKeys("n");
     }
 
-    @TestStore(reset = false, type = TestStore.Type.MEMORY)
     @Test
     void anchorInKeyAndAliasAsValue() {
         readSourceDocument("/anchorincomplexkey/anchor-and-alias.yaml");
