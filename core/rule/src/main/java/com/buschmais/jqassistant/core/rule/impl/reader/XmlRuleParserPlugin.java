@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toSet;
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.2";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/rule/xsd/jqassistant-rule-v2.2.xsd";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.2.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
