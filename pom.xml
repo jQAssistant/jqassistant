@@ -142,7 +142,7 @@
         <maven.invoker.version>3.7.0</maven.invoker.version>
         <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
         <maven.min.version>3.5.0</maven.min.version>
