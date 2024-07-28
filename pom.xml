@@ -116,7 +116,7 @@
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.12.0</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-        <maven.assembly.version>3.3.0</maven.assembly.version>
+        <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
         <maven.owasp-dependency-check.version>10.0.3</maven.owasp-dependency-check.version>
