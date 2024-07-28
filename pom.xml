@@ -140,7 +140,7 @@
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.0.2</maven.xml.version>
         <maven.invoker.version>3.7.0</maven.invoker.version>
-        <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
+        <org.asciidoctor-plugin.version>3.0.0</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
