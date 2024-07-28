@@ -138,7 +138,7 @@
         <maven.site.version>3.12.1</maven.site.version>
         <maven.source.plugin>3.3.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
-        <maven.xml.version>1.0.2</maven.xml.version>
+        <maven.xml.version>1.1.0</maven.xml.version>
         <maven.invoker.version>3.7.0</maven.invoker.version>
         <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
