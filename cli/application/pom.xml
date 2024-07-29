@@ -12,7 +12,7 @@
     <name>jQAssistant Commandline Application</name>
 
     <properties>
-        <maven-resolver-provider.version>3.5.0</maven-resolver-provider.version>
+        <maven-resolver-provider.version>3.9.8</maven-resolver-provider.version>
         <maven-settings-builder.version>3.5.0</maven-settings-builder.version>
     </properties>
 
