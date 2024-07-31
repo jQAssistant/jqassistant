@@ -11,5 +11,7 @@ public interface EmbeddedNeo4jServer {
 
     void start();
 
+    void openBrowser();
+
     void stop();
 }

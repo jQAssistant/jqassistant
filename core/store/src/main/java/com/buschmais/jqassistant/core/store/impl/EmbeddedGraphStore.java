@@ -44,7 +44,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     private final EmbeddedNeo4jServerFactory serverFactory;
 
-    private final EmbeddedNeo4jServer server;
+    private final EmbeddedNeo4jServer embeddedNeo4jServer;
 
     private final Embedded embedded;
 
@@ -66,13 +66,13 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         ArtifactProvider artifactProvider) {
         super(uri, configuration, storePluginRepository);
         this.serverFactory = getEmbeddedNeo4jServerFactory();
-        this.server = serverFactory.getServer();
+        this.embeddedNeo4jServer = serverFactory.getServer();
         this.embedded = configuration.embedded();
         this.artifactProvider = artifactProvider;
     }
 
-    public EmbeddedNeo4jServer getServer() {
-        return this.server;
+    public EmbeddedNeo4jServer getEmbeddedNeo4jServer() {
+        return this.embeddedNeo4jServer;
     }
 
     @Override

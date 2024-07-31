@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.neo4j.embedded.impl;
 
+import java.awt.*;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
@@ -9,38 +13,62 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Slf4j
 class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jCommunityNeoServer.class);
+
     private ClassLoader classLoader;
 
     private Server server;
-    private String listenAddress;
-    private Integer httpPort;
-    private Integer boltPort;
+    private String url;
 
     @Override
-    public final void initialize(String listenAddress, Integer httpPort, Integer boltPort, ClassLoader classLoader) {
+    public void initialize(String listenAddress, Integer httpPort, Integer boltPort, ClassLoader classLoader) {
         this.classLoader = classLoader;
-        this.listenAddress = listenAddress;
-        this.httpPort = httpPort;
-        this.boltPort = boltPort;
+        this.server = new Server(new InetSocketAddress(listenAddress, httpPort));
+        WebAppContext rootContext = getWebAppContext("/", "browser/");
+        WebAppContext pluginContext = getWebAppContext("/jqassistant", "META-INF/jqassistant-static-content/");
+        this.server.setHandler(new HandlerCollection(rootContext, pluginContext));
+        this.url = String.format("http://%s:%d?dbms=bolt://%s:%d&preselectAuthMethod=NO_AUTH", listenAddress, httpPort, listenAddress, boltPort);
     }
 
     @Override
     public void start() {
-        this.server = new Server(new InetSocketAddress(listenAddress, httpPort));
-        WebAppContext rootContext = getWebAppContext("/", "browser/");
-        WebAppContext pluginContext = getWebAppContext("/jqassistant", "META-INF/jqassistant-static-content/");
-        server.setHandler(new HandlerCollection(rootContext, pluginContext));
-        log.info("Starting HTTP server.");
+        LOGGER.info("Starting HTTP server.");
         try {
             server.start();
         } catch (Exception e) {
             throw new IllegalStateException("Cannot start embedded server.", e);
         }
-        log.info("Neo4j browser available at http://{}:{}?dbms=bolt://{}:{}&preselectAuthMethod=NO_AUTH.", listenAddress, httpPort, listenAddress, boltPort);
+        LOGGER.info("Neo4j browser available at {}.", url);
+    }
+
+    @Override
+    public void openBrowser() {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop()
+            .isSupported(Desktop.Action.BROWSE)) {
+            log.info("Opening browser using URL {}.", url);
+            try {
+                Desktop.getDesktop()
+                    .browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                log.warn("Cannot open browser for URL {}", url, e);
+            }
+        }
+    }
+
+    @Override
+    public void stop() {
+        LOGGER.info("Stopping HTTP server.");
+        try {
+            server.stop();
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot stop embedded server.", e);
+        }
     }
 
     private WebAppContext getWebAppContext(String contextPath, String resourceRoot) {
@@ -51,15 +79,4 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
         return webAppContext;
     }
 
-    @Override
-    public void stop() {
-        if (server != null) {
-            log.info("Stopping HTTP server.");
-            try {
-                server.stop();
-            } catch (Exception e) {
-                throw new IllegalStateException("Cannot stop embedded server.", e);
-            }
-        }
-    }
 }
