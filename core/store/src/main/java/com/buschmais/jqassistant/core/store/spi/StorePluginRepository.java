@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 /**
  * Defines the interface for the scanner plugin repository.
  */
-public interface StorePluginRepository extends LifecycleAware  {
+public interface StorePluginRepository extends LifecycleAware {
 
     ClassLoader getClassLoader();
 
@@ -17,10 +17,6 @@ public interface StorePluginRepository extends LifecycleAware  {
      * @return The instances of the configured descriptor mappers.
      */
     List<Class<?>> getDescriptorTypes();
-
-    List<Class<?>> getProcedureTypes();
-
-    List<Class<?>> getFunctionTypes();
 
     @Override
     default void initialize() {

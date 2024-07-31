@@ -17,18 +17,12 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
 
     private final List<Class<?>> descriptorTypes;
 
-    private final List<Class<?>> procedureTypes;
-
-    private final List<Class<?>> functionTypes;
-
     /**
      * Constructor.
      */
     public StorePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.descriptorTypes = getTypes(plugins, plugin -> plugin.getModel());
-        this.procedureTypes = getTypes(plugins, plugin -> plugin.getProcedure());
-        this.functionTypes = getTypes(plugins, plugin -> plugin.getFunction());
+        this.descriptorTypes = getTypes(plugins, JqassistantPlugin::getModel);
     }
 
     @Override
@@ -39,16 +33,6 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
     @Override
     public List<Class<?>> getDescriptorTypes() {
         return descriptorTypes;
-    }
-
-    @Override
-    public List<Class<?>> getProcedureTypes() {
-        return procedureTypes;
-    }
-
-    @Override
-    public List<Class<?>> getFunctionTypes() {
-        return functionTypes;
     }
 
     private List<Class<?>> getTypes(List<JqassistantPlugin> plugins, Function<JqassistantPlugin, ClassListType> classListSupplier) {

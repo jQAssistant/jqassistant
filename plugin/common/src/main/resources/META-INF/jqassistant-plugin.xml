@@ -1,6 +1,6 @@
-<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.4"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.2 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.2.xsd"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.4 https://schema.jqassistant.org/plugin/jqassistant-plugin-v2.4.xsd"
                     id="jqa.plugin.common"
                     name="jQAssistant Common Plugin"
                     version="${project.version}">
