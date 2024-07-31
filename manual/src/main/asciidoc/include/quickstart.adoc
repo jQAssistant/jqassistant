@@ -47,7 +47,7 @@ bin\jqassistant.cmd server
 bin/jqassistant.sh server
 ----
 
-* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Open a browser and navigate to http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH[http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH] (see also <<open-browser>>)
 * Enter the following query in the top level area and hit Ctrl-Enter:
 
 [source]
@@ -154,7 +154,7 @@ jQAssistant comes with an integrated Neo4j server, you can run it using
 mvn jqassistant:server
 ----
 
-* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Open a browser and navigate to http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH[http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH] (see also <<open-browser>>)
 * Enter the follwoing query in the top level area and hit Ctrl-Enter:
 
 [source]
@@ -167,3 +167,18 @@ ORDER BY
   DeclaredMethods DESC
 LIMIT 20
 ----
+
+[[open-browser]]
+[TIP,reftext="Tip: Open browser when starting embedded server"]
+====
+The embedded server by default is started to listen by default on URI `bolt://localhost:7687` without authentication.
+jQAssistant can open the Neo4j browser in your desktop browser automatically when running the server by activating `jqassistant.server.open-browser`, e.g. by using a `jqassistant.yml` in your home directory:
+
+[source,yaml]
+.~/.jqassistant.yml
+----
+jqassistant:
+  server:
+    open-browser: true
+----
+====
