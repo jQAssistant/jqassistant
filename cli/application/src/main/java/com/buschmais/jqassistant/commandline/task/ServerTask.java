@@ -27,10 +27,15 @@ public class ServerTask extends AbstractStoreTask {
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
-            EmbeddedNeo4jServer server = embeddedGraphStore.getServer();
-            server.start();
+            EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
             LOGGER.info("Running server");
-            if (configuration.server().daemon()) {
+            server.start();
+            if (configuration.server()
+                .openBrowser()) {
+                server.openBrowser();
+            }
+            if (configuration.server()
+                .daemon()) {
                 // let the neo4j daemon do the job
                 LOGGER.info("Running server. Use <Ctrl-C> to stop server.");
             } else {
@@ -43,7 +48,6 @@ public class ServerTask extends AbstractStoreTask {
                     server.stop();
                 }
             }
-            ;
         });
     }
 }

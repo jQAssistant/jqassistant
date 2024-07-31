@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.store.api.configuration.Remote;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.RemoteGraphStore;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
+import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class StoreFactoryTest {
 
     @Mock
     private com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
+
+    @Mock
+    private Server server;
 
     @Mock
     private Remote remote;

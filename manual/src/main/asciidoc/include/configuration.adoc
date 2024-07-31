@@ -305,6 +305,20 @@ jqassistant:
     #
     # -Djqassistant.analyze.warn-on-rule-execution-time-seconds
     warn-on-rule-execution-time-seconds: 5
+
+# The embedded server configuration
+  server:
+
+    # Determines whether the shall be ran as daemon. If set to false (default) then <Enter> must be pressed to stop the server, otherwise the process keeps running until it is killed.
+    #
+    # -Djqassistant.server.daemon: true|false
+    daemon: false
+
+    # Open the desktop browser when running the embedded server
+    #
+    # -Djqassistant.server.open-browser: true|false
+    open-browser: false
+
 ----
 
 === Environment Variables

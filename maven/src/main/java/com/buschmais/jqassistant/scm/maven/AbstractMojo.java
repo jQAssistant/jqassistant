@@ -122,7 +122,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 currentThread().setContextClassLoader(pluginRepository.getClassLoader());
                 try {
                     if (isResetStoreBeforeExecution(configuration) && executedModules.isEmpty()) {
-                        withStore(store -> store.reset(), mojoExecutionContext);
+                        withStore(Store::reset, mojoExecutionContext);
                     }
                     execute(mojoExecutionContext, executedModules);
                 } finally {
@@ -222,8 +222,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *     If the store cannot be opened.
      */
     private Store getStore(MojoExecutionContext mojoExecutionContext, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
-        Object existingStore = cachingStoreProvider.getStore(mojoExecutionContext.getConfiguration()
-                .store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository(),
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        Object existingStore = cachingStoreProvider.getStore(configuration.store(), storeDirectorySupplier, mojoExecutionContext.getPluginRepository(),
             new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories));
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
