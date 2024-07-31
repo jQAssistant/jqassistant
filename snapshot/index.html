@@ -2183,7 +2183,7 @@ jQAssistant releases until 2.0.x are available <a href="https://central.sonatype
 <div class="ulist">
 <ul>
 <li>
-<p>Open a browser and navigate to <a href="http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH">http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH</a> (see also <a href="#open-browser">Tip: Open browser when starting embedded server</a>)</p>
+<p>Open a browser and navigate to <a href="http://localhost:7474">http://localhost:7474</a></p>
 </li>
 <li>
 <p>Enter the following query in the top level area and hit Ctrl-Enter:</p>
@@ -2316,7 +2316,7 @@ link:jQA:Rules[role=include]</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>Open a browser and navigate to <a href="http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH">http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH</a> (see also <a href="#open-browser">Tip: Open browser when starting embedded server</a>)</p>
+<p>Open a browser and navigate to <a href="http://localhost:7474">http://localhost:7474</a></p>
 </li>
 <li>
 <p>Enter the follwoing query in the top level area and hit Ctrl-Enter:</p>
@@ -2333,29 +2333,6 @@ ORDER BY
   DeclaredMethods DESC
 LIMIT 20</code></pre>
 </div>
-</div>
-<div id="open-browser" class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The embedded server by default is started to listen by default on URI <code>bolt://localhost:7687</code> without authentication.
-jQAssistant can open the Neo4j browser in your desktop browser automatically when running the server by activating <code>jqassistant.server.open-browser</code>, e.g. by using a <code>jqassistant.yml</code> in your home directory:</p>
-</div>
-<div class="listingblock">
-<div class="title">~/.jqassistant.yml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
-  <span class="key">server</span>:
-    <span class="key">open-browser</span>: <span class="string"><span class="content">true</span></span></code></pre>
-</div>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -2428,7 +2405,7 @@ like "java:classpath" for a directory containing Java classes or "maven:reposito
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 http://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2481,6 +2458,18 @@ like "java:classpath" for a directory containing Java classes or "maven:reposito
 
 <span class="tag">&lt;/jqassistant-rules&gt;</span></code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The rule XML schema is available <a href="https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-rule-v2.2.xsd">online</a> and should be picked automatically for code completion by your IDE.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
@@ -2654,7 +2643,7 @@ In these cases it is possible to perform a dynamic extension (duck-typing) to th
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 http://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConcept</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">plugin1:ConcreteConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
@@ -2704,7 +2693,7 @@ further severity is given, e.g.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 http://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyGroup</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">severity</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">blocker</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2822,7 +2811,7 @@ If violations are exported to dashboards (e.g. SonarQube, Teamscale) then <code>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 http://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:ApplicationRootPackage</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;requiresParameter</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">rootPackage</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">String</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">defaultValue</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">com.buschmais</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <b class="conum">(1)</b>
@@ -11606,7 +11595,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-31 17:40:29 UTC
+Last updated 2024-07-31 17:40:37 UTC
 </div>
 </div>
 </body>
