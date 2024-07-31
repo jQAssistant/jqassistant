@@ -23,8 +23,7 @@ class JavaRuntimePT extends AbstractJavaPluginIT {
      * variable java.home.
      */
     @Test
-    @TestStore(type = TestStore.Type.FILE)
-    void javaRuntime01Scan() {
+    void javaRuntime01Scan() throws RuleException {
         String javaHome = System.getProperty("java.home");
         assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
@@ -32,17 +31,7 @@ class JavaRuntimePT extends AbstractJavaPluginIT {
         store.beginTransaction();
         getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
-    }
-
-    @Test
-    @TestStore(type = TestStore.Type.FILE, reset = false)
-    public void javaRuntime02VirtualDependsOn() throws RuleException {
         applyConcept("java:VirtualDependsOn");
-    }
-
-    @Test
-    @TestStore(type = TestStore.Type.FILE, reset = false)
-    public void javaRuntime03VirtualInvokes() throws RuleException {
         applyConcept("java:VirtualInvokes");
     }
 }

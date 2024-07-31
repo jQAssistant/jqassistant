@@ -35,7 +35,7 @@ public class MethodDescriptorCondition extends Condition<MethodDescriptor> {
     }
 
     public static MethodDescriptorCondition methodDescriptor(Class<?> type, String name, Class<?>... parameterTypes) throws NoSuchMethodException {
-        Method method = type.getDeclaredMethod(name);
+        Method method = type.getDeclaredMethod(name, parameterTypes);
         return new MethodDescriptorCondition(type.getName(), method.getReturnType()
             .getTypeName() + " " + name + getDeclaredParameters(type.getDeclaredConstructor(parameterTypes)));
     }

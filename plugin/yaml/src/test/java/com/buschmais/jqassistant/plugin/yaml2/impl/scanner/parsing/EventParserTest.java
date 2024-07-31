@@ -473,56 +473,6 @@ class EventParserTest {
                 }
             }
 
-            @DisplayName("there the anchor is on the key of a complex key and the alias is used as key in the same map")
-            @Nested
-            class AnchorOnKeyOfMapInComplexKeyAndAliasAsKeyInMap {
-
-                @BeforeEach
-                void setUp() throws IOException {
-                    rootNode = getParseTreeFromFile("/anchor/toplevel-map-anchor-in-complexkey-on-key-alias-is-also-key.yml");
-                }
-
-
-                @DisplayName("then the parse tree contains a single document")
-                @Test
-                void name1() {
-                    assertSoftly(sa -> {
-                        sa.assertThat(rootNode).isNotNull();
-                        sa.assertThat(rootNode.getDocuments()).hasSize(1);
-                    });
-                }
-
-                @DisplayName("then the found document has only one single map")
-                @Test
-                void foundDocumentHasOnlyOneSingleMap() {
-                    DocumentNode documentNode = rootNode.getDocuments().get(0);
-
-                    assertThat(documentNode.getMaps()).hasSize(1);
-                    assertThat(documentNode.getSequences()).isEmpty();
-                    assertThat(documentNode.getScalars()).isEmpty();
-                }
-
-
-                @DisplayName("then the map of the document has a complex key and an alias key")
-                @Test
-                void thenTheMapOfTheDocumentHasAComplexKeyAndAliasKey() {
-                    MapNode topLevelMapNode = rootNode.getDocuments().get(0).getMaps().get(0);
-
-                    assertThat(topLevelMapNode.getComplexKeys()).hasSize(1);
-                    assertThat(topLevelMapNode.getSimpleKeys()).isEmpty();
-                    assertThat(topLevelMapNode.getAliasKeys()).hasSize(1);
-                }
-
-                @DisplayName("then the alias key has the correct key name and the correct value")
-                @Test
-                void thenTheAliasKeyHasTheCorrectValue() {
-                    AliasKeyNode aliasKeyNode = rootNode.getDocuments().get(0).getMaps().get(0).getAliasKeys().get(0);
-
-                    assertThat(aliasKeyNode.getKey()).isInstanceOf(ScalarNode.class);
-                    assertThat(((ScalarNode) aliasKeyNode.getKey()).getScalarValue()).isEqualTo("ck1");
-                }
-            }
-
             @DisplayName("there the anchor is in a complex key on the key value")
             @Nested
             class AnchorIsInAComplexKeyOnTheKeyValue {

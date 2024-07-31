@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -85,7 +84,7 @@ class XmlSourceScannerPluginTest {
                 "test.xml", DefaultScope.NONE, scanner);
 
         assertThat(documentDescriptor).isNotNull();
-        assertThat(parents.size()).isEqualTo(1);
+        assertThat(parents).hasSize(1);
         Map.Entry<XmlElementDescriptor, XmlElementDescriptor> entry = parents.entrySet().iterator().next();
         XmlElementDescriptor childElement = entry.getKey();
         XmlElementDescriptor rootElement = entry.getValue();

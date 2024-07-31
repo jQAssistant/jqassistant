@@ -22,7 +22,7 @@ import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -101,7 +101,7 @@ class ScannerImplTest {
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
         doReturn(Boolean.TRUE).when(selectedPlugin)
-            .accepts(Mockito.<Properties>anyObject(), Mockito.eq(path), Mockito.eq(scope));
+            .accepts(Mockito.any(), Mockito.eq(path), Mockito.eq(scope));
         ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
@@ -115,7 +115,7 @@ class ScannerImplTest {
         String path = "/a/b/c.properties";
         ScannerPlugin<Properties, ?> selectedPlugin = mock(ScannerPlugin.class);
         doReturn(Boolean.FALSE).when(selectedPlugin)
-            .accepts(Mockito.anyObject(), Mockito.eq(path), Mockito.eq(scope));
+            .accepts(Mockito.any(), Mockito.eq(path), Mockito.eq(scope));
         ScannerImpl scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
 
         boolean result = scanner.accepts(selectedPlugin, resource, path, scope);
@@ -127,14 +127,10 @@ class ScannerImplTest {
     void failOnError() throws IOException {
         Scanner scanner = new ScannerImpl(configuration, context, scannerPluginRepository);
         stubExceptionDuringScan(scanner);
-        try {
-            scanner.scan("test", "test", scope);
-            fail("Expecting an " + UnrecoverableScannerException.class.getName());
-        } catch (UnrecoverableScannerException e) {
-            String message = e.getMessage();
-            assertThat(message).contains("test");
-        }
 
+        assertThatExceptionOfType(UnrecoverableScannerException.class).isThrownBy(() -> {
+            scanner.scan("test", "test", scope);
+        }).withMessageContaining("test");
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
         verify(store, never()).commitTransaction();
@@ -196,7 +192,6 @@ class ScannerImplTest {
      */
     @Test
     void pluginPipeline() {
-        Store store = mock(Store.class);
         ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
             Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];

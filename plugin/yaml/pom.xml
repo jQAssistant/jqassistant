@@ -13,10 +13,6 @@
 
     <description>Yet another YAML file scanner for jQAssistant.</description>
 
-    <properties>
-        <snakeyaml.version>2.1</snakeyaml.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -101,7 +97,6 @@
         <dependency>
             <groupId>org.snakeyaml</groupId>
             <artifactId>snakeyaml-engine</artifactId>
-            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 

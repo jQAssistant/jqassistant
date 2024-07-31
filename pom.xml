@@ -96,7 +96,7 @@
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <mockito.version>2.23.4</mockito.version>
+        <mockito.version>5.12.0</mockito.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.22.0</neo4j_5x.version>
@@ -110,13 +110,13 @@
         <smallrye-config.version>3.8.3</smallrye-config.version>
         <maven-resolver.version>1.9.21</maven-resolver.version>
         <snakeyaml.version>2.2</snakeyaml.version>
-        <snakeyaml-engine.version>2.3</snakeyaml-engine.version>
+        <snakeyaml-engine.version>2.7</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xo.version>2.2.8</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>1.12.0</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-        <maven.assembly.version>3.3.0</maven.assembly.version>
+        <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
         <maven.owasp-dependency-check.version>10.0.3</maven.owasp-dependency-check.version>
@@ -138,11 +138,11 @@
         <maven.site.version>3.12.1</maven.site.version>
         <maven.source.plugin>3.3.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
-        <maven.xml.version>1.0.2</maven.xml.version>
+        <maven.xml.version>1.1.0</maven.xml.version>
         <maven.invoker.version>3.7.0</maven.invoker.version>
-        <org.asciidoctor-plugin.version>2.2.4</org.asciidoctor-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <org.asciidoctor-plugin.version>3.0.0</org.asciidoctor-plugin.version>
+        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
         <maven.min.version>3.5.0</maven.min.version>

@@ -20,7 +20,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptySet;
 
 class JsonSchemaValidator {
-    private static final String JSON_SCHEMA = "/META-INF/rule/jsonschema/jqassistant-rule-v2.2.schema.json";
+    private static final String JSON_SCHEMA = "/META-INF/schema/jqassistant-rule-v2.2.schema.json";
     private final ObjectMapper mapper;
     private final JsonSchema schema;
 
