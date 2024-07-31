@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.test.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -65,10 +64,6 @@ public abstract class AbstractPluginIT {
 
     protected static final String ARTIFACT_ID = "artifact";
 
-    private static final String STORE_URI_MEMORY = "memory:///";
-
-    private static final String STORE_URI_REMOTE = "bolt://localhost:7687";
-
     private static PluginRepositoryImpl pluginRepository;
 
     private File workingDirectory;
@@ -95,9 +90,7 @@ public abstract class AbstractPluginIT {
     }
 
     @BeforeEach
-    public void beforeEach(TestInfo testInfo) throws IOException, RuleException {
-        Method method = testInfo.getTestMethod()
-            .orElseThrow(() -> new AssertionError("Unable to get the test method for test '" + testInfo.getDisplayName() + "'."));
+    public void beforeEach() throws IOException, RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         Configuration configuration = createConfiguration(configurationBuilder);
@@ -139,10 +132,10 @@ public abstract class AbstractPluginIT {
      */
     private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
         return ConfigurationMappingLoader.builder(Configuration.class)
-            .withClasspath()
-            .withProfiles(getConfigurationProfiles())
-            .load(configurationBuilder.build(), new EnvConfigSource() {
-            }, new SysPropConfigSource());
+                .withClasspath()
+                .withProfiles(getConfigurationProfiles())
+                .load(configurationBuilder.build(), new EnvConfigSource() {
+                }, new SysPropConfigSource());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
@@ -154,10 +147,10 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository()
-            .getRuleSources());
+                .getRuleSources());
         Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository()
-            .getRuleParserPlugins(configuration.analyze()
-                .rule());
+                .getRuleParserPlugins(configuration.analyze()
+                        .rule());
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
     }
@@ -169,8 +162,8 @@ public abstract class AbstractPluginIT {
     private void initializeReportPlugin(Configuration configuration) {
         ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
-            .getReportPlugins(configuration.analyze()
-                .report(), reportContext);
+                .getReportPlugins(configuration.analyze()
+                        .report(), reportContext);
         this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
     }
 
@@ -190,7 +183,7 @@ public abstract class AbstractPluginIT {
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
         return pluginRepository.getAnalyzerPluginRepository()
-            .getRuleInterpreterPlugins(getRuleInterpreterProperties());
+                .getRuleInterpreterPlugins(getRuleInterpreterProperties());
     }
 
     protected Map<String, Object> getRuleInterpreterProperties() {
@@ -202,7 +195,7 @@ public abstract class AbstractPluginIT {
      */
     private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration) {
         StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), plugins -> emptyList());
-        store = storeFactory.getStore(storeConfiguration, server, () -> TEST_STORE_DIRECTORY);
+        store = storeFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY);
         store.start();
     }
 
@@ -232,7 +225,7 @@ public abstract class AbstractPluginIT {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
         Baseline baselineConfiguration = configuration.analyze()
-            .baseline();
+                .baseline();
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
@@ -242,16 +235,16 @@ public abstract class AbstractPluginIT {
      * Determines the directory a class is located in (e.g. target/test-classes).
      *
      * @param rootClass
-     *     The class.
+     *         The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         String path = URLDecoder.decode(rootClass.getClassLoader()
-            .getResource(".")
-            .getPath(), Charset.defaultCharset());
+                .getResource(".")
+                .getPath(), Charset.defaultCharset());
         File directory = new File(path);
         assertThat(directory).isDirectory()
-            .describedAs("Expected %s to be a directory", directory.toString());
+                .describedAs("Expected %s to be a directory", directory.toString());
         return directory;
     }
 
@@ -259,7 +252,7 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *     The query.
+     *         The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
@@ -270,9 +263,9 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *     The query.
+     *         The query.
      * @param parameters
-     *     The query parameters.
+     *         The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -301,7 +294,7 @@ public abstract class AbstractPluginIT {
      * Applies the concept identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id) throws RuleException {
@@ -312,30 +305,30 @@ public abstract class AbstractPluginIT {
      * Applies the concept identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      * @param parameters
-     *     The rule parameters.
+     *         The rule parameters.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         Analyzer analyzer = getAnalyzer(parameters);
         RuleSelection ruleSelection = RuleSelection.builder()
-            .conceptId(id)
-            .build();
+                .conceptId(id)
+                .build();
         Concept concept = ruleSet.getConceptBucket()
-            .getById(id);
+                .getById(id);
         assertThat(concept).describedAs("The requested concept cannot be found: " + id)
-            .isNotNull();
+                .isNotNull();
         analyzer.execute(ruleSet, ruleSelection);
         return reportPlugin.getConceptResults()
-            .get(id);
+                .get(id);
     }
 
     /**
      * Validates the constraint identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id) throws RuleException {
@@ -346,29 +339,29 @@ public abstract class AbstractPluginIT {
      * Validates the constraint identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      * @param parameters
-     *     The rule parameters.
+     *         The rule parameters.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
-            .constraintId(id)
-            .build();
+                .constraintId(id)
+                .build();
         Constraint constraint = ruleSet.getConstraintBucket()
-            .getById(id);
+                .getById(id);
         assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
-            .isNotNull();
+                .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
         return reportPlugin.getConstraintResults()
-            .get(id);
+                .get(id);
     }
 
     /**
      * Executes the group identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      */
     protected void executeGroup(String id) throws RuleException {
         executeGroup(id, Collections.<String, String>emptyMap());
@@ -378,18 +371,18 @@ public abstract class AbstractPluginIT {
      * Executes the group identified by id.
      *
      * @param id
-     *     The id.
+     *         The id.
      * @param parameters
-     *     The rule parameters.
+     *         The rule parameters.
      */
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
-            .groupId(id)
-            .build();
+                .groupId(id)
+                .build();
         Group group = ruleSet.getGroupsBucket()
-            .getById(id);
+                .getById(id);
         assertThat(group).describedAs("The request group cannot be found: " + id)
-            .isNotNull();
+                .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
     }
 
@@ -408,7 +401,7 @@ public abstract class AbstractPluginIT {
          * Return a column identified by its name.
          *
          * @param <T>
-         *     The expected type.
+         *         The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {

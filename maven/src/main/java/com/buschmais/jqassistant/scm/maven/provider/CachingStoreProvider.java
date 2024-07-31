@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
-import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -55,7 +54,7 @@ public class CachingStoreProvider implements Disposable {
      *     The pluginRepository.
      * @return The store.
      */
-    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Server server, Supplier<File> storeDirectorySupplier,
+    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
         PluginRepository pluginRepository, ArtifactProvider artifactProvider) {
         URI uri = storeConfiguration.uri()
             .orElseGet(() -> {
@@ -74,7 +73,7 @@ public class CachingStoreProvider implements Disposable {
         Store store = storesByKey.get(key);
         if (store == null) {
             StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
-            store = storeFactory.getStore(storeConfiguration, server, storeDirectorySupplier);
+            store = storeFactory.getStore(storeConfiguration, storeDirectorySupplier);
             store.start();
             storesByKey.put(key, store);
             keysByStore.put(store, key);

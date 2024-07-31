@@ -262,7 +262,7 @@ public abstract class AbstractCLIIT {
     protected void withStore(File directory, StoreOperation storeOperation) {
         ExecutionResult serverExecutionResult = execute("server", "-Djqassistant.store.uri=" + directory.toURI());
         try {
-            Store remoteStore = storeFactory.getStore(configuration.store(), configuration.server(), () -> directory);
+            Store remoteStore = storeFactory.getStore(configuration.store(), () -> directory);
             waitAtMost(30, SECONDS).untilAsserted(() -> assertThatNoException().isThrownBy(() -> remoteStore.start()));
             try {
                 storeOperation.run(remoteStore);

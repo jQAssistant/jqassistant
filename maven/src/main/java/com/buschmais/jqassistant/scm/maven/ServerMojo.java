@@ -32,7 +32,14 @@ public class ServerMojo extends AbstractProjectMojo {
         EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
         server.start();
         getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
-        if (!mojoExecutionContext.getConfiguration().server().daemon()) {
+        if (mojoExecutionContext.getConfiguration()
+            .server()
+            .openBrowser()) {
+            server.openBrowser();
+        }
+        if (!mojoExecutionContext.getConfiguration()
+            .server()
+            .daemon()) {
             getLog().info("Press <Enter> to finish.");
             try {
                 System.in.read();

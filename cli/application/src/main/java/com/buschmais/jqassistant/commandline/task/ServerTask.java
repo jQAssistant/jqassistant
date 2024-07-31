@@ -30,7 +30,12 @@ public class ServerTask extends AbstractStoreTask {
             EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
             LOGGER.info("Running server");
             server.start();
-            if (configuration.server().daemon()) {
+            if (configuration.server()
+                .openBrowser()) {
+                server.openBrowser();
+            }
+            if (configuration.server()
+                .daemon()) {
                 // let the neo4j daemon do the job
                 LOGGER.info("Running server. Use <Ctrl-C> to stop server.");
             } else {
@@ -43,7 +48,6 @@ public class ServerTask extends AbstractStoreTask {
                     server.stop();
                 }
             }
-            ;
         });
     }
 }

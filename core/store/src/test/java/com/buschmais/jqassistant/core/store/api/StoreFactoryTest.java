@@ -90,7 +90,7 @@ class StoreFactoryTest {
     private void verify(Optional<URI> uri, Class<? extends Store> expectedStoreType) {
         doReturn(uri).when(configuration)
             .uri();
-        assertThat(storeFactory.getStore(configuration, server, () -> new File("store"))).isInstanceOf(expectedStoreType);
+        assertThat(storeFactory.getStore(configuration, () -> new File("store"))).isInstanceOf(expectedStoreType);
     }
 
 }

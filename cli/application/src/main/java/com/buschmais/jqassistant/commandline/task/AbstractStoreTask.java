@@ -44,7 +44,7 @@ public abstract class AbstractStoreTask extends AbstractTask {
      *     If the execution fails.
      */
     void withStore(CliConfiguration configuration, StoreOperation storeOperation) throws CliExecutionException {
-        Store store = storeFactory.getStore(configuration.store(), configuration.server(), () -> new File(DEFAULT_STORE_DIRECTORY));
+        Store store = storeFactory.getStore(configuration.store(), () -> new File(DEFAULT_STORE_DIRECTORY));
         try {
             store.start();
             storeOperation.run(store);
