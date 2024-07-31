@@ -2183,7 +2183,7 @@ jQAssistant releases until 2.0.x are available <a href="https://central.sonatype
 <div class="ulist">
 <ul>
 <li>
-<p>Open a browser and navigate to <a href="http://localhost:7474">http://localhost:7474</a></p>
+<p>Open a browser and navigate to <a href="http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH">http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH</a> (see also <a href="#open-browser">Tip: Open browser when starting embedded server</a>)</p>
 </li>
 <li>
 <p>Enter the following query in the top level area and hit Ctrl-Enter:</p>
@@ -2316,7 +2316,7 @@ link:jQA:Rules[role=include]</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>Open a browser and navigate to <a href="http://localhost:7474">http://localhost:7474</a></p>
+<p>Open a browser and navigate to <a href="http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH">http://localhost:7474/?dbms=bolt://localhost:7687&amp;preselectAuthMethod=NO_AUTH</a> (see also <a href="#open-browser">Tip: Open browser when starting embedded server</a>)</p>
 </li>
 <li>
 <p>Enter the follwoing query in the top level area and hit Ctrl-Enter:</p>
@@ -2333,6 +2333,29 @@ ORDER BY
   DeclaredMethods DESC
 LIMIT 20</code></pre>
 </div>
+</div>
+<div id="open-browser" class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The embedded server by default is started to listen by default on URI <code>bolt://localhost:7687</code> without authentication.
+jQAssistant can open the Neo4j browser in your desktop browser automatically when running the server by activating <code>jqassistant.server.open-browser</code>, e.g. by using a <code>jqassistant.yml</code> in your home directory:</p>
+</div>
+<div class="listingblock">
+<div class="title">~/.jqassistant.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+  <span class="key">server</span>:
+    <span class="key">open-browser</span>: <span class="string"><span class="content">true</span></span></code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -4199,7 +4222,20 @@ The locations can be overridden by command line parameters of the Command Line U
     <span class="comment"># The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.</span>
     <span class="comment">#</span>
     <span class="comment"># -Djqassistant.analyze.warn-on-rule-execution-time-seconds</span>
-    <span class="key">warn-on-rule-execution-time-seconds</span>: <span class="string"><span class="content">5</span></span></code></pre>
+    <span class="key">warn-on-rule-execution-time-seconds</span>: <span class="string"><span class="content">5</span></span>
+
+<span class="comment"># The embedded server configuration</span>
+  <span class="key">server</span>:
+
+    <span class="comment"># Determines whether the shall be ran as daemon. If set to false (default) then &lt;Enter&gt; must be pressed to stop the server, otherwise the process keeps running until it is killed.</span>
+    <span class="comment">#</span>
+    <span class="comment"># -Djqassistant.server.daemon: true|false</span>
+    <span class="key">daemon</span>: <span class="string"><span class="content">false</span></span>
+
+    <span class="comment"># Open the desktop browser when running the embedded server</span>
+    <span class="comment">#</span>
+    <span class="comment"># -Djqassistant.server.open-browser: true|false</span>
+    <span class="key">open-browser</span>: <span class="string"><span class="content">false</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -11595,7 +11631,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-31 17:40:36 UTC
+Last updated 2024-07-31 17:54:37 UTC
 </div>
 </div>
 </body>
