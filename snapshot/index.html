@@ -4187,7 +4187,20 @@ The locations can be overridden by command line parameters of the Command Line U
     <span class="comment"># The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.</span>
     <span class="comment">#</span>
     <span class="comment"># -Djqassistant.analyze.warn-on-rule-execution-time-seconds</span>
-    <span class="key">warn-on-rule-execution-time-seconds</span>: <span class="string"><span class="content">5</span></span></code></pre>
+    <span class="key">warn-on-rule-execution-time-seconds</span>: <span class="string"><span class="content">5</span></span>
+
+<span class="comment"># The embedded server configuration</span>
+  <span class="key">server</span>:
+
+    <span class="comment"># Determines whether the shall be ran as daemon. If set to false (default) then &lt;Enter&gt; must be pressed to stop the server, otherwise the process keeps running until it is killed.</span>
+    <span class="comment">#</span>
+    <span class="comment"># -Djqassistant.server.daemon: true|false</span>
+    <span class="key">daemon</span>: <span class="string"><span class="content">false</span></span>
+
+    <span class="comment"># Open the desktop browser when running the embedded server</span>
+    <span class="comment">#</span>
+    <span class="comment"># -Djqassistant.server.open-browser: true|false</span>
+    <span class="key">open-browser</span>: <span class="string"><span class="content">false</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -11583,7 +11596,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-31 16:32:32 UTC
+Last updated 2024-07-31 17:13:21 UTC
 </div>
 </div>
 </body>
