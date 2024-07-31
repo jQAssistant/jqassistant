@@ -9,9 +9,9 @@ import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
  */
 public interface PluginConfigurationReader {
 
-    String NAMESPACE = "http://schema.jqassistant.org/plugin/v2.2";
+    String NAMESPACE = "http://schema.jqassistant.org/plugin/v2.4";
     String PLUGIN_RESOURCE = "META-INF/jqassistant-plugin.xml";
-    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/schema/jqassistant-plugin-v2.2.xsd";
+    String PLUGIN_SCHEMA_RESOURCE = "/META-INF/schema/jqassistant-plugin-v2.4.xsd";
 
     /**
      * Return the class loader used to resolve plugins.
