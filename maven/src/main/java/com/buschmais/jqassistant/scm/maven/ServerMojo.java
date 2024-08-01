@@ -28,10 +28,10 @@ public class ServerMojo extends AbstractProjectMojo {
 
     private void server(MojoExecutionContext mojoExecutionContext, EmbeddedGraphStore store) throws MojoExecutionException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
+        getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
         EmbeddedGraphStore embeddedGraphStore = store;
         EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
         server.start();
-        getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
         if (mojoExecutionContext.getConfiguration()
             .server()
             .openBrowser()) {

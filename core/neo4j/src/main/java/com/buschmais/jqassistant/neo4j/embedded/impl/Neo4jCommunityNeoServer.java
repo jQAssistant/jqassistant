@@ -51,7 +51,7 @@ class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
     public void openBrowser() {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop()
             .isSupported(Desktop.Action.BROWSE)) {
-            log.info("Opening browser using URL {}.", url);
+            log.info("Opening browser.");
             try {
                 Desktop.getDesktop()
                     .browse(new URI(url));
