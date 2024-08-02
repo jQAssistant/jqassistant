@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.runtime.impl.configuration;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
@@ -92,6 +93,19 @@ class ConfigurationMappingLoaderTest {
                     .load(new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", ConfigSource.DEFAULT_ORDINAL));
             })
             .withMessageContaining(unknownProperty);
+    }
+
+    @Test
+    void ignoreProperty() {
+        String unknownProperty = "jqassistant.unknown";
+
+        TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class, emptyList())
+            .withUserHome(USER_HOME)
+            .withWorkingDirectory(WORKING_DIRECTORY)
+            .withIgnoreProperties(Set.of(unknownProperty))
+            .load(new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", ConfigSource.DEFAULT_ORDINAL));
+
+        assertThat(configuration).isNotNull();
     }
 
     @Test

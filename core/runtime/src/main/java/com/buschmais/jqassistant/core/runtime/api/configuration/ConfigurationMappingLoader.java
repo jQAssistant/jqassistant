@@ -9,10 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
@@ -95,6 +92,8 @@ public class ConfigurationMappingLoader {
         private final List<ConfigSource> configSources = new ArrayList<>();
 
         private final List<String> profiles = new ArrayList<>();
+
+        private final Set<String> ignoreProperties = new HashSet<>();
 
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
@@ -184,6 +183,18 @@ public class ConfigurationMappingLoader {
         }
 
         /**
+         * Add properties to ignore.
+         *
+         * @param ignoreProperties
+         *     The properties to ignore.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withIgnoreProperties(Collection<String> ignoreProperties) {
+            this.ignoreProperties.addAll(ignoreProperties);
+            return this;
+        }
+
+        /**
          * Load the {@link Configuration} using the given directory including
          * <p/>
          * - yml/yaml files present in the given configuration directory
@@ -205,9 +216,10 @@ public class ConfigurationMappingLoader {
             // Create final config including validation, including only jqassistant properties
             Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
                 .spliterator(), false).filter(property -> property.startsWith(Configuration.PREFIX))
+                .filter(property -> !ignoreProperties.contains(property))
                 .collect(toMap(property -> property, interpolatedConfig::getRawValue));
             SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-                .withSources(new PropertiesConfigSource(interpolatedProperties, "Interpolated Configuration", ConfigSource.DEFAULT_ORDINAL))
+                .withSources(new PropertiesConfigSource(interpolatedProperties, "jQAssistant Configuration", ConfigSource.DEFAULT_ORDINAL))
                 .build();
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {
