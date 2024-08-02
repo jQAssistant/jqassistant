@@ -12,11 +12,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
-import io.smallrye.config.EnvConfigSource;
-import io.smallrye.config.ExpressionConfigSourceInterceptor;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
+import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -25,8 +23,8 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Defines the interface for loading runtime configuration.
@@ -197,12 +195,19 @@ public class ConfigurationMappingLoader {
          * @return The {@link Configuration}.
          */
         public C load(ConfigSource... additionalConfigSources) {
-            SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-                .withSources(this.configSources)
+            // Create intermediate configuration with applied profiles and interpolated properties (without validation)
+            SmallRyeConfig interpolatedConfig = new SmallRyeConfigBuilder().withSources(this.configSources)
                 .withSources(additionalConfigSources)
+                .withProfiles(this.profiles)
                 .withValidateUnknown(false)
                 .withInterceptors(new ExpressionConfigSourceInterceptor())
-                .withProfiles(this.profiles)
+                .build();
+            // Create final config including validation, including only jqassistant properties
+            Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
+                .spliterator(), false).filter(property -> property.startsWith(Configuration.PREFIX))
+                .collect(toMap(property -> property, interpolatedConfig::getRawValue));
+            SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
+                .withSources(new PropertiesConfigSource(interpolatedProperties, "Interpolated Configuration", ConfigSource.DEFAULT_ORDINAL))
                 .build();
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {

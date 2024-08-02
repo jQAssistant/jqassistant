@@ -7,4 +7,3 @@ jqassistant:
       artifact-id: full-test-plugin
       type: jqp
       version: 1.0.0
-      active: false
