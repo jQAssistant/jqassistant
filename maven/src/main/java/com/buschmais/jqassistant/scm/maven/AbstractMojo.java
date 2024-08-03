@@ -45,6 +45,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     private static final int CONFIGURATION_ORDINAL_EXECUTION_ROOT = 100;
 
+    private static final String PROPERTY_CONFIGURATION_LOCATIONS = "jqassistant.configuration.locations";
+
     private static String createExecutionKey(MojoExecution mojoExecution) {
         // Do NOT use a custom class for execution keys, as different modules may use
         // different classloaders
@@ -54,7 +56,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The config locations.
      */
-    @Parameter(property = "jqassistant.configuration.locations")
+    @Parameter(property = PROPERTY_CONFIGURATION_LOCATIONS)
     private List<String> configurationLocations;
 
     @Parameter
@@ -276,7 +278,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             .withEnvVariables()
             .withClasspath()
             .withProfiles(session.getProjectBuildingRequest()
-                .getActiveProfileIds());
+                .getActiveProfileIds())
+            .withIgnoreProperties(Set.of(PROPERTY_CONFIGURATION_LOCATIONS));
         if (!executionRootDirectory.equals(currentProject.getBasedir())) {
             builder.withWorkingDirectory(currentProject.getBasedir());
         }
