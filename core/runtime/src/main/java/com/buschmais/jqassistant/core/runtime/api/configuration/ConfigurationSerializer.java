@@ -125,8 +125,10 @@ public class ConfigurationSerializer<C extends Configuration> {
         }
 
         private static boolean isNullOrEmpty(Object propertyValue) {
-            return propertyValue == null || (propertyValue instanceof Optional<?> && ((Optional<?>) propertyValue).isEmpty()) || (
-                propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty());
+            return propertyValue == null //
+                || (propertyValue instanceof Optional<?> && ((Optional<?>) propertyValue).isEmpty()) //
+                || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty()) //
+                || (propertyValue instanceof Map && ((Map<?, ?>) propertyValue).isEmpty());
         }
 
         /**

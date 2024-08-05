@@ -210,8 +210,8 @@ public class ConfigurationMappingLoader {
             SmallRyeConfig interpolatedConfig = new SmallRyeConfigBuilder().withSources(this.configSources)
                 .withSources(additionalConfigSources)
                 .withProfiles(this.profiles)
-                .withValidateUnknown(false)
                 .withInterceptors(new ExpressionConfigSourceInterceptor())
+                .withValidateUnknown(false)
                 .build();
             // Create final config including validation, including only jqassistant properties
             Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
