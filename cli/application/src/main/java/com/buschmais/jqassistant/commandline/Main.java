@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.commandline;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
@@ -51,6 +48,8 @@ public class Main {
     private static final String CMDLINE_OPTION_MAVEN_SETTINGS = "-mavenSettings";
 
     private static final String CMDLINE_OPTION_PROFILES = "-profiles";
+
+    private static final Set<String> IGNORE_PROPERTIES = Set.of("jqassistant.opts", "jqassistant.home"); //  env variables provided by jqassistant shell scripts
 
     /**
      * The main method.
@@ -245,6 +244,7 @@ public class Main {
             .withClasspath()
             .withEnvVariables()
             .withProfiles(profiles)
+            .withIgnoreProperties(IGNORE_PROPERTIES)
             .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
     }
 

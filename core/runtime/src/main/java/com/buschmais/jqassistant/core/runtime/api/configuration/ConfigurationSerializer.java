@@ -117,7 +117,7 @@ public class ConfigurationSerializer<C extends Configuration> {
          *     - value to be represented
          * @param customTag
          *     - user defined Tag
-         * @return
+         * @return The {@link NodeTuple}.
          */
         @Override
         protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
@@ -125,7 +125,10 @@ public class ConfigurationSerializer<C extends Configuration> {
         }
 
         private static boolean isNullOrEmpty(Object propertyValue) {
-            return propertyValue == null || (propertyValue instanceof Optional<?> && !((Optional<?>) propertyValue).isPresent());
+            return propertyValue == null //
+                || (propertyValue instanceof Optional<?> && ((Optional<?>) propertyValue).isEmpty()) //
+                || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty()) //
+                || (propertyValue instanceof Map && ((Map<?, ?>) propertyValue).isEmpty());
         }
 
         /**

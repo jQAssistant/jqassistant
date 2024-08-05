@@ -9,14 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
-import io.smallrye.config.EnvConfigSource;
-import io.smallrye.config.ExpressionConfigSourceInterceptor;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
+import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -25,8 +20,8 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Defines the interface for loading runtime configuration.
@@ -97,6 +92,8 @@ public class ConfigurationMappingLoader {
         private final List<ConfigSource> configSources = new ArrayList<>();
 
         private final List<String> profiles = new ArrayList<>();
+
+        private final Set<String> ignoreProperties = new HashSet<>();
 
         private Builder(Class<C> configurationMapping, List<String> configLocations) {
             this.configurationMapping = configurationMapping;
@@ -186,6 +183,18 @@ public class ConfigurationMappingLoader {
         }
 
         /**
+         * Add properties to ignore.
+         *
+         * @param ignoreProperties
+         *     The properties to ignore.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withIgnoreProperties(Collection<String> ignoreProperties) {
+            this.ignoreProperties.addAll(ignoreProperties);
+            return this;
+        }
+
+        /**
          * Load the {@link Configuration} using the given directory including
          * <p/>
          * - yml/yaml files present in the given configuration directory
@@ -197,12 +206,20 @@ public class ConfigurationMappingLoader {
          * @return The {@link Configuration}.
          */
         public C load(ConfigSource... additionalConfigSources) {
-            SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-                .withSources(this.configSources)
+            // Create intermediate configuration with applied profiles and interpolated properties (without validation)
+            SmallRyeConfig interpolatedConfig = new SmallRyeConfigBuilder().withSources(this.configSources)
                 .withSources(additionalConfigSources)
-                .withValidateUnknown(false)
-                .withInterceptors(new ExpressionConfigSourceInterceptor())
                 .withProfiles(this.profiles)
+                .withInterceptors(new ExpressionConfigSourceInterceptor())
+                .withValidateUnknown(false)
+                .build();
+            // Create final config including validation, including only jqassistant properties
+            Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
+                .spliterator(), false).filter(property -> property.startsWith(Configuration.PREFIX))
+                .filter(property -> !ignoreProperties.contains(property))
+                .collect(toMap(property -> property, interpolatedConfig::getRawValue));
+            SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
+                .withSources(new PropertiesConfigSource(interpolatedProperties, "jQAssistant Configuration", ConfigSource.DEFAULT_ORDINAL))
                 .build();
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {
