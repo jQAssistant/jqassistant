@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
@@ -13,11 +9,7 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -67,10 +59,10 @@ public final class ReportHelper {
      */
     public ReportHelper(Report configuration, Logger log) {
         this.configuration = configuration;
-        this.infoLogger = message -> log.info(message);
-        this.errorLogger = message -> log.error(message);
-        this.warnLogger = message -> log.warn(message);
-        this.debugLogger = message -> log.debug(message);
+        this.infoLogger = log::info;
+        this.errorLogger = log::error;
+        this.warnLogger = log::warn;
+        this.debugLogger = log::debug;
     }
 
     /**
@@ -84,7 +76,7 @@ public final class ReportHelper {
     public static String escapeRuleId(Rule rule) {
         return rule != null ?
             rule.getId()
-                .replaceAll("\\:", "_") :
+                .replace(":", "_") :
             null;
     }
 
@@ -300,7 +292,8 @@ public final class ReportHelper {
         if (logResult) {
             for (Row row : result.getRows()) {
                 StringBuilder value = new StringBuilder();
-                for (Map.Entry<String, Column<?>> entry : row.getColumns().entrySet()) {
+                for (Map.Entry<String, Column<?>> entry : row.getColumns()
+                    .entrySet()) {
                     if (value.length() > 0) {
                         value.append(", ");
                     }
