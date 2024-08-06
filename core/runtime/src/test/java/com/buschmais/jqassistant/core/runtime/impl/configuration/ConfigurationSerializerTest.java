@@ -59,8 +59,7 @@ class ConfigurationSerializerTest {
         TestConfiguration restoredConfiguration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(yamlConfigSource);
         Scan scan = restoredConfiguration.scan();
-        assertThat(scan.properties()
-            .get("user-value")).isEqualTo("default");
+        assertThat(scan.properties()).containsEntry("user-value", "default");
         assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
     }
 

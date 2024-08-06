@@ -16,7 +16,6 @@ import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -25,8 +24,6 @@ import static java.util.stream.Collectors.toList;
  * Provides utility functionality for creating reports.
  */
 public final class ReportHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(ReportHelper.class);
 
     public interface FailAction<E extends Exception> {
 
@@ -231,7 +228,22 @@ public final class ReportHelper {
      */
     private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, String type, String header, boolean logResult) {
         int failures = 0;
-        for (Result<?> result : results) {
+        List<? extends Result<? extends ExecutableRule>> sortedResult = results.stream()
+            .sorted((Comparator<Result<? extends ExecutableRule>>) (r1, r2) -> {
+                Integer l1 = r1.getSeverity()
+                    .getLevel();
+                Integer l2 = r2.getSeverity()
+                    .getLevel();
+                if (!l1.equals(l2)) {
+                    return l2.compareTo(l1);
+                }
+                return r1.getRule()
+                    .getId()
+                    .compareTo(r2.getRule()
+                        .getId());
+            })
+            .collect(toList());
+        for (Result<?> result : sortedResult) {
             Result.Status status = result.getStatus();
             ExecutableRule<?> rule = result.getRule();
             Severity resultSeverity = result.getSeverity();
