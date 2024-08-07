@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMap
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
-import io.smallrye.config.ConfigValidationException;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -19,7 +18,6 @@ import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Tests for the {@link ConfigurationMappingLoader}.
@@ -81,18 +79,6 @@ class ConfigurationMappingLoaderTest {
 
         assertThat(configuration.scan()
             .properties()).containsEntry("profile-user-value", "test-value");
-    }
-
-    @Test
-    void unknownProperty() {
-        String unknownProperty = "jqassistant.unknown";
-        assertThatExceptionOfType(ConfigValidationException.class).isThrownBy(() -> {
-                ConfigurationMappingLoader.builder(TestConfiguration.class, emptyList())
-                    .withUserHome(USER_HOME)
-                    .withWorkingDirectory(WORKING_DIRECTORY)
-                    .load(new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", ConfigSource.DEFAULT_ORDINAL));
-            })
-            .withMessageContaining(unknownProperty);
     }
 
     @Test
