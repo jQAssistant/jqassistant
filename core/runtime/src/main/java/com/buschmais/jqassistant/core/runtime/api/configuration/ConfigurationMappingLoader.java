@@ -207,25 +207,39 @@ public class ConfigurationMappingLoader {
          */
         public C load(ConfigSource... additionalConfigSources) {
             // Create intermediate configuration with applied profiles and interpolated properties (without validation)
-            SmallRyeConfig interpolatedConfig = new SmallRyeConfigBuilder().withSources(this.configSources)
+            SmallRyeConfig config = new SmallRyeConfigBuilder().withSources(this.configSources)
                 .withSources(additionalConfigSources)
                 .withProfiles(this.profiles)
                 .withInterceptors(new ExpressionConfigSourceInterceptor())
+                .withMapping(configurationMapping)
                 .withValidateUnknown(false)
                 .build();
-            // Create final config including validation, including only jqassistant properties
-            Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
-                .spliterator(), false).filter(property -> property.startsWith(Configuration.PREFIX))
-                .filter(property -> !ignoreProperties.contains(property))
-                .collect(toMap(property -> property, interpolatedConfig::getRawValue));
-            SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(configurationMapping)
-                .withSources(new PropertiesConfigSource(interpolatedProperties, "jQAssistant Configuration", ConfigSource.DEFAULT_ORDINAL))
-                .build();
+            if (log.isDebugEnabled()) {
+                logConfigProblems(config);
+            }
             C configMapping = config.getConfigMapping(configurationMapping);
             if (log.isDebugEnabled()) {
                 log.debug("Loaded configuration from {} config sources:\n{}", additionalConfigSources.length, configurationSerializer.toYaml(configMapping));
             }
             return configMapping;
+        }
+
+        private void logConfigProblems(SmallRyeConfig interpolatedConfig) {
+            // Create final config including validation, including only jqassistant properties
+            Map<String, String> interpolatedProperties = stream(interpolatedConfig.getPropertyNames()
+                .spliterator(), false).filter(property -> property.startsWith(Configuration.PREFIX))
+                .filter(property -> !ignoreProperties.contains(property))
+                .collect(toMap(property -> property, interpolatedConfig::getRawValue));
+            try {
+                new SmallRyeConfigBuilder().withMapping(configurationMapping)
+                    .withSources(new PropertiesConfigSource(interpolatedProperties, "jQAssistant Configuration", ConfigSource.DEFAULT_ORDINAL))
+                    .build();
+            } catch (ConfigValidationException configValidationException) {
+                for (int i = 0; i < configValidationException.getProblemCount(); i++) {
+                    log.debug(configValidationException.getProblem(i)
+                        .getMessage());
+                }
+            }
         }
 
         private List<ConfigSource> getExternalYamlConfigSources(File directory, List<Path> configLocations, int ordinal) {
