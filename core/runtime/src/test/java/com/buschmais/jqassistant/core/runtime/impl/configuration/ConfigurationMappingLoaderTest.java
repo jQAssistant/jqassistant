@@ -2,18 +2,24 @@ package com.buschmais.jqassistant.core.runtime.impl.configuration;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
+import io.smallrye.config.ConfigValidationException;
+import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Tests for the {@link ConfigurationMappingLoader}.
@@ -75,6 +81,31 @@ class ConfigurationMappingLoaderTest {
 
         assertThat(configuration.scan()
             .properties()).containsEntry("profile-user-value", "test-value");
+    }
+
+    @Test
+    void unknownProperty() {
+        String unknownProperty = "jqassistant.unknown";
+        assertThatExceptionOfType(ConfigValidationException.class).isThrownBy(() -> {
+                ConfigurationMappingLoader.builder(TestConfiguration.class, emptyList())
+                    .withUserHome(USER_HOME)
+                    .withWorkingDirectory(WORKING_DIRECTORY)
+                    .load(new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", ConfigSource.DEFAULT_ORDINAL));
+            })
+            .withMessageContaining(unknownProperty);
+    }
+
+    @Test
+    void ignoreProperty() {
+        String unknownProperty = "jqassistant.unknown";
+
+        TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class, emptyList())
+            .withUserHome(USER_HOME)
+            .withWorkingDirectory(WORKING_DIRECTORY)
+            .withIgnoreProperties(Set.of(unknownProperty))
+            .load(new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", ConfigSource.DEFAULT_ORDINAL));
+
+        assertThat(configuration).isNotNull();
     }
 
     @Test
