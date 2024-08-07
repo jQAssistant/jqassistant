@@ -21,6 +21,7 @@ import com.buschmais.xo.neo4j.api.model.Neo4jNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -89,10 +90,10 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConceptResults(inMemoryReportWriter);
 
-        assertThat(violations).isEqualTo(0);
-        assertThat(debugMessages.size()).isGreaterThan(0);
-        assertThat(warnMessages.size()).isEqualTo(0);
-        assertThat(errorMessages.size()).isEqualTo(0);
+        assertThat(violations).isZero();
+        assertThat(debugMessages).isNotEmpty();
+        assertThat(warnMessages).isEmpty();
+        assertThat(errorMessages).isEmpty();
     }
 
     @Test
@@ -112,6 +113,15 @@ class ReportHelperTest {
         verifyMessages(debugMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:infoConcept", "Severity: INFO");
         verifyMessages(warnMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:minorConcept", "Severity: MINOR");
         verifyMessages(errorMessages, ReportHelper.CONCEPT_FAILED_HEADER, "Concept: test:majorConcept", "Severity: MAJOR");
+
+        int expectedLoggedRowsPerRule = 10;
+        InOrder inOrder = inOrder(logger);
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .debug(anyString());
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .warn(anyString());
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .error(anyString());
     }
 
     @Test
@@ -148,10 +158,10 @@ class ReportHelperTest {
 
         int violations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
 
-        assertThat(violations).isEqualTo(0);
-        assertThat(debugMessages.size()).isGreaterThan(0);
-        assertThat(warnMessages.size()).isEqualTo(0);
-        assertThat(errorMessages.size()).isEqualTo(0);
+        assertThat(violations).isZero();
+        assertThat(debugMessages).isNotEmpty();
+        assertThat(warnMessages).isEmpty();
+        assertThat(errorMessages).isEmpty();
     }
 
     @Test
@@ -188,6 +198,15 @@ class ReportHelperTest {
             "MinorElement=MinorValue");
         verifyMessages(errorMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:majorConstraint", "Severity: MAJOR",
             "MajorElement=MajorValue");
+
+        int expectedLoggedRowsPerRule = 12;
+        InOrder inOrder = inOrder(logger);
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .debug(anyString());
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .warn(anyString());
+        inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .error(anyString());
     }
 
     @Test
@@ -228,7 +247,7 @@ class ReportHelperTest {
     }
 
     @Test
-    void continueOnFailureEnabled() throws ReportException {
+    void continueOnFailureEnabled() {
         doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         doReturn(true).when(report)
@@ -381,7 +400,7 @@ class ReportHelperTest {
         }
 
         @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
+        public Object answer(InvocationOnMock invocation) {
             String message = (String) invocation.getArguments()[0];
             messages.add(message);
             return null;
