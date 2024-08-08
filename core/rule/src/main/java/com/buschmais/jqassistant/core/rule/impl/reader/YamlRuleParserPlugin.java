@@ -21,32 +21,29 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
-
+import static java.util.stream.Collectors.joining;
 
 public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
-    private static JsonSchemaValidator validator;
+
+    private JsonSchemaValidator validator;
 
     private static final String YAML_EXTENSION_LONG = ".yaml";
     private static final String YAML_EXTENSION_SHORT = ".yml";
 
-    private ErrorMessageGenerator errorMessageGenerator;
-
-
     @Override
     public void initialize() throws RuleException {
         validator = new JsonSchemaValidator();
-        errorMessageGenerator = new ErrorMessageGenerator();
     }
 
     @Override
     public boolean accepts(RuleSource ruleSource) throws RuleException {
         try {
-            boolean acceptable = ruleSource.getURL().toExternalForm().toLowerCase().endsWith(YAML_EXTENSION_LONG) ||
-                                 ruleSource.getURL().toExternalForm().toLowerCase().endsWith(YAML_EXTENSION_SHORT);
-            return acceptable;
+            String fileName = ruleSource.getURL()
+                .toExternalForm()
+                .toLowerCase();
+            return fileName.endsWith(YAML_EXTENSION_LONG) || fileName.endsWith(YAML_EXTENSION_SHORT);
         } catch (IOException e) {
-            String message = "Unable to get the URL of the rule source.";
-            throw new RuleException(message, e);
+            throw new RuleException("Unable to get the URL of the rule source.", e);
         }
     }
 
@@ -55,18 +52,16 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         try {
             ValidationResult validationResult = validator.validate(ruleSource);
-
-            boolean throwException = !validationResult.isSourceWasEmpty() &&
-                                     validationResult.hasErrors();
-
-            if (throwException) {
-                String message = errorMessageGenerator.generate(ruleSource, validationResult.getValidationMessages());
-                throw new RuleException(message);
+            if (!validationResult.isSourceWasEmpty() && validationResult.hasErrors()) {
+                throw new RuleException(ruleSource + " has validation errors: " + validationResult.getValidationMessages()
+                    .stream()
+                    .map(validationMessage -> validationMessage.toString())
+                    .collect(joining("; ")));
             }
 
-            try (InputStream inputStream = ruleSource.getInputStream();
-                 Reader reader = new YamlUnicodeReader(inputStream)) {
-                LoadSettings settings = LoadSettings.builder().build();
+            try (InputStream inputStream = ruleSource.getInputStream(); Reader reader = new YamlUnicodeReader(inputStream)) {
+                LoadSettings settings = LoadSettings.builder()
+                    .build();
                 Load load = new Load(settings);
                 Iterable<Object> objects = load.loadAllFromReader(reader);
 
@@ -87,8 +82,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             String message = format("Cannot read rules from '%s'.", ruleSource.getId());
             throw new RuleException(message, e);
         } catch (ClassCastException e) {
-            String message = format("Cannot process rules from '%s' because of an invalid YAML datastructure",
-                                    ruleSource.getId());
+            String message = format("Cannot process rules from '%s' because of an invalid YAML datastructure", ruleSource.getId());
             throw new RuleException(message);
         }
     }
@@ -104,9 +98,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean containsGroups = documentMap.containsKey(GROUPS);
 
         if (containsConcepts) {
-            RuleConsumer<Concept> conceptRuleConsumer = concept -> context.getBuilder().addConcept(concept);
-            List<Map<String, Object>> executableRules =
-                (List<Map<String, Object>>) ofNullable(documentMap.get(CONCEPTS)).orElse(emptyList());
+            RuleConsumer<Concept> conceptRuleConsumer = concept -> context.getBuilder()
+                .addConcept(concept);
+            List<Map<String, Object>> executableRules = (List<Map<String, Object>>) ofNullable(documentMap.get(CONCEPTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
                 Concept.ConceptBuilder builder = Concept.builder();
@@ -117,9 +111,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         if (containsConstraints) {
-            RuleConsumer<Constraint> ruleConsumer = constraint -> context.getBuilder().addConstraint(constraint);
-            List<Map<String, Object>> executableRules =
-                (List<Map<String, Object>>) ofNullable(documentMap.get(CONSTRAINTS)).orElse(emptyList());
+            RuleConsumer<Constraint> ruleConsumer = constraint -> context.getBuilder()
+                .addConstraint(constraint);
+            List<Map<String, Object>> executableRules = (List<Map<String, Object>>) ofNullable(documentMap.get(CONSTRAINTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
                 this.processExecutableRule(executableRule, context, ruleConsumer, Constraint.builder(), this::getDefaultConstraintSeverity);
@@ -127,8 +121,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
 
         if (containsGroups) {
-            List<Map<String, Object>> groupRules =
-                (List<Map<String, Object>>) ofNullable(documentMap.get(GROUPS)).orElse(emptyList());
+            List<Map<String, Object>> groupRules = (List<Map<String, Object>>) ofNullable(documentMap.get(GROUPS)).orElse(emptyList());
 
             for (Map<String, Object> groupRule : groupRules) {
                 processGroup(groupRule, context);
@@ -136,19 +129,14 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
     }
 
-    private void processGroup(Map<String, Object> map, RuleContext context)
-        throws RuleException {
+    private void processGroup(Map<String, Object> map, RuleContext context) throws RuleException {
 
-        String id = (String)map.get(ID);
-        List<Map<String, Object>> concepts = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONCEPTS,
-                                                                                             key -> emptyList());
+        String id = (String) map.get(ID);
+        List<Map<String, Object>> concepts = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONCEPTS, key -> emptyList());
         Map<String, Set<String>> providedConcepts = new HashMap<>();
-        List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS,
-                                                                                                key -> emptyList());
+        List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
-        List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS,
-                                                                                           key -> emptyList());
-
+        List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
 
         SeverityMap includedGroups = new SeverityMap();
         SeverityMap includedConstraints = new SeverityMap();
@@ -157,7 +145,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         for (Map<String, Object> refSpec : concepts) {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(refSpec);
             for (String providedConceptId : extractProvidedConcepts(refSpec)) {
-                providedConcepts.computeIfAbsent(providedConceptId, key -> new LinkedHashSet<>()).add(reference.getRuleName());
+                providedConcepts.computeIfAbsent(providedConceptId, key -> new LinkedHashSet<>())
+                    .add(reference.getRuleName());
             }
             includedConcepts.add(reference);
         }
@@ -185,7 +174,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             .groups(includedGroups)
             .build();
 
-        context.getBuilder().addGroup(group);
+        context.getBuilder()
+            .addGroup(group);
     }
 
     private RuleSeverityAssociation extractRuleReferencesFrom(Map<String, Object> refSpec) throws RuleException {
@@ -197,11 +187,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> void processExecutableRule(Map<String, Object> map,
-        RuleContext context, RuleConsumer<T> consumer, B builder, Supplier<Severity> defaultSeveritySupplier)
-        throws RuleException {
+        RuleContext context, RuleConsumer<T> consumer, B builder, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
 
         String id = (String) map.get(ID);
-        String description =IndentHelper.removeIndent((String) map.get(DESCRIPTION));
+        String description = IndentHelper.removeIndent((String) map.get(DESCRIPTION));
         String source = (String) map.get(SOURCE);
         String language = (String) map.get(LANGUAGE);
 
@@ -219,22 +208,23 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         Report report = extractReportConfiguration(map);
         Severity severity = getSeverity((String) map.get(SEVERITY), defaultSeveritySupplier);
 
-        T rule = builder .id(id)
-                        .description(description)
-                        .severity(severity)
-                        .executable(executable)
-                        .requiresConcepts(required)
-                        .parameters(parameters)
-                        .verification(verification)
-                        .report(report)
-                        .ruleSource(context.getSource()).build();
+        T rule = builder.id(id)
+            .description(description)
+            .severity(severity)
+            .executable(executable)
+            .requiresConcepts(required)
+            .parameters(parameters)
+            .verification(verification)
+            .report(report)
+            .ruleSource(context.getSource())
+            .build();
         consumer.consume(rule);
     }
 
     protected Report extractReportConfiguration(Map<String, Object> map) {
         Report.ReportBuilder reportBuilder = Report.builder();
 
-        Optional<Map<String, Object>> reportBlockOpt = ofNullable((Map<String, Object>)map.get(REPORT));
+        Optional<Map<String, Object>> reportBlockOpt = ofNullable((Map<String, Object>) map.get(REPORT));
 
         if (reportBlockOpt.isPresent()) {
             Map<String, Object> reportBlock = reportBlockOpt.get();
@@ -259,7 +249,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                     reportProperties.put(key, val);
                 };
 
-                propertiesMap.keySet().forEach(propertyConsumer);
+                propertiesMap.keySet()
+                    .forEach(propertyConsumer);
 
                 reportBuilder.properties(reportProperties);
             }
@@ -292,10 +283,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Integer max = (Integer) config.get(AGGREGATION_MAX);
 
                 verification = AggregationVerification.builder()
-                                                      .column(columnName)
-                                                      .min(min)
-                                                      .max(max)
-                                                      .build();
+                    .column(columnName)
+                    .min(min)
+                    .max(max)
+                    .build();
             } else {
                 Map<String, Object> config = verify.get(ROW_COUNT);
 
@@ -303,9 +294,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Integer max = (Integer) config.get(ROW_COUNT_MAX);
 
                 verification = RowCountVerification.builder()
-                                                   .min(min)
-                                                   .max(max)
-                                                   .build();
+                    .min(min)
+                    .max(max)
+                    .build();
             }
         }
 
@@ -318,7 +309,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean hasRequiresSection = map.containsKey(REQUIRES_CONCEPTS);
 
         if (hasRequiresSection) {
-            List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(REQUIRES_CONCEPTS);
+            List<Map<String, Object>> list = (List<Map<String, Object>>) map.get(REQUIRES_CONCEPTS);
 
             for (Map<String, Object> required : list) {
                 String refIdVal = (String) required.get(REF_ID);
@@ -339,7 +330,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean hasProvidesSection = map.containsKey(PROVIDES_CONCEPTS);
 
         if (hasProvidesSection) {
-            List<Map<String, Object>> list = (List<Map<String, Object>>)map.get(PROVIDES_CONCEPTS);
+            List<Map<String, Object>> list = (List<Map<String, Object>>) map.get(PROVIDES_CONCEPTS);
             for (Map<String, Object> required : list) {
                 String refIdVal = (String) required.get(REF_ID);
                 providedConcepts.add(refIdVal);
@@ -356,8 +347,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean hasParameters = map.containsKey(REQUIRES_PARAMETERS);
 
         if (hasParameters) {
-            List<Map<String, Object>> list = (List<Map<String, Object>>) map.computeIfAbsent(REQUIRES_PARAMETERS,
-                                                                                             key -> emptyList());
+            List<Map<String, Object>> list = (List<Map<String, Object>>) map.computeIfAbsent(REQUIRES_PARAMETERS, key -> emptyList());
             parameters = new HashMap<>();
 
             for (Map<String, Object> parameterSpec : list) {
