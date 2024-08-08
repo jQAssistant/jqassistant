@@ -13,7 +13,6 @@ import java.util.*;
 
 import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.spi.ConfigSource;
