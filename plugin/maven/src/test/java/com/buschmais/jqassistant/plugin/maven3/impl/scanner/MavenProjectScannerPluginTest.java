@@ -228,6 +228,8 @@ class MavenProjectScannerPluginTest {
             .getLocalRepository();
         doReturn(localRepository).when(mavenSession)
             .getLocalRepository();
+        doReturn(ProjectBuildingRequest.RepositoryMerging.POM_DOMINANT).when(projectBuildingRequest)
+            .getRepositoryMerging();
 
         doReturn(mavenSession).when(scannerContext)
             .peek(MavenSession.class);
