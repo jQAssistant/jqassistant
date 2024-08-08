@@ -38,11 +38,11 @@ class ConfigurationSerializerTest {
 
         String yaml = toYaml(configuration);
 
-        assertThat(yaml).contains("group-id: org.jqassistant.plugin");
-        assertThat(yaml).contains("version: 1.0.0");
-        assertThat(yaml).contains("uri: bolt://localhost:7687");
-        assertThat(yaml).contains("directory: target/rules");
-        assertThat(yaml).contains("fail-on-severity: BLOCKER");
+        assertThat(yaml).contains("group-id: org.jqassistant.plugin")
+            .contains("version: 1.0.0")
+            .contains("uri: bolt://localhost:7687")
+            .contains("directory: target/rules")
+            .contains("fail-on-severity: BLOCKER");
     }
 
     @Test
@@ -59,10 +59,8 @@ class ConfigurationSerializerTest {
         TestConfiguration restoredConfiguration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(yamlConfigSource);
         Scan scan = restoredConfiguration.scan();
-        assertThat(scan.properties()
-            .get("user-value")).isEqualTo("default");
-        assertThat(scan.properties()
-            .get("overwritten-user-value")).isEqualTo("overwritten");
+        assertThat(scan.properties()).containsEntry("user-value", "default");
+        assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
     }
 
     private String toYaml(TestConfiguration configuration) {
