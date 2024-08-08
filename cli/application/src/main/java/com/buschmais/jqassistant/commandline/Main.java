@@ -234,10 +234,10 @@ public class Main {
             .collect(toMap(entry -> String.valueOf(entry.getKey()), entry -> String.valueOf(entry.getValue())));
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(properties, "Command line properties", 400);
         ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine), profiles);
-        ConfigSource configSource = configurationBuilder.build();
         for (Task task : tasks) {
             task.configure(commandLine, configurationBuilder);
         }
+        ConfigSource configSource = configurationBuilder.build();
         return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
             .withUserHome(userHome)
             .withWorkingDirectory(workingDirectory)
