@@ -17,7 +17,7 @@
     </description>
 
     <properties>
-        <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
+        <org.apache.maven_dependency-tree.version>3.3.0</org.apache.maven_dependency-tree.version>
     </properties>
 
     <build>
@@ -85,17 +85,6 @@
             <artifactId>assertj-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>${maven.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>${maven.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-dependency-tree</artifactId>
             <version>${org.apache.maven_dependency-tree.version}</version>
@@ -105,6 +94,16 @@
                     <artifactId>aether-util</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
