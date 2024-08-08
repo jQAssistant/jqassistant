@@ -106,8 +106,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
-        if (!runtimeInformation.isMavenVersion("[3.5,)")) {
-            throw new MojoExecutionException("jQAssistant requires Maven 3.5.x or above.");
+        if (!runtimeInformation.isMavenVersion("[3.6.3,)")) {
+            throw new MojoExecutionException("jQAssistant requires Maven 3.6.3 or above.");
         }
         // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
