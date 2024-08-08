@@ -96,6 +96,7 @@
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <maven.version>3.6.3</maven.version>
         <mockito.version>5.12.0</mockito.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
@@ -145,7 +146,6 @@
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
-        <maven.min.version>3.5.0</maven.min.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- integration tests -->
@@ -511,7 +511,7 @@
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
-                                        <version>[${maven.min.version},)</version>
+                                        <version>[${maven.version},)</version>
                                     </requireMavenVersion>
                                     <requireSameVersions>
                                         <plugins>

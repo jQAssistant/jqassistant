@@ -18,7 +18,6 @@
     </description>
 
     <properties>
-        <org.apache.maven.version>3.5.0</org.apache.maven.version>
         <org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
         <org.apache.maven.reporting_version>3.2.0</org.apache.maven.reporting_version>
 
@@ -185,7 +184,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>${org.apache.maven.version}</version>
+            <version>${maven.version}</version>
             <exclusions>
                 <exclusion>
                     <!-- Contains outdated Google Guice/Guava APIs -->
@@ -201,7 +200,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>${org.apache.maven.version}</version>
+            <version>${maven.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -213,7 +212,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>${org.apache.maven.version}</version>
+            <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

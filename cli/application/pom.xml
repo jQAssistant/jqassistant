@@ -11,11 +11,6 @@
 
     <name>jQAssistant Commandline Application</name>
 
-    <properties>
-        <maven-resolver-provider.version>3.5.0</maven-resolver-provider.version>
-        <maven-settings-builder.version>3.5.0</maven-settings-builder.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -49,7 +44,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings-builder</artifactId>
-            <version>${maven-settings-builder.version}</version>
+            <version>${maven.version}</version>
         </dependency>
         <!-- Maven Resolver -->
         <dependency>
@@ -71,7 +66,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-resolver-provider</artifactId>
-            <version>${maven-resolver-provider.version}</version>
+            <version>${maven.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.maven.resolver</groupId>
