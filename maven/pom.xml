@@ -185,6 +185,7 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <!-- Contains outdated Google Guice/Guava APIs -->
@@ -192,6 +193,12 @@
                     <artifactId>org.eclipse.sisu.inject</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
