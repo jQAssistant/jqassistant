@@ -27,7 +27,7 @@
          ! his own lifecyle inclusive versioning.
          ! Oliver B. Fischer, 2016-10-30
          !-->
-        <org.apache.maven_dependency-tree.version>3.1.0</org.apache.maven_dependency-tree.version>
+        <org.apache.maven_dependency-tree.version>3.3.0</org.apache.maven_dependency-tree.version>
     </properties>
 
     <profiles>
