@@ -23,7 +23,7 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
      * Resolve a required {@link TypeVariableDescriptor} by name.
      *
      * @param name
-     *            The name.
+     *         The name.
      * @return The resolved {@link TypeVariableDescriptor}.
      */
     @ResultOf
@@ -71,5 +71,7 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
 
     @Incoming
     List<TypeDependsOnDescriptor> getDependents();
+
+    List<ThrowsDescriptor> getThrownBy();
 
 }

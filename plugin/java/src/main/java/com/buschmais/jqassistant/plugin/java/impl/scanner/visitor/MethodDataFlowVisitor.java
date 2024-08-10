@@ -1,10 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.*;
 
@@ -34,23 +38,40 @@ public class MethodDataFlowVisitor extends MethodVisitor {
 
     @Override
     public void visitEnd() {
+        Frame<BasicValue>[] frames;
         try {
-            Frame<BasicValue>[] frames = analyzer.analyze(typeName, methodNode);
+            frames = analyzer.analyze(typeName, methodNode);
+            Integer lineNumber = null;
             for (int i = 0; i < methodNode.instructions.size(); i++) {
-                switch (methodNode.instructions.get(i)
-                        .getOpcode()) {
-                case ATHROW:
-                    String throwableType = SignatureHelper.getType(frames[i].getStack(0)
-                            .getType());
-                    methodDescriptor.getThrows()
-                            .add(visitorHelper.resolveType(throwableType)
-                                    .getTypeDescriptor());
-                    break;
-                default:
+                AbstractInsnNode insnNode = methodNode.instructions.get(i);
+                if (insnNode instanceof LineNumberNode) {
+                    lineNumber = ((LineNumberNode) insnNode).line;
+                } else if (insnNode.getOpcode() == ATHROW) {
+                    athrow(frames[i], lineNumber);
                 }
             }
         } catch (AnalyzerException e) {
             log.warn("Cannot analyze data flow of {}#{}.", typeName, methodNode.signature, e);
+        }
+    }
+
+    /**
+     * Evaluates a thrown exception and creates a {@link ThrowsDescriptor}.
+     *
+     * @param frame
+     *         The {@link Frame}.
+     * @param lineNumber
+     *         The line number (can be <code>null</code>)
+     */
+    private void athrow(Frame<BasicValue> frame, Integer lineNumber) {
+        String throwableType = SignatureHelper.getType(frame.getStack(0)
+                .getType());
+        TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
+                .getTypeDescriptor();
+        ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
+                .create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);
+        if (lineNumber != null) {
+            throwsDescriptor.setLineNumber(lineNumber);
         }
     }
 }

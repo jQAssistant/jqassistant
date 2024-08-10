@@ -53,14 +53,6 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
     void setHasDefault(ValueDescriptor<?> hasDefault);
 
     /**
-     * Return all declared throwables of this method.
-     *
-     * @return The declared throwables.
-     */
-    @Relation("THROWS")
-    List<TypeDescriptor> getThrows();
-
-    /**
      * Return all declared generic throwables of this method.
      *
      * @return The declared generic throwables.
@@ -97,6 +89,13 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
      */
     @Incoming
     List<InvokesDescriptor> getInvokedBy();
+
+    /**
+     * Return all thrown types (declared and actually thrown) of this method.
+     *
+     * @return The thrown types throwables.
+     */
+    List<ThrowsDescriptor> getThrows();
 
     /**
      * Return <code>true</code> if this method is native.
