@@ -1,18 +1,18 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate;
 
-import java.util.List;
-
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
 import org.objectweb.asm.*;
 
+import static java.util.Arrays.asList;
+
 public class DelegatingMethodVisitor extends MethodVisitor {
 
-    private Delegator<MethodVisitor> delegator;
+    private final Delegator<MethodVisitor> delegator;
 
-    public DelegatingMethodVisitor(List<MethodVisitor> visitors) {
+    public DelegatingMethodVisitor(MethodVisitor... visitors) {
         super(VisitorHelper.ASM_OPCODES);
-        this.delegator = new Delegator<>(visitors);
+        this.delegator = new Delegator<>(asList(visitors));
     }
 
     public void visitParameter(String name, int access) {
@@ -28,7 +28,7 @@ public class DelegatingMethodVisitor extends MethodVisitor {
     }
 
     public void visitCode() {
-        delegator.accept(visitor -> visitor.visitCode());
+        delegator.accept(MethodVisitor::visitCode);
     }
 
     public void visitFrame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
@@ -112,12 +112,12 @@ public class DelegatingMethodVisitor extends MethodVisitor {
     }
 
     public void visitEnd() {
-        delegator.accept(visitor -> visitor.visitEnd());
+        delegator.accept(MethodVisitor::visitEnd);
     }
 
     @Override
     public AnnotationVisitor visitAnnotationDefault() {
-        return new DelegatingAnnotationVisitor(delegator.apply(visitor -> visitor.visitAnnotationDefault()));
+        return new DelegatingAnnotationVisitor(delegator.apply(MethodVisitor::visitAnnotationDefault));
     }
 
     @Override
@@ -147,8 +147,8 @@ public class DelegatingMethodVisitor extends MethodVisitor {
 
     @Override
     public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor,
-        boolean visible) {
+            boolean visible) {
         return new DelegatingAnnotationVisitor(
-            delegator.apply(visitor -> visitor.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible)));
+                delegator.apply(visitor -> visitor.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible)));
     }
 }
