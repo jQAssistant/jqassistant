@@ -4732,25 +4732,6 @@ using <code>IMPLEMENTS</code> relations, i.e. queries must use
 </tr>
 </tbody>
 </table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Properties of <code>:READS</code>, <code>:WRITES</code> and <code>:INVOKES</code></caption>
-<colgroup>
-<col style="width: 50%;"/>
-<col style="width: 50%;"/>
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">lineNumber</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The line number the referenced field or method is read, written or invoked</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="sect4">
 <h5 id="_nodes_labeled_with_javatypeclass">Nodes labeled with <code>:Java:Type:Class</code></h5>
@@ -4788,7 +4769,7 @@ using <code>IMPLEMENTS</code> relations, i.e. queries must use
 <p>A field declared in a Java type.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Properties of <code>:Java:Field</code></caption>
+<caption class="title">Table 10. Properties of <code>:Java:Field</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -4835,7 +4816,7 @@ using <code>IMPLEMENTS</code> relations, i.e. queries must use
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. Relations of <code>:Java:Field</code></caption>
+<caption class="title">Table 11. Relations of <code>:Java:Field</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -4888,7 +4869,7 @@ themselves will only provide the property <code>signature</code>.</p>
 <p>A method declared in a Java type.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. Properties of <code>:Java:Method</code></caption>
+<caption class="title">Table 12. Properties of <code>:Java:Method</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -4951,7 +4932,7 @@ themselves will only provide the property <code>signature</code>.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. Relations of <code>:Java:Method</code></caption>
+<caption class="title">Table 13. Relations of <code>:Java:Method</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5039,6 +5020,25 @@ themselves will only provide the property <code>signature</code>.</p>
 <p><strong>NOTE</strong> Methods which are referenced by scanned classes but have not been
 scanned themselves will only provide the property <code>signature</code></p>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 14. Properties of <code>:READS</code>, <code>:WRITES</code>, <code>:INVOKES</code> and <code>:THROWS</code></caption>
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lineNumber</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)</p></td>
+</tr>
+</tbody>
+</table>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 15. Properties of <code>:DECLARES_TYPE_PARAMETER</code></caption>
 <colgroup>
@@ -11631,7 +11631,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-09 12:01:35 UTC
+Last updated 2024-08-10 16:19:34 UTC
 </div>
 </div>
 </body>
