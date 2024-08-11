@@ -151,13 +151,6 @@ using `IMPLEMENTS` relations, i.e. queries must use
 | weight | The weight of the dependency, i.e. the count of occurrences of the referenced type
 |====
 
-.Properties of `:READS`, `:WRITES` and `:INVOKES`
-[options="header"]
-|====
-| Name       | Description
-| lineNumber | The line number the referenced field or method is read, written or invoked
-|====
-
 === Nodes labeled with `:Java:Type:Class`
 Qualifies a Java type as class.
 
@@ -245,6 +238,13 @@ A method declared in a Java type.
 
 *NOTE* Methods which are referenced by scanned classes but have not been
 scanned themselves will only provide the property `signature`
+
+.Properties of `:READS`, `:WRITES`, `:INVOKES` and `:THROWS`
+[options="header"]
+|====
+| Name       | Description
+| lineNumber | The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)
+|====
 
 .Properties of `:DECLARES_TYPE_PARAMETER`
 [options="header"]

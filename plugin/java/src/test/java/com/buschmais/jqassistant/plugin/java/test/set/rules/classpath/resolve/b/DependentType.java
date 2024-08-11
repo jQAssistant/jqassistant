@@ -29,4 +29,7 @@ public class DependentType extends ClassType implements InterfaceType {
         classType.bar(2);
     }
 
+    public void throwsException() throws ExceptionType {
+        throw new ExceptionType("message");
+    }
 }

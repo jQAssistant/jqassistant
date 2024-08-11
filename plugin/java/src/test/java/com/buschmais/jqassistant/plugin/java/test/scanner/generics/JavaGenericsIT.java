@@ -51,12 +51,15 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(x.getName()).isEqualTo("X");
         List<BoundDescriptor> xBounds = x.getUpperBounds();
         assertThat(xBounds).hasSize(1);
-        assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
+        assertThat(xBounds.get(0)
+                .getRawType()).is(matching(typeDescriptor(Object.class)));
         TypeVariableDescriptor y = typeParameters.get(1);
         assertThat(y.getName()).isEqualTo("Y");
         List<BoundDescriptor> yBounds = y.getUpperBounds();
         assertThat(yBounds).hasSize(2);
-        List<TypeDescriptor> rawYBounds = yBounds.stream().map(bound -> bound.getRawType()).collect(toList());
+        List<TypeDescriptor> rawYBounds = yBounds.stream()
+                .map(bound -> bound.getRawType())
+                .collect(toList());
         assertThat(rawYBounds).is(matching(hasItems(typeDescriptor(Serializable.class), typeDescriptor(List.class))));
         store.commitTransaction();
     }
@@ -74,7 +77,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         assertThat(x.getName()).isEqualTo("X");
         List<BoundDescriptor> xBounds = x.getUpperBounds();
         assertThat(xBounds).hasSize(1);
-        assertThat(xBounds.get(0).getRawType()).is(matching(typeDescriptor(Object.class)));
+        assertThat(xBounds.get(0)
+                .getRawType()).is(matching(typeDescriptor(Object.class)));
         List<TypeVariableDescriptor> requiredTypeParameters = query(
                 "MATCH (:Type:GenericDeclaration{name:'GenericTypeDeclarations$Inner'})-[declares:REQUIRES_TYPE_PARAMETER]->(typeParameter:Java:ByteCode:Bound:TypeVariable) "
                         + //
@@ -90,18 +94,19 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         evaluate("genericInterfaces", ImplementsGeneric.class.getGenericInterfaces(), 0);
         scanClasses(ImplementsGeneric.class);
         store.beginTransaction();
-        List<TypeDescriptor> interfaces = query("MATCH (:Type{name:'ImplementsGeneric'})-[:IMPLEMENTS]->(interface:Java:ByteCode:Type) RETURN interface")
-                .getColumn("interface");
+        List<TypeDescriptor> interfaces = query(
+                "MATCH (:Type{name:'ImplementsGeneric'})-[:IMPLEMENTS]->(interface:Java:ByteCode:Type) RETURN interface").getColumn("interface");
         assertThat(interfaces).hasSize(1);
         assertThat(interfaces.get(0)).is(matching(typeDescriptor(List.class)));
         List<ParameterizedTypeDescriptor> parameterizedTypes = query(
-                "MATCH (:Type{name:'ImplementsGeneric'})-[:IMPLEMENTS_GENERIC]->(parameterizedType:Java:ByteCode:Bound:ParameterizedType) RETURN parameterizedType")
-                        .getColumn("parameterizedType");
+                "MATCH (:Type{name:'ImplementsGeneric'})-[:IMPLEMENTS_GENERIC]->(parameterizedType:Java:ByteCode:Bound:ParameterizedType) RETURN parameterizedType").getColumn(
+                "parameterizedType");
         assertThat(parameterizedTypes).hasSize(1);
         ParameterizedTypeDescriptor parameterizedType = parameterizedTypes.get(0);
         assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(List.class)));
         Map<Integer, BoundDescriptor> actualTypeArguments = getActualTypeArguments(parameterizedType, 1);
-        assertThat(actualTypeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
+        assertThat(actualTypeArguments.get(0)
+                .getRawType()).is(matching(typeDescriptor(String.class)));
         store.commitTransaction();
     }
 
@@ -110,17 +115,18 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         evaluate("genericSuperClass", ExtendsGeneric.class.getGenericSuperclass(), 0);
         scanClasses(ExtendsGeneric.class);
         store.beginTransaction();
-        List<TypeDescriptor> superClasses = query("MATCH (:Type{name:'ExtendsGeneric'})-[:EXTENDS]->(superClass:Java:ByteCode:Type) RETURN superClass")
-                .getColumn("superClass");
+        List<TypeDescriptor> superClasses = query(
+                "MATCH (:Type{name:'ExtendsGeneric'})-[:EXTENDS]->(superClass:Java:ByteCode:Type) RETURN superClass").getColumn("superClass");
         assertThat(superClasses).hasSize(1);
         assertThat(superClasses.get(0)).is(matching(typeDescriptor(AbstractList.class)));
         List<ParameterizedTypeDescriptor> parameterizedTypes = query(
-                "MATCH (:Type{name:'ExtendsGeneric'})-[:EXTENDS_GENERIC]->(parameterizedType:Java:ByteCode:Bound:ParameterizedType) RETURN parameterizedType")
-                        .getColumn("parameterizedType");
+                "MATCH (:Type{name:'ExtendsGeneric'})-[:EXTENDS_GENERIC]->(parameterizedType:Java:ByteCode:Bound:ParameterizedType) RETURN parameterizedType").getColumn(
+                "parameterizedType");
         ParameterizedTypeDescriptor parameterizedType = parameterizedTypes.get(0);
         assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(AbstractList.class)));
         Map<Integer, BoundDescriptor> actualTypeArguments = getActualTypeArguments(parameterizedType, 1);
-        assertThat(actualTypeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
+        assertThat(actualTypeArguments.get(0)
+                .getRawType()).is(matching(typeDescriptor(String.class)));
         store.commitTransaction();
     }
 
@@ -157,7 +163,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) bound;
         List<HasActualTypeArgumentDescriptor> actualTypeArguments = parameterizedType.getActualTypeArguments();
         assertThat(actualTypeArguments).hasSize(1);
-        BoundDescriptor typeArgument = actualTypeArguments.get(0).getTypeArgument();
+        BoundDescriptor typeArgument = actualTypeArguments.get(0)
+                .getTypeArgument();
         assertThat(typeArgument).isInstanceOf(GenericArrayTypeDescriptor.class);
         BoundDescriptor componentType = ((GenericArrayTypeDescriptor) typeArgument).getComponentType();
         assertThat(componentType.getRawType()).is(matching(typeDescriptor(boolean.class)));
@@ -171,11 +178,13 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         FieldDescriptor field = getMember("GenericFields", "parameterizedType");
         assertThat(field.getType()).is(matching(typeDescriptor(Map.class)));
         BoundDescriptor genericType = field.getGenericType();
-        assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
+        assertThat(genericType).isNotNull()
+                .isInstanceOf(ParameterizedTypeDescriptor.class);
         ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) genericType;
         assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(Map.class)));
         Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 2);
-        assertThat(typeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
+        assertThat(typeArguments.get(0)
+                .getRawType()).is(matching(typeDescriptor(String.class)));
         verifyTypeVariable(typeArguments.get(1), "X", typeDescriptor(GenericFields.class), Object.class);
         store.commitTransaction();
     }
@@ -187,7 +196,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         FieldDescriptor field = getMember("GenericFields", "nestedParameterizedType");
         assertThat(field.getType()).is(matching(typeDescriptor(List.class)));
         BoundDescriptor genericType = field.getGenericType();
-        assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
+        assertThat(genericType).isNotNull()
+                .isInstanceOf(ParameterizedTypeDescriptor.class);
         ParameterizedTypeDescriptor outerListType = (ParameterizedTypeDescriptor) genericType;
         assertThat(outerListType.getRawType()).is(matching(typeDescriptor(List.class)));
         Map<Integer, BoundDescriptor> outerTypeArguments = getActualTypeArguments(outerListType, 1);
@@ -269,9 +279,10 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
         scanClasses(GenericMethods.class);
         store.beginTransaction();
         MethodDescriptor genericException = getMember("GenericMethods", "genericException");
-        List<TypeDescriptor> throwsExceptions = genericException.getThrows();
+        List<ThrowsDescriptor> throwsExceptions = genericException.getThrows();
         assertThat(throwsExceptions).hasSize(1);
-        assertThat(throwsExceptions.get(0)).is(matching(typeDescriptor(IOException.class)));
+        assertThat(throwsExceptions.get(0)
+                .getThrownType()).is(matching(typeDescriptor(IOException.class)));
         List<BoundDescriptor> throwsGenericExceptions = genericException.getThrowsGeneric();
         assertThat(throwsGenericExceptions).hasSize(1);
         verifyTypeVariable(throwsGenericExceptions.get(0), "E", methodDescriptor(GenericMethods.class, "genericException"), IOException.class);
@@ -305,34 +316,44 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
     void variableOfParameterizedType() {
         scanClasses(GenericFields.class);
         store.beginTransaction();
-        Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", "GenericFields").entry("variable", "parameterizedType").build();
-        List<VariableDescriptor> variables = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(:Java:ByteCode:Method)-[:DECLARES]->(variable:Variable{name:$variable}) RETURN variable", parameters)
-            .getColumn("variable");
+        Map<String, Object> parameters = MapBuilder.<String, Object>builder()
+                .entry("typeName", "GenericFields")
+                .entry("variable", "parameterizedType")
+                .build();
+        List<VariableDescriptor> variables = query(
+                "MATCH (:Type{name:$typeName})-[:DECLARES]->(:Java:ByteCode:Method)-[:DECLARES]->(variable:Variable{name:$variable}) RETURN variable",
+                parameters).getColumn("variable");
         assertThat(variables).hasSize(1);
         VariableDescriptor variable = variables.get(0);
         assertThat(variable.getType()).is(matching(typeDescriptor(Map.class)));
         BoundDescriptor genericType = variable.getGenericType();
-        assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
+        assertThat(genericType).isNotNull()
+                .isInstanceOf(ParameterizedTypeDescriptor.class);
         ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) genericType;
-        assertThat(((BoundDescriptor)parameterizedType).getRawType()).is(matching(typeDescriptor(Map.class)));
+        assertThat(((BoundDescriptor) parameterizedType).getRawType()).is(matching(typeDescriptor(Map.class)));
         Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 2);
-        assertThat(typeArguments.get(0).getRawType()).is(matching(typeDescriptor(String.class)));
+        assertThat(typeArguments.get(0)
+                .getRawType()).is(matching(typeDescriptor(String.class)));
         verifyTypeVariable(typeArguments.get(1), "X", typeDescriptor(GenericFields.class), Object.class);
         store.commitTransaction();
     }
 
     private <T extends MemberDescriptor> T getMember(String typeName, String memberName) {
-        Map<String, Object> parameters = MapBuilder.<String, Object> builder().entry("typeName", typeName).entry("memberName", memberName).build();
-        List<T> members = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(member:Java:ByteCode:Member{name:$memberName}) RETURN member", parameters)
-                .getColumn("member");
+        Map<String, Object> parameters = MapBuilder.<String, Object>builder()
+                .entry("typeName", typeName)
+                .entry("memberName", memberName)
+                .build();
+        List<T> members = query("MATCH (:Type{name:$typeName})-[:DECLARES]->(member:Java:ByteCode:Member{name:$memberName}) RETURN member",
+                parameters).getColumn("member");
         assertThat(members).hasSize(1);
         return members.get(0);
     }
 
     private WildcardTypeDescriptor getListOfWildcard(BoundDescriptor genericType) {
-        assertThat(genericType).isNotNull().isInstanceOf(ParameterizedTypeDescriptor.class);
+        assertThat(genericType).isNotNull()
+                .isInstanceOf(ParameterizedTypeDescriptor.class);
         ParameterizedTypeDescriptor parameterizedType = (ParameterizedTypeDescriptor) genericType;
-        assertThat(((BoundDescriptor)parameterizedType).getRawType()).is(matching(typeDescriptor(List.class)));
+        assertThat(parameterizedType.getRawType()).is(matching(typeDescriptor(List.class)));
         Map<Integer, BoundDescriptor> typeArguments = getActualTypeArguments(parameterizedType, 1);
         BoundDescriptor boundDescriptor = typeArguments.get(0);
         assertThat(boundDescriptor).isInstanceOf(WildcardTypeDescriptor.class);
@@ -348,7 +369,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
     }
 
     private void verifyTypeVariable(BoundDescriptor bound, String expectedName, Matcher<?> declaredBy, Class<?> expectedRawType) {
-        assertThat(bound).isNotNull().isInstanceOf(TypeVariableDescriptor.class);
+        assertThat(bound).isNotNull()
+                .isInstanceOf(TypeVariableDescriptor.class);
         TypeVariableDescriptor typeVariable = (TypeVariableDescriptor) bound;
         assertThat(typeVariable.getName()).isEqualTo(expectedName);
         assertThat(typeVariable.getDeclaredBy()).is(matching(declaredBy));
@@ -358,8 +380,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
     private Map<Integer, BoundDescriptor> getActualTypeArguments(ParameterizedTypeDescriptor parameterizedType, int expectedTypeArgumentCount) {
         List<HasActualTypeArgumentDescriptor> actualTypeArguments = parameterizedType.getActualTypeArguments();
         assertThat(actualTypeArguments).hasSize(expectedTypeArgumentCount);
-        Map<Integer, BoundDescriptor> typeArguments = actualTypeArguments.stream().collect(toMap(a -> a.getIndex(), a -> a.getTypeArgument()));
-        return typeArguments;
+        return actualTypeArguments.stream()
+                .collect(toMap(a -> a.getIndex(), a -> a.getTypeArgument()));
     }
 
     private void evaluate(String prefix, Type[] types, int level) {
