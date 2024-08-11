@@ -32,13 +32,14 @@ public class MethodDataFlowVisitor extends MethodVisitor {
 
     private final Analyzer<BasicValue> analyzer;
 
-    MethodDataFlowVisitor(Type type, MethodDescriptor methodDescriptor, MethodNode methodNode, Analyzer<BasicValue> analyzer, VisitorHelper visitorHelper) {
+    MethodDataFlowVisitor(Type type, MethodDescriptor methodDescriptor, MethodNode methodNode, MethodDataFlowVerifier methodDataFlowVerifier,
+            VisitorHelper visitorHelper) {
         super(ASM_OPCODES, methodNode);
         this.type = type;
         this.methodDescriptor = methodDescriptor;
         this.methodNode = methodNode;
-        this.analyzer = analyzer;
         this.visitorHelper = visitorHelper;
+        this.analyzer = new Analyzer<>(methodDataFlowVerifier);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class MethodDataFlowVisitor extends MethodVisitor {
                 }
             }
         } catch (AnalyzerException e) {
-            log.warn("Cannot analyze data flow of {}#{}.", type.getClassName(), methodNode.signature);
-            log.debug("Cannot analyze data flow of {}#{}.", type.getClassName(), methodNode.signature, e);
+            log.warn("Cannot analyze data flow of {}#{}: {}.", type.getClassName(), methodNode.signature, e.getMessage());
+            log.debug("Analyzer exception details.", e);
         }
     }
 

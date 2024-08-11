@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import java.util.Arrays;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
@@ -19,10 +17,10 @@ import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.BasicValue;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.objectweb.asm.Type.getObjectType;
 
 /**
  * A class visitor implementation.
@@ -39,11 +37,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private String sourceFileName;
 
-    private Type type;
+    private String typeName;
 
-    private Type superType;
+    private String superTypeName;
 
-    private Type[] interfaceTypes;
+    private String[] interfaceNames;
 
     private int byteCodeVersion;
 
@@ -72,11 +70,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        this.type = Type.getObjectType(name);
-        this.superType = Type.getObjectType(superName);
-        this.interfaceTypes = Arrays.stream(interfaces)
-                .map(Type::getObjectType)
-                .toArray(Type[]::new);
+        this.typeName = name;
+        this.superTypeName = superName;
+        this.interfaceNames = interfaces;
         this.byteCodeVersion = version;
         Class<? extends JavaByteCodeDescriptor> javaByteCodeType = getJavaByteCodeType(access);
         if (ClassFileDescriptor.class.isAssignableFrom(javaByteCodeType)) {
@@ -91,12 +87,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             }
             setModifiers(access, classFileDescriptor);
             if (signature == null) {
-                if (superName != null) {
-                    TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
-                            .getTypeDescriptor();
-                    classFileDescriptor.setSuperClass(superClassType);
-                }
-                for (int i = 0; interfaces != null && i < interfaces.length; i++) {
+                TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
+                        .getTypeDescriptor();
+                classFileDescriptor.setSuperClass(superClassType);
+                for (int i = 0; i < interfaces.length; i++) {
                     TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType)
                             .getTypeDescriptor();
                     classFileDescriptor.getInterfaces()
@@ -201,13 +195,19 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             visitorHelper.getStore()
                     .create(methodDescriptor, ThrowsDescriptor.class, exceptionType);
         }
-        MethodDataFlowVerifier methodDataFlowVerifier = new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(
-                this.cachedType.getTypeDescriptor()
-                        .getClass()), superType, asList(interfaceTypes));
-        Analyzer<BasicValue> analyzer = new Analyzer<>(methodDataFlowVerifier);
+        Type type = getObjectType(typeName);
         MethodNode methodNode = new MethodNode(access, name, desc, signature, exceptions);
+        MethodDataFlowVerifier methodDataFlowVerifier = getMethodDataFlowVerifier(type);
         return new DelegatingMethodVisitor(new MethodVisitor(cachedType, methodDescriptor, visitorHelper), new MethodLoCVisitor(methodDescriptor),
-                new MethodComplexityVisitor(methodDescriptor), new MethodDataFlowVisitor(type, methodDescriptor, methodNode, analyzer, visitorHelper));
+                new MethodComplexityVisitor(methodDescriptor),
+                new MethodDataFlowVisitor(type, methodDescriptor, methodNode, methodDataFlowVerifier, visitorHelper));
+    }
+
+    private MethodDataFlowVerifier getMethodDataFlowVerifier(Type type) {
+        return new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(this.cachedType.getTypeDescriptor()
+                .getClass()), getObjectType(superTypeName), asList(interfaceNames).stream()
+                .map(Type::getObjectType)
+                .collect(toList()));
     }
 
     /**

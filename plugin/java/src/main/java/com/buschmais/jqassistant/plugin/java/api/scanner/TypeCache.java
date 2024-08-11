@@ -23,19 +23,24 @@ public class TypeCache {
      * Constructor.
      */
     TypeCache() {
-        this.lruCache = Caffeine.newBuilder().maximumSize(8192).removalListener((RemovalListener<String, CachedType>) (key, value, cause) -> {
-            if (RemovalCause.SIZE.equals(cause)) {
-                softCache.put(key, value);
-            }
-        }).build();
-        this.softCache = Caffeine.newBuilder().softValues().build();
+        this.lruCache = Caffeine.newBuilder()
+                .maximumSize(8192)
+                .removalListener((RemovalListener<String, CachedType>) (key, value, cause) -> {
+                    if (RemovalCause.SIZE.equals(cause)) {
+                        softCache.put(key, value);
+                    }
+                })
+                .build();
+        this.softCache = Caffeine.newBuilder()
+                .softValues()
+                .build();
     }
 
     /**
      * Find a type by its fully qualified named.
      *
      * @param fullQualifiedName
-     *            The fqn.
+     *         The fqn.
      * @return The cached type or <code>null</code>.
      */
     public CachedType get(String fullQualifiedName) {
@@ -54,9 +59,9 @@ public class TypeCache {
      * Put a type.
      *
      * @param fullQualifiedName
-     *            The fqn.
+     *         The fqn.
      * @param cachedType
-     *            The type.
+     *         The type.
      */
     public void put(String fullQualifiedName, CachedType cachedType) {
         lruCache.put(fullQualifiedName, cachedType);
@@ -66,7 +71,7 @@ public class TypeCache {
      * Represents a type and all of its declared members.
      *
      * @param <T>
-     *            The descriptor type.
+     *         The descriptor type.
      */
     public static class CachedType<T extends TypeDescriptor> {
         private T typeDescriptor;
@@ -77,7 +82,7 @@ public class TypeCache {
          * Constructor.
          *
          * @param typeDescriptor
-         *            The type descriptor.
+         *         The type descriptor.
          */
         public CachedType(T typeDescriptor) {
             this.typeDescriptor = typeDescriptor;
@@ -96,7 +101,8 @@ public class TypeCache {
         }
 
         public void addMember(String signature, MemberDescriptor member) {
-            typeDescriptor.getDeclaredMembers().add(member);
+            typeDescriptor.getDeclaredMembers()
+                    .add(member);
             getMembers().put(signature, member);
         }
 
@@ -142,10 +148,7 @@ public class TypeCache {
                 return false;
             }
             CachedType that = (CachedType) o;
-            if (!typeDescriptor.equals(that.typeDescriptor)) {
-                return false;
-            }
-            return true;
+            return typeDescriptor.equals(that.typeDescriptor);
         }
 
         @Override
