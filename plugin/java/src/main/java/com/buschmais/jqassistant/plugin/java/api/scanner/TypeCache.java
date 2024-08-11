@@ -16,8 +16,8 @@ import com.github.benmanes.caffeine.cache.RemovalListener;
  */
 public class TypeCache {
 
-    private Cache<String, CachedType> lruCache;
-    private Cache<String, CachedType> softCache;
+    private Cache<String, CachedType<?>> lruCache;
+    private Cache<String, CachedType<?>> softCache;
 
     /**
      * Constructor.
@@ -25,7 +25,7 @@ public class TypeCache {
     TypeCache() {
         this.lruCache = Caffeine.newBuilder()
                 .maximumSize(8192)
-                .removalListener((RemovalListener<String, CachedType>) (key, value, cause) -> {
+                .removalListener((RemovalListener<String, CachedType<?>>) (key, value, cause) -> {
                     if (RemovalCause.SIZE.equals(cause)) {
                         softCache.put(key, value);
                     }
@@ -43,12 +43,12 @@ public class TypeCache {
      *         The fqn.
      * @return The cached type or <code>null</code>.
      */
-    public CachedType get(String fullQualifiedName) {
-        CachedType cachedType = lruCache.getIfPresent(fullQualifiedName);
+    public <T extends TypeDescriptor> CachedType<T> get(String fullQualifiedName) {
+        CachedType<T> cachedType = (CachedType<T>) lruCache.getIfPresent(fullQualifiedName);
         if (cachedType != null) {
             return cachedType;
         }
-        cachedType = softCache.getIfPresent(fullQualifiedName);
+        cachedType = (CachedType<T>) softCache.getIfPresent(fullQualifiedName);
         if (cachedType != null) {
             lruCache.put(fullQualifiedName, cachedType);
         }
@@ -63,7 +63,7 @@ public class TypeCache {
      * @param cachedType
      *         The type.
      */
-    public void put(String fullQualifiedName, CachedType cachedType) {
+    public void put(String fullQualifiedName, CachedType<?> cachedType) {
         lruCache.put(fullQualifiedName, cachedType);
     }
 
@@ -107,8 +107,7 @@ public class TypeCache {
         }
 
         public void addDependency(TypeDescriptor dependency) {
-            Map<TypeDescriptor, Integer> dependencies = getDependencies();
-            Integer weight = dependencies.get(dependency);
+            Integer weight = getDependencies().get(dependency);
             if (weight == null) {
                 weight = 0;
             }
@@ -147,7 +146,7 @@ public class TypeCache {
             if (!(o instanceof CachedType)) {
                 return false;
             }
-            CachedType that = (CachedType) o;
+            CachedType<?> that = (CachedType<?>) o;
             return typeDescriptor.equals(that.typeDescriptor);
         }
 

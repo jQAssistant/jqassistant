@@ -380,9 +380,8 @@ class JavaGenericsIT extends AbstractJavaPluginIT {
     private Map<Integer, BoundDescriptor> getActualTypeArguments(ParameterizedTypeDescriptor parameterizedType, int expectedTypeArgumentCount) {
         List<HasActualTypeArgumentDescriptor> actualTypeArguments = parameterizedType.getActualTypeArguments();
         assertThat(actualTypeArguments).hasSize(expectedTypeArgumentCount);
-        Map<Integer, BoundDescriptor> typeArguments = actualTypeArguments.stream()
+        return actualTypeArguments.stream()
                 .collect(toMap(a -> a.getIndex(), a -> a.getTypeArgument()));
-        return typeArguments;
     }
 
     private void evaluate(String prefix, Type[] types, int level) {
