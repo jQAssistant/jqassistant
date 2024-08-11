@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.util.Arrays;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
@@ -14,8 +16,13 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.Metho
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
+import org.objectweb.asm.tree.analysis.BasicValue;
+
+import static java.util.Arrays.asList;
 
 /**
  * A class visitor implementation.
@@ -32,7 +39,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private String sourceFileName;
 
-    private String typeName;
+    private Type type;
+
+    private Type superType;
+
+    private Type[] interfaceTypes;
 
     private int byteCodeVersion;
 
@@ -61,7 +72,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        this.typeName = name;
+        this.type = Type.getObjectType(name);
+        this.superType = Type.getObjectType(superName);
+        this.interfaceTypes = Arrays.stream(interfaces)
+                .map(Type::getObjectType)
+                .toArray(Type[]::new);
         this.byteCodeVersion = version;
         Class<? extends JavaByteCodeDescriptor> javaByteCodeType = getJavaByteCodeType(access);
         if (ClassFileDescriptor.class.isAssignableFrom(javaByteCodeType)) {
@@ -123,9 +138,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         fieldDescriptor.setTransient(visitorHelper.hasFlag(access, Opcodes.ACC_TRANSIENT));
         setModifiers(access, fieldDescriptor);
         if (signature == null) {
-            TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType)
+            TypeDescriptor typeDescriptor = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType)
                     .getTypeDescriptor();
-            fieldDescriptor.setType(type);
+            fieldDescriptor.setType(typeDescriptor);
         } else {
             new SignatureReader(signature).accept(new AbstractBoundVisitor(visitorHelper, cachedType) {
                 @Override
@@ -186,9 +201,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             visitorHelper.getStore()
                     .create(methodDescriptor, ThrowsDescriptor.class, exceptionType);
         }
+        MethodDataFlowVerifier methodDataFlowVerifier = new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(
+                this.cachedType.getTypeDescriptor()
+                        .getClass()), superType, asList(interfaceTypes));
+        Analyzer<BasicValue> analyzer = new Analyzer<>(methodDataFlowVerifier);
+        MethodNode methodNode = new MethodNode(access, name, desc, signature, exceptions);
         return new DelegatingMethodVisitor(new MethodVisitor(cachedType, methodDescriptor, visitorHelper), new MethodLoCVisitor(methodDescriptor),
-                new MethodComplexityVisitor(methodDescriptor),
-                new MethodDataFlowVisitor(typeName, methodDescriptor, new MethodNode(access, name, desc, signature, exceptions), visitorHelper));
+                new MethodComplexityVisitor(methodDescriptor), new MethodDataFlowVisitor(type, methodDescriptor, methodNode, analyzer, visitorHelper));
     }
 
     /**
