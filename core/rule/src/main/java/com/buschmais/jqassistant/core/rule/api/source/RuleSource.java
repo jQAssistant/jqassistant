@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 /**
  * Defines a source containing rules.
  *
@@ -26,7 +28,7 @@ public abstract class RuleSource {
      *
      * @return The {@link URL}.
      * @throws IOException
-     *             If the {@link URL} cannot be determined.
+     *     If the {@link URL} cannot be determined.
      */
     public abstract URL getURL() throws IOException;
 
@@ -45,8 +47,11 @@ public abstract class RuleSource {
      *
      * @return The {@link InputStream}.
      * @throws IOException
-     *             If the {@link InputStream} cannot be opened.
+     *     If the {@link InputStream} cannot be opened.
+     * @deprecated Use {@link #getURL()} to retrieve an {@link InputStream}.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 2, minor = 6)
     public abstract InputStream getInputStream() throws IOException;
 
     @Override

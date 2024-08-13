@@ -42,8 +42,9 @@ public class BaselineRepository {
     }
 
     private static Baseline read(File baselineFile) {
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(baselineFile))) {
-            return toBaseline(JAXB_HELPER.unmarshal(inputStream));
+        try {
+            return toBaseline(JAXB_HELPER.unmarshal(baselineFile.toURI()
+                .toURL()));
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read baseline file " + baselineFile, e);
         }

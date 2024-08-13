@@ -3,15 +3,16 @@ package com.buschmais.jqassistant.plugin.xml.api.scanner;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Utility class for unmarshalling file resources.
  *
  * @param <X>
- *            The JAXB type of the root element.
+ *     The JAXB type of the root element.
  */
-public class FileResourceJAXBUnmarshaller<X> extends com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller<X> {
+public class FileResourceJAXBUnmarshaller<X> extends JAXBHelper<X> {
 
     public FileResourceJAXBUnmarshaller(Class<X> rootElementType) {
         super(rootElementType);

@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -13,7 +11,7 @@ import javax.xml.validation.Schema;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.core.shared.xml.XmlHelper;
 
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
@@ -31,7 +29,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
     private final ClassLoader pluginClassLoader;
 
-    private final JAXBUnmarshaller<JqassistantPlugin> jaxbUnmarshaller;
+    private final JAXBHelper<JqassistantPlugin> jaxbHelper;
 
     private List<JqassistantPlugin> plugins = null;
 
@@ -43,7 +41,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      */
     public PluginConfigurationReaderImpl(PluginClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
-        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantPlugin.class, SCHEMA, NAMESPACE);
+        this.jaxbHelper = new JAXBHelper<>(JqassistantPlugin.class, SCHEMA, NAMESPACE);
     }
 
     @Override
@@ -59,8 +57,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * @return The {@link JqassistantPlugin}.
      */
     protected JqassistantPlugin readPlugin(URL pluginUrl) {
-        try (InputStream inputStream = new BufferedInputStream(pluginUrl.openStream())) {
-            return jaxbUnmarshaller.unmarshal(inputStream);
+        try {
+            return jaxbHelper.unmarshal(pluginUrl);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read plugin from " + pluginUrl.toString(), e);
         }
