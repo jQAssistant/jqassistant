@@ -18,7 +18,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.tree.MethodNode;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.objectweb.asm.Type.getObjectType;
 
@@ -90,8 +90,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
                         .getTypeDescriptor();
                 classFileDescriptor.setSuperClass(superClassType);
-                for (int i = 0; i < interfaces.length; i++) {
-                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType)
+                for (String anInterface : interfaces) {
+                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(anInterface), cachedType)
                             .getTypeDescriptor();
                     classFileDescriptor.getInterfaces()
                             .add(interfaceType);
@@ -192,8 +192,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
             TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType)
                     .getTypeDescriptor();
-            visitorHelper.getStore()
+            ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
                     .create(methodDescriptor, ThrowsDescriptor.class, exceptionType);
+            throwsDescriptor.setDeclaration(true);
         }
         Type type = getObjectType(typeName);
         MethodNode methodNode = new MethodNode(access, name, desc, signature, exceptions);
@@ -205,8 +206,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private MethodDataFlowVerifier getMethodDataFlowVerifier(Type type) {
         return new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(this.cachedType.getTypeDescriptor()
-                .getClass()), getObjectType(superTypeName), asList(interfaceNames).stream()
-                .map(Type::getObjectType)
+                .getClass()), getObjectType(superTypeName), stream(interfaceNames).map(Type::getObjectType)
                 .collect(toList()));
     }
 

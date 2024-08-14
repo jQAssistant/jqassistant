@@ -239,12 +239,21 @@ A method declared in a Java type.
 *NOTE* Methods which are referenced by scanned classes but have not been
 scanned themselves will only provide the property `signature`
 
-.Properties of `:READS`, `:WRITES`, `:INVOKES` and `:THROWS`
+.Properties of `:READS`, `:WRITES` and `:INVOKES`
 [options="header"]
 |====
 | Name       | Description
 | lineNumber | The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)
 |====
+
+.Properties of `:THROWS`
+[options="header"]
+|====
+| Name        | Description
+| declaration | If `true` then this relation represents the exception declaration within the message signature (`void run() throws RuntimeException`), otherwise an actual `throw e` within the message body. In the latter case the `lineNumber` property is available.
+| lineNumber  | The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)
+|====
+
 
 .Properties of `:DECLARES_TYPE_PARAMETER`
 [options="header"]
