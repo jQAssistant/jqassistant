@@ -37,7 +37,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * Constructor.
      *
      * @param pluginClassLoader
-     *     The class loader to use for detecting plugins.
+     *         The class loader to use for detecting plugins.
      */
     public PluginConfigurationReaderImpl(PluginClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
@@ -53,14 +53,14 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * Read the catalogs from an {@link URL}.
      *
      * @param pluginUrl
-     *     The {@link URL}.
+     *         The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
     protected JqassistantPlugin readPlugin(URL pluginUrl) {
         try {
             return jaxbHelper.unmarshal(pluginUrl);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot read plugin from " + pluginUrl.toString(), e);
+            throw new IllegalStateException("Cannot read plugin from " + pluginUrl, e);
         }
     }
 
@@ -89,12 +89,12 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
                     plugins.add(plugin);
                 } else {
                     JqassistantPlugin loadedPlugin = plugins.stream()
-                        .filter(p -> p.getId()
-                            .equals(plugin.getId()))
-                        .findFirst()
-                        .get();
+                            .filter(p -> p.getId()
+                                    .equals(plugin.getId()))
+                            .findFirst()
+                            .get();
                     LOGGER.warn("Skipping plugin '{}' with id '{}' as it uses the same id as the already loaded plugin '{}'.", plugin.getName(), plugin.getId(),
-                        loadedPlugin.getName());
+                            loadedPlugin.getName());
                 }
             }
         }
