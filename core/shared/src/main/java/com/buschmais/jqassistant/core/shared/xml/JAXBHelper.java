@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.core.shared.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -14,6 +16,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 import javax.xml.validation.Schema;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 
 /**
@@ -74,8 +78,8 @@ public class JAXBHelper<X> {
         this.rootElementType = rootElementType;
         this.schema = schema;
         this.targetNamespace = targetNamespace;
-        inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        this.inputFactory = XMLInputFactory.newInstance();
+        this.inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         try {
             jaxbContext = JAXBContext.newInstance(rootElementType);
         } catch (JAXBException e) {
@@ -83,20 +87,49 @@ public class JAXBHelper<X> {
         }
     }
 
+    /**
+     * Unmarshal an {@link URL}.
+     *
+     * @param url
+     *     The {@link URL}
+     * @return The root object
+     * @throws IOException
+     *     If unmarshalling fails.
+     */
+    public X unmarshal(URL url) throws IOException {
+        try (InputStream inputStream = url.openStream()) {
+            return unmarshal(inputStream, of(url.toString()));
+        }
+    }
+
+    /**
+     * Unmarshal an {@link InputStream}.
+     *
+     * @param stream
+     *     The {@link InputStream}
+     * @return The root object
+     * @throws IOException
+     *     If unmarshalling fails.
+     */
     public X unmarshal(InputStream stream) throws IOException {
+        return unmarshal(stream, empty());
+    }
+
+    private X unmarshal(InputStream stream, Optional<String> sourceId) throws IOException {
         try {
             XMLStreamReader xmlStreamReader = new NamespaceMappingStreamReader(inputFactory.createXMLStreamReader(stream), targetNamespace);
-            return unmarshal(xmlStreamReader);
+            return unmarshal(xmlStreamReader, sourceId);
         } catch (XMLStreamException e) {
             throw new IOException("Cannot read XML document.", e);
         }
     }
 
-    private X unmarshal(XMLStreamReader xmlStreamReader) throws IOException {
+    private X unmarshal(XMLStreamReader xmlStreamReader, Optional<String> sourceId) throws IOException {
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             if (schema != null) {
                 unmarshaller.setSchema(schema);
+                unmarshaller.setEventHandler(new JAXBValidationEventHandler(sourceId));
             }
             return unmarshaller.unmarshal(xmlStreamReader, rootElementType)
                 .getValue();
