@@ -71,12 +71,12 @@ public class RuleSetExecutor<R> {
      *     The group.
      * @param excludedConstraintIds
      *     The {@link Set} of constraint ids that shall be excluded from execution.
-     * @param overridingSeverity
-     *     The severity.
+     * @param overriddenSeverity
+     *     The {@link Severity} to override the default rule severity.
      */
-    private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overridingSeverity) throws RuleException {
+    private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity) throws RuleException {
         if (!executedGroups.contains(group)) {
-            Severity groupSeverity = getEffectiveSeverity(overridingSeverity, group.getSeverity());
+            Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
                 .entrySet()) {
@@ -199,7 +199,7 @@ public class RuleSetExecutor<R> {
             Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, concept.getSeverity());
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyAllRequiredConcepts(ruleSet, concept, executionStack);
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
-                Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, executionStack);
+                Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, executionStack);
                 checkDeprecation(concept);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providedConceptResults);
             } else {
@@ -228,18 +228,25 @@ public class RuleSetExecutor<R> {
      *     The {@link RuleSet}.
      * @param concept
      *     The {@link Concept}.
+     * @param overriddenSeverity
+     *     The {@link Severity} to override the default rule severity.
      * @param stack
      *     The current execution stack.
      * @throws RuleException
      *     If execution fails.
      */
-    private Map<Concept, R> applyProvidingConcepts(RuleSet ruleSet, Concept concept, Set<Concept> stack) throws RuleException {
+    private Map<Concept, R> applyProvidingConcepts(RuleSet ruleSet, Concept concept, Severity overriddenSeverity, Set<Concept> stack) throws RuleException {
         Map<Concept, R> results = new LinkedHashMap<>();
+        Severity providedSeverity = concept.getSeverity();
         for (String providingConceptId : ruleSet.getProvidedConcepts()
             .getOrDefault(concept.getId(), emptySet())) {
             Concept providingConcept = ruleSet.getConceptBucket()
                 .getById(providingConceptId);
-            R result = applyConcept(ruleSet, providingConcept, null, stack);
+            Severity providingSeverity = providingConcept.getSeverity();
+            // use overridden severity or highest default severity of provided and providing concept
+            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity,
+                providedSeverity.getLevel() < providingSeverity.getLevel() ? providedSeverity : providingSeverity);
+            R result = applyConcept(ruleSet, providingConcept, effectiveSeverity, stack);
             results.put(providingConcept, result);
         }
         return results;
