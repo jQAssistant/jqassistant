@@ -37,9 +37,9 @@ public final class ReportHelper {
 
     }
 
-    public static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
-    public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
-    private static String FOOTER = "-------------------------------------------------------------------";
+    public static final String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
+    public static final String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
+    private static final String FOOTER = "-------------------------------------------------------------------";
 
     private final Report configuration;
 
@@ -97,7 +97,6 @@ public final class ReportHelper {
             .append(rule.getId())
             .append("|");
         columns.entrySet()
-            .stream()
             .forEach(entry -> id.append(entry.getKey())
                 .append(':')
                 .append(entry.getValue()
@@ -129,7 +128,7 @@ public final class ReportHelper {
         } else if (value instanceof Iterable) {
             Spliterator<?> spliterator = ((Iterable<?>) value).spliterator();
             List<String> elements = StreamSupport.stream(spliterator, false)
-                .map(element -> getLabel(element))
+                .map(ReportHelper::getLabel)
                 .collect(toList());
             return StringUtils.join(elements, ", ");
         } else if (value instanceof Map) {
@@ -153,12 +152,13 @@ public final class ReportHelper {
     }
 
     private static String getLanguageLabel(CompositeObject descriptor) {
-        LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
-        if (elementValue != null) {
-            SourceProvider sourceProvider = elementValue.getSourceProvider();
-            return sourceProvider.getName(descriptor);
-        }
-        return null;
+        return getSourceProvider(descriptor).map(sourceProvider -> sourceProvider.getName(descriptor))
+            .orElse(null);
+    }
+
+    private static <D extends CompositeObject> Optional<SourceProvider<D>> getSourceProvider(CompositeObject descriptor) {
+        return LanguageHelper.getLanguageElement(descriptor)
+            .map(LanguageElement::getSourceProvider);
     }
 
     /**
@@ -311,13 +311,33 @@ public final class ReportHelper {
                     }
                     value.append(entry.getKey());
                     value.append('=');
-                    String stringValue = entry.getValue()
-                        .getLabel();
+                    Column<?> column = entry.getValue();
+                    String stringValue = column.getLabel();
                     value.append(stringValue);
+                    Object columnValue = column.getValue();
+                    if (columnValue instanceof CompositeObject) {
+                        appendLineNumbers((CompositeObject) columnValue, value);
+                    }
                 }
                 rows.add(value.toString());
             }
         }
         return rows;
+    }
+
+    private static void appendLineNumbers(CompositeObject descriptor, StringBuilder value) {
+        getSourceProvider(descriptor).flatMap(sourceProvider -> sourceProvider.getSourceLocation(descriptor))
+            .ifPresent(sourceLocation -> sourceLocation.getStartLine()
+                .ifPresent(startLine -> {
+                    value.append(", line: ")
+                        .append(startLine);
+                    sourceLocation.getEndLine()
+                        .ifPresent(endLine -> {
+                            if (!startLine.equals(endLine)) {
+                                value.append("-")
+                                    .append(endLine);
+                            }
+                        });
+                }));
     }
 }

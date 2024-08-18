@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 
 import com.buschmais.jqassistant.core.report.api.model.Language;
@@ -11,48 +12,55 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.api.metadata.reflection.AnnotatedType;
 
+import lombok.NoArgsConstructor;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static lombok.AccessLevel.PRIVATE;
+
 /**
  * Provides utility functionality for creating reports.
  */
+@NoArgsConstructor(access = PRIVATE)
 public final class LanguageHelper {
 
     /**
      * Return the {@link LanguageElement} associated with a {@link CompositeObject}.
-     *
+     * <p>
      * The method uses a breadth-first-search to identify a descriptor type annotated with {@link LanguageElement}.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @return The resolved {@link LanguageElement}
      */
-    public static LanguageElement getLanguageElement(CompositeObject descriptor) {
+    public static Optional<LanguageElement> getLanguageElement(CompositeObject descriptor) {
         Queue<Class<?>> queue = new LinkedList<>();
-        Class<?>[] descriptorTypes = descriptor.getClass().getInterfaces();
+        Class<?>[] descriptorTypes = descriptor.getClass()
+            .getInterfaces();
         do {
             queue.addAll(Arrays.asList(descriptorTypes));
             Class<?> descriptorType = queue.poll();
             AnnotatedType annotatedType = new AnnotatedType(descriptorType);
             Annotation languageAnnotation = annotatedType.getByMetaAnnotation(Language.class);
             if (languageAnnotation != null) {
-                return getAnnotationValue(languageAnnotation, "value", LanguageElement.class);
+                return of(getAnnotationValue(languageAnnotation, "value", LanguageElement.class));
             }
             descriptorTypes = descriptorType.getInterfaces();
-        }
-        while (!queue.isEmpty());
-        return null;
+        } while (!queue.isEmpty());
+        return empty();
     }
 
     /**
      * Return a value from an annotation.
      *
      * @param annotation
-     *            The annotation.
+     *     The annotation.
      * @param value
-     *            The value.
+     *     The value.
      * @param expectedType
-     *            The expected type.
+     *     The expected type.
      * @param <T>
-     *            The expected type.
+     *     The expected type.
      * @return The value.
      */
     private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) {

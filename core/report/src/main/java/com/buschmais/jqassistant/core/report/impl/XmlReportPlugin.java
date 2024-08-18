@@ -16,7 +16,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.report.api.*;
+import com.buschmais.jqassistant.core.report.api.LanguageHelper;
+import com.buschmais.jqassistant.core.report.api.ReportContext;
+import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
@@ -304,14 +307,15 @@ public class XmlReportPlugin implements ReportPlugin {
         Object value = column.getValue();
         if (value instanceof CompositeObject) {
             CompositeObject descriptor = (CompositeObject) value;
-            LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
-            if (elementValue != null) {
+            Optional<LanguageElement> languageElement = LanguageHelper.getLanguageElement(descriptor);
+            if (languageElement.isPresent()) {
+                LanguageElement elementValue = languageElement.get();
                 xmlStreamWriter.writeStartElement("element");
                 xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
                 xmlStreamWriter.writeCharacters(elementValue.name());
                 xmlStreamWriter.writeEndElement(); // element
-                SourceProvider sourceProvider = elementValue.getSourceProvider();
-                Optional<FileLocation> sourceLocation = sourceProvider.getSourceLocation(descriptor);
+                Optional<FileLocation> sourceLocation = elementValue.getSourceProvider()
+                    .getSourceLocation(descriptor);
                 if (sourceLocation.isPresent()) {
                     xmlStreamWriter.writeStartElement("source");
                     writeSourceLocation(sourceLocation.get());
