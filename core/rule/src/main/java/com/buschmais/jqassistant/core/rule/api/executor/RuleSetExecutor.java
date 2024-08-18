@@ -49,13 +49,13 @@ public class RuleSetExecutor<R> {
         this.ruleVisitor.beforeRules();
         try {
             for (String conceptPattern : ruleSelection.getConceptIds()) {
-                applyConcepts(ruleSet, conceptPattern, null, null);
+                applyConcepts(ruleSet, conceptPattern, null);
             }
             for (String groupPattern : ruleSelection.getGroupIds()) {
-                executeGroups(ruleSet, groupPattern, ruleSelection.getExcludeConstraintIds(), null, null);
+                executeGroups(ruleSet, groupPattern, ruleSelection.getExcludeConstraintIds(), null);
             }
             for (String constraintPattern : ruleSelection.getConstraintIds()) {
-                validateConstraints(ruleSet, constraintPattern, ruleSelection.getExcludeConstraintIds(), null, null);
+                validateConstraints(ruleSet, constraintPattern, ruleSelection.getExcludeConstraintIds(), null);
             }
         } finally {
             this.ruleVisitor.afterRules();
@@ -71,56 +71,58 @@ public class RuleSetExecutor<R> {
      *     The group.
      * @param excludedConstraintIds
      *     The {@link Set} of constraint ids that shall be excluded from execution.
-     * @param parentSeverity
+     * @param overridingSeverity
      *     The severity.
      */
-    private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity parentSeverity) throws RuleException {
+    private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overridingSeverity) throws RuleException {
         if (!executedGroups.contains(group)) {
-            ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, parentSeverity, parentSeverity));
+            Severity groupSeverity = getEffectiveSeverity(overridingSeverity, group.getSeverity());
+            ruleVisitor.beforeGroup(group, groupSeverity);
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
                 .entrySet()) {
-                applyConcepts(ruleSet, conceptEntry.getKey(), parentSeverity, conceptEntry.getValue());
+                applyConcepts(ruleSet, conceptEntry.getKey(), getEffectiveSeverity(conceptEntry.getValue(), groupSeverity));
             }
             for (Map.Entry<String, Severity> groupEntry : group.getGroups()
                 .entrySet()) {
-                executeGroups(ruleSet, groupEntry.getKey(), excludedConstraintIds, parentSeverity, groupEntry.getValue());
+                Severity effectiveSeverity = getEffectiveSeverity(groupEntry.getValue(), groupSeverity);
+                executeGroups(ruleSet, groupEntry.getKey(), excludedConstraintIds, effectiveSeverity);
             }
             Map<String, Severity> constraints = group.getConstraints();
             for (Map.Entry<String, Severity> constraintEntry : constraints.entrySet()) {
-                validateConstraints(ruleSet, constraintEntry.getKey(), excludedConstraintIds, parentSeverity, constraintEntry.getValue());
+                Severity effectiveSeverity = getEffectiveSeverity(constraintEntry.getValue(), groupSeverity);
+                validateConstraints(ruleSet, constraintEntry.getKey(), excludedConstraintIds, effectiveSeverity);
             }
             ruleVisitor.afterGroup(group);
             executedGroups.add(group);
         }
     }
 
-    private void applyConcepts(RuleSet ruleSet, String conceptPattern, Severity parentSeverity, Severity requestedSeverity) throws RuleException {
+    private void applyConcepts(RuleSet ruleSet, String conceptPattern, Severity overriddenSeverity) throws RuleException {
         List<Concept> matchingConcepts = ruleSet.getConceptBucket()
             .match(conceptPattern);
         if (matchingConcepts.isEmpty()) {
             LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
-                applyConcept(ruleSet, matchingConcept, parentSeverity, requestedSeverity, new LinkedHashSet<>());
+                applyConcept(ruleSet, matchingConcept, overriddenSeverity, new LinkedHashSet<>());
             }
         }
     }
 
-    private void executeGroups(RuleSet ruleSet, String groupPattern, Set<String> excludedConstraintIds, Severity parentSeverity, Severity requestedSeverity)
-        throws RuleException {
+    private void executeGroups(RuleSet ruleSet, String groupPattern, Set<String> excludedConstraintIds, Severity overridingSeverity) throws RuleException {
         List<Group> matchingGroups = ruleSet.getGroupsBucket()
             .match(groupPattern);
         if (matchingGroups.isEmpty()) {
             LOGGER.warn("Could not find groups matching to '{}'.", groupPattern);
         } else {
             for (Group matchingGroup : matchingGroups) {
-                executeGroup(ruleSet, matchingGroup, excludedConstraintIds, getEffectiveSeverity(matchingGroup, parentSeverity, requestedSeverity));
+                executeGroup(ruleSet, matchingGroup, excludedConstraintIds, overridingSeverity);
             }
         }
     }
 
-    private void validateConstraints(RuleSet ruleSet, String constraintPattern, Set<String> excludedConstraintIds, Severity parentSeverity,
-        Severity requestedSeverity) throws RuleException {
+    private void validateConstraints(RuleSet ruleSet, String constraintPattern, Set<String> excludedConstraintIds, Severity overriddenSeverity)
+        throws RuleException {
         List<Constraint> matchingConstraints = ruleSet.getConstraintBucket()
             .match(constraintPattern);
         if (matchingConstraints.isEmpty()) {
@@ -131,26 +133,24 @@ public class RuleSetExecutor<R> {
                 if (excludedConstraintIds.contains(constraintId)) {
                     log.info("Skipping excluded constraint '{}'.", constraintId);
                 } else {
-                    validateConstraint(ruleSet, matchingConstraint, parentSeverity, requestedSeverity);
+                    validateConstraint(ruleSet, matchingConstraint, overriddenSeverity);
                 }
             }
         }
     }
 
     /**
-     * Determines the effective severity for a rule to be executed.
+     * Determines the effective severity.
      *
-     * @param rule
-     *     The rule.
-     * @param parentSeverity
-     *     The severity inherited from the parent group.
-     * @param includeSeverity
-     *     The severity as specified on the rule in the parent group.
      * @return The effective severity.
      */
-    private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity includeSeverity) {
-        Severity inheritedSeverity = includeSeverity != null ? includeSeverity : parentSeverity;
-        return inheritedSeverity != null ? inheritedSeverity : rule.getSeverity();
+    private Severity getEffectiveSeverity(Severity... severities) {
+        for (Severity severity : severities) {
+            if (severity != null) {
+                return severity;
+            }
+        }
+        return null;
     }
 
     /**
@@ -160,16 +160,14 @@ public class RuleSetExecutor<R> {
      *     The {@link RuleSet}.
      * @param constraint
      *     The constraint.
-     * @param groupSeverity
-     *     The {@link Severity} inherited from the parent.
-     * @param includeSeverity
-     *     The {@link Severity} as request as incluude inherited from the parent group.
+     * @param overriddenSeverity
+     *     The {@link Severity} to override the default rule severity.
      * @throws RuleException
      *     If the constraint cannot be validated.
      */
-    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity groupSeverity, Severity includeSeverity) throws RuleException {
+    private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity overriddenSeverity) throws RuleException {
         if (!executedConstraints.contains(constraint)) {
-            Severity effectiveSeverity = getEffectiveSeverity(constraint, groupSeverity, includeSeverity);
+            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyRequiredConcepts(ruleSet, constraint, new LinkedHashSet<>());
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 checkDeprecation(constraint);
@@ -188,22 +186,17 @@ public class RuleSetExecutor<R> {
      *     The {@link RuleSet}.
      * @param concept
      *     The concept.
-     * @param groupSeverity
-     *     The {@link Severity} inherited from the parent.
-     * @param includeSeverity
-     *     The {@link Severity} as request as incluude inherited from the parent group.
      * @param executionStack
      *     The {@link Concept}s currently being executed while resolving
      *     required {@link Concept}s.
      * @throws RuleException
      *     If the concept cannot be applied.
      */
-    private R applyConcept(RuleSet ruleSet, Concept concept, Severity groupSeverity, Severity includeSeverity, Set<Concept> executionStack)
-        throws RuleException {
+    private R applyConcept(RuleSet ruleSet, Concept concept, Severity overriddenSeverity, Set<Concept> executionStack) throws RuleException {
         R result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
-            Severity effectiveSeverity = getEffectiveSeverity(concept, groupSeverity, includeSeverity);
+            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, concept.getSeverity());
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyAllRequiredConcepts(ruleSet, concept, executionStack);
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, executionStack);
@@ -246,7 +239,7 @@ public class RuleSetExecutor<R> {
             .getOrDefault(concept.getId(), emptySet())) {
             Concept providingConcept = ruleSet.getConceptBucket()
                 .getById(providingConceptId);
-            R result = applyConcept(ruleSet, providingConcept, null, null, stack);
+            R result = applyConcept(ruleSet, providingConcept, null, stack);
             results.put(providingConcept, result);
         }
         return results;
@@ -283,7 +276,7 @@ public class RuleSetExecutor<R> {
             for (Concept requiredConcept : ruleSet.getConceptBucket()
                 .match(entry.getKey())) {
                 if (!stack.contains(requiredConcept)) {
-                    R conceptResult = applyConcept(ruleSet, requiredConcept, null, null, stack);
+                    R conceptResult = applyConcept(ruleSet, requiredConcept, null, stack);
                     requiredConcepts.put(new AbstractMap.SimpleEntry<>(requiredConcept, entry.getValue()), conceptResult);
                 }
             }
