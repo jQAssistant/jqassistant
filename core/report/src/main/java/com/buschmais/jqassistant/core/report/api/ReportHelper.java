@@ -116,11 +116,8 @@ public final class ReportHelper {
             return "";
         } else if (value instanceof CompositeObject) {
             CompositeObject descriptor = (CompositeObject) value;
-            String label = getLanguageLabel(descriptor);
-            if (label != null) {
-                return label;
-            }
-            return getLabel(descriptor.getDelegate());
+            return getSourceProvider(descriptor).map(sourceProvider -> sourceProvider.getName(descriptor))
+                .orElse(getLabel(descriptor.getDelegate()));
         } else if (value.getClass()
             .isArray()) {
             Object[] objects = (Object[]) value;
@@ -149,11 +146,6 @@ public final class ReportHelper {
             return getLabel(neo4jPropertyContainer.getProperties());
         }
         return value.toString();
-    }
-
-    private static String getLanguageLabel(CompositeObject descriptor) {
-        return getSourceProvider(descriptor).map(sourceProvider -> sourceProvider.getName(descriptor))
-            .orElse(null);
     }
 
     private static <D extends CompositeObject> Optional<SourceProvider<D>> getSourceProvider(CompositeObject descriptor) {
