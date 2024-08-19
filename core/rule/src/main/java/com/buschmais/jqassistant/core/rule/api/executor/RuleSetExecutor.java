@@ -60,6 +60,9 @@ public class RuleSetExecutor<R> {
         } finally {
             this.ruleVisitor.afterRules();
         }
+        if (executedConcepts.isEmpty() && executedConstraints.isEmpty()) {
+            log.warn("No concepts or constraints were executed.");
+        }
     }
 
     /**
