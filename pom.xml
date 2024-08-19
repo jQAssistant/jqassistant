@@ -136,7 +136,7 @@
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
         <maven.resources.version>3.3.1</maven.resources.version>
         <maven.shade.version>3.6.0</maven.shade.version>
-        <maven.site.version>3.12.1</maven.site.version>
+        <maven.site.version>3.20.0</maven.site.version>
         <maven.source.plugin>3.3.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.1.0</maven.xml.version>
