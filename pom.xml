@@ -128,7 +128,7 @@
         <maven.deploy.version>3.1.2</maven.deploy.version>
         <maven.release.version>3.1.1</maven.release.version>
         <maven.enforcer.version>3.5.0</maven.enforcer.version>
-        <maven.failsafe.version>3.3.1</maven.failsafe.version>
+        <maven.failsafe.version>3.4.0</maven.failsafe.version>
         <maven.jacoco.version>0.8.12</maven.jacoco.version>
         <maven.install.version>3.1.2</maven.install.version>
         <maven.jar.version>3.4.2</maven.jar.version>
