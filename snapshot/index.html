@@ -2716,7 +2716,7 @@ further severity is given, e.g.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyGroup</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">severity</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">blocker</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2727,7 +2727,7 @@ further severity is given, e.g.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Thus, execution of the group 'my-rules:MyGroup' will report a violation of constraint&#8230;&#8203;</p>
+<p>Thus execution of the group 'my-rules:MyGroup' will report a violation of constraint&#8230;&#8203;</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2738,18 +2738,6 @@ further severity is given, e.g.</p>
 <p>&#8230;&#8203;'my-rules-Constraint2' with severity 'minor' (specified within the group)</p>
 </li>
 </ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-If a concept provides another concept then it will be applied using the highest severity of the providing or the provided concept.
-</td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect3">
@@ -2844,12 +2832,12 @@ If violations are exported to dashboards (e.g. SonarQube, Teamscale) then <code>
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:ApplicationRootPackage</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-        <span class="tag">&lt;requiresParameter</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">rootPackage</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">String</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">defaultValue</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">com.buschmais</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <span class="comment">&lt;!-- &lt;1&gt; --&gt;</span>
+        <span class="tag">&lt;requiresParameter</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">rootPackage</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">String</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">defaultValue</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">com.buschmais</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <b class="conum">(1)</b>
         <span class="tag">&lt;description&gt;</span>Labels the root package of the application with &quot;Root&quot;.<span class="tag">&lt;/description&gt;</span>
         <span class="tag">&lt;cypher&gt;</span><span class="inline-delimiter">&lt;![CDATA[</span>
            MATCH
@@ -11643,7 +11631,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-20 01:06:53 UTC
+Last updated 2024-08-20 08:57:16 UTC
 </div>
 </div>
 </body>
