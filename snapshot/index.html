@@ -5033,7 +5033,7 @@ themselves will only provide the property <code>signature</code>.</p>
 scanned themselves will only provide the property <code>signature</code></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. Properties of <code>:READS</code>, <code>:WRITES</code>, <code>:INVOKES</code> and <code>:THROWS</code></caption>
+<caption class="title">Table 14. Properties of <code>:READS</code>, <code>:WRITES</code> and <code>:INVOKES</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5052,7 +5052,30 @@ scanned themselves will only provide the property <code>signature</code></p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. Properties of <code>:DECLARES_TYPE_PARAMETER</code></caption>
+<caption class="title">Table 15. Properties of <code>:THROWS</code></caption>
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">declaration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <code>true</code> then this relation represents the exception declaration within the message signature (<code>void run() throws RuntimeException</code>), otherwise an actual <code>throw e</code> within the message body. In the latter case the <code>lineNumber</code> property is available.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lineNumber</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 16. Properties of <code>:DECLARES_TYPE_PARAMETER</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5083,7 +5106,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>A method parameter.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. Properties of <code>:Java:Parameter</code></caption>
+<caption class="title">Table 17. Properties of <code>:Java:Parameter</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5102,7 +5125,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 17. Relations of <code>:Java:Parameter</code></caption>
+<caption class="title">Table 18. Relations of <code>:Java:Parameter</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5145,7 +5168,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>A variable declared in a method.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 18. Properties of <code>:Java:Variable</code></caption>
+<caption class="title">Table 19. Properties of <code>:Java:Variable</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5168,7 +5191,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 19. Relations of <code>:Java:Variable</code></caption>
+<caption class="title">Table 20. Relations of <code>:Java:Variable</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5205,7 +5228,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>A value, can be qualified by either <code>:Primitive</code>, <code>:Annotation</code>, <code>:Class</code>, <code>:Enum</code> or <code>:Array</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 20. Properties of <code>:Java:Value</code></caption>
+<caption class="title">Table 21. Properties of <code>:Java:Value</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5230,7 +5253,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>A primitive value.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 21. Properties of <code>:Java:Value:Primitive</code></caption>
+<caption class="title">Table 22. Properties of <code>:Java:Value:Primitive</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5255,7 +5278,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>Represents a annotation on a Java element, e.g. <code>@Entity public class &#8230;&#8203;</code></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 22. Relations of <code>:Java:Value:Annotation:</code></caption>
+<caption class="title">Table 23. Relations of <code>:Java:Value:Annotation:</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5292,7 +5315,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>Represents a class instance, e.g. as specified by annotation attribute.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 23. Relations of `:Java:Value:Class:</caption>
+<caption class="title">Table 24. Relations of `:Java:Value:Class:</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5323,7 +5346,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>Represents an enum value.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 24. Relations of <code>:Java:Value:Enum:</code></caption>
+<caption class="title">Table 25. Relations of <code>:Java:Value:Enum:</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5354,7 +5377,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 <p>Represents an array value, i.e. a node referencing value nodes.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 25. Relations of <code>:Java:Value:Array:</code></caption>
+<caption class="title">Table 26. Relations of <code>:Java:Value:Array:</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5404,7 +5427,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 26. Relations of <code>:Java:Bound</code></caption>
+<caption class="title">Table 27. Relations of <code>:Java:Bound</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5445,7 +5468,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 27. Relations of <code>:Java:Bound:TypeVariable</code></caption>
+<caption class="title">Table 28. Relations of <code>:Java:Bound:TypeVariable</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5501,7 +5524,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 28. Relations of <code>:Java:Bound:ParameterizedType</code></caption>
+<caption class="title">Table 29. Relations of <code>:Java:Bound:ParameterizedType</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5526,7 +5549,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 29. Properties of <code>:HAS_ACTUAL_TYPE_ARGUMENT</code></caption>
+<caption class="title">Table 30. Properties of <code>:HAS_ACTUAL_TYPE_ARGUMENT</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5564,7 +5587,7 @@ scanned themselves will only provide the property <code>signature</code></p>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 30. Relations of <code>:Java:Bound:WildcardType</code></caption>
+<caption class="title">Table 31. Relations of <code>:Java:Bound:WildcardType</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5620,7 +5643,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 31. Relations of <code>:Java:Bound:GenericArrayType</code></caption>
+<caption class="title">Table 32. Relations of <code>:Java:Bound:GenericArrayType</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5651,7 +5674,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>Represents a module declaration according the Java Platform Module Specification (JPMS)</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 32. Properties of <code>:Java:Module</code></caption>
+<caption class="title">Table 33. Properties of <code>:Java:Module</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5678,7 +5701,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 33. Relations of <code>:Java:Module</code></caption>
+<caption class="title">Table 34. Relations of <code>:Java:Module</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5733,7 +5756,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 34. Properties of <code>:REQUIRES</code></caption>
+<caption class="title">Table 35. Properties of <code>:REQUIRES</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5762,7 +5785,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>Represents an exported package declaration of a Java module.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 35. Relations of <code>:Java:ExportedPackage</code></caption>
+<caption class="title">Table 36. Relations of <code>:Java:ExportedPackage</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5799,7 +5822,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>Represents a provided service declaration of a Java module.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 36. Relations of <code>:Java:ProvidedService</code></caption>
+<caption class="title">Table 37. Relations of <code>:Java:ProvidedService</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5836,7 +5859,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>Represents an open package declaration of a Java module.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 37. Relations of <code>:Java:OpenPackage</code></caption>
+<caption class="title">Table 38. Relations of <code>:Java:OpenPackage</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5879,7 +5902,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>A <code>MANIFEST.MF</code> file containing sections.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 38. Properties of <code>:File:Java:Manifest</code></caption>
+<caption class="title">Table 39. Properties of <code>:File:Java:Manifest</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -5898,7 +5921,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 39. Relations of <code>:File:Java:Manifest</code></caption>
+<caption class="title">Table 40. Relations of <code>:File:Java:Manifest</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5929,7 +5952,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>A manifest section.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 40. Relations of <code>:Java:ManifestSection</code></caption>
+<caption class="title">Table 41. Relations of <code>:Java:ManifestSection</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -5960,7 +5983,7 @@ There can be either upper or lower bounds. An unbound wildcard has neither upper
 <p>A manifest entry.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 41. Properties of :Java:Value:ManifestEntry</caption>
+<caption class="title">Table 42. Properties of :Java:Value:ManifestEntry</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -6000,7 +6023,7 @@ the doctype
 or a XML based property file (<code>*.xml</code>).</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 42. Properties of <code>:File:Java:Properties</code> and <code>:File:Java:Properties:Xml</code></caption>
+<caption class="title">Table 43. Properties of <code>:File:Java:Properties</code> and <code>:File:Java:Properties:Xml</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -6019,7 +6042,7 @@ or a XML based property file (<code>*.xml</code>).</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 43. Relations of <code>:File:Java:Properties</code> and <code>:File:Java:Properties:Xml</code></caption>
+<caption class="title">Table 44. Relations of <code>:File:Java:Properties</code> and <code>:File:Java:Properties:Xml</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -6050,7 +6073,7 @@ or a XML based property file (<code>*.xml</code>).</p>
 <p>A key value/pair.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 44. Properties of <code>:Java:Value:Property</code></caption>
+<caption class="title">Table 45. Properties of <code>:Java:Value:Property</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -6085,7 +6108,7 @@ or a XML based property file (<code>*.xml</code>).</p>
 <p>A file containing the implementation class names for a service interface</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 45. Properties of <code>:File:Java:ServiceLoader</code></caption>
+<caption class="title">Table 46. Properties of <code>:File:Java:ServiceLoader</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -6104,7 +6127,7 @@ or a XML based property file (<code>*.xml</code>).</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 46. Relations of <code>:File:Java:ServiceLoader</code></caption>
+<caption class="title">Table 47. Relations of <code>:File:Java:ServiceLoader</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -7726,7 +7749,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id="_configuration_3">7.2.1.2. Configuration</h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 47. Configuration properties</caption>
+<caption class="title">Table 48. Configuration properties</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7754,7 +7777,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id=":Json:File">7.2.1.3. Nodes labeled with <code>:Json:File</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 48. Properties of <code>:Json:File</code></caption>
+<caption class="title">Table 49. Properties of <code>:Json:File</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7778,7 +7801,7 @@ with invalid Unicode characters.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 49. Relations of <code>:Json:File</code></caption>
+<caption class="title">Table 50. Relations of <code>:Json:File</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -7806,7 +7829,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id=":Json:Array">7.2.1.4. Nodes labeled with <code>:Json:Array</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 50. Properties of <code>:Json:Array</code></caption>
+<caption class="title">Table 51. Properties of <code>:Json:Array</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7824,7 +7847,7 @@ with invalid Unicode characters.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 51. Relations of <code>:Json:Array</code></caption>
+<caption class="title">Table 52. Relations of <code>:Json:Array</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -7852,7 +7875,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id=":Json:Key">7.2.1.5. Nodes labeled with <code>:Json:Key</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 52. Properties of <code>:Json:Key</code></caption>
+<caption class="title">Table 53. Properties of <code>:Json:Key</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7871,7 +7894,7 @@ with invalid Unicode characters.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 53. Relations of <code>:Json:Key</code></caption>
+<caption class="title">Table 54. Relations of <code>:Json:Key</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -7899,7 +7922,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id=":Json:Object">7.2.1.6. Nodes labeled with <code>:Json:Object</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 54. Properties of <code>:Json:Object</code></caption>
+<caption class="title">Table 55. Properties of <code>:Json:Object</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7917,7 +7940,7 @@ with invalid Unicode characters.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 55. Relations of <code>:Json:Object</code></caption>
+<caption class="title">Table 56. Relations of <code>:Json:Object</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -7945,7 +7968,7 @@ with invalid Unicode characters.</p>
 <div class="sect4">
 <h5 id=":Json:Scalar">7.2.1.7. Nodes labeled with <code>:Json:Scalar</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 56. Properties of <code>:Json:Scalar</code></caption>
+<caption class="title">Table 57. Properties of <code>:Json:Scalar</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -7964,7 +7987,7 @@ with invalid Unicode characters.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 57. Relations of <code>:Json:Scalar</code></caption>
+<caption class="title">Table 58. Relations of <code>:Json:Scalar</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -8007,7 +8030,7 @@ value associated with an other JSON element.</p>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 58. Properties of <code>:Json:Value</code></caption>
+<caption class="title">Table 59. Properties of <code>:Json:Value</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -8025,7 +8048,7 @@ value associated with an other JSON element.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 59. Relations of <code>:Json:Value</code></caption>
+<caption class="title">Table 60. Relations of <code>:Json:Value</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -8267,7 +8290,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p>A file containing results of a JUnit 4 or JUnit 5 test suite.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 60. Properties of <code>:File:JUnit:TestSuite</code></caption>
+<caption class="title">Table 61. Properties of <code>:File:JUnit:TestSuite</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -8310,7 +8333,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 61. Relations of <code>:File:JUnit:TestSuite</code></caption>
+<caption class="title">Table 62. Relations of <code>:File:JUnit:TestSuite</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -8341,7 +8364,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p>A test case.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 62. Properties of <code>:JUnit:TestCase</code></caption>
+<caption class="title">Table 63. Properties of <code>:JUnit:TestCase</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -8372,7 +8395,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 63. Relations of <code>:JUnit:TestCase</code></caption>
+<caption class="title">Table 64. Relations of <code>:JUnit:TestCase</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -8409,7 +8432,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p>Provides detail information about a test case with result <code>FAILURE</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 64. Properties of <code>:JUnit:Failure</code></caption>
+<caption class="title">Table 65. Properties of <code>:JUnit:Failure</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -8438,7 +8461,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p>Provides detail information about a test case with result <code>ERROR</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 65. Properties of <code>:JUnit:Error</code></caption>
+<caption class="title">Table 66. Properties of <code>:JUnit:Error</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10021,7 +10044,7 @@ RETURN
 <div class="sect4">
 <h5 id="_configuration_4">7.4.1.1. Configuration</h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 66. Configuration properties</caption>
+<caption class="title">Table 67. Configuration properties</caption>
 <colgroup>
 <col style="width: 33.3333%;"/>
 <col style="width: 33.3333%;"/>
@@ -10073,7 +10096,7 @@ They follow the Maven syntax, i.e. <code>[groupId]:[artifactId]:[type]:[version]
 <p>A <code>pom.xml</code> file describing a single Maven project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 67. Properties of <code>:Maven:Project:File:Directory</code></caption>
+<caption class="title">Table 68. Properties of <code>:Maven:Project:File:Directory</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10112,7 +10135,7 @@ They follow the Maven syntax, i.e. <code>[groupId]:[artifactId]:[type]:[version]
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 68. Relations of <code>:Maven:Project:File:Directory</code></caption>
+<caption class="title">Table 69. Relations of <code>:Maven:Project:File:Directory</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10179,7 +10202,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 69. Properties of <code>:Maven:Artifact</code></caption>
+<caption class="title">Table 70. Properties of <code>:Maven:Artifact</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10214,7 +10237,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 70. Relations of <code>:Maven:Artifact</code></caption>
+<caption class="title">Table 71. Relations of <code>:Maven:Artifact</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10245,7 +10268,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 71. Properties of <code>:DEPENDS_ON</code></caption>
+<caption class="title">Table 72. Properties of <code>:DEPENDS_ON</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10277,7 +10300,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 <div class="sect4">
 <h5 id=":Maven:Scm">7.4.2.1. Nodes labeled with <code>:Maven:Scm</code></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 72. Properties of <code>:Maven:Scm</code></caption>
+<caption class="title">Table 73. Properties of <code>:Maven:Scm</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10312,7 +10335,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 <p>A POM describing a Maven project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 73. Properties of <code>:Maven:Pom</code></caption>
+<caption class="title">Table 74. Properties of <code>:Maven:Pom</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10351,7 +10374,7 @@ The artifact is further labeled with <code>:Main</code> representing the main ar
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 74. Relations of <code>:Maven:Pom</code></caption>
+<caption class="title">Table 75. Relations of <code>:Maven:Pom</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10472,7 +10495,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A declared or managed dependency of <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 75. Properties of :Maven:Dependency</caption>
+<caption class="title">Table 76. Properties of :Maven:Dependency</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10495,7 +10518,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 76. Relations of :Maven:Dependency</caption>
+<caption class="title">Table 77. Relations of :Maven:Dependency</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10532,7 +10555,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>Describes an exclusion pattern for <a href="#:Maven:Dependency">Nodes labeled with <code>:Maven:Dependency</code></a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 77. Properties of :Maven:Dependency</caption>
+<caption class="title">Table 78. Properties of :Maven:Dependency</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10561,7 +10584,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A contributor of the project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 78. Properties of :Maven:Contributor</caption>
+<caption class="title">Table 79. Properties of :Maven:Contributor</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10604,7 +10627,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 79. Relations of :Maven:Contributor</caption>
+<caption class="title">Table 80. Relations of :Maven:Contributor</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10635,7 +10658,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A developer taking part in the development of the project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 80. Properties of :Maven:Developer</caption>
+<caption class="title">Table 81. Properties of :Maven:Developer</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10678,7 +10701,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 81. Relations of :Maven:Developer</caption>
+<caption class="title">Table 82. Relations of :Maven:Developer</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10709,7 +10732,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>The organization behind the project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 82. Properties of :Maven:Organization</caption>
+<caption class="title">Table 83. Properties of :Maven:Organization</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10738,7 +10761,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A Maven repository declared for a Maven POM or a profile in a Maven POM.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 83. Properties of <code>:Maven:Repository</code></caption>
+<caption class="title">Table 84. Properties of <code>:Maven:Repository</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10795,7 +10818,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>The roles a person plays in the project.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 84. Properties of :Maven:Role</caption>
+<caption class="title">Table 85. Properties of :Maven:Role</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10820,7 +10843,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A maven profile</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 85. Properties of <code>:Maven:Profile</code></caption>
+<caption class="title">Table 86. Properties of <code>:Maven:Profile</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10839,7 +10862,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 86. Relations of <code>:Maven:Profile</code></caption>
+<caption class="title">Table 87. Relations of <code>:Maven:Profile</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10912,7 +10935,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A maven profile activation</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 87. Properties of <code>:Maven:ProfileActivation</code></caption>
+<caption class="title">Table 88. Properties of <code>:Maven:ProfileActivation</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -10935,7 +10958,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 88. Relations of <code>:Maven:ProfileActivation</code></caption>
+<caption class="title">Table 89. Relations of <code>:Maven:ProfileActivation</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -10978,7 +11001,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>File specification used to activate a profile</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 89. Properties of <code>:Maven:ActivationFile</code></caption>
+<caption class="title">Table 90. Properties of <code>:Maven:ActivationFile</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11007,7 +11030,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>Defines operating system&#8217;s attributes to activate a profile</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 90. Properties of <code>:Maven:ActivationOS</code></caption>
+<caption class="title">Table 91. Properties of <code>:Maven:ActivationOS</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11044,7 +11067,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 <p>A Maven module</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 91. Properties of <code>:Maven:Module</code></caption>
+<caption class="title">Table 92. Properties of <code>:Maven:Module</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11070,7 +11093,7 @@ A <a href="#:Maven:Pom">Nodes labeled with <code>:Maven:Pom</code></a> node may 
 through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 92. Properties of <code>:Maven:Plugin</code></caption>
+<caption class="title">Table 93. Properties of <code>:Maven:Plugin</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11089,7 +11112,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 93. Relations of <code>:Maven:Plugin</code></caption>
+<caption class="title">Table 94. Relations of <code>:Maven:Plugin</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11138,7 +11161,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 <p>A used license</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 94. Properties of <code>:Maven:License</code></caption>
+<caption class="title">Table 95. Properties of <code>:Maven:License</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11175,7 +11198,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 <p>A plugin execution</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 95. Properties of <code>:Maven:PluginExecution</code></caption>
+<caption class="title">Table 96. Properties of <code>:Maven:PluginExecution</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11202,7 +11225,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 96. Relations of <code>:Maven:PluginExecution</code></caption>
+<caption class="title">Table 97. Relations of <code>:Maven:PluginExecution</code></caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11239,7 +11262,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 <p>A configuration for plugins, executions</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 97. Relations of :Maven:Configuration</caption>
+<caption class="title">Table 98. Relations of :Maven:Configuration</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11270,7 +11293,7 @@ through the outgoing <code>IS_ARTIFACT</code> relation.</p>
 <p>A goal for plugin executions</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 98. Properties of <code>:Maven:ExecutionGoal</code></caption>
+<caption class="title">Table 99. Properties of <code>:Maven:ExecutionGoal</code></caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11335,7 +11358,7 @@ The files to scan may be configured using include and exclude filters.</p>
 <div class="sect4">
 <h5 id="_configuration_5">7.5.1.1. Configuration</h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 99. Configuration properties</caption>
+<caption class="title">Table 100. Configuration properties</caption>
 <colgroup>
 <col style="width: 33.3333%;"/>
 <col style="width: 33.3333%;"/>
@@ -11380,7 +11403,7 @@ XML documents.</p>
 <p>Represents an XML document.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 100. Properties of :Xml:Document</caption>
+<caption class="title">Table 101. Properties of :Xml:Document</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11415,7 +11438,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 101. Relations of :Xml:Document</caption>
+<caption class="title">Table 102. Relations of :Xml:Document</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11446,7 +11469,7 @@ XML documents.</p>
 <p>An XML element.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 102. Properties of :Xml:Element</caption>
+<caption class="title">Table 103. Properties of :Xml:Element</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11469,7 +11492,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 103. Relations of :Xml:Element</caption>
+<caption class="title">Table 104. Relations of :Xml:Element</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11524,7 +11547,7 @@ XML documents.</p>
 <p>A XML namespace declaration.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 104. Properties of :Xml:Namespace</caption>
+<caption class="title">Table 105. Properties of :Xml:Namespace</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11553,7 +11576,7 @@ XML documents.</p>
 <p>An XML attribute.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 105. Properties of :Xml:Attribute</caption>
+<caption class="title">Table 106. Properties of :Xml:Attribute</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11576,7 +11599,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 106. Relations of :Xml:Attribute</caption>
+<caption class="title">Table 107. Relations of :Xml:Attribute</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -11607,7 +11630,7 @@ XML documents.</p>
 <p>A text value of an XML element.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 107. Properties of :Xml:Text</caption>
+<caption class="title">Table 108. Properties of :Xml:Text</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -11643,7 +11666,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-22 07:05:25 UTC
+Last updated 2024-08-22 12:18:48 UTC
 </div>
 </div>
 </body>
