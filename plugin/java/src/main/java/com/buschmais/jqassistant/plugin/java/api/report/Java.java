@@ -171,24 +171,6 @@ public @interface Java {
                 };
             }
         },
-        Throws {
-            @Override
-            public SourceProvider<ThrowsDescriptor> getSourceProvider() {
-                return new SourceProvider<>() {
-                    @Override
-                    public String getName(ThrowsDescriptor descriptor) {
-                        return descriptor.getThrowingMethod()
-                                .getSignature() + ", line " + descriptor.getLineNumber();
-                    }
-
-                    @Override
-                    public Optional<FileLocation> getSourceLocation(ThrowsDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getThrowingMethod()
-                                .getDeclaringType(), descriptor.getLineNumber());
-                    }
-                };
-            }
-        },
         TypeDepdendency {
             @Override
             public SourceProvider<TypeDependsOnDescriptor> getSourceProvider() {
