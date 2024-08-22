@@ -82,6 +82,7 @@ public class MethodDataFlowVisitor extends MethodVisitor {
                     .getTypeDescriptor();
             ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
                     .create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);
+            throwsDescriptor.setDeclaration(false);
             if (lineNumber != null) {
                 throwsDescriptor.setLineNumber(lineNumber);
             }

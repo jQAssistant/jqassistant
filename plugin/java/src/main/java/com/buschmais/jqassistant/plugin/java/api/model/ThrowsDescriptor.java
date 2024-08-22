@@ -14,6 +14,10 @@ import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 @Java(Java.JavaLanguageElement.Throws)
 public interface ThrowsDescriptor extends Descriptor, LineNumberDescriptor {
 
+    boolean isDeclaration();
+
+    void setDeclaration(boolean declaration);
+
     @Outgoing
     MethodDescriptor getThrowingMethod();
 

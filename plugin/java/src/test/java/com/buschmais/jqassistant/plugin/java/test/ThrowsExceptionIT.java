@@ -15,18 +15,26 @@ class ThrowsExceptionIT extends AbstractJavaPluginIT {
 
     @Test
     void throwNewIllegalArgumentException() {
-        verify("throwNewIllegalArgumentException", IllegalArgumentException.class,
-                throwsDescriptor -> assertThat(throwsDescriptor.getLineNumber()).isNotNull());
+        verify("throwNewIllegalArgumentException", IllegalArgumentException.class, throwsDescriptor -> {
+            assertThat(throwsDescriptor.isDeclaration()).isFalse();
+            assertThat(throwsDescriptor.getLineNumber()).isNotNull();
+        });
     }
 
     @Test
     void throwRuntimeExceptionFromParameter() {
-        verify("throwRuntimeExceptionFromParameter", RuntimeException.class, throwsDescriptor -> assertThat(throwsDescriptor.getLineNumber()).isNotNull());
+        verify("throwRuntimeExceptionFromParameter", RuntimeException.class, throwsDescriptor -> {
+            assertThat(throwsDescriptor.isDeclaration()).isFalse();
+            assertThat(throwsDescriptor.getLineNumber()).isNotNull();
+        });
     }
 
     @Test
     void declaredException() {
-        verify("declaredException", Exception.class, throwsDescriptor -> assertThat(throwsDescriptor.getLineNumber()).isNull());
+        verify("declaredException", Exception.class, throwsDescriptor -> {
+            assertThat(throwsDescriptor.isDeclaration()).isTrue();
+            assertThat(throwsDescriptor.getLineNumber()).isNull();
+        });
     }
 
     private void verify(String methodName, Class<?> expectedExceptionType, Consumer<ThrowsDescriptor> throwsDescriptorConsumer) {
