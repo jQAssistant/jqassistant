@@ -422,7 +422,7 @@ class RuleSetExecutorTest {
             .build();
         Concept abstractConcept = Concept.builder()
             .id("concept:AbstractConcept")
-            .severity(MINOR)
+            .severity(MAJOR)
             .requiresConcepts(Map.of("concept:RequiredConcept", true))
             .build();
         // provides the required concept directly
@@ -438,7 +438,6 @@ class RuleSetExecutorTest {
             .build();
         Group group = Group.builder()
             .id("group")
-            .concept("concept:ProvidingConcept1", null)
             .concept("concept:Concept", null)
             .providedConcepts(Map.of("concept:AbstractConcept", Set.of("concept:ProvidingConcept2")))
             .build();
@@ -460,11 +459,11 @@ class RuleSetExecutorTest {
         inOrder.verify(visitor)
             .visitConcept(requiredConcept, MINOR, emptyMap(), emptyMap());
         inOrder.verify(visitor)
-            .visitConcept(eq(providingConcept1), eq(MINOR), anyMap(), anyMap());
+            .visitConcept(eq(providingConcept1), eq(MAJOR), anyMap(), anyMap());
         inOrder.verify(visitor)
-            .visitConcept(eq(providingConcept2), eq(MINOR), anyMap(), anyMap());
+            .visitConcept(eq(providingConcept2), eq(MAJOR), anyMap(), anyMap());
         inOrder.verify(visitor)
-            .visitConcept(abstractConcept, MINOR, ofEntries(entry(new SimpleEntry<>(requiredConcept, TRUE), TRUE)),
+            .visitConcept(abstractConcept, MAJOR, ofEntries(entry(new SimpleEntry<>(requiredConcept, TRUE), TRUE)),
                 ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
         inOrder.verify(visitor)
             .visitConcept(eq(concept), eq(CRITICAL), anyMap(), anyMap());

@@ -200,7 +200,7 @@ further severity is given, e.g.
 ----
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
 
     <group id="my-rules:MyGroup" severity="blocker">
         <includeConstraint refId="my-rules:MyConstraint1"/>
@@ -210,10 +210,12 @@ further severity is given, e.g.
 </jqassistant-rules>
 ----
 
-Thus execution of the group 'my-rules:MyGroup' will report a violation of constraint...
+Thus, execution of the group 'my-rules:MyGroup' will report a violation of constraint...
 
 - ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
 - ...'my-rules-Constraint2' with severity 'minor' (specified within the group)
+
+NOTE: If a concept provides another concept then it will be applied using the highest severity of the providing or the provided concept.
 
 ==== Warnings and Failures
 
@@ -283,12 +285,12 @@ Both concepts and constraints may define required parameters:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.8"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
 
     <concept id="my-rules:ApplicationRootPackage">
-        <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <1>
+        <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <!-- <1> -->
         <description>Labels the root package of the application with "Root".</description>
         <cypher><![CDATA[
            MATCH

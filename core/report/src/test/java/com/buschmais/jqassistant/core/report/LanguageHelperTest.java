@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.report;
 
+import java.util.Optional;
+
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
@@ -17,7 +19,7 @@ import static org.mockito.Mockito.when;
 class LanguageHelperTest {
 
     @Test
-    public void resolveNameFromDescriptorWithLanguageElement() {
+    void resolveNameFromDescriptorWithLanguageElement() {
         TestDescriptorWithLanguageElement testDescriptor = Mockito.mock(TestDescriptorWithLanguageElement.class);
         resolveName(testDescriptor, TestLanguageElement.TestElement);
     }
@@ -36,10 +38,10 @@ class LanguageHelperTest {
 
     private void resolveName(TestDescriptorWithLanguageElement testDescriptor, LanguageElement expectedLanguageElement) {
         when(testDescriptor.getValue()).thenReturn("value");
-        LanguageElement languageElement = LanguageHelper.getLanguageElement(testDescriptor);
-        assertThat(languageElement).isNotNull();
-        assertThat(languageElement).isEqualTo(expectedLanguageElement);
-        SourceProvider<TestDescriptorWithLanguageElement> sourceProvider = languageElement.getSourceProvider();
+        Optional<LanguageElement> optionalLanguageElement = LanguageHelper.getLanguageElement(testDescriptor);
+        assertThat(optionalLanguageElement).isPresent()
+            .contains(expectedLanguageElement);
+        SourceProvider<TestDescriptorWithLanguageElement> sourceProvider = expectedLanguageElement.getSourceProvider();
         String name = sourceProvider.getName(testDescriptor);
         assertThat(name).isEqualTo("value");
     }

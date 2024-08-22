@@ -90,8 +90,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
                         .getTypeDescriptor();
                 classFileDescriptor.setSuperClass(superClassType);
-                for (String anInterface : interfaces) {
-                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(anInterface), cachedType)
+                for (int i = 0; i < interfaces.length; i++) {
+                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType)
                             .getTypeDescriptor();
                     classFileDescriptor.getInterfaces()
                             .add(interfaceType);

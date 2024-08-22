@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.impl.reader;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -62,8 +61,8 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
      */
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
         List<JqassistantRules> rules = new ArrayList<>();
-        try (InputStream inputStream = ruleSource.getInputStream()) {
-            JqassistantRules jqassistantRules = jaxbHelper.unmarshal(inputStream);
+        try {
+            JqassistantRules jqassistantRules = jaxbHelper.unmarshal(ruleSource.getURL());
             rules.add(jqassistantRules);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);

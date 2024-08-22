@@ -7,10 +7,12 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A rule set builder.
  */
+@Slf4j
 public class RuleSetBuilder {
 
     private final DefaultRuleSet ruleSet = new DefaultRuleSet();
@@ -58,8 +60,24 @@ public class RuleSetBuilder {
             .add(providingConceptId);
     }
 
-    public RuleSet getRuleSet() {
+    public RuleSet getRuleSet() throws RuleException {
+        validate();
         return ruleSet;
+    }
+
+    private void validate() throws RuleException {
+        Set<String> conceptIds = ruleSet.getConceptBucket()
+            .getIds();
+        for (Map.Entry<String, Set<String>> entry : ruleSet.getProvidedConcepts()
+            .entrySet()) {
+            String providedConceptId = entry.getKey();
+            if (!conceptIds.contains(providedConceptId)) {
+                for (String providingConceptId : entry.getValue()) {
+                    log.warn("Concept {} provides non-resolvable concept with id '{}'.", ruleSet.getConceptBucket()
+                        .getById(providingConceptId), providedConceptId);
+                }
+            }
+        }
     }
 
     /**

@@ -1,0 +1,6 @@
+<jqassistant-test
+        xmlns="http://schema.jqassistant.org/test/v1.0"
+        id="additional-element-and-attribute"
+        unknown-attribute="unknown-attribute">
+    <unknown-element/>
+</jqassistant-test>

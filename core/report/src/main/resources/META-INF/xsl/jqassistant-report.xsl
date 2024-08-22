@@ -120,17 +120,6 @@
         </style>
         <h1>jQAssistant Report</h1>
         <div>
-            <h3>Groups</h3>
-            <table>
-                <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:80%;">Group Name</th>
-                    <th style="width:15%;">Date</th>
-                </tr>
-                <xsl:apply-templates select="//tns:group"/>
-            </table>
-        </div>
-        <div>
             <h3>Constraints</h3>
             <h6>
                 <ul>
@@ -188,6 +177,17 @@
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
+            </table>
+        </div>
+        <div>
+            <h3>Groups</h3>
+            <table>
+                <tr>
+                    <th style="width:5%;">#</th>
+                    <th style="width:80%;">Group Name</th>
+                    <th style="width:15%;">Date</th>
+                </tr>
+                <xsl:apply-templates select="//tns:group"/>
             </table>
         </div>
     </xsl:template>

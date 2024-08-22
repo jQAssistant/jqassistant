@@ -31,7 +31,7 @@ public @interface Java {
         Package {
             @Override
             public SourceProvider<PackageDescriptor> getSourceProvider() {
-                return new SourceProvider<PackageDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(PackageDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
@@ -47,7 +47,7 @@ public @interface Java {
         Type {
             @Override
             public SourceProvider<ClassFileDescriptor> getSourceProvider() {
-                return new SourceProvider<ClassFileDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(ClassFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
@@ -69,16 +69,18 @@ public @interface Java {
         Variable {
             @Override
             public SourceProvider<VariableDescriptor> getSourceProvider() {
-                return new SourceProvider<VariableDescriptor>() {
+                return new SourceProvider<>() {
 
                     @Override
                     public String getName(VariableDescriptor descriptor) {
-                        return descriptor.getMethod().getSignature() + "#" + descriptor.getSignature();
+                        return descriptor.getMethod()
+                            .getSignature() + "#" + descriptor.getSignature();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(VariableDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType());
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                            .getDeclaringType());
                     }
 
                 };
@@ -87,15 +89,17 @@ public @interface Java {
         ReadField {
             @Override
             public SourceProvider<ReadsDescriptor> getSourceProvider() {
-                return new SourceProvider<ReadsDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return descriptor.getMethod().getSignature() + ", line " + descriptor.getLineNumber();
+                        return descriptor.getMethod()
+                            .getSignature();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(ReadsDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType(), descriptor.getLineNumber());
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                            .getDeclaringType(), descriptor.getLineNumber());
                     }
                 };
             }
@@ -103,15 +107,17 @@ public @interface Java {
         WriteField {
             @Override
             public SourceProvider<WritesDescriptor> getSourceProvider() {
-                return new SourceProvider<WritesDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return descriptor.getMethod().getSignature() + ", line " + descriptor.getLineNumber();
+                        return descriptor.getMethod()
+                            .getSignature();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(WritesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod().getDeclaringType(), descriptor.getLineNumber());
+                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                            .getDeclaringType(), descriptor.getLineNumber());
                     }
 
                 };
@@ -132,15 +138,35 @@ public @interface Java {
         MethodInvocation {
             @Override
             public SourceProvider<InvokesDescriptor> getSourceProvider() {
-                return new SourceProvider<InvokesDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return descriptor.getInvokingMethod().getSignature() + ", line " + descriptor.getLineNumber();
+                        return descriptor.getInvokingMethod()
+                            .getSignature();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(InvokesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getInvokingMethod().getDeclaringType(), descriptor.getLineNumber());
+                        return TypeSourceHelper.getSourceLocation(descriptor.getInvokingMethod()
+                            .getDeclaringType(), descriptor.getLineNumber());
+                    }
+                };
+            }
+        },
+        Throws {
+            @Override
+            public SourceProvider<ThrowsDescriptor> getSourceProvider() {
+                return new SourceProvider<>() {
+                    @Override
+                    public String getName(ThrowsDescriptor descriptor) {
+                        return descriptor.getThrowingMethod()
+                            .getSignature() + ", line " + descriptor.getLineNumber();
+                    }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(ThrowsDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getThrowingMethod()
+                            .getDeclaringType(), descriptor.getLineNumber());
                     }
                 };
             }
@@ -166,10 +192,12 @@ public @interface Java {
         TypeDepdendency {
             @Override
             public SourceProvider<TypeDependsOnDescriptor> getSourceProvider() {
-                return new SourceProvider<TypeDependsOnDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(TypeDependsOnDescriptor descriptor) {
-                        return descriptor.getDependent().getName() + "->" + descriptor.getDependency().getName();
+                        return descriptor.getDependent()
+                            .getName() + "->" + descriptor.getDependency()
+                            .getName();
                     }
 
                     @Override
@@ -216,7 +244,7 @@ public @interface Java {
             @Override
             public Optional<FileLocation> getSourceLocation(MethodDescriptor descriptor) {
                 return TypeSourceHelper.getSourceLocation(descriptor.getDeclaringType(), ofNullable(descriptor.getFirstLineNumber()),
-                        ofNullable(descriptor.getLastLineNumber()));
+                    ofNullable(descriptor.getLastLineNumber()));
             }
 
         }
