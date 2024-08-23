@@ -20,11 +20,6 @@ class C02E01IT extends AbstractYAMLPluginIT {
         return YAML_FILE;
     }
 
-    @AfterEach
-    void commitTransaction() {
-        store.commitTransaction();
-    }
-
     @Test
     void thereIsOneDocument() {
         YMLFileDescriptor result = readSourceDocument();
