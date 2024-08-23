@@ -4295,9 +4295,10 @@ The priorities are as following: <code>System Property</code> -&#8594; <code>Env
 <div class="sect2">
 <h3 id="_property_placeholders">6.4. Property placeholders</h3>
 <div class="paragraph">
-<p>Values may contain placeholders referering to other properties:</p>
+<p>Values may contain placeholders referring to other properties:</p>
 </div>
 <div class="listingblock">
+<div class="title">.jqassistant.yml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">src-dir</span>: <span class="string"><span class="content">./src</span></span>
 
@@ -4327,6 +4328,33 @@ The priorities are as following: <code>System Property</code> -&#8594; <code>Env
 <p>Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)</p>
 </li>
 </ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The predefined property <code>jqassistant.store.embedded.neo4j-version</code> may be used to specify the version of the <a href="https://github.com/neo4j/apoc">APOC</a> plugin for the embedded store (Neo4j v5 only):</p>
+</div>
+<div class="listingblock">
+<div class="title">.jqassistant.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+  <span class="key">store</span>:
+    <span class="key">embedded</span>:
+      <span class="key">neo4j-plugins</span>:
+        - <span class="string"><span class="content">group-id: org.neo4j.procedure</span></span>
+          <span class="key">artifact-id</span>: <span class="string"><span class="content">apoc-core</span></span>
+          <span class="key">classifier</span>: <span class="string"><span class="content">core</span></span>
+          <span class="key">version</span>: <span class="string"><span class="content">${jqassistant.store.embedded.neo4j-version}</span></span></code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -11666,7 +11694,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-23 14:51:34 UTC
+Last updated 2024-08-23 15:09:08 UTC
 </div>
 </div>
 </body>
