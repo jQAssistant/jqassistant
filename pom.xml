@@ -101,7 +101,7 @@
         <system-lambda.version>1.2.1</system-lambda.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.22.0</neo4j_5x.version>
+        <neo4j_5x.version>5.23.0</neo4j_5x.version>
         <neo4j_5x_apoc.version>${neo4j_5x.version}</neo4j_5x_apoc.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
