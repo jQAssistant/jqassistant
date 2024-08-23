@@ -341,9 +341,10 @@ The priorities are as following: `System Property` --> `Environment Variable` --
 
 === Property placeholders
 
-Values may contain placeholders referering to other properties:
+Values may contain placeholders referring to other properties:
 
 [source,yaml]
+..jqassistant.yml
 ----
 src-dir: ./src
 
@@ -362,3 +363,20 @@ The properties in placeholders can be defined in different sources:
 - environment variables
 - Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)
 
+[TIP]
+====
+The predefined property `jqassistant.store.embedded.neo4j-version` may be used to specify the version of the https://github.com/neo4j/apoc[APOC] plugin for the embedded store (Neo4j v5 only):
+
+[source,yaml]
+..jqassistant.yml
+----
+jqassistant:
+  store:
+    embedded:
+      neo4j-plugins:
+        - group-id: org.neo4j.procedure
+          artifact-id: apoc-core
+          classifier: core
+          version: ${jqassistant.store.embedded.neo4j-version}
+----
+====

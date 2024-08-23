@@ -133,10 +133,15 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected void destroy() {
         neo4jPluginDirectory.ifPresent(directory -> {
-            try {
-                FileUtils.deleteDirectory(directory);
-            } catch (IOException e) {
-                log.warn("Cannot delete Neo4j plugin directory {}.", directory);
+            // delete Neo4j plugin directory only if it has not been configured explicitly
+            if (embedded.neo4jPluginDirectory()
+                .isEmpty()) {
+                log.info("Removing Neo4j plugin directory {}.", directory);
+                try {
+                    FileUtils.deleteDirectory(directory);
+                } catch (IOException e) {
+                    log.warn("Cannot delete Neo4j plugin directory {}.", directory);
+                }
             }
         });
     }

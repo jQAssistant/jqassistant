@@ -5,6 +5,6 @@ def itGroup = jqassistantReport.group.find { it.@id = 'it' }
 def concept = itGroup.concept.find { it.@id == 'it:APOCHelp' }
 assert concept.status == 'success'
 
-def pluginDir = new File(basedir, 'target/jqassistant/plugins')
-assert pluginDir.exists();
-assert pluginDir.isDirectory();
+def pluginDir = new File(basedir, 'target/jqassistant/store/plugins')
+assert pluginDir.exists()
+assert pluginDir.isDirectory()

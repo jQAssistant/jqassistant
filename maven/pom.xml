@@ -42,12 +42,14 @@
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <pomIncludes>
                                 <!-- Use -Dinvoker.test=<pattern> to override the configuration below on the commandline -->
-                                <include>configuration/*/pom.xml</include>
+                                <include>analyze/*/pom.xml</include>
                                 <include>cli/*/pom.xml</include>
-                                <include>singlemodule/*/pom.xml</include>
-                                <include>multimodule/*/*/pom.xml</include>
+                                <include>configuration/*/pom.xml</include>
                                 <include>list-plugins/pom.xml</include>
+                                <include>multimodule/*/*/pom.xml</include>
+                                <include>neo4j-plugin/pom.xml</include>
                                 <include>plugin/pom.xml</include>
+                                <include>singlemodule/*/pom.xml</include>
                                 <include>yaml/*/pom.xml</include>
                             </pomIncludes>
                         </configuration>
@@ -58,6 +60,22 @@
     </profiles>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>.jqassistant.yml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>.jqassistant.yml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -158,11 +176,6 @@
                 <version>${project.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.17.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
