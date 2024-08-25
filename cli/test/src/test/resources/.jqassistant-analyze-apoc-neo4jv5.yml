@@ -5,6 +5,5 @@ jqassistant:
         - group-id: org.neo4j.procedure
           artifact-id: apoc-core
           classifier: core
-          version: @neo4j_5x_apoc.version@
-
+          version: ${jqassistant.store.embedded.neo4j-version}
 

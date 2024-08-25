@@ -102,7 +102,6 @@
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.23.0</neo4j_5x.version>
-        <neo4j_5x_apoc.version>${neo4j_5x.version}</neo4j_5x_apoc.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -173,7 +172,7 @@
                 <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>2.4.0</version>
+                    <version>2.5.0-RC2</version>
                     <executions>
                         <execution>
                             <id>default</id>
