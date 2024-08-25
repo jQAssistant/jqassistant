@@ -5,7 +5,6 @@ import java.util.List;
 import com.buschmais.jqassistant.plugin.yaml2.api.model.*;
 import com.buschmais.jqassistant.plugin.yaml2.impl.scanner.AbstractYAMLPluginIT;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.yaml2.helper.TestHelper.getDocuments;
@@ -47,8 +46,8 @@ class C02E01IT extends AbstractYAMLPluginIT {
         YMLSequenceDescriptor sequenceDescriptor = getSequences(documentDescriptor).getSequenceByParsePosition(0);
         assertThat(sequenceDescriptor).hasItems(3);
         assertThat(sequenceDescriptor.getScalars()).isNotNull()
-                                                   .isNotEmpty()
-                                                   .hasSize(3);
+            .isNotEmpty()
+            .hasSize(3);
     }
 
     @Test
@@ -60,8 +59,8 @@ class C02E01IT extends AbstractYAMLPluginIT {
         List<YMLScalarDescriptor> items = sequenceDescriptor.getScalars();
 
         String[] values = items.stream()
-                               .map(YMLScalarDescriptor::getValue)
-                               .toArray(String[]::new);
+            .map(YMLScalarDescriptor::getValue)
+            .toArray(String[]::new);
 
         assertThat(values).containsExactly("Mark McGwire", "Sammy Sosa", "Ken Griffey");
     }
@@ -70,8 +69,7 @@ class C02E01IT extends AbstractYAMLPluginIT {
     void viaCypherFileCanBeFound() {
         readSourceDocument();
 
-        List<Object> result = query("MATCH (s:File:Yaml) WHERE s.fileName =~ '.*" +
-                               YAML_FILE + "' RETURN s").getColumn("s");
+        List<Object> result = query("MATCH (s:File:Yaml) WHERE s.fileName =~ '.*" + YAML_FILE + "' RETURN s").getColumn("s");
 
         assertThat(result).hasSize(1);
     }
@@ -80,10 +78,7 @@ class C02E01IT extends AbstractYAMLPluginIT {
     void viaCypherDocumentCanBeFound() {
         readSourceDocument();
 
-        String cypherQuery = "MATCH (f:File:Yaml) " +
-                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
-                             "WHERE f.fileName =~ '.*" +
-                             YAML_FILE + "' RETURN d";
+        String cypherQuery = "MATCH (f:File:Yaml) " + "-[:HAS_DOCUMENT]->(d:Yaml:Document) " + "WHERE f.fileName =~ '.*" + YAML_FILE + "' RETURN d";
 
         List<?> results = query(cypherQuery).getColumn("d");
 
@@ -94,11 +89,9 @@ class C02E01IT extends AbstractYAMLPluginIT {
     void viaCypherSequenceInDocumentCanBeFound() {
         readSourceDocument();
 
-        String cypherQuery = "MATCH (f:File:Yaml) " +
-                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
-                             "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " +
-                             "WHERE f.fileName =~ '.*" +
-                             YAML_FILE + "' RETURN s";
+        String cypherQuery =
+            "MATCH (f:File:Yaml) " + "-[:HAS_DOCUMENT]->(d:Yaml:Document) " + "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " + "WHERE f.fileName =~ '.*" + YAML_FILE
+                + "' RETURN s";
 
         List<?> results = query(cypherQuery).getColumn("s");
 
@@ -109,20 +102,14 @@ class C02E01IT extends AbstractYAMLPluginIT {
     void viaCypherSequenceValuesCanBeFound() {
         readSourceDocument();
 
-        String cypherQuery = "MATCH (f:File:Yaml) " +
-                             "-[:HAS_DOCUMENT]->(d:Yaml:Document) " +
-                             "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " +
-                             "-[:HAS_ITEM]->(sc:Yaml:Scalar) " +
-                             "WHERE f.fileName =~ '.*" +
-                             YAML_FILE + "' RETURN sc.value AS v";
+        String cypherQuery =
+            "MATCH (f:File:Yaml) " + "-[:HAS_DOCUMENT]->(d:Yaml:Document) " + "-[:HAS_SEQUENCE]->(s:Yaml:Sequence) " + "-[:HAS_ITEM]->(sc:Yaml:Scalar) "
+                + "WHERE f.fileName =~ '.*" + YAML_FILE + "' RETURN sc.value AS v";
 
         List<String> results = query(cypherQuery).getColumn("v");
 
         assertThat(results).hasSize(3)
-                           .containsExactly("Mark McGwire",
-                                            "Sammy Sosa",
-                                            "Ken Griffey");
+            .containsExactly("Mark McGwire", "Sammy Sosa", "Ken Griffey");
     }
-
 
 }
