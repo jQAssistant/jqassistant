@@ -40,7 +40,7 @@ public class ConfigurationMappingLoader {
     public static final List<Path> DEFAULT_CONFIG_LOCATIONS = List.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
         .stream()
         .map(Paths::get)
-        .collect(toList());
+        .collect(toUnmodifiableList());
 
     /**
      * The ordinal for config sources from the user home.
@@ -264,7 +264,7 @@ public class ConfigurationMappingLoader {
                 return emptyList();
             }
             if (file.isDirectory()) {
-                log.info("Loading configuration from directory '{}'.", configLocationPath.toAbsolutePath());
+                log.info("Scanning for configuration files in directory '{}'.", configLocationPath.toAbsolutePath());
                 List<Path> configurationFiles = findYamlConfigurationFiles(configLocationPath);
                 return configurationFiles.stream()
                     .map(path -> getYamlConfigSource(path, ordinal))
