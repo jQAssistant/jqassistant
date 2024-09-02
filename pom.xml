@@ -110,7 +110,7 @@
         <slf4j.version>2.0.16</slf4j.version>
         <smallrye-config.version>3.9.1</smallrye-config.version>
         <maven-resolver.version>1.9.22</maven-resolver.version>
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <snakeyaml.version>2.3</snakeyaml.version>
         <snakeyaml-engine.version>2.7</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xo.version>2.2.9</xo.version>
