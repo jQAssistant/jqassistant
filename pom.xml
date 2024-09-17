@@ -80,7 +80,7 @@
         <commons-digester.version>2.1</commons-digester.version>
         <commons-io.version>2.16.1</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.16.0</commons-lang3.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-text.version>1.12.0</commons-text.version>
         <guava.version>33.3.0-jre</guava.version>
         <guice.version>7.0.0</guice.version>
@@ -92,12 +92,12 @@
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <json-schema-validator.version>1.5.1</json-schema-validator.version>
-        <junit.version>5.10.3</junit.version>
+        <junit.version>5.11.0</junit.version>
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
         <lombok.version>1.18.34</lombok.version>
-        <mapstruct.version>1.6.0</mapstruct.version>
+        <mapstruct.version>1.6.2</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.12.0</mockito.version>
+        <mockito.version>5.13.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
@@ -106,11 +106,11 @@
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
         <neo4j.neo4j-java-driver.version>4.4.17</neo4j.neo4j-java-driver.version>
-        <neo4j-browser.version>5.21.0</neo4j-browser.version>
+        <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.16</slf4j.version>
         <smallrye-config.version>3.9.1</smallrye-config.version>
         <maven-resolver.version>1.9.22</maven-resolver.version>
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <snakeyaml.version>2.3</snakeyaml.version>
         <snakeyaml-engine.version>2.7</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xo.version>2.2.9</xo.version>
@@ -120,7 +120,7 @@
         <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.5.0</maven.checkstyle.version>
-        <maven.owasp-dependency-check.version>10.0.3</maven.owasp-dependency-check.version>
+        <maven.owasp-dependency-check.version>10.0.4</maven.owasp-dependency-check.version>
         <maven.cyclonedx.version>2.8.1</maven.cyclonedx.version>
         <maven.clean.version>3.4.0</maven.clean.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
@@ -128,11 +128,11 @@
         <maven.deploy.version>3.1.3</maven.deploy.version>
         <maven.release.version>3.1.1</maven.release.version>
         <maven.enforcer.version>3.5.0</maven.enforcer.version>
-        <maven.failsafe.version>3.4.0</maven.failsafe.version>
+        <maven.failsafe.version>3.5.0</maven.failsafe.version>
         <maven.jacoco.version>0.8.12</maven.jacoco.version>
         <maven.install.version>3.1.3</maven.install.version>
         <maven.jar.version>3.4.2</maven.jar.version>
-        <maven.javadoc.version>3.8.0</maven.javadoc.version>
+        <maven.javadoc.version>3.10.0</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
         <maven.resources.version>3.3.1</maven.resources.version>
         <maven.shade.version>3.6.0</maven.shade.version>
@@ -141,8 +141,9 @@
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.1.0</maven.xml.version>
         <maven.invoker.version>3.8.0</maven.invoker.version>
+        <maven.invoker.groovy.version>4.0.23</maven.invoker.groovy.version>
         <org.asciidoctor-plugin.version>3.0.0</org.asciidoctor-plugin.version>
-        <maven-gpg-plugin.version>3.2.5</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
@@ -314,12 +315,12 @@
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
                             <artifactId>groovy</artifactId>
-                            <version>4.0.22</version>
+                            <version>${maven.invoker.groovy.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
                             <artifactId>groovy-xml</artifactId>
-                            <version>4.0.22</version>
+                            <version>${maven.invoker.groovy.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
