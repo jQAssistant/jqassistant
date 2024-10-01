@@ -97,7 +97,7 @@
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.6.2</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.14.0</mockito.version>
+        <mockito.version>5.14.1</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
