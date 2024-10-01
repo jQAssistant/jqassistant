@@ -86,7 +86,7 @@
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <jackson.version>2.17.2</jackson.version>
+        <jackson.version>2.18.0</jackson.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
@@ -97,7 +97,7 @@
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.6.2</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.13.0</mockito.version>
+        <mockito.version>5.14.1</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <neo4j_4x.version>4.4.36</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
@@ -143,7 +143,7 @@
         <maven.invoker.version>3.8.0</maven.invoker.version>
         <maven.invoker.groovy.version>4.0.23</maven.invoker.groovy.version>
         <org.asciidoctor-plugin.version>3.0.0</org.asciidoctor-plugin.version>
-        <maven-gpg-plugin.version>3.2.6</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
