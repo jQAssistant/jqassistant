@@ -115,7 +115,7 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xo.version>2.2.9</xo.version>
         <!-- Maven plugin versions -->
-        <doxia-markdown.version>1.12.0</doxia-markdown.version>
+        <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
