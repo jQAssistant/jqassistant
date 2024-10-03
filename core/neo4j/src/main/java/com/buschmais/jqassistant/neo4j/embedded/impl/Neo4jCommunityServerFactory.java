@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServerFactory;
 import com.buschmais.jqassistant.neo4j.embedded.InstrumentationProvider;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
+import lombok.extern.slf4j.Slf4j;
 import org.neo4j.configuration.GraphDatabaseInternalSettings;
 import org.neo4j.configuration.GraphDatabaseSettings;
 import org.neo4j.configuration.connectors.BoltConnector;
@@ -28,6 +29,7 @@ import org.neo4j.io.ByteUnit;
 
 import static java.lang.Boolean.FALSE;
 
+@Slf4j
 public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
 
     @Override
@@ -119,7 +121,7 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
      */
     private static Consumer<Path> getInstrumentationAppender() {
         return path -> InstrumentationProvider.INSTANCE.getInstrumentation()
-            .ifPresent(instrumentation -> {
+            .ifPresentOrElse(instrumentation -> {
                 JarFile jarFile;
                 try {
                     jarFile = new JarFile(path.toFile());
@@ -127,6 +129,6 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
                     throw new IllegalStateException("Cannot create JAR from file " + path.toAbsolutePath(), e);
                 }
                 instrumentation.appendToSystemClassLoaderSearch(jarFile);
-            });
+            }, () -> log.warn("Runtime instrumentation is not available, Neo4j plugins might not work."));
     }
 }

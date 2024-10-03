@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import static java.nio.file.Files.createTempDirectory;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.apache.commons.io.FileUtils.copyFileToDirectory;
+import static org.apache.commons.io.FileUtils.copyFile;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -94,10 +94,13 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         List<File> files = artifactProvider.resolve(plugins);
         File pluginDirectory = getNeo4jPluginDirectory(embedded);
         for (File file : files) {
-            try {
-                copyFileToDirectory(file, pluginDirectory);
-            } catch (IOException e) {
-                throw new IllegalStateException("Cannot copy Neo4j plugins to " + pluginDirectory, e);
+            File destFile = new File(pluginDirectory, file.getName());
+            if (!destFile.exists()) {
+                try {
+                    copyFile(file, destFile);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot copy Neo4j plugins to " + pluginDirectory, e);
+                }
             }
         }
         log.info("Installed {} artifact(s) into Neo4j plugin directory '{}'.", files.size(), pluginDirectory.getAbsolutePath());
