@@ -88,6 +88,7 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
      */
     private static Consumer<Path> getClasspathAppender() {
         ClassLoader neo4jClassLoader = GraphDatabaseSettings.class.getClassLoader();
+        log.info("Using neo4j classloader {}", neo4jClassLoader);
         if (neo4jClassLoader instanceof URLClassLoader) {
             return getURLClassLoaderAppender(neo4jClassLoader);
         } else {
