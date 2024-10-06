@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
@@ -28,6 +29,7 @@ import org.neo4j.configuration.helpers.SocketAddress;
 import org.neo4j.io.ByteUnit;
 
 import static java.lang.Boolean.FALSE;
+import static java.util.stream.Collectors.toSet;
 
 @Slf4j
 public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
@@ -73,24 +75,26 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
      *     The plugin directory.
      */
     private static void prepareClassloader(Path pluginDir) {
-        Consumer<Path> classpathAppender = getClasspathAppender();
+        Set<Path> paths;
         try (Stream<Path> pathStream = Files.find(pluginDir, 1, (p, a) -> p.getFileName()
             .toString()
             .endsWith(".jar"))) {
-            pathStream.forEach(classpathAppender::accept);
+            paths = pathStream.collect(toSet());
         } catch (IOException e) {
             throw new IllegalStateException("Cannot list plugin directory " + pluginDir, e);
         }
+        getClasspathAppender().accept(paths);
+
     }
 
     /**
      * Provides a {@link Consumer} to add the {@link Path} of a JAR file to the {@link ClassLoader} used by Neo4j.
      */
-    private static Consumer<Path> getClasspathAppender() {
+    private static Consumer<Set<Path>> getClasspathAppender() {
         ClassLoader neo4jClassLoader = GraphDatabaseSettings.class.getClassLoader();
-        log.info("Using neo4j classloader {}", neo4jClassLoader);
+        log.info("Using Neo4j classloader {}", neo4jClassLoader);
         if (neo4jClassLoader instanceof URLClassLoader) {
-            return getURLClassLoaderAppender(neo4jClassLoader);
+            return getURLClassLoaderAppender((URLClassLoader) neo4jClassLoader);
         } else {
             return getInstrumentationAppender();
         }
@@ -99,37 +103,52 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
     /**
      * Uses an existing {@link URLClassLoader} (e.g. Maven) by making the method addURL accessible.
      */
-    private static Consumer<Path> getURLClassLoaderAppender(ClassLoader classLoader) {
+    private static Consumer<Set<Path>> getURLClassLoaderAppender(URLClassLoader classLoader) {
+        Method method;
         try {
-            Method method = classLoader.getClass()
+            method = classLoader.getClass()
                 .getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            return path -> {
-                try {
-                    method.invoke(classLoader, path.toUri()
-                        .toURL());
-                } catch (ReflectiveOperationException | MalformedURLException e) {
-                    throw new IllegalStateException(e);
-                }
-            };
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Cannot use URLClassLoader to extend classpath.", e);
         }
+        method.setAccessible(true);
+        Set<URL> existingUrls = Set.of(classLoader.getURLs());
+        return paths -> {
+            for (Path path : paths) {
+                URL url;
+                try {
+                    url = path.toUri()
+                        .toURL();
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException(e);
+                }
+                if (!existingUrls.contains(url)) {
+                    try {
+                        method.invoke(classLoader, url);
+                    } catch (ReflectiveOperationException e) {
+                        throw new IllegalStateException("Cannot add URL to classloader.", e);
+                    }
+                }
+            }
+        };
     }
 
     /**
      * Uses {@link java.lang.instrument.Instrumentation} if available (e.g. CLI).
      */
-    private static Consumer<Path> getInstrumentationAppender() {
-        return path -> InstrumentationProvider.INSTANCE.getInstrumentation()
+    private static Consumer<Set<Path>> getInstrumentationAppender() {
+        return paths -> InstrumentationProvider.INSTANCE.getInstrumentation()
             .ifPresentOrElse(instrumentation -> {
-                JarFile jarFile;
-                try {
-                    jarFile = new JarFile(path.toFile());
-                } catch (IOException e) {
-                    throw new IllegalStateException("Cannot create JAR from file " + path.toAbsolutePath(), e);
+                for (Path path : paths) {
+                    JarFile jarFile;
+                    try {
+                        jarFile = new JarFile(path.toFile());
+                    } catch (IOException e) {
+                        throw new IllegalStateException("Cannot create JAR from file " + path.toAbsolutePath(), e);
+                    }
+                    instrumentation.appendToSystemClassLoaderSearch(jarFile);
+
                 }
-                instrumentation.appendToSystemClassLoaderSearch(jarFile);
             }, () -> log.warn("Runtime instrumentation is not available, Neo4j plugins might not work."));
     }
 }
