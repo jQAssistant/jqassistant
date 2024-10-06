@@ -32,7 +32,7 @@
                         </manifest>
                         <manifestEntries>
                             <!-- Required for loading Neo4j plugins with embedded store -->
-                            <Launcher-Agent-Class>com.buschmais.jqassistant.neo4j.embedded.InstrumentationProvider</Launcher-Agent-Class>
+                            <Launcher-Agent-Class>com.buschmais.xo.neo4j.embedded.api.InstrumentationProvider</Launcher-Agent-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>

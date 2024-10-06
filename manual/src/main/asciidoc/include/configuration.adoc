@@ -89,13 +89,7 @@ jqassistant:
       # -Djqassistant.store.embedded.http-port
       http-port: 7474
 
-      # The directory from which Neo4j shall load plugins (e.g. APOC)
-      #
-      # -Djqassistant.store.embedded.neo4j-plugin-directory
-      neo4j-plugin-directory:
-
       # The list of Neo4j plugins to load and activate.
-      # It uses the "neo4j-plugin-directory" (see above) if provided, otherwise a temporary directory is created.
       neo4j-plugins:
         # Each plugin is identified using its Maven coordinates:
         #
