@@ -27,4 +27,14 @@ public interface Remote {
     @Description("The password for authenticating against the repository.")
     Optional<String> password();
 
+    String RELEASES = "releases";
+
+    @Description("The release repository policy.")
+    Policy releases();
+
+    String SNAPSHOTS = "snapshots";
+
+    @Description("The snapshot repository policy.")
+    Policy snapshots();
+
 }

@@ -67,6 +67,14 @@ class MavenSettingsConfigSourceBuilderTest {
         Remote publicRemote = remotes.get("public");
         assertThat(publicRemote).isNotNull();
         assertThat(publicRemote.url()).isEqualTo("https://public-repo.acme.com/");
+        Policy releasesPolicy = publicRemote.releases();
+        assertThat(releasesPolicy.enabled()).isTrue();
+        assertThat(releasesPolicy.updatePolicy()).isEqualTo("never");
+        assertThat(releasesPolicy.checksumPolicy()).isEqualTo("ignore");
+        Policy snapshotsPolicy = publicRemote.snapshots();
+        assertThat(snapshotsPolicy.enabled()).isFalse();
+        assertThat(snapshotsPolicy.updatePolicy()).isEqualTo("always");
+        assertThat(snapshotsPolicy.checksumPolicy()).isEqualTo("fail");
 
         Remote privateRemote = remotes.get("private-repo");
         assertThat(privateRemote).isNotNull();
