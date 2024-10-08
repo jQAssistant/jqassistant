@@ -53,6 +53,36 @@ jqassistant:
         # -Djqassistant.repositories.central.password (optional)
         password:
 
+        # The repository policy for releases (optional)
+        releases:
+          # If true then this repository is used to resolve releases.
+          #
+          # -Djqassistant.repositories.central.releases.enabled
+          enabled: true
+          # Determines the update policy: never|daily|always|interval:X (in minutes)
+          #
+          # -Djqassistant.repositories.central.releases.update-policy
+          update-policy: daily
+          # Determines the checksum policy: fail|warn|ignore
+          #
+          # -Djqassistant.repositories.central.releases.checksum-policy
+          checksum-policy: warn
+
+        # The repository policy for snapshots (optional)
+        snapshots:
+          # If true then this repository is used to resolve releases.
+          #
+          # -Djqassistant.repositories.central.snapshots.enabled
+          enabled: true
+          # Determines the update policy: never|daily|always|interval:X (in minutes)
+          #
+          # -Djqassistant.repositories.central.snapshots.update-policy
+          update-policy: daily
+          # Determines the checksum policy: fail|warn|ignore
+          #
+          # -Djqassistant.repositories.central.snapshots.checksum-policy
+          checksum-policy: warn
+
     # If true (default), ignore any repositories specified by transitive dependencies.
     #
     # -Djqassistant.repositories.ignore-transitive-repositories (optional)
