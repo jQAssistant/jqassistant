@@ -19,6 +19,7 @@ import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSo
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
+import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
@@ -61,6 +62,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     @Parameter
     private String yaml;
+
+    @Parameter
+    private Properties properties;
 
     /**
      * The Maven Session.
@@ -266,10 +270,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         MavenPropertiesConfigSource userPropertiesConfigSource = new MavenPropertiesConfigSource(session.getUserProperties(), "Maven Session User Properties ");
         MavenPropertiesConfigSource systemPropertiesConfigSource = new MavenPropertiesConfigSource(session.getSystemProperties(),
             "Maven Session System Properties");
-        ConfigSource mavenPluginConfiguration = getMavenPluginConfiguration();
+        ConfigSource yamlConfiguration = getYamlPluginConfiguration();
+        ConfigSource propertiesConfiguration = getPropertiesPluginConfiguration();
 
         ConfigSource[] configSources = new ConfigSource[] { configurationBuilder.build(), projectConfigSource, settingsConfigSource,
-            projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, mavenPluginConfiguration };
+            projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
         ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
@@ -286,9 +291,16 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         return builder.load(configSources);
     }
 
-    private ConfigSource getMavenPluginConfiguration() {
+    private ConfigSource getYamlPluginConfiguration() {
         return isNotEmpty(yaml) ?
-            new YamlConfigSource("Maven plugin execution configuration", yaml, MavenPropertiesConfigSource.CONFIGURATION_ORDINAL_MAVEN_PROPERTIES) :
+            new YamlConfigSource("Maven plugin execution YAML configuration", yaml, MavenPropertiesConfigSource.CONFIGURATION_ORDINAL_MAVEN_PROPERTIES) :
+            EmptyConfigSource.INSTANCE;
+    }
+
+    private ConfigSource getPropertiesPluginConfiguration() {
+        return properties != null ?
+            new PropertiesConfigSource(properties, "Maven plugin execution properties configuration",
+                MavenPropertiesConfigSource.CONFIGURATION_ORDINAL_MAVEN_PROPERTIES) :
             EmptyConfigSource.INSTANCE;
     }
 
