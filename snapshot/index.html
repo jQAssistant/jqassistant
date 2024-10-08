@@ -3203,6 +3203,36 @@ Available options are described in the section <a href="#core:Configuration">Con
         <span class="comment"># -Djqassistant.repositories.central.password (optional)</span>
         <span class="key">password</span>:
 
+        <span class="comment"># The repository policy for releases (optional)</span>
+        <span class="key">releases</span>:
+          <span class="comment"># If true then this repository is used to resolve releases.</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.releases.enabled</span>
+          <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
+          <span class="comment"># Determines the update policy: never|daily|always|interval:X (in minutes)</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.releases.update-policy</span>
+          <span class="key">update-policy</span>: <span class="string"><span class="content">daily</span></span>
+          <span class="comment"># Determines the checksum policy: fail|warn|ignore</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.releases.checksum-policy</span>
+          <span class="key">checksum-policy</span>: <span class="string"><span class="content">warn</span></span>
+
+        <span class="comment"># The repository policy for snapshots (optional)</span>
+        <span class="key">snapshots</span>:
+          <span class="comment"># If true then this repository is used to resolve releases.</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.snapshots.enabled</span>
+          <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
+          <span class="comment"># Determines the update policy: never|daily|always|interval:X (in minutes)</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.snapshots.update-policy</span>
+          <span class="key">update-policy</span>: <span class="string"><span class="content">daily</span></span>
+          <span class="comment"># Determines the checksum policy: fail|warn|ignore</span>
+          <span class="comment">#</span>
+          <span class="comment"># -Djqassistant.repositories.central.snapshots.checksum-policy</span>
+          <span class="key">checksum-policy</span>: <span class="string"><span class="content">warn</span></span>
+
     <span class="comment"># If true (default), ignore any repositories specified by transitive dependencies.</span>
     <span class="comment">#</span>
     <span class="comment"># -Djqassistant.repositories.ignore-transitive-repositories (optional)</span>
@@ -11688,7 +11718,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-08 13:00:06 UTC
+Last updated 2024-10-08 17:32:07 UTC
 </div>
 </div>
 </body>
