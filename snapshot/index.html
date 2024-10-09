@@ -3643,10 +3643,13 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
                             &lt;configurationLocations&gt;
                                 &lt;configurationLocation&gt;/home/runner/work/jqassistant/jqassistant/maven/.jqassistant.yml&lt;/configurationLocation&gt;
                             &lt;/configurationLocations&gt;
-                            &lt;yaml&gt;
+                            &lt;yaml&gt;&lt;![CDATA[
                                 jqassistant:
                                   skip: true
-                            &lt;yaml&gt;
+                            ]]&gt;&lt;/yaml&gt;
+                            &lt;properties&gt;
+                              &lt;jqassistant.skip&gt;true&lt;/jqassistant.skip&gt;
+                            &lt;/properties&gt;
                             --&gt;</span>
                         <span class="tag">&lt;/configuration&gt;</span>
                     <span class="tag">&lt;/execution&gt;</span>
@@ -3701,7 +3704,20 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
 <div class="ulist">
 <ul>
 <li>
-<p>embedded YAML configuration</p>
+<p>embedded configuration using YAML</p>
+</li>
+<li>
+<p>can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">properties</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>embedded configuration using properties</p>
 </li>
 <li>
 <p>can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration</p>
@@ -11688,7 +11704,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-09 06:04:06 UTC
+Last updated 2024-10-09 08:02:37 UTC
 </div>
 </div>
 </body>
