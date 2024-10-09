@@ -144,10 +144,13 @@ The configuration furthermore supports profiles, e.g. for `mvn verify -Pcustom-p
                             <configurationLocations>
                                 <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
                             </configurationLocations>
-                            <yaml>
+                            <yaml><![CDATA[
                                 jqassistant:
                                   skip: true
-                            <yaml>
+                            ]]></yaml>
+                            <properties>
+                              <jqassistant.skip>true</jqassistant.skip>
+                            </properties>
                             -->
                         </configuration>
                     </execution>
@@ -187,8 +190,13 @@ configurationLocations (-Djqassistant.configuration.locations)::
 * default: '.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml'
 
 yaml::
-* embedded YAML configuration
+* embedded configuration using YAML
 * can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
+
+properties::
+* embedded configuration using properties
+* can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
+
 
 If multiple, partially overlapping configurations are provided then the following priorities apply (from lowest to highest):
 
