@@ -34,8 +34,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
+import static org.eclipse.aether.repository.RepositoryPolicy.*;
 
 /**
  * Factory for the {@link PluginResolver} to be used in standalone in the CLI.
@@ -47,9 +46,24 @@ public class ArtifactProviderFactory {
 
     public static final String MAVEN_CENTRAL_URL = "https://repo1.maven.org/maven2";
 
-    private static final RepositoryPolicy SNAPSHOT_REPOSITORY_POLICY = new RepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_FAIL);
-
     private static final String REPOSITORY_LAYOUT_DEFAULT = "default";
+
+    private static final Policy DEFAULT_REPOSITORY_POLICY = new Policy() {
+        @Override
+        public boolean enabled() {
+            return true;
+        }
+
+        @Override
+        public String updatePolicy() {
+            return UPDATE_POLICY_DAILY;
+        }
+
+        @Override
+        public String checksumPolicy() {
+            return CHECKSUM_POLICY_WARN;
+        }
+    };
 
     private static final Remote MAVEN_CENTRAL = new Remote() {
         @Override
@@ -65,6 +79,16 @@ public class ArtifactProviderFactory {
         @Override
         public Optional<String> password() {
             return empty();
+        }
+
+        @Override
+        public Policy releases() {
+            return DEFAULT_REPOSITORY_POLICY;
+        }
+
+        @Override
+        public Policy snapshots() {
+            return DEFAULT_REPOSITORY_POLICY;
         }
     };
 
@@ -189,10 +213,15 @@ public class ArtifactProviderFactory {
     }
 
     private static RemoteRepository getRemoteRepository(String id, Remote remote, ProxySelector proxySelector) {
-        RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()).setSnapshotPolicy(
-                SNAPSHOT_REPOSITORY_POLICY)
+        RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()) //
+            .setReleasePolicy(getRepositoryPolicy(remote.releases()))
+            .setSnapshotPolicy(getRepositoryPolicy(remote.snapshots()))
             .build();
         return getRemoteRepository(remoteRepository, proxySelector, remote.username(), remote.password());
+    }
+
+    private static RepositoryPolicy getRepositoryPolicy(Policy policy) {
+        return new RepositoryPolicy(policy.enabled(), policy.updatePolicy(), policy.checksumPolicy());
     }
 
     private static RemoteRepository getRemoteRepository(RemoteRepository remoteRepository, ProxySelector proxySelector, Optional<String> optionalUsername,

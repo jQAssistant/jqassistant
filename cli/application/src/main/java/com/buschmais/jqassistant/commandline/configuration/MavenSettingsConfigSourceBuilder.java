@@ -144,7 +144,17 @@ public class MavenSettingsConfigSourceBuilder {
             .collect(toList()));
         for (Repository repository : repositories) {
             put(repository.getUrl(), properties, Remote.PREFIX, repository.getId(), Remote.URL);
+            applyRepositoryPolicy(repository.getId(), repository.getReleases(), properties, Remote.RELEASES);
+            applyRepositoryPolicy(repository.getId(), repository.getSnapshots(), properties, Remote.SNAPSHOTS);
             applyServerCredentials(repository.getId(), settings, properties, Remote.PREFIX, Remote.USERNAME, Remote.PASSWORD);
+        }
+    }
+
+    private static void applyRepositoryPolicy(String repositoryId, RepositoryPolicy policy, Map<String, String> properties, String policyPrefix) {
+        if (policy != null) {
+            put(Boolean.toString(policy.isEnabled()), properties, Remote.PREFIX, repositoryId, policyPrefix, Policy.ENABLED);
+            put(policy.getUpdatePolicy(), properties, Remote.PREFIX, repositoryId, policyPrefix, Policy.UPDATE_POLICY);
+            put(policy.getChecksumPolicy(), properties, Remote.PREFIX, repositoryId, policyPrefix, Policy.CHECKSUM_POLICY);
         }
     }
 
