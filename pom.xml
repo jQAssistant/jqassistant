@@ -298,6 +298,7 @@
                         <goals>
                             <goal>verify -e</goal>
                         </goals>
+                        <updateSnapshots>true</updateSnapshots>
                         <streamLogs>true</streamLogs>
                         <postBuildHookScript>verify</postBuildHookScript>
                         <writeJunitReport>true</writeJunitReport>
