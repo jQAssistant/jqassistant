@@ -99,7 +99,7 @@
         <maven.version>3.6.3</maven.version>
         <mockito.version>5.14.2</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
-        <neo4j_4x.version>4.4.38</neo4j_4x.version>
+        <neo4j_4x.version>5.24.2</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.24.2</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
