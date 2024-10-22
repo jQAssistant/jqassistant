@@ -140,7 +140,7 @@
         <maven.source.plugin>3.3.1</maven.source.plugin>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.1.0</maven.xml.version>
-        <maven.invoker.version>3.8.0</maven.invoker.version>
+        <maven.invoker.version>3.8.1</maven.invoker.version>
         <maven.invoker.groovy.version>4.0.23</maven.invoker.groovy.version>
         <org.asciidoctor-plugin.version>3.0.0</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
