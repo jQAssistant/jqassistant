@@ -130,10 +130,9 @@
             <table>
                 <tr>
                     <th style="width:5%;">#</th>
-                    <th style="width:50%;">Constraint Name</th>
+                    <th style="width:70%;">Constraint Name</th>
                     <th style="width:15%;">Count</th>
-                    <th style="width:15%;">Severity</th>
-                    <th style="width:15%;">Duration (in ms)</th>
+                    <th style="width:10%;">Severity</th>
                 </tr>
                 <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -160,10 +159,9 @@
             <table>
                 <tr>
                     <th style="width:5%;">#</th>
-                    <th style="width:65%;">Concept Name</th>
-                    <th style="width:10%;">Count</th>
+                    <th style="width:70%;">Concept Name</th>
+                    <th style="width:15%;">Count</th>
                     <th style="width:10%;">Severity</th>
-                    <th style="width:10%;">Duration (in ms)</th>
                 </tr>
                 <xsl:apply-templates select="//tns:concept[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -235,14 +233,14 @@
             <td class="right">
                 <xsl:value-of select="tns:severity/text()"/>
             </td>
-            <td class="right">
-                <xsl:value-of select="tns:duration/text()"/>
-            </td>
         </tr>
         <tr id="resultOf{$ruleId}" style="display:none;" name="resultRow">
             <td colspan="5">
                 <p>
                     <xsl:value-of select="tns:description/text()"/>
+                </p>
+                <p>
+                    Execution Time (in ms): <xsl:value-of select="tns:duration/text()"/>
                 </p>
                 <xsl:choose>
                     <xsl:when test="tns:result">
