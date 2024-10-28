@@ -56,7 +56,7 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     @Test
     public void testWithDeepAndShallowAssertion() {
-        assertTrue(true);
+        assertTrue(true, "Condition must be true");
         deepNestedAssertion();
     }
 
@@ -87,7 +87,7 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
     }
 
     private void deepNestedAssertion3() {
-        assertTrue(true);
+        assertTrue(true, "Condition must be true");
     }
 
     private void throwsException() throws IllegalArgumentException {
