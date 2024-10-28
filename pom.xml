@@ -119,7 +119,7 @@
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
-        <maven.checkstyle.version>3.5.0</maven.checkstyle.version>
+        <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.owasp-dependency-check.version>11.0.0</maven.owasp-dependency-check.version>
         <maven.cyclonedx.version>2.9.0</maven.cyclonedx.version>
         <maven.clean.version>3.4.0</maven.clean.version>
