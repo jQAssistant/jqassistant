@@ -7176,12 +7176,10 @@ ORDER BY
 OPTIONAL MATCH
   path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]-&gt;(assert:Method:Assert))
 WITH
-  testClass, testMethod, COLLECT(length(path)) as lengths
-WITH
-  testClass, testMethod, REDUCE(minVal = lengths[0], n IN lengths | CASE WHEN n &lt; minVal THEN n ELSE minVal END) AS shortestPathLength
+  testClass, testMethod, path
 WHERE
-  shortestPathLength is null
-  or shortestPathLength &gt; $javaTestAssertMaxCallDepth
+  path is null
+  or length(path) &gt; $javaTestAssertMaxCallDepth
 RETURN
   distinct testClass AS TestClass, testMethod AS TestMethod
 ORDER BY
@@ -11736,7 +11734,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-25 09:01:34 UTC
+Last updated 2024-10-28 00:57:23 UTC
 </div>
 </div>
 </body>
