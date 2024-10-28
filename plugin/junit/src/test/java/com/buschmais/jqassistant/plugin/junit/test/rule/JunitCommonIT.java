@@ -204,7 +204,7 @@ public class JunitCommonIT extends AbstractJunitIT {
                 .getValue())
             .map(MethodDescriptor.class::cast)
             .collect(toList());
-        assertThat(methods.size(), equalTo(4));
+        assertThat(methods.size(), equalTo(5));
 
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
             methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
