@@ -50,6 +50,17 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
     }
 
     @Test
+    public void testWithDeepNestedAssertion() {
+        deepNestedAssertion();
+    }
+
+    @Test
+    public void testWithDeepAndShallowAssertion() {
+        assertTrue(true);
+        deepNestedAssertion();
+    }
+
+    @Test
     public void assertWithNonVoidReturn() {
         assertThrows(IllegalArgumentException.class, this::throwsException);
     }
@@ -61,6 +72,22 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     private void nestedAssertion() {
         fail("Failing");
+    }
+
+    private void deepNestedAssertion() {
+        deepNestedAssertion1();
+    }
+
+    private void deepNestedAssertion1() {
+        deepNestedAssertion2();
+    }
+
+    private void deepNestedAssertion2() {
+        deepNestedAssertion3();
+    }
+
+    private void deepNestedAssertion3() {
+        assertTrue(true);
     }
 
     private void throwsException() throws IllegalArgumentException {

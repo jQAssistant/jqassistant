@@ -209,6 +209,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
             methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
             methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class),
+            methodDescriptor(Assertions4Junit5.class, "testWithDeepNestedAssertion"),
             methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")));
 
         store.commitTransaction();
