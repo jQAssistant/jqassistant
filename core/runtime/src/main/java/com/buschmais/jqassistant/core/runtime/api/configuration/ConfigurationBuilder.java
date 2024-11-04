@@ -1,13 +1,21 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
+import com.fasterxml.classmate.ResolvedType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.victools.jsonschema.generator.*;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.PropertiesConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSource;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.PropertiesConfigSource;
-import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
  * Builder for a {@link ConfigSource} providing utility methods to support construction.
@@ -37,7 +45,81 @@ public class ConfigurationBuilder {
     public ConfigurationBuilder(String name, int ordinal) {
         this.name = name;
         this.ordinal = ordinal;
+        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON)
+            .with(Option.STATIC_METHODS).with(Option.PUBLIC_STATIC_FIELDS);
+
+        configBuilder.forTypesInGeneral()
+            .withCustomDefinitionProvider((javaType, context) -> {
+                if (javaType.getErasedType().isInterface()) {
+                    ObjectNode schema = context.getGeneratorConfig().createObjectNode();
+                    TypeContext typeContext = context.getTypeContext();
+
+                    for (Method method : javaType.getErasedType().getMethods()) {
+                        String propertyName = method.getName();
+                        propertyName = camelToKebabCase(propertyName);
+                        ResolvedType returnType = typeContext.resolve(method.getGenericReturnType());
+                        JsonNode propertySchema = generateSchemaForReturnType(returnType, context);
+                        schema.set(propertyName, propertySchema);
+                    }
+                    return new CustomDefinition(schema);
+                }
+                return null;
+            });
+
+        SchemaGeneratorConfig config = configBuilder.build();
+        SchemaGenerator generator = new SchemaGenerator(config);
+        ObjectNode jsonSchema = generator.generateSchema(Configuration.class);
+        saveSchemaToFile(jsonSchema, "target", "jsonSchema");
+        System.out.println(jsonSchema.toString());
+
     }
+
+    // reflexiver Aufruf um sub-interfaces abzufangen - Codedopplungen refaktorieren?
+    private JsonNode generateSchemaForReturnType(ResolvedType returnType, SchemaGenerationContext context) {
+        Class<?> erasedType = returnType.getErasedType();
+        if ((erasedType.isPrimitive() || erasedType == String.class || erasedType.getPackageName().startsWith("java."))) {
+
+            ObjectNode simpleSchema = context.getGeneratorConfig().createObjectNode();
+            simpleSchema.put("type", returnType.getErasedType().getSimpleName().toLowerCase());
+            return simpleSchema;
+        }
+        ObjectNode returnTypeSchema = context.getGeneratorConfig().createObjectNode();
+        if (returnType.getErasedType().isInterface()) {
+            TypeContext typeContext = context.getTypeContext();
+            for (Method returnMethod : returnType.getErasedType().getMethods()) {
+                String returnPropertyName = returnMethod.getName();
+                returnPropertyName = camelToKebabCase(returnPropertyName );
+                ResolvedType nestedReturnType = typeContext.resolve(returnMethod.getGenericReturnType());
+                JsonNode nestedPropertySchema = generateSchemaForReturnType(nestedReturnType, context);
+                returnTypeSchema.set(returnPropertyName, nestedPropertySchema);
+
+            }
+        }
+        return returnTypeSchema;
+    }
+
+    // Saving the json schema in runtime/target
+    private void saveSchemaToFile(ObjectNode schema, String targetFolder, String fileName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File targetFile = new File(targetFolder, fileName);
+        try {
+            new File(targetFolder);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(targetFile, schema);
+            System.out.println("Schema saved: " + targetFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String camelToKebabCase(String str) {
+        return str.replaceAll("([a-z0-9])([A-Z])", "$1-$2").toLowerCase();
+    }
+
+/**
+ private static String convertToKebabCase(String input) {
+ return input.replaceAll("([a-z])([A-Z]+)", "$1-$2").toLowerCase(Locale.ROOT);
+ }
+ **/
 
     /**
      * Build the {@link ConfigSource}.
