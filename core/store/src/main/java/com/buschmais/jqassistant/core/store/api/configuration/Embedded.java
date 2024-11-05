@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.store.api.configuration;
 
-import java.io.File;
 import java.util.List;
-import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
@@ -40,6 +38,4 @@ public interface Embedded {
 
     List<Plugin> neo4jPlugins();
 
-    String NEO4J_PLUGIN_DIRECTORY = "neo4j-plugin-directory";
-    Optional<File> neo4jPluginDirectory();
 }
