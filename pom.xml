@@ -145,7 +145,7 @@
         <org.asciidoctor-plugin.version>3.1.0</org.asciidoctor-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
-        <maven.sonar.version>4.0.0.4121</maven.sonar.version>
+        <maven.sonar.version>5.0.0.4389</maven.sonar.version>
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
