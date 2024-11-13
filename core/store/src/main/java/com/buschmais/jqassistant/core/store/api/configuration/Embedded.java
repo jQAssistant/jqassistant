@@ -40,6 +40,4 @@ public interface Embedded {
 
     List<Plugin> neo4jPlugins();
 
-    String NEO4J_PLUGIN_DIRECTORY = "neo4j-plugin-directory";
-    Optional<File> neo4jPluginDirectory();
 }

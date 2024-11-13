@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.runtime.api.configuration;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.shared.configuration.Plugin;
@@ -17,6 +18,8 @@ import io.smallrye.config.WithDefault;
  */
 @ConfigMapping(prefix = Configuration.PREFIX)
 public interface Configuration {
+
+    Severity severity();
 
     String PREFIX = "jqassistant";
 
