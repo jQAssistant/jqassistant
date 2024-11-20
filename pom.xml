@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.buschmais.jqassistant.build</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.6.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>parent</artifactId>
     <version>2.6.0-SNAPSHOT</version>
@@ -37,19 +43,6 @@
     <prerequisites>
         <maven>${maven.version}</maven>
     </prerequisites>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <developers>
         <developer>
@@ -116,75 +109,30 @@
         <xo.version>2.3.0</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
-        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-        <maven.assembly.version>3.7.1</maven.assembly.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
-        <maven.owasp-dependency-check.version>11.1.0</maven.owasp-dependency-check.version>
-        <maven.cyclonedx.version>2.9.0</maven.cyclonedx.version>
-        <maven.clean.version>3.4.0</maven.clean.version>
-        <maven.compiler.version>3.13.0</maven.compiler.version>
-        <maven.dependency.version>3.8.1</maven.dependency.version>
-        <maven.deploy.version>3.1.3</maven.deploy.version>
-        <maven.release.version>3.1.1</maven.release.version>
-        <maven.enforcer.version>3.5.0</maven.enforcer.version>
-        <maven.failsafe.version>3.5.2</maven.failsafe.version>
-        <maven.jacoco.version>0.8.12</maven.jacoco.version>
-        <maven.install.version>3.1.3</maven.install.version>
-        <maven.jar.version>3.4.2</maven.jar.version>
-        <maven.javadoc.version>3.11.1</maven.javadoc.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
-        <maven.resources.version>3.3.1</maven.resources.version>
-        <maven.shade.version>3.6.0</maven.shade.version>
-        <maven.site.version>3.21.0</maven.site.version>
-        <maven.source.plugin>3.3.1</maven.source.plugin>
-        <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <maven.xml.version>1.1.0</maven.xml.version>
-        <maven.invoker.version>3.8.1</maven.invoker.version>
-        <maven.invoker.groovy.version>4.0.24</maven.invoker.groovy.version>
-        <org.asciidoctor-plugin.version>3.1.1</org.asciidoctor-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
-        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
-        <maven.sonar.version>4.0.0.4121</maven.sonar.version>
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- integration tests -->
-        <it.jqassistant.store.uri>memory:///</it.jqassistant.store.uri>
         <!-- tests triggered by invoker plugin & internal verification -->
         <it.jqassistant.version>2.5.0</it.jqassistant.version>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
+        <jqassistant.build.version>2.6.0-SNAPSHOT</jqassistant.build.version>
         <!-- Sonar -->
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>jqassistant</sonar.organization>
         <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
-        <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.asciidoctor</groupId>
-                    <artifactId>asciidoctor-maven-plugin</artifactId>
-                    <version>${org.asciidoctor-plugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>2.5.0</version>
-                    <executions>
-                        <execution>
-                            <id>default</id>
-                            <goals>
-                                <goal>scan</goal>
-                                <goal>analyze</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                     <configuration>
-                      <yaml>
+                      <yaml><![CDATA[
                         jqassistant:
                           scan:
                             include:
@@ -196,7 +144,7 @@
                           analyze:
                             groups:
                               - jqa-*
-                      </yaml>
+                      ]]></yaml>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -240,18 +188,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>${maven.clean.version}</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven.failsafe.version}</version>
                     <configuration>
-                        <systemPropertyVariables>
-                            <!-- default store to use for Integration tests -->
-                            <jqassistant.store.uri>${it.jqassistant.store.uri}</jqassistant.store.uri>
-                        </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
                             @{argLine}
@@ -264,12 +206,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.surefire.version}</version>
                     <configuration>
-                        <systemPropertyVariables>
-                            <!-- default store to use for Integration tests -->
-                            <jqassistant.store.uri>${it.jqassistant.store.uri}</jqassistant.store.uri>
-                        </systemPropertyVariables>
                         <!-- for JUnit Pioneer and Neo4j 4.x -->
                         <argLine>
                             @{argLine}
@@ -282,12 +219,10 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${maven.jacoco.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>${maven.invoker.version}</version>
                     <configuration>
                         <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                         <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
@@ -312,23 +247,10 @@
                             </goals>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.groovy</groupId>
-                            <artifactId>groovy</artifactId>
-                            <version>${maven.invoker.groovy.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.groovy</groupId>
-                            <artifactId>groovy-xml</artifactId>
-                            <version>${maven.invoker.groovy.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven.assembly.version}</version>
                     <executions>
                         <execution>
                             <id>attach-asciidoc</id>
@@ -355,7 +277,6 @@
                 <plugin>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok-maven-plugin</artifactId>
-                    <version>${lombok-maven-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>generate-sources</phase>
@@ -374,7 +295,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.version}</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <release>11</release>
@@ -405,7 +325,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.javadoc.version}</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <detectJavaApiLink>false</detectJavaApiLink>
@@ -422,18 +341,6 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven.install.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${maven.jar.version}</version>
                 </plugin>
 
                 <plugin>
@@ -464,46 +371,9 @@
                         </execution>
                     </executions>
                 </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>${maven.shade.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${maven.dependency.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven.deploy.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${maven.release.version}</version>
-                    <configuration>
-                        <mavenExecutorId>forked-path</mavenExecutorId>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <tagNameFormat>@{version}</tagNameFormat>
-                        <goals>deploy</goals>
-                        <releaseProfiles>release</releaseProfiles>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${maven.sonar.version}</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${maven.enforcer.version}</version>
                     <executions>
                         <execution>
                             <id>enforce-plugin-versions</id>
@@ -550,27 +420,12 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven.resources.version}</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>${maven.site.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.doxia</groupId>
                             <artifactId>doxia-module-markdown</artifactId>
                             <version>${doxia-markdown.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.asciidoctor</groupId>
-                            <artifactId>asciidoctor-maven-plugin</artifactId>
-                            <version>${org.asciidoctor-plugin.version}</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -578,11 +433,9 @@
                     </configuration>
                 </plugin>
 
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven.source.plugin}</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -608,7 +461,6 @@
                 <plugin>
                     <groupId>org.cyclonedx</groupId>
                     <artifactId>cyclonedx-maven-plugin</artifactId>
-                    <version>${maven.cyclonedx.version}</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -628,7 +480,6 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>${maven.owasp-dependency-check.version}</version>
                     <configuration>
                         <skipSystemScope>true</skipSystemScope>
                         <skipTestScope>true</skipTestScope>
@@ -642,16 +493,6 @@
                             <format>HTML</format>
                         </formats>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${maven-gpg-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${nexus-staging-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -714,138 +555,6 @@
             <properties>
                 <neo4j.version>${neo4j_5x.version}</neo4j.version>
             </properties>
-        </profile>
-        <profile>
-            <id>IT</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>it-store-remote</id>
-            <properties>
-                <it.jqassistant.store.uri>neo4j://localhost:7687</it.jqassistant.store.uri>
-            </properties>
-        </profile>
-        <profile>
-            <id>it-store-file</id>
-            <properties>
-                <it.jqassistant.store.uri>file:${project.build.directory}/jqassistant/test-store</it.jqassistant.store.uri>
-            </properties>
-        </profile>
-        <profile>
-            <id>owasp</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.owasp</groupId>
-                        <artifactId>dependency-check-maven</artifactId>
-                        <version>${maven.owasp-dependency-check.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release</id>
-            <!--
-             ! This profile is automatically activated by using maven-release-plugin:perfom.
-             ! So this mean signing of artifacts is only done in case of running a release.
-             !-->
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-release-versions</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireReleaseDeps />
-                                        <requireReleaseVersion />
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <configuration>
-                            <!-- Prevent `gpg` from using pinentry programs -->
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>sonatype-nexus-staging</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>IntelliJ</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>idea.maven.embedder.version</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
     <modules>
