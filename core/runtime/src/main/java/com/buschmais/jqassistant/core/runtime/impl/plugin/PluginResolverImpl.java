@@ -10,8 +10,8 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
-import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

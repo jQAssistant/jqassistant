@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.*;
 import java.util.function.Supplier;
 
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.runtime.impl.plugin.AetherArtifactProvider;
+import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.scm.maven.configuration.Maven;
@@ -277,7 +277,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
-        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
+        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(
+                MavenConfiguration.class, configurationLocations)
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()

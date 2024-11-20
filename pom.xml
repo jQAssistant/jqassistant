@@ -113,7 +113,7 @@
         <snakeyaml.version>2.3</snakeyaml.version>
         <snakeyaml-engine.version>2.8</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xo.version>2.3.0</xo.version>
+        <xo.version>2.4.0-SNAPSHOT</xo.version>
         <!-- Maven plugin versions -->
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
@@ -150,7 +150,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- integration tests -->
-        <it.jqassistant.store.uri>memory:///</it.jqassistant.store.uri>
+        <it.jqassistant.store.uri>memory:${project.build.directory}/jqassistant/test-store</it.jqassistant.store.uri>
         <!-- tests triggered by invoker plugin & internal verification -->
         <it.jqassistant.version>2.5.0</it.jqassistant.version>
         <!-- jQA build version -->
@@ -184,7 +184,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                      <yaml>
+                      <yaml><![CDATA[
                         jqassistant:
                           scan:
                             include:
@@ -196,7 +196,7 @@
                           analyze:
                             groups:
                               - jqa-*
-                      </yaml>
+                      ]]></yaml>
                     </configuration>
                     <dependencies>
                         <dependency>

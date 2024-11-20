@@ -5,8 +5,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
-import com.buschmais.jqassistant.core.shared.configuration.Plugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
