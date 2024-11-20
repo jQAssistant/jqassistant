@@ -1,0 +1,9 @@
+jqassistant:
+  plugins:
+    - group-id: org.jqassistant.tooling.dashboard
+      artifact-id: jqassistant-dashboard-plugin
+      version: 1.0.0-SNAPSHOT
+  analyze:
+    concepts:
+      - jqassistant-dashboard:ComponentVersionReport
+    execute-applied-concepts: true

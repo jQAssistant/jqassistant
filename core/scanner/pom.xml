@@ -12,7 +12,6 @@
 		<dependency>
 			<groupId>com.buschmais.jqassistant.core</groupId>
 			<artifactId>store</artifactId>
-			<version>${project.version}</version>
 		</dependency>
         <dependency>
             <groupId>io.smallrye.config</groupId>
