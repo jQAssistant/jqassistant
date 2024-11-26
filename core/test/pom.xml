@@ -13,7 +13,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>runtime</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
