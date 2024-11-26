@@ -5,4 +5,4 @@ jqassistant:
         - group-id: org.neo4j.procedure
           artifact-id: apoc-core
           classifier: core
-          version: 5.24.2
+          version: ${neo4j_5x.version}
