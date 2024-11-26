@@ -9,14 +9,14 @@ import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
+import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 

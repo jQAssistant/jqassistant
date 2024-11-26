@@ -6,7 +6,7 @@ import java.util.List;
 import com.buschmais.jqassistant.commandline.CliConfigurationException;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 

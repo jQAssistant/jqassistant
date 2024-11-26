@@ -39,42 +39,11 @@
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>
         </dependency>
-
-        <!-- Maven Settings -->
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-settings-builder</artifactId>
-            <version>${maven.version}</version>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>artifact-resolver</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <!-- Maven Resolver -->
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-connector-basic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-transport-file</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-transport-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-resolver-provider</artifactId>
-            <version>${maven.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.maven.resolver</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- 3rd party dependencies -->
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.store.api.configuration;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.shared.configuration.Plugin;
+import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
