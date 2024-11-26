@@ -154,7 +154,7 @@
         <!-- tests triggered by invoker plugin & internal verification -->
         <it.jqassistant.version>2.5.0</it.jqassistant.version>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.4.0-M1</jqassistant.build.version>
+        <jqassistant.build.version>2.6.0-M1</jqassistant.build.version>
         <!-- Sonar -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>jqassistant</sonar.organization>
