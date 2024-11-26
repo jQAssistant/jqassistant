@@ -142,6 +142,8 @@
                           analyze:
                             groups:
                               - jqa-*
+                          maven:
+                            reuse-store: false
                       ]]></yaml>
                     </configuration>
                     <dependencies>
