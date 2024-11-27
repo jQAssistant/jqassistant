@@ -63,6 +63,8 @@
     </developers>
 
     <properties>
+        <!-- jQA build version -->
+        <jqassistant.build.version>2.6.0-M1</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.26.3</assertj.version>
         <asm.version>9.7.1</asm.version>
@@ -116,8 +118,6 @@
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- jQA build version -->
-        <jqassistant.build.version>${project.parent.version}</jqassistant.build.version>
         <!-- Sonar -->
         <sonar.organization>jqassistant</sonar.organization>
         <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
