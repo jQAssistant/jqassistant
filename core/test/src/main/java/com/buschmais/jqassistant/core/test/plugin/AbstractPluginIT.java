@@ -20,14 +20,13 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
+import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
@@ -38,6 +37,9 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
@@ -48,7 +50,10 @@ import io.smallrye.config.SysPropConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -60,22 +65,30 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public abstract class AbstractPluginIT {
 
-    public static final File TEST_STORE_DIRECTORY = new File("target/jqassistant/test-store");
+    private static final File USER_HOME = new File(System.getProperty("user.home"));
+
+    private static final File WORKING_DIRECTORY = new File(".");
+
+    private static final File OUTPUT_DIRECTORY = new File(WORKING_DIRECTORY, "target/jqassistant");
+
+    private static final File TEST_STORE_DIRECTORY = new File("target/jqassistant/test-store");
 
     protected static final String ARTIFACT_ID = "artifact";
 
+    private static ArtifactProviderFactory artifactProviderFactory;
+
     private static PluginRepositoryImpl pluginRepository;
 
-    private File workingDirectory;
-
-    private File outputDirectory;
-
     protected Store store;
+
     protected InMemoryReportPlugin reportPlugin;
+
     protected RuleSet ruleSet;
 
     @BeforeAll
-    public static void initPluginRepository() {
+    public static final void initPluginRepository() {
+        artifactProviderFactory = new ArtifactProviderFactory(USER_HOME);
+        OUTPUT_DIRECTORY.mkdirs();
         PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
@@ -83,7 +96,7 @@ public abstract class AbstractPluginIT {
     }
 
     @AfterAll
-    public static void destroyPluginRepository() {
+    public static final void destroyPluginRepository() {
         if (pluginRepository != null) {
             pluginRepository.destroy();
         }
@@ -93,11 +106,8 @@ public abstract class AbstractPluginIT {
     public void beforeEach() throws IOException, RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
-        Configuration configuration = createConfiguration(configurationBuilder);
-        workingDirectory = new File(".");
-        outputDirectory = new File(workingDirectory, "target/jqassistant");
-        outputDirectory.mkdirs();
-        startStore(configuration.store());
+        ITConfiguration configuration = createConfiguration(configurationBuilder);
+        startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
     }
@@ -130,12 +140,12 @@ public abstract class AbstractPluginIT {
      *
      * @return The  configuration.
      */
-    private Configuration createConfiguration(ConfigurationBuilder configurationBuilder) {
-        return ConfigurationMappingLoader.builder(Configuration.class)
-                .withClasspath()
-                .withProfiles(getConfigurationProfiles())
-                .load(configurationBuilder.build(), new EnvConfigSource() {
-                }, new SysPropConfigSource());
+    private ITConfiguration createConfiguration(ConfigurationBuilder configurationBuilder) {
+        return ConfigurationMappingLoader.builder(ITConfiguration.class)
+            .withClasspath()
+            .withProfiles(getConfigurationProfiles())
+            .load(configurationBuilder.build(), new EnvConfigSource() {
+            }, new SysPropConfigSource());
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
@@ -147,10 +157,10 @@ public abstract class AbstractPluginIT {
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository()
-                .getRuleSources());
+            .getRuleSources());
         Collection<RuleParserPlugin> ruleParserPlugins = pluginRepository.getRulePluginRepository()
-                .getRuleParserPlugins(configuration.analyze()
-                        .rule());
+            .getRuleParserPlugins(configuration.analyze()
+                .rule());
         RuleParser ruleParser = new RuleParser(ruleParserPlugins);
         ruleSet = ruleParser.parse(sources);
     }
@@ -160,10 +170,10 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeReportPlugin(Configuration configuration) {
-        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, OUTPUT_DIRECTORY);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
-                .getReportPlugins(configuration.analyze()
-                        .report(), reportContext);
+            .getReportPlugins(configuration.analyze()
+                .report(), reportContext);
         this.reportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
     }
 
@@ -183,7 +193,7 @@ public abstract class AbstractPluginIT {
 
     protected Map<String, Collection<RuleInterpreterPlugin>> getRuleInterpreterPlugins() {
         return pluginRepository.getAnalyzerPluginRepository()
-                .getRuleInterpreterPlugins(getRuleInterpreterProperties());
+            .getRuleInterpreterPlugins(getRuleInterpreterProperties());
     }
 
     protected Map<String, Object> getRuleInterpreterProperties() {
@@ -193,10 +203,12 @@ public abstract class AbstractPluginIT {
     /**
      * Initializes and resets the store.
      */
-    private void startStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration) {
-        StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), plugins -> emptyList());
-        store = storeFactory.getStore(storeConfiguration, () -> TEST_STORE_DIRECTORY);
+    private void startStore(ITConfiguration configuration) {
+        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
+        store = storeFactory.getStore(configuration.store(), () -> TEST_STORE_DIRECTORY);
         store.start();
+        store.reset();
     }
 
     /**
@@ -216,16 +228,16 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Scan.class, Scan.PROPERTIES, properties);
         Configuration configuration = createConfiguration(configurationBuilder);
-        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, workingDirectory, outputDirectory);
+        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
         return new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
     }
 
-    private Analyzer getAnalyzer(Map<String, String> parameters) throws RuleException {
+    private Analyzer getAnalyzer(Map<String, String> parameters) {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder().with(Analyze.class, Analyze.RULE_PARAMETERS, parameters);
         Configuration configuration = createConfiguration(configurationBuilder);
         Baseline baselineConfiguration = configuration.analyze()
-                .baseline();
+            .baseline();
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
@@ -235,16 +247,16 @@ public abstract class AbstractPluginIT {
      * Determines the directory a class is located in (e.g. target/test-classes).
      *
      * @param rootClass
-     *         The class.
+     *     The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
         String path = URLDecoder.decode(rootClass.getClassLoader()
-                .getResource(".")
-                .getPath(), Charset.defaultCharset());
+            .getResource(".")
+            .getPath(), Charset.defaultCharset());
         File directory = new File(path);
         assertThat(directory).isDirectory()
-                .describedAs("Expected %s to be a directory", directory.toString());
+            .describedAs("Expected %s to be a directory", directory.toString());
         return directory;
     }
 
@@ -252,7 +264,7 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *         The query.
+     *     The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
@@ -263,9 +275,9 @@ public abstract class AbstractPluginIT {
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      *
      * @param query
-     *         The query.
+     *     The query.
      * @param parameters
-     *         The query parameters.
+     *     The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -294,7 +306,7 @@ public abstract class AbstractPluginIT {
      * Applies the concept identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id) throws RuleException {
@@ -305,30 +317,30 @@ public abstract class AbstractPluginIT {
      * Applies the concept identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      * @param parameters
-     *         The rule parameters.
+     *     The rule parameters.
      * @return The result.
      */
     protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
         Analyzer analyzer = getAnalyzer(parameters);
         RuleSelection ruleSelection = RuleSelection.builder()
-                .conceptId(id)
-                .build();
+            .conceptId(id)
+            .build();
         Concept concept = ruleSet.getConceptBucket()
-                .getById(id);
+            .getById(id);
         assertThat(concept).describedAs("The requested concept cannot be found: " + id)
-                .isNotNull();
+            .isNotNull();
         analyzer.execute(ruleSet, ruleSelection);
         return reportPlugin.getConceptResults()
-                .get(id);
+            .get(id);
     }
 
     /**
      * Validates the constraint identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id) throws RuleException {
@@ -339,29 +351,29 @@ public abstract class AbstractPluginIT {
      * Validates the constraint identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      * @param parameters
-     *         The rule parameters.
+     *     The rule parameters.
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
-                .constraintId(id)
-                .build();
+            .constraintId(id)
+            .build();
         Constraint constraint = ruleSet.getConstraintBucket()
-                .getById(id);
+            .getById(id);
         assertThat(constraint).describedAs("The requested constraint cannot be found: " + id)
-                .isNotNull();
+            .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
         return reportPlugin.getConstraintResults()
-                .get(id);
+            .get(id);
     }
 
     /**
      * Executes the group identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      */
     protected void executeGroup(String id) throws RuleException {
         executeGroup(id, Collections.<String, String>emptyMap());
@@ -371,18 +383,18 @@ public abstract class AbstractPluginIT {
      * Executes the group identified by id.
      *
      * @param id
-     *         The id.
+     *     The id.
      * @param parameters
-     *         The rule parameters.
+     *     The rule parameters.
      */
     protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
-                .groupId(id)
-                .build();
+            .groupId(id)
+            .build();
         Group group = ruleSet.getGroupsBucket()
-                .getById(id);
+            .getById(id);
         assertThat(group).describedAs("The request group cannot be found: " + id)
-                .isNotNull();
+            .isNotNull();
         getAnalyzer(parameters).execute(ruleSet, ruleSelection);
     }
 
@@ -401,7 +413,7 @@ public abstract class AbstractPluginIT {
          * Return a column identified by its name.
          *
          * @param <T>
-         *         The expected type.
+         *     The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {

@@ -4,10 +4,8 @@ import java.io.File;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.commandline.plugin.ArtifactProviderFactory;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationBuilder;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoader;
+import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
@@ -16,6 +14,8 @@ import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationRea
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import io.smallrye.config.PropertiesConfigSource;
@@ -25,7 +25,7 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.buschmais.jqassistant.commandline.configuration.MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource;
+import static com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;

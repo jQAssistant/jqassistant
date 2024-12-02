@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
-import com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationSerializer;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.Option;

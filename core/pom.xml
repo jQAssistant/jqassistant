@@ -61,14 +61,15 @@
     </build>
 
     <modules>
-        <module>neo4j</module>
-        <module>schemata</module>
-        <module>shared</module>
-        <module>rule</module>
-        <module>report</module>
         <module>analysis</module>
+        <module>artifact-resolver</module>
+        <module>neo4j</module>
+        <module>shared</module>
         <module>scanner</module>
+        <module>schemata</module>
         <module>store</module>
+        <module>report</module>
+        <module>rule</module>
         <module>runtime</module>
         <module>test</module>
     </modules>
