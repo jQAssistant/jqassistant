@@ -1,0 +1,21 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant
+      type: ${project.version}
+  scan:
+    include:
+      urls:
+        - jqassistant-plugin:META-INF/jqassistant-plugin.xml
+      files:
+        - target/site/jacoco
+    properties:
+      custom.scan.value: testValue
+      jqassistant.plugin.jacoco.filename: jacoco.xml
+  analyze:
+    groups:
+      - default
+    report:
+      properties:
+        customReport.fileName: ${project.build.directory}/customReport.txt
+        fail-on-severity: MINOR
+

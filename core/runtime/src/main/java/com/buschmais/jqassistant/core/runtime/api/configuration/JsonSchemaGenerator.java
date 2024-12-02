@@ -8,9 +8,7 @@ import com.github.victools.jsonschema.generator.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class JsonSchemaGenerator {
 
@@ -37,16 +35,17 @@ public class JsonSchemaGenerator {
                     mapNode.put("type", "object");
                     ObjectNode addNode = context.getGeneratorConfig().createObjectNode();
                     addNode.withArrayProperty("type");
+                    addNode.put("type", "string");
                     mapNode.set("additionalProperties", addNode);
                     return new CustomDefinition(mapNode);
                 }
                 return null;
             });
+        configBuilder.forTypesInGeneral()
+            .withDefinitionNamingStrategy((definitionKey, context) -> mapToKebabCase(definitionKey.getType().getTypeName()));
 
         SchemaGenerator generator = new SchemaGenerator(configBuilder.build());
-        ObjectNode jsonSchema = generator.generateSchema(clazz);
-        saveSchemaToFile(jsonSchema, "src/test/resources", "jsonSchema.json");
-        return jsonSchema;
+        return generator.generateSchema(clazz);
     }
 
     private static List<ResolvedType> getResolvedTypes(MethodScope target, ResolvedType resolvedType) {
@@ -54,17 +53,17 @@ public class JsonSchemaGenerator {
             if (resolvedType.getErasedType().equals(URI.class)) {
                 return List.of(target.getContext().resolve(String.class));
             }
-            if (resolvedType.getErasedType().equals(Map.class) && resolvedType.getErasedType().getComponentType() != null) {
+            if (resolvedType.isInstanceOf(Map.class)) {
                 return List.of(target.getContext().resolve(Map.class));
             }
             if (resolvedType.getErasedType().equals(Optional.class)) {
                 return getResolvedTypes(target, resolvedType.getTypeParameters().get(0));
             }
         }
-        return List.of(target.getContext().resolve(resolvedType));
+            return List.of(target.getContext().resolve(resolvedType));
     }
 
-    private void saveSchemaToFile(ObjectNode schema, String targetFolder, String fileName) {
+    public void saveSchemaToFile(ObjectNode schema, String targetFolder, String fileName) {
         ObjectMapper objectMapper = new ObjectMapper();
         File targetFile = new File(targetFolder, fileName);
         try {
