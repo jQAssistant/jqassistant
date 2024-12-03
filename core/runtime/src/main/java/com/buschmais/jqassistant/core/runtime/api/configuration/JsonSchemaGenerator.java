@@ -4,11 +4,14 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.*;
+import io.smallrye.config.WithDefault;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class JsonSchemaGenerator {
 
@@ -23,7 +26,8 @@ public class JsonSchemaGenerator {
                 return getResolvedTypes(target, resolvedType);
             });
         configBuilder.forFields()
-            .withIgnoreCheck(field -> field.getName().startsWith("PREFIX") || field.getName().startsWith("SKIP"));
+            .withIgnoreCheck(field -> field.getName().startsWith("PREFIX") || field.getName().startsWith("SKIP") || field.getName().startsWith("DEFAULT") );
+
         configBuilder.forMethods().withPropertyNameOverrideResolver((member) -> mapToKebabCase(member.getName()));
         configBuilder.forFields().withPropertyNameOverrideResolver((member) -> mapToKebabCase(member.getName()));
         configBuilder.forTypesInGeneral()
@@ -41,6 +45,13 @@ public class JsonSchemaGenerator {
                 }
                 return null;
             });
+        configBuilder.forMethods().withDefaultResolver(field -> {
+            WithDefault annotation = field.getAnnotationConsideringFieldAndGetter(WithDefault.class);
+            if (annotation != null) {
+                return annotation.value();
+            }
+            return null;
+        });
         configBuilder.forTypesInGeneral()
             .withDefinitionNamingStrategy((definitionKey, context) -> mapToKebabCase(definitionKey.getType().getTypeName()));
 
@@ -60,7 +71,7 @@ public class JsonSchemaGenerator {
                 return getResolvedTypes(target, resolvedType.getTypeParameters().get(0));
             }
         }
-            return List.of(target.getContext().resolve(resolvedType));
+        return List.of(target.getContext().resolve(resolvedType));
     }
 
     public void saveSchemaToFile(ObjectNode schema, String targetFolder, String fileName) {

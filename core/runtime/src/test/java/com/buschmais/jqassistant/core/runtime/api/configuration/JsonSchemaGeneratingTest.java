@@ -27,7 +27,8 @@ public class JsonSchemaGeneratingTest {
 
     public String validateYaml(JsonSchema schema, String filePath) throws IOException {
         JsonNode node = generator.generateSchema(JQAssistant.class);
-        File file = new File("target/test-classes/jsonSchema.schema.json");
+        File file = new File("src/test/resources/jqassistant-configuration.schema.json");
+        System.out.println("Schema saved: " + file.getAbsolutePath());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, node);
 
@@ -38,9 +39,10 @@ public class JsonSchemaGeneratingTest {
         String jsonString = objectMapper.writeValueAsString(yamlData);
         Set<ValidationMessage> validationMessages = schema.validate(objectMapper.readTree(jsonString));
         if (validationMessages.isEmpty()) {
+            System.out.println("Schema was successfully validated.");
             return "YAML is valid.";
         } else {
-
+            System.out.println("Schema validation failed on errors:");
             validationMessages.forEach(msg -> System.out.println("- " + msg.getMessage()));
             return "YAML is invalid.";
         }
@@ -71,7 +73,7 @@ public class JsonSchemaGeneratingTest {
     }
 
     @Test
-    public void generateSchemaAndValidTest() throws IOException {
+    public void generateSchema() throws IOException {
         JsonNode node = generator.generateSchema(JQAssistant.class);
         assertThat(node).isNotNull();
         File file = new File("src/test/resources/jqassistant-configuration.schema.json");
@@ -83,7 +85,8 @@ public class JsonSchemaGeneratingTest {
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, node);
         JsonNode rootNode = mapper.readTree(file);
         Set<ValidationMessage> validationMessages = schema.validate(rootNode);
-        System.out.println(validationMessages);
+        System.out.println("Generated schema.");
+        validationMessages.forEach(msg -> System.out.println("- " + msg.getMessage()));
     }
 
     @ConfigMapping

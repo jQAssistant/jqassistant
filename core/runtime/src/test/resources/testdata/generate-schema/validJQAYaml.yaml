@@ -11,11 +11,19 @@ jqassistant:
     properties:
       custom.scan.value: testValue
       jqassistant.plugin.jacoco.filename: jacoco.xml
+  store:
+    embedded:
+      http-port: 7474
   analyze:
     groups:
       - default
+    rule:
+      default-concept-severity: CRITICAL
     report:
+      fail-on-severity: MINOR
+      warn-on-severity: MINOR
       properties:
         customReport.fileName: ${project.build.directory}/customReport.txt
         fail-on-severity: MINOR
+
 
