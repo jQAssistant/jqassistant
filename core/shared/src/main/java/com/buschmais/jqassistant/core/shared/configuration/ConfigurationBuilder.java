@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.core.shared.configuration;
 
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.PropertiesConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSource;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.PropertiesConfigSource;
-import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
  * Builder for a {@link ConfigSource} providing utility methods to support construction.
@@ -26,6 +27,7 @@ public class ConfigurationBuilder {
 
     private final Map<String, String> properties = new HashMap<>();
 
+
     /**
      * Constructor.
      *
@@ -38,6 +40,7 @@ public class ConfigurationBuilder {
         this.name = name;
         this.ordinal = ordinal;
     }
+
 
     /**
      * Build the {@link ConfigSource}.
