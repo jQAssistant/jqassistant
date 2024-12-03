@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Stream;
 
 import io.smallrye.config.*;
 import io.smallrye.config.source.yaml.YamlConfigSource;
@@ -61,8 +62,7 @@ public class ConfigurationMappingLoader {
     /**
      * The default names of configuration files
      */
-    private static final List<Path> DEFAULT_CONFIG_LOCATIONS = List.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
-        .stream()
+    private static final List<Path> DEFAULT_CONFIG_LOCATIONS = Stream.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
         .map(Paths::get)
         .collect(toUnmodifiableList());
 
@@ -215,6 +215,7 @@ public class ConfigurationMappingLoader {
          * @return The configuration.
          */
         public C load(ConfigSource... additionalConfigSources) {
+            log.debug("Loading configuration using profiles {}. ", profiles);
             // Create intermediate configuration with applied profiles and interpolated properties (without validation)
             SmallRyeConfig config = new SmallRyeConfigBuilder().withSources(this.configSources)
                 .withSources(additionalConfigSources)
@@ -237,7 +238,7 @@ public class ConfigurationMappingLoader {
             Map<String, String> filteredProperties = stream(interpolatedConfig.getPropertyNames()
                 .spliterator(), false).filter(property -> property.startsWith(PREFIX))
                 .filter(property -> !ignoreProperties.contains(property))
-                .collect(toMap(property -> property, interpolatedConfig::getRawValue, (s1, s2) -> null, () -> new TreeMap<>()));
+                .collect(toMap(property -> property, interpolatedConfig::getRawValue, (s1, s2) -> null, TreeMap::new));
             log.debug("jQAssistant config properties:");
             for (Map.Entry<String, String> entry : filteredProperties.entrySet()) {
                 log.debug("\t{}={}", entry.getKey(), entry.getValue());
@@ -283,7 +284,7 @@ public class ConfigurationMappingLoader {
         private List<Path> findYamlConfigurationFiles(Path configurationDirectory) {
             List<Path> configurationFiles = new ArrayList<>();
             try {
-                walkFileTree(configurationDirectory, new SimpleFileVisitor<Path>() {
+                walkFileTree(configurationDirectory, new SimpleFileVisitor<>() {
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
