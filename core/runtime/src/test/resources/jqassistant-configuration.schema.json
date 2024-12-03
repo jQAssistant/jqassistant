@@ -313,6 +313,5 @@
       },
       "additionalProperties" : false
     }
-  },
-  "additionalProperties" : false
+  }
 }
