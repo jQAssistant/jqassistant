@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
+import com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -50,6 +51,7 @@ import io.smallrye.config.SysPropConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,6 +59,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,6 +67,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Abstract base class for analysis tests.
  */
 public abstract class AbstractPluginIT {
+
+    private static final String PROPERTY_MAVEN_SETTINGS = "jqassistant.it.maven-settings";
+    private static final String PROPERTY_PROFILES = "jqassistant.it.profiles";
 
     private static final File USER_HOME = new File(System.getProperty("user.home"));
 
@@ -74,6 +80,8 @@ public abstract class AbstractPluginIT {
     private static final File TEST_STORE_DIRECTORY = new File("target/jqassistant/test-store");
 
     protected static final String ARTIFACT_ID = "artifact";
+
+    private static ConfigSource mavenSettingsConfigSource;
 
     private static ArtifactProviderFactory artifactProviderFactory;
 
@@ -86,17 +94,21 @@ public abstract class AbstractPluginIT {
     protected RuleSet ruleSet;
 
     @BeforeAll
-    public static final void initPluginRepository() {
+    public static void initPluginRepository() {
         artifactProviderFactory = new ArtifactProviderFactory(USER_HOME);
-        OUTPUT_DIRECTORY.mkdirs();
+        Optional<File> mavenSettingsFile = ofNullable(System.getProperty(PROPERTY_MAVEN_SETTINGS)).map(File::new);
+        List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
+            .orElse(emptyList());
+        mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
         PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
         pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
         pluginRepository.initialize();
+        OUTPUT_DIRECTORY.mkdirs();
     }
 
     @AfterAll
-    public static final void destroyPluginRepository() {
+    public static void destroyPluginRepository() {
         if (pluginRepository != null) {
             pluginRepository.destroy();
         }
@@ -145,7 +157,7 @@ public abstract class AbstractPluginIT {
             .withClasspath()
             .withProfiles(getConfigurationProfiles())
             .load(configurationBuilder.build(), new EnvConfigSource() {
-            }, new SysPropConfigSource());
+            }, new SysPropConfigSource(), mavenSettingsConfigSource);
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
@@ -281,23 +293,22 @@ public abstract class AbstractPluginIT {
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
-        Query.Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
-        List<Map<String, Object>> rows = new ArrayList<>();
-        Map<String, List<Object>> columns = new HashMap<>();
-        for (CompositeRowObject rowObject : compositeRowObjects) {
-            Map<String, Object> row = new HashMap<>();
-            Iterable<String> columnNames = rowObject.getColumns();
-            for (String columnName : columnNames) {
-                List<Object> columnValues = columns.get(columnName);
-                if (columnValues == null) {
-                    columnValues = new ArrayList<>();
-                    columns.put(columnName, columnValues);
+        List<Map<String, Object>> rows;
+        Map<String, List<Object>> columns;
+        try (Query.Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters)) {
+            rows = new ArrayList<>();
+            columns = new HashMap<>();
+            for (CompositeRowObject rowObject : compositeRowObjects) {
+                Map<String, Object> row = new HashMap<>();
+                Iterable<String> columnNames = rowObject.getColumns();
+                for (String columnName : columnNames) {
+                    List<Object> columnValues = columns.computeIfAbsent(columnName, k -> new ArrayList<>());
+                    Object value = rowObject.get(columnName, Object.class);
+                    row.put(columnName, value);
+                    columnValues.add(value);
                 }
-                Object value = rowObject.get(columnName, Object.class);
-                row.put(columnName, value);
-                columnValues.add(value);
+                rows.add(row);
             }
-            rows.add(row);
         }
         return new TestResult(rows, columns);
     }
@@ -344,7 +355,7 @@ public abstract class AbstractPluginIT {
      * @return The result.
      */
     protected Result<Constraint> validateConstraint(String id) throws RuleException {
-        return validateConstraint(id, Collections.<String, String>emptyMap());
+        return validateConstraint(id, emptyMap());
     }
 
     /**
@@ -376,7 +387,7 @@ public abstract class AbstractPluginIT {
      *     The id.
      */
     protected void executeGroup(String id) throws RuleException {
-        executeGroup(id, Collections.<String, String>emptyMap());
+        executeGroup(id, emptyMap());
     }
 
     /**
@@ -404,7 +415,7 @@ public abstract class AbstractPluginIT {
     @Getter
     @AllArgsConstructor(access = PRIVATE)
     @ToString
-    protected class TestResult {
+    protected static class TestResult {
 
         private List<Map<String, Object>> rows;
         private Map<String, List<Object>> columns;
