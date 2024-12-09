@@ -6373,18 +6373,6 @@ If not explicitly specified this is the first column specified in the return cla
 <p><a href="#java:AssertMethod">Concept <code>java:AssertMethod</code></a></p>
 </li>
 <li>
-<p><a href="#java:AssertAnnotation">Concept <code>java:AssertAnnotation</code></a></p>
-</li>
-<li>
-<p><a href="#java:PerformsAssertion">Concept <code>java:PerformsAssertion</code></a></p>
-</li>
-<li>
-<p><a href="#java:TestMethodPerformsMethodAssertion">Concept <code>java:TestMethodPerformsMethodAssertion</code></a></p>
-</li>
-<li>
-<p><a href="#java:TestMethodPerformsAnnotationAssertion">Concept <code>java:TestMethodPerformsAnnotationAssertion</code></a></p>
-</li>
-<li>
 <p><a href="#java-classpath:ResolveType">Concept <code>java-classpath:ResolveType</code></a></p>
 </li>
 <li>
@@ -7177,64 +7165,27 @@ ORDER BY
 </div>
 </div>
 <div class="sect4">
-<h5 id="java:AssertAnnotation">Concept <code>java:AssertAnnotation</code></h5>
-<div class="literalblock">
-<div class="content">
-<pre>An assert annotation is used to define an expected testing result (e.g. @Test(expected = RuntimeException.class)
-for a test method.</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (type:Java:Type)-[:DECLARES]-&gt;(method:Method)-[:ANNOTATED_BY]-&gt;(annotation:Annotation:Assert)-[:OF_TYPE]-&gt;(annotationType:Java:Type)
-RETURN
-  type AS DeclaringType, method AS AnnotatedTestMethod, annotationType AS AnnotationType
-ORDER BY
-  type.fqn, method.fqn, annotationType.fqn</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="java:PerformsAssertion">Concept <code>java:PerformsAssertion</code></h5>
+<h5 id="java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></h5>
 <div class="paragraph">
-<p>Returns all test methods performing at least one assertion.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (type:Java:Type)-[:DECLARES]-&gt;(testMethod:Method)-[:PERFORMS_ASSERTION]-&gt;(assertion:Assert)
-RETURN
-  type AS DeclaringType, testMethod AS TestMethod
-ORDER BY
-  type.fqn, testMethod.signature</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="java:TestMethodPerformsMethodAssertion">Concept <code>java:TestMethodPerformsMethodAssertion</code></h5>
-<div class="literalblock">
-<div class="content">
-<pre>A test method performs a method assertion, if it invokes an assert method within a call hierarchy of max. 3 steps.</pre>
-</div>
+<p>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
   (testClass:Java:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
 OPTIONAL MATCH
-  (testMethod)-[invokes:INVOKES|VIRTUAL_INVOKES*]-&gt;(assertMethod:Method:Assert), path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]-&gt;(assertMethod))
+  path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]-&gt;(assert:Method:Assert))
 WITH
-  testClass, testMethod, assertMethod, length(path) as callDepth
+  testClass, testMethod, COLLECT(length(path)) as lengths
+WITH
+  testClass, testMethod, REDUCE(minVal = lengths[0], n IN lengths | CASE WHEN n &lt; minVal THEN n ELSE minVal END) AS shortestPathLength
 WHERE
-  callDepth is not null
-  and callDepth &lt;= $javaTestAssertMaxCallDepth
-MERGE
-  (testMethod)-[:PERFORMS_ASSERTION]-&gt;(assertMethod)
+  shortestPathLength is null
+  or shortestPathLength &gt; $javaTestAssertMaxCallDepth
 RETURN
-  distinct testClass AS TestClass, testMethod AS TestMethod, assertMethod as AssertMethod
+  distinct testClass AS TestClass, testMethod AS TestMethod
 ORDER BY
-  testClass.fqn, testMethod.name, AssertMethod.name</code></pre>
+  testClass.fqn, testMethod.name</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7250,87 +7201,6 @@ ORDER BY
 </li>
 <li>
 <p><a href="#java:AssertMethod">java:AssertMethod</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Provided concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:PerformsAssertion">java:PerformsAssertion</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect4">
-<h5 id="java:TestMethodPerformsAnnotationAssertion">Concept <code>java:TestMethodPerformsAnnotationAssertion</code></h5>
-<div class="literalblock">
-<div class="content">
-<pre>A test method performs an annotation assertion, if it is annotated with an assert annotation.</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (testClass:Java:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)-[:ANNOTATED_BY]-&gt;(assertAnnotation:Annotation:Assert)-[:OF_TYPE]-&gt;(annotationType:Java:Type)
-MERGE
-  (testMethod)-[:PERFORMS_ASSERTION]-&gt;(assertAnnotation)
-RETURN
-  distinct testClass AS TestClass, testMethod as TestMethod, annotationType AS AssertAnnotationType
-ORDER BY
-  testClass.fqn, testMethod.fqn</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Required concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:TestMethod">java:TestMethod</a></p>
-</li>
-<li>
-<p><a href="#java:AssertAnnotation">java:AssertAnnotation</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Provided concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:PerformsAssertion">java:PerformsAssertion</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect4">
-<h5 id="java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></h5>
-<div class="paragraph">
-<p>All test methods must perform at least one assertion.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (testClass:Java:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
-WHERE NOT
-  (testMethod)-[:PERFORMS_ASSERTION]-&gt;(:Assert)
-RETURN
-  distinct testClass AS TestClass, testMethod AS TestMethod
-ORDER BY
-  testClass.fqn, testMethod.name</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Required concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:PerformsAssertion">java:PerformsAssertion</a></p>
 </li>
 </ul>
 </div>
@@ -8720,6 +8590,12 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p><a href="#junit:IgnoreWithoutMessage">Constraint <code>junit:IgnoreWithoutMessage</code></a></p>
 </li>
 <li>
+<p><a href="#junit:AssertionMustProvideMessage">Constraint <code>junit:AssertionMustProvideMessage</code></a></p>
+</li>
+<li>
+<p><a href="#junit:TestMethodWithoutAssertion">Constraint <code>junit:TestMethodWithoutAssertion</code></a></p>
+</li>
+<li>
 <p><a href="#junit3:TestClass">Concept <code>junit3:TestClass</code></a></p>
 </li>
 <li>
@@ -8757,9 +8633,6 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 </li>
 <li>
 <p><a href="#junit4:AssertMethod">Concept <code>junit4:AssertMethod</code></a></p>
-</li>
-<li>
-<p><a href="#junit4:AssertAnnotation">Concept <code>junit4:AssertAnnotation</code></a></p>
 </li>
 <li>
 <p><a href="#junit4:SuiteClass">Concept <code>junit4:SuiteClass</code></a></p>
@@ -9173,46 +9046,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AssertAnnotation">7.3.2.15. Concept <code>junit4:AssertAnnotation</code></h5>
-<div class="paragraph">
-<p>Labels @Test-Annotations with the parameter "expected" as assert annotations.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (testType:Java:Type)-[:DECLARES]-&gt;(annotatedTestMethod:Test:Method)-[:ANNOTATED_BY]-&gt;(annotation:Annotation)-[:OF_TYPE]-&gt;(:Java:Type {fqn: &quot;org.junit.Test&quot;}),
-  (annotation)-[:HAS]-&gt;(expectation:Java:Value {name: 'expected'})
-SET
-  annotation:Junit4:Assert
-RETURN
-  testType AS DeclaringType, annotatedTestMethod AS AnnotatedTestMethod
-ORDER BY
-  testType.fqn, annotatedTestMethod.name</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Required concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:TestMethod">java:TestMethod</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Provided concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:AssertAnnotation">java:AssertAnnotation</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect4">
-<h5 id="junit4:SuiteClass">7.3.2.16. Concept <code>junit4:SuiteClass</code></h5>
+<h5 id="junit4:SuiteClass">7.3.2.15. Concept <code>junit4:SuiteClass</code></h5>
 <div class="paragraph">
 <p>Labels all classes annotated by "@org.junit.runners.Suite.SuiteClasses" with "Junit4" and "Suite" and creates a relation "CONTAINS_TESTCLASS" to all referenced classes.</p>
 </div>
@@ -9236,7 +9070,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:InnerTestClass">7.3.2.17. Concept <code>junit4:InnerTestClass</code></h5>
+<h5 id="junit4:InnerTestClass">7.3.2.16. Concept <code>junit4:InnerTestClass</code></h5>
 <div class="paragraph">
 <p>Labels inner types of types labeled with "Test" with "Test" and "Inner".</p>
 </div>
@@ -9262,7 +9096,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AssertionMustProvideMessage">7.3.2.18. Constraint <code>junit4:AssertionMustProvideMessage</code></h5>
+<h5 id="junit4:AssertionMustProvideMessage">7.3.2.17. Constraint <code>junit4:AssertionMustProvideMessage</code></h5>
 <div class="paragraph">
 <p>All assertions must provide a message.</p>
 </div>
@@ -9296,7 +9130,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:NonJUnit4TestMethod">7.3.2.19. Constraint <code>junit4:NonJUnit4TestMethod</code></h5>
+<h5 id="junit4:NonJUnit4TestMethod">7.3.2.18. Constraint <code>junit4:NonJUnit4TestMethod</code></h5>
 <div class="paragraph">
 <p>Only the jUnit 4-test annotation must be used to identify test methods in a jUnit 4-based project.</p>
 </div>
@@ -9323,7 +9157,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:UsageOfJUnit5TestApi">7.3.2.20. Constraint <code>junit4:UsageOfJUnit5TestApi</code></h5>
+<h5 id="junit4:UsageOfJUnit5TestApi">7.3.2.19. Constraint <code>junit4:UsageOfJUnit5TestApi</code></h5>
 <div class="paragraph">
 <p>Only the jUnit 4-test api must be used in a jUnit 4-based project.</p>
 </div>
@@ -9352,7 +9186,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:Default">7.3.2.21. Group <code>junit5:Default</code></h5>
+<h5 id="junit5:Default">7.3.2.20. Group <code>junit5:Default</code></h5>
 <div class="paragraph">
 <p>Includes constraints:</p>
 </div>
@@ -9371,7 +9205,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestMethod">7.3.2.22. Concept <code>junit5:TestMethod</code></h5>
+<h5 id="junit5:TestMethod">7.3.2.21. Concept <code>junit5:TestMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
@@ -9402,7 +9236,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:RepeatedTestMethod">7.3.2.23. Concept <code>junit5:RepeatedTestMethod</code></h5>
+<h5 id="junit5:RepeatedTestMethod">7.3.2.22. Concept <code>junit5:RepeatedTestMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.RepeatedTest") and
@@ -9433,7 +9267,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:ParameterizedTestMethod">7.3.2.24. Concept <code>junit5:ParameterizedTestMethod</code></h5>
+<h5 id="junit5:ParameterizedTestMethod">7.3.2.23. Concept <code>junit5:ParameterizedTestMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
@@ -9464,7 +9298,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:DisabledTestClassOrMethod">7.3.2.25. Concept <code>junit5:DisabledTestClassOrMethod</code></h5>
+<h5 id="junit5:DisabledTestClassOrMethod">7.3.2.24. Concept <code>junit5:DisabledTestClassOrMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all classes or methods annotated with "@org.junit.jupiter.api.Disabled"
@@ -9485,7 +9319,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:BeforeEach">7.3.2.26. Concept <code>junit5:BeforeEach</code></h5>
+<h5 id="junit5:BeforeEach">7.3.2.25. Concept <code>junit5:BeforeEach</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeEach"
@@ -9507,7 +9341,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:BeforeAll">7.3.2.27. Concept <code>junit5:BeforeAll</code></h5>
+<h5 id="junit5:BeforeAll">7.3.2.26. Concept <code>junit5:BeforeAll</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeAll"
@@ -9529,7 +9363,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AfterEach">7.3.2.28. Concept <code>junit5:AfterEach</code></h5>
+<h5 id="junit5:AfterEach">7.3.2.27. Concept <code>junit5:AfterEach</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
@@ -9551,7 +9385,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AfterAll">7.3.2.29. Concept <code>junit5:AfterAll</code></h5>
+<h5 id="junit5:AfterAll">7.3.2.28. Concept <code>junit5:AfterAll</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterAll"
@@ -9573,7 +9407,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestTemplateMethod">7.3.2.30. Concept <code>junit5:TestTemplateMethod</code></h5>
+<h5 id="junit5:TestTemplateMethod">7.3.2.29. Concept <code>junit5:TestTemplateMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
@@ -9605,7 +9439,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethodWithMetaAnnotation">7.3.2.31. Concept <code>junit5:TaggedMethodWithMetaAnnotation</code></h5>
+<h5 id="junit5:TaggedMethodWithMetaAnnotation">7.3.2.30. Concept <code>junit5:TaggedMethodWithMetaAnnotation</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by an Junit meta annotation
@@ -9663,7 +9497,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClassWithMetaAnnotation">7.3.2.32. Concept <code>junit5:TaggedClassWithMetaAnnotation</code></h5>
+<h5 id="junit5:TaggedClassWithMetaAnnotation">7.3.2.31. Concept <code>junit5:TaggedClassWithMetaAnnotation</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all classes annotated by an Junit meta annotation
@@ -9721,7 +9555,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethod">7.3.2.33. Concept <code>junit5:TaggedMethod</code></h5>
+<h5 id="junit5:TaggedMethod">7.3.2.32. Concept <code>junit5:TaggedMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
@@ -9774,7 +9608,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethodTags">7.3.2.34. Concept <code>junit5:TaggedMethodTags</code></h5>
+<h5 id="junit5:TaggedMethodTags">7.3.2.33. Concept <code>junit5:TaggedMethodTags</code></h5>
 <div class="paragraph">
 <p>Collects all tags of methods annotated with
             "@org.junit.jupiter.api.Tag" and "@org.junit.jupiter.api.Test"
@@ -9823,7 +9657,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClass">7.3.2.35. Concept <code>junit5:TaggedClass</code></h5>
+<h5 id="junit5:TaggedClass">7.3.2.34. Concept <code>junit5:TaggedClass</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
@@ -9871,7 +9705,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClassTags">7.3.2.36. Concept <code>junit5:TaggedClassTags</code></h5>
+<h5 id="junit5:TaggedClassTags">7.3.2.35. Concept <code>junit5:TaggedClassTags</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Collects all tags of classes annotated with
@@ -9913,7 +9747,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestClass">7.3.2.37. Concept <code>junit5:TestClass</code></h5>
+<h5 id="junit5:TestClass">7.3.2.36. Concept <code>junit5:TestClass</code></h5>
 <div class="paragraph">
 <p>Labels all classes containing test methods with "Test" and "Junit5".</p>
 </div>
@@ -9948,7 +9782,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:NestedTestClass">7.3.2.38. Concept <code>junit5:NestedTestClass</code></h5>
+<h5 id="junit5:NestedTestClass">7.3.2.37. Concept <code>junit5:NestedTestClass</code></h5>
 <div class="paragraph">
 <p>Labels all nested test classes annotated with "@org.junit.jupiter.api.Nested",
             independently from the number of tests contained in the method, with
@@ -9968,7 +9802,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AssertMethod">7.3.2.39. Concept <code>junit5:AssertMethod</code></h5>
+<h5 id="junit5:AssertMethod">7.3.2.38. Concept <code>junit5:AssertMethod</code></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all assertion methods declared by "org.junit.jupiter.api.Assertions" with "Junit5"
@@ -10003,7 +9837,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AssertionMustProvideMessage">7.3.2.40. Constraint <code>junit5:AssertionMustProvideMessage</code></h5>
+<h5 id="junit5:AssertionMustProvideMessage">7.3.2.39. Constraint <code>junit5:AssertionMustProvideMessage</code></h5>
 <div class="paragraph">
 <p>All assertions must provide a message.</p>
 </div>
@@ -10038,7 +9872,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:NonJUnit5TestMethod">7.3.2.41. Constraint <code>junit5:NonJUnit5TestMethod</code></h5>
+<h5 id="junit5:NonJUnit5TestMethod">7.3.2.40. Constraint <code>junit5:NonJUnit5TestMethod</code></h5>
 <div class="paragraph">
 <p>Only the jUnit 5-test annotation must be used to identify test methods in a jUnit 5-based project.</p>
 </div>
@@ -10068,7 +9902,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:UsageOfJUnit4TestApi">7.3.2.42. Constraint <code>junit5:UsageOfJUnit4TestApi</code></h5>
+<h5 id="junit5:UsageOfJUnit4TestApi">7.3.2.41. Constraint <code>junit5:UsageOfJUnit4TestApi</code></h5>
 <div class="paragraph">
 <p>Only the jUnit 5-test api must be used in a jUnit 5-based project.</p>
 </div>
@@ -10097,20 +9931,26 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:Default">7.3.2.43. Group <code>junit:Default</code></h5>
+<h5 id="junit:Default">7.3.2.42. Group <code>junit:Default</code></h5>
 <div class="paragraph">
 <p>Includes constraints:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
+<p><a href="#junit:AssertionMustProvideMessage">junit:AssertionMustProvideMessage</a></p>
+</li>
+<li>
 <p><a href="#junit:IgnoreWithoutMessage">junit:IgnoreWithoutMessage</a></p>
+</li>
+<li>
+<p><a href="#junit:TestMethodWithoutAssertion">junit:TestMethodWithoutAssertion</a></p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:TestCaseDefinedByClass">7.3.2.44. Concept <code>junit:TestCaseDefinedByClass</code></h5>
+<h5 id="junit:TestCaseDefinedByClass">7.3.2.43. Concept <code>junit:TestCaseDefinedByClass</code></h5>
 <div class="paragraph">
 <p>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</p>
 </div>
@@ -10132,7 +9972,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:TestCaseImplementedByMethod">7.3.2.45. Concept <code>junit:TestCaseImplementedByMethod</code></h5>
+<h5 id="junit:TestCaseImplementedByMethod">7.3.2.44. Concept <code>junit:TestCaseImplementedByMethod</code></h5>
 <div class="paragraph">
 <p>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
             methods.</p>
@@ -10162,7 +10002,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:IgnoreWithoutMessage">7.3.2.46. Constraint <code>junit:IgnoreWithoutMessage</code></h5>
+<h5 id="junit:IgnoreWithoutMessage">7.3.2.45. Constraint <code>junit:IgnoreWithoutMessage</code></h5>
 <div class="paragraph">
 <p>All @Ignore annotations must provide a message.</p>
 </div>
@@ -10184,6 +10024,79 @@ WHERE
 RETURN
   e AS IgnoreWithoutMessage</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="junit:AssertionMustProvideMessage">7.3.2.46. Constraint <code>junit:AssertionMustProvideMessage</code></h5>
+<div class="paragraph">
+<p><em>The rule is deprecated: This constraint has been replaced by "junit4:AssertionMustProvideMessage" and "junit5:AssertionMustProvideMessage".</em></p>
+</div>
+<div class="paragraph">
+<p>All assertions must provide a message.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method),
+  (testMethod)-[invocation:INVOKES]-&gt;(assertMethod:Assert:Method)
+WHERE NOT (
+   assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+   or assertMethod.signature =~ '.* fail(java.lang.String)'
+)
+RETURN
+  invocation AS Invocation,
+  testType AS DeclaringType,
+  testMethod AS Method</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:TestMethod">java:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="junit:TestMethodWithoutAssertion">7.3.2.47. Constraint <code>junit:TestMethodWithoutAssertion</code></h5>
+<div class="paragraph">
+<p><em>The rule is deprecated: This constraint has been replaced by "java:TestMethodWithoutAssertion".</em></p>
+</div>
+<div class="paragraph">
+<p>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
+WHERE
+  NOT (testMethod)-[:INVOKES|VIRTUAL_INVOKES*..3]-&gt;(:Method:Assert)
+RETURN
+  testType AS DeclaringType,
+  testMethod AS Method</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:VirtualInvokes">java:VirtualInvokes</a></p>
+</li>
+<li>
+<p><a href="#java:TestMethod">java:TestMethod</a></p>
+</li>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -11823,7 +11736,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-09 15:41:23 UTC
+Last updated 2024-12-09 15:44:16 UTC
 </div>
 </div>
 </body>
