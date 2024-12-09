@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.core.shared.configuration;
 
-import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.PropertiesConfigSource;
-import org.eclipse.microprofile.config.spi.ConfigSource;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.PropertiesConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSource;
+
+
+
 
 
 /**

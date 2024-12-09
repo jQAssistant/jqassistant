@@ -7,7 +7,6 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
-import io.smallrye.config.ConfigMapping;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,36 +15,29 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonSchemaGeneratorTest {
+public class CliJsonSchemaGeneratorTest {
 
     private final JsonSchemaGenerator generator = new JsonSchemaGenerator();
 
     @Test
     public void generateSchema() throws IOException {
-        JsonNode node = generator.generateSchema(CliJQAssistant.class);
+        JsonNode node = generator.generateSchema(CliConfiguration.class, "target/generated-resources/schema/jqassistant-configuration-cli.schema.json");
+        File file = new File("target/generated-resources/schema/jqassistant-configuration-cli.schema.json");
         assertThat(node).isNotNull();
-        ObjectMapper objectMapper = new ObjectMapper();
-        File targetFile;
         try {
-            targetFile = new File("src/main/resources/json-schema", "jqassistant-configuration-cli.schema.json");
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(targetFile, node);
-            System.out.println("Schema saved: " + targetFile.getAbsolutePath());
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
             JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory).build();
             JsonSchema schema = schemaFactory.getSchema(node);
-            JsonNode rootNode = mapper.readTree(targetFile);
+            JsonNode rootNode = mapper.readTree(file);
             Set<ValidationMessage> validationMessages = schema.validate(rootNode);
-            System.out.println(validationMessages);
+            if(!validationMessages.isEmpty()) {
+                System.out.println(validationMessages);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-    }
-
-    @ConfigMapping
-    private interface CliJQAssistant {
-        CliConfiguration jqassistant();
     }
 }

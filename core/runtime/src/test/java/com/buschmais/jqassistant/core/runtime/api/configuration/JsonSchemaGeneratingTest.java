@@ -28,11 +28,9 @@ public class JsonSchemaGeneratingTest {
 
     @Before
     public void generateSchema() throws IOException {
-        node = generator.generateSchema(JQAssistant.class);
-        file = new File("src/test/resources/jqassistant-configuration.schema.json");
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, node);
-        System.out.println("Schema saved: " + file.getAbsolutePath());
+        String path = "target/generated-resources/schema/jqassistant-configuration.schema.json";
+        node = generator.generateSchema(Configuration.class, path); //target/generated-resources/schema/jqassistant-configuration.schema.json
+        file = new File(path);
     }
 
     @Test
@@ -49,8 +47,7 @@ public class JsonSchemaGeneratingTest {
     }
 
     @Test
-    public void testValidYaml() throws IOException {
-        assertThat(node).isNotNull();
+    public void testValidYaml() {
         JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory).build();
         JsonSchema schema = schemaFactory.getSchema(node);
@@ -58,9 +55,7 @@ public class JsonSchemaGeneratingTest {
     }
 
     @Test
-    public void testInvalidYaml() throws IOException {
-        JsonNode node = generator.generateSchema(JQAssistant.class);
-        assertThat(node).isNotNull();
+    public void testInvalidYaml() {
         JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory).build();
         JsonSchema schema = schemaFactory.getSchema(node);
@@ -88,4 +83,5 @@ public class JsonSchemaGeneratingTest {
         }
         return null;
     }
+
 }
