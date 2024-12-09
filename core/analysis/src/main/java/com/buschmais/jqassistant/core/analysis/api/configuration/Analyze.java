@@ -19,6 +19,7 @@ public interface Analyze {
      *
      * @return The {@link Rule} configuration.
      */
+
     @Description("The rule configuration.")
     Rule rule();
 
