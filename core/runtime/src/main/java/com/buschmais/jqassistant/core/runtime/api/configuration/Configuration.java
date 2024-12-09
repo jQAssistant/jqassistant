@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.neo4j.embedded.api.configuration.Server;
+
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
-
-import java.util.List;
 
 /**
  * Represents the runtime configuration for jQAssistant.

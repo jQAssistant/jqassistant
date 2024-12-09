@@ -1,14 +1,15 @@
 package com.buschmais.jqassistant.core.analysis.api.configuration;
 
-import com.buschmais.jqassistant.core.report.api.configuration.Report;
-import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
-import com.buschmais.jqassistant.core.shared.annotation.Description;
-import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.WithDefault;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.buschmais.jqassistant.core.report.api.configuration.Report;
+import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
+
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 @ConfigMapping(prefix = "jqassistant.analyze")
 public interface Analyze {

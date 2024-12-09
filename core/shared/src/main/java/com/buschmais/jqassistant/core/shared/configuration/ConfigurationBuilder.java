@@ -9,7 +9,6 @@ import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.PropertiesConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
-
 /**
  * Builder for a {@link ConfigSource} providing utility methods to support construction.
  * <p>
@@ -27,7 +26,6 @@ public class ConfigurationBuilder {
 
     private final Map<String, String> properties = new HashMap<>();
 
-
     /**
      * Constructor.
      *
@@ -40,7 +38,6 @@ public class ConfigurationBuilder {
         this.name = name;
         this.ordinal = ordinal;
     }
-
 
     /**
      * Build the {@link ConfigSource}.

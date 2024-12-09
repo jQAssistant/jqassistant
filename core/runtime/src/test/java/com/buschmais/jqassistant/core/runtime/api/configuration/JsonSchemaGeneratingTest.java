@@ -1,5 +1,11 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -7,15 +13,9 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +26,7 @@ public class JsonSchemaGeneratingTest {
     JsonNode node;
     File file;
 
-    @Before
+    @BeforeEach
     public void generateSchema() throws IOException {
         String path = "target/generated-resources/schema/jqassistant-configuration.schema.json";
         node = generator.generateSchema(Configuration.class, path); //target/generated-resources/schema/jqassistant-configuration.schema.json
@@ -42,7 +42,6 @@ public class JsonSchemaGeneratingTest {
         JsonSchema schema = schemaFactory.getSchema(node);
         JsonNode rootNode = mapper.readTree(file);
         Set<ValidationMessage> validationMessages = schema.validate(rootNode);
-        System.out.println("Validated schema.");
         validationMessages.forEach(msg -> System.out.println("- " + msg.getMessage()));
     }
 
