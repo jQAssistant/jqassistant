@@ -33,6 +33,9 @@ public class Assertions4Junit4 {
         nestedAssertion();
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testWithExpectedRuntimeException(){};
+
     private void nestedAssertion() {
         fail("Failing");
     }

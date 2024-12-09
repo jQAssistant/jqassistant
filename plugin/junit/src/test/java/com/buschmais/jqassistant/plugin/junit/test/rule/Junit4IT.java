@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
@@ -173,6 +176,29 @@ public class Junit4IT extends AbstractJunitIT {
         List<MethodDescriptor> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
         assertThat(methods, containsInAnyOrder(methodDescriptor(Assert.class, "assertTrue", boolean.class),
             methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class), methodDescriptor(Assert.class, "fail", String.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AssertAnnotation".
+     *
+     * @throws IOException
+     *     If the test fails.
+     * @throws NoSuchMethodException
+     *     If the test fails.
+     */
+    @Test
+    public void assertAnnotation() throws Exception {
+        scanClasses(Assertions4Junit4.class);
+        Result<Concept> result = applyConcept("java:AssertAnnotation");
+        store.beginTransaction();
+        assertThat(result.getStatus(), equalTo(SUCCESS));
+        Map<String, Column<?>> assertAnnotation = result.getRows()
+            .get(0)
+            .getColumns();
+        assertThat(assertAnnotation.get("DeclaringType").getLabel(), endsWith("test.set.junit4.Assertions4Junit4"));
+        assertThat(assertAnnotation.get("AnnotatedTestMethod").getLabel(), equalTo("void testWithExpectedRuntimeException()"));
+        assertThat(assertAnnotation.get("AnnotationType").getLabel(), equalTo("org.junit.Test"));
         store.commitTransaction();
     }
 
