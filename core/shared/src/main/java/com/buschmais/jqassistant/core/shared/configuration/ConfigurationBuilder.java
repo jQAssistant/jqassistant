@@ -10,9 +10,6 @@ import io.smallrye.config.PropertiesConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
 
-
-
-
 /**
  * Builder for a {@link ConfigSource} providing utility methods to support construction.
  * <p>
