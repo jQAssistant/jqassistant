@@ -149,6 +149,23 @@
             ]]></cypher>
     </concept>
 
+    <concept id="junit4:AssertAnnotation">
+        <providesConcept refId="java:AssertAnnotation"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <description>Labels @Test-Annotations with the parameter "expected" as assert annotations.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Java:Type)-[:DECLARES]->(annotatedTestMethod:Test:Method)-[:ANNOTATED_BY]->(annotation:Annotation)-[:OF_TYPE]->(:Java:Type {fqn: "org.junit.Test"}),
+              (annotation)-[:HAS]->(expectation:Java:Value {name: 'expected'})
+            SET
+              annotation:Junit4:Assert
+            RETURN
+              testType AS DeclaringType, annotatedTestMethod AS AnnotatedTestMethod
+            ORDER BY
+              testType.fqn, annotatedTestMethod.name
+        ]]></cypher>
+    </concept>
+
     <concept id="junit4:SuiteClass">
         <description>Labels all classes annotated by "@org.junit.runners.Suite.SuiteClasses" with "Junit4" and "Suite" and creates a relation "CONTAINS_TESTCLASS" to all referenced classes.</description>
         <cypher><![CDATA[
