@@ -8720,12 +8720,6 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p><a href="#junit:IgnoreWithoutMessage">Constraint <code>junit:IgnoreWithoutMessage</code></a></p>
 </li>
 <li>
-<p><a href="#junit:AssertionMustProvideMessage">Constraint <code>junit:AssertionMustProvideMessage</code></a></p>
-</li>
-<li>
-<p><a href="#junit:TestMethodWithoutAssertion">Constraint <code>junit:TestMethodWithoutAssertion</code></a></p>
-</li>
-<li>
 <p><a href="#junit3:TestClass">Concept <code>junit3:TestClass</code></a></p>
 </li>
 <li>
@@ -10110,13 +10104,7 @@ RETURN DISTINCT
 <div class="ulist">
 <ul>
 <li>
-<p><a href="#junit:AssertionMustProvideMessage">junit:AssertionMustProvideMessage</a></p>
-</li>
-<li>
 <p><a href="#junit:IgnoreWithoutMessage">junit:IgnoreWithoutMessage</a></p>
-</li>
-<li>
-<p><a href="#junit:TestMethodWithoutAssertion">junit:TestMethodWithoutAssertion</a></p>
 </li>
 </ul>
 </div>
@@ -10196,79 +10184,6 @@ WHERE
 RETURN
   e AS IgnoreWithoutMessage</code></pre>
 </div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="junit:AssertionMustProvideMessage">7.3.2.47. Constraint <code>junit:AssertionMustProvideMessage</code></h5>
-<div class="paragraph">
-<p><em>The rule is deprecated: This constraint has been replaced by "junit4:AssertionMustProvideMessage" and "junit5:AssertionMustProvideMessage".</em></p>
-</div>
-<div class="paragraph">
-<p>All assertions must provide a message.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method),
-  (testMethod)-[invocation:INVOKES]-&gt;(assertMethod:Assert:Method)
-WHERE NOT (
-   assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
-   or assertMethod.signature =~ '.* fail(java.lang.String)'
-)
-RETURN
-  invocation AS Invocation,
-  testType AS DeclaringType,
-  testMethod AS Method</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Required concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:TestMethod">java:TestMethod</a></p>
-</li>
-<li>
-<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect4">
-<h5 id="junit:TestMethodWithoutAssertion">7.3.2.48. Constraint <code>junit:TestMethodWithoutAssertion</code></h5>
-<div class="paragraph">
-<p><em>The rule is deprecated: This constraint has been replaced by "java:TestMethodWithoutAssertion".</em></p>
-</div>
-<div class="paragraph">
-<p>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
-WHERE
-  NOT (testMethod)-[:PERFORMS_ASSERTION]-&gt;(:Assert)
-RETURN
-  testType AS DeclaringType,
-  testMethod AS Method</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Required concepts:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#java:VirtualInvokes">java:VirtualInvokes</a></p>
-</li>
-<li>
-<p><a href="#java:TestMethod">java:TestMethod</a></p>
-</li>
-<li>
-<p><a href="#java:MethodPerformsAssertion">java:MethodPerformsAssertion</a></p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -11908,7 +11823,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-12 15:38:36 UTC
+Last updated 2024-12-12 15:41:52 UTC
 </div>
 </div>
 </body>
