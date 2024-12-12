@@ -620,20 +620,20 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java:PerformsAssertion">
+    <concept id="java:MethodPerformsAssertion">
         <description>Returns all test methods performing at least one assertion.</description>
         <cypher><![CDATA[
             MATCH
-              (type:Java:Type)-[:DECLARES]->(testMethod:Method)-[:PERFORMS_ASSERTION]->(assertion:Assert)
+              (type:Java:Type)-[:DECLARES]->(method:Method)-[:PERFORMS_ASSERTION]->(assertion:Assert)
             RETURN
-              type AS DeclaringType, testMethod AS TestMethod
+              type AS DeclaringType, method AS Method
             ORDER BY
-              type.fqn, testMethod.signature
+              type.fqn, method.signature
         ]]></cypher>
     </concept>
 
     <concept id="java:TestMethodPerformsMethodAssertion">
-        <providesConcept refId="java:PerformsAssertion"/>
+        <providesConcept refId="java:MethodPerformsAssertion"/>
         <requiresConcept refId="java:VirtualInvokes"/>
         <requiresConcept refId="java:TestMethod"/>
         <requiresConcept refId="java:AssertMethod"/>
@@ -645,7 +645,7 @@
             MATCH
               (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
             OPTIONAL MATCH
-              (testMethod)-[invokes:INVOKES|VIRTUAL_INVOKES*]->(assertMethod:Method:Assert), path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assertMethod))
+              path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assertMethod:Method:Assert))
             WITH
               testClass, testMethod, assertMethod, length(path) as callDepth
             WHERE
@@ -661,7 +661,7 @@
     </concept>
 
     <concept id="java:TestMethodPerformsAnnotationAssertion">
-        <providesConcept refId="java:PerformsAssertion"/>
+        <providesConcept refId="java:MethodPerformsAssertion"/>
         <requiresConcept refId="java:TestMethod"/>
         <requiresConcept refId="java:AssertAnnotation"/>
         <description>
@@ -680,7 +680,7 @@
     </concept>
 
     <constraint id="java:TestMethodWithoutAssertion">
-        <requiresConcept refId="java:PerformsAssertion"/>
+        <requiresConcept refId="java:MethodPerformsAssertion"/>
         <description>All test methods must perform at least one assertion.</description>
         <cypher><![CDATA[
             MATCH

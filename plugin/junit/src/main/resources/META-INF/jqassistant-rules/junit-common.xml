@@ -89,7 +89,7 @@
     <constraint id="junit:TestMethodWithoutAssertion">
         <requiresConcept refId="java:VirtualInvokes"/>
         <requiresConcept refId="java:TestMethod"/>
-        <requiresConcept refId="java:PerformsAssertion"/>
+        <requiresConcept refId="java:MethodPerformsAssertion"/>
         <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
         <deprecated>This constraint has been replaced by "java:TestMethodWithoutAssertion".</deprecated>
         <cypher><![CDATA[
