@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.*;
-import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
@@ -34,7 +34,7 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private static final String EXPECTED_CONTENT = "c = foo\n" + "---\n" + "c = bar\n";
 
-    private JAXBUnmarshaller<Testsuite> unmarshaller = new JAXBUnmarshaller(Testsuite.class);
+    private JAXBHelper<Testsuite> unmarshaller = new JAXBHelper(Testsuite.class);
 
     private Group testGroup = Group.builder().id("test:Group").description("testGroup").build();
     private Concept concept = Concept.builder().id("test:Concept").description("testConcept").severity(Severity.MINOR).build();

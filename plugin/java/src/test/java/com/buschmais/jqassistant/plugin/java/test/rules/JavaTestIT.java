@@ -87,17 +87,17 @@ class JavaTestIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void javaPerformsAssertion() throws RuleException {
-        Result<Concept> result = applyConcept("java:PerformsAssertion");
+    void javaMethodPerformsAssertion() throws RuleException {
+        Result<Concept> result = applyConcept("java:MethodPerformsAssertion");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).hasSize(2);
         Map<String, Column<?>> annotationAssertion = result.getRows().get(0).getColumns();
         Map<String, Column<?>> methodAssertion = result.getRows().get(1).getColumns();
         store.beginTransaction();
         assertThat(annotationAssertion.get("DeclaringType").getLabel()).isEqualTo("Test");
-        assertThat(annotationAssertion.get("TestMethod").getLabel()).isEqualTo("void annotatedTest()");
+        assertThat(annotationAssertion.get("Method").getLabel()).isEqualTo("void annotatedTest()");
         assertThat(methodAssertion.get("DeclaringType").getLabel()).isEqualTo("Test");
-        assertThat(methodAssertion.get("TestMethod").getLabel()).isEqualTo("void test()");
+        assertThat(methodAssertion.get("Method").getLabel()).isEqualTo("void test()");
         store.commitTransaction();
     }
 
