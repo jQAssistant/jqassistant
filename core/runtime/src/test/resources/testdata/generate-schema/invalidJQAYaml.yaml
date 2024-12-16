@@ -1,18 +1,18 @@
 jqassistant:
   plugins:
     - group-id: com.buschmais.jqassistant
-      artifact-id: jqassistant-maven-plugin.integration.plugin.customplugin # should actually be right, issue in class semantic
-      typo: ${project.version}
+      artifact-id: jqassistant-maven-plugin.integration.plugin.customplugin
+      typo: ${project.version} # invalid property 'typo'
   scan:
     include:
       urls:
         - jqassistant-plugin:META-INF/jqassistant-plugin.xml
-      files:
+      files: # must be an array not a string
         target/site/jacoco
   analyze:
     groups:
       - default
     report:
-      properties:
+      properties: # must not be an array but an object
         - ${project.build.directory}/customReport.txt
         - fail-on-severity: MINOR

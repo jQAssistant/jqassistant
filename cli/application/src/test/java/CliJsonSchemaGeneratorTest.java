@@ -25,20 +25,13 @@ public class CliJsonSchemaGeneratorTest {
         JsonNode node = generator.generateSchema(CliConfiguration.class, "target/generated-resources/schema/jqassistant-configuration-cli.schema.json");
         File file = new File("target/generated-resources/schema/jqassistant-configuration-cli.schema.json");
         assertThat(node).isNotNull();
-        try {
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
-            JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
-                .build();
-            JsonSchema schema = schemaFactory.getSchema(node);
-            JsonNode rootNode = mapper.readTree(file);
-            Set<ValidationMessage> validationMessages = schema.validate(rootNode);
-            if (!validationMessages.isEmpty()) {
-                System.out.println(validationMessages);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
+            .build();
+        JsonSchema schema = schemaFactory.getSchema(node);
+        JsonNode rootNode = mapper.readTree(file);
+        Set<ValidationMessage> validationMessages = schema.validate(rootNode);
+        assertThat(validationMessages).isEmpty();
     }
 }
