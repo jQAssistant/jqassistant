@@ -9152,8 +9152,8 @@ RETURN
 WHERE
   assertType.fqn = 'org.junit.Assert'
   and (
-    assertMethod.signature =~ 'void assert.*'
-    or assertMethod.signature =~ 'void fail.*'
+    assertMethod.signature CONTAINS ' assert'
+    or assertMethod.signature CONTAINS ' fail'
   )
 SET
   assertMethod:Junit4:Assert
@@ -9272,7 +9272,7 @@ RETURN
   (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method),
   (testMethod)-[invocation:INVOKES*]-&gt;(assertMethod:Junit4:Assert:Method)
 WHERE NOT (
-    assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+    assertMethod.signature =~ '.*assert.*\\(java.lang.String,.*\\)'
     or assertMethod.signature = 'void fail(java.lang.String)'
 )
 RETURN
@@ -10013,8 +10013,8 @@ RETURN
   (testType:Type)-[:DECLARES]-&gt;(testMethod:Test:Method),
   (testMethod)-[invocation:INVOKES]-&gt;(assertMethod:Junit5:Assert:Method)
 WHERE NOT (
-  assertMethod.signature =~ 'void assert.*\\(.*java.lang.String\\)'
-  or assertMethod.signature =~ 'void assert.*\\(.*java.util.function.Supplier\\)'
+  assertMethod.signature =~ '.*assert.*\\(.*java.lang.String\\)'
+  or assertMethod.signature =~ '.*assert.*\\(.*java.util.function.Supplier\\)'
   or assertMethod.signature = 'java.lang.Object fail(java.lang.String)'
 )
 RETURN
@@ -11823,7 +11823,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-18 08:33:02 UTC
+Last updated 2024-12-18 12:35:30 UTC
 </div>
 </div>
 </body>
