@@ -139,8 +139,8 @@
             WHERE
               assertType.fqn = 'org.junit.Assert'
               and (
-                assertMethod.signature =~ 'void assert.*'
-                or assertMethod.signature =~ 'void fail.*'
+                assertMethod.signature CONTAINS ' assert'
+                or assertMethod.signature CONTAINS ' fail'
               )
             SET
               assertMethod:Junit4:Assert
@@ -208,7 +208,7 @@
               (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
               (testMethod)-[invocation:INVOKES*]->(assertMethod:Junit4:Assert:Method)
             WHERE NOT (
-                assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+                assertMethod.signature =~ '.*assert.*\\(java.lang.String,.*\\)'
                 or assertMethod.signature = 'void fail(java.lang.String)'
             )
             RETURN

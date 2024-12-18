@@ -17,6 +17,11 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
     }
 
     @Test
+    public void assertWithMessageButNonVoidReturnType() {
+        assertThrows(NullPointerException.class, null, "Condition must be true");
+    }
+
+    @Test
     public void assertWithMessageSupplier() {
         assertTrue(() -> true, () -> "S");
     }
