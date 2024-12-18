@@ -451,8 +451,8 @@
               (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
               (testMethod)-[invocation:INVOKES]->(assertMethod:Junit5:Assert:Method)
             WHERE NOT (
-              assertMethod.signature =~ 'void assert.*\\(.*java.lang.String\\)'
-              or assertMethod.signature =~ 'void assert.*\\(.*java.util.function.Supplier\\)'
+              assertMethod.signature =~ '.*assert.*\\(.*java.lang.String\\)'
+              or assertMethod.signature =~ '.*assert.*\\(.*java.util.function.Supplier\\)'
               or assertMethod.signature = 'java.lang.Object fail(java.lang.String)'
             )
             RETURN
