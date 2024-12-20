@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.junit.test.set.junit4;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -12,6 +13,11 @@ public class Assertions4Junit4 {
     @Test
     public void assertWithoutMessage() {
         assertTrue(true);
+    }
+
+    @Test
+    public void assertWithMessageButNonVoidReturnType() {
+        assertThrows("Condition must be true", NullPointerException.class, null);
     }
 
     @Test

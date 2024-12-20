@@ -464,11 +464,12 @@ public class Junit5IT extends AbstractJunitIT {
                 .get("TestMethod")
                 .getValue())
             .collect(Collectors.toList());
-        assertThat(rows.size(), equalTo(6));
+        assertThat(rows.size(), equalTo(7));
         assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
             is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")), is(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion")),
             is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")), is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithExpectedRuntimeException"))));
+            is(methodDescriptor(Assertions4Junit4.class, "testWithExpectedRuntimeException")),
+            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessageButNonVoidReturnType"))));
         store.commitTransaction();
     }
 
@@ -492,10 +493,11 @@ public class Junit5IT extends AbstractJunitIT {
                 .get("TestMethod")
                 .getValue())
             .collect(Collectors.toList());
-        assertThat(rows.size(), equalTo(4));
+        assertThat(rows.size(), equalTo(5));
         assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
             is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")), is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")),
-            is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion"))));
+            is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion")),
+            is(methodDescriptor(Assertions4Junit4.class, "assertWithMessageButNonVoidReturnType"))));
         store.commitTransaction();
     }
 
