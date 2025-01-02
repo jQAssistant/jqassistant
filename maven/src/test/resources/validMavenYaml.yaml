@@ -1,0 +1,18 @@
+jqassistant:
+  maven:
+    use-execution-root-as-project-root: false
+    reuse-store: true
+  module:
+    skip: false
+  store:
+    uri: file://target/jqassistant/store
+    embedded:
+      connector-enabled: false
+      listen-address: localhost
+      bolt-port: 7687
+      http-port: 7474
+  analyze:
+    rule:
+      directory: jqassistant/
+      default-concept-severity: MINOR
+

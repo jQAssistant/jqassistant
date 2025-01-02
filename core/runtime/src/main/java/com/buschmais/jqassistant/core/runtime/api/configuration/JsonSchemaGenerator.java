@@ -20,37 +20,16 @@ public class JsonSchemaGenerator {
 
     public ObjectNode generateSchema(Class<?> clazz, String path) throws IOException {
         SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.JAVA_OBJECT).with(
-                Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES, Option.NONSTATIC_NONVOID_NONGETTER_METHODS, Option.PLAIN_DEFINITION_KEYS,
+                Option.NONSTATIC_NONVOID_NONGETTER_METHODS, Option.PLAIN_DEFINITION_KEYS, Option.FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT,
                 Option.FIELDS_DERIVED_FROM_ARGUMENTFREE_METHODS, Option.FLATTENED_ENUMS, Option.ALLOF_CLEANUP_AT_THE_END)
-            .without(Option.VOID_METHODS, Option.GETTER_METHODS);
+            .without(Option.VOID_METHODS, Option.GETTER_METHODS, Option.PUBLIC_STATIC_FIELDS);
 
         configBuilder.forMethods()
             .withTargetTypeOverridesResolver(target -> getResolvedTypes(target, target.getType()));
-        configBuilder.forFields()
-            .withIgnoreCheck(field -> field.getName()
-                .startsWith("PREFIX") || field.getName()
-                .startsWith("SKIP") || field.getName()
-                .startsWith("DEFAULT"));
         configBuilder.forMethods()
             .withPropertyNameOverrideResolver((member) -> mapToKebabCase(member.getName()));
-        configBuilder.forFields()
-            .withPropertyNameOverrideResolver((member) -> mapToKebabCase(member.getName()));
-
         configBuilder.forTypesInGeneral()
-            .withCustomDefinitionProvider((javaType, context) -> {
-                if (javaType.isInstanceOf(Map.class)) {
-                    ObjectNode mapNode = context.getGeneratorConfig()
-                        .createObjectNode();
-                    mapNode.put("type", "object");
-                    ObjectNode addNode = context.getGeneratorConfig()
-                        .createObjectNode();
-                    addNode.withArrayProperty("type");
-                    addNode.put("type", "string");
-                    mapNode.set("additionalProperties", addNode);
-                    return new CustomDefinition(mapNode);
-                }
-                return null;
-            });
+            .withCustomDefinitionProvider(new MapDefinitionProvider());
         configBuilder.forMethods()
             .withDefaultResolver(method -> {
                 WithDefault annotation = method.getAnnotationConsideringFieldAndGetter(WithDefault.class);
@@ -124,10 +103,6 @@ public class JsonSchemaGenerator {
                 return List.of(target.getContext()
                     .resolve(String.class));
             }
-            if (resolvedType.isInstanceOf(Map.class)) {
-                return List.of(target.getContext()
-                    .resolve(Map.class));
-            }
             if (resolvedType.getErasedType()
                 .equals(Optional.class)) {
                 return getResolvedTypes(target, resolvedType.getTypeParameters()
@@ -140,6 +115,31 @@ public class JsonSchemaGenerator {
 
     private static String mapToKebabCase(String name) {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_HYPHEN, name);
+    }
+
+    public static class MapDefinitionProvider implements CustomDefinitionProviderV2 {
+
+        @Override
+        public CustomDefinition provideCustomSchemaDefinition(ResolvedType targetType, SchemaGenerationContext context) {
+            if (!targetType.isInstanceOf(Map.class)) {
+                return null;
+            }
+            ResolvedType keyType = context.getTypeContext().getTypeParameterFor(targetType, Map.class, 0);
+            ResolvedType valueType = context.getTypeContext().getTypeParameterFor(targetType, Map.class, 1);
+            if (keyType == null || !keyType.isInstanceOf(String.class)) {
+                return null;
+            }
+            if (valueType == null) {
+                valueType = context.getTypeContext().resolve(Object.class);
+            }
+            ObjectNode customSchema = context.getGeneratorConfig().createObjectNode();
+            customSchema.put(context.getKeyword(SchemaKeyword.TAG_TYPE), "object");
+            ObjectNode unkownNameWrapper = context.getGeneratorConfig().createObjectNode();
+            ObjectNode valueTypeDefinition = context.createDefinition(valueType);
+            unkownNameWrapper.set("^.*$", valueTypeDefinition);
+            customSchema.set(context.getKeyword(SchemaKeyword.TAG_PATTERN_PROPERTIES), unkownNameWrapper);
+            return new CustomDefinition(customSchema);
+        }
     }
 
 }
