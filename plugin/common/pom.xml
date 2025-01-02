@@ -16,7 +16,7 @@
     </description>
 
     <properties>
-        <org.codehaus.groovy.version>3.0.23</org.codehaus.groovy.version>
+        <org.apache.groovy.version>4.0.24</org.apache.groovy.version>
         <org.jruby.version>9.4.9.0</org.jruby.version>
         <org.openjdk.nashorn.version>15.4</org.openjdk.nashorn.version>
         <commons-compress.version>1.27.1</commons-compress.version>
@@ -161,9 +161,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
-            <version>${org.codehaus.groovy.version}</version>
+            <version>${org.apache.groovy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
