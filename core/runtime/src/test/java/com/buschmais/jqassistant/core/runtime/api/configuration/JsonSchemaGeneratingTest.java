@@ -18,25 +18,25 @@ import org.yaml.snakeyaml.Yaml;
 import static io.smallrye.config._private.ConfigLogging.log;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonSchemaGeneratingTest {
+class JsonSchemaGeneratingTest {
 
     private final JsonSchemaGenerator generator = new JsonSchemaGenerator();
 
     private JsonNode node;
 
     @BeforeEach
-    public void generateSchema() throws IOException {
+    void generateSchema() throws IOException {
         String path = "target/generated-resources/schema/jqassistant-configuration.schema.json";
         node = generator.generateSchema(Configuration.class, path);
     }
 
     @Test
-    public void testValidYaml() throws Exception {
+    void testValidYaml() throws Exception {
         assertThat(validateYaml("src/test/resources/testdata/generate-schema/validJQAYaml.yaml")).isEmpty();
     }
 
     @Test
-    public void testInvalidYaml() throws Exception {
+    void testInvalidYaml() throws Exception {
         assertThat(validateYaml("src/test/resources/testdata/generate-schema/invalidJQAYaml.yaml")).hasSize(3);
     }
 

@@ -1,3 +1,5 @@
+package com.buschmais.jqassistant.commandline.test;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
@@ -19,19 +21,19 @@ import org.yaml.snakeyaml.Yaml;
 import static io.smallrye.config._private.ConfigLogging.log;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CliJsonSchemaGeneratorTest {
+class CliJsonSchemaGeneratorTest {
 
     private final JsonSchemaGenerator generator = new JsonSchemaGenerator();
     private JsonNode node;
 
     @BeforeEach
-    public void generateSchema() throws IOException {
+    void generateSchema() throws IOException {
         String path = "target/generated-resources/schema/jqassistant-configuration-cli.schema.json";
         node = generator.generateSchema(CliConfiguration.class, path);
     }
 
     @Test
-    public void testValidYaml() throws Exception {
+    void testValidYaml() throws Exception {
         assertThat(validateYaml("src/test/resources/validCliYaml.yaml")).isEmpty();
     }
 

@@ -16,6 +16,8 @@ import com.github.victools.jsonschema.generator.*;
 import com.google.common.base.CaseFormat;
 import io.smallrye.config.WithDefault;
 
+import static io.smallrye.config._private.ConfigLogging.log;
+
 public class JsonSchemaGenerator {
 
     public ObjectNode generateSchema(Class<?> clazz, String path) throws IOException {
@@ -27,7 +29,7 @@ public class JsonSchemaGenerator {
         configBuilder.forMethods()
             .withTargetTypeOverridesResolver(target -> getResolvedTypes(target, target.getType()));
         configBuilder.forMethods()
-            .withPropertyNameOverrideResolver((member) -> mapToKebabCase(member.getName()));
+            .withPropertyNameOverrideResolver(member -> mapToKebabCase(member.getName()));
         configBuilder.forTypesInGeneral()
             .withCustomDefinitionProvider(new MapDefinitionProvider());
         configBuilder.forMethods()
@@ -62,23 +64,28 @@ public class JsonSchemaGenerator {
     private static ObjectNode wrapJqassistant(ObjectNode schema) {
         ObjectNode propertiesNode = JsonNodeFactory.instance.objectNode();
         ObjectNode jqaWrapper = JsonNodeFactory.instance.objectNode();
-
         ObjectNode definitionWrapper = JsonNodeFactory.instance.objectNode();
+
+        String properties = "properties";
+        String object = "object";
+        String defs = "$defs";
+        String type = "type";
+
         for (Map.Entry<String, JsonNode> property : schema.properties()) {
             if (property.getKey()
-                .equals("properties")) {
-                propertiesNode.put("type", "object");
-                propertiesNode.set("properties", property.getValue());
+                .equals(properties)) {
+                propertiesNode.put(type, object);
+                propertiesNode.set(properties, property.getValue());
                 propertiesNode.put("additionalProperties", false);
             }
             if (property.getKey()
-                .equals("$defs")) {
-                definitionWrapper.set("$defs", property.getValue());
+                .equals(defs)) {
+                definitionWrapper.set(defs, property.getValue());
             }
         }
         jqaWrapper.set("jqassistant", propertiesNode);
-        definitionWrapper.put("type", "object");
-        definitionWrapper.set("properties", jqaWrapper);
+        definitionWrapper.put(type, object);
+        definitionWrapper.set(properties, jqaWrapper);
         return definitionWrapper;
     }
 
@@ -92,7 +99,7 @@ public class JsonSchemaGenerator {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writerWithDefaultPrettyPrinter()
             .writeValue(file, schema);
-        System.out.println("Schema saved: " + file.getAbsolutePath());
+        log.info("Schema saved: " + file.getAbsolutePath());
     }
 
     private static List<ResolvedType> getResolvedTypes(MethodScope target, ResolvedType resolvedType) {
@@ -124,17 +131,22 @@ public class JsonSchemaGenerator {
             if (!targetType.isInstanceOf(Map.class)) {
                 return null;
             }
-            ResolvedType keyType = context.getTypeContext().getTypeParameterFor(targetType, Map.class, 0);
-            ResolvedType valueType = context.getTypeContext().getTypeParameterFor(targetType, Map.class, 1);
+            ResolvedType keyType = context.getTypeContext()
+                .getTypeParameterFor(targetType, Map.class, 0);
+            ResolvedType valueType = context.getTypeContext()
+                .getTypeParameterFor(targetType, Map.class, 1);
             if (keyType == null || !keyType.isInstanceOf(String.class)) {
                 return null;
             }
             if (valueType == null) {
-                valueType = context.getTypeContext().resolve(Object.class);
+                valueType = context.getTypeContext()
+                    .resolve(Object.class);
             }
-            ObjectNode customSchema = context.getGeneratorConfig().createObjectNode();
+            ObjectNode customSchema = context.getGeneratorConfig()
+                .createObjectNode();
             customSchema.put(context.getKeyword(SchemaKeyword.TAG_TYPE), "object");
-            ObjectNode unkownNameWrapper = context.getGeneratorConfig().createObjectNode();
+            ObjectNode unkownNameWrapper = context.getGeneratorConfig()
+                .createObjectNode();
             ObjectNode valueTypeDefinition = context.createDefinition(valueType);
             unkownNameWrapper.set("^.*$", valueTypeDefinition);
             customSchema.set(context.getKeyword(SchemaKeyword.TAG_PATTERN_PROPERTIES), unkownNameWrapper);
