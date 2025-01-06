@@ -605,24 +605,88 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="java:TestMethodWithoutAssertion">
+    <concept id="java:AssertAnnotation">
+        <description>
+            An assert annotation is used to define an expected testing result (e.g. @Test(expected = RuntimeException.class)
+            for a test method.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(method:Method)-[:ANNOTATED_BY]->(annotation:Annotation:Assert)-[:OF_TYPE]->(annotationType:Java:Type)
+            RETURN
+              type AS DeclaringType, method AS AnnotatedTestMethod, annotationType AS AnnotationType
+            ORDER BY
+              type.fqn, method.fqn, annotationType.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:MethodPerformsAssertion">
+        <description>Returns all test methods performing at least one assertion.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(method:Method)-[:PERFORMS_ASSERTION]->(assertion:Assert)
+            RETURN
+              type AS DeclaringType, method AS Method
+            ORDER BY
+              type.fqn, method.signature
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TestMethodPerformsMethodAssertion">
+        <providesConcept refId="java:MethodPerformsAssertion"/>
         <requiresConcept refId="java:VirtualInvokes"/>
         <requiresConcept refId="java:TestMethod"/>
         <requiresConcept refId="java:AssertMethod"/>
         <requiresParameter name="javaTestAssertMaxCallDepth" type="int" defaultValue="3" />
-        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <description>
+            A test method performs a method assertion, if it invokes an assert method within a call hierarchy of max. 3 steps.
+        </description>
         <cypher><![CDATA[
             MATCH
               (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
             OPTIONAL MATCH
-              path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assert:Method:Assert))
+              path=shortestPath((testMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assertMethod:Method:Assert))
             WITH
-              testClass, testMethod, COLLECT(length(path)) as lengths
-            WITH
-              testClass, testMethod, REDUCE(minVal = lengths[0], n IN lengths | CASE WHEN n < minVal THEN n ELSE minVal END) AS shortestPathLength
+              testClass, testMethod, assertMethod, length(path) as callDepth
             WHERE
-              shortestPathLength is null
-              or shortestPathLength > $javaTestAssertMaxCallDepth
+              callDepth is not null
+              and callDepth <= $javaTestAssertMaxCallDepth
+            MERGE
+              (testMethod)-[:PERFORMS_ASSERTION]->(assertMethod)
+            RETURN
+              distinct testClass AS TestClass, testMethod AS TestMethod, assertMethod as AssertMethod
+            ORDER BY
+              testClass.fqn, testMethod.name, AssertMethod.name
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TestMethodPerformsAnnotationAssertion">
+        <providesConcept refId="java:MethodPerformsAssertion"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <requiresConcept refId="java:AssertAnnotation"/>
+        <description>
+            A test method performs an annotation assertion, if it is annotated with an assert annotation.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)-[:ANNOTATED_BY]->(assertAnnotation:Annotation:Assert)-[:OF_TYPE]->(annotationType:Java:Type)
+            MERGE
+              (testMethod)-[:PERFORMS_ASSERTION]->(assertAnnotation)
+            RETURN
+              distinct testClass AS TestClass, testMethod as TestMethod, annotationType AS AssertAnnotationType
+            ORDER BY
+              testClass.fqn, testMethod.fqn
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java:TestMethodWithoutAssertion">
+        <requiresConcept refId="java:MethodPerformsAssertion"/>
+        <description>All test methods must perform at least one assertion.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
+            WHERE NOT
+              (testMethod)-[:PERFORMS_ASSERTION]->(:Assert)
             RETURN
               distinct testClass AS TestClass, testMethod AS TestMethod
             ORDER BY

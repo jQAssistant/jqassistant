@@ -139,14 +139,31 @@
             WHERE
               assertType.fqn = 'org.junit.Assert'
               and (
-                assertMethod.signature =~ 'void assert.*'
-                or assertMethod.signature =~ 'void fail.*'
+                assertMethod.signature CONTAINS ' assert'
+                or assertMethod.signature CONTAINS ' fail'
               )
             SET
               assertMethod:Junit4:Assert
             RETURN
               assertMethod
             ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AssertAnnotation">
+        <providesConcept refId="java:AssertAnnotation"/>
+        <requiresConcept refId="java:TestMethod"/>
+        <description>Labels @Test-Annotations with the parameter "expected" as assert annotations.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testType:Java:Type)-[:DECLARES]->(annotatedTestMethod:Test:Method)-[:ANNOTATED_BY]->(annotation:Annotation)-[:OF_TYPE]->(:Java:Type {fqn: "org.junit.Test"}),
+              (annotation)-[:HAS]->(expectation:Java:Value {name: 'expected'})
+            SET
+              annotation:Junit4:Assert
+            RETURN
+              testType AS DeclaringType, annotatedTestMethod AS AnnotatedTestMethod
+            ORDER BY
+              testType.fqn, annotatedTestMethod.name
+        ]]></cypher>
     </concept>
 
     <concept id="junit4:SuiteClass">
@@ -191,7 +208,7 @@
               (testType:Type)-[:DECLARES]->(testMethod:Test:Method),
               (testMethod)-[invocation:INVOKES*]->(assertMethod:Junit4:Assert:Method)
             WHERE NOT (
-                assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+                assertMethod.signature =~ '.*assert.*\\(java.lang.String,.*\\)'
                 or assertMethod.signature = 'void fail(java.lang.String)'
             )
             RETURN
