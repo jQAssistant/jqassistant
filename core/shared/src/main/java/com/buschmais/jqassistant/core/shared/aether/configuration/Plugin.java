@@ -19,7 +19,7 @@ public interface Plugin {
     Optional<String> classifier();
 
     @Description("The artifactId of the plugin.")
-    List<String> artifactId();
+    String artifactId();
 
     @Description("The type (extension) of the plugin.")
     @WithDefault("jar")

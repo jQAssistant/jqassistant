@@ -47,7 +47,7 @@ public class AetherArtifactProvider implements ArtifactProvider {
 
     private List<Dependency> getDependencies(List<Plugin> plugins) {
         return plugins.stream()
-            .flatMap(plugin -> getPluginDependencies(plugin).stream())
+            .map(this::toDependency)
             .collect(toList());
     }
 
@@ -60,21 +60,15 @@ public class AetherArtifactProvider implements ArtifactProvider {
         return dependencyResult;
     }
 
-    private List<Dependency> getPluginDependencies(Plugin plugin) {
-        List<Exclusion> exlusions = plugin.exclusions()
+    private Dependency toDependency(Plugin plugin) {
+        List<Exclusion> exclusions = plugin.exclusions()
             .stream()
             .map(AetherArtifactProvider::getPluginExclusions)
             .flatMap(Collection::stream)
             .collect(toList());
-        return plugin.artifactId()
-            .stream()
-            .map(artifactId -> getDependency(plugin, artifactId.trim(), exlusions))
-            .collect(toList());
-    }
-
-    private static Dependency getDependency(Plugin plugin, String artifactId, List<Exclusion> exlusions) {
-        return new Dependency(new DefaultArtifact(plugin.groupId(), artifactId, plugin.classifier()
-            .orElse(null), plugin.type(), plugin.version()), JavaScopes.RUNTIME, false, exlusions);
+        return new Dependency(new DefaultArtifact(plugin.groupId(), plugin.artifactId()
+            .trim(), plugin.classifier()
+            .orElse(null), plugin.type(), plugin.version()), JavaScopes.RUNTIME, false, exclusions);
     }
 
     private static List<Exclusion> getPluginExclusions(com.buschmais.jqassistant.core.shared.aether.configuration.Exclusion exclusion) {
@@ -99,9 +93,7 @@ public class AetherArtifactProvider implements ArtifactProvider {
 
     private void logDependencyTree(DependencyNode node, int indent) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            builder.append(' ');
-        }
+        builder.append(" ".repeat(indent));
         Artifact artifact = node.getArtifact();
         if (artifact != null) {
             log.info("{}{}", builder, artifact);
