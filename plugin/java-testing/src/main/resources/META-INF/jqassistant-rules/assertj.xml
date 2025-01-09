@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
 
     <concept id="assertj:AssertMethod">
-        <providesConcept refId="java:AssertMethod"/> <!-- TODO: Test this binding as well -->
+        <providesConcept refId="java:AssertMethod"/>
         <description>
             Sets labels :Assert and :AssertJ for AssertJ assert methods.
         </description>
