@@ -5,11 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -19,11 +19,18 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource;
 
+import lombok.extern.slf4j.Slf4j;
+
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+import static java.nio.file.Files.walkFileTree;
+
 /**
  * Abstract base implementation for directory scanners.
  */
-public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor>
-        extends AbstractContainerScannerPlugin<File, File, D> {
+@Slf4j
+public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor> extends AbstractContainerScannerPlugin<File, File, D> {
+
+    public static final String PROPERTY_FOLLOW_SYMLINKS = "directory.follow-symbolic-links";
 
     @Override
     public Class<? extends File> getType() {
@@ -44,9 +51,9 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     protected Iterable<? extends File> getEntries(File container) throws IOException {
         final Path directoryPath = container.toPath();
         final List<File> files = new ArrayList<>();
-        SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+        SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 if (!directoryPath.equals(dir)) {
                     files.add(dir.toFile());
                 }
@@ -54,12 +61,18 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
             }
 
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 files.add(file.toFile());
                 return FileVisitResult.CONTINUE;
             }
         };
-        Files.walkFileTree(directoryPath, visitor);
+        boolean followSymlinks = getBooleanProperty(PROPERTY_FOLLOW_SYMLINKS, false);
+        log.info("Following symlinks: {}", followSymlinks);
+        if (followSymlinks) {
+            walkFileTree(directoryPath, EnumSet.of(FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
+        } else {
+            walkFileTree(directoryPath, visitor);
+        }
         return files;
     }
 
