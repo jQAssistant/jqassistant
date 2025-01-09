@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit.test.rule;
+package com.buschmais.jqassistant.plugin.java_testing.concept;
 
 import java.util.List;
 import java.util.stream.Collectors;

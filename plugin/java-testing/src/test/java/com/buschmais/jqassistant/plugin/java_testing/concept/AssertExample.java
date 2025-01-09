@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit.test.rule;
+package com.buschmais.jqassistant.plugin.java_testing.concept;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

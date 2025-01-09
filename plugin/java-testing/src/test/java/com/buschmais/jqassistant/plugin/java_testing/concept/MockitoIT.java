@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit.test.rule;
+package com.buschmais.jqassistant.plugin.java_testing.concept;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
