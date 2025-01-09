@@ -51,7 +51,9 @@ class RuleSetIT extends AbstractJavaPluginIT {
         assertThat(assertMethods).contains(1L, 1L);
 
         final TestResult methodQueryResultForAssertJ = query(
-            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) " + "WHERE assertMethod:AssertJ:Assert " + "RETURN testMethod, assertMethod");
+            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) "
+                + "WHERE assertMethod:AssertJ:Assert "
+                + "RETURN testMethod, assertMethod");
         assertThat(methodQueryResultForAssertJ.getRows().size()).isEqualTo(1);
         assertThat(methodQueryResultForAssertJ.<MethodDescriptor>getColumn("testMethod"))
             .haveExactly(1, methodDescriptor(AssertExample.class, "assertjAssertExampleMethod"));
@@ -59,7 +61,9 @@ class RuleSetIT extends AbstractJavaPluginIT {
             .haveExactly(1, methodDescriptor(Assertions.class, "assertThat", boolean.class));
 
         final TestResult methodQueryResultForMockito = query(
-            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) " + "WHERE assertMethod:Mockito:Assert " + "RETURN testMethod, assertMethod");
+            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) "
+                + "WHERE assertMethod:Mockito:Assert "
+                + "RETURN testMethod, assertMethod");
         assertThat(methodQueryResultForMockito.getRows().size()).isEqualTo(1);
         assertThat(methodQueryResultForMockito.<MethodDescriptor>getColumn("testMethod"))
             .haveExactly(1, methodDescriptor(AssertExample.class, "mockitoVerifyExampleMethod"));

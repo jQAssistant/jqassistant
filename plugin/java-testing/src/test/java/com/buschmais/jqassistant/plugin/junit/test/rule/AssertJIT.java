@@ -33,7 +33,9 @@ class AssertJIT extends AbstractJavaPluginIT {
             .is(methodDescriptor(Assertions.class, "assertThat", boolean.class));
 
         final TestResult methodQueryResult = query(
-            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) " + "WHERE assertMethod:AssertJ:Assert " + "RETURN testMethod, assertMethod");
+            "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) "
+                + "WHERE assertMethod:AssertJ:Assert "
+                + "RETURN testMethod, assertMethod");
         assertThat(methodQueryResult.getRows().size()).isEqualTo(1);
         assertThat(methodQueryResult.<MethodDescriptor>getColumn("testMethod"))
             .haveExactly(1, methodDescriptor(AssertExample.class, "assertjAssertExampleMethod"));
