@@ -67,8 +67,8 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
             }
         };
         boolean followSymlinks = getBooleanProperty(PROPERTY_FOLLOW_SYMLINKS, false);
-        log.info("Following symlinks: {}", followSymlinks);
         if (followSymlinks) {
+            log.info("Following symbolic links.");
             walkFileTree(directoryPath, EnumSet.of(FOLLOW_LINKS), Integer.MAX_VALUE, visitor);
         } else {
             walkFileTree(directoryPath, visitor);
