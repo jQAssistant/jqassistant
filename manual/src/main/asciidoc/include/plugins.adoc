@@ -8,6 +8,7 @@ This section provides detailed descriptions of all distributed plugins.
 // Please insert new documents in alphabetical order!!!!
 //
 
+include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/java/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/java-testing/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/json/asciidoc/plugin.adoc[]

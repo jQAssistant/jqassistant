@@ -1,7 +1,7 @@
 <<FileResourceScanner>> <<DirectoryResourceScanner>> <<UrlScanner>> <<UriScanner>>
 
 [[FileResourceScanner]]
-== File Resource Scanner
+== File Scanner
 Imports file resources which may origin from scanned directories, archives or URLs.
 
 === Configuration
@@ -26,8 +26,19 @@ Represents a file.
 |====
 
 [[DirectoryResourceScanner]]
-== Directory Resource Scanner
+== Directory Scanner
+
 Imports directory resources which may origin from scanned directories or archives.
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property                        | Description                                        | Default
+| directory.follow-symbolic-links | If `true` follow symbolic links in the file system | false
+|====
+
 
 [[:File:Directory]]
 === :File:Directory
