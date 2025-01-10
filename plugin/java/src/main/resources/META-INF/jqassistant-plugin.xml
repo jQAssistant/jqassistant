@@ -38,9 +38,11 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</class>
         <!-- JPMS -->
