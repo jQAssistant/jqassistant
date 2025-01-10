@@ -59,7 +59,7 @@ public class MethodDataFlowVisitor extends MethodVisitor {
                 }
             }
         } catch (AnalyzerException e) {
-            log.warn("Cannot analyze data flow of {}#{}: {}.", type.getClassName(), methodNode.signature, e.getMessage());
+            log.warn("Cannot analyze data flow of '{}#{}': '{}'.", type.getClassName(), methodNode.signature, e.getMessage());
             log.debug("Analyzer exception details.", e);
         }
     }

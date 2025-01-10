@@ -1,0 +1,23 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+
+    <concept id="assertj:AssertMethod">
+        <providesConcept refId="java:AssertMethod"/>
+        <description>
+            Sets labels :Assert and :AssertJ for AssertJ assert methods.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+                (assertType:Type)-[:DECLARES]->(assertMethod)
+            WHERE
+                assertType.fqn =~ 'org\\.assertj\\.core\\.api\\..*Assertions.*'
+                AND assertMethod.signature =~ '.* assert.*'
+            SET
+                assertMethod:AssertJ:Assert
+            RETURN
+                assertMethod
+        ]]></cypher>
+    </concept>
+
+</jqassistant-rules>
