@@ -22,6 +22,9 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder;
+import com.buschmais.jqassistant.core.rule.api.annotation.ConceptId;
+import com.buschmais.jqassistant.core.rule.api.annotation.ConstraintId;
+import com.buschmais.jqassistant.core.rule.api.annotation.GroupId;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -320,7 +323,7 @@ public abstract class AbstractPluginIT {
      *     The id.
      * @return The result.
      */
-    protected Result<Concept> applyConcept(String id) throws RuleException {
+    protected Result<Concept> applyConcept(@ConceptId String id) throws RuleException {
         return applyConcept(id, emptyMap());
     }
 
@@ -333,7 +336,7 @@ public abstract class AbstractPluginIT {
      *     The rule parameters.
      * @return The result.
      */
-    protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
+    protected Result<Concept> applyConcept(@ConceptId String id, Map<String, String> parameters) throws RuleException {
         Analyzer analyzer = getAnalyzer(parameters);
         RuleSelection ruleSelection = RuleSelection.builder()
             .conceptId(id)
@@ -354,7 +357,7 @@ public abstract class AbstractPluginIT {
      *     The id.
      * @return The result.
      */
-    protected Result<Constraint> validateConstraint(String id) throws RuleException {
+    protected Result<Constraint> validateConstraint(@ConstraintId String id) throws RuleException {
         return validateConstraint(id, emptyMap());
     }
 
@@ -367,7 +370,7 @@ public abstract class AbstractPluginIT {
      *     The rule parameters.
      * @return The result.
      */
-    protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
+    protected Result<Constraint> validateConstraint(@ConstraintId String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
             .constraintId(id)
             .build();
@@ -386,7 +389,7 @@ public abstract class AbstractPluginIT {
      * @param id
      *     The id.
      */
-    protected void executeGroup(String id) throws RuleException {
+    protected void executeGroup(@GroupId String id) throws RuleException {
         executeGroup(id, emptyMap());
     }
 
@@ -398,7 +401,7 @@ public abstract class AbstractPluginIT {
      * @param parameters
      *     The rule parameters.
      */
-    protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
+    protected void executeGroup(@GroupId String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
             .groupId(id)
             .build();
