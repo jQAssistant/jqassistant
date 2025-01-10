@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class ArtifactProviderFactoryTest {
 
-    private ArtifactProviderFactory artifactProviderFactory;
+    private File userHome;
 
     @Mock
     private ArtifactResolverConfiguration configuration;
@@ -43,15 +43,14 @@ class ArtifactProviderFactoryTest {
         doReturn(repositories).when(configuration)
             .repositories();
         URL userHomeUrl = ArtifactProviderFactoryTest.class.getResource("/userhome");
-        File userHome = new File(userHomeUrl.getFile());
-        this.artifactProviderFactory = new ArtifactProviderFactory(userHome);
+        this.userHome = new File(userHomeUrl.getFile());
     }
 
     @Test
     void mavenCentralIsDefault() {
-        AetherArtifactProvider artifactResolver = artifactProviderFactory.create(configuration);
+        AetherArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
 
-        List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
+        List<RemoteRepository> remoteRepositories = artifactProvider.getRepositories();
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mavenCentral = remoteRepositories.get(0);
         verify(mavenCentral, MAVEN_CENTRAL_ID, MAVEN_CENTRAL_URL, authentication -> assertThat(authentication).isNull());
@@ -71,7 +70,7 @@ class ArtifactProviderFactoryTest {
         doReturn(Map.of("central-mirror", mirror)).when(repositories)
             .mirrors();
 
-        AetherArtifactProvider artifactResolver = artifactProviderFactory.create(configuration);
+        AetherArtifactProvider artifactResolver = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
         List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
 
         assertThat(remoteRepositories).hasSize(1);
@@ -101,7 +100,7 @@ class ArtifactProviderFactoryTest {
         doReturn(of(proxy)).when(configuration)
             .proxy();
 
-        AetherArtifactProvider artifactResolver = artifactProviderFactory.create(configuration);
+        AetherArtifactProvider artifactResolver = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
         List<RemoteRepository> remoteRepositories = artifactResolver.getRepositories();
         assertThat(remoteRepositories).hasSize(1);
         RemoteRepository mavenCentral = remoteRepositories.get(0);

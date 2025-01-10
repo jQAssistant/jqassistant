@@ -36,8 +36,7 @@ class PluginResolverIT {
         TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(testConfigSource);
 
-        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File("target/it/userhome"));
-        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, new File("target/it/userhome"));
         PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
 
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(ArtifactProviderFactory.class.getClassLoader(), configuration);

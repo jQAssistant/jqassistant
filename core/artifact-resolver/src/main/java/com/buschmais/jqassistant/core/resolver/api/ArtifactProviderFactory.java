@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.resolver.configuration.Proxy;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -33,12 +34,14 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static lombok.AccessLevel.PRIVATE;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
 
 /**
  * Factory for the {@link AetherArtifactProvider} to be used in standalone in the CLI.
  */
+@NoArgsConstructor(access = PRIVATE)
 @Slf4j
 public class ArtifactProviderFactory {
 
@@ -92,12 +95,6 @@ public class ArtifactProviderFactory {
         }
     };
 
-    private final File jqassistantUserDir;
-
-    public ArtifactProviderFactory(File userHome) {
-        this.jqassistantUserDir = new File(userHome, ".jqassistant");
-    }
-
     /**
      * Creates a {@link AetherArtifactProvider} using the given {@link ArtifactResolverConfiguration} providing the required {@link Plugin}s and {@link Repositories}
      * <p>
@@ -106,12 +103,12 @@ public class ArtifactProviderFactory {
      * If no remote repository is specified the resolver will use Maven Central.
      *
      * @param configuration
-     *         The {@link ArtifactResolverConfiguration}.
+     *     The {@link ArtifactResolverConfiguration}.
      * @return The {@link AetherArtifactProvider}.
      */
-    public AetherArtifactProvider create(ArtifactResolverConfiguration configuration) {
+    public static AetherArtifactProvider getArtifactProvider(ArtifactResolverConfiguration configuration, File userHome) {
         Repositories repositories = configuration.repositories();
-        File localRepository = getLocalRepository(repositories);
+        File localRepository = getLocalRepository(repositories, userHome);
         Optional<org.eclipse.aether.repository.Proxy> proxy = getProxy(configuration.proxy());
         ProxySelector proxySelector = getProxySelector(configuration, proxy);
         Optional<MirrorSelector> mirrorSelector = getMirrorSelector(repositories);
@@ -119,16 +116,16 @@ public class ArtifactProviderFactory {
         RepositorySystem repositorySystem = newRepositorySystem();
         log.info("Local repository: {}", localRepository);
         log.info("Remote repositories: {}", remoteRepositories.stream()
-                .map(repository -> {
-                    org.eclipse.aether.repository.Proxy repositoryProxy = repository.getProxy();
-                    List<RemoteRepository> mirroredRepositories = repository.getMirroredRepositories();
-                    return String.format("'%s (%s%s%s)'", repository.getId(), repository.getUrl(), !mirroredRepositories.isEmpty() ?
-                            String.format(", mirror of %s", mirroredRepositories.stream()
-                                    .map(r -> r.getId())
-                                    .collect(joining(", "))) :
-                            "", repositoryProxy != null ? String.format(" via proxy %s:%d", repositoryProxy.getHost(), repositoryProxy.getPort()) : "");
-                })
-                .collect(joining(", ")));
+            .map(repository -> {
+                org.eclipse.aether.repository.Proxy repositoryProxy = repository.getProxy();
+                List<RemoteRepository> mirroredRepositories = repository.getMirroredRepositories();
+                return String.format("'%s (%s%s%s)'", repository.getId(), repository.getUrl(), !mirroredRepositories.isEmpty() ?
+                    String.format(", mirror of %s", mirroredRepositories.stream()
+                        .map(r -> r.getId())
+                        .collect(joining(", "))) :
+                    "", repositoryProxy != null ? String.format(" via proxy %s:%d", repositoryProxy.getHost(), repositoryProxy.getPort()) : "");
+            })
+            .collect(joining(", ")));
         RepositorySystemSession session = newRepositorySystemSession(repositories, repositorySystem, localRepository, mirrorSelector, proxySelector);
 
         return new AetherArtifactProvider(repositorySystem, session, remoteRepositories);
@@ -138,41 +135,43 @@ public class ArtifactProviderFactory {
      * Determine the local repository to use.
      *
      * @param repositories
-     *         The {@link Repositories} configuration.
+     *     The {@link Repositories} configuration.
+     * @param userHome
+     *     The users home directory.
      * @return The local repository.
      */
-    private File getLocalRepository(Repositories repositories) {
-        // determine local repository
+    private static File getLocalRepository(Repositories repositories, File userHome) {
+        File jqassistantUserDir = new File(userHome, ".jqassistant");        // determine local repository
         return repositories.local()
-                .orElseGet(() -> {
-                    File repository = new File(jqassistantUserDir, "repository");
-                    repository.mkdirs();
-                    return repository;
-                });
+            .orElseGet(() -> {
+                File repository = new File(jqassistantUserDir, "repository");
+                repository.mkdirs();
+                return repository;
+            });
     }
 
-    private Optional<org.eclipse.aether.repository.Proxy> getProxy(Optional<Proxy> proxy) {
+    private static Optional<org.eclipse.aether.repository.Proxy> getProxy(Optional<Proxy> proxy) {
         return proxy.map(p -> {
             String protocol = p.protocol()
-                    .orElse("https");
+                .orElse("https");
             String host = p.host();
             Integer port = p.port();
             AuthenticationBuilder authBuilder = new AuthenticationBuilder();
             p.username()
-                    .ifPresent(authBuilder::addUsername);
+                .ifPresent(authBuilder::addUsername);
             p.password()
-                    .ifPresent(authBuilder::addPassword);
+                .ifPresent(authBuilder::addPassword);
 
             return new org.eclipse.aether.repository.Proxy(protocol, host, port, authBuilder.build());
         });
     }
 
-    private ProxySelector getProxySelector(ArtifactResolverConfiguration configuration, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
+    private static ProxySelector getProxySelector(ArtifactResolverConfiguration configuration, Optional<org.eclipse.aether.repository.Proxy> optionalProxy) {
         DefaultProxySelector proxySelector = new DefaultProxySelector();
         optionalProxy.ifPresent(proxy -> proxySelector.add(proxy, configuration.proxy()
-                .map(proxyConfiguration -> proxyConfiguration.nonProxyHosts()
-                        .orElse(null))
-                .orElse(null)));
+            .map(proxyConfiguration -> proxyConfiguration.nonProxyHosts()
+                .orElse(null))
+            .orElse(null)));
         return proxySelector;
     }
 
@@ -180,30 +179,31 @@ public class ArtifactProviderFactory {
      * Determines the remote repositories to use, using Maven Central as fallback.
      *
      * @param repositories
-     *         The {@link Repositories} configuration.
+     *     The {@link Repositories} configuration.
      * @param proxySelector
-     *         The {@link ProxySelector}.
+     *     The {@link ProxySelector}.
      * @param mirrorSelector
-     *         The {@link MirrorSelector}.
+     *     The {@link MirrorSelector}.
      * @return The list of configured {@link RemoteRepository}s.
      */
-    private List<RemoteRepository> getRemoteRepositories(Repositories repositories, ProxySelector proxySelector, Optional<MirrorSelector> mirrorSelector) {
+    private static List<RemoteRepository> getRemoteRepositories(Repositories repositories, ProxySelector proxySelector,
+        Optional<MirrorSelector> mirrorSelector) {
         // Use Maven Central as default
         Map<String, Remote> remotes = new HashMap<>();
         remotes.put(MAVEN_CENTRAL_ID, MAVEN_CENTRAL);
         // Add configured remotes
         remotes.putAll(repositories.remotes());
         return remotes.entrySet()
-                .stream()
-                .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), proxySelector))
-                // apply any configured mirrors to the remote repository
-                .map(remoteRepository -> mirrorSelector.map(selector -> selectMirror(remoteRepository, selector, repositories.mirrors(), proxySelector))
-                        .orElse(remoteRepository))
-                .collect(toList());
+            .stream()
+            .map(remoteEntry -> getRemoteRepository(remoteEntry.getKey(), remoteEntry.getValue(), proxySelector))
+            // apply any configured mirrors to the remote repository
+            .map(remoteRepository -> mirrorSelector.map(selector -> selectMirror(remoteRepository, selector, repositories.mirrors(), proxySelector))
+                .orElse(remoteRepository))
+            .collect(toList());
     }
 
     private static RemoteRepository selectMirror(RemoteRepository remoteRepository, MirrorSelector selector, Map<String, Mirror> mirrors,
-            ProxySelector proxySelector) {
+        ProxySelector proxySelector) {
         RemoteRepository mirrorRepository = selector.getMirror(remoteRepository);
         if (mirrorRepository == null) {
             return remoteRepository;
@@ -214,9 +214,9 @@ public class ArtifactProviderFactory {
 
     private static RemoteRepository getRemoteRepository(String id, Remote remote, ProxySelector proxySelector) {
         RemoteRepository remoteRepository = new RemoteRepository.Builder(id, REPOSITORY_LAYOUT_DEFAULT, remote.url()) //
-                .setReleasePolicy(getRepositoryPolicy(remote.releases()))
-                .setSnapshotPolicy(getRepositoryPolicy(remote.snapshots()))
-                .build();
+            .setReleasePolicy(getRepositoryPolicy(remote.releases()))
+            .setSnapshotPolicy(getRepositoryPolicy(remote.snapshots()))
+            .build();
         return getRemoteRepository(remoteRepository, proxySelector, remote.username(), remote.password());
     }
 
@@ -225,14 +225,14 @@ public class ArtifactProviderFactory {
     }
 
     private static RemoteRepository getRemoteRepository(RemoteRepository remoteRepository, ProxySelector proxySelector, Optional<String> optionalUsername,
-            Optional<String> optionalPassword) {
+        Optional<String> optionalPassword) {
         AuthenticationBuilder authBuilder = new AuthenticationBuilder();
         optionalUsername.ifPresent(authBuilder::addUsername);
         optionalPassword.ifPresent(authBuilder::addPassword);
         org.eclipse.aether.repository.Proxy proxy = proxySelector.getProxy(remoteRepository);
         return new RemoteRepository.Builder(remoteRepository).setProxy(proxy)
-                .setAuthentication(authBuilder.build())
-                .build();
+            .setAuthentication(authBuilder.build())
+            .build();
     }
 
     /**
@@ -240,7 +240,7 @@ public class ArtifactProviderFactory {
      *
      * @return The {@link RepositorySystem}.
      */
-    private RepositorySystem newRepositorySystem() {
+    private static RepositorySystem newRepositorySystem() {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         locator.addService(TransporterFactory.class, FileTransporterFactory.class);
@@ -252,17 +252,17 @@ public class ArtifactProviderFactory {
      * Creates a new {@link RepositorySystemSession}.
      *
      * @param repositories
-     *         The {@link Repositories}
+     *     The {@link Repositories}
      * @param system
-     *         the {@link RepositorySystem}
+     *     the {@link RepositorySystem}
      * @param mirrorSelector
-     *         The optional {@link MirrorSelector}.
+     *     The optional {@link MirrorSelector}.
      * @param proxySelector
-     *         The {@link ProxySelector}.
+     *     The {@link ProxySelector}.
      * @return a new {@link RepositorySystemSession}.
      */
-    private RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory,
-            Optional<MirrorSelector> mirrorSelector, ProxySelector proxySelector) {
+    private static RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory,
+        Optional<MirrorSelector> mirrorSelector, ProxySelector proxySelector) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setTransferListener(new TransferListener());
         LocalRepository localRepo = new LocalRepository(localDirectory);
@@ -270,18 +270,18 @@ public class ArtifactProviderFactory {
         session.setProxySelector(proxySelector);
         mirrorSelector.ifPresent(session::setMirrorSelector);
         session.setIgnoreArtifactDescriptorRepositories(repositories.ignoreTransitiveRepositories()
-                .orElse(true));
+            .orElse(true));
         return session;
     }
 
-    private Optional<MirrorSelector> getMirrorSelector(Repositories repositories) {
+    private static Optional<MirrorSelector> getMirrorSelector(Repositories repositories) {
         if (repositories.mirrors()
-                .isEmpty()) {
+            .isEmpty()) {
             return empty();
         }
         DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
         for (Map.Entry<String, Mirror> entry : repositories.mirrors()
-                .entrySet()) {
+            .entrySet()) {
             String id = entry.getKey();
             Mirror mirror = entry.getValue();
             mirrorSelector.add(id, mirror.url(), null, false, false, mirror.mirrorOf(), null);
@@ -296,15 +296,15 @@ public class ArtifactProviderFactory {
         @Override
         public void transferStarted(TransferEvent transferEvent) {
             log.info("Downloading '{}{}'.", transferEvent.getResource()
-                    .getRepositoryUrl(), transferEvent.getResource()
-                    .getResourceName());
+                .getRepositoryUrl(), transferEvent.getResource()
+                .getResourceName());
         }
 
         @Override
         public void transferSucceeded(TransferEvent transferEvent) {
             log.info("Finished download of '{}{}'.", transferEvent.getResource()
-                    .getRepositoryUrl(), transferEvent.getResource()
-                    .getResourceName());
+                .getRepositoryUrl(), transferEvent.getResource()
+                .getResourceName());
         }
     }
 }
