@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 
+import lombok.ToString;
+
 /**
  * Container to store {@link Rule Rules}.
  *
@@ -11,6 +13,7 @@ import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
  *            Type of the rule stored in the bucket.
  * @see Rule
  */
+@ToString
 public abstract class AbstractRuleBucket<T extends AbstractRule> {
 
     private TreeMap<String, T> rules = new TreeMap<>();

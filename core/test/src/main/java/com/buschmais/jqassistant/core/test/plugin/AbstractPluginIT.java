@@ -60,8 +60,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.*;
 import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,8 +85,6 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
-    private static ArtifactProviderFactory artifactProviderFactory;
-
     private static PluginRepositoryImpl pluginRepository;
 
     protected Store store;
@@ -98,7 +95,6 @@ public abstract class AbstractPluginIT {
 
     @BeforeAll
     public static void initPluginRepository() {
-        artifactProviderFactory = new ArtifactProviderFactory(USER_HOME);
         Optional<File> mavenSettingsFile = ofNullable(System.getProperty(PROPERTY_MAVEN_SETTINGS)).map(File::new);
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
@@ -219,7 +215,7 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     private void startStore(ITConfiguration configuration) {
-        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, USER_HOME);
         StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
         store = storeFactory.getStore(configuration.store(), () -> TEST_STORE_DIRECTORY);
         store.start();

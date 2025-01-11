@@ -193,8 +193,7 @@ public class Main {
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
-            ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(userHome);
-            ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+            ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
             PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider);
             StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
             ClassLoader contextClassLoader = currentThread().getContextClassLoader();

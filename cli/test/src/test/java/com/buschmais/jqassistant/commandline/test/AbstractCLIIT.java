@@ -163,8 +163,7 @@ public abstract class AbstractCLIIT {
         pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())));
         pluginRepository.initialize();
         // The user home contains a Maven settings.xml to configure the local repository
-        ArtifactProviderFactory artifactProviderFactory = new ArtifactProviderFactory(new File(userHome));
-        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, new File(userHome));
         storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
     }
 
