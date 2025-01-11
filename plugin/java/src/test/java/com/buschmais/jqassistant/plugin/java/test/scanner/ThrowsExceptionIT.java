@@ -1,10 +1,11 @@
-package com.buschmais.jqassistant.plugin.java.test;
+package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.junit.jupiter.api.Test;
 

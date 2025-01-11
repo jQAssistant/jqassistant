@@ -227,6 +227,7 @@ A method declared in a Java type.
 | HAS                     | <<:Java:Parameter>>          | 0..n        | References a parameter of the method
 | THROWS                  | <<:Java:Type>>               | 0..n        | References the exception types thrown by the method
 | THROWS_GENERIC          | <<:Java:Bound>>              | 0..n        | References the generic exception types thrown by the method
+| CATCHES                 | <<:Java:Type>>               | 0..n        | References the exception types caught by a method
 | RETURNS                 | <<:Java:Type>>               | 0..n        | References the return type of the method
 | RETURNS_GENERIC         | <<:Java:Bound>>              | 0..n        | References the generic return type of the method
 | ANNOTATED_BY            | <<:Java:Value:Annotation>>   | 0..n        | References an annotation which is present on the method declaration
@@ -254,6 +255,13 @@ scanned themselves will only provide the property `signature`
 | lineNumber  | The line number where the operation is performed (not available if the scanned bytecode is compiled without line number information)
 |====
 
+.Properties of `:CATCHES`
+[options="header"]
+|====
+| Name           | Description
+| firstLineNumber | The first line number (inclusive) where the referenced exception is caught
+| lastLineNumber   | The last line number (exclusive) where the referenced exception is caught
+|====
 
 .Properties of `:DECLARES_TYPE_PARAMETER`
 [options="header"]

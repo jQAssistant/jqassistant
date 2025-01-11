@@ -98,6 +98,14 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
     List<ThrowsDescriptor> getThrows();
 
     /**
+     * Return all caught exception types.
+     *
+     * @return The caught exception types.
+     */
+    @Relation("CATCHES")
+    List<CatchesDescriptor> getCatches();
+
+    /**
      * Return <code>true</code> if this method is native.
      *
      * @return <code>true</code> if this method is native.
