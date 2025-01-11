@@ -192,6 +192,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
             TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType)
                 .getTypeDescriptor();
+            visitorHelper.getStore()
+                .addDescriptorType(exceptionType, ThrowableDescriptor.class);
             ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
                 .create(methodDescriptor, ThrowsDescriptor.class, exceptionType);
             throwsDescriptor.setDeclaration(true);

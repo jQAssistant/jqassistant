@@ -166,6 +166,10 @@ Qualifies a Java type as record.
 === Nodes labeled with `:Java:Type:Annotation`
 Qualifies a Java type as annotation.
 
+[[:Java:Type:Throwable]]
+=== Nodes labeled with :Java:Type:Throwable
+A throwable Java type.
+
 [[:Java:Field]]
 === Nodes labeled with `:Java:Field`
 A field declared in a Java type.
@@ -225,9 +229,9 @@ A method declared in a Java type.
 | Name                    | Target label(s)              | Cardinality | Description
 | DECLARES_TYPE_PARAMETER | <<:Java:Bound:TypeVariable>> | 0..n        | Declares a type variable
 | HAS                     | <<:Java:Parameter>>          | 0..n        | References a parameter of the method
-| THROWS                  | <<:Java:Type>>               | 0..n        | References the exception types thrown by the method
+| CATCHES                 | <<:Java:Type:Throwable>>     | 0..n        | References the exception types caught by a method
+| THROWS                  | <<:Java:Type:Throwable>>     | 0..n        | References the exception types thrown by the method
 | THROWS_GENERIC          | <<:Java:Bound>>              | 0..n        | References the generic exception types thrown by the method
-| CATCHES                 | <<:Java:Type>>               | 0..n        | References the exception types caught by a method
 | RETURNS                 | <<:Java:Type>>               | 0..n        | References the return type of the method
 | RETURNS_GENERIC         | <<:Java:Bound>>              | 0..n        | References the generic return type of the method
 | ANNOTATED_BY            | <<:Java:Value:Annotation>>   | 0..n        | References an annotation which is present on the method declaration

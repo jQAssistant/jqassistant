@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.junit.jupiter.api.Test;
@@ -41,12 +43,14 @@ class ThrowsExceptionIT extends AbstractJavaPluginIT {
     private void verify(String methodName, Class<?> expectedExceptionType, Consumer<ThrowsDescriptor> throwsDescriptorConsumer) {
         scanClasses(TestClass.class);
         store.beginTransaction();
-        TestResult query = query("MATCH (:Method{name:$methodName})-[throwsException:THROWS]->(:Type) RETURN throwsException",
-                Map.of("methodName", methodName));
+        TestResult query = query("MATCH (:Method{name:$methodName})-[throwsException:THROWS]->(:Type:Throwable) RETURN throwsException",
+            Map.of("methodName", methodName));
         List<ThrowsDescriptor> throwsExceptions = query.getColumn("throwsException");
         assertThat(throwsExceptions).hasSize(1);
         ThrowsDescriptor throwsDescriptor = throwsExceptions.get(0);
-        assertThat(throwsDescriptor.getThrownType()).satisfies(typeDescriptor(expectedExceptionType));
+        TypeDescriptor thrownType = throwsDescriptor.getThrownType();
+        assertThat(thrownType).isInstanceOf(ThrowableDescriptor.class)
+            .is(typeDescriptor(expectedExceptionType));
         throwsDescriptorConsumer.accept(throwsDescriptor);
         store.commitTransaction();
     }

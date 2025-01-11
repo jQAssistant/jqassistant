@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
@@ -33,7 +35,7 @@ public class MethodDataFlowVisitor extends MethodVisitor {
     private final Analyzer<BasicValue> analyzer;
 
     MethodDataFlowVisitor(Type type, MethodDescriptor methodDescriptor, MethodNode methodNode, MethodDataFlowVerifier methodDataFlowVerifier,
-            VisitorHelper visitorHelper) {
+        VisitorHelper visitorHelper) {
         super(ASM_OPCODES, methodNode);
         this.type = type;
         this.methodDescriptor = methodDescriptor;
@@ -68,20 +70,21 @@ public class MethodDataFlowVisitor extends MethodVisitor {
      * Evaluates a thrown exception and creates a {@link ThrowsDescriptor}.
      *
      * @param frame
-     *         The {@link Frame}.
+     *     The {@link Frame}.
      * @param lineNumber
-     *         The line number (can be <code>null</code>)
+     *     The line number (can be <code>null</code>)
      */
     private void athrow(Frame<BasicValue> frame, Integer lineNumber) {
         if (frame == null) {
             log.warn("Expected frame for athrow is null, skipping ({}#{}).", type.getClassName(), methodNode.signature);
         } else {
             String throwableType = SignatureHelper.getType(frame.getStack(0)
-                    .getType());
+                .getType());
             TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
-                    .getTypeDescriptor();
-            ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
-                    .create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);
+                .getTypeDescriptor();
+            Store store = visitorHelper.getStore();
+            store.addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
+            ThrowsDescriptor throwsDescriptor = store.create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);
             throwsDescriptor.setDeclaration(false);
             if (lineNumber != null) {
                 throwsDescriptor.setLineNumber(lineNumber);

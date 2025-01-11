@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
@@ -53,6 +54,8 @@ class MethodCatchesVisitor extends MethodVisitor {
             String throwableType = SignatureHelper.getObjectType(tryCatchBlock.getType());
             TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
                 .getTypeDescriptor();
+            visitorHelper.getStore()
+                .addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
             CatchesDescriptor catchesDescriptor = visitorHelper.getStore()
                 .create(methodDescriptor, CatchesDescriptor.class, typeDescriptor);
             catchesDescriptor.setFirstLineNumber(lineNumbers.get(tryCatchBlock.getStart()));
