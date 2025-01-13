@@ -18,8 +18,10 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</class>

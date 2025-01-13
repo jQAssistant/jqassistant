@@ -74,4 +74,6 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
 
     List<ThrowsDescriptor> getThrownBy();
 
+    List<CatchesDescriptor> getCatchingMethods();
+
 }

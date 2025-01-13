@@ -33,9 +33,9 @@ final class MethodDataFlowVerifier extends SimpleVerifier {
     @Override
     protected boolean isInterface(Type type) {
         return this.type.equals(type) ?
-                this.isInterfaceType :
-                this.interfaceTypes.stream()
-                        .anyMatch(interfaceType -> interfaceType.equals(type));
+            this.isInterfaceType :
+            this.interfaceTypes.stream()
+                .anyMatch(interfaceType -> interfaceType.equals(type));
     }
 
     @Override
