@@ -12,8 +12,18 @@ jqassistant:
       custom.scan.value: testValue
       jqassistant.plugin.jacoco.filename: jacoco.xml
   store:
+    uri: file://target/jqassistant/store
     embedded:
       http-port: 7474
+      connector-enabled: false
+      listen-address: localhost
+      bolt-port: 7687
+      neo4j-plugins:
+        - group-id: com.buschmais.jqassistant
+          artifact-id: jqassistant-maven-plugin.integration.plugin.customplugin
+          version: M1.3.1
+          classifier: randomClassifier
+          type: randomType
   analyze:
     groups:
       - default
@@ -25,5 +35,8 @@ jqassistant:
       properties:
         customReport.fileName: ${project.build.directory}/customReport.txt
         fail-on-severity: MINOR
+  server:
+    daemon: false
+    open-browser: false
 
 

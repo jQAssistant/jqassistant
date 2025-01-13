@@ -16,7 +16,7 @@ public interface Exclusion {
     String groupId();
 
     @Description("The artifactId of the exclusion.")
-    List<String> artifactId();
+    String artifactId();
 
     @Description("The classifier of the exclusion (optional).")
     Optional<String> classifier();
