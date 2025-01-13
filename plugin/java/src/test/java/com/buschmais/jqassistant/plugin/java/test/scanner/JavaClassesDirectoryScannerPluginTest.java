@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -36,15 +37,19 @@ class JavaClassesDirectoryScannerPluginTest {
 
     private File directory;
 
+    private JavaClassesDirectoryScannerPlugin plugin;
+
     @BeforeEach
     void before() throws IOException {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         directory = Files.createTempDirectory("directory").toFile();
+        this.plugin = new JavaClassesDirectoryScannerPlugin();
+        this.plugin.configure(context, emptyMap());
     }
 
     @AfterEach
-    void after() throws IOException {
+    void after() {
         if (directory != null) {
             directory.delete();
         }
@@ -59,7 +64,6 @@ class JavaClassesDirectoryScannerPluginTest {
      */
     @Test
     void createArtifact() throws IOException {
-        JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(null);
         when(store.create(JavaClassesDirectoryDescriptor.class)).thenReturn(artifact);
@@ -81,7 +85,6 @@ class JavaClassesDirectoryScannerPluginTest {
      */
     @Test
     void useArtifactFromContext() throws IOException {
-        JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
         File directory = Files.createTempDirectory("directory").toFile();
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(artifact);

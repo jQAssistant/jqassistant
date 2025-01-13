@@ -101,36 +101,33 @@ Add the following lines to the parent pom.xml file of your project:
 
 ==== Add a rule
 
-Within your parent module create a directory `jqassistant` and a file `my-rules.adoc`:
+Within your parent module create a directory `jqassistant` and a file `my-rules.xml`:
 
 [source,xml]
-.jqassistant/my-rules.adoc
-....
-= My Project
-
-// Include a summary of all executed rules and their status
-include::jQA:Summary[]
-
-[[default]]
-[role=group,includesConstraints="my-rules:*"]
-== Default Rules
-
-[[my-rules:TestClassName]]
-[source,cypher,role=constraint,requiresConcepts="junit4:TestClass"]
+.jqassistant/my-rules.xml
 ----
-MATCH
-    (t:Junit4:Test:Class)
-WHERE NOT
-    t.name ends with "Test"
-RETURN
-    t AS InvalidTestClass
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+
+    <group id="default">
+        <includeConstraint refId="my-rules:*"/>
+    </group>
+
+    <constraint id="my-rules:TestClassWithoutTestSuffix">
+        <requiresConcept refId="java:TestMethod"/>
+        <description>A class declaring test methods must have the name suffix "Test".</description>
+        <cypher><![CDATA[
+            MATCH
+              (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
+            WHERE NOT
+              testClass.name ends with "Test"
+            RETURN DISTINCT
+              testClass AS TestClassWithoutTestSuffix
+        ]]></cypher>
+    </constraint>
+</jqassistant-rules>
 ----
-
-== Imported Rules
-
-// Include specific rules that have been executed and their results.
-include::jQA:Rules[concepts="junit*:*"]
-....
 
 ==== Run the build
 

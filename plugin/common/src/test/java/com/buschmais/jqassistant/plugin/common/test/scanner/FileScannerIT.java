@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor;
@@ -15,12 +16,14 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirec
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition.fileDescriptor;
+import static java.nio.file.Files.createSymbolicLink;
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies file/directory scanning.
  */
-class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
+class FileScannerIT extends AbstractPluginIT {
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
@@ -45,12 +48,9 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
 
     /**
      * Scan a directory using two dependent plugins for a custom scope.
-     *
-     * @throws IOException
-     *     If the test fails.
      */
     @Test
-    void directoryContainsChildren() throws IOException {
+    void directoryContainsChildren() {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
@@ -75,5 +75,31 @@ class FileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractP
             previous = current;
         }
         store.commitTransaction();
+    }
+
+    @Test
+    void followSymbolicLinksDisabled() throws IOException {
+        store.beginTransaction();
+        DirectoryDescriptor directoryDescriptor = scanSymbolicLink(emptyMap());
+        assertThat(directoryDescriptor.getContains()).hasSize(1);
+        store.commitTransaction();
+    }
+
+    @Test
+    void followSymbolicLinksEnabled() throws IOException {
+        store.beginTransaction();
+        DirectoryDescriptor directoryDescriptor = scanSymbolicLink(Map.of("directory.follow-symbolic-links", "true"));
+        assertThat(directoryDescriptor.getContains()).hasSizeGreaterThan(1);
+        store.commitTransaction();
+    }
+
+    private DirectoryDescriptor scanSymbolicLink(Map<String, Object> properties) throws IOException {
+        File classesDirectory = getClassesDirectory(FileScannerIT.class);
+        File symLink = new File("target/test-classes-link");
+        if (symLink.exists()) {
+            symLink.delete();
+        }
+        createSymbolicLink(symLink.toPath(), classesDirectory.toPath());
+        return getScanner(properties).scan(symLink, symLink.getAbsolutePath(), DefaultScope.NONE);
     }
 }

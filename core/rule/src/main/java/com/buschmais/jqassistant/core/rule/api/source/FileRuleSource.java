@@ -66,11 +66,13 @@ public class FileRuleSource extends RuleSource {
         }
         log.info("Reading rules from directory '{}'.", rulesDirectory.getAbsolutePath());
         List<RuleSource> ruleSources = new LinkedList<>();
-        Files.walkFileTree(rulesDirectory.toPath(), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(rulesDirectory.toPath(), new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
-                String relativePath = rulesDirectory.toPath().relativize(path).toString();
-                ruleSources.add(new FileRuleSource(rulesDirectory, relativePath));
+                String fileResourcePath = rulesDirectory.toPath()
+                    .relativize(path)
+                    .toString();
+                ruleSources.add(new FileRuleSource(rulesDirectory, fileResourcePath));
                 return FileVisitResult.CONTINUE;
             }
 

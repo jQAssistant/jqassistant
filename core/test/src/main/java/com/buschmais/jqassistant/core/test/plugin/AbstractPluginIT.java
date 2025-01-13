@@ -22,6 +22,9 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder;
+import com.buschmais.jqassistant.core.rule.api.annotation.ConceptId;
+import com.buschmais.jqassistant.core.rule.api.annotation.ConstraintId;
+import com.buschmais.jqassistant.core.rule.api.annotation.GroupId;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RuleParserPlugin;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -57,8 +60,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.*;
 import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,8 +85,6 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
-    private static ArtifactProviderFactory artifactProviderFactory;
-
     private static PluginRepositoryImpl pluginRepository;
 
     protected Store store;
@@ -95,7 +95,6 @@ public abstract class AbstractPluginIT {
 
     @BeforeAll
     public static void initPluginRepository() {
-        artifactProviderFactory = new ArtifactProviderFactory(USER_HOME);
         Optional<File> mavenSettingsFile = ofNullable(System.getProperty(PROPERTY_MAVEN_SETTINGS)).map(File::new);
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
@@ -216,7 +215,7 @@ public abstract class AbstractPluginIT {
      * Initializes and resets the store.
      */
     private void startStore(ITConfiguration configuration) {
-        ArtifactProvider artifactProvider = artifactProviderFactory.create(configuration);
+        ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, USER_HOME);
         StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
         store = storeFactory.getStore(configuration.store(), () -> TEST_STORE_DIRECTORY);
         store.start();
@@ -320,7 +319,7 @@ public abstract class AbstractPluginIT {
      *     The id.
      * @return The result.
      */
-    protected Result<Concept> applyConcept(String id) throws RuleException {
+    protected Result<Concept> applyConcept(@ConceptId String id) throws RuleException {
         return applyConcept(id, emptyMap());
     }
 
@@ -333,7 +332,7 @@ public abstract class AbstractPluginIT {
      *     The rule parameters.
      * @return The result.
      */
-    protected Result<Concept> applyConcept(String id, Map<String, String> parameters) throws RuleException {
+    protected Result<Concept> applyConcept(@ConceptId String id, Map<String, String> parameters) throws RuleException {
         Analyzer analyzer = getAnalyzer(parameters);
         RuleSelection ruleSelection = RuleSelection.builder()
             .conceptId(id)
@@ -354,7 +353,7 @@ public abstract class AbstractPluginIT {
      *     The id.
      * @return The result.
      */
-    protected Result<Constraint> validateConstraint(String id) throws RuleException {
+    protected Result<Constraint> validateConstraint(@ConstraintId String id) throws RuleException {
         return validateConstraint(id, emptyMap());
     }
 
@@ -367,7 +366,7 @@ public abstract class AbstractPluginIT {
      *     The rule parameters.
      * @return The result.
      */
-    protected Result<Constraint> validateConstraint(String id, Map<String, String> parameters) throws RuleException {
+    protected Result<Constraint> validateConstraint(@ConstraintId String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
             .constraintId(id)
             .build();
@@ -386,7 +385,7 @@ public abstract class AbstractPluginIT {
      * @param id
      *     The id.
      */
-    protected void executeGroup(String id) throws RuleException {
+    protected void executeGroup(@GroupId String id) throws RuleException {
         executeGroup(id, emptyMap());
     }
 
@@ -398,7 +397,7 @@ public abstract class AbstractPluginIT {
      * @param parameters
      *     The rule parameters.
      */
-    protected void executeGroup(String id, Map<String, String> parameters) throws RuleException {
+    protected void executeGroup(@GroupId String id, Map<String, String> parameters) throws RuleException {
         RuleSelection ruleSelection = RuleSelection.builder()
             .groupId(id)
             .build();

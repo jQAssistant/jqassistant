@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -34,12 +35,35 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
     @Override
     public final void visitFormalTypeParameter(String name) {
         if (this.genericDeclaration == null) {
-            this.genericDeclaration = visitorHelper.getStore().addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
+            this.genericDeclaration = visitorHelper.getStore()
+                .addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
         }
-        this.currentTypeParameter = this.genericDeclaration.resolveTypeParameter(currentTypeParameterIndex);
+        this.currentTypeParameter = resolveDeclaredTypeParameter();
         this.currentTypeParameter.setName(name);
         this.currentTypeParameterIndex++;
-        visitorHelper.getTypeVariableResolver().declare(this.currentTypeParameter);
+        visitorHelper.getTypeVariableResolver()
+            .declare(this.currentTypeParameter);
+    }
+
+    /**
+     * Resolves the declared type parameter (i.e. {@link TypeVariableDescriptor}) for the current index.
+     *
+     * @return The {@link TypeVariableDescriptor}.
+     */
+    private TypeVariableDescriptor resolveDeclaredTypeParameter() {
+        // Find an existing type parameter declaration (i.e. which is already referenced.
+        for (GenericDeclarationDeclaresTypeParameter typeParameter : this.genericDeclaration.getDeclaredTypeParameters()) {
+            if (typeParameter.getIndex() == this.currentTypeParameterIndex) {
+                return typeParameter.getTypeParameter();
+            }
+        }
+        // Create a new type parameter declaration.
+        TypeVariableDescriptor typeParameter = visitorHelper.getStore()
+            .create(TypeVariableDescriptor.class);
+        GenericDeclarationDeclaresTypeParameter declaration = visitorHelper.getStore()
+            .create(this.genericDeclaration, GenericDeclarationDeclaresTypeParameter.class, typeParameter);
+        declaration.setIndex(this.currentTypeParameterIndex);
+        return typeParameter;
     }
 
     @Override
@@ -48,7 +72,8 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);
-                currentTypeParameter.getUpperBounds().add(bound);
+                currentTypeParameter.getUpperBounds()
+                    .add(bound);
             }
         };
     }
@@ -59,7 +84,8 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);
-                currentTypeParameter.getUpperBounds().add(bound);
+                currentTypeParameter.getUpperBounds()
+                    .add(bound);
             }
         };
     }

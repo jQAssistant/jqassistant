@@ -219,11 +219,6 @@
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>common</artifactId>
-                <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
@@ -237,6 +232,20 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>java-testing</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
@@ -314,6 +323,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -339,6 +349,13 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>java</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>java-testing</artifactId>
             <type>zip</type>
             <classifier>asciidoc</classifier>
             <scope>provided</scope>
