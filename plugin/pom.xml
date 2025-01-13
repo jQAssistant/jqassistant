@@ -34,6 +34,13 @@
                 </excludes>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>META-INF/jqassistant.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
         <pluginManagement>

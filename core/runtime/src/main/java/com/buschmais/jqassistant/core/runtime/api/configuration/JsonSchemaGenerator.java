@@ -1,11 +1,15 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,7 +18,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.*;
 import com.google.common.base.CaseFormat;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import io.smallrye.config.WithDefault;
+import org.yaml.snakeyaml.Yaml;
 
 import static io.smallrye.config._private.ConfigLogging.log;
 
@@ -90,7 +99,15 @@ public class JsonSchemaGenerator {
     }
 
     private static void saveSchemaToFile(ObjectNode schema, String path) throws IOException {
-        File file = new File(path);
+        String pathName = path;
+        if (path.endsWith(".schema.json")) {
+            pathName = path.substring(0, path.length() - ".schema.json".length());
+        } else {
+            log.warn("Path name does not meet naming strategy of json schemas and therefore could not be versioned.");
+        }
+        String versionedFilePath = pathName + "-" + VersionProvider.getVersion() + ".schema.json";
+
+        File file = new File(versionedFilePath);
         File parentDir = file.getParentFile();
 
         if (parentDir != null && !parentDir.exists()) {
@@ -102,6 +119,9 @@ public class JsonSchemaGenerator {
         log.info("Schema saved: " + file.getAbsolutePath());
     }
 
+    /**
+     * Handles type resolution of URI, File and Optional properties.
+     */
     private static List<ResolvedType> getResolvedTypes(MethodScope target, ResolvedType resolvedType) {
         if (resolvedType != null) {
             if (resolvedType.getErasedType()
@@ -124,6 +144,19 @@ public class JsonSchemaGenerator {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_HYPHEN, name);
     }
 
+    /**
+     * Handles the schema definitions for maps with different value types (targetType).
+     * Assumes that maps are always of the form <String, targetType>, and cases deviating
+     * from this structure are not handled.
+     *
+     * <p>The schema definition for the map properties is manually set as a type "object".
+     * A schema definition for the value type (e.g., Boolean, Java classes, etc.) is generated
+     * dynamically. Since the property name (key) in the map is custom, a placeholder
+     * node with a regex-based name pattern ("^.*$") is used, and the value type definition
+     * is assigned to this node.</p>
+     * <p>
+     * Based on the idea of https://github.com/victools/jsonschema-generator/blob/main/jsonschema-examples/src/main/java/com/github/victools/jsonschema/examples/EnumMapExample.java
+     */
     public static class MapDefinitionProvider implements CustomDefinitionProviderV2 {
 
         @Override
@@ -145,13 +178,33 @@ public class JsonSchemaGenerator {
             ObjectNode customSchema = context.getGeneratorConfig()
                 .createObjectNode();
             customSchema.put(context.getKeyword(SchemaKeyword.TAG_TYPE), "object");
-            ObjectNode unkownNameWrapper = context.getGeneratorConfig()
+            ObjectNode unknownNameWrapper = context.getGeneratorConfig()
                 .createObjectNode();
             ObjectNode valueTypeDefinition = context.createDefinition(valueType);
-            unkownNameWrapper.set("^.*$", valueTypeDefinition);
-            customSchema.set(context.getKeyword(SchemaKeyword.TAG_PATTERN_PROPERTIES), unkownNameWrapper);
+            unknownNameWrapper.set("^.*$", valueTypeDefinition);
+            customSchema.set(context.getKeyword(SchemaKeyword.TAG_PATTERN_PROPERTIES), unknownNameWrapper);
             return new CustomDefinition(customSchema);
         }
+    }
+
+    /**
+     * Helper method for validating a jqassistant.yaml example file to ensure the right behaviour of the schema generator.
+     */
+    public Set<ValidationMessage> validateYaml(String yamlPath, JsonNode schemaNode) throws Exception {
+        JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
+            .build();
+        JsonSchema schema = schemaFactory.getSchema(schemaNode);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Yaml yaml = new Yaml();
+        FileInputStream yamlInputStream = new FileInputStream(yamlPath);
+        Map<String, Object> yamlData = yaml.load(yamlInputStream);
+        String jsonString = objectMapper.writeValueAsString(yamlData);
+        Set<ValidationMessage> validationMessages = schema.validate(objectMapper.readTree(jsonString));
+        if (!validationMessages.isEmpty()) {
+            log.error(validationMessages.toString());
+        }
+        return validationMessages;
     }
 
 }

@@ -2,8 +2,8 @@ jqassistant:
   maven:
     use-execution-root-as-project-root: false
     reuse-store: true
-  module:
-    skip: false
+    module:
+      skip: false
   store:
     uri: file://target/jqassistant/store
     embedded:
