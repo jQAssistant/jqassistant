@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider;
-
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +23,7 @@ import com.networknt.schema.ValidationMessage;
 import io.smallrye.config.WithDefault;
 import org.yaml.snakeyaml.Yaml;
 
+import static com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider.getVersionProvider;
 import static io.smallrye.config._private.ConfigLogging.log;
 
 public class JsonSchemaGenerator {
@@ -105,7 +104,7 @@ public class JsonSchemaGenerator {
         } else {
             log.warn("Path name does not meet naming strategy of json schemas and therefore could not be versioned.");
         }
-        String versionedFilePath = pathName + "-" + VersionProvider.getVersion() + ".schema.json";
+        String versionedFilePath = pathName + "-v" + getVersionProvider().getMajorVersion() + "." + getVersionProvider().getMinorVersion() + ".schema.json";
 
         File file = new File(versionedFilePath);
         File parentDir = file.getParentFile();
