@@ -321,6 +321,34 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.cli</groupId>
+                <artifactId>application</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+                <classifier>schema</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+                <classifier>schema</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -419,7 +447,7 @@
         </dependency>
 
         <!--
-         ! The XML and JSON schemata provided by the core framework
+         ! The XML and JSON schemas provided by the core framework
          !-->
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -427,6 +455,19 @@
             <type>zip</type>
             <classifier>schema</classifier>
             <scope>provided</scope>
+        </dependency>
+        <!-- The JSON schemas for configuration files -->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.cli</groupId>
+            <artifactId>application</artifactId>
+            <type>zip</type>
+            <classifier>schema</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>jqassistant-maven-plugin</artifactId>
+            <type>zip</type>
+            <classifier>schema</classifier>
         </dependency>
     </dependencies>
 

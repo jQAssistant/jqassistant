@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.shared.aether.configuration;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
@@ -16,7 +15,7 @@ public interface Exclusion {
     String groupId();
 
     @Description("The artifactId of the exclusion.")
-    List<String> artifactId();
+    String artifactId();
 
     @Description("The classifier of the exclusion (optional).")
     Optional<String> classifier();

@@ -1,0 +1,29 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant
+      artifact-id: jqassistant-maven-plugin.integration.plugin.customplugin
+      typo: ${project.version} # invalid property 'typo'
+      exclusions:
+        - group-id: com.buschmais.jqassistant
+          artifact-id: jqassistant-maven-plugin.integration.plugin.randomplugin
+  scan:
+    include:
+      urls:
+        - jqassistant-plugin:META-INF/jqassistant-plugin.xml
+      files: # must be an array not a string
+        target/site/jacoco
+  analyze:
+    groups:
+      - default
+    report:
+      properties: # must not be an array but an object
+        - ${project.build.directory}/customReport.txt
+        - fail-on-severity: MINOR
+  store:
+    remote:
+      username: kay24
+      password: 6H3dg8jnd
+      encryption: true
+      trust-strategy: trustAllCertificates
+
+

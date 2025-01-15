@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.shared.aether;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
@@ -63,20 +62,13 @@ public class AetherArtifactProvider implements ArtifactProvider {
     private Dependency toDependency(Plugin plugin) {
         List<Exclusion> exclusions = plugin.exclusions()
             .stream()
-            .map(AetherArtifactProvider::getPluginExclusions)
-            .flatMap(Collection::stream)
+            .map(exclusion -> new Exclusion(exclusion.groupId(), exclusion.artifactId()
+                .trim(), exclusion.classifier()
+                .orElse(null), exclusion.type()))
             .collect(toList());
         return new Dependency(new DefaultArtifact(plugin.groupId(), plugin.artifactId()
             .trim(), plugin.classifier()
             .orElse(null), plugin.type(), plugin.version()), JavaScopes.RUNTIME, false, exclusions);
-    }
-
-    private static List<Exclusion> getPluginExclusions(com.buschmais.jqassistant.core.shared.aether.configuration.Exclusion exclusion) {
-        return exclusion.artifactId()
-            .stream()
-            .map(artifactId -> new Exclusion(exclusion.groupId(), artifactId.trim(), exclusion.classifier()
-                .orElse(null), exclusion.type()))
-            .collect(toList());
     }
 
     private DependencyResult resolveDependencies(DependencyFilter classpathFilter, List<Dependency> dependencies) {

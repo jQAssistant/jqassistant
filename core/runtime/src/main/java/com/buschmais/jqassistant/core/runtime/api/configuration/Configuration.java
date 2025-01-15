@@ -17,7 +17,6 @@ import io.smallrye.config.WithDefault;
  */
 @ConfigMapping(prefix = Configuration.PREFIX)
 public interface Configuration {
-
     String PREFIX = "jqassistant";
 
     String SKIP = "skip";
