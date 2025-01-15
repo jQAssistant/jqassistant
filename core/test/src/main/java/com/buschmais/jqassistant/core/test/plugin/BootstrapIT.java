@@ -55,7 +55,9 @@ public class BootstrapIT {
 
         log.info("Rule sources: {}.", ruleProvider.getRuleSources());
         log.info("Available rules: {}.", ruleProvider.getAvailableRules());
-        log.info("Effective rules: {}.", ruleProvider.getEffectiveRules());
+        log.info("Effective rules (Groups): {}.", ruleProvider.getEffectiveRules().getGroups());
+        log.info("Effective rules (Concepts): {}.", ruleProvider.getEffectiveRules().getConcepts());
+        log.info("Effective rules (Constraints): {}.", ruleProvider.getEffectiveRules().getConstraints());
     }
 
     @ConfigMapping(prefix = Configuration.PREFIX)

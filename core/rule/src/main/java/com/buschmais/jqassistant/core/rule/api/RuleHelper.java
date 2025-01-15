@@ -7,25 +7,15 @@ import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides utility functionality for creating reports.
  */
+@Slf4j
 public class RuleHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";
-    private final Logger logger;
-
-    /**
-     * Constructor.
-     *
-     * @param log
-     *     The logger to use for printing messages.
-     */
-    public RuleHelper(Logger log) {
-        this.logger = log;
-    }
 
     /**
      * Logs the given rule set on level info.
@@ -63,22 +53,22 @@ public class RuleHelper {
      *     The visitor.
      */
     private void printValidRules(CollectRulesVisitor visitor) {
-        logger.info("Groups [" + visitor.getGroups()
+        log.info("Groups [" + visitor.getGroups()
             .size() + "]");
         for (Group group : visitor.getGroups()) {
-            logger.info(LOG_LINE_PREFIX + group.getId() + "\"");
+            log.info(LOG_LINE_PREFIX + group.getId() + "\"");
         }
-        logger.info("Constraints [" + visitor.getConstraints()
+        log.info("Constraints [" + visitor.getConstraints()
             .size() + "]");
         for (Constraint constraint : visitor.getConstraints()
             .keySet()) {
-            logger.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
+            log.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
         }
-        logger.info("Concepts [" + visitor.getConcepts()
+        log.info("Concepts [" + visitor.getConcepts()
             .size() + "]");
         for (Concept concept : visitor.getConcepts()
             .keySet()) {
-            logger.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
+            log.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
         }
     }
 
@@ -93,7 +83,7 @@ public class RuleHelper {
      * @throws RuleException
      *     If the rules cannot be evaluated.
      */
-    private CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
+    public CollectRulesVisitor getAllRules(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSetExecutor<Boolean> executor = new RuleSetExecutor<>(visitor, configuration);
         executor.execute(ruleSet, ruleSelection);
@@ -109,23 +99,23 @@ public class RuleHelper {
     private void printMissingRules(CollectRulesVisitor visitor) {
         Set<String> missingConcepts = visitor.getMissingConcepts();
         if (!missingConcepts.isEmpty()) {
-            logger.info("Missing concepts [{}]", missingConcepts.size());
+            log.info("Missing concepts [{}]", missingConcepts.size());
             for (String missingConcept : missingConcepts) {
-                logger.warn(LOG_LINE_PREFIX + "{}", missingConcept);
+                log.warn(LOG_LINE_PREFIX + "{}", missingConcept);
             }
         }
         Set<String> missingConstraints = visitor.getMissingConstraints();
         if (!missingConstraints.isEmpty()) {
-            logger.info("Missing constraints [{}]", missingConstraints.size());
+            log.info("Missing constraints [{}]", missingConstraints.size());
             for (String missingConstraint : missingConstraints) {
-                logger.warn(LOG_LINE_PREFIX + "{}", missingConstraint);
+                log.warn(LOG_LINE_PREFIX + "{}", missingConstraint);
             }
         }
         Set<String> missingGroups = visitor.getMissingGroups();
         if (!missingGroups.isEmpty()) {
-            logger.info("Missing groups [{}]", missingGroups.size());
+            log.info("Missing groups [{}]", missingGroups.size());
             for (String missingGroup : missingGroups) {
-                logger.warn(LOG_LINE_PREFIX + "{}", missingGroup);
+                log.warn(LOG_LINE_PREFIX + "{}", missingGroup);
             }
         }
     }

@@ -29,7 +29,7 @@ public class EffectiveRulesMojo extends AbstractRuleMojo {
             .analyze();
         RuleSet ruleSet = readRules(mojoExecutionContext);
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
-        RuleHelper ruleHelper = new RuleHelper(LOGGER);
+        RuleHelper ruleHelper = new RuleHelper();
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection, analyze.rule());
         } catch (RuleException e) {
