@@ -11,12 +11,8 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTask implements Task {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
     protected File outputDirectory;
     protected StoreFactory storeFactory;
@@ -29,7 +25,7 @@ public abstract class AbstractTask implements Task {
         this.outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
         this.pluginRepository = pluginRepository;
         this.storeFactory = storeFactory;
-        this.ruleHelper = new RuleHelper(LOGGER);
+        this.ruleHelper = new RuleHelper();
     }
 
     @Override

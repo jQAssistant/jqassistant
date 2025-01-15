@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.rule.api.RuleHelper;
+import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
@@ -32,7 +34,7 @@ public class RuleProvider {
     private final RuleSet availableRules;
 
     @Getter
-    private final RuleSelection effectiveRules;
+    private final CollectRulesVisitor effectiveRules;
 
     public static RuleProvider create(Configuration configuration, String defaultRuleDirectory, PluginRepository pluginRepository) throws RuleException {
         return new RuleProvider(configuration, pluginRepository, defaultRuleDirectory);
@@ -78,8 +80,15 @@ public class RuleProvider {
         return ruleParser.parse(ruleSources);
     }
 
-    private RuleSelection initEffectiveRules() {
+    private CollectRulesVisitor initEffectiveRules() throws RuleException {
         Analyze analyze = this.configuration.analyze();
-        return RuleSelection.select(this.availableRules, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
+        RuleSelection selection = RuleSelection.select(this.availableRules, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
+        RuleHelper ruleHelper = new RuleHelper();
+        try {
+            return ruleHelper.getAllRules(this.availableRules, selection, configuration.analyze().rule());
+        } catch (RuleException e) {
+            throw new RuleException(e.getMessage());
+        }
     }
+
 }

@@ -1,4 +1,8 @@
 jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant.plugin
+      artifact-id: java
+      version: 2.6.0-M2
   store:
     embedded:
       neo4j-plugins:
@@ -6,3 +10,8 @@ jqassistant:
           artifact-id: apoc-core
           classifier: core
           version: ${neo4j_5x.version}
+  analyze:
+    rule:
+      directory: ${project.basedir}/test/resources/rules
+    groups:
+      - bootstrap:Default

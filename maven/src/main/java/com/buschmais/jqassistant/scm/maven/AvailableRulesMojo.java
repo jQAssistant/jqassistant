@@ -16,14 +16,13 @@ import org.slf4j.LoggerFactory;
  */
 @Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableRulesMojo extends AbstractRuleMojo {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesMojo.class);
 
     @Override
     public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");
         RuleSet ruleSet = readRules(mojoExecutionContext);
-        RuleHelper ruleHelper = new RuleHelper(LOGGER);
+        RuleHelper ruleHelper = new RuleHelper();
         try {
             ruleHelper.printRuleSet(ruleSet, mojoExecutionContext.getConfiguration()
                 .analyze()
