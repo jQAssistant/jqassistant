@@ -9,28 +9,26 @@ import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.validateYaml;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JsonSchemaGeneratingTest {
+class JsonSchemaGeneratorTest {
 
-    private final JsonSchemaGenerator generator = new JsonSchemaGenerator();
-
-    private JsonNode node;
+    private JsonNode schemaNode;
 
     @BeforeEach
     void generateSchema() throws IOException {
-        String path = "target/generated-resources/schema/jqassistant-configuration.schema.json";
-        node = generator.generateSchema(Configuration.class, path);
+        schemaNode = JsonSchemaGenerator.generateSchema(Configuration.class);
     }
 
     @Test
     void testValidYaml() throws Exception {
-        assertThat(generator.validateYaml("src/test/resources/testdata/generate-schema/validJQAYaml.yaml", node)).isEmpty();
+        assertThat(validateYaml(JsonSchemaGenerator.class.getResource("/testdata/generate-schema/validJQAYaml.yaml"), schemaNode)).isEmpty();
     }
 
     @Test
     void testInvalidYaml() throws Exception {
-        Set<ValidationMessage> messages = generator.validateYaml("src/test/resources/testdata/generate-schema/invalidJQAYaml.yaml", node);
+        Set<ValidationMessage> messages = validateYaml(JsonSchemaGenerator.class.getResource("/testdata/generate-schema/invalidJQAYaml.yaml"), schemaNode);
         Set<String> validationResults = new HashSet<>();
         for (ValidationMessage message : messages) {
             validationResults.add(message.getInstanceLocation()

@@ -111,6 +111,7 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xo.version>2.5.0</xo.version>
         <!-- Maven plugin versions -->
+        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
@@ -127,6 +128,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>

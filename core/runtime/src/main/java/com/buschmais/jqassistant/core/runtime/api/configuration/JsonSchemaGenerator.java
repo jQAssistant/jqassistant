@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,14 +22,18 @@ import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import io.smallrye.config.WithDefault;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
 
 import static com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider.getVersionProvider;
-import static io.smallrye.config._private.ConfigLogging.log;
+import static lombok.AccessLevel.PRIVATE;
 
+@NoArgsConstructor(access = PRIVATE)
+@Slf4j
 public class JsonSchemaGenerator {
 
-    public ObjectNode generateSchema(Class<?> clazz, String path) throws IOException {
+    public static ObjectNode generateSchema(Class<?> clazz) {
         SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.JAVA_OBJECT).with(
                 Option.NONSTATIC_NONVOID_NONGETTER_METHODS, Option.PLAIN_DEFINITION_KEYS, Option.FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT,
                 Option.FIELDS_DERIVED_FROM_ARGUMENTFREE_METHODS, Option.FLATTENED_ENUMS, Option.ALLOF_CLEANUP_AT_THE_END)
@@ -54,9 +59,7 @@ public class JsonSchemaGenerator {
 
         SchemaGenerator generator = new SchemaGenerator(configBuilder.build());
         ObjectNode schema = generator.generateSchema(clazz);
-        ObjectNode finalSchema = wrapJqassistant(schema);
-        saveSchemaToFile(finalSchema, path);
-        return finalSchema;
+        return wrapJqassistant(schema);
     }
 
     /**
@@ -95,27 +98,6 @@ public class JsonSchemaGenerator {
         definitionWrapper.put(type, object);
         definitionWrapper.set(properties, jqaWrapper);
         return definitionWrapper;
-    }
-
-    private static void saveSchemaToFile(ObjectNode schema, String path) throws IOException {
-        String pathName = path;
-        if (path.endsWith(".schema.json")) {
-            pathName = path.substring(0, path.length() - ".schema.json".length());
-        } else {
-            log.warn("Path name does not meet naming strategy of json schemas and therefore could not be versioned.");
-        }
-        String versionedFilePath = pathName + "-v" + getVersionProvider().getMajorVersion() + "." + getVersionProvider().getMinorVersion() + ".schema.json";
-
-        File file = new File(versionedFilePath);
-        File parentDir = file.getParentFile();
-
-        if (parentDir != null && !parentDir.exists()) {
-            parentDir.mkdirs();
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writerWithDefaultPrettyPrinter()
-            .writeValue(file, schema);
-        log.info("Schema saved: " + file.getAbsolutePath());
     }
 
     /**
@@ -186,18 +168,36 @@ public class JsonSchemaGenerator {
         }
     }
 
+    public static File writeSchema(ObjectNode schema, File directory, String fileNamePrefix) throws IOException {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String fileName = fileNamePrefix + "-v" + getVersionProvider().getMajorVersion() + "." + getVersionProvider().getMinorVersion() + ".schema.json";
+
+        File file = new File(directory, fileName);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writerWithDefaultPrettyPrinter()
+            .writeValue(file, schema);
+        log.info("Schema saved: " + file.getAbsolutePath());
+        return file;
+    }
+
     /**
      * Helper method for validating a jqassistant.yaml example file to ensure the right behaviour of the schema generator.
      */
-    public Set<ValidationMessage> validateYaml(String yamlPath, JsonNode schemaNode) throws Exception {
+    public static Set<ValidationMessage> validateYaml(URL configResource, JsonNode schemaNode) throws Exception {
         JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
             .build();
         JsonSchema schema = schemaFactory.getSchema(schemaNode);
         ObjectMapper objectMapper = new ObjectMapper();
         Yaml yaml = new Yaml();
-        FileInputStream yamlInputStream = new FileInputStream(yamlPath);
-        Map<String, Object> yamlData = yaml.load(yamlInputStream);
+        Map<String, Object> yamlData;
+        try (InputStream inputStream = configResource.openStream()) {
+            yamlData = yaml.load(inputStream);
+        }
         String jsonString = objectMapper.writeValueAsString(yamlData);
         Set<ValidationMessage> validationMessages = schema.validate(objectMapper.readTree(jsonString));
         if (!validationMessages.isEmpty()) {
@@ -205,5 +205,4 @@ public class JsonSchemaGenerator {
         }
         return validationMessages;
     }
-
 }
