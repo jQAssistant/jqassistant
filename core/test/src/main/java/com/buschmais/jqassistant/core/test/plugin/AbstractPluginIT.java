@@ -60,7 +60,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -160,11 +161,11 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
-        File rulesDirectory = getRulesDirectory();
-        // read rules from rules directory
+        File ruleDirectory = getRuleDirectory();
+        // read rules from rule directories
         List<RuleSource> sources = new LinkedList<>();
-        if (rulesDirectory.exists()) {
-            sources.addAll(FileRuleSource.getRuleSources(rulesDirectory));
+        if (ruleDirectory.exists()) {
+            sources.addAll(FileRuleSource.getRuleSources(ruleDirectory));
         }
         // read rules from plugins
         sources.addAll(pluginRepository.getRulePluginRepository()
@@ -176,7 +177,10 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleParser.parse(sources);
     }
 
-    private File getRulesDirectory() {
+    /**
+     * Return the rule directory to be used by a test class.
+     */
+    protected File getRuleDirectory() {
         return new File(getClassesDirectory(this.getClass()), "rules");
     }
 
@@ -249,7 +253,7 @@ public abstract class AbstractPluginIT {
         Configuration configuration = createConfiguration(configurationBuilder);
         Baseline baselineConfiguration = configuration.analyze()
             .baseline();
-        BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory());
+        BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRuleDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
     }
