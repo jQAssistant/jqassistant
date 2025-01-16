@@ -10,7 +10,7 @@ For general information about the tool, getting started and asking questions we 
 * https://jqassistant.org[Project homepage]
 * https://jqassistant.github.io/jqassistant[User Manual]
 * https://github.com/jqassistant-tutorials[Tutorials]
-* https://github.com/jqassistant-plugins[Plugins]
+* https://github.com/jqassistant-plugin[Plugins]
 * https://stackoverflow.com/questions/tagged/jqassistant[Stackoverflow]
 * https://groups.google.com/g/jqassistant[Google Group]
 
