@@ -1,4 +1,5 @@
 :numbered:
+:sectlinks:
 :sectnumlevels: 2
 :toclevels: 2
 
