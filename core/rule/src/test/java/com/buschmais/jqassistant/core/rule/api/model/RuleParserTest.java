@@ -34,7 +34,7 @@ class RuleParserTest {
 
     @Test
     void readRuleSet() throws Exception {
-        File rulesDirectory = new File(RuleParserTest.class.getResource("/").getPath());
+        File rulesDirectory = new File("target/test-classes");
         RuleSet ruleSet = ruleParser
                 .parse(asList(new FileRuleSource(rulesDirectory, "test-concepts.xml")));
         assertThat(ruleSet.getConceptBucket().size()).isEqualTo(1);
