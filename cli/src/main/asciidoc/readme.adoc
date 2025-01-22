@@ -168,7 +168,6 @@ If multiple, partially overlapping configurations are provided then the followin
 * <<cli:available-scopes>>
 * <<cli:effective-configuration>>
 * <<cli:effective-rules>>
-* <<cli:list-plugins>>
 * <<cli:report>>
 * <<cli:scan>>
 * <<cli:server>>
@@ -212,17 +211,6 @@ Print the current configuration as YAML representation on the console.
 ==== effective-rules
 
 List the rules which would be executed for an analysis and the given concepts, constraints or groups.
-
-[[cli:list-plugins]]
-==== list-plugins
-
-Lists all plugins known to jQAssistant. Helpful to check
-which plugins are active during the scan and analysis.
-
-[source]
-----
-jqassistant.sh list-plugins
-----
 
 [[cli:report]]
 ==== report
