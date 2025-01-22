@@ -95,14 +95,13 @@ jqassistant:
     # jqassistant.maven.reuse-store: true|false
     reuse-store: true
 
-  # Properties for module level goals (e.g. scan)
-  module:
-
-    # Skip goals which are executed per module, useful to exclude single modules from `scan`.
-    # NOTE: 'jqassistant.skip' applies to all goals (e.g. scan, analyze)
-    #
-    # jqassistant.maven.module.skip: true|false
-    skip: false
+    # Properties for module level goals (e.g. scan)
+    module:
+      # Skip goals which are executed per module, useful to exclude single modules from `scan`.
+      # NOTE: 'jqassistant.skip' applies to all goals (e.g. scan, analyze)
+      #
+      # jqassistant.maven.module.skip: true|false
+      skip: false
 ----
 
 TIP: Maven properties (e.g. `project.basedir`) or user properties defined in `pom.xml` or `settings.xml` files can be referenced in `.jqassistant.yml` files by using the `${...}` syntax, e.g. `${project.basedir}/src/main`.
