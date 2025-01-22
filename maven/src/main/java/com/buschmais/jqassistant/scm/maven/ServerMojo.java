@@ -1,19 +1,18 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.IOException;
-
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
+import java.io.IOException;
+
 /**
  * Starts an embedded Neo4j server.
  */
-@Mojo(name = "server", threadSafe = true)
+@Mojo(name = "server", aggregator = true, threadSafe = true)
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override

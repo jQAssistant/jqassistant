@@ -11,8 +11,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * Lists all effective rules.
  */
-@Mojo(name = "effective-configuration", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
-public class EffectiveConfigurationMojo extends AbstractRuleMojo {
+@Mojo(name = "effective-configuration", defaultPhase = LifecyclePhase.VALIDATE, aggregator = true, threadSafe = true)
+public class EffectiveConfigurationMojo extends AbstractProjectMojo {
 
     private final com.buschmais.jqassistant.core.shared.configuration.ConfigurationSerializer<MavenConfiguration> configurationSerializer = new ConfigurationSerializer<>();
 
