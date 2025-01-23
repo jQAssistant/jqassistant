@@ -45,7 +45,6 @@
                                 <include>analyze/*/pom.xml</include>
                                 <include>cli/*/pom.xml</include>
                                 <include>configuration/*/pom.xml</include>
-                                <include>list-plugins/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>neo4j-plugin/pom.xml</include>
                                 <include>plugin/pom.xml</include>
