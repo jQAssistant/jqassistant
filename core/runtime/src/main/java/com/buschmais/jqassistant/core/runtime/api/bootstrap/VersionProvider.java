@@ -35,7 +35,7 @@ public class VersionProvider {
         try {
             props.load(inputStream);
         } catch (IOException e) {
-            log.warn("Failed to load inout stream from " + PROPERTIES_FILE);
+            throw new IllegalStateException("Failed to load input stream from " + PROPERTIES_FILE, e);
         }
         this.minorVersion = props.getProperty(MINOR_VERSION);
         this.majorVersion = props.getProperty(MAJOR_VERSION);
