@@ -81,6 +81,8 @@ Furthermore, the following Maven specific option is supported:
 
 [source,yaml]
 ----
+$schema: "https://jqassistant.github.io/jqassistant/current/schema/jqassistant-configuration-maven-v2.6.schema.json"
+
 jqassistant:
 
   maven:
