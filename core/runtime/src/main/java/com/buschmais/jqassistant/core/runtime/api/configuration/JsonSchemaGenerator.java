@@ -58,7 +58,9 @@ public class JsonSchemaGenerator {
                 .getTypeName()));
 
         SchemaGenerator generator = new SchemaGenerator(configBuilder.build());
-        ObjectNode schema = generator.generateSchema(clazz);
+        ObjectNode schema = generator.buildMultipleSchemaDefinitions()generateSchema(clazz);
+        //Versuchen, mit buildmultipleSchemaDefinitions nur die Definitions zu bauen und dann eigenständig das schema zusammenzubauen - am Ende soll das Schema dann auf die erstellten Definitionen zugreifen und so übersichtlich werden
+        //issues mit doku anpassen bearbeiten
         return wrapJqassistant(schema);
     }
 
@@ -76,6 +78,9 @@ public class JsonSchemaGenerator {
         ObjectNode propertiesNode = JsonNodeFactory.instance.objectNode();
         ObjectNode jqaWrapper = JsonNodeFactory.instance.objectNode();
         ObjectNode definitionWrapper = JsonNodeFactory.instance.objectNode();
+        ObjectNode profileWrapper= JsonNodeFactory.instance.objectNode();
+        ObjectNode patternPropertiesWrapper = JsonNodeFactory.instance.objectNode();
+        ObjectNode jqaWrapperForProfile = JsonNodeFactory.instance.objectNode();
 
         String properties = "properties";
         String object = "object";
@@ -94,9 +99,22 @@ public class JsonSchemaGenerator {
                 definitionWrapper.set(defs, property.getValue());
             }
         }
+
+        // adds the "jqassistant" root to the generated content node
         jqaWrapper.set("jqassistant", propertiesNode);
+        jqaWrapperForProfile.set("jqassistant", propertiesNode);
+
+        // creates the profile content node by type object declaration and jqa content in properties section
+        profileWrapper.put(type, object);
+        profileWrapper.set(properties, jqaWrapperForProfile);
+
+        // adds the regex expression to the profile to fit "%custom-profile" syntax
+        patternPropertiesWrapper.set("^%.*$", profileWrapper);
         definitionWrapper.put(type, object);
+
+        // stacks definitions, jqa content node and profile content node together
         definitionWrapper.set(properties, jqaWrapper);
+        definitionWrapper.set("patternProperties", patternPropertiesWrapper);
         return definitionWrapper;
     }
 

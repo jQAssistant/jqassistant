@@ -1,3 +1,4 @@
+$schema: "https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-configuration-maven-v2.6.schema.json"
 jqassistant:
   maven:
     use-execution-root-as-project-root: false
@@ -15,4 +16,10 @@ jqassistant:
     rule:
       directory: jqassistant/
       default-concept-severity: MINOR
+"%custom-profile": # in general not forbidden in cli
+  jqassistant:
+    store:
+      uri: "bolt://localhost:7687"
+
+
 
