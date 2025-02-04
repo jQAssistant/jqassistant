@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.of;
 
@@ -40,12 +41,20 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     private final Map<Class<? extends Verification>, VerificationStrategy<?>> verificationStrategies;
 
+    private final Severity.Threshold warnOnSeverity;
+
+    private final Severity.Threshold failOnSeverity;
+
     AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, BaselineManager baselineManager) throws RuleException {
         this.classLoader = classLoader;
         this.store = store;
         this.baselineManager = baselineManager;
-        this.verificationStrategies = of(new RowCountVerificationStrategy(configuration.report()),
-            new AggregationVerificationStrategy(configuration.report())).collect(toMap(VerificationStrategy::getVerificationType, strategy -> strategy));
+        this.warnOnSeverity = Severity.Threshold.from(configuration.report()
+            .warnOnSeverity());
+        this.failOnSeverity = Severity.Threshold.from(configuration.report()
+            .failOnSeverity());
+        this.verificationStrategies = of(new RowCountVerificationStrategy(), new AggregationVerificationStrategy()).collect(
+            toMap(VerificationStrategy::getVerificationType, strategy -> strategy));
     }
 
     @Override
@@ -96,7 +105,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows) throws RuleException {
+    public <T extends ExecutableRule<?>> VerificationStrategy.Result verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
             log.debug("Using default verification for '{}'.", executable);
@@ -107,6 +116,21 @@ class AnalyzerContextImpl implements AnalyzerContext {
             throw new RuleException("Result verification not supported: " + verification.getClass()
                 .getName());
         }
-        return strategy.verify(executable, severity, verification, columnNames, rows);
+        return strategy.verify(executable, verification, columnNames, rows);
     }
+
+    @Override
+    public Result.Status getStatus(VerificationStrategy.Result verificationResult, Severity severity) {
+        if (!verificationResult.isSuccessful()) {
+            if (severity.exceeds(failOnSeverity)) {
+                return FAILURE;
+            } else {
+                if (severity.exceeds(warnOnSeverity)) {
+                    return WARNING;
+                }
+            }
+        }
+        return SUCCESS;
+    }
+
 }

@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Column;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.Suppress;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.BLOCKER;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
@@ -113,7 +115,7 @@ class AnalyzerContextImplTest {
     }
 
     @Test
-    void suppressByNonPrimaryColumn() throws RuleException {
+    void suppressByNonPrimaryColumn() {
         Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
@@ -133,26 +135,41 @@ class AnalyzerContextImplTest {
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
     }
 
+    @Test
+    void getStatus() {
+        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
+            .successful(true)
+            .build(), BLOCKER)).isEqualTo(Result.Status.SUCCESS);
+        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
+            .successful(false)
+            .build(), Severity.INFO)).isEqualTo(Result.Status.SUCCESS);
+        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
+            .successful(false)
+            .build(), Severity.MINOR)).isEqualTo(Result.Status.WARNING);
+        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
+            .successful(false)
+            .build(), Severity.MAJOR)).isEqualTo(Result.Status.FAILURE);
+    }
+
     private Constraint getConstraint() {
         com.buschmais.jqassistant.core.rule.api.model.Report report = com.buschmais.jqassistant.core.rule.api.model.Report.builder()
             .primaryColumn(PRIMARY_COLUMN)
             .build();
-        Constraint constraint = Constraint.builder()
+        return Constraint.builder()
             .id(CONSTRAINT_ID)
             .report(report)
             .build();
-        return constraint;
     }
 
     private static Suppress createSuppressedValue(Optional<String> suppressColumn, String... suppressIds) {
-        Suppress suppress = new Suppress() {
+        return new Suppress() {
             @Override
             public String[] getSuppressIds() {
                 return suppressIds;
             }
 
             @Override
-            public void setSuppressIds(String[] suppressIds) {
+            public void setSuppressIds(String[] suppressIds1) {
             }
 
             @Override
@@ -161,9 +178,8 @@ class AnalyzerContextImplTest {
             }
 
             @Override
-            public void setSuppressColumn(String suppressColumn) {
+            public void setSuppressColumn(String suppressColumn1) {
             }
         };
-        return suppress;
     }
 }

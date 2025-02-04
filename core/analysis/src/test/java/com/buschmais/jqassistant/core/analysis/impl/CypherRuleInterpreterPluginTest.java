@@ -63,6 +63,11 @@ class CypherRuleInterpreterPluginTest {
     void rows() throws RuleException {
         Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
             Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
+        doReturn(VerificationStrategy.Result.builder()
+            .successful(true)
+            .rowCount(2)
+            .build()).when(analyzerContext)
+            .verify(any(Constraint.class), anyList(), anyList());
 
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 

@@ -59,7 +59,8 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                 rows.add(row);
             }
         }
-        Status status = getStatus(executableRule, severity, columnNames, rows, context);
+        VerificationStrategy.Result result = context.verify(executableRule, columnNames, rows);
+        Status status = context.getStatus(result, severity);
         return Result.<T>builder()
             .rule(executableRule)
             .status(status)
@@ -76,30 +77,6 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             columns.put(columnName, context.toColumn(columnValue));
         }
         return context.toRow(rule, columns);
-    }
-
-    /**
-     * Evaluate the status of the result, may be overridden by sub-classes.
-     *
-     * @param executableRule
-     *     The {@link ExecutableRule}.
-     * @param severity
-     *     The effective {@link Severity}.
-     * @param columnNames
-     *     The column names.
-     * @param rows
-     *     The rows.
-     * @param context
-     *     The {@link AnalyzerContext}.
-     * @param <T>
-     *     The rule type.
-     * @return The {@link Status}.
-     * @throws RuleException
-     *     If evaluation fails.
-     */
-    protected <T extends ExecutableRule<?>> Status getStatus(T executableRule, Severity severity, List<String> columnNames, List<Row> rows,
-        AnalyzerContext context) throws RuleException {
-        return context.verify(executableRule, severity, columnNames, rows);
     }
 
 }
