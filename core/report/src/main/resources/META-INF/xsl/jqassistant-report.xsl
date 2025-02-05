@@ -228,7 +228,7 @@
                 </span>
             </td>
             <td class="right">
-                <xsl:value-of select="count(tns:result/tns:rows/tns:row)"/>
+                <xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>
             </td>
             <td class="right">
                 <xsl:value-of select="tns:severity/text()"/>
