@@ -21,10 +21,7 @@ import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
-import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
-import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -178,6 +175,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 writeElementWithCharacters("description", rule.getDescription());
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
+                writeVerificationResult(result.getVerificationResult());
                 writeStatus(result.getStatus()); // status
                 writeSeverity(result.getSeverity()); // severity
                 writeDuration(ruleBeginTime);
@@ -186,6 +184,13 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeEndElement(); // concept|constraint
             });
         }
+    }
+
+    private void writeVerificationResult(VerificationResult verificationResult) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("verificationResult");
+        writeElementWithCharacters("success", Boolean.toString(verificationResult.isSuccess()));
+        writeElementWithCharacters("rowCount", Integer.toString(verificationResult.getRowCount()));
+        xmlStreamWriter.writeEndElement(); // verificationResult
     }
 
     private void writeResult(List<String> columnNames, String primaryColumn) throws XMLStreamException {
