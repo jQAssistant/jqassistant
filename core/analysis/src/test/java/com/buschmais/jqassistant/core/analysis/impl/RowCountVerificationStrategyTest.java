@@ -45,15 +45,15 @@ class RowCountVerificationStrategyTest {
 
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         when(result.size()).thenReturn(1);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -64,15 +64,15 @@ class RowCountVerificationStrategyTest {
 
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         when(result.size()).thenReturn(1);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
     }
 
     @Test
@@ -83,15 +83,15 @@ class RowCountVerificationStrategyTest {
 
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         when(result.size()).thenReturn(1);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -103,21 +103,21 @@ class RowCountVerificationStrategyTest {
 
         when(result.size()).thenReturn(0);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         when(result.size()).thenReturn(1);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         when(result.size()).thenReturn(2);
         assertThat(strategy.verify(concept, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, rowCountVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
 }

@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -59,10 +60,11 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                 rows.add(row);
             }
         }
-        VerificationStrategy.Result result = context.verify(executableRule, columnNames, rows);
-        Status status = context.getStatus(result, severity);
+        VerificationResult verificationResult = context.verify(executableRule, columnNames, rows);
+        Status status = context.getStatus(verificationResult, severity);
         return Result.<T>builder()
             .rule(executableRule)
+            .verificationResult(verificationResult)
             .status(status)
             .severity(severity)
             .columnNames(columnNames)

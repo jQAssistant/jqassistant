@@ -52,21 +52,21 @@ class AggregationVerificationStrategyTest {
 
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -77,21 +77,21 @@ class AggregationVerificationStrategyTest {
 
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
     }
 
     @Test
@@ -102,21 +102,21 @@ class AggregationVerificationStrategyTest {
 
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -128,33 +128,33 @@ class AggregationVerificationStrategyTest {
 
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 0), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
 
         result = asList(createRow(concept, 1), createRow(concept, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 1), createRow(concept, 2));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
 
         result = asList(createRow(concept, 2), createRow(concept, 2));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -164,9 +164,9 @@ class AggregationVerificationStrategyTest {
             .build();
         result = asList(createRow(concept, 0, 1), createRow(concept, 0, 1));
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
     }
 
     @Test
@@ -185,9 +185,9 @@ class AggregationVerificationStrategyTest {
             .build();
         result = Collections.emptyList();
         assertThat(strategy.verify(concept, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isFalse();
+            .isSuccess()).isFalse();
         assertThat(strategy.verify(constraint, aggregationVerification, COLUMN_NAMES, result)
-            .isSuccessful()).isTrue();
+            .isSuccess()).isTrue();
     }
 
     private Row createRow(ExecutableRule<?> rule, int... values) {

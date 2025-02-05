@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.impl.VerificationStrategy;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -83,7 +83,7 @@ public interface AnalyzerContext {
      * @throws RuleException
      *     If no valid verification strategy can be found.
      */
-    <T extends ExecutableRule<?>> VerificationStrategy.Result verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
+    <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
 
-    Result.Status getStatus(VerificationStrategy.Result verificationResult, Severity severity);
+    Result.Status getStatus(VerificationResult verificationResult, Severity severity);
 }

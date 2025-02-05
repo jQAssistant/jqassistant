@@ -9,10 +9,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
-import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Row;
-import com.buschmais.jqassistant.core.report.api.model.Suppress;
+import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -89,7 +86,7 @@ class AnalyzerContextImplTest {
             .build());
 
         Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1)
-            .map(row -> row.getKey())
+            .map(Row::getKey)
             .collect(toSet());
         assertThat(rowKeys).hasSize(3);
     }
@@ -137,17 +134,17 @@ class AnalyzerContextImplTest {
 
     @Test
     void getStatus() {
-        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
-            .successful(true)
+        assertThat(analyzerContext.getStatus(VerificationResult.builder()
+            .success(true)
             .build(), BLOCKER)).isEqualTo(Result.Status.SUCCESS);
-        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
-            .successful(false)
+        assertThat(analyzerContext.getStatus(VerificationResult.builder()
+            .success(false)
             .build(), Severity.INFO)).isEqualTo(Result.Status.SUCCESS);
-        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
-            .successful(false)
+        assertThat(analyzerContext.getStatus(VerificationResult.builder()
+            .success(false)
             .build(), Severity.MINOR)).isEqualTo(Result.Status.WARNING);
-        assertThat(analyzerContext.getStatus(VerificationStrategy.Result.builder()
-            .successful(false)
+        assertThat(analyzerContext.getStatus(VerificationResult.builder()
+            .success(false)
             .build(), Severity.MAJOR)).isEqualTo(Result.Status.FAILURE);
     }
 

@@ -12,8 +12,7 @@ import lombok.*;
  * The result of an executed {@link Rule}.
  *
  * @param <T>
- *            The rule type.
- *
+ *     The rule type.
  * @see Rule
  */
 @Builder
@@ -26,7 +25,10 @@ public class Result<T extends ExecutableRule> {
      * The defined status for the result of a rule.
      */
     public enum Status {
-        SUCCESS, FAILURE, WARNING, SKIPPED;
+        SUCCESS,
+        FAILURE,
+        WARNING,
+        SKIPPED
     }
 
     /**
@@ -35,6 +37,8 @@ public class Result<T extends ExecutableRule> {
     private final T rule;
 
     private final Status status;
+
+    private final VerificationResult verificationResult;
 
     /**
      * The effective severity.

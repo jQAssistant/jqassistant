@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -84,7 +85,7 @@ class AnalyzerRuleVisitorTest {
     @Mock
     private AnalyzerContext analyzerContext;
 
-    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
+    private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     private AnalyzerRuleVisitor analyzerRuleVisitor;
 
@@ -109,8 +110,8 @@ class AnalyzerRuleVisitorTest {
 
         doReturn(createResult(columnNames)).when(store)
             .executeQuery(eq(STATEMENT), anyMap());
-        doAnswer(i -> VerificationStrategy.Result.builder()
-            .successful(true)
+        doAnswer(i -> VerificationResult.builder()
+            .success(true)
             .rowCount(i.getArgument(2, List.class)
                 .size())
             .build()).when(analyzerContext)
@@ -214,8 +215,8 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeConcept() throws RuleException {
-        VerificationStrategy.Result verificationResult = VerificationStrategy.Result.builder()
-            .successful(true)
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(true)
             .build();
         doReturn(verificationResult).when(analyzerContext)
             .verify(eq(concept), anyList(), anyList());
@@ -291,8 +292,8 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeConstraint() throws RuleException {
-        VerificationStrategy.Result verificationResult = VerificationStrategy.Result.builder()
-            .successful(false)
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(false)
             .build();
         doReturn(verificationResult).when(analyzerContext)
             .verify(eq(constraint), anyList(), anyList());
@@ -363,8 +364,8 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeAppliedConcept() throws RuleException {
-        VerificationStrategy.Result verificationResult = VerificationStrategy.Result.builder()
-            .successful(true)
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(true)
             .build();
         doReturn(verificationResult).when(analyzerContext)
             .verify(eq(concept), anyList(), anyList());

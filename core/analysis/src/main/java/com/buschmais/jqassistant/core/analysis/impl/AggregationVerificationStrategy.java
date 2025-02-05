@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
@@ -21,8 +22,8 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
     }
 
     @Override
-    public <T extends ExecutableRule> VerificationStrategy.Result verify(T executable, AggregationVerification verification, List<String> columnNames,
-        List<Row> rows) throws RuleException {
+    public <T extends ExecutableRule> VerificationResult verify(T executable, AggregationVerification verification, List<String> columnNames, List<Row> rows)
+        throws RuleException {
         LOGGER.debug("Verifying result of {}", executable);
         if (rows.isEmpty()) {
             return getStatus(executable, 0, verification.getMin(), verification.getMax());

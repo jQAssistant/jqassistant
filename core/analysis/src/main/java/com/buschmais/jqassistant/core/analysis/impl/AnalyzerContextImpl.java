@@ -7,10 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Row;
-import com.buschmais.jqassistant.core.report.api.model.Suppress;
+import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -105,7 +102,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public <T extends ExecutableRule<?>> VerificationStrategy.Result verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
+    public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
         Verification verification = executable.getVerification();
         if (verification == null) {
             log.debug("Using default verification for '{}'.", executable);
@@ -120,8 +117,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Result.Status getStatus(VerificationStrategy.Result verificationResult, Severity severity) {
-        if (!verificationResult.isSuccessful()) {
+    public Result.Status getStatus(VerificationResult verificationResult, Severity severity) {
+        if (!verificationResult.isSuccess()) {
             if (severity.exceeds(failOnSeverity)) {
                 return FAILURE;
             } else {
