@@ -143,6 +143,7 @@
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
                 <xsl:apply-templates select="//tns:constraint[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:verificationResult/tns:success"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
@@ -172,6 +173,7 @@
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
                 <xsl:apply-templates select="//tns:concept[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:verificationResult/tns:success"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
@@ -217,14 +219,13 @@
                     <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-
             <td>
                 <xsl:value-of select="position()"/>
             </td>
             <td>
                 <span class="ruleName" title="{tns:description/text()}"
                       onclick="javascript:toggleResult('{$ruleId}');">
-                    <xsl:value-of select="@id"/>
+                    <xsl:value-of select="@id"/><xsl:if test="tns:verificationResult/tns:success='false'">&#160;&#127783;</xsl:if>
                 </span>
             </td>
             <td class="right">
