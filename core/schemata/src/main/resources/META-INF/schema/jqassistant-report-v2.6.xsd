@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://schema.jqassistant.org/report/v2.3"
-           targetNamespace="http://schema.jqassistant.org/report/v2.3"
+           xmlns:tns="http://schema.jqassistant.org/report/v2.6"
+           targetNamespace="http://schema.jqassistant.org/report/v2.6"
            elementFormDefault="qualified">
 
     <xs:group name="RuleGroup">
