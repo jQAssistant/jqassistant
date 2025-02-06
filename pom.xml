@@ -113,6 +113,7 @@
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
@@ -129,7 +130,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
                 </plugin>
@@ -377,6 +378,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>enforce-plugin-versions</id>
@@ -385,6 +387,9 @@
                             </goals>
                             <configuration>
                                 <rules>
+                                    <requireJavaVersion>
+                                        <version>[11,)</version>
+                                    </requireJavaVersion>
                                     <requireMavenVersion>
                                         <version>[${maven.version},)</version>
                                     </requireMavenVersion>
@@ -402,19 +407,6 @@
                                         <banSnapshots>true</banSnapshots>
                                         <phases>clean,deploy,site</phases>
                                     </requirePluginVersions>
-                                </rules>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>enforce-java-version</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVersion>
-                                        <version>[11,)</version>
-                                    </requireJavaVersion>
                                 </rules>
                             </configuration>
                         </execution>
