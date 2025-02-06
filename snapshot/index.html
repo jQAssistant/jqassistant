@@ -3190,7 +3190,9 @@ Available options are described in the section <a href="#core:Configuration">Con
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="error">$schema</span>: <span class="error">&quot;https://jqassistant.github.io/jqassistant/current/schema/jqassistant-configuration-cli-v2.6.schema.json&quot;</span>
+
+<span class="key">jqassistant</span>:
 
   <span class="comment"># Defines the local and remote Maven repositories for retrieving additional plugins.</span>
   <span class="key">repositories</span>:
@@ -3595,7 +3597,9 @@ Available options are described in the section <a href="#core:Configuration">Con
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="error">$schema</span>: <span class="error">&quot;https://jqassistant.github.io/jqassistant/current/schema/jqassistant-configuration-maven-v2.6.schema.json&quot;</span>
+
+<span class="key">jqassistant</span>:
 
   <span class="key">maven</span>:
     <span class="comment"># Force the module where 'mvn' is being executed to be used as root module. The database will be created in this module and contain all information of the reactor. Rules will be read from the rules folder of this module.</span>
@@ -12217,7 +12221,7 @@ XML documents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-03 07:13:58 UTC
+Last updated 2025-02-06 07:36:29 UTC
 </div>
 </div>
 </body>
