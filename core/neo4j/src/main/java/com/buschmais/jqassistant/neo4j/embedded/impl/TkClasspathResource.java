@@ -7,9 +7,11 @@ import lombok.ToString;
 import org.takes.HttpException;
 import org.takes.rq.RqHref;
 import org.takes.rs.RsWithBody;
+import org.takes.rs.RsWithHeader;
 import org.takes.tk.TkWrap;
 
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.URLConnection.guessContentTypeFromName;
 
 /**
  * HTTP request handler for classpath resources
@@ -25,11 +27,11 @@ final class TkClasspathResource extends TkWrap {
             String path = new RqHref.Base(request).href()
                 .path();
             String resource = resolve(path);
-            final InputStream input = classLoader.getResourceAsStream(resource);
-            if (input == null) {
+            final InputStream inputStream = classLoader.getResourceAsStream(resource);
+            if (inputStream == null) {
                 throw new HttpException(HTTP_NOT_FOUND, String.format("%s not found.", resource));
             }
-            return new RsWithBody(input);
+            return new RsWithHeader(new RsWithBody(inputStream), "content-type", guessContentTypeFromName(path));
         });
     }
 
