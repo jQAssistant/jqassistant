@@ -235,6 +235,12 @@
                 <artifactId>neo4j-browser</artifactId>
                 <version>${neo4j-browser.version}</version>
             </dependency>
+            <!-- Takes HTTP server -->
+            <dependency>
+                <groupId>org.takes</groupId>
+                <artifactId>takes</artifactId>
+                <version>1.24.6</version>
+            </dependency>
             <!-- Java APIs -->
             <dependency>
                 <groupId>javax.annotation</groupId>
