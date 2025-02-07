@@ -9,6 +9,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportReader;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
@@ -25,7 +26,7 @@ class XmlReportTest {
 
     private static final ReportReader REPORT_READER = new ReportReader();
 
-    private XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
+    private final XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
     @Test
     void writeAndReadReport() throws ReportException, MalformedURLException {
@@ -40,6 +41,9 @@ class XmlReportTest {
         assertThat(groupType.getGroupOrConceptOrConstraint()).hasSize(1);
         ExecutableRuleType ruleType = (ExecutableRuleType) groupType.getGroupOrConceptOrConstraint()
             .get(0);
+        VerificationResultType verificationResult = ruleType.getVerificationResult();
+        assertThat(verificationResult.isSuccess()).isTrue();
+        assertThat(verificationResult.getRowCount()).isEqualTo(1);
         assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
         assertThat(ruleType).isInstanceOf(ConceptType.class);
         assertThat(ruleType.getId()).isEqualTo("my:concept");
@@ -85,7 +89,7 @@ class XmlReportTest {
         List<AbstractReportType> imageOrLink = reports.getImageOrLink();
         assertThat(imageOrLink).hasSize(2);
         Map<String, AbstractReportType> reportsByLabel = imageOrLink.stream()
-            .collect(toMap(r -> r.getLabel(), r -> r));
+            .collect(toMap(AbstractReportType::getLabel, r -> r));
         AbstractReportType image = reportsByLabel.get("Image");
         assertThat(image).isInstanceOf(ImageType.class);
         assertThat(image.getValue()).isEqualTo("file:image.png");
@@ -224,14 +228,17 @@ class XmlReportTest {
     }
 
     private static <T extends ExecutableRule<?>> Result<T> getResult(T rule) {
-        Result<T> result = Result.<T>builder()
+        return Result.<T>builder()
             .rule(rule)
+            .verificationResult(VerificationResult.builder()
+                .success(false)
+                .rowCount(0)
+                .build())
             .status(Result.Status.FAILURE)
             .severity(Severity.CRITICAL)
             .columnNames(emptyList())
             .rows(emptyList())
             .build();
-        return result;
     }
 
     @Test

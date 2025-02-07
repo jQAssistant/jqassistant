@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
@@ -68,6 +69,10 @@ public final class XmlReportTestHelper {
         rows.add(createRow(concept));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
+            .verificationResult(VerificationResult.builder()
+                .success(true)
+                .rowCount(rows.size())
+                .build())
             .status(Result.Status.SUCCESS)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
@@ -114,6 +119,10 @@ public final class XmlReportTestHelper {
             .build());
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
+            .verificationResult(VerificationResult.builder()
+                .success(true)
+                .rowCount(rows.size())
+                .build())
             .status(Result.Status.SUCCESS)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
@@ -158,6 +167,10 @@ public final class XmlReportTestHelper {
         rows.add(createRow(constraint));
         Result<Constraint> result = Result.<Constraint>builder()
             .rule(constraint)
+            .verificationResult(VerificationResult.builder()
+                .success(false)
+                .rowCount(rows.size())
+                .build())
             .status(Result.Status.FAILURE)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
@@ -185,8 +198,7 @@ public final class XmlReportTestHelper {
     private static ReportContext getReportContext() {
         File reportDirectory = new File("target/test");
         reportDirectory.mkdirs();
-        ReportContext reportContext = new ReportContextImpl(XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
-        return reportContext;
+        return new ReportContextImpl(XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
     }
 
     private static Row createRow(ExecutableRule<?> rule) {
