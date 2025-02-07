@@ -49,6 +49,10 @@
             <artifactId>xo.neo4j.embedded</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.takes</groupId>
+            <artifactId>takes</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.smallrye.config</groupId>
             <artifactId>smallrye-config-core</artifactId>
         </dependency>
@@ -68,14 +72,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
