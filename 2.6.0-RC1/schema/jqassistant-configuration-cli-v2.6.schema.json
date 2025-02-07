@@ -1,0 +1,419 @@
+{
+  "$defs" : {
+    "com.buschmais.jqassistant.core.resolver.configuration.-policy" : {
+      "type" : "object",
+      "properties" : {
+        "checksum-policy" : {
+          "type" : "string",
+          "default" : "warn"
+        },
+        "enabled" : {
+          "type" : "boolean",
+          "default" : "true"
+        },
+        "update-policy" : {
+          "type" : "string",
+          "default" : "daily"
+        }
+      },
+      "additionalProperties" : false
+    },
+    "com.buschmais.jqassistant.core.rule.api.model.-severity" : {
+      "type" : "string",
+      "enum" : [ "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO" ]
+    },
+    "com.buschmais.jqassistant.core.shared.aether.configuration.-plugin" : {
+      "type" : "object",
+      "properties" : {
+        "artifact-id" : {
+          "type" : "string"
+        },
+        "classifier" : {
+          "type" : "string"
+        },
+        "exclusions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "artifact-id" : {
+                "type" : "string"
+              },
+              "classifier" : {
+                "type" : "string"
+              },
+              "group-id" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "default" : "jar"
+              }
+            },
+            "additionalProperties" : false
+          }
+        },
+        "group-id" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "default" : "jar"
+        },
+        "version" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    },
+    "java.util.-map_java.lang.-string.java.lang.-string_" : {
+      "type" : "object",
+      "patternProperties" : {
+        "^.*$" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "jqassistant" : {
+      "type" : "object",
+      "properties" : {
+        "analyze" : {
+          "type" : "object",
+          "properties" : {
+            "baseline" : {
+              "type" : "object",
+              "properties" : {
+                "enabled" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "file" : {
+                  "type" : "string"
+                },
+                "include-concepts" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "include-constraints" : {
+                  "default" : "*",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "default" : "*"
+                  }
+                }
+              },
+              "additionalProperties" : false
+            },
+            "concepts" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "constraints" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "exclude-constraints" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "execute-applied-concepts" : {
+              "type" : "boolean",
+              "default" : "false"
+            },
+            "groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "report" : {
+              "type" : "object",
+              "properties" : {
+                "continue-on-failure" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "create-archive" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "directory" : {
+                  "type" : "string"
+                },
+                "fail-on-severity" : {
+                  "type" : "string",
+                  "default" : "MAJOR"
+                },
+                "properties" : {
+                  "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_"
+                },
+                "warn-on-severity" : {
+                  "type" : "string",
+                  "default" : "MINOR"
+                }
+              },
+              "additionalProperties" : false
+            },
+            "rule" : {
+              "type" : "object",
+              "properties" : {
+                "default-concept-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity"
+                },
+                "default-constraint-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity"
+                },
+                "default-group-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity"
+                },
+                "directory" : {
+                  "type" : "string"
+                },
+                "required-concepts-are-optional-by-default" : {
+                  "type" : "boolean",
+                  "default" : "true"
+                }
+              },
+              "additionalProperties" : false
+            },
+            "rule-parameters" : {
+              "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_"
+            },
+            "warn-on-execution-time-seconds" : {
+              "type" : "integer",
+              "default" : "5"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "default-plugins" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin"
+          }
+        },
+        "plugins" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin"
+          }
+        },
+        "proxy" : {
+          "type" : "object",
+          "properties" : {
+            "host" : {
+              "type" : "string"
+            },
+            "non-proxy-hosts" : {
+              "type" : "string"
+            },
+            "password" : {
+              "type" : "string"
+            },
+            "port" : {
+              "type" : "integer"
+            },
+            "protocol" : {
+              "type" : "string"
+            },
+            "username" : {
+              "type" : "string"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "repositories" : {
+          "type" : "object",
+          "properties" : {
+            "ignore-transitive-repositories" : {
+              "type" : "boolean"
+            },
+            "local" : {
+              "type" : "string"
+            },
+            "mirrors" : {
+              "type" : "object",
+              "patternProperties" : {
+                "^.*$" : {
+                  "type" : "object",
+                  "properties" : {
+                    "mirror-of" : {
+                      "type" : "string"
+                    },
+                    "password" : {
+                      "type" : "string"
+                    },
+                    "url" : {
+                      "type" : "string"
+                    },
+                    "username" : {
+                      "type" : "string"
+                    }
+                  },
+                  "additionalProperties" : false
+                }
+              },
+              "additionalProperties" : false
+            },
+            "remotes" : {
+              "type" : "object",
+              "patternProperties" : {
+                "^.*$" : {
+                  "type" : "object",
+                  "properties" : {
+                    "password" : {
+                      "type" : "string"
+                    },
+                    "releases" : {
+                      "$ref" : "#/$defs/com.buschmais.jqassistant.core.resolver.configuration.-policy"
+                    },
+                    "snapshots" : {
+                      "$ref" : "#/$defs/com.buschmais.jqassistant.core.resolver.configuration.-policy"
+                    },
+                    "url" : {
+                      "type" : "string"
+                    },
+                    "username" : {
+                      "type" : "string"
+                    }
+                  },
+                  "additionalProperties" : false
+                }
+              },
+              "additionalProperties" : false
+            }
+          },
+          "additionalProperties" : false
+        },
+        "scan" : {
+          "type" : "object",
+          "properties" : {
+            "continue-on-error" : {
+              "type" : "boolean",
+              "default" : "false"
+            },
+            "include" : {
+              "type" : "object",
+              "properties" : {
+                "files" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "urls" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "additionalProperties" : false
+            },
+            "properties" : {
+              "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_"
+            },
+            "reset" : {
+              "type" : "boolean"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "server" : {
+          "type" : "object",
+          "properties" : {
+            "daemon" : {
+              "type" : "boolean",
+              "default" : "false"
+            },
+            "open-browser" : {
+              "type" : "boolean",
+              "default" : "false"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "skip" : {
+          "type" : "boolean",
+          "default" : "false"
+        },
+        "store" : {
+          "type" : "object",
+          "properties" : {
+            "embedded" : {
+              "type" : "object",
+              "properties" : {
+                "bolt-port" : {
+                  "type" : "integer",
+                  "default" : "7687"
+                },
+                "connector-enabled" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "http-port" : {
+                  "type" : "integer",
+                  "default" : "7474"
+                },
+                "listen-address" : {
+                  "type" : "string",
+                  "default" : "localhost"
+                },
+                "neo4j-plugins" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin"
+                  }
+                }
+              },
+              "additionalProperties" : false
+            },
+            "remote" : {
+              "type" : "object",
+              "properties" : {
+                "encryption" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "password" : {
+                  "type" : "string"
+                },
+                "properties" : {
+                  "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_"
+                },
+                "trust-certificate" : {
+                  "type" : "string"
+                },
+                "trust-strategy" : {
+                  "type" : "string"
+                },
+                "username" : {
+                  "type" : "string"
+                }
+              },
+              "additionalProperties" : false
+            },
+            "uri" : {
+              "type" : "string"
+            }
+          },
+          "additionalProperties" : false
+        }
+      },
+      "additionalProperties" : false
+    }
+  }
+}
