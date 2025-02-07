@@ -40,7 +40,7 @@ import static java.util.Collections.emptyMap;
 /**
  * Runs analysis according to the defined rules.
  */
-@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
 public class AnalyzeMojo extends AbstractRuleMojo {
 
     public static final String JQASSISTANT_REPORT_CLASSIFIER = "jqassistant-report";

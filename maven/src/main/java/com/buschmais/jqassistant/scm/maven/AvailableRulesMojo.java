@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.maven;
 import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -12,7 +11,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * Lists all available rules.
  */
-@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, aggregator = true, threadSafe = true)
 public class AvailableRulesMojo extends AbstractRuleMojo {
 
     @Override
