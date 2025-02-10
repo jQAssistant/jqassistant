@@ -64,7 +64,7 @@
 
     <properties>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.6.0</jqassistant.build.version>
+        <jqassistant.build.version>2.6.1</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.27.3</assertj.version>
         <asm.version>9.7.1</asm.version>
