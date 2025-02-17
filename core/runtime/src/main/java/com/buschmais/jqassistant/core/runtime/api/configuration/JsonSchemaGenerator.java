@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.shared.annotation.Description;
+
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,20 +42,25 @@ public class JsonSchemaGenerator {
             .without(Option.VOID_METHODS, Option.GETTER_METHODS, Option.PUBLIC_STATIC_FIELDS);
 
         configBuilder.forMethods()
-            .withTargetTypeOverridesResolver(target -> getResolvedTypes(target, target.getType()));
-        configBuilder.forMethods()
-            .withPropertyNameOverrideResolver(member -> mapToKebabCase(member.getName()));
-        configBuilder.forTypesInGeneral()
-            .withCustomDefinitionProvider(new MapDefinitionProvider());
-        configBuilder.forMethods()
+            .withTargetTypeOverridesResolver(target -> getResolvedTypes(target, target.getType()))
+            .withPropertyNameOverrideResolver(member -> mapToKebabCase(member.getName()))
             .withDefaultResolver(method -> {
                 WithDefault annotation = method.getAnnotationConsideringFieldAndGetter(WithDefault.class);
                 if (annotation != null) {
                     return annotation.value();
                 }
                 return null;
+            })
+            .withDescriptionResolver(method -> {
+                Description annotation = method.getAnnotationConsideringFieldAndGetter(Description.class);
+                if (annotation != null) {
+                    return annotation.value();
+                }
+                return null;
             });
+
         configBuilder.forTypesInGeneral()
+            .withCustomDefinitionProvider(new MapDefinitionProvider())
             .withDefinitionNamingStrategy((definitionKey, context) -> mapToKebabCase(definitionKey.getType()
                 .getTypeName()));
 
