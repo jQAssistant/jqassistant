@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -39,7 +40,7 @@ class CypherRuleInterpreterPluginTest {
     public static final String PRIMARY_COLUMN = "primary";
     public static final String SECONDARY_COLUMN = "secondary";
 
-    private CypherRuleInterpreterPlugin interpreterPlugin = new CypherRuleInterpreterPlugin();
+    private final CypherRuleInterpreterPlugin interpreterPlugin = new CypherRuleInterpreterPlugin();
 
     @Mock
     private AnalyzerContext analyzerContext;
@@ -63,6 +64,11 @@ class CypherRuleInterpreterPluginTest {
     void rows() throws RuleException {
         Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
             Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
+        doReturn(VerificationResult.builder()
+            .success(true)
+            .rowCount(2)
+            .build()).when(analyzerContext)
+            .verify(any(Constraint.class), anyList(), anyList());
 
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
@@ -91,7 +97,7 @@ class CypherRuleInterpreterPluginTest {
 
     private static ResultIterator<CompositeRowObject> asResultIterator(List<CompositeRowObject> queryRows) {
         Iterator<CompositeRowObject> iterator = queryRows.iterator();
-        ResultIterator<CompositeRowObject> resultIterator = new ResultIterator<>() {
+        return new ResultIterator<>() {
 
             @Override
             public boolean hasNext() {
@@ -107,7 +113,6 @@ class CypherRuleInterpreterPluginTest {
             public void close() {
             }
         };
-        return resultIterator;
     }
 
     private CompositeRowObject asRow(Map<String, Object> row) {

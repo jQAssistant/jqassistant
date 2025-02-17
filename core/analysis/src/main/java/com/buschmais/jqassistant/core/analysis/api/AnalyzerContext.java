@@ -6,6 +6,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -39,7 +40,7 @@ public interface AnalyzerContext {
      *     The value type.
      * @return The {@link Column}.
      */
-    <T> Column toColumn(T value) ;
+    <T> Column toColumn(T value);
 
     /**
      * Create a result {@link Row} from a map of columns.
@@ -65,7 +66,7 @@ public interface AnalyzerContext {
      *     The {@link Row}.
      * @return <code>true</code> if the row shall be suppressed.
      */
-     <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row);
+    <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.
@@ -74,8 +75,6 @@ public interface AnalyzerContext {
      *     The type of the executable.
      * @param executable
      *     The executable.
-     * @param severity
-     *     The effective {@link Severity} of the executed rule.
      * @param columnNames
      *     The column names.
      * @param rows
@@ -84,6 +83,7 @@ public interface AnalyzerContext {
      * @throws RuleException
      *     If no valid verification strategy can be found.
      */
-    <T extends ExecutableRule<?>> Result.Status verify(T executable, Severity severity, List<String> columnNames, List<Row> rows)
-        throws RuleException;
+    <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
+
+    Result.Status getStatus(VerificationResult verificationResult, Severity severity);
 }

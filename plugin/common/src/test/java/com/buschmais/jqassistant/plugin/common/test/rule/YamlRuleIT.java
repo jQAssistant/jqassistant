@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
@@ -41,13 +42,17 @@ public class YamlRuleIT extends AbstractPluginIT {
                         .create(PropertyDescriptor.class);
                     propertyDescriptor.setName("testProperty");
                     propertyDescriptor.setValue("testValue");
-            Map<String, Column<?>> columns = new HashMap<>();
-            columns.put("Property", context.toColumn(propertyDescriptor));
+                    Map<String, Column<?>> columns = new HashMap<>();
+                    columns.put("Property", context.toColumn(propertyDescriptor));
                     return Result.<T>builder()
                         .rule(executableRule)
                         .severity(severity)
                         .columnNames(singletonList("Property"))
-                .rows(singletonList(ReportHelper.toRow(executableRule, columns)))
+                        .rows(singletonList(ReportHelper.toRow(executableRule, columns)))
+                        .verificationResult(VerificationResult.builder()
+                            .success(true)
+                            .rowCount(1)
+                            .build())
                         .status(SUCCESS)
                         .build();
                 });

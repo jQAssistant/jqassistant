@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.build</groupId>
         <artifactId>parent</artifactId>
-        <version>2.6.0</version>
+        <version>2.6.1</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
@@ -64,12 +64,12 @@
 
     <properties>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.6.0</jqassistant.build.version>
+        <jqassistant.build.version>2.6.1</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.27.3</assertj.version>
         <asm.version>9.7.1</asm.version>
         <caffeine.version>3.2.0</caffeine.version>
-        <commons-beanutils.version>1.10.0</commons-beanutils.version>
+        <commons-beanutils.version>1.10.1</commons-beanutils.version>
         <commons-codec.version>1.18.0</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-digester.version>2.1</commons-digester.version>
@@ -95,9 +95,9 @@
         <maven.version>3.6.3</maven.version>
         <mockito.version>5.15.2</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
-        <neo4j_4x.version>4.4.40</neo4j_4x.version>
+        <neo4j_4x.version>4.4.41</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.26.1</neo4j_5x.version>
+        <neo4j_5x.version>5.26.2</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -106,13 +106,14 @@
         <slf4j.version>2.0.16</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
         <maven-resolver.version>1.9.22</maven-resolver.version>
-        <snakeyaml.version>2.3</snakeyaml.version>
+        <snakeyaml.version>2.4</snakeyaml.version>
         <snakeyaml-engine.version>2.9</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xo.version>2.6.0</xo.version>
+        <xo.version>2.6.2</xo.version>
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <maven.buildhelper.version>3.6.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
@@ -129,7 +130,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
                 </plugin>
@@ -377,6 +378,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>enforce-plugin-versions</id>
@@ -385,6 +387,9 @@
                             </goals>
                             <configuration>
                                 <rules>
+                                    <requireJavaVersion>
+                                        <version>[11,)</version>
+                                    </requireJavaVersion>
                                     <requireMavenVersion>
                                         <version>[${maven.version},)</version>
                                     </requireMavenVersion>
@@ -402,19 +407,6 @@
                                         <banSnapshots>true</banSnapshots>
                                         <phases>clean,deploy,site</phases>
                                     </requirePluginVersions>
-                                </rules>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>enforce-java-version</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVersion>
-                                        <version>[11,)</version>
-                                    </requireJavaVersion>
                                 </rules>
                             </configuration>
                         </execution>

@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -171,6 +172,10 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         if (executable == null) {
             return Result.<T>builder()
                 .rule(executableRule)
+                .verificationResult(VerificationResult.builder()
+                    .success(true)
+                    .rowCount(0)
+                    .build())
                 .status(SUCCESS)
                 .severity(severity)
                 .columnNames(emptyList())

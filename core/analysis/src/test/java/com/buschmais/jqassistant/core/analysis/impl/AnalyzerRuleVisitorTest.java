@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -26,6 +27,7 @@ import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOManager;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,7 +85,7 @@ class AnalyzerRuleVisitorTest {
     @Mock
     private AnalyzerContext analyzerContext;
 
-    private Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
+    private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     private AnalyzerRuleVisitor analyzerRuleVisitor;
 
@@ -95,6 +97,7 @@ class AnalyzerRuleVisitorTest {
 
     private Map<String, GroupDescriptor> groupDescriptors;
 
+    @SneakyThrows
     @BeforeEach
     void setUp() {
         concept = createConcept("test:Concept");
@@ -107,6 +110,12 @@ class AnalyzerRuleVisitorTest {
 
         doReturn(createResult(columnNames)).when(store)
             .executeQuery(eq(STATEMENT), anyMap());
+        doAnswer(i -> VerificationResult.builder()
+            .success(true)
+            .rowCount(i.getArgument(2, List.class)
+                .size())
+            .build()).when(analyzerContext)
+            .verify(any(ExecutableRule.class), any(), any());
 
         doReturn(store).when(analyzerContext)
             .getStore();
@@ -206,8 +215,13 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeConcept() throws RuleException {
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(true)
+            .build();
+        doReturn(verificationResult).when(analyzerContext)
+            .verify(eq(concept), anyList(), anyList());
         doReturn(SUCCESS).when(analyzerContext)
-            .verify(eq(concept), eq(MAJOR), anyList(), anyList());
+            .getStatus(verificationResult, MAJOR);
 
         Result.Status status = analyzerRuleVisitor.visitConcept(concept, MAJOR, emptyMap(), emptyMap());
 
@@ -219,6 +233,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
+        verify(analyzerContext).getStatus(verificationResult, MAJOR);
         verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
         verifyConceptResult(SUCCESS, MAJOR);
         verify(ruleRepository).mergeConcept(concept.getId());
@@ -277,8 +292,13 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeConstraint() throws RuleException {
-        doReturn(Result.Status.FAILURE).when(analyzerContext)
-            .verify(eq(constraint), eq(BLOCKER), anyList(), anyList());
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(false)
+            .build();
+        doReturn(verificationResult).when(analyzerContext)
+            .verify(eq(constraint), anyList(), anyList());
+        doReturn(FAILURE).when(analyzerContext)
+            .getStatus(verificationResult, BLOCKER);
 
         analyzerRuleVisitor.visitConstraint(constraint, BLOCKER, emptyMap());
 
@@ -287,6 +307,8 @@ class AnalyzerRuleVisitorTest {
         Map<String, Object> parameters = argumentCaptor.getValue();
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
+
+        verify(analyzerContext).getStatus(verificationResult, BLOCKER);
         verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
         verify(ruleRepository).mergeConstraint(constraint.getId());
@@ -342,13 +364,19 @@ class AnalyzerRuleVisitorTest {
 
     @Test
     void executeAppliedConcept() throws RuleException {
+        VerificationResult verificationResult = VerificationResult.builder()
+            .success(true)
+            .build();
+        doReturn(verificationResult).when(analyzerContext)
+            .verify(eq(concept), anyList(), anyList());
         doReturn(SUCCESS).when(analyzerContext)
-            .verify(eq(concept), eq(MINOR), anyList(), anyList());
+            .getStatus(verificationResult, MINOR);
         doReturn(true).when(configuration)
             .executeAppliedConcepts();
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
+        verify(analyzerContext).getStatus(verificationResult, MINOR);
         verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
         verify(ruleRepository).mergeConcept(concept.getId());
     }
@@ -375,9 +403,11 @@ class AnalyzerRuleVisitorTest {
             .group("child", INFO)
             .build();
         AnalyzeTaskDescriptor analyzeTaskDescriptor = mock(AnalyzeTaskDescriptor.class);
-        doReturn(analyzeTaskDescriptor).when(store).create(AnalyzeTaskDescriptor.class);
+        doReturn(analyzeTaskDescriptor).when(store)
+            .create(AnalyzeTaskDescriptor.class);
         List<GroupDescriptor> rootGroups = new ArrayList<>();
-        doReturn(rootGroups).when(analyzeTaskDescriptor).getIncludesGroups();
+        doReturn(rootGroups).when(analyzeTaskDescriptor)
+            .getIncludesGroups();
 
         analyzerRuleVisitor.beforeRules();
         analyzerRuleVisitor.beforeGroup(parent, BLOCKER);

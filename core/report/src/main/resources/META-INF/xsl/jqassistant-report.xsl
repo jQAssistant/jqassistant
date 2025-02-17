@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.3">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.6">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
@@ -96,26 +96,14 @@
                 color:#fff;
             }
 
-            .success * .ruleName:after {
-                content:" \2714";
-            }
-
             .failure {
                 background-color:crimson;
                 color:#fff;
             }
 
-            .failure * .ruleName:after {
-                content:" \2718";
-            }
-
             .warning {
                 background-color:orange;
                 color:#fff;
-            }
-
-            .warning * .ruleName:after {
-                content:" \0021";
             }
         </style>
         <h1>jQAssistant Report</h1>
@@ -129,10 +117,10 @@
             </h6>
             <table>
                 <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:70%;">Constraint Name</th>
-                    <th style="width:15%;">Count</th>
-                    <th style="width:10%;">Severity</th>
+                    <th style="width:85%;">Constraint</th>
+                    <th style="width:5%;">Status</th>
+                    <th style="width:5%;">Severity</th>
+                    <th style="width:5%;">Count</th>
                 </tr>
                 <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -143,6 +131,7 @@
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
                 <xsl:apply-templates select="//tns:constraint[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:verificationResult/tns:success"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
@@ -158,10 +147,10 @@
             </h6>
             <table>
                 <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:70%;">Concept Name</th>
-                    <th style="width:15%;">Count</th>
-                    <th style="width:10%;">Severity</th>
+                    <th style="width:85%;">Concept</th>
+                    <th style="width:5%;">Status</th>
+                    <th style="width:5%;">Severity</th>
+                    <th style="width:5%;">Count</th>
                 </tr>
                 <xsl:apply-templates select="//tns:concept[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -172,6 +161,7 @@
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
                 <xsl:apply-templates select="//tns:concept[not(tns:status='failure' or tns:status='warning')]">
+                    <xsl:sort select="tns:verificationResult/tns:success"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
@@ -217,10 +207,6 @@
                     <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-
-            <td>
-                <xsl:value-of select="position()"/>
-            </td>
             <td>
                 <span class="ruleName" title="{tns:description/text()}"
                       onclick="javascript:toggleResult('{$ruleId}');">
@@ -228,10 +214,19 @@
                 </span>
             </td>
             <td class="right">
-                <xsl:value-of select="count(tns:result/tns:rows/tns:row)"/>
+                <xsl:if test="tns:verificationResult/tns:success='false'">&#127783;&#160;</xsl:if>
+                <xsl:choose>
+                    <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
+                    <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
+                    <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
+                    <xsl:otherwise></xsl:otherwise>
+                </xsl:choose>
             </td>
             <td class="right">
                 <xsl:value-of select="tns:severity/text()"/>
+            </td>
+            <td class="right">
+                <xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>
             </td>
         </tr>
         <tr id="resultOf{$ruleId}" style="display:none;" name="resultRow">
