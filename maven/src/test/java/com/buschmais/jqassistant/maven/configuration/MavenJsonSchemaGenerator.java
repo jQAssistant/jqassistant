@@ -5,7 +5,6 @@ import java.io.File;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,14 +21,6 @@ public class MavenJsonSchemaGenerator {
         ObjectNode schemaNode = generateSchema(MavenConfiguration.class);
         assertThat(validateYaml(MavenJsonSchemaGenerator.class.getResource("/validMavenYaml.yaml"), schemaNode)).isEmpty();
         File file = writeSchema(schemaNode, new File(outputDirectory), "jqassistant-configuration-maven");
-        assertThat(file).exists();
-    }
-
-    @Test
-    public void schemaTest () throws Exception {
-        ObjectNode schemaNode = generateSchema(MavenConfiguration.class);
-        assertThat(validateYaml(MavenJsonSchemaGenerator.class.getResource("/validMavenYaml.yaml"), schemaNode)).isEmpty();
-        File file = writeSchema(schemaNode, new File("target/generated-resources/schema"), "jqassistant-configuration-maven");
         assertThat(file).exists();
     }
 }
