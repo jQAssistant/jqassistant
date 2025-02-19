@@ -48,19 +48,7 @@
       },
       "additionalProperties" : false
     },
-    "java.util.-map_java.lang.-string.java.lang.-string_" : {
-      "type" : "object",
-      "patternProperties" : {
-        "^.*$" : {
-          "type" : "string"
-        }
-      },
-      "additionalProperties" : false
-    }
-  },
-  "type" : "object",
-  "properties" : {
-    "jqassistant" : {
+    "com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration" : {
       "type" : "object",
       "properties" : {
         "analyze" : {
@@ -333,6 +321,31 @@
         }
       },
       "additionalProperties" : false
+    },
+    "java.util.-map_java.lang.-string.java.lang.-string_" : {
+      "type" : "object",
+      "patternProperties" : {
+        "^.*$" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "jqassistant" : {
+      "$ref" : "#/$defs/com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration"
+    }
+  },
+  "patternProperties" : {
+    "^%.*$" : {
+      "type" : "object",
+      "properties" : {
+        "jqassistant" : {
+          "$ref" : "#/$defs/com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration"
+        }
+      }
     }
   }
 }

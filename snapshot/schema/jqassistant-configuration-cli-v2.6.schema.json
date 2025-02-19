@@ -1,84 +1,6 @@
 {
   "$defs" : {
-    "com.buschmais.jqassistant.core.resolver.configuration.-policy" : {
-      "type" : "object",
-      "properties" : {
-        "checksum-policy" : {
-          "type" : "string",
-          "default" : "warn"
-        },
-        "enabled" : {
-          "type" : "boolean",
-          "default" : "true"
-        },
-        "update-policy" : {
-          "type" : "string",
-          "default" : "daily"
-        }
-      },
-      "additionalProperties" : false
-    },
-    "com.buschmais.jqassistant.core.rule.api.model.-severity" : {
-      "type" : "string",
-      "enum" : [ "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO" ]
-    },
-    "com.buschmais.jqassistant.core.shared.aether.configuration.-plugin" : {
-      "type" : "object",
-      "properties" : {
-        "artifact-id" : {
-          "type" : "string"
-        },
-        "classifier" : {
-          "type" : "string"
-        },
-        "exclusions" : {
-          "type" : "array",
-          "items" : {
-            "type" : "object",
-            "properties" : {
-              "artifact-id" : {
-                "type" : "string"
-              },
-              "classifier" : {
-                "type" : "string"
-              },
-              "group-id" : {
-                "type" : "string"
-              },
-              "type" : {
-                "type" : "string",
-                "default" : "jar"
-              }
-            },
-            "additionalProperties" : false
-          }
-        },
-        "group-id" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "default" : "jar"
-        },
-        "version" : {
-          "type" : "string"
-        }
-      },
-      "additionalProperties" : false
-    },
-    "java.util.-map_java.lang.-string.java.lang.-string_" : {
-      "type" : "object",
-      "patternProperties" : {
-        "^.*$" : {
-          "type" : "string"
-        }
-      },
-      "additionalProperties" : false
-    }
-  },
-  "type" : "object",
-  "properties" : {
-    "jqassistant" : {
+    "com.buschmais.jqassistant.commandline.configuration.-cli-configuration" : {
       "type" : "object",
       "properties" : {
         "analyze" : {
@@ -414,6 +336,97 @@
         }
       },
       "additionalProperties" : false
+    },
+    "com.buschmais.jqassistant.core.resolver.configuration.-policy" : {
+      "type" : "object",
+      "properties" : {
+        "checksum-policy" : {
+          "type" : "string",
+          "default" : "warn"
+        },
+        "enabled" : {
+          "type" : "boolean",
+          "default" : "true"
+        },
+        "update-policy" : {
+          "type" : "string",
+          "default" : "daily"
+        }
+      },
+      "additionalProperties" : false
+    },
+    "com.buschmais.jqassistant.core.rule.api.model.-severity" : {
+      "type" : "string",
+      "enum" : [ "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO" ]
+    },
+    "com.buschmais.jqassistant.core.shared.aether.configuration.-plugin" : {
+      "type" : "object",
+      "properties" : {
+        "artifact-id" : {
+          "type" : "string"
+        },
+        "classifier" : {
+          "type" : "string"
+        },
+        "exclusions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "artifact-id" : {
+                "type" : "string"
+              },
+              "classifier" : {
+                "type" : "string"
+              },
+              "group-id" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "default" : "jar"
+              }
+            },
+            "additionalProperties" : false
+          }
+        },
+        "group-id" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "default" : "jar"
+        },
+        "version" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    },
+    "java.util.-map_java.lang.-string.java.lang.-string_" : {
+      "type" : "object",
+      "patternProperties" : {
+        "^.*$" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "jqassistant" : {
+      "$ref" : "#/$defs/com.buschmais.jqassistant.commandline.configuration.-cli-configuration"
+    }
+  },
+  "patternProperties" : {
+    "^%.*$" : {
+      "type" : "object",
+      "properties" : {
+        "jqassistant" : {
+          "$ref" : "#/$defs/com.buschmais.jqassistant.commandline.configuration.-cli-configuration"
+        }
+      }
     }
   }
 }
