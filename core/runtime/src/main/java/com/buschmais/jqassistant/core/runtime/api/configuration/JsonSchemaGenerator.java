@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
@@ -55,6 +52,12 @@ public class JsonSchemaGenerator {
                 Description annotation = method.getAnnotationConsideringFieldAndGetter(Description.class);
                 if (annotation != null) {
                     return annotation.value();
+                }
+                if (method.getType() != null) {
+                    Description innerAnnotation = method.getType().getErasedType().getAnnotation(Description.class);
+                    if (innerAnnotation != null) {
+                        return innerAnnotation.value();
+                    }
                 }
                 return null;
             });
