@@ -57,46 +57,41 @@ public class JsonSchemaGenerator {
             .withDefinitionNamingStrategy((definitionKey, context) -> mapToKebabCase(definitionKey.getType()
                 .getTypeName()));
 
-        SchemaGenerator generator = new SchemaGenerator(configBuilder.build());
-        ObjectNode schema = generator.generateSchema(clazz);
-        return wrapJqassistant(schema);
+        SchemaGenerator generatorNew = new SchemaGenerator(configBuilder.build());
+        SchemaBuilder schemaBuilder = generatorNew.buildMultipleSchemaDefinitions();
+        schemaBuilder.createSchemaReference(clazz); // has to be called twice to initiate definition generating
+        ObjectNode schema = schemaBuilder.createSchemaReference(clazz);
+
+        ObjectNode definitions = schemaBuilder.collectDefinitions("$defs");
+        return wrapJqassistant(schema, definitions);
     }
 
     /**
-     * Splits the generated json schema into properties and $defs,
-     * wraps the jqassistant root node around the properties part
-     * and puts it back together with the $defs part.
-     * Prohibits additionalProperties for the properties in jqassistant.
+     * Takes the schema properties and definition nodes,
+     * wraps the jqassistant root node around the property nodes
+     * (one for standard and one for profiles) and combines them.
+     * Indirectly allows additional properties at highest level by not prohibiting them.
      *
-     * @param schema
-     *     the json schema generated with the victools schema generator
+     * @param properties
+     *     the json representation of the jqassistant properties generated with the victools schema generator
+     * @param definitions
+     *     generated definitions or the schema properties
      * @return complete json schema for jqassistant.yaml
      */
-    private static ObjectNode wrapJqassistant(ObjectNode schema) {
-        ObjectNode propertiesNode = JsonNodeFactory.instance.objectNode();
+    private static ObjectNode wrapJqassistant(ObjectNode properties, ObjectNode definitions) {
         ObjectNode jqaWrapper = JsonNodeFactory.instance.objectNode();
         ObjectNode definitionWrapper = JsonNodeFactory.instance.objectNode();
+        ObjectNode profileWrapper = JsonNodeFactory.instance.objectNode();
+        ObjectNode patternPropertiesWrapper = JsonNodeFactory.instance.objectNode();
 
-        String properties = "properties";
-        String object = "object";
-        String defs = "$defs";
-        String type = "type";
-
-        for (Map.Entry<String, JsonNode> property : schema.properties()) {
-            if (property.getKey()
-                .equals(properties)) {
-                propertiesNode.put(type, object);
-                propertiesNode.set(properties, property.getValue());
-                propertiesNode.put("additionalProperties", false);
-            }
-            if (property.getKey()
-                .equals(defs)) {
-                definitionWrapper.set(defs, property.getValue());
-            }
-        }
-        jqaWrapper.set("jqassistant", propertiesNode);
-        definitionWrapper.put(type, object);
-        definitionWrapper.set(properties, jqaWrapper);
+        jqaWrapper.set("jqassistant", properties);
+        profileWrapper.put("type", "object");
+        profileWrapper.set("properties", jqaWrapper);
+        patternPropertiesWrapper.set("^%.*$", profileWrapper);
+        definitionWrapper.set("$defs", definitions);
+        definitionWrapper.put("type", "object");
+        definitionWrapper.set("properties", jqaWrapper);
+        definitionWrapper.set("patternProperties", patternPropertiesWrapper);
         return definitionWrapper;
     }
 
