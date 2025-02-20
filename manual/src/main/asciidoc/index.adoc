@@ -27,4 +27,8 @@ include::include/configuration.adoc[]
 
 include::include/plugins.adoc[]
 
+:leveloffset: +1
 
+include::include/known-issues.adoc[]
+
+:leveloffset: -1
