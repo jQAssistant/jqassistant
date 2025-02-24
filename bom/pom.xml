@@ -504,6 +504,12 @@
                 <version>${system-lambda.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>uk.org.webcompere</groupId>
+                <artifactId>model-assert</artifactId>
+                <version>${model-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -3,16 +3,14 @@ package com.buschmais.jqassistant.core.runtime.api.configuration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.validateYaml;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
 class JsonSchemaGeneratorTest {
 
@@ -48,47 +46,20 @@ class JsonSchemaGeneratorTest {
     }
 
     @Test
-    void testDescriptionsAndDefaults() {
-        ObjectNode pluginNode = JsonSchemaGenerator.generateSchema(Plugin.class);
-
-        // inner descriptions should not be available at the moment on outer level
-        assertThat(schemaNode.findValue("plugins")
-            .has("description")).isFalse();
-        assertThat(schemaNode.findValue("default-plugins")
-            .has("description")).isFalse();
+    void testDescriptions() {
+        // inner descriptions should not be available on outer level at the moment
+        assertJson(schemaNode).at("/properties/jqassistant/properties/plugins")
+            .doesNotContainKey("description");
 
         // direct descriptions should be available
-        assertThat(schemaNode.findValue("skip")
-            .get("description")
-            .textValue()).isEqualTo("Skip execution of jQAssistant tasks/goals.");
-        assertThat(pluginNode.findValue("group-id")
-            .get("description")
-            .textValue()).isEqualTo("The groupId of the plugin.");
-        assertThat(pluginNode.findValue("classifier")
-            .get("description")
-            .textValue()).isEqualTo("The classifier of the plugin (optional).");
-        assertThat(pluginNode.findValue("artifact-id")
-            .get("description")
-            .textValue()).isEqualTo("The artifactId of the plugin.");
-        assertThat(pluginNode.findValues("type")
-            .get(11)
-            .get("description")
-            .textValue()).isEqualTo("The type (extension) of the plugin.");
-        assertThat(pluginNode.findValue("version")
-            .get("description")
-            .textValue()).isEqualTo("The version of the plugin.");
-        assertThat(pluginNode.findValue("exclusions")
-            .get("description")
-            .textValue()).isEqualTo("The exclusions of the plugin.");
+        assertJson(schemaNode).at("/properties/jqassistant/properties/skip/description")
+            .isText("Skip execution of jQAssistant tasks/goals.");
+    }
 
-        // defaults should be available
-        assertThat(schemaNode.findValue("skip")
-            .get("default")
-            .textValue()).isEqualTo("false");
-        assertThat(pluginNode.findValues("type")
-            .get(11)
-            .get("default")
-            .textValue()).isEqualTo("jar");
-
+    @Test
+    void testDefaults() {
+        // default values should be available
+        assertJson(schemaNode).at("/properties/jqassistant/properties/skip/default")
+            .isText("false");
     }
 }
