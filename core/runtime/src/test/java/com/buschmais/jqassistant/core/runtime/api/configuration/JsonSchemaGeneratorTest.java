@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,13 +10,14 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.validateYaml;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
 class JsonSchemaGeneratorTest {
 
     private JsonNode schemaNode;
 
     @BeforeEach
-    void generateSchema() throws IOException {
+    void generateSchema() {
         schemaNode = JsonSchemaGenerator.generateSchema(Configuration.class);
     }
 
@@ -45,4 +45,21 @@ class JsonSchemaGeneratorTest {
         }
     }
 
+    @Test
+    void testDescriptions() {
+        // inner descriptions should not be available on outer level at the moment
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-plugin/description")
+            .isMissing();
+
+        // direct descriptions should be available
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-configuration/properties/skip/description")
+            .isText("Skip execution of jQAssistant tasks/goals.");
+    }
+
+    @Test
+    void testDefaults() {
+        // default values should be available
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-configuration/properties/skip/default")
+            .isText("false");
+    }
 }
