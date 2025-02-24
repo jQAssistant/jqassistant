@@ -2038,6 +2038,20 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </li>
 </ul>
 </li>
+<li><a href="#_known_issues">8. Known Issues</a>
+<ul class="sectlevel2">
+<li><a href="#_maven_2">8.1. Maven</a>
+<ul class="sectlevel3">
+<li><a href="#_cannot_re_use_store_instance_from_reactor">Cannot re-use store instance from reactor</a></li>
+</ul>
+</li>
+<li><a href="#_general">8.2. General</a>
+<ul class="sectlevel3">
+<li><a href="#_unsatisfiedlinkerror_on_linux_systems">UnsatisfiedLinkError on Linux systems</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -3112,7 +3126,7 @@ Entries in the baseline can be removed manually if these entries no longer shall
 </table>
 </div>
 <div class="paragraph">
-<p>If baseline management is enabled the by default all constraint violations will be included.
+<p>If baseline management is enabled then by default all constraint violations will be included.
 This can be fine-tuned by adding further configuration properties:</p>
 </div>
 <div class="listingblock">
@@ -12218,10 +12232,90 @@ XML documents.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_known_issues"><a class="link" href="#_known_issues">8. Known Issues</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes known issues and their solutions.</p>
+</div>
+<div class="sect2">
+<h3 id="_maven_2"><a class="link" href="#_maven_2">8.1. Maven</a></h3>
+<div class="sect3">
+<h4 id="_cannot_re_use_store_instance_from_reactor"><a class="link" href="#_cannot_re_use_store_instance_from_reactor">8.1.1. Cannot re-use store instance from reactor</a></h4>
+<div class="paragraph">
+<p>This error may occur in cases where a Maven project contains build extensions, e.g.</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;build&gt;</span>
+  <span class="tag">&lt;extensions&gt;</span>
+    <span class="tag">&lt;extension&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>kr.motd.maven<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>os-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>${os-maven-plugin.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;/extension&gt;</span>
+  <span class="tag">&lt;/extensions&gt;</span>
+<span class="tag">&lt;/build&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The problem be resolved by adding the following option to the <code>.jqassistant.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">.jqassistant.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+  <span class="key">maven</span>:
+    <span class="key">reuse-store</span>: <span class="string"><span class="content">false</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively the option can be specified on the Maven command line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">mvn -Djqassistant.maven.reuse-store=false jqassistant:scan jqassistant:analyze</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_general"><a class="link" href="#_general">8.2. General</a></h3>
+<div class="sect3">
+<h4 id="_unsatisfiedlinkerror_on_linux_systems"><a class="link" href="#_unsatisfiedlinkerror_on_linux_systems">8.2.1. UnsatisfiedLinkError on Linux systems</a></h4>
+<div class="paragraph">
+<p>On Linux systems using the <code>noexec</code> option on the <code>/home</code> mount the following error occurs on startup:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>java.lang.UnsatisfiedLinkError: /home/jqa-user/.cache/JNA/temp/jna1503285157168624171.tmp: /home/jqa-user.cache/JNA/temp/jna1503285157168624171.tmp: failed to map segment from shared object</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The problem can be resolved by setting the system property <code>-Djna.tmpdir</code> pointing to a temporary directory without the noexec limitation:</p>
+</div>
+<div class="listingblock">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>mvn -Djna.tmpdir=/tmp jqassistant:scan jqassistant:analyze</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Command line interface</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>export JQASSISTANT_OPTIONS=-Djna.tmpdir=/tmp
+jqassistant.sh scan analyze</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-24 12:08:42 UTC
+Last updated 2025-02-24 17:24:26 UTC
 </div>
 </div>
 </body>
