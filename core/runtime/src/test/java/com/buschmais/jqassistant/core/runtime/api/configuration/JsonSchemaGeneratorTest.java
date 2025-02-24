@@ -48,18 +48,18 @@ class JsonSchemaGeneratorTest {
     @Test
     void testDescriptions() {
         // inner descriptions should not be available on outer level at the moment
-        assertJson(schemaNode).at("/properties/jqassistant/properties/plugins")
-            .doesNotContainKey("description");
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-plugin/description")
+            .isMissing();
 
         // direct descriptions should be available
-        assertJson(schemaNode).at("/properties/jqassistant/properties/skip/description")
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-configuration/properties/skip/description")
             .isText("Skip execution of jQAssistant tasks/goals.");
     }
 
     @Test
     void testDefaults() {
         // default values should be available
-        assertJson(schemaNode).at("/properties/jqassistant/properties/skip/default")
+        assertJson(schemaNode).at("/$defs/com.buschmais.jqassistant.core.runtime.api.configuration.-configuration/properties/skip/default")
             .isText("false");
     }
 }
