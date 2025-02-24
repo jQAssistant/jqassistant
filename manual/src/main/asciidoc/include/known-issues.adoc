@@ -1,0 +1,66 @@
+= Known Issues
+
+This section describes known issues and their solutions.
+
+== Maven
+
+=== Cannot re-use store instance from reactor
+
+This error may occur in cases where a Maven project contains build extensions, e.g.
+
+.pom.xml
+[source,xml]
+----
+<build>
+  <extensions>
+    <extension>
+      <groupId>kr.motd.maven</groupId>
+      <artifactId>os-maven-plugin</artifactId>
+      <version>${os-maven-plugin.version}</version>
+    </extension>
+  </extensions>
+</build>
+----
+
+The problem be resolved by adding the following option to the `.jqassistant.yml`:
+
+..jqassistant.yml
+[source,yaml]
+----
+jqassistant:
+  maven:
+    reuse-store: false
+----
+
+Alternatively the option can be specified on the Maven command line:
+
+[source,bash]
+----
+mvn -Djqassistant.maven.reuse-store=false jqassistant:scan jqassistant:analyze
+----
+
+== General
+
+=== UnsatisfiedLinkError on Linux systems
+
+On Linux systems using the `noexec` option on the `/home` mount the following error occurs on startup:
+
+----
+java.lang.UnsatisfiedLinkError: /home/jqa-user/.cache/JNA/temp/jna1503285157168624171.tmp: /home/jqa-user.cache/JNA/temp/jna1503285157168624171.tmp: failed to map segment from shared object
+----
+
+The problem can be resolved by setting the system property `-Djna.tmpdir` pointing to a temporary directory without the noexec limitation:
+
+.Maven
+[source,bash]
+```
+mvn -Djna.tmpdir=/tmp jqassistant:scan jqassistant:analyze
+```
+
+.Command line interface
+[source,bash]
+```
+export JQASSISTANT_OPTIONS=-Djna.tmpdir=/tmp
+jqassistant.sh scan analyze
+```
+
