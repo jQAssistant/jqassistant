@@ -117,7 +117,8 @@
             </h6>
             <table>
                 <tr>
-                    <th style="width:85%;">Constraint</th>
+                    <th style="width:5%;">#</th>
+                    <th style="width:80%;">Constraint</th>
                     <th style="width:5%;">Status</th>
                     <th style="width:5%;">Severity</th>
                     <th style="width:5%;">Count</th>
@@ -147,7 +148,8 @@
             </h6>
             <table>
                 <tr>
-                    <th style="width:85%;">Concept</th>
+                    <th style="width:5%;">#</th>
+                    <th style="width:80%;">Concept</th>
                     <th style="width:5%;">Status</th>
                     <th style="width:5%;">Severity</th>
                     <th style="width:5%;">Count</th>
@@ -204,9 +206,12 @@
                     <xsl:when test="tns:status='failure'">failure</xsl:when>
                     <xsl:when test="tns:status='warning'">warning</xsl:when>
                     <xsl:when test="tns:status='success'">success</xsl:when>
-                    <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
+
+            <td>
+                <xsl:value-of select="position()"/>
+            </td>
             <td>
                 <span class="ruleName" title="{tns:description/text()}"
                       onclick="javascript:toggleResult('{$ruleId}');">
@@ -214,13 +219,16 @@
                 </span>
             </td>
             <td class="right">
-                <xsl:if test="tns:verificationResult/tns:success='false'">&#127783;&#160;</xsl:if>
-                <xsl:choose>
-                    <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
-                    <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
-                    <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
-                    <xsl:otherwise></xsl:otherwise>
-                </xsl:choose>
+                <xsl:if test="tns:verificationResult/tns:success='false'">
+                    <span title="Result verification failed">&#127783;&#160;</span>
+                </xsl:if>
+                <span title="Result evaluation according to warn-on-severity/fail-on-severity thresholds">
+                    <xsl:choose>
+                        <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
+                        <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
+                        <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
+                    </xsl:choose>
+                </span>
             </td>
             <td class="right">
                 <xsl:value-of select="tns:severity/text()"/>
@@ -308,7 +316,6 @@
                             <xsl:when test="tns:status='failure'">failure</xsl:when>
                             <xsl:when test="tns:status='warning'">warning</xsl:when>
                             <xsl:when test="tns:status='success'">success</xsl:when>
-                            <xsl:otherwise></xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
                     <xsl:value-of select="tns:status"/>
