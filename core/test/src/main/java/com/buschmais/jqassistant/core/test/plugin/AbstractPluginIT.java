@@ -223,7 +223,16 @@ public abstract class AbstractPluginIT {
         StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
         store = storeFactory.getStore(configuration.store(), () -> TEST_STORE_DIRECTORY);
         store.start();
-        store.reset();
+        if (isReset()) {
+            store.reset();
+        }
+    }
+
+    /**
+     * Determines if the store shall be reset before each test method.
+     */
+    protected boolean isReset() {
+        return true;
     }
 
     /**
