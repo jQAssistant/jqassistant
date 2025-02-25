@@ -18,6 +18,11 @@ class JavaRuntimePT extends AbstractJavaPluginIT {
     public static final Class<?>[] PRIMITIVE_TYPES = new Class<?>[] { void.class, boolean.class, short.class, int.class, float.class, double.class,
         long.class };
 
+    @Override
+    protected boolean isReset() {
+        return false;
+    }
+
     /**
      * Scans the rt.jar of the Java Runtime Environment specified by the environment
      * variable java.home.
