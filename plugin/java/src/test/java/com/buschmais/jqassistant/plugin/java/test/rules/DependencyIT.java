@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,7 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
@@ -21,13 +21,10 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static com.buschmais.jqassistant.core.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
@@ -178,19 +175,19 @@ class DependencyIT extends AbstractJavaPluginIT {
     @Test
     void packageCycles() throws Exception {
         scanClassPathDirectory(getClassesDirectory(A.class));
-        assertThat(validateConstraint("java:AvoidCyclicPackageDependencies").getStatus()).isEqualTo(FAILURE);
+
+        Result<Constraint> result = validateConstraint("java:AvoidCyclicPackageDependencies");
+
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
         store.beginTransaction();
-        Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
-        Result<Constraint> result = constraintViolations.get("java:AvoidCyclicPackageDependencies");
-        assertThat(result).isNotNull();
         List<Row> rows = result.getRows();
         assertThat(rows).hasSize(2);
         for (Row row : rows) {
             PackageDescriptor p = (PackageDescriptor) row.getColumns()
                 .get("Package")
                 .getValue();
-            assertThat(p.getFullQualifiedName()).satisfiesAnyOf(arg -> assertThat(arg).isEqualTo(A.class.getPackage()
-                .getName()), arg -> assertThat(arg).isEqualTo(B.class.getPackage()
+            assertThat(p.getFullQualifiedName()).satisfiesAnyOf(name -> assertThat(name).isEqualTo(A.class.getPackage()
+                .getName()), name -> assertThat(name).isEqualTo(B.class.getPackage()
                 .getName()));
         }
         store.commitTransaction();
@@ -206,12 +203,19 @@ class DependencyIT extends AbstractJavaPluginIT {
     void artifactCycles() throws Exception {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        assertThat(validateConstraint("java:AvoidCyclicArtifactDependencies").getStatus()).isEqualTo(FAILURE);
+
+        Result<Constraint> result = validateConstraint("java:AvoidCyclicArtifactDependencies");
+
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults()
-            .values();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("java:AvoidCyclicArtifactDependencies")));
-        assertThat(constraintViolations, matcher);
+        List<Row> rows = result.getRows();
+        assertThat(rows).hasSize(2);
+        for (Row row : rows) {
+            ArtifactDescriptor p = (ArtifactDescriptor) row.getColumns()
+                .get("Artifact")
+                .getValue();
+            assertThat(p.getFullQualifiedName()).satisfiesAnyOf(name -> assertThat(name).isEqualTo("a"), name -> assertThat(name).isEqualTo("b"));
+        }
         store.commitTransaction();
     }
 }
