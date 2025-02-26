@@ -7394,9 +7394,9 @@ RETURN
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
     (p1:Package)-[:DEPENDS_ON]-&gt;(p2:Package),
-    path=shortestPath((p2)-[:DEPENDS_ON*]-&gt;(p1))
+    path = allShortestPaths((p2)-[:DEPENDS_ON*]-&gt;(p1))
 WHERE
-    p1&lt;&gt;p2
+    p1 &lt;&gt; p2
 RETURN
     p1 as Package, nodes(path) as Cycle
 ORDER BY
@@ -7423,9 +7423,9 @@ ORDER BY
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
     (a1:Artifact)-[:DEPENDS_ON]-&gt;(a2:Artifact),
-    path=shortestPath((a2)-[:DEPENDS_ON*]-&gt;(a1))
+    path = allShortestPaths((a2)-[:DEPENDS_ON*]-&gt;(a1))
 WHERE
-    a1&lt;&gt;a2
+    a1 &lt;&gt; a2
 RETURN
     a1 as Artifact, nodes(path) as Cycle
 ORDER BY
@@ -12315,7 +12315,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-25 06:55:56 UTC
+Last updated 2025-02-26 03:33:26 UTC
 </div>
 </div>
 </body>
