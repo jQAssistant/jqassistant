@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java_testing.concept;
 
+import org.mockito.BDDMockito;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -18,4 +20,7 @@ public class AssertExample {
         verify(mock(Object.class).equals(any(Object.class)));
     }
 
+    void bddMockitoThenShouldExampleMethod() {
+        BDDMockito.then(mock(Object.class)).shouldHaveNoInteractions();
+    }
 }
