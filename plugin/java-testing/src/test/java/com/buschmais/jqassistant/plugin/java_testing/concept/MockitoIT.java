@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
@@ -39,7 +40,33 @@ class MockitoIT extends AbstractJavaPluginIT {
             .getValue()).asInstanceOf(type(MethodDescriptor.class))
             .is(methodDescriptor(Mockito.class, "verify", Object.class));
 
-        verifyResultGraph();
+        final TestResult methodQueryResultForMockito = getMethodQueryResultForMockito();
+        assertThat(methodQueryResultForMockito.getRows().size()).isEqualTo(1);
+        verifyMockitoVerifyExampleContained(methodQueryResultForMockito);
+
+        store.commitTransaction();
+    }
+
+    @Test
+    void bddMockitoThenShouldMethod() throws Exception {
+        scanClasses(AssertExample.class);
+
+        final Result<Concept> conceptResult = applyConcept("mockito:BddThenShouldMethod");
+        assertThat(conceptResult.getStatus()).isEqualTo(SUCCESS);
+
+        store.beginTransaction();
+
+        assertThat(conceptResult.getRows().size()).isEqualTo(1);
+        assertThat(conceptResult.getRows()
+            .get(0)
+            .getColumns()
+            .get("assertMethod")
+            .getValue()).asInstanceOf(type(MethodDescriptor.class))
+            .is(methodDescriptor(BDDMockito.Then.class, "shouldHaveNoInteractions"));
+
+        final TestResult methodQueryResultForMockito = getMethodQueryResultForMockito();
+        assertThat(methodQueryResultForMockito.getRows().size()).isEqualTo(1);
+        verifyBddMockitoThenShouldExampleContained(methodQueryResultForMockito);
 
         store.commitTransaction();
     }
@@ -61,22 +88,32 @@ class MockitoIT extends AbstractJavaPluginIT {
             .collect(Collectors.toList());
         assertThat(declaringTypes).haveExactly(1, typeDescriptor(Mockito.class));
 
-        verifyResultGraph();
-
+        final TestResult methodQueryResultForMockito = getMethodQueryResultForMockito();
+        assertThat(methodQueryResultForMockito.getRows().size()).isEqualTo(2);
+        verifyMockitoVerifyExampleContained(methodQueryResultForMockito);
+        verifyBddMockitoThenShouldExampleContained(methodQueryResultForMockito);
         store.commitTransaction();
     }
 
-    // Expects an open transaction
-    private void verifyResultGraph() throws NoSuchMethodException {
-        final TestResult methodQueryResultForMockito = query(
+    private TestResult getMethodQueryResultForMockito() {
+        return query(
             "MATCH (testMethod:Method)-[:INVOKES]->(assertMethod:Method) "
                 + "WHERE assertMethod:Mockito:Assert "
                 + "RETURN testMethod, assertMethod");
-        assertThat(methodQueryResultForMockito.getRows().size()).isEqualTo(1);
-        assertThat(methodQueryResultForMockito.<MethodDescriptor>getColumn("testMethod"))
+    }
+
+    private void verifyMockitoVerifyExampleContained(TestResult methodQueryResult) throws NoSuchMethodException {
+        assertThat(methodQueryResult.<MethodDescriptor>getColumn("testMethod"))
             .haveExactly(1, methodDescriptor(AssertExample.class, "mockitoVerifyExampleMethod"));
-        assertThat(methodQueryResultForMockito.<MethodDescriptor>getColumn("assertMethod"))
+        assertThat(methodQueryResult.<MethodDescriptor>getColumn("assertMethod"))
             .haveExactly(1, methodDescriptor(Mockito.class, "verify", Object.class));
+    }
+
+    private void verifyBddMockitoThenShouldExampleContained(TestResult methodQueryResult) throws NoSuchMethodException {
+        assertThat(methodQueryResult.<MethodDescriptor>getColumn("testMethod"))
+            .haveExactly(1, methodDescriptor(AssertExample.class, "bddMockitoThenShouldExampleMethod"));
+        assertThat(methodQueryResult.<MethodDescriptor>getColumn("assertMethod"))
+            .haveExactly(1, methodDescriptor(BDDMockito.Then.class, "shouldHaveNoInteractions"));
     }
 
 }
