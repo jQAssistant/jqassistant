@@ -55,6 +55,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>artifact-resolver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>scanner</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -139,40 +144,10 @@
             <!-- Begin of XO dependencies -->
             <dependency>
                 <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.neo4j.embedded</artifactId>
+                <artifactId>xo.bom</artifactId>
                 <version>${xo.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.neo4j</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.api</artifactId>
-                <version>${xo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.neo4j.api</artifactId>
-                <version>${xo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.impl</artifactId>
-                <version>${xo.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.neo4j.remote</artifactId>
-                <version>${xo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.xo</groupId>
-                <artifactId>xo.spi</artifactId>
-                <version>${xo.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <!-- End of XO dependencies -->
 
@@ -494,9 +469,10 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
+                <artifactId>mockito-bom</artifactId>
+                <type>pom</type>
                 <version>${mockito.version}</version>
-                <scope>test</scope>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.stefanbirkner</groupId>
