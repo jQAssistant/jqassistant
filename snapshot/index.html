@@ -8257,6 +8257,9 @@ RETURN
 <li>
 <p><a href="#mockito:VerifyMethod">Concept <code>mockito:VerifyMethod</code></a></p>
 </li>
+<li>
+<p><a href="#mockito:BddThenShouldMethod">Concept <code>mockito:BddThenShouldMethod</code></a></p>
+</li>
 </ul>
 </div>
 <div class="sect4">
@@ -8300,10 +8303,42 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-    (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+    (assertType:Java:Type)-[:DECLARES]-&gt;(assertMethod:Java:Method)
 WHERE
     assertType.fqn = 'org.mockito.Mockito'
     and assertMethod.signature =~ '.* verify.*'
+SET
+    assertMethod:Mockito:Assert
+RETURN
+    assertMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="mockito:BddThenShouldMethod"><a class="link" href="#mockito:BddThenShouldMethod">Concept <code>mockito:BddThenShouldMethod</code></a></h5>
+<div class="literalblock">
+<div class="content">
+<pre>Sets labels :Assert and :Mockito for BDDMockito then-should methods.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (type:Java:Type)-[:IMPLEMENTS|EXTENDS*0..]-&gt;(bddMockitoThenType:Java:Type),
+    (type)-[:DECLARES]-&gt;(assertMethod:Java:Method)
+WHERE
+    bddMockitoThenType.fqn = 'org.mockito.BDDMockito$Then'
+    and assertMethod.signature =~ '.* should.*'
 SET
     assertMethod:Mockito:Assert
 RETURN
@@ -12315,7 +12350,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 08:14:35 UTC
+Last updated 2025-03-17 13:48:42 UTC
 </div>
 </div>
 </body>
