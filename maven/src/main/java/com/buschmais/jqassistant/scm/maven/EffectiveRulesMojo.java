@@ -5,7 +5,6 @@ import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lists all effective rules.
  */
-@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, aggregator = true, threadSafe = true)
 public class EffectiveRulesMojo extends AbstractRuleMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveRulesMojo.class);

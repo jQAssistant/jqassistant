@@ -1,20 +1,19 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.*;
-
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.rule.api.writer.RuleSetWriter;
 import com.buschmais.jqassistant.core.rule.impl.writer.XmlRuleSetWriter;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
+import java.io.*;
+
 /**
  * Exports the all rules to an XML file.
  */
-@Mojo(name = "export-rules", threadSafe = true)
+@Mojo(name = "export-rules", aggregator = true, threadSafe = true)
 public class ExportRulesMojo extends AbstractRuleMojo {
 
     @Override
