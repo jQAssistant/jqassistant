@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.plugin.java_testing.concept;
 
+import org.assertj.core.api.Assertions;
 import org.mockito.BDDMockito;
+import org.xmlunit.assertj.XmlAssert;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -13,8 +14,13 @@ import static org.mockito.Mockito.verify;
 public class AssertExample {
 
     void assertjAssertExampleMethod() {
-        assertThat(true).isTrue();
+        Assertions.assertThat(true).isTrue();
     }
+
+    void xmlAssertExampleMethod() {
+        XmlAssert.assertThat("<nop/>").and("<nop />").normalizeWhitespace().areSimilar();
+    }
+
 
     void mockitoVerifyExampleMethod() {
         verify(mock(Object.class).equals(any(Object.class)));

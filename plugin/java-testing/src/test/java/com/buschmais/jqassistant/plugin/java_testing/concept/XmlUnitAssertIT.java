@@ -11,8 +11,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.xmlunit.assertj.XmlAssert;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.assertj.MethodDescriptorCondition.methodDescriptor;
@@ -20,13 +20,13 @@ import static com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorC
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 
-class AssertJIT extends AbstractJavaPluginIT {
+class XmlUnitAssertIT extends AbstractJavaPluginIT {
 
     @Test
-    void assertjAssertMethod() throws Exception {
+    void xmlAssertMethod() throws Exception {
         scanClasses(AssertExample.class);
 
-        final Result<Concept> conceptResult = applyConcept("assertj:AssertMethod");
+        final Result<Concept> conceptResult = applyConcept("xmlunitAssertj:AssertMethod");
         assertThat(conceptResult.getStatus()).isEqualTo(SUCCESS);
 
         store.beginTransaction();
@@ -37,7 +37,7 @@ class AssertJIT extends AbstractJavaPluginIT {
             .getColumns()
             .get("assertMethod")
             .getValue()).asInstanceOf(type(MethodDescriptor.class))
-            .is(methodDescriptor(Assertions.class, "assertThat", boolean.class));
+            .is(methodDescriptor(XmlAssert.class, "assertThat", Object.class));
 
         verifyResultGraph();
 
@@ -59,7 +59,7 @@ class AssertJIT extends AbstractJavaPluginIT {
             .map(Column::getValue)
             .map(TypeDescriptor.class::cast)
             .collect(Collectors.toList());
-        assertThat(declaringTypes).haveExactly(1, typeDescriptor(Assertions.class));
+        assertThat(declaringTypes).haveExactly(1, typeDescriptor(XmlAssert.class));
 
         verifyResultGraph();
 
@@ -73,9 +73,9 @@ class AssertJIT extends AbstractJavaPluginIT {
                 + "WHERE assertMethod:AssertJ:Assert "
                 + "RETURN testMethod, assertMethod");
         assertThat(methodQueryResult.<MethodDescriptor>getColumn("testMethod"))
-            .haveExactly(1, methodDescriptor(AssertExample.class, "assertjAssertExampleMethod"));
+            .haveExactly(1, methodDescriptor(AssertExample.class, "xmlAssertExampleMethod"));
         assertThat(methodQueryResult.<MethodDescriptor>getColumn("assertMethod"))
-            .haveExactly(1, methodDescriptor(Assertions.class, "assertThat", boolean.class));
+            .haveExactly(1, methodDescriptor(XmlAssert.class, "assertThat", Object.class));
     }
 
 }

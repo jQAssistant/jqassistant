@@ -7,6 +7,7 @@
     <description>jQAssistant rules providing concepts to identify framework-specific assertions</description>
     <rules>
         <resource>assertj.xml</resource>
+        <resource>xmlunitAssertj.xml</resource>
         <resource>mockito.xml</resource>
     </rules>
 </jqassistant-plugin>
