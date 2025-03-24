@@ -336,6 +336,10 @@
         "store" : {
           "type" : "object",
           "properties" : {
+            "auto-commit-threshold" : {
+              "type" : "integer",
+              "description" : "The threshold before auto-committing a transaction when creating/deleting nodes."
+            },
             "embedded" : {
               "type" : "object",
               "properties" : {
