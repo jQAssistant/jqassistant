@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import com.buschmais.jqassistant.core.store.api.configuration.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
@@ -10,8 +13,6 @@ import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,22 +41,25 @@ class AbstractGraphStoreTest {
     @Mock
     private XOTransaction xoTransaction;
 
-
     @BeforeEach
     void setUp() {
-        doReturn(xoManager).when(xoManagerFactory).createXOManager();
-        doReturn(xoTransaction).when(xoManager).currentTransaction();
+        doReturn(xoManager).when(xoManagerFactory)
+            .createXOManager();
+        doReturn(xoTransaction).when(xoManager)
+            .currentTransaction();
     }
 
     @Test
     void defaultAutoCommit() throws URISyntaxException {
-        doReturn(empty()).when(storeConfiguration).autoCommitThreshold();
+        doReturn(empty()).when(storeConfiguration)
+            .autoCommitThreshold();
         verifyAutoCommit(10);
     }
 
     @Test
     void configuredAutoCommit() throws URISyntaxException {
-        doReturn(of(40)).when(storeConfiguration).autoCommitThreshold();
+        doReturn(of(40)).when(storeConfiguration)
+            .autoCommitThreshold();
         verifyAutoCommit(5);
     }
 
@@ -88,7 +92,6 @@ class AbstractGraphStoreTest {
      * {@link AbstractGraphStore} implementation for testing purposes.
      */
     private class TestStore extends AbstractGraphStore {
-
 
         protected TestStore(URI uri, Store configuration, StorePluginRepository storePluginRepository) {
             super(uri, configuration, storePluginRepository);
