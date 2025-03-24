@@ -21,4 +21,6 @@ public interface Store {
     @Description("Configuration of the remote store.")
     Remote remote();
 
+    @Description("The threshold before auto-committing a transaction when creating/deleting nodes.")
+    Optional<Integer> autoCommitThreshold();
 }
