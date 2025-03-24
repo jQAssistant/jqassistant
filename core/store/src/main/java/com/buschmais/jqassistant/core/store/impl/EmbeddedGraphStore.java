@@ -32,7 +32,6 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbeddedGraphStore.class);
 
     private static final int AUTOCOMMIT_THRESHOLD = 32678;
-    public static final String NEO4J_PLUGIN_DIR_PREFIX = "jqassistant-neo4j-plugins";
 
     private final EmbeddedNeo4jServerFactory serverFactory;
 
@@ -66,13 +65,12 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected XOUnit configure(XOUnit.XOUnitBuilder builder) {
+    protected void configure(XOUnit.XOUnitBuilder builder) {
         List<File> plugins = resolveNeo4jPlugins();
         Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
             plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
-        return builder.build();
     }
 
     private List<File> resolveNeo4jPlugins() {
@@ -82,9 +80,9 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected final void initialize(XOManagerFactory xoManagerFactory) {
+    protected final void initialize(XOManagerFactory<?, ?, ?, ?> xoManagerFactory) {
         LOGGER.debug("Initializing embedded Neo4j server.");
-        EmbeddedDatastore embeddedDatastore = (EmbeddedDatastore) xoManagerFactory.getDatastore(EmbeddedDatastore.class);
+        EmbeddedDatastore embeddedDatastore = xoManagerFactory.getDatastore(EmbeddedDatastore.class);
         embeddedNeo4jServer.initialize(embedded.listenAddress(), embedded.httpPort(), embedded.boltPort(), storePluginRepository.getClassLoader());
         logVersion(embeddedDatastore);
     }
@@ -98,6 +96,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected void destroy() {
+        // nothing to do
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
@@ -105,7 +104,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected int getAutocommitThreshold() {
+    protected int getDefaultAutocommitThreshold() {
         return AUTOCOMMIT_THRESHOLD;
     }
 
