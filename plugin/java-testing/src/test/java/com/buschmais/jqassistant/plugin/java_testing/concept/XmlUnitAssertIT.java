@@ -26,7 +26,7 @@ class XmlUnitAssertIT extends AbstractJavaPluginIT {
     void xmlAssertMethod() throws Exception {
         scanClasses(AssertExample.class);
 
-        final Result<Concept> conceptResult = applyConcept("xmlunitAssertj:AssertMethod");
+        final Result<Concept> conceptResult = applyConcept("xmlunit-assertj:AssertMethod");
         assertThat(conceptResult.getStatus()).isEqualTo(SUCCESS);
 
         store.beginTransaction();
