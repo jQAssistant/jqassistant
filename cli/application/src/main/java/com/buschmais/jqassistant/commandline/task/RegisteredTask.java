@@ -1,10 +1,13 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import com.google.common.base.CaseFormat;
 
@@ -136,12 +139,13 @@ public enum RegisteredTask {
         return tasks;
     }
 
-    public static List<String> getTaskNames() {
-        List<String> taskNames = new ArrayList<>();
+    public static Map<String, String> getTaskNamesAndDescriptions() {
+        Map<String, String> taskNameAndDescription = new HashMap<>();
         for (RegisteredTask registeredTask : values()) {
-            taskNames.add(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, registeredTask.name()));
+            taskNameAndDescription.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN,
+                registeredTask.name()), registeredTask.getDeclaringClass().getAnnotation(Description.class).value());
         }
-        return taskNames;
+        return taskNameAndDescription;
     }
 
 }

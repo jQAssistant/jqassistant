@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import static java.util.Collections.emptyMap;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
+@Description("Runs analysis according to the defined rules.")
 public class AnalyzeTask extends AbstractRuleTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeTask.class);

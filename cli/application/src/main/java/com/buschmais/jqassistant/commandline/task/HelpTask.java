@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -12,6 +14,7 @@ import org.apache.commons.cli.Options;
 /**
  * @author Oliver B. Fischer, Freiheitsgrade Consulting
  */
+@Description("Lists all available options.")
 public class HelpTask extends AbstractTask {
 
     @Override
@@ -23,7 +26,7 @@ public class HelpTask extends AbstractTask {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(120);
         formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
-        System.out.println("Tasks are: " + gatherTaskNames());
+        System.out.println("Available Tasks:"  + gatherTaskNamesAndDescriptions());
         System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
@@ -32,12 +35,11 @@ public class HelpTask extends AbstractTask {
      *
      * @return The names of all supported tasks.
      */
-    private String gatherTaskNames() {
+    public String gatherTaskNamesAndDescriptions() {
         final StringBuilder builder = new StringBuilder();
-        for (String taskName : RegisteredTask.getTaskNames()) {
-            builder.append("'")
-                .append(taskName)
-                .append("' ");
+        for (Map.Entry<String, String> task  : RegisteredTask.getTaskNamesAndDescriptions().entrySet()) {
+            builder.append("\n").append(task.getKey())
+                .append("': ").append(task.getValue());
         }
         return builder.toString()
             .trim();
