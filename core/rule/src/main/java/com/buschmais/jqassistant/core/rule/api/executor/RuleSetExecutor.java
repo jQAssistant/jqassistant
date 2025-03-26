@@ -50,9 +50,9 @@ public class RuleSetExecutor<R> {
     public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
         // determine all explicitly required concepts (transitively), they are needed to identify providing concepts which are explictly required
         ActivatedConceptsVisitor activatedConceptsVisitor = new ActivatedConceptsVisitor();
-        execute(ruleSet, ruleSelection, emptySet());
+        new RuleSetExecutor<>(activatedConceptsVisitor, configuration).execute(ruleSet, ruleSelection, emptySet());
         Set<String> userActivatedConcepts = activatedConceptsVisitor.getActivatedConcepts();
-        log.debug("Activated concepts: {}", userActivatedConcepts);
+        log.debug("Executing with activated concepts: {}", userActivatedConcepts);
         execute(ruleSet, ruleSelection, userActivatedConcepts);
     }
 
