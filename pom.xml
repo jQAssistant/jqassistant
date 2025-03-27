@@ -110,6 +110,7 @@
         <snakeyaml.version>2.4</snakeyaml.version>
         <snakeyaml-engine.version>2.9</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
+        <xmlunit-assertj.version>2.10.0</xmlunit-assertj.version>
         <xo.version>2.6.4</xo.version>
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
