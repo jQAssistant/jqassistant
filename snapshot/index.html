@@ -8255,6 +8255,9 @@ RETURN
 <p><a href="#assertj:AssertMethod">Concept <code>assertj:AssertMethod</code></a></p>
 </li>
 <li>
+<p><a href="#xmlunit-assertj:AssertMethod">Concept <code>xmlunit-assertj:AssertMethod</code></a></p>
+</li>
+<li>
 <p><a href="#mockito:VerifyMethod">Concept <code>mockito:VerifyMethod</code></a></p>
 </li>
 <li>
@@ -8275,6 +8278,37 @@ RETURN
     (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
 WHERE
     assertType.fqn =~ 'org\\.assertj\\.core\\.api\\..*Assertions.*'
+    AND assertMethod.signature =~ '.* assert.*'
+SET
+    assertMethod:AssertJ:Assert
+RETURN
+    assertMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="xmlunit-assertj:AssertMethod"><a class="link" href="#xmlunit-assertj:AssertMethod">Concept <code>xmlunit-assertj:AssertMethod</code></a></h5>
+<div class="literalblock">
+<div class="content">
+<pre>Sets labels :Assert and :AssertJ for xmlunit-assertj assert methods.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+    assertType.fqn =~ 'org\\.xmlunit\\.assertj\\..*Assert.*'
     AND assertMethod.signature =~ '.* assert.*'
 SET
     assertMethod:AssertJ:Assert
@@ -12350,7 +12384,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-26 20:36:55 UTC
+Last updated 2025-03-27 07:47:41 UTC
 </div>
 </div>
 </body>
