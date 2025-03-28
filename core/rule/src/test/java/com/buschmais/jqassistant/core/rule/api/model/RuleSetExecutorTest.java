@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
@@ -17,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
@@ -429,7 +429,7 @@ class RuleSetExecutorTest {
         Concept providingConcept1 = Concept.builder()
             .id("concept:ProvidingConcept1")
             .severity(MINOR)
-            .providedConcepts(Set.of("concept:AbstractConcept"))
+            .providedConcepts(Map.of("concept:AbstractConcept", IF_AVAILABLE))
             .build();
         // provides the required concept indirectly via the group below
         Concept providingConcept2 = Concept.builder()
@@ -439,7 +439,7 @@ class RuleSetExecutorTest {
         Group group = Group.builder()
             .id("group")
             .concept("concept:Concept", null)
-            .providedConcepts(Map.of("concept:AbstractConcept", Set.of("concept:ProvidingConcept2")))
+            .providedConcepts(Map.of("concept:AbstractConcept", Map.of("concept:ProvidingConcept2", IF_AVAILABLE)))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(concept)

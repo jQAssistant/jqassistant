@@ -7,7 +7,7 @@ public interface RuleSet {
 
     ConceptBucket getConceptBucket();
 
-    Map<String, Set<String>> getProvidedConcepts();
+    Map<String, Map<String, Concept.Activation>> getProvidedConcepts();
 
     Map<String, Set<String>> getProvidingConcepts();
 

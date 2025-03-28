@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -9,6 +10,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.github.stefanbirkner.systemlambda.SystemLambda;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -68,12 +70,12 @@ class RuleSetBuilderTest {
             .build();
         Concept providingConcept = Concept.builder()
             .id("providing")
-            .providedConcepts(Set.of("provided"))
+            .providedConcepts(Map.of("provided", IF_AVAILABLE))
             .ruleSource(RULE_SOURCE)
             .build();
         Concept nonResolvableProvidingConcept = Concept.builder()
             .id("non-resolvable-providing")
-            .providedConcepts(Set.of("non-resolvable-provided"))
+            .providedConcepts(Map.of("non-resolvable-provided", IF_AVAILABLE))
             .ruleSource(RULE_SOURCE)
             .build();
 
@@ -84,8 +86,8 @@ class RuleSetBuilderTest {
                 .addConcept(nonResolvableProvidingConcept)
                 .getRuleSet();
             assertThat(ruleSet.getProvidedConcepts()).hasSize(2)
-                .containsEntry("provided", Set.of("providing"))
-                .containsEntry("non-resolvable-provided", Set.of("non-resolvable-providing"));
+                .containsEntry("provided", Map.of("providing", IF_AVAILABLE))
+                .containsEntry("non-resolvable-provided", Map.of("non-resolvable-providing", IF_AVAILABLE));
             assertThat(ruleSet.getProvidingConcepts()).hasSize(2)
                 .containsEntry("providing", Set.of("provided"))
                 .containsEntry("non-resolvable-providing", Set.of("non-resolvable-provided"));

@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import lombok.Getter;
 
@@ -13,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class Group extends AbstractSeverityRule {
 
-    public static Severity DEFAULT_SEVERITY = null;
+    public static final Severity DEFAULT_SEVERITY = null;
 
-    public static Severity DEFAULT_INCLUDE_SEVERITY = null;
+    public static final Severity DEFAULT_INCLUDE_SEVERITY = null;
 
     /**
      * The set of rules contained in the group.
@@ -25,7 +24,7 @@ public class Group extends AbstractSeverityRule {
     /**
      * The provided concepts, where the key represents the id of the provided concept and the value the set of providing concepts,
      */
-    private final Map<String, Set<String>> providedConcepts = new HashMap<>();
+    private final Map<String, Map<String, Concept.Activation>> providedConcepts = new HashMap<>();
 
     /**
      * The set of constraints contained in the group.
@@ -52,7 +51,7 @@ public class Group extends AbstractSeverityRule {
             return this;
         }
 
-        public GroupBuilder providedConcepts(Map<String, Set<String>> providedConcepts) {
+        public GroupBuilder providedConcepts(Map<String, Map<String, Concept.Activation>> providedConcepts) {
             rule.providedConcepts.putAll(providedConcepts);
             return this;
         }
@@ -86,7 +85,5 @@ public class Group extends AbstractSeverityRule {
     public static Group.GroupBuilder builder() {
         return new GroupBuilder(new Group());
     }
-
-
 
 }
