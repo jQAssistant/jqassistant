@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -205,7 +206,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneConceptParameterInvalidUnsupportedDatastructure() throws RuleException {
+        void oneConceptParameterInvalidUnsupportedDatastructure() {
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-with-illegal-datastructure.yml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -249,7 +250,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneConceptOneDependencyWithUnsupportedKey() throws RuleException {
+        void oneConceptOneDependencyWithUnsupportedKey() {
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-one-dependency-and-unsupported-key.yaml")).isExactlyInstanceOf(RuleException.class)
                 .hasNoCause();
         }
@@ -312,7 +313,7 @@ class YamlRuleParserPluginTest {
             Concept concept = ruleSet.getConceptBucket()
                 .getById("test:ProvidingConcept");
 
-            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrder("test:Concept1", "test:Concept2");
+            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:Concept1", IF_AVAILABLE, "test:Concept2", IF_AVAILABLE));
 
         }
     }
@@ -332,7 +333,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void documentEmptyEmptyFile() throws RuleException {
+        void documentEmptyEmptyFile() {
             assertThatExceptionOfType(RuleException.class).isThrownBy(() -> readRuleSet("/yaml/document-empty-empty-file.yaml"));
         }
 
@@ -473,7 +474,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneGroupIncludeConceptSeverityUnknown() throws Exception {
+        void oneGroupIncludeConceptSeverityUnknown() {
             assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-severity-unknown.yml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -613,7 +614,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneGroupIncludeConceptAdditionalKeyword() throws RuleException {
+        void oneGroupIncludeConceptAdditionalKeyword() {
             assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-additional-keyword.yaml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -891,7 +892,7 @@ class YamlRuleParserPluginTest {
         return Stream.of("https://host.domain/rules.xMl", "https://host.domain/rules.adoc", "https://host.domain/rules.ADOC");
     }
 
-    static private Map.Entry<String, Object> makeEntry(String key, Object value) {
+    private static Map.Entry<String, Object> makeEntry(String key, Object value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 

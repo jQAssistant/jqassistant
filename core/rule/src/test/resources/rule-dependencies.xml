@@ -1,4 +1,4 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7">
 
     <group id="test">
         <includeGroup refId="test:Constraints" />

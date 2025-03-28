@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * A {@link RuleParserPlugin} implementation.
@@ -27,8 +27,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.2";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.2.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.7";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.7.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -101,7 +101,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         SeverityEnumType severityType = referencableType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
         Map<String, Severity> includeConcepts = getIncludedReferences(referencableType.getIncludeConcept());
-        Map<String, Set<String>> providedConcepts = getProvidedConcepts(referencableType.getIncludeConcept());
+        Map<String, Map<String, Concept.Activation>> providedConcepts = getProvidedConcepts(referencableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referencableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referencableType.getIncludeGroup());
         return Group.builder()
@@ -123,10 +123,9 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Severity severity = getSeverity(severityType, this::getDefaultConceptSeverity);
         List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
-        List<ReferenceType> providesConcept = conceptType.getProvidesConcept();
-        Set<String> providesConcepts = providesConcept.stream()
-            .map(ReferenceType::getRefId)
-            .collect(toSet());
+        List<ProvidesReferenceType> providesConcept = conceptType.getProvidesConcept();
+        Map<String, Concept.Activation> providesConcepts = providesConcept.stream()
+            .collect(toMap(ReferenceType::getRefId, XmlRuleParserPlugin::getActivation));
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
@@ -246,16 +245,21 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         return references;
     }
 
-    private Map<String, Set<String>> getProvidedConcepts(List<IncludeConceptType> conceptTypes) {
-        Map<String, Set<String>> providedConcepts = new HashMap<>();
+    private Map<String, Map<String, Concept.Activation>> getProvidedConcepts(List<IncludeConceptType> conceptTypes) {
+        Map<String, Map<String, Concept.Activation>> providedConcepts = new HashMap<>();
         for (IncludeConceptType conceptType : conceptTypes) {
-            for (ReferenceType referenceType : conceptType.getProvidesConcept()) {
+            for (ProvidesReferenceType referenceType : conceptType.getProvidesConcept()) {
                 String providingConceptId = conceptType.getRefId();
-                providedConcepts.computeIfAbsent(referenceType.getRefId(), providedConceptId -> new HashSet<>())
-                    .add(providingConceptId);
+                providedConcepts.computeIfAbsent(referenceType.getRefId(), providedConceptId -> new HashMap<>())
+                    .put(providingConceptId, getActivation(referenceType));
             }
         }
         return providedConcepts;
+    }
+
+    private static Concept.Activation getActivation(ProvidesReferenceType referenceType) {
+        return Concept.Activation.valueOf(referenceType.getActivation()
+            .name());
     }
 
     private Map<String, Severity> getIncludedReferences(List<? extends IncludedReferenceType> referenceType) throws RuleException {

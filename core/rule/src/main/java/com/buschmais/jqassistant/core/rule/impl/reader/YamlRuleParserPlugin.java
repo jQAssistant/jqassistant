@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept.Activation;
 import com.buschmais.jqassistant.core.rule.api.model.Parameter.Type;
 import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
@@ -17,9 +18,11 @@ import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.*;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 
@@ -55,7 +58,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             if (!validationResult.isSourceWasEmpty() && validationResult.hasErrors()) {
                 throw new RuleException(ruleSource + " has validation errors: " + validationResult.getValidationMessages()
                     .stream()
-                    .map(validationMessage -> validationMessage.toString())
+                    .map(Object::toString)
                     .collect(joining("; ")));
             }
 
@@ -104,7 +107,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
             for (Map<String, Object> executableRule : executableRules) {
                 Concept.ConceptBuilder builder = Concept.builder();
-                Set<String> provided = this.extractProvidedConcepts(executableRule);
+                Map<String, Activation> provided = this.extractProvidedConcepts(executableRule);
                 builder.providedConcepts(provided);
                 this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder, this::getDefaultConceptSeverity);
             }
@@ -133,7 +136,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         String id = (String) map.get(ID);
         List<Map<String, Object>> concepts = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONCEPTS, key -> emptyList());
-        Map<String, Set<String>> providedConcepts = new HashMap<>();
+        Map<String, Map<String, Activation>> providedConcepts = new HashMap<>();
         List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
@@ -144,11 +147,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         for (Map<String, Object> refSpec : concepts) {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(refSpec);
-            for (String providedConceptId : extractProvidedConcepts(refSpec)) {
-                providedConcepts.computeIfAbsent(providedConceptId, key -> new LinkedHashSet<>())
-                    .add(reference.getRuleName());
-            }
             includedConcepts.add(reference);
+            for (Map.Entry<String, Activation> providedConcept : extractProvidedConcepts(refSpec).entrySet()) {
+                providedConcepts.computeIfAbsent(providedConcept.getKey(), key -> new LinkedHashMap<>())
+                    .put(reference.getRuleName(), providedConcept.getValue());
+            }
         }
 
         for (Map<String, Object> refSpec : constraints) {
@@ -256,9 +259,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             }
         }
 
-        Report report = reportBuilder.build();
-
-        return report;
+        return reportBuilder.build();
     }
 
     private Verification extractVerification(Map<String, Object> map) {
@@ -321,11 +322,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             }
         }
 
-        return Collections.unmodifiableMap(requiredConcepts);
+        return unmodifiableMap(requiredConcepts);
     }
 
-    private Set<String> extractProvidedConcepts(Map<String, Object> map) {
-        Set<String> providedConcepts = new HashSet<>();
+    private Map<String, Activation> extractProvidedConcepts(Map<String, Object> map) {
+        Map<String, Activation> providedConcepts = new HashMap<>();
 
         boolean hasProvidesSection = map.containsKey(PROVIDES_CONCEPTS);
 
@@ -333,12 +334,14 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             List<Map<String, Object>> list = (List<Map<String, Object>>) map.get(PROVIDES_CONCEPTS);
             for (Map<String, Object> required : list) {
                 String refIdVal = (String) required.get(REF_ID);
-                providedConcepts.add(refIdVal);
+                Activation activationVal = Activation.valueOf(
+                    LOWER_HYPHEN.to(UPPER_UNDERSCORE, (String) required.getOrDefault(ACTIVATION, UPPER_UNDERSCORE.to(LOWER_HYPHEN, IF_AVAILABLE.name()))));
+                providedConcepts.put(refIdVal, activationVal);
             }
 
         }
 
-        return Collections.unmodifiableSet(providedConcepts);
+        return unmodifiableMap(providedConcepts);
     }
 
     private Map<String, Parameter> extractParameters(Map<String, Object> map) {

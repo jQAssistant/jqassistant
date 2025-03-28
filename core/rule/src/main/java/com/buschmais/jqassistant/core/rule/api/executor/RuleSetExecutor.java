@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -264,10 +265,11 @@ public class RuleSetExecutor<R> {
         Set<Concept> stack) throws RuleException {
         Map<Concept, R> results = new LinkedHashMap<>();
         Severity providedSeverity = concept.getSeverity();
-        for (String providingConceptId : ruleSet.getProvidedConcepts()
-            .getOrDefault(concept.getId(), emptySet())) {
+        for (Map.Entry<String, Concept.Activation> providingConceptEntry : ruleSet.getProvidedConcepts()
+            .getOrDefault(concept.getId(), emptyMap())
+            .entrySet()) {
             Concept providingConcept = ruleSet.getConceptBucket()
-                .getById(providingConceptId);
+                .getById(providingConceptEntry.getKey());
             Severity providingSeverity = providingConcept.getSeverity();
             // use overridden severity or highest default severity of provided and providing concept
             Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity,

@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,8 +29,8 @@ class RuleDependenciesTest {
     }
 
     private void verifyRuleset(RuleSet ruleSet) {
-        assertThat(ruleSet.getProvidedConcepts()).containsExactlyEntriesOf(
-            Map.of("test:AbstractConcept", Set.of("test:ProvidingConcept1", "test:ProvidingConcept2")));
+        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(
+            Map.of("test:AbstractConcept", Map.of("test:ProvidingConcept1", IF_AVAILABLE, "test:ProvidingConcept2", IF_AVAILABLE)));
     }
 
 }
