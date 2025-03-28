@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept.Activation;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -265,19 +266,33 @@ public class RuleSetExecutor<R> {
         Set<Concept> stack) throws RuleException {
         Map<Concept, R> results = new LinkedHashMap<>();
         Severity providedSeverity = concept.getSeverity();
-        for (Map.Entry<String, Concept.Activation> providingConceptEntry : ruleSet.getProvidedConcepts()
+        for (Map.Entry<String, Activation> providingConceptEntry : ruleSet.getProvidedConcepts()
             .getOrDefault(concept.getId(), emptyMap())
             .entrySet()) {
             Concept providingConcept = ruleSet.getConceptBucket()
                 .getById(providingConceptEntry.getKey());
-            Severity providingSeverity = providingConcept.getSeverity();
-            // use overridden severity or highest default severity of provided and providing concept
-            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity,
-                providedSeverity.getLevel() < providingSeverity.getLevel() ? providedSeverity : providingSeverity);
-            R result = applyConcept(ruleSet, providingConcept, effectiveSeverity, activatedConcepts, stack);
-            results.put(providingConcept, result);
+            Activation activation = providingConceptEntry.getValue();
+            if (isProvidingConceptActivated(providingConcept, activation, activatedConcepts)) {
+                Severity providingSeverity = providingConcept.getSeverity();
+                // use overridden severity or highest default severity of provided and providing concept
+                Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity,
+                    providedSeverity.getLevel() < providingSeverity.getLevel() ? providedSeverity : providingSeverity);
+                R result = applyConcept(ruleSet, providingConcept, effectiveSeverity, activatedConcepts, stack);
+                results.put(providingConcept, result);
+            }
         }
         return results;
+    }
+
+    private static boolean isProvidingConceptActivated(Concept providingConcept, Activation activation, Set<String> activatedConcepts) throws RuleException {
+        switch (activation) {
+        case IF_AVAILABLE:
+            return true;
+        case IF_REQUIRED:
+            return activatedConcepts.contains(providingConcept.getId());
+        default:
+            throw new RuleException("Unknown activation strategy " + activation + " for providing concept + " + providingConcept.getId());
+        }
     }
 
     /**
