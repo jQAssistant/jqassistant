@@ -44,15 +44,18 @@ public abstract class AbstractGraphStore implements Store {
 
     protected final com.buschmais.jqassistant.core.store.api.configuration.Store configuration;
 
+    private final int autoCommitThreshold;
+
     protected final StorePluginRepository storePluginRepository;
 
-    private XOManagerFactory xoManagerFactory;
+    private XOManagerFactory<?, ?, ?, ?> xoManagerFactory;
     private XOManager xoManager;
-    private int created;
+    private int created = 0;
 
     protected AbstractGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
         this.uri = uri;
         this.configuration = configuration;
+        this.autoCommitThreshold = configuration.autoCommitThreshold().orElse(getDefaultAutocommitThreshold());
         this.storePluginRepository = storePluginRepository;
     }
 
@@ -68,7 +71,7 @@ public abstract class AbstractGraphStore implements Store {
                 .strictValidation(true)
                 .build());
         configure(builder);
-        xoManagerFactory = XO.createXOManagerFactory(builder.build());
+        this.xoManagerFactory = getXOManagerFactory(builder.build());
         initialize(xoManagerFactory);
         xoManager = xoManagerFactory.createXOManager();
     }
@@ -125,8 +128,9 @@ public abstract class AbstractGraphStore implements Store {
      */
     private void autoCommit() {
         created++;
-        if (created == getAutocommitThreshold()) {
+        if (created == autoCommitThreshold) {
             flush();
+            created = 0;
         }
     }
 
@@ -145,6 +149,7 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor> void delete(T descriptor) {
+        autoCommit();
         xoManager.delete(descriptor);
     }
 
@@ -294,17 +299,27 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     /**
+     * May be overwritten for testing.
+     *
+     * @param xoUnit The {@link XOUnit}.
+     * @return The {@link XOManagerFactory}.
+     */
+    protected XOManagerFactory<?, ?, ?, ?> getXOManagerFactory(XOUnit xoUnit) {
+        return XO.createXOManagerFactory(xoUnit);
+    }
+
+    /**
      * Configure store specific options.
      */
-    protected abstract XOUnit configure(XOUnit.XOUnitBuilder builder);
+    protected abstract void configure(XOUnit.XOUnitBuilder builder);
 
     /**
      * Initialize the store.
      */
-    protected abstract void initialize(XOManagerFactory xoManagerFactory);
+    protected abstract void initialize(XOManagerFactory<?, ?, ?, ?> xoManagerFactory);
 
     protected abstract void destroy();
 
-    protected abstract int getAutocommitThreshold();
+    protected abstract int getDefaultAutocommitThreshold();
 
 }

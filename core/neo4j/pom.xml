@@ -47,6 +47,12 @@
         <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.neo4j.embedded</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.neo4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.takes</groupId>
@@ -78,6 +84,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -18,12 +18,12 @@ public class RemoteGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected int getAutocommitThreshold() {
+    protected int getDefaultAutocommitThreshold() {
         return 1048;
     }
 
     @Override
-    protected XOUnit configure(XOUnit.XOUnitBuilder builder) {
+    protected void configure(XOUnit.XOUnitBuilder builder) {
         builder.provider(RemoteNeo4jXOProvider.class);
         Properties properties = new Properties();
         Remote remote = this.configuration.remote();
@@ -39,11 +39,10 @@ public class RemoteGraphStore extends AbstractGraphStore {
             .ifPresent(trustCertificate -> properties.setProperty(Property.TRUST_CERTIFICATE.getKey(), trustCertificate));
         properties.putAll(remote.properties());
         builder.properties(properties);
-        return builder.build();
     }
 
     @Override
-    protected void initialize(XOManagerFactory xoManagerFactory) {
+    protected void initialize(XOManagerFactory<?, ?, ?, ?> xoManagerFactory) {
         // unused
     }
 

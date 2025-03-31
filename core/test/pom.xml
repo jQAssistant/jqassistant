@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>artifact-resolver</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -41,6 +40,11 @@
             <groupId>org.neo4j.community</groupId>
             <artifactId>it-test-support</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -64,7 +68,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
