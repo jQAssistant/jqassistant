@@ -142,8 +142,14 @@ public enum RegisteredTask {
     public static Map<String, String> getTaskNamesAndDescriptions() {
         Map<String, String> taskNameAndDescription = new HashMap<>();
         for (RegisteredTask registeredTask : values()) {
+            String description;
+            if(registeredTask.getTask().getClass().getAnnotation(Description.class) == null){
+                description = "The follwing task is missing a decription:" + registeredTask.name();
+            }else {
+                description = registeredTask.getTask().getClass().getAnnotation(Description.class).value();
+            }
             taskNameAndDescription.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN,
-                registeredTask.name()), registeredTask.getDeclaringClass().getAnnotation(Description.class).value());
+                registeredTask.name()), description);
         }
         return taskNameAndDescription;
     }

@@ -26,8 +26,8 @@ public class HelpTask extends AbstractTask {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(120);
         formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
-        System.out.println("Available Tasks:"  + gatherTaskNamesAndDescriptions());
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
+        System.out.println( "\n"+ "---- Available Tasks: ----"  + "\n \n"+ gatherTaskNamesAndDescriptions());
+        System.out.println("\n"+ "Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
     }
 
     /**
@@ -35,7 +35,7 @@ public class HelpTask extends AbstractTask {
      *
      * @return The names of all supported tasks.
      */
-    public String gatherTaskNamesAndDescriptions() {
+    private String gatherTaskNamesAndDescriptions() {
         final StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> task  : RegisteredTask.getTaskNamesAndDescriptions().entrySet()) {
             builder.append("\n").append(task.getKey())
