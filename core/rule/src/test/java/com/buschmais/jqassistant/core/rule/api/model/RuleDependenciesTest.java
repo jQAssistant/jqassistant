@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_REQUIRED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,8 +30,9 @@ class RuleDependenciesTest {
     }
 
     private void verifyRuleset(RuleSet ruleSet) {
-        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(
-            Map.of("test:AbstractConcept", Map.of("test:ProvidingConcept1", IF_AVAILABLE, "test:ProvidingConcept2", IF_AVAILABLE)));
+        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:AbstractConcept",
+            Map.of("test:ProvidingConcept1", IF_AVAILABLE, "test:ProvidingConcept2", IF_AVAILABLE, "test:ProvidingConcept3", IF_REQUIRED,
+                "test:ProvidingConcept4", IF_REQUIRED)));
     }
 
 }
