@@ -53,3 +53,19 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+  sdkman-publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to SDKMAN
+        env:
+          SDKMAN_TOKEN: ${{ secrets.SDKMAN_TOKEN }}
+        run: |
+          curl -X PUT \
+            -H "Consumer-Key: CONSUMER_KEY" \
+            -H "Consumer-Token: CONSUMER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -d '{"candidate": "jqassistant", "version": ${{ github.event.inputs.releaseVersion }}}' \
+              https://vendors.sdkman.io/default
+
