@@ -4,20 +4,20 @@ Shell scripts are provided for executing jQAssistant from the command line of Mi
 systems. They are located in the bin/ directory of the distribution:
 
 * jqassistant.cmd
-* jqassistant.sh
+* jqassistant
 
 The command line accepts tasks and their specific options:
 
 [source]
 ----
-jqassistant.sh <task1> <task2> <task3> -<option1> -<option2>
+jqassistant <task1> <task2> <task3> -<option1> -<option2>
 ----
 
 The following example will scan the content of the directories classes/ and test-classes/:
 
 [source]
 ----
-jqassistant.sh scan -f classes,test-classes
+jqassistant scan -f classes,test-classes
 ----
 
 === Configuration
@@ -182,11 +182,11 @@ specified further by scopes, e.g.
 
 [source]
 ----
-jqassistant.sh scan -f lib/
-jqassistant.sh scan -f java:classpath::classes/
-jqassistant.sh scan -u http://host/artifact.jar
-jqassistant.sh scan -u http://user:secret@host/artifact.jar
-jqassistant.sh scan -u maven:repository::http://my.maven.repository
+jqassistant scan -f lib/
+jqassistant scan -f java:classpath::classes/
+jqassistant scan -u http://host/artifact.jar
+jqassistant scan -u http://user:secret@host/artifact.jar
+jqassistant scan -u maven:repository::http://my.maven.repository
 ----
 
 [[cli:available-scopes]]
