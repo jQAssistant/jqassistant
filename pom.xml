@@ -90,7 +90,7 @@
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <junit.version>5.12.1</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
-        <lombok.version>1.18.36</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
         <mockito.version>5.16.1</mockito.version>
