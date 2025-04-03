@@ -36,8 +36,15 @@ on:
         type: boolean
         required: false
         default: false
+      candidate:
+        description: "Skdman candidate ID."
+        type: string
+        required: true
+      url:
+        description: "URL of the candidate."
+        required: true
       setDefault:
-        description: "Set as default candidate."
+        description: "Set as skdman default candidate."
         type: boolean
         required: false
         default: false
@@ -60,7 +67,7 @@ jobs:
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
-  release:
+  release_on_skdman:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +77,7 @@ jobs:
       - uses: ./sdkman-release-action
         with:
           CANDIDATE: ${{ github.event.inputs.candidate }}
-          VERSION: ${{ github.event.inputs.version }}
+          VERSION: ${{ github.event.inputs.releaseVersion }}
           URL: ${{ github.event.inputs.url }}
           CONSUMER-KEY: ${{ secrets.SDKMAN_CONSUMER_KEY }}
           CONSUMER-TOKEN: ${{ secrets.SDKMAN_CONSUMER_TOKEN }}
@@ -84,7 +91,7 @@ jobs:
         uses: ./sdkman-default-action
         with:
           CANDIDATE: ${{ github.event.inputs.candidate }}
-          VERSION: ${{ github.event.inputs.version }}
+          VERSION: ${{ github.event.inputs.releaseVersion }}
           CONSUMER-KEY: ${{ secrets.SDKMAN_CONSUMER_KEY }}
           CONSUMER-TOKEN: ${{ secrets.SDKMAN_CONSUMER_TOKEN }}
 
