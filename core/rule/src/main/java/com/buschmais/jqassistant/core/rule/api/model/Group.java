@@ -13,9 +13,9 @@ import lombok.Getter;
 @Getter
 public class Group extends AbstractSeverityRule {
 
-    public static Severity DEFAULT_SEVERITY = null;
+    public static final Severity DEFAULT_SEVERITY = null;
 
-    public static Severity DEFAULT_INCLUDE_SEVERITY = null;
+    public static final Severity DEFAULT_INCLUDE_SEVERITY = null;
 
     /**
      * The set of rules contained in the group.
@@ -25,7 +25,7 @@ public class Group extends AbstractSeverityRule {
     /**
      * The provided concepts, where the key represents the id of the provided concept and the value the set of providing concepts,
      */
-    private final Map<String, Set<String>> providedConcepts = new HashMap<>();
+    private final Map<String, Set<Concept.ProvidedConcept>> providedConcepts = new HashMap<>();
 
     /**
      * The set of constraints contained in the group.
@@ -35,7 +35,7 @@ public class Group extends AbstractSeverityRule {
     /**
      * The set of groups contained in the group.
      */
-    private Map<String, Severity> groups = new LinkedHashMap<>();
+    private final Map<String, Severity> groups = new LinkedHashMap<>();
 
     public static class GroupBuilder extends AbstractSeverityRule.Builder<Group.GroupBuilder, Group> {
         public GroupBuilder(Group group) {
@@ -52,7 +52,7 @@ public class Group extends AbstractSeverityRule {
             return this;
         }
 
-        public GroupBuilder providedConcepts(Map<String, Set<String>> providedConcepts) {
+        public GroupBuilder providedConcepts(Map<String, Set<Concept.ProvidedConcept>> providedConcepts) {
             rule.providedConcepts.putAll(providedConcepts);
             return this;
         }
@@ -86,7 +86,5 @@ public class Group extends AbstractSeverityRule {
     public static Group.GroupBuilder builder() {
         return new GroupBuilder(new Group());
     }
-
-
 
 }

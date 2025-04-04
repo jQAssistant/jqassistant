@@ -2,16 +2,20 @@
 groups:
   - id: test
     includedGroups:
-      - refId: test1
-      - refId: test2
-  - id: test1
+      - refId: test:Constraints
+      - refId: test:Concepts
+  - id: test:Constraints
     includedConstraints:
       - refId: test:Constraint
-  - id: test2
+  - id: test:Concepts
     includedConcepts:
       - refId: test:ProvidingConcept2
         providesConcepts:
           - refId: test:AbstractConcept
+      - refId: test:ProvidingConcept4
+        providesConcepts:
+          - refId: test:AbstractConcept
+            activation: if-required
 
 constraints:
   - id: test:Constraint
@@ -61,6 +65,23 @@ concepts:
       return
         n
 
+  - id: test:ProvidingConcept3
+    description: Providing Test Concept 3
+    providesConcepts:
+      - refId: test:AbstractConcept
+        activation: if-required
+    source: |
+      match
+        (n)
+      return
+        n
 
+  - id: test:ProvidingConcept4
+    description: Providing Test Concept 4
+    source: |
+      match
+        (n)
+      return
+        n
 
 

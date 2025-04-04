@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.rule.impl.reader.CDataXMLStreamWriter;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import org.jqassistant.schema.rule.v2.*;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -27,9 +28,9 @@ import static java.util.stream.Collectors.toList;
  */
 public class XmlRuleSetWriter implements RuleSetWriter {
 
-    private JAXBContext jaxbContext;
+    private final JAXBContext jaxbContext;
 
-    private Rule rule;
+    private final Rule rule;
 
     public XmlRuleSetWriter(Rule rule) {
         this.rule = rule;
@@ -51,7 +52,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             .conceptIds(ruleSet.getConceptBucket()
                 .getIds())
             .build();
-        new RuleSetExecutor(visitor, rule).execute(ruleSet, ruleSelection);
+        new RuleSetExecutor<>(visitor, rule).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
         writeConcepts(visitor.getConcepts()
@@ -82,13 +83,13 @@ public class XmlRuleSetWriter implements RuleSetWriter {
     private void writeGroups(Collection<Group> groups, JqassistantRules rules) {
         for (Group group : groups) {
             // Create map with providing concepts as keys and set of provided concept ids as values
-            Map<String, Set<String>> providedConcepts = new HashMap<>();
-            for (Map.Entry<String, Set<String>> entry : group.getProvidedConcepts()
+            Map<String, Set<Concept.ProvidedConcept>> providedConcepts = new HashMap<>();
+            for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : group.getProvidedConcepts()
                 .entrySet()) {
                 String providedConceptId = entry.getKey();
-                for (String providingConceptId : entry.getValue()) {
+                for (Concept.ProvidedConcept providedConcept : entry.getValue()) {
                     providedConcepts.computeIfAbsent(providedConceptId, id -> new LinkedHashSet<>())
-                        .add(providingConceptId);
+                        .add(providedConcept);
                 }
             }
             GroupType groupType = new GroupType();
@@ -106,12 +107,7 @@ public class XmlRuleSetWriter implements RuleSetWriter {
                 IncludeConceptType includeConceptType = new IncludeConceptType();
                 includeConceptType.setRefId(conceptEntry.getKey());
                 includeConceptType.setSeverity(getSeverity(conceptEntry.getValue()));
-                for (String providedConceptId : providedConcepts.getOrDefault(conceptEntry.getKey(), Collections.emptySet())) {
-                    ReferenceType referenceType = new ReferenceType();
-                    referenceType.setRefId(providedConceptId);
-                    includeConceptType.getProvidesConcept()
-                        .add(referenceType);
-                }
+                addProvidesConcepts(providedConcepts.getOrDefault(conceptEntry.getKey(), emptySet()), includeConceptType);
                 groupType.getIncludeConcept()
                     .add(includeConceptType);
             }
@@ -128,6 +124,14 @@ public class XmlRuleSetWriter implements RuleSetWriter {
         }
     }
 
+    private void addProvidesConcepts(Set<Concept.ProvidedConcept> providesConceptIds, IncludeConceptType includeConceptType) {
+        for (Concept.ProvidedConcept providedConcept : providesConceptIds) {
+            ProvidesReferenceType providesReferenceType = getProvidesReferenceType(providedConcept);
+            includeConceptType.getProvidesConcept()
+                .add(providesReferenceType);
+        }
+    }
+
     private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
@@ -137,7 +141,8 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             conceptType.setSource(writeExecutable(concept));
             conceptType.getRequiresConcept()
                 .addAll(writeRequiredConcepts(concept));
-            writeProvidedConcepts(concept, conceptType);
+            Set<Concept.ProvidedConcept> providedConcepts = concept.getProvidedConcepts();
+            writeProvidedConcepts(providedConcepts, conceptType);
             rules.getConceptOrConstraintOrGroup()
                 .add(conceptType);
         }
@@ -170,13 +175,20 @@ public class XmlRuleSetWriter implements RuleSetWriter {
             .collect(toList());
     }
 
-    private void writeProvidedConcepts(Concept concept, ConceptType conceptType) {
-        for (String refId : concept.getProvidedConcepts()) {
-            ReferenceType conceptReferenceType = new ReferenceType();
-            conceptReferenceType.setRefId(refId);
+    private void writeProvidedConcepts(Set<Concept.ProvidedConcept> providedConcepts, ConceptType conceptType) {
+        for (Concept.ProvidedConcept providedConcept : providedConcepts) {
+            ProvidesReferenceType providesReferenceType = getProvidesReferenceType(providedConcept);
             conceptType.getProvidesConcept()
-                .add(conceptReferenceType);
+                .add(providesReferenceType);
         }
+    }
+
+    private ProvidesReferenceType getProvidesReferenceType(Concept.ProvidedConcept providedConcept) {
+        ProvidesReferenceType providesReferenceType = new ProvidesReferenceType();
+        providesReferenceType.setRefId(providedConcept.getProvidedConceptId());
+        providesReferenceType.setActivation(ActivationEnumType.valueOf(providedConcept.getActivation()
+            .name()));
+        return providesReferenceType;
     }
 
     private SourceType writeExecutable(ExecutableRule<?> executableRule) {
