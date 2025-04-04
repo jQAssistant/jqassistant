@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
@@ -68,14 +67,24 @@ class RuleSetBuilderTest {
             .id("provided")
             .ruleSource(RULE_SOURCE)
             .build();
+        Concept.ProvidedConcept resolvableProvidedConcept = Concept.ProvidedConcept.builder()
+            .providingConceptId("providing")
+            .providedConceptId("provided")
+            .activation(IF_AVAILABLE)
+            .build();
         Concept providingConcept = Concept.builder()
             .id("providing")
-            .providedConcepts(Map.of("provided", IF_AVAILABLE))
+            .providedConcept(resolvableProvidedConcept)
             .ruleSource(RULE_SOURCE)
+            .build();
+        Concept.ProvidedConcept nonResolvableProvidedConcept = Concept.ProvidedConcept.builder()
+            .providingConceptId("non-resolvable-providing")
+            .providedConceptId("non-resolvable-provided")
+            .activation(IF_AVAILABLE)
             .build();
         Concept nonResolvableProvidingConcept = Concept.builder()
             .id("non-resolvable-providing")
-            .providedConcepts(Map.of("non-resolvable-provided", IF_AVAILABLE))
+            .providedConcept(nonResolvableProvidedConcept)
             .ruleSource(RULE_SOURCE)
             .build();
 
@@ -86,9 +95,9 @@ class RuleSetBuilderTest {
                 .addConcept(nonResolvableProvidingConcept)
                 .getRuleSet();
             assertThat(ruleSet.getProvidedConcepts()).hasSize(2)
-                .containsEntry("provided", Map.of("providing", IF_AVAILABLE))
-                .containsEntry("non-resolvable-provided", Map.of("non-resolvable-providing", IF_AVAILABLE));
-            assertThat(ruleSet.getProvidingConcepts()).hasSize(2)
+                .containsEntry("provided", Set.of(resolvableProvidedConcept))
+                .containsEntry("non-resolvable-provided", Set.of(nonResolvableProvidedConcept));
+            assertThat(ruleSet.getProvidingConceptIds()).hasSize(2)
                 .containsEntry("providing", Set.of("provided"))
                 .containsEntry("non-resolvable-providing", Set.of("non-resolvable-provided"));
         });

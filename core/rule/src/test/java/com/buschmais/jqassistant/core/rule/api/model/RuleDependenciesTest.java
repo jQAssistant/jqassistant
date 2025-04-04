@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 
@@ -30,9 +31,29 @@ class RuleDependenciesTest {
     }
 
     private void verifyRuleset(RuleSet ruleSet) {
-        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:AbstractConcept",
-            Map.of("test:ProvidingConcept1", IF_AVAILABLE, "test:ProvidingConcept2", IF_AVAILABLE, "test:ProvidingConcept3", IF_REQUIRED,
-                "test:ProvidingConcept4", IF_REQUIRED)));
+        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept1")
+                .activation(IF_AVAILABLE)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept2")
+                .activation(IF_AVAILABLE)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept3")
+                .activation(IF_REQUIRED)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept4")
+                .activation(IF_REQUIRED)
+                .build())));
     }
 
 }

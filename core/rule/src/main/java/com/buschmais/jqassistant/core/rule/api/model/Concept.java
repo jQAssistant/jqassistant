@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import lombok.Getter;
+import lombok.*;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 
@@ -15,7 +15,7 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 @Getter
 public class Concept extends AbstractExecutableRule {
 
-    public static Severity DEFAULT_SEVERITY = MINOR;
+    public static final Severity DEFAULT_SEVERITY = MINOR;
 
     /**
      * Determines the activation policy of providing concepts
@@ -28,10 +28,27 @@ public class Concept extends AbstractExecutableRule {
         /**
          * Activate the providing concept only if it is explicitly or transitively required by the user.
          */
-        IF_REQUIRED;
+        IF_REQUIRED
     }
 
-    private final Map<String, Activation> providedConcepts = new LinkedHashMap<>();
+    @lombok.Builder
+    @Getter
+    @RequiredArgsConstructor
+    @EqualsAndHashCode
+    @ToString
+    public static class ProvidedConcept {
+
+        @NonNull
+        private final String providingConceptId;
+
+        @NonNull
+        private final String providedConceptId;
+
+        @NonNull
+        private final Activation activation;
+    }
+
+    private final Set<ProvidedConcept> providedConcepts = new LinkedHashSet<>();
 
     public static class ConceptBuilder extends AbstractExecutableRule.Builder<ConceptBuilder, Concept> {
         private ConceptBuilder(Concept rule) {
@@ -43,9 +60,15 @@ public class Concept extends AbstractExecutableRule {
             return this;
         }
 
-        public ConceptBuilder providedConcepts(Map<String, Activation> providedConcepts) {
+        public ConceptBuilder providedConcept(ProvidedConcept providedConcept) {
             Concept r = build();
-            r.providedConcepts.putAll(providedConcepts);
+            r.providedConcepts.add(providedConcept);
+            return this;
+        }
+
+        public ConceptBuilder providedConcepts(Set<ProvidedConcept> providedConcepts) {
+            Concept r = build();
+            r.providedConcepts.addAll(providedConcepts);
             return this;
         }
     }

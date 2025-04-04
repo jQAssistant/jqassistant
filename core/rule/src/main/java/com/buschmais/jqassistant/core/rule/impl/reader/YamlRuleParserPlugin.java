@@ -101,25 +101,26 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         boolean containsGroups = documentMap.containsKey(GROUPS);
 
         if (containsConcepts) {
-            RuleConsumer<Concept> conceptRuleConsumer = concept -> context.getBuilder()
-                .addConcept(concept);
             List<Map<String, Object>> executableRules = (List<Map<String, Object>>) ofNullable(documentMap.get(CONCEPTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
                 Concept.ConceptBuilder builder = Concept.builder();
-                Map<String, Activation> provided = this.extractProvidedConcepts(executableRule);
-                builder.providedConcepts(provided);
-                this.processExecutableRule(executableRule, context, conceptRuleConsumer, builder, this::getDefaultConceptSeverity);
+                String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
+                Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
+                builder.providedConcepts(providedConcepts);
+                context.getBuilder()
+                    .addConcept(builder.build());
             }
         }
 
         if (containsConstraints) {
-            RuleConsumer<Constraint> ruleConsumer = constraint -> context.getBuilder()
-                .addConstraint(constraint);
             List<Map<String, Object>> executableRules = (List<Map<String, Object>>) ofNullable(documentMap.get(CONSTRAINTS)).orElse(emptyList());
 
             for (Map<String, Object> executableRule : executableRules) {
-                this.processExecutableRule(executableRule, context, ruleConsumer, Constraint.builder(), this::getDefaultConstraintSeverity);
+                Constraint.ConstraintBuilder builder = Constraint.builder();
+                this.processExecutableRule(executableRule, context, builder, this::getDefaultConstraintSeverity);
+                context.getBuilder()
+                    .addConstraint(builder.build());
             }
         }
 
@@ -136,7 +137,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         String id = (String) map.get(ID);
         List<Map<String, Object>> concepts = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONCEPTS, key -> emptyList());
-        Map<String, Map<String, Activation>> providedConcepts = new HashMap<>();
+        Map<String, Set<Concept.ProvidedConcept>> providedConcepts = new HashMap<>();
         List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
@@ -148,9 +149,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         for (Map<String, Object> refSpec : concepts) {
             RuleSeverityAssociation reference = extractRuleReferencesFrom(refSpec);
             includedConcepts.add(reference);
-            for (Map.Entry<String, Activation> providedConcept : extractProvidedConcepts(refSpec).entrySet()) {
-                providedConcepts.computeIfAbsent(providedConcept.getKey(), key -> new LinkedHashMap<>())
-                    .put(reference.getRuleName(), providedConcept.getValue());
+            for (Concept.ProvidedConcept providedConcept : extractProvidedConcepts(reference.getRuleName(), refSpec)) {
+                providedConcepts.computeIfAbsent(providedConcept.getProvidedConceptId(), key -> new LinkedHashSet<>())
+                    .add(providedConcept);
             }
         }
 
@@ -189,8 +190,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         return new RuleSeverityAssociation(refId, severity);
     }
 
-    private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> void processExecutableRule(Map<String, Object> map,
-        RuleContext context, RuleConsumer<T> consumer, B builder, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
+    private <T extends AbstractExecutableRule, B extends AbstractExecutableRule.Builder<B, T>> String processExecutableRule(Map<String, Object> map,
+        RuleContext context, B builder, Supplier<Severity> defaultSeveritySupplier) throws RuleException {
 
         String id = (String) map.get(ID);
         String description = IndentHelper.removeIndent((String) map.get(DESCRIPTION));
@@ -211,7 +212,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         Report report = extractReportConfiguration(map);
         Severity severity = getSeverity((String) map.get(SEVERITY), defaultSeveritySupplier);
 
-        T rule = builder.id(id)
+        builder.id(id)
             .description(description)
             .severity(severity)
             .executable(executable)
@@ -219,9 +220,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             .parameters(parameters)
             .verification(verification)
             .report(report)
-            .ruleSource(context.getSource())
-            .build();
-        consumer.consume(rule);
+            .ruleSource(context.getSource());
+        return id;
     }
 
     protected Report extractReportConfiguration(Map<String, Object> map) {
@@ -325,8 +325,8 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         return unmodifiableMap(requiredConcepts);
     }
 
-    private Map<String, Activation> extractProvidedConcepts(Map<String, Object> map) {
-        Map<String, Activation> providedConcepts = new HashMap<>();
+    private Set<Concept.ProvidedConcept> extractProvidedConcepts(String providingConceptId, Map<String, Object> map) {
+        Set<Concept.ProvidedConcept> providedConcepts = new LinkedHashSet<>();
 
         boolean hasProvidesSection = map.containsKey(PROVIDES_CONCEPTS);
 
@@ -336,12 +336,16 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 String refIdVal = (String) required.get(REF_ID);
                 Activation activationVal = Activation.valueOf(
                     LOWER_HYPHEN.to(UPPER_UNDERSCORE, (String) required.getOrDefault(ACTIVATION, UPPER_UNDERSCORE.to(LOWER_HYPHEN, IF_AVAILABLE.name()))));
-                providedConcepts.put(refIdVal, activationVal);
+                providedConcepts.add(Concept.ProvidedConcept.builder()
+                    .providingConceptId(providingConceptId)
+                    .providedConceptId(refIdVal)
+                    .activation(activationVal)
+                    .build());
             }
 
         }
 
-        return unmodifiableMap(providedConcepts);
+        return unmodifiableSet(providedConcepts);
     }
 
     private Map<String, Parameter> extractParameters(Map<String, Object> map) {

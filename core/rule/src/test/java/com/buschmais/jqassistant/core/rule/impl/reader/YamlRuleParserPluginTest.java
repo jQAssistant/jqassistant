@@ -51,9 +51,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getConceptBucket()
                 .size()).isEqualTo(1);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getGroupsBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -125,7 +125,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(verification).isInstanceOf(AggregationVerification.class);
 
-            AggregationVerification aggregationVerification = AggregationVerification.class.cast(verification);
+            AggregationVerification aggregationVerification = (AggregationVerification) verification;
 
             assertThat(aggregationVerification.getMax()).isEqualTo(20);
             assertThat(aggregationVerification.getMin()).isEqualTo(10);
@@ -145,7 +145,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(verification).isInstanceOf(RowCountVerification.class);
 
-            RowCountVerification rowCountVerification = RowCountVerification.class.cast(verification);
+            RowCountVerification rowCountVerification = (RowCountVerification) verification;
 
             assertThat(rowCountVerification.getMax()).isEqualTo(20);
             assertThat(rowCountVerification.getMin()).isEqualTo(10);
@@ -192,7 +192,7 @@ class YamlRuleParserPluginTest {
             assertThatThrownBy(() -> readRuleSet(resourcePath)).isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
                 .hasMessageMatching(
-                    "^The concept '[^']+' " + "in rule source '[^']+' " + "" + "has an invalid parameter\\. The following keys are missing: " + missingKeyword);
+                    "^The concept '[^']+' " + "in rule source '[^']+' " + "has an invalid parameter\\. The following keys are missing: " + missingKeyword);
         }
 
         @Disabled
@@ -313,8 +313,15 @@ class YamlRuleParserPluginTest {
             Concept concept = ruleSet.getConceptBucket()
                 .getById("test:ProvidingConcept");
 
-            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:Concept1", IF_AVAILABLE, "test:Concept2", IF_AVAILABLE));
-
+            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrder(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:ProvidingConcept")
+                .providedConceptId("test:Concept1")
+                .activation(IF_AVAILABLE)
+                .build(), Concept.ProvidedConcept.builder()
+                .providingConceptId("test:ProvidingConcept")
+                .providedConceptId("test:Concept2")
+                .activation(IF_AVAILABLE)
+                .build());
         }
     }
 
@@ -404,9 +411,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> constraints = group.getConstraints();
 
-            assertThat(constraints).hasSize(1);
-            assertThat(constraints).containsKey("uuu");
-            assertThat(constraints.get("uuu")).isNull();
+            assertThat(constraints).hasSize(1)
+                .containsEntry("uuu", null);
 
             assertThat(group.getGroups()).isEmpty();
             assertThat(group.getConcepts()).isEmpty();
@@ -463,7 +469,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(constraints).hasSize(1);
             assertThat(constraints).containsKey("referenced_constraint");
-            assertThat(constraints.get("referenced_constraint")).isEqualTo(Severity.INFO);
+            assertThat(constraints).containsEntry("referenced_constraint", Severity.INFO);
             assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(Constraint.DEFAULT_SEVERITY);
         }
 

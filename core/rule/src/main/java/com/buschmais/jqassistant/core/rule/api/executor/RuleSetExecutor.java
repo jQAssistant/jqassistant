@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -266,13 +265,11 @@ public class RuleSetExecutor<R> {
         Set<Concept> stack) throws RuleException {
         Map<Concept, R> results = new LinkedHashMap<>();
         Severity providedSeverity = concept.getSeverity();
-        for (Map.Entry<String, Activation> providingConceptEntry : ruleSet.getProvidedConcepts()
-            .getOrDefault(concept.getId(), emptyMap())
-            .entrySet()) {
+        for (Concept.ProvidedConcept providedConcept : ruleSet.getProvidedConcepts()
+            .getOrDefault(concept.getId(), emptySet())) {
             Concept providingConcept = ruleSet.getConceptBucket()
-                .getById(providingConceptEntry.getKey());
-            Activation activation = providingConceptEntry.getValue();
-            if (isProvidingConceptActivated(providingConcept, activation, activatedConcepts)) {
+                .getById(providedConcept.getProvidingConceptId());
+            if (isProvidingConceptActivated(providingConcept, providedConcept.getActivation(), activatedConcepts)) {
                 Severity providingSeverity = providingConcept.getSeverity();
                 // use overridden severity or highest default severity of provided and providing concept
                 Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity,
@@ -303,7 +300,7 @@ public class RuleSetExecutor<R> {
         Map<Map.Entry<Concept, Boolean>, R> requiredConcepts = new HashMap<>();
         Set<String> conceptIds = ruleSet.getConceptBucket()
             .getIds();
-        for (String providedConceptId : ruleSet.getProvidingConcepts()
+        for (String providedConceptId : ruleSet.getProvidingConceptIds()
             .getOrDefault(concept.getId(), emptySet())) {
             if (conceptIds.contains(providedConceptId)) {
                 Concept providedConcept = ruleSet.getConceptBucket()

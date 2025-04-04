@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
@@ -430,7 +431,11 @@ class RuleSetExecutorTest {
         Concept providingConcept1 = Concept.builder()
             .id("concept:ProvidingConcept1")
             .severity(MINOR)
-            .providedConcepts(Map.of("concept:AbstractConcept", IF_AVAILABLE))
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept1")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())
             .build();
         // provides the required concept indirectly via the group below
         Concept providingConcept2 = Concept.builder()
@@ -440,7 +445,11 @@ class RuleSetExecutorTest {
         Group group = Group.builder()
             .id("group")
             .concept("concept:Concept", null)
-            .providedConcepts(Map.of("concept:AbstractConcept", Map.of("concept:ProvidingConcept2", IF_AVAILABLE)))
+            .providedConcepts(Map.of("concept:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept2")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(concept)
@@ -480,13 +489,21 @@ class RuleSetExecutorTest {
         Concept providingConcept1 = Concept.builder()
             .id("concept:ProvidingConcept1")
             .severity(MINOR)
-            .providedConcepts(Map.of("concept:AbstractConcept", IF_AVAILABLE))
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept1")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())
             .build();
         // provides the required concept indirectly via the group below
         Concept providingConcept2 = Concept.builder()
             .id("concept:ProvidingConcept2")
             .severity(MINOR)
-            .providedConcepts(Map.of("concept:AbstractConcept", IF_REQUIRED))
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept2")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_REQUIRED)
+                .build())
             .build();
         Concept providingConcept3 = Concept.builder()
             .id("concept:ProvidingConcept3")
@@ -495,14 +512,22 @@ class RuleSetExecutorTest {
         Concept providingConcept4 = Concept.builder()
             .id("concept:ProvidingConcept4")
             .severity(MINOR)
-            .providedConcepts(Map.of("concept:AbstractConcept", IF_REQUIRED))
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept4")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_REQUIRED)
+                .build())
             .build();
         Group group = Group.builder()
             .id("group")
             .concept("concept:AbstractConcept", null)
             .concept("concept:ProvidingConcept2", null)
             .concept("concept:ProvidingConcept3", null)
-            .providedConcepts(Map.of("concept:AbstractConcept", Map.of("concept:ProvidingConcept3", IF_REQUIRED)))
+            .providedConcepts(Map.of("concept:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providedConceptId("concept:AbstractConcept")
+                .providingConceptId("concept:ProvidingConcept3")
+                .activation(IF_REQUIRED)
+                .build())))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(abstractConcept)

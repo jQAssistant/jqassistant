@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jqassistant.schema.rule.v2.*;
 
 import static com.buschmais.jqassistant.core.rule.impl.reader.IndentHelper.removeIndent;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A {@link RuleParserPlugin} implementation.
@@ -101,7 +101,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         SeverityEnumType severityType = referencableType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
         Map<String, Severity> includeConcepts = getIncludedReferences(referencableType.getIncludeConcept());
-        Map<String, Map<String, Concept.Activation>> providedConcepts = getProvidedConcepts(referencableType.getIncludeConcept());
+        Map<String, Set<Concept.ProvidedConcept>> providedConcepts = getProvidedConcepts(referencableType.getIncludeConcept());
         Map<String, Severity> includeConstraints = getIncludedReferences(referencableType.getIncludeConstraint());
         Map<String, Severity> includeGroups = getIncludedReferences(referencableType.getIncludeGroup());
         return Group.builder()
@@ -123,9 +123,14 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Severity severity = getSeverity(severityType, this::getDefaultConceptSeverity);
         List<OptionalReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Map<String, Boolean> requiresConcepts = getRequiresConcepts(requiresConcept);
-        List<ProvidesReferenceType> providesConcept = conceptType.getProvidesConcept();
-        Map<String, Concept.Activation> providesConcepts = providesConcept.stream()
-            .collect(toMap(ReferenceType::getRefId, XmlRuleParserPlugin::getActivation));
+        Set<Concept.ProvidedConcept> providedConcepts = conceptType.getProvidesConcept()
+            .stream()
+            .map(providesReferenceType -> Concept.ProvidedConcept.builder()
+                .providingConceptId(id)
+                .providedConceptId(providesReferenceType.getRefId())
+                .activation(getActivation(providesReferenceType))
+                .build())
+            .collect(toSet());
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
@@ -137,7 +142,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .deprecation(deprecated)
             .executable(executable)
             .parameters(parameters)
-            .providedConcepts(providesConcepts)
+            .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
             .verification(verification)
             .report(report)
@@ -245,13 +250,17 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         return references;
     }
 
-    private Map<String, Map<String, Concept.Activation>> getProvidedConcepts(List<IncludeConceptType> conceptTypes) {
-        Map<String, Map<String, Concept.Activation>> providedConcepts = new HashMap<>();
+    private Map<String, Set<Concept.ProvidedConcept>> getProvidedConcepts(List<IncludeConceptType> conceptTypes) {
+        Map<String, Set<Concept.ProvidedConcept>> providedConcepts = new HashMap<>();
         for (IncludeConceptType conceptType : conceptTypes) {
             for (ProvidesReferenceType referenceType : conceptType.getProvidesConcept()) {
                 String providingConceptId = conceptType.getRefId();
-                providedConcepts.computeIfAbsent(referenceType.getRefId(), providedConceptId -> new HashMap<>())
-                    .put(providingConceptId, getActivation(referenceType));
+                providedConcepts.computeIfAbsent(referenceType.getRefId(), providedConceptId -> new LinkedHashSet<>())
+                    .add(Concept.ProvidedConcept.builder()
+                        .providingConceptId(providingConceptId)
+                        .providedConceptId(referenceType.getRefId())
+                        .activation(getActivation(referenceType))
+                        .build());
             }
         }
         return providedConcepts;
