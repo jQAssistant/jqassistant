@@ -12,39 +12,33 @@
 * The latest command line distributions are available on Maven Central. Use one of the links below for selecting the bundled Neo4j version depending on your local JDK, select `Browse` and download the `*-distribution.zip` file:
 ** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv5/versions[jQAssistant for JDK 17 or later] (includes Neo4j v5.x, _recommended_)
 ** https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-neo4jv4/versions[jQAssistant for JDK 11] (includes Neo4j v4.x)
-* Unpack the distribution, a directory
-  `jqassistant-commandline-neo4jv__<?>__-_<version>_` will be created
+* Unpack the distribution, a directory `jqassistant-commandline-neo4jv__<?>__-_<version>_` will be created.
+It contains a `bin` folder providing `jqassistant` shell scripts for Windows and Linux systems.
 
-NOTE: jQAssistant releases until 2.0.x are available https://central.sonatype.com/artifact/com.buschmais.jqassistant.cli/jqassistant-commandline-distribution/versions[here].
+[TIP]
+====
+The Neo4j v5.x command line distribution is also available via https://sdkman.io/[SDKMan!]:
+
+[source,bash]
+----
+sdk install jqassistant
+----
+====
 
 ==== Scan
 
-[source]
-.Windows
+[source,bash]
 ----
-bin\jqassistant.cmd scan -f lib
-----
-
-[source]
-.Linux
-----
-bin/jqassistant.sh scan -f lib
+jqassistant scan -f lib
 ----
 
 * The JAR files contained in the lib/ folder will be scanned.
 
 ==== Explore
 
-[source]
-.Windows
+[source,bash]
 ----
-bin\jqassistant.cmd server
-----
-
-[source]
-.Linux
-----
-bin/jqassistant.sh server
+jqassistant server
 ----
 
 * Open a browser and navigate to http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH[http://localhost:7474/?dbms=bolt://localhost:7687&preselectAuthMethod=NO_AUTH] (see also <<open-browser>>)
