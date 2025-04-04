@@ -467,9 +467,8 @@ class YamlRuleParserPluginTest {
 
             Map<String, Severity> constraints = group.getConstraints();
 
-            assertThat(constraints).hasSize(1);
-            assertThat(constraints).containsKey("referenced_constraint");
-            assertThat(constraints).containsEntry("referenced_constraint", Severity.INFO);
+            assertThat(constraints).hasSize(1)
+                .containsEntry("referenced_constraint", Severity.INFO);
             assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(Constraint.DEFAULT_SEVERITY);
         }
 
@@ -492,9 +491,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getGroupsBucket()
                 .size()).isEqualTo(1);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getConceptBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -551,9 +550,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getGroupsBucket()
                 .size()).isEqualTo(2);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getConceptBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -569,9 +568,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> concepts = group.getConcepts();
 
-            assertThat(concepts).hasSize(1);
-            assertThat(concepts).containsKey("efg");
-            assertThat(concepts.get("efg")).isNull();
+            assertThat(concepts).hasSize(1)
+                .containsEntry("efg", null);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -590,9 +588,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> concepts = group.getConcepts();
 
-            assertThat(concepts).hasSize(1);
-            assertThat(concepts).containsKey("xxx");
-            assertThat(concepts.get("xxx")).isEqualTo(Severity.MINOR);
+            assertThat(concepts).hasSize(1)
+                .containsEntry("xxx", Severity.MINOR);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -613,10 +610,8 @@ class YamlRuleParserPluginTest {
 
             Map<String, Severity> includedGroups = group.getGroups();
 
-            assertThat(includedGroups).containsKey("mmm");
-            assertThat(includedGroups.get("mmm")).isEqualTo(Severity.BLOCKER);
-
-            assertThat(includedGroups).hasSize(1);
+            assertThat(includedGroups).hasSize(1)
+                .containsEntry("mmm", Severity.BLOCKER);
         }
 
         @Test
@@ -672,11 +667,9 @@ class YamlRuleParserPluginTest {
 
             Group group = groups.getById("p_g");
 
-            assertThat(group.getGroups()
-                .containsKey("a_g")).isNotNull();
-            assertThat(group.getGroups()
-                .containsKey("b_g")).isNotNull();
-            assertThat(group.getGroups()).hasSize(2);
+            assertThat(group.getGroups()).hasSize(2)
+                .containsEntry("a_g", null)
+                .containsEntry("b_g", null);
         }
     }
 

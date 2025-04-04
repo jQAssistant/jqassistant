@@ -14,6 +14,8 @@ import com.buschmais.jqassistant.core.rule.api.reader.AggregationVerification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
@@ -375,26 +377,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         return Type.valueOf(value.toUpperCase());
     }
 
+    @Getter
+    @RequiredArgsConstructor
     private static class RuleContext {
-        private RuleSource source;
-        private RuleSetBuilder builder;
-
-        public RuleContext(RuleSource source, RuleSetBuilder builder) {
-            this.source = source;
-            this.builder = builder;
-        }
-
-        public RuleSource getSource() {
-            return source;
-        }
-
-        public RuleSetBuilder getBuilder() {
-            return builder;
-        }
-    }
-
-    private interface RuleConsumer<T> {
-        void consume(T t) throws RuleException;
+        private final RuleSource source;
+        private final RuleSetBuilder builder;
     }
 
     static class SeverityMap extends HashMap<String, Severity> {
@@ -403,22 +390,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         }
     }
 
+    @Getter
+    @RequiredArgsConstructor
     static class RuleSeverityAssociation {
-        private String ruleName;
-        private Severity severity;
-
-        public RuleSeverityAssociation(String ruleName, Severity severity) {
-            this.ruleName = ruleName;
-            this.severity = severity;
-        }
-
-        public String getRuleName() {
-            return ruleName;
-        }
-
-        public Severity getSeverity() {
-            return severity;
-        }
-
+        private final String ruleName;
+        private final Severity severity;
     }
 }
