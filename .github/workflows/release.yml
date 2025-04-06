@@ -37,14 +37,12 @@ on:
         required: false
         default: false
       candidate:
-        description: "Skdman candidate ID."
+        description: "SDKMAN candidate ID."
         type: string
         required: true
-      url:
-        description: "URL of the candidate."
-        required: true
+        default: "jqassistant"
       setDefault:
-        description: "Set as skdman default candidate."
+        description: "SDKMAN default candidate."
         type: boolean
         required: false
         default: false
@@ -78,16 +76,16 @@ jobs:
         with:
           CANDIDATE: ${{ github.event.inputs.candidate }}
           VERSION: ${{ github.event.inputs.releaseVersion }}
-          URL: ${{ github.event.inputs.url }}
+          URL: https://github.com/jQAssistant/jqassistant/releases/download/${{ github.event.inputs.releaseVersion }}/jqassistant-commandline-neo4jv5-${{ github.event.inputs.releaseVersion }}-distribution.zip
           CONSUMER-KEY: ${{ secrets.SDKMAN_CONSUMER_KEY }}
           CONSUMER-TOKEN: ${{ secrets.SDKMAN_CONSUMER_TOKEN }}
       - name: defaultRelease
-        if: ${{ github.event.inputs.setDefault }} == true
+        if: ${{ github.event.inputs.setDefault == 'true' }}
         uses: actions/checkout@v4
         with:
           repository: sdkman/sdkman-default-action
           path: sdkman-default-action
-      - if: ${{ github.event.inputs.setDefault }} == true
+      - if: ${{ github.event.inputs.setDefault == 'true' }}
         uses: ./sdkman-default-action
         with:
           CANDIDATE: ${{ github.event.inputs.candidate }}
