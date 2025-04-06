@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_REQUIRED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,8 +31,29 @@ class RuleDependenciesTest {
     }
 
     private void verifyRuleset(RuleSet ruleSet) {
-        assertThat(ruleSet.getProvidedConcepts()).containsExactlyEntriesOf(
-            Map.of("test:AbstractConcept", Set.of("test:ProvidingConcept1", "test:ProvidingConcept2")));
+        assertThat(ruleSet.getProvidedConcepts()).containsExactlyInAnyOrderEntriesOf(Map.of("test:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept1")
+                .activation(IF_AVAILABLE)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept2")
+                .activation(IF_AVAILABLE)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept3")
+                .activation(IF_REQUIRED)
+                .build(),
+
+            Concept.ProvidedConcept.builder()
+                .providedConceptId("test:AbstractConcept")
+                .providingConceptId("test:ProvidingConcept4")
+                .activation(IF_REQUIRED)
+                .build())));
     }
 
 }

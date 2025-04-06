@@ -37,7 +37,7 @@ Rules are expressed as Cypher queries and are specified in XML files:
 ----
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -91,7 +91,7 @@ Rules are expressed as Cypher queries and are specified in XML files:
 </jqassistant-rules>
 ----
 
-NOTE: The rule XML schema is available https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-rule-v2.2.xsd[online] and should be picked automatically for code completion by your IDE.
+NOTE: The rule XML schema is available https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-rule-v2.7.xsd[online] and should be picked automatically for code completion by your IDE.
 
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
@@ -144,8 +144,8 @@ information shall help the developer to understand and fix the problem.
 
 As shown in the snippets above concepts or constraints may define dependencies to other concepts. There are two approaches:
 
-`requiresConcept` (XML) or `requiresConcepts` (Asciidoc):: A rule explicitly requires another concept to be executed before.
-`providesConcept` (XML) or `providesConcepts` (Asciidoc):: A concept extends another concept by adding the same labels or relationships.
+`requiresConcept`:: A rule explicitly requires another concept to be executed before.
+`providesConcept`:: A concept extends another concept by adding the same labels or relationships.
 
 The rules are referenced by their ids. jQAssistant will ensure that these rules are executed in the correct order.
 
@@ -159,24 +159,68 @@ In this case it can become necessary to extend such concepts with project-specif
 * These constraints exclude all Java types labeled with `:Type:Generated` and therefore require the concept `java:GeneratedType` which is defined by the Java plugin
 * This concept may be extended by project specific concepts adding labels `:Type:Generated` and declaring the provided concept `java:GeneratedType` using `providesConcept(s)`
 
-There might be cases where a concept is provided by a rule plugin which provides the same labels or relationships as an (abstract) concept from another plugin.
-In these cases it is possible to perform a dynamic extension (duck-typing) to the abstract by specifying `providesConcept` in a group definition:
+A concept can provide another concept directly:
 
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+
+    <concept id="my-rules:ConcreteConcept">
+       <providesConcept refId="plugin:AbstractConcept"/>
+        <cypher>
+          ...
+        </cypher>
+    </group>
+
+</jqassistant-rules>
+----
+
+There might be cases where a concept implicitly provides another concept by adding the same labels or relationships.
+In these cases it is possible to perform a dynamic extension (duck-typing) by specifying `providesConcept` in a group definition:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
 
     <group id="default">
-        <includeConcept refId="plugin1:ConcreteConcept">
-            <providesConcept refId="plugin2:AbstractConcept"/>
+        <includeConcept refId="another-plugin:ConcreteConcept">
+            <providesConcept refId="plugin:AbstractConcept"/>
         </includeConcept>
     </group>
 
 </jqassistant-rules>
 ----
+
+If a concept shall be executed where one or more providing concepts exist then the latter are activated automatically and executed before the provided concept.
+This includes concepts which are not directly or indirectly required by the current configuration.
+For cases where this is not desirable it is possible to specify an activation strategy for providing concepts:
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+
+    <concept id="my-rules:ConcreteConcept">
+       <providesConcept refId="plugin:AbstractConcept" activation="if-required"/>
+        <cypher>
+          ...
+        </cypher>
+    </group>
+
+</jqassistant-rules>
+----
+
+The example above activates the concept `my-rules:ConcreteConcept` only, if it is directly or indirectly required by the current configuration (e.g. by inclusion in an activated group or required by an activated constraint).
+
+NOTE: The activation strategy supports the values `if-available` (default) or `if-required`.
 
 ==== Severity Of Rules
 
@@ -198,9 +242,9 @@ further severity is given, e.g.
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
 
     <group id="my-rules:MyGroup" severity="blocker">
         <includeConstraint refId="my-rules:MyConstraint1"/>
@@ -285,9 +329,9 @@ Both concepts and constraints may define required parameters:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
 
     <concept id="my-rules:ApplicationRootPackage">
         <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <!-- <1> -->
