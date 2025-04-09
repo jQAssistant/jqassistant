@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.6">
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.7">
+    <build>
+        <name>Test</name>
+        <timestamp>2025-04-07T01:00:00</timestamp>
+        <properties/>
+    </build>
     <concept id="concept:SuccessWithMinorSeverity">
         <description>Minor Success</description>
         <verificationResult>
