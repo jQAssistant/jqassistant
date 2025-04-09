@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -31,6 +28,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -47,7 +45,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.6";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.7";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -93,6 +91,22 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
             xmlStreamWriter.writeStartElement("jqassistant-report");
             xmlStreamWriter.writeDefaultNamespace(NAMESPACE_URL);
+            xmlStreamWriter.writeStartElement("build");
+            writeElementWithCharacters("name", reportContext.getBuild()
+                .name());
+            writeElementWithCharacters("timestamp", ISO_OFFSET_DATE_TIME.format(reportContext.getBuild()
+                .timestamp()));
+            xmlStreamWriter.writeStartElement("properties");
+            for (Map.Entry<String, String> entry : new TreeMap<>(reportContext.getBuild()
+                .properties()).entrySet()) {
+                xmlStreamWriter.writeStartElement("property");
+                xmlStreamWriter.writeAttribute("key", entry.getKey());
+                xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(entry.getValue())
+                    .replaceAll(""));
+                xmlStreamWriter.writeEndElement(); // property
+            }
+            xmlStreamWriter.writeEndElement(); // properties
+            xmlStreamWriter.writeEndElement(); // build
         });
     }
 

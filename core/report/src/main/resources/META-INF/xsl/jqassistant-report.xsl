@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.6">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.7">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
@@ -106,7 +106,14 @@
                 color:#fff;
             }
         </style>
-        <h1>jQAssistant Report</h1>
+        <h1 title="{/tns:jqassistant-report/tns:build/tns:timestamp}">jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:build/tns:name"/></h1>
+        <!-- optional build properties -->
+        <xsl:for-each select="/tns:jqassistant-report/tns:build/tns:properties/tns:property">
+            <div>
+                <xsl:value-of select="@key"/>:
+                <xsl:value-of select="text()"/>
+            </div>
+        </xsl:for-each>
         <div>
             <h3>Constraints</h3>
             <h6>

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@</groupId>
-    <artifactId>@project.artifactId@.integration.configuration.profile</artifactId>
+    <artifactId>@project.artifactId@.integration.configuration.build</artifactId>
     <version>@project.version@</version>
 
     <build>
@@ -14,11 +14,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>test-store</id>
-        </profile>
-    </profiles>
 
 </project>

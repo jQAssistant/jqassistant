@@ -1,10 +1,12 @@
 package com.buschmais.jqassistant.commandline;
 
 import java.io.File;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
+import com.buschmais.jqassistant.core.report.api.BuildConfigBuilder;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
@@ -226,7 +228,12 @@ public class Main {
             LOGGER.info("Activating configuration profile(s) {}.", profiles.stream()
                 .collect(joining(", ")));
         }
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("TaskConfigSource", 200);
+        ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource(workingDirectory.getAbsoluteFile()
+            .toPath()
+            .normalize()
+            .toString(), ZonedDateTime.now());
+        // provide build information
+        ConfigurationBuilder taskConfigurationBuilder = new ConfigurationBuilder("TaskConfigSource", 200);
         Map<String, String> properties = commandLine.getOptionProperties("D")
             .entrySet()
             .stream()
@@ -234,9 +241,9 @@ public class Main {
         PropertiesConfigSource commandLineProperties = new PropertiesConfigSource(properties, "Command line properties", 400);
         ConfigSource mavenSettingsConfigSource = createMavenSettingsConfigSource(userHome, getMavenSettings(commandLine), profiles);
         for (Task task : tasks) {
-            task.configure(commandLine, configurationBuilder);
+            task.configure(commandLine, taskConfigurationBuilder);
         }
-        ConfigSource configSource = configurationBuilder.build();
+        ConfigSource taskConfigSource = taskConfigurationBuilder.build();
         return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
             .withUserHome(userHome)
             .withWorkingDirectory(workingDirectory)
@@ -244,7 +251,7 @@ public class Main {
             .withEnvVariables()
             .withProfiles(profiles)
             .withIgnoreProperties(IGNORE_PROPERTIES)
-            .load(configSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+            .load(buildConfigSource, taskConfigSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
     }
 
     private List<String> getConfigLocations(CommandLine commandLine) {

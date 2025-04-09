@@ -42,14 +42,12 @@ public class AnalyzeTask extends AbstractRuleTask {
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
             Analyze analyze = configuration.analyze();
-            Report report = analyze
-                .report();
+            Report report = analyze.report();
             LOGGER.info("Executing analysis.");
             File reportDirectory = new File(report.directory()
                 .orElse(DEFAULT_REPORT_DIRECTORY));
-            ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, reportDirectory, reportDirectory);
-            Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze
-                .report(), reportContext);
+            ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, reportDirectory, reportDirectory);
+            Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
             InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
             try {
                 Baseline baselineConfiguration = analyze.baseline();
@@ -57,8 +55,7 @@ public class AnalyzeTask extends AbstractRuleTask {
                 BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
                 Analyzer analyzer = new AnalyzerImpl(analyze, pluginRepository.getClassLoader(), store, pluginRepository.getAnalyzerPluginRepository()
                     .getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
-                RuleSet availableRules = getAvailableRules(analyze
-                    .rule());
+                RuleSet availableRules = getAvailableRules(analyze.rule());
                 analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
             } catch (RuleException e) {
                 throw new CliExecutionException("Analysis failed.", e);
@@ -77,8 +74,6 @@ public class AnalyzeTask extends AbstractRuleTask {
                 store.commitTransaction();
             }
         });
-
-
     }
 
     private void createReportArchive(ReportContext reportContext) throws CliConfigurationException {

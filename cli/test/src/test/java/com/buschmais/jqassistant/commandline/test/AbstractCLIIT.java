@@ -3,12 +3,14 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.*;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.extension.*;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
@@ -140,6 +143,8 @@ public abstract class AbstractCLIIT {
         userHome = AbstractCLIIT.class.getResource("/userhome/")
             .getFile();
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("CLI IT", 110);
+        configurationBuilder.with(Build.class, Build.NAME, "CLI IT")
+            .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
         configurationBuilder.with(com.buschmais.jqassistant.core.store.api.configuration.Store.class,
             com.buschmais.jqassistant.core.store.api.configuration.Store.URI, "bolt://localhost:7687");
         configuration = ConfigurationMappingLoader.builder(CliConfiguration.class)
