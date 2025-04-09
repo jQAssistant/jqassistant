@@ -225,12 +225,12 @@ public class Main {
         List<String> configLocations = getConfigLocations(commandLine);
         List<String> profiles = getUserProfiles(commandLine);
         if (!profiles.isEmpty()) {
-            LOGGER.info("Activating configuration profile(s) {}.", profiles.stream()
-                .collect(joining(", ")));
+            LOGGER.info("Activating configuration profile(s) {}.", String.join(", ", profiles));
         }
         ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource(workingDirectory.getAbsoluteFile()
             .toPath()
             .normalize()
+            .getFileName()
             .toString(), ZonedDateTime.now());
         // provide build information
         ConfigurationBuilder taskConfigurationBuilder = new ConfigurationBuilder("TaskConfigSource", 200);

@@ -34,11 +34,11 @@ class ReportIT extends com.buschmais.jqassistant.commandline.test.AbstractCLIIT 
 
         File xmlReport = new File(getDefaultReportDirectory(), ReportTask.REPORT_FILE_XML);
         assertThat(xmlReport).exists();
-        JAXBHelper<JqassistantReport> jaxbHelper = new JAXBHelper(JqassistantReport.class);
+        JAXBHelper<JqassistantReport> jaxbHelper = new JAXBHelper<>(JqassistantReport.class);
         BuildType buildType = jaxbHelper.unmarshal(new FileInputStream(xmlReport))
             .getBuild();
         assertThat(buildType).isNotNull();
-        assertThat(buildType.getName()).endsWith(ReportIT.class.getSimpleName());
+        assertThat(buildType.getName()).isEqualTo(ReportIT.class.getSimpleName());
         BuildPropertiesType properties = buildType.getProperties();
         assertThat(properties).isNotNull();
         assertThat(properties.getProperty()).hasSize(1);
