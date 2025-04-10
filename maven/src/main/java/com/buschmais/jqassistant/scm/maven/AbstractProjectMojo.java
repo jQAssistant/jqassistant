@@ -24,14 +24,13 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         MavenProject currentModule = mojoExecutionContext.getCurrentModule();
         getLog().debug("Verifying if '" + currentModule + "' is last module for project '" + rootModule + (" (project modules='" + projectModules + "')."));
 
-        Set<MavenProject> remainingModules = getRemainingModules(mojoExecutionContext, projectModules);
-
-        remainingModules.removeAll(executedModules);
         if (executedModules.isEmpty()) {
             getLog().debug("No modules have been executed so far, considering this module the first one within the project.");
             beforeProject(mojoExecutionContext);
         }
 
+        Set<MavenProject> remainingModules = getRemainingModules(mojoExecutionContext, projectModules);
+        remainingModules.removeAll(executedModules);
         remainingModules.remove(currentModule);
         if (remainingModules.isEmpty()) {
             getLog().debug("Did not find any subsequent module with a plugin configuration, considering this module the last one within the project.");
