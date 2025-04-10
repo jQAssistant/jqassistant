@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Include;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import static java.util.Collections.emptyList;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
+@Description("Scans the current Maven project.")
 @Slf4j
 public class ScanTask extends AbstractStoreTask {
 

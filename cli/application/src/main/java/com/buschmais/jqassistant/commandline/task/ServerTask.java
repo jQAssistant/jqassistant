@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
+@Description("Starts an embedded Neo4j server.")
 public class ServerTask extends AbstractStoreTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
