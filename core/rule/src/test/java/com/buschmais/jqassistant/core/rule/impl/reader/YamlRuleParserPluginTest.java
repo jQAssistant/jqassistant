@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -50,9 +51,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getConceptBucket()
                 .size()).isEqualTo(1);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getGroupsBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -124,7 +125,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(verification).isInstanceOf(AggregationVerification.class);
 
-            AggregationVerification aggregationVerification = AggregationVerification.class.cast(verification);
+            AggregationVerification aggregationVerification = (AggregationVerification) verification;
 
             assertThat(aggregationVerification.getMax()).isEqualTo(20);
             assertThat(aggregationVerification.getMin()).isEqualTo(10);
@@ -144,7 +145,7 @@ class YamlRuleParserPluginTest {
 
             assertThat(verification).isInstanceOf(RowCountVerification.class);
 
-            RowCountVerification rowCountVerification = RowCountVerification.class.cast(verification);
+            RowCountVerification rowCountVerification = (RowCountVerification) verification;
 
             assertThat(rowCountVerification.getMax()).isEqualTo(20);
             assertThat(rowCountVerification.getMin()).isEqualTo(10);
@@ -191,7 +192,7 @@ class YamlRuleParserPluginTest {
             assertThatThrownBy(() -> readRuleSet(resourcePath)).isExactlyInstanceOf(RuleException.class)
                 .hasNoCause()
                 .hasMessageMatching(
-                    "^The concept '[^']+' " + "in rule source '[^']+' " + "" + "has an invalid parameter\\. The following keys are missing: " + missingKeyword);
+                    "^The concept '[^']+' " + "in rule source '[^']+' " + "has an invalid parameter\\. The following keys are missing: " + missingKeyword);
         }
 
         @Disabled
@@ -205,7 +206,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneConceptParameterInvalidUnsupportedDatastructure() throws RuleException {
+        void oneConceptParameterInvalidUnsupportedDatastructure() {
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-with-parameter-with-illegal-datastructure.yml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -249,7 +250,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneConceptOneDependencyWithUnsupportedKey() throws RuleException {
+        void oneConceptOneDependencyWithUnsupportedKey() {
             assertThatThrownBy(() -> readRuleSet("/yaml/concept-single-with-one-dependency-and-unsupported-key.yaml")).isExactlyInstanceOf(RuleException.class)
                 .hasNoCause();
         }
@@ -312,8 +313,15 @@ class YamlRuleParserPluginTest {
             Concept concept = ruleSet.getConceptBucket()
                 .getById("test:ProvidingConcept");
 
-            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrder("test:Concept1", "test:Concept2");
-
+            assertThat(concept.getProvidedConcepts()).containsExactlyInAnyOrder(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:ProvidingConcept")
+                .providedConceptId("test:Concept1")
+                .activation(IF_AVAILABLE)
+                .build(), Concept.ProvidedConcept.builder()
+                .providingConceptId("test:ProvidingConcept")
+                .providedConceptId("test:Concept2")
+                .activation(IF_AVAILABLE)
+                .build());
         }
     }
 
@@ -332,7 +340,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void documentEmptyEmptyFile() throws RuleException {
+        void documentEmptyEmptyFile() {
             assertThatExceptionOfType(RuleException.class).isThrownBy(() -> readRuleSet("/yaml/document-empty-empty-file.yaml"));
         }
 
@@ -403,9 +411,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> constraints = group.getConstraints();
 
-            assertThat(constraints).hasSize(1);
-            assertThat(constraints).containsKey("uuu");
-            assertThat(constraints.get("uuu")).isNull();
+            assertThat(constraints).hasSize(1)
+                .containsEntry("uuu", null);
 
             assertThat(group.getGroups()).isEmpty();
             assertThat(group.getConcepts()).isEmpty();
@@ -460,9 +467,8 @@ class YamlRuleParserPluginTest {
 
             Map<String, Severity> constraints = group.getConstraints();
 
-            assertThat(constraints).hasSize(1);
-            assertThat(constraints).containsKey("referenced_constraint");
-            assertThat(constraints.get("referenced_constraint")).isEqualTo(Severity.INFO);
+            assertThat(constraints).hasSize(1)
+                .containsEntry("referenced_constraint", Severity.INFO);
             assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(Constraint.DEFAULT_SEVERITY);
         }
 
@@ -473,7 +479,7 @@ class YamlRuleParserPluginTest {
         }
 
         @Test
-        void oneGroupIncludeConceptSeverityUnknown() throws Exception {
+        void oneGroupIncludeConceptSeverityUnknown() {
             assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-severity-unknown.yml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -485,9 +491,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getGroupsBucket()
                 .size()).isEqualTo(1);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getConceptBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -544,9 +550,9 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getGroupsBucket()
                 .size()).isEqualTo(2);
             assertThat(ruleSet.getConstraintBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
             assertThat(ruleSet.getConceptBucket()
-                .size()).isEqualTo(0);
+                .size()).isZero();
         }
 
         @Test
@@ -562,9 +568,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> concepts = group.getConcepts();
 
-            assertThat(concepts).hasSize(1);
-            assertThat(concepts).containsKey("efg");
-            assertThat(concepts.get("efg")).isNull();
+            assertThat(concepts).hasSize(1)
+                .containsEntry("efg", null);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -583,9 +588,8 @@ class YamlRuleParserPluginTest {
                 .next();
             Map<String, Severity> concepts = group.getConcepts();
 
-            assertThat(concepts).hasSize(1);
-            assertThat(concepts).containsKey("xxx");
-            assertThat(concepts.get("xxx")).isEqualTo(Severity.MINOR);
+            assertThat(concepts).hasSize(1)
+                .containsEntry("xxx", Severity.MINOR);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -606,14 +610,12 @@ class YamlRuleParserPluginTest {
 
             Map<String, Severity> includedGroups = group.getGroups();
 
-            assertThat(includedGroups).containsKey("mmm");
-            assertThat(includedGroups.get("mmm")).isEqualTo(Severity.BLOCKER);
-
-            assertThat(includedGroups).hasSize(1);
+            assertThat(includedGroups).hasSize(1)
+                .containsEntry("mmm", Severity.BLOCKER);
         }
 
         @Test
-        void oneGroupIncludeConceptAdditionalKeyword() throws RuleException {
+        void oneGroupIncludeConceptAdditionalKeyword() {
             assertThatThrownBy(() -> readRuleSet("/yaml/group-single-include-concept-additional-keyword.yaml")).hasNoCause()
                 .isExactlyInstanceOf(RuleException.class);
         }
@@ -665,11 +667,9 @@ class YamlRuleParserPluginTest {
 
             Group group = groups.getById("p_g");
 
-            assertThat(group.getGroups()
-                .containsKey("a_g")).isNotNull();
-            assertThat(group.getGroups()
-                .containsKey("b_g")).isNotNull();
-            assertThat(group.getGroups()).hasSize(2);
+            assertThat(group.getGroups()).hasSize(2)
+                .containsEntry("a_g", null)
+                .containsEntry("b_g", null);
         }
     }
 
@@ -891,7 +891,7 @@ class YamlRuleParserPluginTest {
         return Stream.of("https://host.domain/rules.xMl", "https://host.domain/rules.adoc", "https://host.domain/rules.ADOC");
     }
 
-    static private Map.Entry<String, Object> makeEntry(String key, Object value) {
+    private static Map.Entry<String, Object> makeEntry(String key, Object value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 

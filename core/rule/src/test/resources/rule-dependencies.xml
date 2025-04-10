@@ -1,4 +1,4 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7">
 
     <group id="test">
         <includeGroup refId="test:Constraints" />
@@ -12,6 +12,9 @@
     <group id="test:Concepts">
         <includeConcept refId="test:ProvidingConcept2">
             <providesConcept refId="test:AbstractConcept"/>
+        </includeConcept>
+        <includeConcept refId="test:ProvidingConcept4">
+            <providesConcept refId="test:AbstractConcept" activation="if-required"/>
         </includeConcept>
     </group>
 
@@ -60,6 +63,27 @@
 
     <concept id="test:ProvidingConcept2">
         <description>Providing test concept 2</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept3">
+        <providesConcept refId="test:AbstractConcept" activation="if-required"/>
+        <description>Providing test concept 3</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept4">
+        <description>Providing test concept 4</description>
         <cypher><![CDATA[
             match
               (n)

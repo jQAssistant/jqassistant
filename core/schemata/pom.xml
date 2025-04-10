@@ -59,7 +59,7 @@
                                         <includes>
                                             <include>jqassistant-plugin-v2.4.xsd</include>
                                             <include>jqassistant-report-v2.6.xsd</include>
-                                            <include>jqassistant-rule-v2.2.xsd</include>
+                                            <include>jqassistant-rule-v2.7.xsd</include>
                                             <include>jqassistant-baseline-v2.4.xsd</include>
                                         </includes>
                                     </fileset>

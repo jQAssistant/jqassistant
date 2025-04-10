@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_REQUIRED;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
@@ -409,7 +411,7 @@ class RuleSetExecutorTest {
     }
 
     @Test
-    void providedConcepts() throws RuleException {
+    void providedConceptDependencies() throws RuleException {
         Concept concept = Concept.builder()
             .id("concept:Concept")
             .severity(CRITICAL)
@@ -429,7 +431,11 @@ class RuleSetExecutorTest {
         Concept providingConcept1 = Concept.builder()
             .id("concept:ProvidingConcept1")
             .severity(MINOR)
-            .providedConcepts(Set.of("concept:AbstractConcept"))
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept1")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())
             .build();
         // provides the required concept indirectly via the group below
         Concept providingConcept2 = Concept.builder()
@@ -439,7 +445,11 @@ class RuleSetExecutorTest {
         Group group = Group.builder()
             .id("group")
             .concept("concept:Concept", null)
-            .providedConcepts(Map.of("concept:AbstractConcept", Set.of("concept:ProvidingConcept2")))
+            .providedConcepts(Map.of("concept:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept2")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())))
             .build();
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(concept)
@@ -467,6 +477,84 @@ class RuleSetExecutorTest {
                 ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE)));
         inOrder.verify(visitor)
             .visitConcept(eq(concept), eq(CRITICAL), anyMap(), anyMap());
+    }
+
+    @Test
+    void providedConceptsIfRequired() throws RuleException {
+        Concept abstractConcept = Concept.builder()
+            .id("concept:AbstractConcept")
+            .severity(MAJOR)
+            .build();
+        // provides the required concept directly
+        Concept providingConcept1 = Concept.builder()
+            .id("concept:ProvidingConcept1")
+            .severity(MINOR)
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept1")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_AVAILABLE)
+                .build())
+            .build();
+        // provides the required concept indirectly via the group below
+        Concept providingConcept2 = Concept.builder()
+            .id("concept:ProvidingConcept2")
+            .severity(MINOR)
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept2")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_REQUIRED)
+                .build())
+            .build();
+        Concept providingConcept3 = Concept.builder()
+            .id("concept:ProvidingConcept3")
+            .severity(MINOR)
+            .build();
+        Concept providingConcept4 = Concept.builder()
+            .id("concept:ProvidingConcept4")
+            .severity(MINOR)
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("concept:ProvidingConcept4")
+                .providedConceptId("concept:AbstractConcept")
+                .activation(IF_REQUIRED)
+                .build())
+            .build();
+        Group group = Group.builder()
+            .id("group")
+            .concept("concept:AbstractConcept", null)
+            .concept("concept:ProvidingConcept2", null)
+            .concept("concept:ProvidingConcept3", null)
+            .providedConcepts(Map.of("concept:AbstractConcept", Set.of(Concept.ProvidedConcept.builder()
+                .providedConceptId("concept:AbstractConcept")
+                .providingConceptId("concept:ProvidingConcept3")
+                .activation(IF_REQUIRED)
+                .build())))
+            .build();
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(abstractConcept)
+            .addConcept(providingConcept1)
+            .addConcept(providingConcept2)
+            .addConcept(providingConcept3)
+            .addConcept(providingConcept4)
+            .addGroup(group)
+            .getRuleSet();
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        InOrder inOrder = inOrder(visitor);
+        inOrder.verify(visitor)
+            .visitConcept(eq(providingConcept1), eq(MAJOR), anyMap(), anyMap());
+        inOrder.verify(visitor)
+            .visitConcept(eq(providingConcept2), eq(MAJOR), anyMap(), anyMap());
+        inOrder.verify(visitor)
+            .visitConcept(eq(providingConcept3), eq(MAJOR), anyMap(), anyMap());
+        inOrder.verify(visitor)
+            .visitConcept(abstractConcept, MAJOR, emptyMap(),
+                ofEntries(entry(providingConcept1, TRUE), entry(providingConcept2, TRUE), entry(providingConcept3, TRUE)));
+        inOrder.verify(visitor, never())
+            .visitConcept(eq(providingConcept4), any(), anyMap(), anyMap());
     }
 
     @Test

@@ -71,7 +71,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public abstract class AbstractPluginIT {
 
+    /**
+     * System property specifying a custom Maven settings.xml to use for configuring the plugin resolver
+     */
     private static final String PROPERTY_MAVEN_SETTINGS = "jqassistant.it.maven-settings";
+
+    /**
+     * System property specifying the profiles to activate
+     */
     private static final String PROPERTY_PROFILES = "jqassistant.it.profiles";
 
     private static final File USER_HOME = new File(System.getProperty("user.home"));

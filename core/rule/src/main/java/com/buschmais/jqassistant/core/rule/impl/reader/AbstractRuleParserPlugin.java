@@ -61,6 +61,7 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String DESCRIPTION = "description";
     protected static final String ID = "id";
     protected static final String REF_ID = "refId";
+    protected static final String ACTIVATION = "activation";
 
     @Override
     public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
@@ -105,7 +106,4 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
         return severity != null ? severity : defaultSeveritySupplier.get();
     }
 
-    protected boolean getTransactional(String value) {
-        return value != null ? Boolean.getBoolean(value) : true;
-    }
 }
