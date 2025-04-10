@@ -18,25 +18,21 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     @Override
     public final void execute(MojoExecutionContext mojoExecutionContext, Set<MavenProject> executedModules)
         throws MojoExecutionException, MojoFailureException {
-        Map<MavenProject, List<MavenProject>> projects = mojoExecutionContext.getProjects();
-        MavenProject rootModule = mojoExecutionContext.getRootModule();
-        List<MavenProject> projectModules = projects.get(rootModule);
-        MavenProject currentModule = mojoExecutionContext.getCurrentModule();
-        getLog().debug("Verifying if '" + currentModule + "' is last module for project '" + rootModule + (" (project modules='" + projectModules + "')."));
-
         if (executedModules.isEmpty()) {
             getLog().debug("No modules have been executed so far, considering this module the first one within the project.");
             beforeProject(mojoExecutionContext);
         }
 
+        Map<MavenProject, List<MavenProject>> projects = mojoExecutionContext.getProjects();
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        List<MavenProject> projectModules = projects.get(rootModule);
+        MavenProject currentModule = mojoExecutionContext.getCurrentModule();
         Set<MavenProject> remainingModules = getRemainingModules(mojoExecutionContext, projectModules);
         remainingModules.removeAll(executedModules);
         remainingModules.remove(currentModule);
         if (remainingModules.isEmpty()) {
             getLog().debug("Did not find any subsequent module with a plugin configuration, considering this module the last one within the project.");
             afterProject(mojoExecutionContext);
-        } else {
-            getLog().debug("Found " + remainingModules.size() + " subsequent modules executing this plugin.");
         }
     }
 
