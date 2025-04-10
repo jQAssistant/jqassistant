@@ -79,6 +79,25 @@
             "report" : {
               "type" : "object",
               "properties" : {
+                "build" : {
+                  "type" : "object",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the build."
+                    },
+                    "properties" : {
+                      "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+                      "description" : "The build properties."
+                    },
+                    "timestamp" : {
+                      "type" : "string",
+                      "description" : "The build timestamp."
+                    }
+                  },
+                  "additionalProperties" : false,
+                  "description" : "The customizable build information to be displayed in reports."
+                },
                 "continue-on-failure" : {
                   "type" : "boolean",
                   "description" : "Determines if jQAssistant shall continue the build if failures have been detected.",

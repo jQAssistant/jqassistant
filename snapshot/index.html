@@ -4272,6 +4272,22 @@ The locations can be overridden by command line parameters of the Command Line U
     <span class="comment"># The report configuration</span>
     <span class="key">report</span>:
 
+      <span class="comment"># Customizable build information to be displayed in reports.</span>
+      <span class="key">build</span>:
+        <span class="comment"># The build name, defaults to current project name or directory.</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.analyze.report.build.name</span>
+        <span class="key">name</span>:
+        <span class="comment"># The build timestamp (ISO 8601 date time format with offset, e.g. 2025-04-09T16:31:33+00:00), defaults to current time.</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.analyze.report.build.timestamp</span>
+        <span class="key">timestamp</span>:
+        <span class="comment"># Additional build properties, e.g. branch name, etc.</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.analyze.report.build.properties</span>
+        <span class="key">properties</span>:
+          <span class="comment"># key: value</span>
+
       <span class="comment"># The properties to configure report plugins. The supported properties are plugin specific.</span>
       <span class="comment">#</span>
       <span class="comment"># -Djqassistant.analyze.report.properties</span>
@@ -12434,7 +12450,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-10 07:24:02 UTC
+Last updated 2025-04-10 16:06:35 UTC
 </div>
 </div>
 </body>
