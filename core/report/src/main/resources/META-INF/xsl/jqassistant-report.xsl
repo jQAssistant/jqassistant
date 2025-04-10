@@ -106,9 +106,11 @@
                 color:#fff;
             }
         </style>
-        <h1 title="{/tns:jqassistant-report/tns:build/tns:timestamp}">jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:build/tns:name"/></h1>
+        <h1 title="{/tns:jqassistant-report/tns:context/tns:build/tns:timestamp}">
+            jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
+        </h1>
         <!-- optional build properties -->
-        <xsl:for-each select="/tns:jqassistant-report/tns:build/tns:properties/tns:property">
+        <xsl:for-each select="/tns:jqassistant-report/tns:context/tns:build/tns:properties/tns:property">
             <div>
                 <xsl:value-of select="@key"/>:
                 <xsl:value-of select="text()"/>

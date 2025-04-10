@@ -91,23 +91,29 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
             xmlStreamWriter.writeStartElement("jqassistant-report");
             xmlStreamWriter.writeDefaultNamespace(NAMESPACE_URL);
-            xmlStreamWriter.writeStartElement("build");
-            writeElementWithCharacters("name", reportContext.getBuild()
-                .name());
-            writeElementWithCharacters("timestamp", ISO_OFFSET_DATE_TIME.format(reportContext.getBuild()
-                .timestamp()));
-            xmlStreamWriter.writeStartElement("properties");
-            for (Map.Entry<String, String> entry : new TreeMap<>(reportContext.getBuild()
-                .properties()).entrySet()) {
-                xmlStreamWriter.writeStartElement("property");
-                xmlStreamWriter.writeAttribute("key", entry.getKey());
-                xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(entry.getValue())
-                    .replaceAll(""));
-                xmlStreamWriter.writeEndElement(); // property
-            }
-            xmlStreamWriter.writeEndElement(); // properties
-            xmlStreamWriter.writeEndElement(); // build
+            writeContext();
         });
+    }
+
+    private void writeContext() throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("context");
+        xmlStreamWriter.writeStartElement("build");
+        writeElementWithCharacters("name", reportContext.getBuild()
+            .name());
+        writeElementWithCharacters("timestamp", ISO_OFFSET_DATE_TIME.format(reportContext.getBuild()
+            .timestamp()));
+        xmlStreamWriter.writeStartElement("properties");
+        for (Map.Entry<String, String> entry : new TreeMap<>(reportContext.getBuild()
+            .properties()).entrySet()) {
+            xmlStreamWriter.writeStartElement("property");
+            xmlStreamWriter.writeAttribute("key", entry.getKey());
+            xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(entry.getValue())
+                .replaceAll(""));
+            xmlStreamWriter.writeEndElement(); // property
+        }
+        xmlStreamWriter.writeEndElement(); // properties
+        xmlStreamWriter.writeEndElement(); // build
+        xmlStreamWriter.writeEndElement(); // context
     }
 
     @Override

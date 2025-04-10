@@ -17,11 +17,17 @@
     <xs:element name="jqassistant-report">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="build" type="tns:BuildType"/>
+                <xs:element name="context" type="tns:ContextType"/>
                 <xs:group ref="tns:RuleGroup"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="ContextType">
+        <xs:sequence>
+            <xs:element name="build" type="tns:BuildType"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="BuildType">
         <xs:sequence>

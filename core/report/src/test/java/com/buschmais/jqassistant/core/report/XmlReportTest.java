@@ -33,7 +33,7 @@ class XmlReportTest {
         File xmlReport = xmlReportTestHelper.createXmlReport();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report).isNotNull();
-        verifyBuild(report.getBuild());
+        verifyContext(report.getContext());
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
         GroupType groupType = (GroupType) report.getGroupOrConceptOrConstraint()
             .get(0);
@@ -99,7 +99,9 @@ class XmlReportTest {
         assertThat(link.getValue()).isEqualTo("file:report.csv");
     }
 
-    private static void verifyBuild(BuildType buildType) {
+    private static void verifyContext(ContextType contextType) {
+        assertThat(contextType).isNotNull();
+        BuildType buildType = contextType.getBuild();
         assertThat(buildType).isNotNull();
         assertThat(buildType.getName()).isEqualTo("TestBuild");
         assertThat(buildType.getTimestamp()).isNotNull();

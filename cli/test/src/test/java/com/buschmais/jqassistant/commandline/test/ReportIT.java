@@ -28,7 +28,7 @@ class ReportIT extends com.buschmais.jqassistant.commandline.test.AbstractCLIIT 
     }
 
     @DistributionTest
-    void buildProperty() throws IOException {
+    void context() throws IOException {
         String[] args1 = new String[] { "analyze", "report", "-D", "jqassistant.analyze.report.build.properties.Branch=develop" };
         assertThat(execute(args1).getExitCode()).isZero();
 
@@ -36,6 +36,7 @@ class ReportIT extends com.buschmais.jqassistant.commandline.test.AbstractCLIIT 
         assertThat(xmlReport).exists();
         JAXBHelper<JqassistantReport> jaxbHelper = new JAXBHelper<>(JqassistantReport.class);
         BuildType buildType = jaxbHelper.unmarshal(new FileInputStream(xmlReport))
+            .getContext()
             .getBuild();
         assertThat(buildType).isNotNull();
         assertThat(buildType.getName()).isEqualTo(ReportIT.class.getSimpleName());
